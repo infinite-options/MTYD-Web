@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import MealIndicator from "./MealIndicator";
-import styles from "./selectmeal.module.css";
+import styles from "./SelectMeal.module.css";
 import { Link } from "react-router-dom";
 
 class Header extends Component {

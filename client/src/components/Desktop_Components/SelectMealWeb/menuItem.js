@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "./selectmeal.module.css";
+import styles from "./SelectMeal.module.css";
 class MenuItem extends React.Component {
   render() {
     const { cartItems } = this.props;

@@ -4,7 +4,7 @@ import axios from "axios";
 import Header from "./header";
 import Cookies from "js-cookie";
 import { API_URL } from "../../../reducers/constants";
-import styles from "./selectmeal.module.css";
+import styles from "./SelectMeal.module.css";
 import Burgermenu from "./example";
 export class MenuItemList extends Component {
   constructor() {
