@@ -15,7 +15,7 @@ import {
     changeNewZip,
     submitPasswordSignUp,
   } from "../../../reducers/actions/loginActions";
-import styles from './SignUpWeb.module.css';
+import styles from './SignupWeb.module.css';
 import GoogleLogin from "react-google-login";
 import FacebookLogin from "react-facebook-login";
 import { Link } from "react-router-dom";
