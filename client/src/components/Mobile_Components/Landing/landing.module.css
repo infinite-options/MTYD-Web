@@ -1,0 +1,134 @@
+.root {
+  height: inherit;
+  width: inherit;
+  background-image: url("../../../images/landing.png");
+  background-size: cover;
+}
+
+.mealHeader {
+  height: 200px;
+  text-align: center;
+  padding: 4.5rem 0rem 0rem 0rem;
+}
+
+p:nth-of-type(1) {
+  font-size: 2.5rem;
+  color: white;
+  padding: 0px 80px;
+}
+p:nth-of-type(2) {
+  margin-top: 20px;
+  font-size: 18px;
+  color: #fdca3e;
+  padding: 5px 40px;
+  font-weight: 600;
+}
+
+.headerItemContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.headerItem {
+  flex: 1;
+}
+
+.headerItem:nth-of-type(1) {
+  flex: 3;
+}
+
+.loginSectionContainer {
+  display: flex;
+  text-align: center;
+  flex-wrap: wrap;
+  padding: 55px 0px 0px 0px;
+}
+
+.googleBtn {
+  background-color: none;
+  border: none;
+  cursor: pointer;
+  border-radius: 50%;
+  padding: 0px;
+  height: 32.9px;
+  width: 32.9px;
+}
+
+.googleBtn::before {
+  content: url(./google-plus.svg);
+}
+
+.appleLogin {
+  background-color: black;
+  border: none;
+  cursor: pointer;
+  border-radius: 50%;
+  padding: 0px;
+  height: 32.9px;
+  width: 32.9px;
+}
+
+.fbLogin {
+  background-color: none;
+  border: none;
+  cursor: pointer;
+  border-radius: 50%;
+  padding: 0px;
+  height: 32.9px;
+  width: 32.9px;
+  color: transparent;
+}
+
+.fbLogin::before {
+  content: url(./facebook.svg);
+}
+
+.loginSectionItem {
+  flex: 1 100%;
+  margin: 7px 10px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.loginSectionInput {
+  width: 270px;
+  height: 31px;
+  border-radius: 18px;
+  background-color: #ffffffd0;
+  border: none;
+  margin-bottom: 5px;
+}
+
+.buttonContainer {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.button {
+  width: 110px;
+  height: 45px;
+  color: #000000;
+  border: none;
+  background-color: #ff9e19;
+  border-radius: 25px;
+  padding: 10px;
+  font-size: 1rem;
+  font-weight: 500;
+  margin: 0rem 0.8rem;
+}
+
+.socialLoginItem {
+  margin: 20px;
+  padding: 5px;
+  height: 30px;
+}

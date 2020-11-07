@@ -416,6 +416,12 @@ export const submitPasswordSignUp = (
                 .post(API_URL+'signup',object)
                 .then((res) => {
                     console.log(res);
+                    let customerInfo = res.data.result.customer_uid;
+                    console.log(customerInfo);
+                    console.log('cookie',document.cookie)
+                    document.cookie = 'customer_uid=' + customerInfo;
+                    console.log('cookie',document.cookie)
+                    preCallback(customerInfo.customer_uid,callback);
                     dispatch({
                         type: SUBMIT_SIGNUP,
                     })
