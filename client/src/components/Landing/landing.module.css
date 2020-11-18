@@ -101,9 +101,20 @@ p:nth-of-type(2) {
   border-radius: 18px;
   background-color: #ffffffd0;
   border: none;
-  margin-bottom: 5px;
+  /* margin-bottom: 5px; */
 }
-
+.loginSectionInput > input {
+  width: 85%;
+  float: left;
+  background-color: transparent;
+  padding-top: 3px;
+  height: 100%;
+  border: none;
+}
+.loginSectionInput > a {
+  cursor: pointer;
+  height: 100%;
+}
 .buttonContainer {
   margin-top: 10px;
   display: flex;

@@ -14,6 +14,7 @@
     "prop-types": "^15.7.2",
     "react": "^16.13.1",
     "react-apple-login": "^1.0.14",
+    "react-bootstrap": "^1.4.0",
     "react-burger-menu": "^2.8.0",
     "react-dom": "^16.13.1",
     "react-facebook-login": "^4.1.1",
