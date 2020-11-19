@@ -3,7 +3,7 @@ import Subscribe from "../NavBar/subscribe.png";
 import Select from "../NavBar/select.png";
 import Profile from "../NavBar/profile.png";
 import More from "../NavBar/more.png";
-import { Link } from "react-router-dom";
+import {Link} from "react-router-dom";
 
 import styles from "./navBar.module.css";
 
@@ -69,4 +69,21 @@ class BottomNavBar extends React.Component {
   }
 }
 
-export { BottomNavBar, SideNavBar };
+class WebNavBar extends React.Component {
+  render() {
+    return (
+      <div className={styles.navbar}>
+        <div>
+          <h4 style={{color: "orange", fontSize: "20px"}}>LOGO</h4>
+        </div>
+        <ul>
+          <Link to='/'>HOME</Link>
+          <Link to='/about'>ABOUT</Link>
+          <Link to='/profile'>PROFILE</Link>
+        </ul>
+      </div>
+    );
+  }
+}
+
+export {WebNavBar, BottomNavBar, SideNavBar};

@@ -209,41 +209,43 @@ class Landing extends React.Component {
                 padding: "0rem 8.5rem"
               }}
             >
-              <GoogleLogin
-                clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
-                render={renderProps => (
+              <div className={styles.socialLogin}>
+                <GoogleLogin
+                  clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
+                  render={renderProps => (
+                    <button
+                      className={styles.googleBtn}
+                      onClick={renderProps.onClick}
+                      disabled={renderProps.disabled}
+                    ></button>
+                  )}
+                  onSuccess={this.responseGoogle}
+                  onFailure={this.responseGoogle}
+                  isSignedIn={false}
+                  disabled={false}
+                  cookiePolicy={"single_host_origin"}
+                />
+                <FacebookLogin
+                  appId={process.env.REACT_APP_FACEBOOK_APP_ID}
+                  autoLoad={false}
+                  fields={"name,email,picture"}
+                  callback={this.responseFacebook}
+                  cssClass={styles.fbLogin}
+                  textButton=''
+                />
+                <div>
                   <button
-                    className={styles.googleBtn}
-                    onClick={renderProps.onClick}
-                    disabled={renderProps.disabled}
-                  ></button>
-                )}
-                onSuccess={this.responseGoogle}
-                onFailure={this.responseGoogle}
-                isSignedIn={false}
-                disabled={false}
-                cookiePolicy={"single_host_origin"}
-              />
-              <FacebookLogin
-                appId={process.env.REACT_APP_FACEBOOK_APP_ID}
-                autoLoad={false}
-                fields={"name,email,picture"}
-                callback={this.responseFacebook}
-                cssClass={styles.fbLogin}
-                textButton=''
-              />
-              <div>
-                <button
-                  onClick={() => {
-                    window.AppleID.auth.signIn();
-                  }}
-                  className={styles.appleLogin}
-                >
-                  <i
-                    className='fa fa-apple'
-                    style={{fontSize: "28px", color: "white"}}
-                  ></i>
-                </button>
+                    onClick={() => {
+                      window.AppleID.auth.signIn();
+                    }}
+                    className={styles.appleLogin}
+                  >
+                    <i
+                      className='fa fa-apple'
+                      style={{fontSize: "28px", color: "white"}}
+                    ></i>
+                  </button>
+                </div>
               </div>
             </div>
           </div>

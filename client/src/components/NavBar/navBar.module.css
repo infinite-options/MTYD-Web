@@ -2,8 +2,41 @@
   --height: 50px;
   --width: 60px;
   --padding: 15px;
+  --light-color: #2731b4;
   width: inherit;
   height: inherit;
+}
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  margin: auto;
+  padding: 10px;
+  opacity: 0.9;
+  height: 60px;
+  border-bottom-left-radius: 30px;
+  border-bottom-right-radius: 30px;
+
+  box-shadow: 0px 5px #d6d1d1;
+}
+.navbar ul {
+  display: flex;
+  list-style: none;
+  justify-items: right;
+  padding: 10px 10px 0px 0px;
+  margin-right: 0px;
+}
+.navbar a {
+  color: black;
+  padding: 0.45rem;
+  margin: 0 0.25rem;
+  text-decoration: none;
+}
+.navbar > ul > a:hover {
+  color: var(--light-color);
 }
 
 .navContainer {

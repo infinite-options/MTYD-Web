@@ -46,7 +46,20 @@ p:nth-of-type(2) {
   flex-wrap: wrap;
   padding: 55px 0px 0px 0px;
 }
-
+.socialLogin {
+  display: flex;
+  width: 50%;
+  margin: auto;
+  text-align: center;
+  justify-content: space-evenly;
+  padding: 0px;
+}
+.socialLogin > button,
+.socialLogin > span > button,
+.socialLogin > div > button {
+  margin-left: 20px;
+  margin-right: 20px;
+}
 .googleBtn {
   background-color: none;
   border: none;
