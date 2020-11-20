@@ -235,10 +235,10 @@
 }
 
 .indicator-wrapper {
-  margin: 0px 10px;
+  margin: auto auto;
   display: flex;
   justify-content: flex-start;
-  align-content: left;
+  /* align-content: left; */
   text-align: center;
   flex-direction: row;
   height: 3rem;

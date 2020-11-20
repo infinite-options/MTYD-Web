@@ -9,16 +9,7 @@ import {Link} from "react-router-dom";
 const Menu = props => {
   return (
     <div className={props.show ? styles.menu : styles.menu1}>
-      {props.show && (
-        <div className={styles.logo}>
-          <img src={takeaway} alt='Logo' />
-          <p style={{color: "black"}}>
-            {" "}
-            MEALS DELIVERIES ARE
-            <span style={{color: "#FF9E19"}}> MONDAY,WEDNESDAY,FRIDAY</span>
-          </p>
-        </div>
-      )}
+      {props.show && props.message}
       <div className={styles.selectBtn + " " + (!props.show && styles.w5)}>
         <Link to='/choose-plan'>
           <img src={group} alt='Subscription' />

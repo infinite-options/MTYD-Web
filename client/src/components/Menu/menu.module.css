@@ -35,7 +35,7 @@
   width: 50%;
   display: flex;
   margin-top: 1rem;
-  padding: 10px;
+  padding: 1.5rem;
   justify-content: space-evenly;
   text-align: center;
   float: right;
@@ -67,4 +67,14 @@ a img {
   color: black;
   font-size: 14px;
   font-weight: bold;
+}
+.navMessage {
+  width: 50%;
+  color: black !important;
+  font-size: 25px !important;
+  font-weight: 600 !important;
+  margin-bottom: 0px;
+  margin-top: 1rem;
+  padding: 20px !important;
+  text-align: center;
 }

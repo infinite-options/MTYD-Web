@@ -29,6 +29,7 @@ import {API_URL} from "../../reducers/constants";
 import {Link} from "react-router-dom";
 import {withRouter} from "react-router";
 import styles from "./choosePlan.module.css";
+import menuStyles from "../Menu/menu.module.css";
 import {WebNavBar, BottomNavBar} from "../NavBar";
 import Menu from "../Menu";
 import takeaway from "./static/take-away.svg";
@@ -216,6 +217,16 @@ class ChoosePlan extends React.Component {
     if (!this.state.mounted) {
       return null;
     }
+    let message = (
+      <div className={menuStyles.logo}>
+        <img src={takeaway} alt='Logo' />
+        <p style={{color: "black"}}>
+          {" "}
+          MEALS DELIVERIES ARE
+          <span style={{color: "#FF9E19"}}> MONDAY,WEDNESDAY,FRIDAY</span>
+        </p>
+      </div>
+    );
     return (
       /*for mobile's screen*/
       <>
@@ -334,7 +345,7 @@ class ChoosePlan extends React.Component {
         <div className={styles.full_screen}>
           <WebNavBar />
           <div className={styles.container}>
-            <Menu show={true} />
+            <Menu show={true} message={message} />
             <div className={styles.box}>
               <div className={styles.box1}>
                 <h5>

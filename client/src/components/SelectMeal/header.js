@@ -1,11 +1,13 @@
-import React, { Component } from "react";
+import React, {Component} from "react";
 import MealIndicator from "./MealIndicator";
 import styles from "./selectmeal.module.css";
+import menuStyles from "../Menu/menu.module.css";
+import {WebNavBar} from "../NavBar";
+import MenuBar from "../Menu";
 class Header extends Component {
-  
   showDeliveryDay = () => {
     const mySet = new Set();
-    this.props.data.map((menuitem) => {
+    this.props.data.map(menuitem => {
       if (menuitem.menu_date === this.props.myDate) {
         mySet.add(menuitem.delivery_days);
       }
@@ -32,7 +34,7 @@ class Header extends Component {
               ? styles.selectionStyles
               : styles.selectionStyles && styles.selectedDays
           }
-          onClick={(e) => this.props.setDeliveryDay(e)}
+          onClick={e => this.props.setDeliveryDay(e)}
         >
           {dayselector}
         </button>
@@ -57,7 +59,7 @@ class Header extends Component {
               ? styles.selectionStyles
               : styles.selectionStyles && styles.selectedDays
           }
-          onClick={(e) => this.props.makeSelection(e)}
+          onClick={e => this.props.makeSelection(e)}
         >
           {selectionOptions}
         </button>
@@ -67,7 +69,7 @@ class Header extends Component {
   };
 
   render() {
-    const { meals, totalCount, totalMeals } = this.props;
+    const {meals, totalCount, totalMeals} = this.props;
     let mealsCount = parseInt(totalMeals);
 
     //To disable and enable save button
@@ -100,10 +102,14 @@ class Header extends Component {
         document.getElementById("meal-plan-picker").disabled = false;
       }
     }
-
+    let message = (
+      <p className={menuStyles.navMessage}>
+        Please Complete Your Meal Selection For Your Meal Subscriptions
+      </p>
+    );
     return (
       <React.Fragment>
-        <div className={styles.mealHeader}>
+        {/* <div className={styles.mealHeader}>
           <p
             style={{
               flex: "6",
@@ -117,14 +123,16 @@ class Header extends Component {
             MENU THIS WEEK
           </p>
           <div className={styles.avatar}></div>
-        </div>
-        <div className={styles.stickyHeader}>
+        </div> */}
+        <WebNavBar />
+        <MenuBar show={true} message={message} />
+        <div className={styles.stickyHeader + " px-5 "}>
           <select
             onChange={this.props.mealsOnChange}
             className={styles.pickers}
             id={styles.mealPlanPicker}
           >
-            {meals.map((mealItem) => {
+            {meals.map(mealItem => {
               let meal = JSON.parse(mealItem.items)[0];
               let mealName = meal.name;
               return (
@@ -142,20 +150,20 @@ class Header extends Component {
             id={styles.date}
             className={styles.pickers}
           >
-            {this.props.dates.map((date) => (
+            {this.props.dates.map(date => (
               <option key={date} value={date}>
                 {date}
               </option>
             ))}
           </select>
-          <div className={styles.deliveryDays}>{this.showDeliveryDay()}</div>
-          <div className={styles.supriseSkipSave}>
-            {this.showSelectionOptions()}
-          </div>
           <MealIndicator
             totalCount={this.props.totalCount}
             totalMeals={this.props.totalMeals}
           />
+          {/* <div className={styles.deliveryDays}>{this.showDeliveryDay()}</div> */}
+          <div className={styles.supriseSkipSave}>
+            {this.showSelectionOptions()}
+          </div>
         </div>
       </React.Fragment>
     );

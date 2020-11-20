@@ -1,21 +1,17 @@
 import React from "react";
-import { connect } from "react-redux";
+import {connect} from "react-redux";
 import MenuItemList from "./menuItemList";
 
-class ChoosePlan extends React.Component {
+class SelectMeal extends React.Component {
   render() {
-    return (
-      <div style={{ backgroundColor: "black" }}>
-        <MenuItemList />
-      </div>
-    );
+    return <MenuItemList />;
   }
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
   /* Put needed states from store here */
 });
 
 export default connect(mapStateToProps, {
   /* Needed functions from actions*/
-})(ChoosePlan);
+})(SelectMeal);
