@@ -14,15 +14,16 @@ export const fetchOrderHistory = purchaseId => async dispatch => {
   // Change 100-000001 to other customers when log in implemented
 
   try {
-    console.log("here: ", purchaseId);
+    let object = {};
     for (let id of purchaseId) {
       console.log("there and here");
       const res = await axios(`${API_URL}pid_history/${id}`);
-      await dispatch({
-        type: FETCH_ORDER_HISTORY,
-        payload: {[id]: res.data.result}
-      });
+      object[id] = res.data.result;
     }
+    dispatch({
+      type: FETCH_ORDER_HISTORY,
+      payload: object
+    });
   } catch (err) {
     console.log(err);
   }

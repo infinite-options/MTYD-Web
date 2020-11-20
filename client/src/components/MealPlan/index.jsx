@@ -1,5 +1,5 @@
 import React, {useEffect} from "react";
-import {connect} from "react-redux";
+import {connect, useSelector} from "react-redux";
 import {
   fetchProfileInformation,
   fetchSubscribed
@@ -25,27 +25,31 @@ const MealPlan = props => {
       .find(item => item.startsWith("customer_uid="))
       .split("=")[1];
   }
-
+  let orderHistoryLeft = 0;
   useEffect(() => {
     if (!customerId) {
       props.history.push("/");
     } else {
       (async () => {
-        console.log("customerId: ", customerId);
-        await props.fetchSubscribed(customerId);
         await props.fetchProfileInformation(customerId);
-        //fetch order history
+        await props.fetchSubscribed(customerId);
+
         let purchaseIds = [];
-        for (let item of props.subscribedPlans) {
-          console.log("item in main: ", item);
-          purchaseIds.push(item.purchase_id);
+        console.log(props.subscribedPlans.length);
+        if (props.subscribedPlans.length > 0) {
+          for (let item of props.subscribedPlans) {
+            purchaseIds.push(item.purchase_id);
+          }
+          await props.fetchOrderHistory(purchaseIds);
         }
-        console.log("hello there");
-        await props.fetchOrderHistory(purchaseIds);
       })();
     }
     //eslint-disable-next-line
-  }, [props.customerId]);
+  }, [
+    props.customerId,
+    props.subscribedPlans.length,
+    Object.keys(props.orderHistory).length
+  ]);
   const loadHistory = () => {
     let items = props.orderHistory;
     let itemShow = [];
@@ -53,36 +57,22 @@ const MealPlan = props => {
       let name = JSON.parse(items[key][0].items)[0].name;
       let purchases = items[key];
       itemShow.push(
-        <div className={"row " + styles.historyItemName}>
-          <p style={{fontWeight: "bold", fontSize: "20px"}}>{name}</p>
+        <div className={"row pl-2 mb-5 " + styles.historyItemName}>
+          <p className={styles.itemName + " pl-0 text-uppercase"}>{name}</p>
           {purchases.map(purchase => {
             console.log("purchase: ", purchase);
-            let _date = new Date(purchase.purchase_date);
-            console.log(_date);
+            let _date = purchase.purchase_date.split(" ");
+            let date = new Date(_date[0]);
+            console.log(date);
             return (
               <>
-                <div className={"row " + styles.historyItemName}>
-                  <p
-                    style={{
-                      fontWeight: "600",
-                      fontSize: "13px",
-                      float: "left"
-                    }}
-                  >
-                    DATE:
+                <div className={styles.historyItemName}>
+                  <p className='font-weight-bold'>{date.toDateString()}</p>
+                  <p className='mt-0'>
+                    <span className={styles.title}>ORDER #:</span>{" "}
+                    {purchase.purchase_uid}
                   </p>
-                  <p
-                    style={{
-                      fontWeight: "bold",
-                      fontSize: "13px",
-                      float: "left"
-                    }}
-                  >
-                    ORDER #:
-                  </p>
-                  <p style={{fontWeight: "bold", fontSize: "13px"}}>
-                    DELIVERY ADDRESS:
-                  </p>
+                  <p className={styles.title}>DELIVERY ADDRESS:</p>
                   <p>{purchase.delivery_address}</p>
                   <p>
                     {purchase.delivery_city +
@@ -90,12 +80,8 @@ const MealPlan = props => {
                       purchase.delivery_state +
                       "."}
                   </p>
-                  <p>
-                    <span style={{fontWeight: "bold", fontSize: "13px"}}>
-                      PAYMENT CARD:
-                    </span>{" "}
-                    {purchase.cc_num}
-                  </p>
+                  <p className={styles.title}>PAYMENT CARD:</p>
+                  <p>{purchase.cc_num}</p>
                 </div>
               </>
             );
@@ -210,8 +196,10 @@ const MealPlan = props => {
                 })}
               </div>
             </div>
-            <div className='col-3'>
-              <h6>ORDER HISTORY</h6>
+            <div className='col-3 text-left pl-5'>
+              <h6 className='mb-4' style={{fontSize: "25px"}}>
+                ORDER HISTORY
+              </h6>
               {loadHistory()}
             </div>
           </div>

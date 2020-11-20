@@ -12,10 +12,7 @@ export default function(state = initialState, action) {
     case FETCH_ORDER_HISTORY:
       return {
         ...state,
-        orderHistory: {
-          ...state.orderHistory,
-          ...action.payload
-        }
+        orderHistory: action.payload
       };
 
     default:
