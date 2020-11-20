@@ -128,3 +128,7 @@
   font-weight: bold !important;
   font-size: 15px;
 }
+.fixedHeight {
+  max-height: 720px;
+  overflow: scroll;
+}

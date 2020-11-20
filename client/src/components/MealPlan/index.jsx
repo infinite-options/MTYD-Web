@@ -25,7 +25,7 @@ const MealPlan = props => {
       .find(item => item.startsWith("customer_uid="))
       .split("=")[1];
   }
-  let orderHistoryLeft = 0;
+
   useEffect(() => {
     if (!customerId) {
       props.history.push("/");
@@ -35,7 +35,7 @@ const MealPlan = props => {
         await props.fetchSubscribed(customerId);
 
         let purchaseIds = [];
-        console.log(props.subscribedPlans.length);
+
         if (props.subscribedPlans.length > 0) {
           for (let item of props.subscribedPlans) {
             purchaseIds.push(item.purchase_id);
@@ -60,14 +60,14 @@ const MealPlan = props => {
         <div className={"row pl-2 mb-5 " + styles.historyItemName}>
           <p className={styles.itemName + " pl-0 text-uppercase"}>{name}</p>
           {purchases.map(purchase => {
-            console.log("purchase: ", purchase);
             let _date = purchase.purchase_date.split(" ");
             let date = new Date(_date[0]);
-            console.log(date);
+            let dateShow = date.toDateString().replace(" ", ", ");
+            console.log("dateShow: ", dateShow);
             return (
               <>
                 <div className={styles.historyItemName}>
-                  <p className='font-weight-bold'>{date.toDateString()}</p>
+                  <p className='font-weight-bold'>{dateShow}</p>
                   <p className='mt-0'>
                     <span className={styles.title}>ORDER #:</span>{" "}
                     {purchase.purchase_uid}
@@ -75,10 +75,13 @@ const MealPlan = props => {
                   <p className={styles.title}>DELIVERY ADDRESS:</p>
                   <p>{purchase.delivery_address}</p>
                   <p>
-                    {purchase.delivery_city +
-                      " " +
-                      purchase.delivery_state +
-                      "."}
+                    {
+                      (purchase.delivery_city +
+                        ", " +
+                        purchase.delivery_state +
+                        " ",
+                      purchase.delivery_zip + ".")
+                    }
                   </p>
                   <p className={styles.title}>PAYMENT CARD:</p>
                   <p>{purchase.cc_num}</p>
@@ -97,8 +100,8 @@ const MealPlan = props => {
       <div className={styles.container}>
         <Menu show={false} />
         <div className={styles.box1}>
-          <div className='row'>
-            <div className='col-9'>
+          <div className={"row " + styles.fixedHeight}>
+            <div className={"col-9 " + styles.fixedHeight}>
               <div className={styles.box}>
                 <div className='row'>
                   <input
@@ -196,7 +199,7 @@ const MealPlan = props => {
                 })}
               </div>
             </div>
-            <div className='col-3 text-left pl-5'>
+            <div className={"col-3 text-left pl-5 " + styles.fixedHeight}>
               <h6 className='mb-4' style={{fontSize: "25px"}}>
                 ORDER HISTORY
               </h6>

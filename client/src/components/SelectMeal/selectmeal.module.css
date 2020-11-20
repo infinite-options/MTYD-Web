@@ -340,8 +340,8 @@
 .pickers:focus {
   outline: none;
 }
-.stickyHeader select option {
-  background: white !important;
+.stickyHeader select.selector {
+  background: #068585 !important;
 }
 .stickyHeader {
   display: flex;
