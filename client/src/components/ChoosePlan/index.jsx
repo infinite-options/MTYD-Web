@@ -30,10 +30,8 @@ import {Link} from "react-router-dom";
 import {withRouter} from "react-router";
 import styles from "./choosePlan.module.css";
 import {WebNavBar, BottomNavBar} from "../NavBar";
-import takeaway from "./take-away.svg";
-import calendar from "./static/Calendar.svg";
-import group from "./static/Group 1682.svg";
-import lunch from "./static/lunch.svg";
+import Menu from "../Menu";
+import takeaway from "./static/take-away.svg";
 import chooseMeals from "./static/choose_meals.svg";
 import prepay from "./static/prepay.png";
 import delivery from "./static/delivery.png";
@@ -186,7 +184,6 @@ class ChoosePlan extends React.Component {
       } else {
         active = false;
       }
-      console.log("Option: ", optionStr);
       paymentOptionButtons.push(
         <div className={styles.sameLine} key={i}>
           <button
@@ -337,33 +334,7 @@ class ChoosePlan extends React.Component {
         <div className={styles.full_screen}>
           <WebNavBar />
           <div className={styles.container}>
-            <div className={styles.menu}>
-              <div className={styles.logo}>
-                <img src={takeaway} alt='React Logo' />
-                <p style={{color: "black"}}>
-                  {" "}
-                  MEALS DELIVERIES ARE
-                  <span style={{color: "#FF9E19"}}>
-                    {" "}
-                    MONDAY,WEDNESDAY,FRIDAY
-                  </span>
-                </p>
-              </div>
-              <div className={styles.selectBtn}>
-                <div>
-                  <img src={group} alt='Subscription' />
-                  <p>SUBSCRIPTION</p>
-                </div>
-                <div>
-                  <img src={lunch} alt='MEAL PLAN' />
-                  <p>MEAL PLAN</p>
-                </div>
-                <div>
-                  <img src={calendar} alt='MEALS AVAILABLE' />
-                  <p>MEALS AVAILABLE</p>
-                </div>
-              </div>
-            </div>
+            <Menu show={true} />
             <div className={styles.box}>
               <div className={styles.box1}>
                 <h5>
@@ -468,10 +439,11 @@ class ChoosePlan extends React.Component {
                             <div className='row'>
                               <div className='col px-1'>
                                 <input
-                                  type='text'
+                                  type='email'
                                   value={this.props.email}
                                   className={styles.inputBox}
                                   placeholder='Email'
+                                  readOnly
                                 />
                               </div>
                             </div>
@@ -676,7 +648,7 @@ class ChoosePlan extends React.Component {
                         this.props.instructions,
                         this.props.selectedPlan,
                         () => {
-                          this.props.history.push("/select-meal");
+                          this.props.history.push("/meal-plan");
                         }
                       )
                     }

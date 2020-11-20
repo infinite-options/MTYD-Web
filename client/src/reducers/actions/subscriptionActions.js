@@ -22,7 +22,8 @@ import {
   CHANGE_CARD_CVV,
   CHANGE_CARD_MONTH,
   CHANGE_CARD_YEAR,
-  CHANGE_CARD_ZIP
+  CHANGE_CARD_ZIP,
+  FETCH_SUBSCRIBED_INFO
 } from "../actions/subscriptionTypes";
 
 import {API_URL, BING_LCOATION_API_URL} from "../constants";
@@ -480,5 +481,21 @@ export const submitPayment = (
           console.log(err.response);
         }
       });
+  }
+};
+
+export const fetchSubscribed = customerId => async dispatch => {
+  //fetch  data from server
+  try {
+    const res = await axios(`${API_URL}customer_lplp`, {
+      params: {customer_uid: customerId}
+    });
+    console.log("res.data: ", res.data);
+    dispatch({
+      type: FETCH_SUBSCRIBED_INFO,
+      payload: res.data.result
+    });
+  } catch (err) {
+    console.log(err);
   }
 };

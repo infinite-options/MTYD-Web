@@ -1,0 +1,70 @@
+.menu {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.menu1 {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.logo {
+  display: flex;
+  width: 50%;
+  flex-direction: row;
+  margin-top: 1rem;
+  padding: 10px;
+  text-align: left;
+}
+.logo img {
+  max-width: 40px;
+  max-height: 40px;
+  margin-left: 10px;
+}
+.logo > p {
+  display: block;
+  padding: 10px;
+  margin-bottom: 0px;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.selectBtn {
+  width: 50%;
+  display: flex;
+  margin-top: 1rem;
+  padding: 10px;
+  justify-content: space-evenly;
+  text-align: center;
+  float: right;
+}
+a {
+  display: flex;
+  justify-content: space-between;
+}
+a img {
+  width: 30px;
+  height: 30px;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+.w7 {
+  width: 50%;
+}
+.selectBtn div img,
+.selectBtn div p {
+  display: inline;
+  margin-bottom: 0px;
+}
+.selectBtn div img {
+  width: 40px;
+  height: 40px;
+}
+.selectBtn div p {
+  padding: 10px;
+  color: black;
+  font-size: 14px;
+  font-weight: bold;
+}

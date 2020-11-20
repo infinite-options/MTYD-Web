@@ -12,6 +12,7 @@ import Landing from "./components/Landing";
 import SignUp from "./components/SignUp";
 import SocialSignUp from "./components/SocialSignUp";
 import ChoosePlan from "./components/ChoosePlan";
+import MealPlan from "./components/MealPlan";
 import PaymentDetails from "./components/PaymentDetails";
 import Profile from "./components/Profile";
 import SelectMeal from "./components/SelectMeal";
@@ -51,6 +52,7 @@ function App() {
               component={SocialSignUp}
             />
             <AppliedRoute exact path='/choose-plan' component={ChoosePlan} />
+            <AppliedRoute exact path='/meal-plan' component={MealPlan} />
             <AppliedRoute
               exact
               path='/payment-details'

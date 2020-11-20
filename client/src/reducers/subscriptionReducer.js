@@ -20,6 +20,7 @@ import {
   CHANGE_CARD_ZIP,
   CHANGE_CARD_MONTH,
   CHANGE_CARD_YEAR,
+  FETCH_SUBSCRIBED_INFO,
   SUBMIT_PAYMENT
 } from "./actions/subscriptionTypes";
 
@@ -54,6 +55,7 @@ const initialState = {
     month: "",
     year: ""
   },
+  subscribedPlans: [],
   deliveryInstructions: "",
   paymentPassword: ""
 };
@@ -223,6 +225,11 @@ export default function(state = initialState, action) {
           ...state.creditCard,
           year: action.payload
         }
+      };
+    case FETCH_SUBSCRIBED_INFO:
+      return {
+        ...state,
+        subscribedPlans: action.payload
       };
     default:
       return state;

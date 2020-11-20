@@ -1,26 +1,24 @@
-import {
-    LOGOUT_PROFILE, FETCH_ORDER_HISTORY,
-} from "./actions/profileTypes";
-
+import {LOGOUT_PROFILE, FETCH_ORDER_HISTORY} from "./actions/profileTypes";
 
 const initialState = {
-    orderHistory: [],
-}
+  orderHistory: {}
+};
 
-export default function (state=initialState, action) {
-    switch(action.type) {
+export default function(state = initialState, action) {
+  switch (action.type) {
+    case LOGOUT_PROFILE:
+      return initialState;
 
-        case LOGOUT_PROFILE:
-            return initialState;
+    case FETCH_ORDER_HISTORY:
+      return {
+        ...state,
+        orderHistory: {
+          ...state.orderHistory,
+          ...action.payload
+        }
+      };
 
-        case FETCH_ORDER_HISTORY:
-            return {
-                ...state,
-                orderHistory: action.payload
-            }
-
-        default:
-            return state;
-        
-    }
+    default:
+      return state;
+  }
 }

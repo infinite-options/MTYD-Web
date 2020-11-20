@@ -1,35 +1,29 @@
-import axios from 'axios';
+import axios from "axios";
 
-import {
-    LOGOUT_PROFILE, FETCH_ORDER_HISTORY
-} from './profileTypes';
+import {LOGOUT_PROFILE, FETCH_ORDER_HISTORY} from "./profileTypes";
 
-import { API_URL } from '../constants'
+import {API_URL} from "../constants";
 
 export const resetProfile = () => dispatch => {
-    dispatch({
-        type: LOGOUT_PROFILE,
-    })
-}
+  dispatch({
+    type: LOGOUT_PROFILE
+  });
+};
 
-export const fetchOrderHistory = (customer_uid) => dispatch => {
-    // Change 100-000001 to other customers when log in implemented
-    axios
-        // .get(API_URL + 'meals_selected?customer_uid=100-000001')
-        .get(API_URL + 'customer_lplp',{
-            params: {
-                customer_uid: customer_uid,
-            }
-        })
-        .then((res) => {
-            console.log(res.data.result);
-            dispatch({
-                type: FETCH_ORDER_HISTORY,
-                payload: res.data.result,
-            })
-        })
-        .catch((err) => {
-            console.log(err);
-        })
+export const fetchOrderHistory = purchaseId => async dispatch => {
+  // Change 100-000001 to other customers when log in implemented
 
-}
+  try {
+    console.log("here: ", purchaseId);
+    for (let id of purchaseId) {
+      console.log("there and here");
+      const res = await axios(`${API_URL}pid_history/${id}`);
+      await dispatch({
+        type: FETCH_ORDER_HISTORY,
+        payload: {[id]: res.data.result}
+      });
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
