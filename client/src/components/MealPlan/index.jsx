@@ -62,10 +62,7 @@ const MealPlan = props => {
           {purchases.map(purchase => {
             let _date = purchase.purchase_date.split(" ");
             let date = new Date(`${_date[0]}T00:00:00`);
-            console.log("date extracted string: ", _date[0]);
-            console.log("datetime object: ", date);
             let dateShow = date.toDateString().replace(" ", ", ");
-            console.log("dateShow: ", dateShow);
             return (
               <>
                 <div className={styles.historyItemName}>
