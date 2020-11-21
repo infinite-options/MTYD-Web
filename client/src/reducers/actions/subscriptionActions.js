@@ -1,5 +1,5 @@
 import axios from "axios";
-
+import {history} from "../../App";
 import {
   LOGOUT_SUBSCRIPTION,
   FETCH_PLAN_INFO,
@@ -23,7 +23,8 @@ import {
   CHANGE_CARD_MONTH,
   CHANGE_CARD_YEAR,
   CHANGE_CARD_ZIP,
-  FETCH_SUBSCRIBED_INFO
+  FETCH_SUBSCRIBED_INFO,
+  ADD_ERROR
 } from "../actions/subscriptionTypes";
 
 import {API_URL, BING_LCOATION_API_URL} from "../constants";
@@ -126,27 +127,39 @@ export const fetchProfileInformation = customerId => dispatch => {
   axios
     .get(API_URL + "Profile/" + customerId)
     .then(res => {
-      console.log(res);
-      let customerInfo = res.data.result[0];
-      let email = customerInfo.customer_email;
-      let socialMedia =
-        customerInfo.user_social_media !== null
-          ? customerInfo.user_social_media
-          : "NULL";
-      console.log(socialMedia);
-      dispatch({
-        type: FETCH_PROFILE_INFO,
-        payload: {
-          customerId: customerId,
-          email: email,
-          socialMedia: socialMedia
-        }
-      });
+      if (
+        !res.data.result ||
+        !res.data.result.length ||
+        res.data.code !== 200
+      ) {
+        history.push("/choose-plan");
+        dispatch({
+          type: ADD_ERROR,
+          payload: "Cannot get Profile Info."
+        });
+      } else {
+        let customerInfo = res.data.result[0];
+        let email = customerInfo.customer_email;
+        let socialMedia =
+          customerInfo.user_social_media !== null
+            ? customerInfo.user_social_media
+            : "NULL";
+
+        dispatch({
+          type: FETCH_PROFILE_INFO,
+          payload: {
+            customerId: customerId,
+            email: email,
+            socialMedia: socialMedia
+          }
+        });
+      }
     })
     .catch(err => {
-      console.log(err);
       if (err.response) {
         console.log(err.response);
+      } else {
+        console.log(err.toString());
       }
     });
 };
@@ -339,7 +352,8 @@ export const submitPayment = (
                       qty: "1",
                       name: selectedPlan.item_name,
                       price: selectedPlan.item_price,
-                      item_uid: selectedPlan.item_uid
+                      item_uid: selectedPlan.item_uid,
+                      itm_business_uid: "200-000001"
                     }
                   ];
                   console.log(purchasedItem);
@@ -428,7 +442,8 @@ export const submitPayment = (
               qty: "1",
               name: selectedPlan.item_name,
               price: selectedPlan.item_price,
-              item_uid: selectedPlan.item_uid
+              item_uid: selectedPlan.item_uid,
+              itm_business_uid: "200-000001"
             }
           ];
           console.log(purchasedItem);
@@ -487,15 +502,35 @@ export const submitPayment = (
 export const fetchSubscribed = customerId => async dispatch => {
   //fetch  data from server
   try {
+    let purchaseIds = [];
     const res = await axios(`${API_URL}customer_lplp`, {
       params: {customer_uid: customerId}
     });
-    console.log("res.data: ", res.data);
-    dispatch({
-      type: FETCH_SUBSCRIBED_INFO,
-      payload: res.data.result
-    });
+    if (res.status !== 200) {
+      dispatch({
+        type: ADD_ERROR,
+        payload: "Cannot Get Subscription Info"
+      });
+    } else {
+      dispatch({
+        type: FETCH_SUBSCRIBED_INFO,
+        payload: res.data.result
+      });
+      for (let items of res.data.result) {
+        purchaseIds.push(items.purchase_id);
+      }
+    }
+    return purchaseIds;
   } catch (err) {
-    console.log(err);
+    let message = "";
+    if (err.response) {
+      message = err.response;
+    } else {
+      message = err.toString();
+    }
+    dispatch({
+      type: ADD_ERROR,
+      payload: message
+    });
   }
 };

@@ -132,3 +132,18 @@
   max-height: 720px;
   overflow: scroll;
 }
+.subscribeNotice {
+  border: 1px solid;
+  border-radius: 20px;
+  box-shadow: 5px 5px #b1abab;
+  height: 100%;
+  width: 100%;
+  background-color: #89bce6;
+}
+.subscribeNotice > p {
+  color: rgb(22, 30, 73);
+  padding: 0px !important;
+  margin: auto;
+  font-size: 20px;
+  font-weight: bold;
+}

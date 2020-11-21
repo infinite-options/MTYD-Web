@@ -21,6 +21,10 @@ import "./App.css";
 import AuthApi from "./components/AuthApi";
 import Cookies from "js-cookie";
 
+import createBrowserHistory from "history/createBrowserHistory";
+
+export const history = createBrowserHistory();
+
 function App() {
   const [auth, setAuth] = React.useState(false);
   const readCookie = () => {
@@ -38,7 +42,7 @@ function App() {
   return (
     <div className='root'>
       <Provider store={store}>
-        <Router>
+        <Router history={history}>
           {/* <div className='sideNavBar'>
             <SideNavBar />
           </div> */}

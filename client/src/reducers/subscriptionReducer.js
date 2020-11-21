@@ -21,6 +21,7 @@ import {
   CHANGE_CARD_MONTH,
   CHANGE_CARD_YEAR,
   FETCH_SUBSCRIBED_INFO,
+  ADD_ERROR,
   SUBMIT_PAYMENT
 } from "./actions/subscriptionTypes";
 
@@ -57,7 +58,8 @@ const initialState = {
   },
   subscribedPlans: [],
   deliveryInstructions: "",
-  paymentPassword: ""
+  paymentPassword: "",
+  errors: []
 };
 
 export default function(state = initialState, action) {
@@ -230,6 +232,11 @@ export default function(state = initialState, action) {
       return {
         ...state,
         subscribedPlans: action.payload
+      };
+    case ADD_ERROR:
+      return {
+        ...state,
+        errors: action.payload
       };
     default:
       return state;

@@ -7,9 +7,15 @@ import {API_URL} from "../../reducers/constants";
 import styles from "./selectmeal.module.css";
 import MenuBar from "../Menu";
 
+import {connect} from "react-redux";
+import {
+  fetchSubscribed,
+  fetchProfileInformation
+} from "../../reducers/actions/subscriptionActions";
 import Burgermenu from "./example";
-export class MenuItemList extends Component {
-  constructor() {
+
+class MenuItemList extends Component {
+  constructor(props) {
     super();
     this.state = {
       data: [],
@@ -21,9 +27,14 @@ export class MenuItemList extends Component {
     };
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     this.loadMealPlans();
     this.loadMenuItems();
+    const customer_uid = Cookies.get("customer_uid");
+    if (customer_uid && customer_uid !== "") {
+      await this.props.fetchProfileInformation(customer_uid);
+      await this.props.fetchSubscribed(customer_uid);
+    }
   }
 
   loadMealPlans = () => {
@@ -525,8 +536,6 @@ export class MenuItemList extends Component {
 
     return (
       <div className={styles.mealMenuWrapper}>
-        {/* <Burgermenu /> */}
-
         <Header
           data={this.state.data}
           dates={uniqueDates}
@@ -548,7 +557,6 @@ export class MenuItemList extends Component {
           purchaseID={this.state.purchaseID}
           mealSelected={this.state.mealSelected}
         />
-
         <div className={styles.menuItemsWrapper}>
           <MenuItem
             addToCart={this.addToCart}
@@ -558,11 +566,18 @@ export class MenuItemList extends Component {
             cartItems={this.state.cartItems}
             mealSelected={this.state.mealSelected}
             purchaseID={this.state.purchaseID}
+            show={this.props.subscribedPlans.length}
           />
         </div>
       </div>
     );
   }
 }
+const mapStateToProps = state => ({
+  subscribedPlans: state.subscribe.subscribedPlans
+});
 
-export default MenuItemList;
+export default connect(mapStateToProps, {
+  fetchSubscribed,
+  fetchProfileInformation
+})(MenuItemList);

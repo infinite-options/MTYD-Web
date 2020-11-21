@@ -148,7 +148,7 @@ class Landing extends React.Component {
                     }}
                   />
 
-                  <a>
+                  <a className={styles.passwordShow}>
                     <i
                       className='far fa-eye'
                       id='togglePassword'

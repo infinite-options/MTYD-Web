@@ -228,12 +228,12 @@
 
 .menuItemsWrapper {
   display: flex;
-  align-content: left;
   justify-content: left;
   flex-wrap: wrap;
   padding: 1rem 2rem 1rem 2rem;
   /* background-image: linear-gradient(#000000, #ff9300); */
-  height: 100%;
+  overflow: scroll;
+  height: 650px;
   width: 100%;
 }
 
@@ -241,8 +241,8 @@
   position: relative;
   border: none;
   border-radius: 5%;
-  width: 300px;
-  height: 300px;
+  width: 320px;
+  height: 320px;
   margin: 0.2rem 0.2rem 0.2rem 0.2rem;
   box-shadow: 1px 1px #888888;
   z-index: 1;
@@ -250,8 +250,11 @@
 .menuitemIndividual {
   height: 380px;
   width: 380px;
-
-  margin: 0.1rem 0.5rem;
+  margin: 0.5rem 0.5rem;
+  text-align: center;
+}
+.menuitemIndividual p {
+  text-align: left;
 }
 #menuItemTitle {
   font-size: 0.8rem;
@@ -271,28 +274,27 @@
 }
 #favorite {
   position: absolute;
-  color: #8b0a5a;
+  color: #f58a8a;
   top: 0;
   left: 0;
   padding: 0.5rem;
-  font-size: 20px;
+  font-size: 30px;
 }
 
 .menuElements {
   color: #000000;
   font-size: 0.7rem;
   font-weight: 600;
-  text-align: center;
-  margin: 0;
+  text-align: center !important;
   position: absolute;
-  margin: 0.3rem;
+  margin: 0.5rem;
   background-color: white;
   border-radius: 50%;
   border: none;
   white-space: nowrap;
   vertical-align: baseline;
-  height: 1.6rem;
-  width: 1.6rem;
+  height: 3rem;
+  width: 3rem;
   padding: 0rem;
 }
 
@@ -307,22 +309,30 @@
   bottom: 0;
   left: 0;
   z-index: 2;
+  font-size: 25px;
 }
 
 #plusButton {
   bottom: 0;
   right: 0;
   z-index: 2;
+  font-size: 25px;
 }
-
+#eyeBtn {
+  top: 0;
+  left: 0;
+  z-index: 2;
+  background-image: url("./images/eye.svg");
+  background-repeat: no-repeat;
+  background-position: center;
+}
 .footerIcons {
   height: 1.5em;
   width: 1.5rem;
 }
 
 .pickers {
-  text-indent: 1px;
-  text-align: center;
+  text-align-last: right !important;
   -webkit-appearance: menulist;
   height: 32px;
   width: 329px;
@@ -330,16 +340,36 @@
   border: none;
   border-radius: 20px;
   color: #000000;
-  font-weight: 400;
+  font-weight: 500;
   border: 1px solid #ffba00;
-  padding: 0.2rem 1rem;
+  padding: 0.2rem 1rem 0.2rem 1rem;
   margin: 0.3rem 0.3rem;
-  font-size: 1rem;
+  font-size: 15px;
 }
 
 .pickers:focus {
   outline: none;
 }
+
+#mealPlanPicker {
+  background-image: url("../Menu/static/lunch.svg");
+  background-origin: content-box;
+  background-position: left;
+  background-repeat: no-repeat;
+  background-size: 20px 20px;
+  background-clip: content-box;
+}
+
+#date {
+  background-image: url("../Menu/static/Calendar.svg");
+  background-origin: content-box;
+  background-position: left;
+  background-repeat: no-repeat;
+  background-size: 20px 20px;
+  background-clip: content-box;
+  text-align-last: right !important;
+}
+
 .stickyHeader select.selector {
   background: #068585 !important;
 }

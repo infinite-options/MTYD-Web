@@ -4,6 +4,7 @@ import styles from "./selectmeal.module.css";
 import menuStyles from "../Menu/menu.module.css";
 import {WebNavBar} from "../NavBar";
 import MenuBar from "../Menu";
+import {connect} from "react-redux";
 class Header extends Component {
   showDeliveryDay = () => {
     const mySet = new Set();
@@ -102,72 +103,68 @@ class Header extends Component {
         document.getElementById("meal-plan-picker").disabled = false;
       }
     }
-    let message = (
+    let message = this.props.subscribedPlans.length ? (
       <p className={menuStyles.navMessage}>
         Please Complete Your Meal Selection For Your Meal Subscriptions
       </p>
+    ) : (
+      <p className={menuStyles.navMessage + " text-left"}>
+        Below are this weeks Meals.{" "}
+        <span style={{display: "block"}}>
+          Please buy a Subscription before selecting
+        </span>
+        Meals
+      </p>
     );
     return (
-      <React.Fragment>
-        {/* <div className={styles.mealHeader}>
-          <p
-            style={{
-              flex: "6",
-              textAlign: "center",
-              fontSize: "24px",
-              color: "black",
-              fontWeight: "bold",
-              paddingLeft: "50px",
-            }}
-          >
-            MENU THIS WEEK
-          </p>
-          <div className={styles.avatar}></div>
-        </div> */}
+      <>
         <WebNavBar />
         <MenuBar show={true} message={message} />
-        <div className={styles.stickyHeader + " px-5 "}>
-          <select
-            onChange={this.props.mealsOnChange}
-            className={styles.pickers}
-            id={styles.mealPlanPicker}
-          >
-            {meals.map(mealItem => {
-              let meal = JSON.parse(mealItem.items)[0];
-              let mealName = meal.name;
-              return (
-                <option value={mealItem.purchase_id}>
-                  {mealName.toUpperCase()}
+        {this.props.subscribedPlans.length ? (
+          <div className={styles.stickyHeader + " px-5 "}>
+            <select
+              onChange={this.props.mealsOnChange}
+              className={styles.pickers}
+              id={styles.mealPlanPicker}
+            >
+              {meals.map(mealItem => {
+                let meal = JSON.parse(mealItem.items)[0];
+                let mealName = meal.name;
+                return (
+                  <option value={mealItem.purchase_id}>
+                    {mealName.toUpperCase()}
+                  </option>
+                );
+              })}
+            </select>
+            <select
+              onChange={this.props.filterDates}
+              name='date'
+              id={styles.date}
+              className={styles.pickers}
+            >
+              {this.props.dates.map(date => (
+                <option key={date} value={date}>
+                  {date.split(" ")[0]}
                 </option>
-              );
-            })}
-          </select>
-
-          <select
-            onChange={this.props.filterDates}
-            value={this.props.date}
-            name='date'
-            id={styles.date}
-            className={styles.pickers}
-          >
-            {this.props.dates.map(date => (
-              <option key={date} value={date}>
-                {date}
-              </option>
-            ))}
-          </select>
-          <MealIndicator
-            totalCount={this.props.totalCount}
-            totalMeals={this.props.totalMeals}
-          />
-          {/* <div className={styles.deliveryDays}>{this.showDeliveryDay()}</div> */}
-          <div className={styles.supriseSkipSave}>
-            {this.showSelectionOptions()}
+              ))}
+            </select>
+            <MealIndicator
+              totalCount={this.props.totalCount}
+              totalMeals={this.props.totalMeals}
+            />
+            <div className={styles.supriseSkipSave}>
+              {this.showSelectionOptions()}
+            </div>
           </div>
-        </div>
-      </React.Fragment>
+        ) : (
+          ""
+        )}
+      </>
     );
   }
 }
-
-export default Header;
+const mapStateToProps = state => ({
+  subscribedPlans: state.subscribe.subscribedPlans
+});
+export default connect(mapStateToProps, {})(Header);
