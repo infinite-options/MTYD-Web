@@ -1,8 +1,9 @@
-import React, {useEffect} from "react";
+import React, {useEffect, Fragment} from "react";
 import {connect} from "react-redux";
 import {
   fetchProfileInformation,
-  fetchSubscribed
+  fetchSubscribed,
+  fetchPlans
 } from "../../reducers/actions/subscriptionActions";
 import {withRouter} from "react-router";
 import {fetchOrderHistory} from "../../reducers/actions/profileActions";
@@ -26,43 +27,24 @@ const MealPlan = props => {
       .find(item => item.startsWith("customer_uid="))
       .split("=")[1];
   }
-
-  useEffect(
-    () => {
-      // if (!customerId) {
-      //   props.history.push("/");
-      // } else {
-      (async () => {
-        try {
-          props.fetchProfileInformation(customerId);
-
-          (() => {
-            Promise.resolve()
-              .then(() => fetchSubscribed(customerId))
-              .then(ids => {
-                console.log(ids);
-                fetchOrderHistory(ids);
-              });
-          })();
-
-          // await props.fetchSubscribed(customerId);
-
-          // // if (props.subscribedPlans.length > 0) {
-          // for (let item of props.subscribedPlans) {
-          //   await purchaseIds.push(item.purchase_id);
-          // }
-          // await props.fetchOrderHistory(purchaseIds);
-          // // }
-        } catch (err) {
-          // props.history.push("/");
-          console.log(err);
-        }
-      })();
-    },
+  let plans = null;
+  useEffect(() => {
+    if (!customerId) {
+      props.history.push("/");
+    } else {
+      try {
+        props.fetchProfileInformation(customerId);
+        props.fetchPlans();
+        props
+          .fetchSubscribed(customerId)
+          .then(ids => props.fetchOrderHistory(ids));
+      } catch (err) {
+        // props.history.push("/");
+        console.log(err);
+      }
+    }
     //eslint-disable-next-line
-    // }
-    []
-  );
+  }, []);
   const loadHistory = () => {
     let items = props.orderHistory;
     let itemShow = [];
@@ -70,14 +52,14 @@ const MealPlan = props => {
       let name = JSON.parse(items[key][0].items)[0].name;
       let purchases = items[key];
       itemShow.push(
-        <div className={"row pl-2 mb-5 " + styles.historyItemName}>
+        <div key={key} className={"row pl-2 mb-5 " + styles.historyItemName}>
           <p className={styles.itemName + " pl-0 text-uppercase"}>{name}</p>
           {purchases.map(purchase => {
             let _date = purchase.purchase_date.split(" ");
             let date = new Date(`${_date[0]}T00:00:00`);
             let dateShow = date.toDateString().replace(" ", ", ");
             return (
-              <>
+              <Fragment key={purchase.purchase_uid}>
                 <div className={styles.historyItemName}>
                   <p className='font-weight-bold'>{dateShow}</p>
                   <p className='mt-0'>
@@ -98,7 +80,7 @@ const MealPlan = props => {
                   <p className={styles.title}>PAYMENT CARD:</p>
                   <p>{purchase.cc_num}</p>
                 </div>
-              </>
+              </Fragment>
             );
           })}
         </div>
@@ -143,14 +125,22 @@ const MealPlan = props => {
                     </div>
                   </div>
                   {props.subscribedPlans.map((plan, index) => {
-                    let item = JSON.parse(plan.items);
+                    let item = JSON.parse(plan.items)[0];
                     let cc_num = plan.cc_num;
+                    let frequency = " ";
+                    if (Object.keys(props.plans).length > 0) {
+                      let item_desc =
+                        props.plans[item.name.split(" ")[0]][item.item_uid]
+                          .item_desc;
+                      frequency = item_desc.split(" - ")[1].toUpperCase();
+                    }
+
                     return (
-                      <>
+                      <Fragment key={index}>
                         <div className='row'>
                           <div className='col-4 ml-5'>
                             <input
-                              value={item[0].name}
+                              value={item.name}
                               className={styles.infoBtn}
                               readOnly
                             />
@@ -175,7 +165,7 @@ const MealPlan = props => {
                                   styles.textCenter
                                 }
                               >
-                                <p>FOR 2 WEEKS</p>
+                                <p>FOR {frequency}</p>
                                 <input
                                   className={styles.circleInput}
                                   readOnly
@@ -210,7 +200,7 @@ const MealPlan = props => {
                         {index + 1 !== props.subscribedPlans.length && (
                           <hr className={styles.separatedLine + " mx-5"} />
                         )}
-                      </>
+                      </Fragment>
                     );
                   })}
                 </div>
@@ -240,11 +230,13 @@ const mapStateToProps = state => ({
   customerId: state.subscribe.profile.customerId,
   subscribedPlans: state.subscribe.subscribedPlans,
   orderHistory: state.profile.orderHistory,
-  errors: state.subscribe.errors
+  errors: state.subscribe.errors,
+  plans: state.subscribe.plans
 });
 
 export default connect(mapStateToProps, {
   fetchProfileInformation,
   fetchSubscribed,
-  fetchOrderHistory
+  fetchOrderHistory,
+  fetchPlans
 })(withRouter(MealPlan));

@@ -36,6 +36,7 @@ export const resetSubsription = () => dispatch => {
 };
 
 export const fetchPlans = () => dispatch => {
+  let plans = null;
   axios
     .get(API_URL + "plans", {
       params: {
@@ -47,9 +48,9 @@ export const fetchPlans = () => dispatch => {
       let itemsReturn = {};
       for (let item of items) {
         if (item.num_items in itemsReturn) {
-          itemsReturn[item.num_items].push(item);
+          itemsReturn[item.num_items][item.item_uid] = item;
         } else {
-          itemsReturn[item.num_items] = [item];
+          itemsReturn[item.num_items] = {[item.item_uid]: item};
         }
       }
 
@@ -63,6 +64,7 @@ export const fetchPlans = () => dispatch => {
         (elt, index) => paymentFrequency.indexOf(elt) === index
       );
       distinctPaymentFrequency.sort((a, b) => a - b);
+      plans = itemsReturn;
       dispatch({
         type: FETCH_PLAN_INFO,
         payload: {
@@ -75,6 +77,7 @@ export const fetchPlans = () => dispatch => {
     .catch(err => {
       console.log(err);
     });
+  return plans;
 };
 
 export const chooseMealsDelivery = (
@@ -105,7 +108,7 @@ const calculateTotalPayment = (dispatch, plans, meal, options) => {
   if (meal !== "" && options !== "") {
     let mealNum = Number(meal);
     let optionsNum = Number(options);
-    let selectedPlan = plans[meal].filter(
+    let selectedPlan = Object.values(plans[meal]).filter(
       elt => elt.num_items === mealNum && elt.payment_frequency === optionsNum
     );
     if (selectedPlan.length !== 0) {
@@ -501,9 +504,9 @@ export const submitPayment = (
 
 export const fetchSubscribed = customerId => async dispatch => {
   //fetch  data from server
+  let purchaseIds = [];
   try {
-    let purchaseIds = [];
-    const res = await axios(`${API_URL}customer_lplp`, {
+    const res = await axios.get(`${API_URL}customer_lplp`, {
       params: {customer_uid: customerId}
     });
     if (res.status !== 200) {
@@ -520,7 +523,6 @@ export const fetchSubscribed = customerId => async dispatch => {
         purchaseIds.push(items.purchase_id);
       }
     }
-    return purchaseIds;
   } catch (err) {
     let message = "";
     if (err.response) {
@@ -533,4 +535,5 @@ export const fetchSubscribed = customerId => async dispatch => {
       payload: message
     });
   }
+  return purchaseIds;
 };
