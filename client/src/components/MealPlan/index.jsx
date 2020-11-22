@@ -13,7 +13,6 @@ import Menu from "../Menu";
 import chooseMeal from "../ChoosePlan/static/choose_meals.svg";
 import prepay from "../ChoosePlan/static/prepay.png";
 import delivery from "../ChoosePlan/static/delivery.png";
-import store from "../../reducers/store";
 const MealPlan = props => {
   //check for logged in user
   let customerId = null;
@@ -28,6 +27,8 @@ const MealPlan = props => {
       .split("=")[1];
   }
   let plans = null;
+  // we can replace hooks by store.subscribe(listener)
+  let letters = "";
   useEffect(() => {
     if (!customerId) {
       props.history.push("/");
@@ -45,6 +46,10 @@ const MealPlan = props => {
     }
     //eslint-disable-next-line
   }, []);
+
+  const loadLetters = () =>
+    (props.firstName.charAt(0) + props.lastName.charAt(0)).toUpperCase();
+
   const loadHistory = () => {
     let items = props.orderHistory;
     let itemShow = [];
@@ -102,7 +107,7 @@ const MealPlan = props => {
                     <input
                       type='text'
                       className={styles.logo}
-                      value='SM'
+                      value={loadLetters(customerId)}
                       readOnly
                     />
                   </div>
@@ -231,7 +236,9 @@ const mapStateToProps = state => ({
   subscribedPlans: state.subscribe.subscribedPlans,
   orderHistory: state.profile.orderHistory,
   errors: state.subscribe.errors,
-  plans: state.subscribe.plans
+  plans: state.subscribe.plans,
+  firstName: state.login.userInfo.firstName,
+  lastName: state.login.userInfo.lastName
 });
 
 export default connect(mapStateToProps, {

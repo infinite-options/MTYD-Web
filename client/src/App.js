@@ -7,7 +7,7 @@ import {
   Switch
 } from "react-router-dom";
 import AppliedRoute from "./components/AppliedRoute";
-import {SideNavBar, BottomNavBar} from "./components/NavBar";
+
 import Landing from "./components/Landing";
 import SignUp from "./components/SignUp";
 import SocialSignUp from "./components/SocialSignUp";
@@ -43,10 +43,6 @@ function App() {
     <div className='root'>
       <Provider store={store}>
         <Router history={history}>
-          {/* <div className='sideNavBar'>
-            <SideNavBar />
-          </div> */}
-          {/* <div className='mainApp'> */}
           <Switch>
             <AppliedRoute exact path='/' component={Landing} />
             <AppliedRoute exact path='/sign-up' component={SignUp} />

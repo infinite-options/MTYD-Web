@@ -6,9 +6,10 @@ import More from "../NavBar/more.png";
 import {Link} from "react-router-dom";
 import {connect} from "react-redux";
 import {withRouter} from "react-router-dom";
-import {resetLogin} from "../../reducers/actions/loginActions";
+import {resetLogin, LoadUserInfo} from "../../reducers/actions/loginActions";
 import {resetProfile} from "../../reducers/actions/profileActions";
 import {resetSubscription} from "../../reducers/actions/subscriptionActions";
+import store from "../../reducers/store";
 import styles from "./navBar.module.css";
 import Cookies from "js-cookie";
 import User from "./User.svg";
@@ -78,7 +79,11 @@ class NavBar extends React.Component {
   constructor(props) {
     super();
     this.state = {
-      login: false
+      login: false,
+      iconName: "",
+      firstName: "",
+      lastName: "",
+      customerId: ""
     };
   }
   logOut = () => {
@@ -91,10 +96,25 @@ class NavBar extends React.Component {
   };
   componentDidMount() {
     //check for logged in
+    let currentState;
     const customer_uid = Cookies.get("customer_uid");
     if (customer_uid) {
       this.setState({login: true});
     }
+    this.props.LoadUserInfo(customer_uid);
+    store.subscribe(() => {
+      let userInfo = store.getState().login.userInfo;
+      if (userInfo && userInfo.customerId !== "") {
+        let iconName = (
+          userInfo.firstName.charAt(0) + userInfo.lastName.charAt(0)
+        ).toUpperCase();
+        this.setState(state => ({
+          ...state,
+          ...userInfo,
+          iconName
+        }));
+      }
+    });
   }
   render() {
     return (
@@ -106,18 +126,14 @@ class NavBar extends React.Component {
           <Link to='/'>HOME</Link>
           <Link to='/about'>ABOUT</Link>
           {this.state.login ? (
-            <Fragment>
-              <Link to='/profile'>PROFILE</Link>
-              <a className={styles.logout} onClick={() => this.logOut()}>
-                {" "}
-                <span id={styles.textLogout}>
-                  <p>LOGOUT</p>
-                </span>
-                <span id={styles.iconLogout}>
-                  <i className='fa fa-sign-out'></i>
-                </span>{" "}
-              </a>
-            </Fragment>
+            <a href='/Profile' className={styles.profileIconWrapper}>
+              <input
+                className={styles.profileIcon}
+                readOnly
+                value={this.state.iconName}
+              />
+              <p>PROFILE</p>
+            </a>
           ) : (
             <a href='/'>
               <img src={User} alt='User Logo' />
@@ -134,6 +150,7 @@ const mapStateToProps = state => ({});
 const WebNavBar = connect(mapStateToProps, {
   resetLogin,
   resetProfile,
-  resetSubscription
+  resetSubscription,
+  LoadUserInfo
 })(withRouter(NavBar));
 export {WebNavBar, BottomNavBar, SideNavBar};

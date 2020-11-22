@@ -86,7 +86,7 @@ class Profile extends React.Component {
               className={styles.headerItem}
               onClick={() => {
                 this.props.resetProfile();
-                this.props.resetSubsription();
+                this.props.resetSubscription();
                 this.props.resetLogin(() => {
                   // Reroute to log in page
                   this.props.history.push("/");

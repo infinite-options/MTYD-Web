@@ -26,6 +26,7 @@ import {
   FETCH_SUBSCRIBED_INFO,
   ADD_ERROR
 } from "../actions/subscriptionTypes";
+import {LOAD_USER_INFO} from "../actions/loginTypes";
 
 import {API_URL, BING_LCOATION_API_URL} from "../constants";
 

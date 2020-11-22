@@ -13,10 +13,11 @@
   position: relative;
   z-index: 1;
   width: 100%;
+  height: 80px;
   margin: auto;
-  padding: 10px;
+  padding: 0px 30px;
   opacity: 1;
-  height: 60px;
+
   border-bottom-left-radius: 30px;
   border-bottom-right-radius: 30px;
   background-color: white;
@@ -25,16 +26,20 @@
 .navbar ul {
   display: flex;
   list-style: none;
-  justify-items: right;
-  padding: 10px 10px 0px 0px;
-  margin-right: 0px;
+  align-items: center;
+  margin: 0px;
+  height: 100%;
 }
 
 .navbar a {
   color: black;
   padding: 1rem;
   margin: 0.25rem;
+  height: 100%;
   text-decoration: none;
+  align-items: center;
+  font-size: 20px;
+  font-weight: 500;
 }
 
 .navbar > ul a:hover {
@@ -43,7 +48,9 @@
   background-color: #5d7ebb;
   border-radius: 20px;
 }
-
+.navbar > ul a:active {
+  transform: translateY(2px);
+}
 .navContainer {
   display: flex;
   flex-flow: column;
@@ -52,11 +59,10 @@
 }
 
 .logout,
-.navbar ul a,
 .logout p,
 .logout i {
   color: black !important;
-  font-size: 20px !important;
+  font-size: 20px;
   font-weight: 450;
   padding: 5px 5px !important;
   height: 40px;
@@ -82,6 +88,38 @@
   display: block;
   width: 100%;
 }
+
+.profileIcon {
+  display: block;
+  text-align: center;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #ff9e19;
+  color: white;
+  font-size: 20px;
+  font-weight: 500;
+  border-style: none;
+}
+.profileIcon:focus {
+  outline: none !important;
+}
+
+.profileIconWrapper {
+  display: block;
+  height: 100%;
+  padding: 10px !important;
+}
+
+.profileIconWrapper p {
+  font-size: 10px !important;
+  color: black !important;
+  padding: 0px !important;
+  display: block;
+  margin-bottom: 0px;
+  font-weight: bold;
+}
+
 @media (max-width: 500px) {
   .navContainer {
     flex-flow: row;

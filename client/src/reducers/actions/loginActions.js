@@ -18,7 +18,8 @@ import {
   CHANGE_NEW_CITY,
   CHANGE_NEW_STATE,
   CHANGE_NEW_ZIP,
-  SUBMIT_SIGNUP
+  SUBMIT_SIGNUP,
+  LOAD_USER_INFO
 } from "./loginTypes";
 
 import {API_URL, BING_LCOATION_API_URL} from "../constants";
@@ -594,4 +595,19 @@ export const submitSocialSignUp = (
         console.log(err.response);
       }
     });
+};
+
+export const LoadUserInfo = customerId => dispatch => {
+  axios.get(API_URL + "Profile/" + customerId).then(res => {
+    if (res.data.result) {
+      dispatch({
+        type: LOAD_USER_INFO,
+        payload: {
+          customerId: res.data.result[0].customer_uid,
+          firstName: res.data.result[0].customer_first_name,
+          lastName: res.data.result[0].customer_last_name
+        }
+      });
+    }
+  });
 };
