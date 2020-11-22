@@ -100,21 +100,21 @@ class NavBar extends React.Component {
     const customer_uid = Cookies.get("customer_uid");
     if (customer_uid) {
       this.setState({login: true});
+      this.props.LoadUserInfo(customer_uid);
+      store.subscribe(() => {
+        let userInfo = store.getState().login.userInfo;
+        if (userInfo && userInfo.customerId !== "") {
+          let iconName = (
+            userInfo.firstName.charAt(0) + userInfo.lastName.charAt(0)
+          ).toUpperCase();
+          this.setState(state => ({
+            ...state,
+            ...userInfo,
+            iconName
+          }));
+        }
+      });
     }
-    this.props.LoadUserInfo(customer_uid);
-    store.subscribe(() => {
-      let userInfo = store.getState().login.userInfo;
-      if (userInfo && userInfo.customerId !== "") {
-        let iconName = (
-          userInfo.firstName.charAt(0) + userInfo.lastName.charAt(0)
-        ).toUpperCase();
-        this.setState(state => ({
-          ...state,
-          ...userInfo,
-          iconName
-        }));
-      }
-    });
   }
   render() {
     return (
