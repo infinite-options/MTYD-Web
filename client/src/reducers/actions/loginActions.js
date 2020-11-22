@@ -82,7 +82,7 @@ export const loginAttempt = (email, password, callback) => dispatch => {
     })
     .then(res => {
       let saltObject = res;
-      console.log(saltObject);
+
       if (!(saltObject.data.code && saltObject.data.code !== 200)) {
         let hashAlg = saltObject.data.result[0].password_algorithm;
         let salt = saltObject.data.result[0].password_salt;
@@ -123,10 +123,9 @@ export const loginAttempt = (email, password, callback) => dispatch => {
                 // Handle successful Login
                 if (res.data.code === 200) {
                   let customerInfo = res.data.result[0];
-                  console.log(customerInfo);
-                  console.log("cookie", document.cookie);
+
                   document.cookie = "customer_uid=" + customerInfo.customer_uid;
-                  console.log("cookie", document.cookie);
+
                   dispatch({
                     type: SUBMIT_PASSWORD
                   });

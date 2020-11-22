@@ -29,7 +29,7 @@ import {
 
 import {API_URL, BING_LCOATION_API_URL} from "../constants";
 
-export const resetSubsription = () => dispatch => {
+export const resetSubscription = () => dispatch => {
   dispatch({
     type: LOGOUT_SUBSCRIPTION
   });

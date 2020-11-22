@@ -343,7 +343,7 @@ class ChoosePlan extends React.Component {
         </div>
         {/* For Full Screen */}
         <div className={styles.full_screen}>
-          <WebNavBar />
+          <WebNavBar login={true} logOut={this.logOut} />
           <div className={styles.container}>
             <Menu show={true} message={message} />
             <div className={styles.box}>

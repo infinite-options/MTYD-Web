@@ -38,7 +38,20 @@
   padding: 1.5rem;
   justify-content: space-evenly;
   text-align: center;
+
   float: right;
+}
+.selectBtn a {
+  text-decoration: none;
+  padding: 10px;
+  color: black;
+  font-weight: 450;
+  vertical-align: center;
+}
+.selectBtn a:hover {
+  background-color: #7fa4dd;
+  border-radius: 20px;
+  outline-offset: 5px;
 }
 a {
   display: flex;

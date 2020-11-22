@@ -4,9 +4,13 @@ import Select from "../NavBar/select.png";
 import Profile from "../NavBar/profile.png";
 import More from "../NavBar/more.png";
 import {Link} from "react-router-dom";
-
+import {connect} from "react-redux";
+import {withRouter} from "react-router-dom";
+import {resetLogin} from "../../reducers/actions/loginActions";
+import {resetProfile} from "../../reducers/actions/profileActions";
+import {resetSubscription} from "../../reducers/actions/subscriptionActions";
 import styles from "./navBar.module.css";
-
+import Cookies from "js-cookie";
 class SideNavBar extends React.Component {
   render() {
     return (
@@ -69,7 +73,28 @@ class BottomNavBar extends React.Component {
   }
 }
 
-class WebNavBar extends React.Component {
+class NavBar extends React.Component {
+  constructor(props) {
+    super();
+    this.state = {
+      login: false
+    };
+  }
+  logOut = () => {
+    this.props.resetProfile();
+    this.props.resetSubscription();
+    this.props.resetLogin(() => {
+      // Reroute to log in page
+      this.props.history.push("/");
+    });
+  };
+  componentDidMount() {
+    //check for logged in
+    const customer_uid = Cookies.get("customer_uid");
+    if (customer_uid) {
+      this.setState({login: true});
+    }
+  }
   render() {
     return (
       <div className={styles.navbar}>
@@ -80,10 +105,27 @@ class WebNavBar extends React.Component {
           <Link to='/'>HOME</Link>
           <Link to='/about'>ABOUT</Link>
           <Link to='/profile'>PROFILE</Link>
+          {this.state.login && (
+            <a className={styles.logout} onClick={() => this.logOut()}>
+              {" "}
+              <span id={styles.textLogout}>
+                <p>LOGOUT</p>
+              </span>
+              <span id={styles.iconLogout}>
+                <i className='fa fa-sign-out'></i>
+              </span>{" "}
+            </a>
+          )}
         </ul>
       </div>
     );
   }
 }
 
+const mapStateToProps = state => ({});
+const WebNavBar = connect(mapStateToProps, {
+  resetLogin,
+  resetProfile,
+  resetSubscription
+})(withRouter(NavBar));
 export {WebNavBar, BottomNavBar, SideNavBar};

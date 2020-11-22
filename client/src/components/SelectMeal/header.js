@@ -131,7 +131,10 @@ class Header extends Component {
                 let meal = JSON.parse(mealItem.items)[0];
                 let mealName = meal.name;
                 return (
-                  <option value={mealItem.purchase_id}>
+                  <option
+                    value={mealItem.purchase_id}
+                    key={mealItem.purchase_uid}
+                  >
                     {mealName.toUpperCase()}
                   </option>
                 );
