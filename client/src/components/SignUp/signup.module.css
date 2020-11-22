@@ -1,17 +1,73 @@
 .root {
-  height: inherit;
-  width: inherit;
-  background-image: url("../../images/landing.png");
+  height: 950px;
+  width: 100%;
+  background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+    url("../../images/landing.png");
   background-size: cover;
+  background-color: #696969;
+  background-repeat: no-repeat;
 }
-
+.wrap_container {
+  display: flex;
+  align-items: center;
+}
+.container {
+  width: 800px;
+  height: 650px;
+  margin: 70px auto;
+  border: 2px solid #ffa500;
+  border-radius: 15px;
+}
 .mealHeader {
   height: 200px;
   text-align: center;
   padding: 4.5rem 0rem 0rem 0rem;
   background-color: #00000074;
 }
+.userInfo {
+  border-right: 2px solid #ffa500;
+  border-top-left-radius: 13px;
+  border-bottom-left-radius: 13px;
+  align-self: center;
+  margin: 0rem;
+  padding: 0px 15px 0px 0px;
+  background-color: white;
+  height: 100%;
+}
+.explore {
+  background: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)),
+    url("../../images/landing.png");
+  text-align: center;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-top-right-radius: 13px;
+  border-bottom-right-radius: 13px;
+}
+.explore p {
+  font-size: 20px;
+  color: #ff9e19;
+  font-weight: bold;
+  padding: 0px;
+  margin: auto;
 
+  width: 100%;
+}
+.explore button {
+  background-color: #ff9e19;
+  border-radius: 20px;
+  width: 120px;
+  height: 40px;
+  margin: 20px;
+}
+.explore button:focus {
+  outline: none;
+}
+.centerBtn {
+  display: flex;
+  justify-content: center;
+}
 .headerItemContainer {
   display: flex;
   align-items: center;
@@ -38,16 +94,16 @@
 
 .inputContainer {
   display: flex;
+  justify-content: center;
   flex-wrap: wrap;
   width: inherit;
-  margin: 5px 0;
-  padding: 0 20px;
+  margin: 5px auto;
+  padding: 10px 10px;
+  width: 70%;
 }
 
 .inputItem {
   flex: 1 100%;
-  margin: 7px 10px 10px;
-  height: 20px;
   padding: 7px 2px;
 }
 .inputItem > input,
@@ -69,8 +125,6 @@
 
 .inputItemAddress {
   flex: 1 100%;
-  margin: 7px 10px 10px;
-  height: 20px;
   padding: 7px 2px;
 }
 
@@ -109,9 +163,11 @@
 }
 
 .buttonContainer {
-  width: 40%;
-  padding: 0 20px;
+  width: 100%;
+  padding: 0px 20px;
   margin: 10px 10px;
+  display: flex;
+  justify-content: center;
 }
 
 .button {
@@ -127,4 +183,12 @@
   width: 102px;
   font-size: larger;
   font-weight: 500;
+  box-shadow: 0 3px #999;
+}
+.button:focus {
+  outline: none;
+}
+.button:active {
+  transform: translateY(4px);
+  box-shadow: 0px 1px #666;
 }

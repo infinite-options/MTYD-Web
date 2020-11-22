@@ -566,7 +566,7 @@ export const submitSocialSignUp = (
         }
         console.log(JSON.stringify(object));
         axios
-          .post(API_URL + "signup", object)
+          .post(API_URL + "createAccount", object)
           .then(res => {
             console.log(res);
             if (customerId === "") {

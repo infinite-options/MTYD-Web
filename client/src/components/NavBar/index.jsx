@@ -1,4 +1,4 @@
-import React from "react";
+import React, {Fragment} from "react";
 import Subscribe from "../NavBar/subscribe.png";
 import Select from "../NavBar/select.png";
 import Profile from "../NavBar/profile.png";
@@ -11,6 +11,7 @@ import {resetProfile} from "../../reducers/actions/profileActions";
 import {resetSubscription} from "../../reducers/actions/subscriptionActions";
 import styles from "./navBar.module.css";
 import Cookies from "js-cookie";
+import User from "./User.svg";
 class SideNavBar extends React.Component {
   render() {
     return (
@@ -104,16 +105,23 @@ class NavBar extends React.Component {
         <ul>
           <Link to='/'>HOME</Link>
           <Link to='/about'>ABOUT</Link>
-          <Link to='/profile'>PROFILE</Link>
-          {this.state.login && (
-            <a className={styles.logout} onClick={() => this.logOut()}>
-              {" "}
-              <span id={styles.textLogout}>
-                <p>LOGOUT</p>
-              </span>
-              <span id={styles.iconLogout}>
-                <i className='fa fa-sign-out'></i>
-              </span>{" "}
+          {this.state.login ? (
+            <Fragment>
+              <Link to='/profile'>PROFILE</Link>
+              <a className={styles.logout} onClick={() => this.logOut()}>
+                {" "}
+                <span id={styles.textLogout}>
+                  <p>LOGOUT</p>
+                </span>
+                <span id={styles.iconLogout}>
+                  <i className='fa fa-sign-out'></i>
+                </span>{" "}
+              </a>
+            </Fragment>
+          ) : (
+            <a href='/'>
+              <img src={User} alt='User Logo' />
+              SIGN IN
             </a>
           )}
         </ul>
