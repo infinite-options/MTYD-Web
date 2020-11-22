@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import Cookies from "js-cookie";
 import {connect} from "react-redux";
 import {
   bypassLogin,
@@ -44,26 +45,32 @@ class Landing extends React.Component {
   };
 
   componentDidMount() {
-    let queryString = this.props.location.search;
-    let urlParams = new URLSearchParams(queryString);
-    // Clear Query parameters
-    window.history.pushState({}, document.title, window.location.pathname);
-    if (urlParams.has("email") && urlParams.has("hashed")) {
-      // Automatic log in
-      this.props.bypassLogin(
-        urlParams.get("email"),
-        urlParams.get("hashed"),
-        this.successLogin
-      );
+    //check for logedIn
+    const customerId = Cookies.get("customer_uid");
+    if (customerId) {
+      this.props.history.push("/select-meal");
     } else {
-      this.setState({
-        mounted: true
-      });
-      window.AppleID.auth.init({
-        clientId: process.env.REACT_APP_APPLE_CLIENT_ID,
-        scope: "email",
-        redirectURI: process.env.REACT_APP_APPLE_REDIRECT_URI
-      });
+      let queryString = this.props.location.search;
+      let urlParams = new URLSearchParams(queryString);
+      // Clear Query parameters
+      window.history.pushState({}, document.title, window.location.pathname);
+      if (urlParams.has("email") && urlParams.has("hashed")) {
+        // Automatic log in
+        this.props.bypassLogin(
+          urlParams.get("email"),
+          urlParams.get("hashed"),
+          this.successLogin
+        );
+      } else {
+        this.setState({
+          mounted: true
+        });
+        window.AppleID.auth.init({
+          clientId: process.env.REACT_APP_APPLE_CLIENT_ID,
+          scope: "email",
+          redirectURI: process.env.REACT_APP_APPLE_REDIRECT_URI
+        });
+      }
     }
   }
 
