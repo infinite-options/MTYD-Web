@@ -62,10 +62,6 @@ function App() {
             <AppliedRoute exact path='/select-meal' component={SelectMeal} />
             <AppliedRoute path='*' component={NotFound} />
           </Switch>
-          {/* </div> */}
-          {/* <div className='bottomNavBar'>
-            <BottomNavBar />
-          </div> */}
         </Router>
       </Provider>
     </div>

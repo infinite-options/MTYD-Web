@@ -62,9 +62,6 @@
   font-size: 15px !important;
   margin-bottom: 10px;
 }
-.cardInfo i {
-  font-size: 60px;
-}
 .infoBtn {
   text-align: center;
   border: 3px solid #ffba00;
@@ -146,4 +143,22 @@
   margin: auto;
   font-size: 20px;
   font-weight: bold;
+}
+.iconBtn {
+  width: 20%;
+  text-align: left;
+  background-color: transparent;
+  border-radius: 50%;
+  font-size: 15px !important;
+  border: none;
+  opacity: 30%;
+}
+.iconBtn:hover {
+  opacity: 100%;
+}
+.iconBtn:focus {
+  outline: none;
+}
+.iconBtn:active {
+  transform: translateY(2px);
 }

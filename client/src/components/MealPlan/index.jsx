@@ -26,9 +26,9 @@ const MealPlan = props => {
       .find(item => item.startsWith("customer_uid="))
       .split("=")[1];
   }
-  let plans = null;
+
   // we can replace hooks by store.subscribe(listener)
-  let letters = "";
+
   useEffect(() => {
     if (!customerId) {
       props.history.push("/");
@@ -139,7 +139,6 @@ const MealPlan = props => {
                           .item_desc;
                       frequency = item_desc.split(" - ")[1].toUpperCase();
                     }
-
                     return (
                       <Fragment key={index}>
                         <div className='row'>
@@ -149,28 +148,42 @@ const MealPlan = props => {
                               className={styles.infoBtn}
                               readOnly
                             />
+                            <button className={styles.iconBtn}>
+                              <i className='fa fa-pencil'></i>
+                            </button>
                           </div>
                           <div className='col'>
                             <div className={"row mt-3"}>
                               <div className={"col " + styles.cardInfo}>
-                                <p>CARD</p>
-                                <i className='fa fa-credit-card'></i>
-                                <p
-                                  className={styles.font10}
-                                  style={{marginTop: "0px"}}
-                                >
-                                  {cc_num}
-                                </p>
+                                <div className='row'>
+                                  <p className='mt-0 mr-4'>CARD</p>
+                                  <button className={styles.iconBtn}>
+                                    <i className='fa fa-pencil align-top ml-4'></i>
+                                  </button>
+                                </div>
+                                <div className={"row  d-block"}>
+                                  <i
+                                    className='fa fa-credit-card'
+                                    style={{
+                                      fontSize: "50px",
+                                      textAlign: "center"
+                                    }}
+                                  ></i>
+                                  <p
+                                    className={styles.font10}
+                                    style={{marginTop: "0px"}}
+                                  >
+                                    {cc_num}
+                                  </p>
+                                </div>
                               </div>
-                              <div
-                                className={
-                                  "col " +
-                                  styles.cardInfo +
-                                  " " +
-                                  styles.textCenter
-                                }
-                              >
-                                <p>FOR {frequency}</p>
+                              <div className={"col " + styles.cardInfo}>
+                                <div className='row'>
+                                  <p>FOR {frequency}</p>
+                                  <button className={styles.iconBtn}>
+                                    <i className='fa fa-pencil align-top ml-4'></i>
+                                  </button>
+                                </div>
                                 <input
                                   className={styles.circleInput}
                                   readOnly
@@ -179,11 +192,16 @@ const MealPlan = props => {
                             </div>
                           </div>
                           <div className={"col  mx-5 " + styles.deliveryInfo}>
-                            <p className='mt-3'>
-                              {plan.delivery_first_name +
-                                " " +
-                                plan.delivery_last_name}
-                            </p>
+                            <div className='row'>
+                              <p className='ml-3 mt-3'>
+                                {plan.delivery_first_name +
+                                  " " +
+                                  plan.delivery_last_name}
+                              </p>
+                              <button className={styles.iconBtn}>
+                                <i className='fa fa-pencil ml-4'></i>
+                              </button>
+                            </div>
                             <p>{plan.delivery_address}.</p>
                             <p>
                               {plan.delivery_unit !== "NULL" && (
