@@ -6,6 +6,7 @@ import {
   GET_TOTAL_PAYMENT,
   CHANGE_ADDRESS_FIRST_NAME,
   CHANGE_ADDRESS_LAST_NAME,
+  CHANGE_ADDRESS_EMAIL,
   CHANGE_ADDRESS_STREET,
   FETCH_PROFILE_INFO,
   CHANGE_ADDRESS_UNIT,
@@ -22,7 +23,12 @@ import {
   CHANGE_CARD_YEAR,
   FETCH_SUBSCRIBED_INFO,
   ADD_ERROR,
-  SUBMIT_PAYMENT
+  SET_CURRENT_MEAL,
+  SET_SELECTED_PLAN,
+  RESET_USER_INFO,
+  SET_MEALS,
+  SET_PAYMENT_OPTIONS,
+  SET_CURRENT_PURCHASE
 } from "./actions/subscriptionTypes";
 
 const initialState = {
@@ -34,13 +40,16 @@ const initialState = {
   plans: {},
   numItems: [],
   paymentFrequency: [],
+  currentMeal: {},
+  currentPurchase: "",
   selectedPlan: {},
   meals: "",
   paymentOption: "",
   addressInfo: {
     firstName: "",
     lastName: "",
-    phoneNumber: ""
+    phoneNumber: "",
+    email: ""
   },
   address: {
     street: "",
@@ -121,7 +130,14 @@ export default function(state = initialState, action) {
           lastName: action.payload
         }
       };
-
+    case CHANGE_ADDRESS_EMAIL:
+      return {
+        ...state,
+        addressInfo: {
+          ...state.addressInfo,
+          email: action.payload
+        }
+      };
     case CHANGE_ADDRESS_STREET:
       return {
         ...state,
@@ -228,16 +244,67 @@ export default function(state = initialState, action) {
           year: action.payload
         }
       };
-    case FETCH_SUBSCRIBED_INFO:
+    case RESET_USER_INFO:
       return {
         ...state,
-        subscribedPlans: action.payload
+        addressInfo: {
+          firstName: "",
+          lastName: "",
+          phoneNumber: ""
+        },
+        address: {
+          street: "",
+          unit: "",
+          city: "",
+          state: "",
+          zip: ""
+        },
+        creditCard: {
+          number: "",
+          cvv: "",
+          zip: "",
+          month: "",
+          year: ""
+        }
+      };
+
+    case SET_CURRENT_MEAL:
+      return {
+        ...state,
+        currentMeal: action.payload
+      };
+    case SET_SELECTED_PLAN: {
+      return {
+        ...state,
+        selectedPlan: action.payload
+      };
+    }
+    case SET_MEALS:
+      return {
+        ...state,
+        meals: action.payload
+      };
+    case SET_PAYMENT_OPTIONS:
+      return {
+        ...state,
+        paymentOption: action.payload
+      };
+    case SET_CURRENT_PURCHASE:
+      return {
+        ...state,
+        currentPurchase: action.payload
       };
     case ADD_ERROR:
       return {
         ...state,
         errors: action.payload
       };
+    case FETCH_SUBSCRIBED_INFO:
+      return {
+        ...state,
+        subscribedPlans: action.payload
+      };
+
     default:
       return state;
   }

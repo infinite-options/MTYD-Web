@@ -8,6 +8,7 @@ import {
   GET_TOTAL_PAYMENT,
   CHANGE_ADDRESS_FIRST_NAME,
   CHANGE_ADDRESS_LAST_NAME,
+  CHANGE_ADDRESS_EMAIL,
   CHANGE_ADDRESS_STREET,
   FETCH_PROFILE_INFO,
   CHANGE_ADDRESS_UNIT,
@@ -24,11 +25,18 @@ import {
   CHANGE_CARD_YEAR,
   CHANGE_CARD_ZIP,
   FETCH_SUBSCRIBED_INFO,
-  ADD_ERROR
+  ADD_ERROR,
+  SET_CURRENT_MEAL,
+  SET_MEALS,
+  SET_PAYMENT_OPTIONS,
+  SET_SELECTED_PLAN,
+  RESET_USER_INFO,
+  SET_CURRENT_PURCHASE
 } from "../actions/subscriptionTypes";
 import {LOAD_USER_INFO} from "../actions/loginTypes";
 
 import {API_URL, BING_LCOATION_API_URL} from "../constants";
+import {bindActionCreators} from "../../../../../../../Library/Caches/typescript/3.6/node_modules/redux";
 
 export const resetSubscription = () => dispatch => {
   dispatch({
@@ -148,7 +156,7 @@ export const fetchProfileInformation = customerId => dispatch => {
           customerInfo.user_social_media !== null
             ? customerInfo.user_social_media
             : "NULL";
-
+        console.log(res);
         dispatch({
           type: FETCH_PROFILE_INFO,
           payload: {
@@ -538,3 +546,91 @@ export const fetchSubscribed = customerId => async dispatch => {
   }
   return purchaseIds;
 };
+
+export const setCurrentMeal = meal => dispatch =>
+  dispatch({
+    type: SET_CURRENT_MEAL,
+    payload: meal
+  });
+export const setSelectedPlan = meal => dispatch =>
+  dispatch({type: SET_SELECTED_PLAN, payload: meal});
+export const setMeals = meal => dispatch =>
+  dispatch({type: SET_MEALS, payload: meal});
+export const setPaymentOption = option => dispatch =>
+  dispatch({
+    type: SET_PAYMENT_OPTIONS,
+    payload: option
+  });
+
+export const setUserInfo = info => dispatch => {
+  if (Object.keys(info).length === 0) {
+    dispatch({type: RESET_USER_INFO});
+  } else {
+    // set Address => change name and phone number
+    if (
+      info.customer_first_name !== undefined &&
+      info.customer_first_name !== "NULL"
+    )
+      dispatch({
+        type: CHANGE_ADDRESS_FIRST_NAME,
+        payload: info.customer_first_name
+      });
+    if (
+      info.customer_last_name !== undefined &&
+      info.customer_last_name !== "NULL"
+    )
+      dispatch({
+        type: CHANGE_ADDRESS_LAST_NAME,
+        payload: info.customer_last_name
+      });
+    if (
+      info.delivery_email !== undefined &&
+      info.delivery_email !== "NULL" &&
+      info.delivery_email !== null
+    )
+      dispatch({type: CHANGE_ADDRESS_EMAIL, payload: info.delivery_email});
+    if (
+      info.delivery_phone_num !== undefined &&
+      info.delivery_phone_num !== "NULL"
+    )
+      dispatch({type: CHANGE_ADDRESS_PHONE, payload: info.delivery_phone_num});
+    //set Address Info or delivery info
+    if (info.delivery_address !== undefined && info.delivery_address !== "NULL")
+      dispatch({type: CHANGE_ADDRESS_STREET, payload: info.delivery_address});
+    if (info.delivery_unit !== undefined && info.delivery_unit !== "NULL")
+      dispatch({type: CHANGE_ADDRESS_UNIT, payload: info.delivery_unit});
+    if (info.delivery_city !== undefined && info.delivery_city !== "NULL")
+      dispatch({type: CHANGE_ADDRESS_CITY, payload: info.delivery_city});
+    if (info.delivery_state !== undefined && info.delivery_state !== "NULL")
+      dispatch({type: CHANGE_ADDRESS_STATE, payload: info.delivery_state});
+    if (info.delivery_zip !== undefined && info.delivery_zip !== "NULL")
+      dispatch({type: CHANGE_ADDRESS_ZIP, payload: info.delivery_zip});
+    //set creditCard
+    if (info.cc_num !== undefined && info.cc_num !== "NULL")
+      dispatch({type: CHANGE_CARD_NUMBER, payload: info.cc_num});
+    if (info.month !== undefined && info.month !== "NULL" && info.month != null)
+      dispatch({
+        type: CHANGE_CARD_MONTH,
+        payload: info.month
+      });
+    if (info.year !== undefined && info.year !== "NULL" && info.year !== null)
+      dispatch({
+        type: CHANGE_CARD_YEAR,
+        payload: info.year
+      });
+    if (
+      info.cc_cvv !== undefined &&
+      info.cc_cvv !== "NULL" &&
+      info.cc_cvv !== null
+    )
+      dispatch({type: CHANGE_CARD_CVV, payload: info.cc_cvv});
+    if (
+      info.cc_zip !== undefined &&
+      info.cc_zip !== "NULL" &&
+      info.cc_zip !== null
+    )
+      dispatch({type: CHANGE_CARD_ZIP, payload: info.cc_zip});
+  }
+};
+export const setCurrentPurchase = id => dispatch =>
+  dispatch({type: SET_CURRENT_PURCHASE, payload: id});

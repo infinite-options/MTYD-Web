@@ -1,0 +1,70 @@
+.mealBtn {
+  background-color: transparent;
+}
+
+.mealSelectBtn {
+  background-color: orange;
+}
+.hline {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  border: 0;
+
+  border-top: 2px solid #ffba00;
+}
+.modalTitle {
+  display: flex;
+  background-color: #ff9e19;
+  color: black;
+  justify-content: center;
+  border-bottom-right-radius: 20px;
+  border-bottom-left-radius: 20px;
+}
+.modalContainer {
+  text-align: center;
+}
+.modalContainer > p {
+  color: black;
+  font-size: 15px;
+  font-weight: bold;
+  padding: 0px;
+}
+.sameLine2Input {
+  width: 100%;
+  justify-content: center;
+  margin: 0px;
+}
+.sameLine2Input > input {
+  width: 40%;
+  border-radius: 20px;
+  background-color: #fff0c6;
+  border-style: none;
+  padding: 5px 10px;
+  margin: 5px 5px;
+}
+.sameLine1Input {
+  width: 100%;
+  justify-content: center;
+  margin: 0px;
+}
+.sameLine1Input > input {
+  border-radius: 20px;
+  width: 100%;
+  background-color: #fff0c6;
+  border-style: none;
+  padding: 5px 10px;
+  margin: 5px 40px;
+}
+.sameLine3Input {
+  width: 100%;
+  justify-content: center;
+  margin: 0px;
+}
+.sameLine3Input > input {
+  border-radius: 20px;
+  width: 25%;
+  background-color: #fff0c6;
+  border-style: none;
+  padding: 5px 10px;
+  margin: 5px 10px;
+}

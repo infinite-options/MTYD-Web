@@ -135,38 +135,6 @@ class ChoosePlan extends React.Component {
     }
     return mealButtons;
   };
-
-  paymentFrequency = () => {
-    let myArr = [paymentOption1, paymentOption2, paymentOption3];
-    let deselectedPaymentOption = styles.paymentButton;
-    let selectedPaymentOption =
-      styles.paymentButton + " " + styles.paymentButtonSelected;
-    let paymentOptionButtons = [];
-    for (const [i, option] of this.props.paymentFrequency.entries()) {
-      let optionStr = option.toString();
-      paymentOptionButtons.push(
-        <img
-          src={myArr[i]}
-          key={optionStr}
-          className={
-            this.props.paymentOption === optionStr
-              ? selectedPaymentOption
-              : deselectedPaymentOption
-          }
-          onClick={() =>
-            this.props.choosePaymentOption(
-              optionStr,
-              this.props.meals,
-              this.props.plans
-            )
-          }
-        >
-          {/* {optionStr} */}
-        </img>
-      );
-    }
-    return paymentOptionButtons;
-  };
   paymentFrequency2 = () => {
     let myArr = [
       {image: paymentOption1, desc: "WEEKLY"},

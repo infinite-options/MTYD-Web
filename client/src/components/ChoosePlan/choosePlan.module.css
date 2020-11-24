@@ -68,13 +68,19 @@
   min-width: 20%;
   font-size: 13px;
   font-weight: 600;
+  outline: 0;
 }
 
 .mealButtonSelected {
-  border: 2px solid #ee9043;
-}
-.mealButtonSelected button:focus {
+  /* border: 2px solid #ee9043; */
+  background-color: #ee9043;
   outline: 0;
+}
+.mealButtonSelected:focus {
+  outline: 0 !important;
+}
+.mealButtonSelected:active {
+  outline: 0 !important;
 }
 .sameLine {
   display: flex;

@@ -1,9 +1,15 @@
-import React, {useEffect, Fragment} from "react";
+import React, {useEffect, useState, Fragment} from "react";
 import {connect} from "react-redux";
 import {
   fetchProfileInformation,
   fetchSubscribed,
-  fetchPlans
+  fetchPlans,
+  setCurrentMeal,
+  setSelectedPlan,
+  chooseMealsDelivery,
+  choosePaymentOption,
+  setUserInfo,
+  setCurrentPurchase
 } from "../../reducers/actions/subscriptionActions";
 import {withRouter} from "react-router";
 import {fetchOrderHistory} from "../../reducers/actions/profileActions";
@@ -13,6 +19,9 @@ import Menu from "../Menu";
 import chooseMeal from "../ChoosePlan/static/choose_meals.svg";
 import prepay from "../ChoosePlan/static/prepay.png";
 import delivery from "../ChoosePlan/static/delivery.png";
+import ChangeMealPlan from "./ChangeModals/ChangeMealPlan";
+import ChangeUserInfo from "./ChangeModals/ChangeUserInfo";
+
 const MealPlan = props => {
   //check for logged in user
   let customerId = null;
@@ -29,6 +38,11 @@ const MealPlan = props => {
 
   // we can replace hooks by store.subscribe(listener)
 
+  const [modal, setModal] = useState(null);
+  const modalShow = [
+    <ChangeMealPlan isShow={true} changeOpen={() => setModal(null)} />,
+    <ChangeUserInfo isShow={true} changeOpen={() => setModal(null)} />
+  ];
   useEffect(() => {
     if (!customerId) {
       props.history.push("/");
@@ -40,13 +54,98 @@ const MealPlan = props => {
           .fetchSubscribed(customerId)
           .then(ids => props.fetchOrderHistory(ids));
       } catch (err) {
-        // props.history.push("/");
         console.log(err);
       }
     }
     //eslint-disable-next-line
   }, []);
+  const setMealChange = id => {
+    //get current meal
+    let currentItem = JSON.parse(props.subscribedPlans[id].items)[0];
+    let currentItemUid = currentItem.item_uid;
+    console.log("currentItemUid: ", currentItemUid);
+    for (let items of Object.values(props.plans)) {
+      for (let key of Object.keys(items)) {
+        if (key.toString() === currentItemUid) {
+          props.setCurrentMeal(items[key]);
+          const {
+            cc_num,
+            cc_exp_date,
+            cc_cvv,
+            cc_zip,
+            delivery_email,
+            customer_first_name,
+            customer_last_name,
+            delivery_address,
+            delivery_unit,
+            delivery_city,
+            delivery_state,
+            delivery_zip,
+            delivery_phone_num
+          } = props.subscribedPlans[id];
+          const info = {
+            cc_num,
+            month: cc_exp_date.split(" ")[0].split("-")[1],
+            year: cc_exp_date.split(" ")[0].split("-")[0],
+            delivery_email,
+            cc_cvv,
+            cc_zip,
+            customer_first_name,
+            customer_last_name,
+            delivery_address,
+            delivery_unit,
+            delivery_city,
+            delivery_state,
+            delivery_zip,
+            delivery_phone_num
+          };
+          console.log(info);
+          props.setUserInfo(info);
+          props.setCurrentPurchase(props.subscribedPlans[id].purchase_uid);
+          // props.setSelectedMeal(items[key]);
+        }
+      }
+    }
+    setModal(0);
+  };
 
+  const setUserInfoChange = id => {
+    //get current meal's info
+    const {
+      cc_num,
+      cc_exp_date,
+      cc_cvv,
+      cc_zip,
+      delivery_email,
+      customer_first_name,
+      customer_last_name,
+      delivery_address,
+      delivery_unit,
+      delivery_city,
+      delivery_state,
+      delivery_zip,
+      delivery_phone_num
+    } = props.subscribedPlans[id];
+    const info = {
+      cc_num,
+      month: cc_exp_date.split(" ")[0].split("-")[1],
+      year: cc_exp_date.split(" ")[0].split("-")[0],
+      delivery_email,
+      cc_cvv,
+      cc_zip,
+      customer_first_name,
+      customer_last_name,
+      delivery_address,
+      delivery_unit,
+      delivery_city,
+      delivery_state,
+      delivery_zip,
+      delivery_phone_num
+    };
+    props.setUserInfo(info);
+    props.setCurrentPurchase(props.subscribedPlans[id].purchase_uid);
+    setModal(1);
+  };
   const loadLetters = () =>
     (props.firstName.charAt(0) + props.lastName.charAt(0)).toUpperCase();
 
@@ -98,6 +197,7 @@ const MealPlan = props => {
       <WebNavBar />
       <div className={styles.container}>
         <Menu show={false} />
+        {modal !== null && modalShow[modal]}
         {props.subscribedPlans.length ? (
           <div className={styles.box1}>
             <div className={"row " + styles.fixedHeight}>
@@ -148,7 +248,10 @@ const MealPlan = props => {
                               className={styles.infoBtn}
                               readOnly
                             />
-                            <button className={styles.iconBtn}>
+                            <button
+                              className={styles.iconBtn}
+                              onClick={() => setMealChange(index)}
+                            >
                               <i className='fa fa-pencil'></i>
                             </button>
                           </div>
@@ -156,9 +259,12 @@ const MealPlan = props => {
                             <div className={"row mt-3"}>
                               <div className={"col " + styles.cardInfo}>
                                 <div className='row'>
-                                  <p className='mt-0 mr-4'>CARD</p>
-                                  <button className={styles.iconBtn}>
-                                    <i className='fa fa-pencil align-top ml-4'></i>
+                                  <p className='mt-0 mr-2'>CARD</p>
+                                  <button
+                                    className={styles.iconBtn}
+                                    onClick={() => setUserInfoChange(index)}
+                                  >
+                                    <i className='fa fa-pencil align-top ml-3'></i>
                                   </button>
                                 </div>
                                 <div className={"row  d-block"}>
@@ -180,7 +286,10 @@ const MealPlan = props => {
                               <div className={"col " + styles.cardInfo}>
                                 <div className='row'>
                                   <p>FOR {frequency}</p>
-                                  <button className={styles.iconBtn}>
+                                  <button
+                                    className={styles.iconBtn}
+                                    onClick={() => setMealChange(index)}
+                                  >
                                     <i className='fa fa-pencil align-top ml-4'></i>
                                   </button>
                                 </div>
@@ -198,7 +307,10 @@ const MealPlan = props => {
                                   " " +
                                   plan.delivery_last_name}
                               </p>
-                              <button className={styles.iconBtn}>
+                              <button
+                                className={styles.iconBtn}
+                                onClick={() => setUserInfoChange(index)}
+                              >
                                 <i className='fa fa-pencil ml-4'></i>
                               </button>
                             </div>
@@ -254,6 +366,7 @@ const mapStateToProps = state => ({
   subscribedPlans: state.subscribe.subscribedPlans,
   orderHistory: state.profile.orderHistory,
   errors: state.subscribe.errors,
+  meals: state.subscribe.meals,
   plans: state.subscribe.plans,
   firstName: state.login.userInfo.firstName,
   lastName: state.login.userInfo.lastName
@@ -263,5 +376,11 @@ export default connect(mapStateToProps, {
   fetchProfileInformation,
   fetchSubscribed,
   fetchOrderHistory,
-  fetchPlans
+  fetchPlans,
+  setCurrentMeal,
+  setSelectedPlan,
+  chooseMealsDelivery,
+  choosePaymentOption,
+  setUserInfo,
+  setCurrentPurchase
 })(withRouter(MealPlan));
