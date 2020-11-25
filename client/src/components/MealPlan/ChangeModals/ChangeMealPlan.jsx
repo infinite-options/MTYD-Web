@@ -96,20 +96,19 @@ const ChangeMealPlan = props => {
       .get(`http://127.0.0.1:2000/api/v2/Profile/${props.customerId}`)
       .then(res => {
         console.log("res when submit: ", res);
-        setPassword(res.data.result[0].password_hashed);
+
         let items = props.selectedPlan;
         const data = {
           customer_email: props.profile.email,
-          password,
+          password: res.data.result[0].password_hashed,
           purchase_id: props.currentPurchase,
           items: [
             {
-              qty: 1,
+              qty: "1",
               name: items.item_name,
-              price: items.item_price,
+              price: items.item_price.toString(),
               item_uid: items.item_uid,
-              pur_business_uid: items.itm_business_uid,
-              start_delivery_date: "2020-11-30 12:00:00"
+              itm_business_uid: items.itm_business_uid
             }
           ],
           cc_num: props.creditCard.number,
@@ -123,6 +122,8 @@ const ChangeMealPlan = props => {
           .post("http://localhost:2000/api/v2/change_purchase", data)
           .then(res => {
             console.log("Response after post: ", res);
+            reset();
+            window.location.reload(false);
           })
           .catch(err => {
             console.log("ChangeMealPlan modal error happened.");

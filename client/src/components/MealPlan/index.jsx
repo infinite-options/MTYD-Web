@@ -158,7 +158,7 @@ const MealPlan = props => {
       itemShow.push(
         <div key={key} className={"row pl-2 mb-5 " + styles.historyItemName}>
           <p className={styles.itemName + " pl-0 text-uppercase"}>{name}</p>
-          {purchases.map(purchase => {
+          {purchases.map((purchase, id) => {
             let _date = purchase.purchase_date.split(" ");
             let date = new Date(`${_date[0]}T00:00:00`);
             let dateShow = date.toDateString().replace(" ", ", ");
@@ -183,6 +183,15 @@ const MealPlan = props => {
                   </p>
                   <p className={styles.title}>PAYMENT CARD:</p>
                   <p>{purchase.cc_num}</p>
+                  {id + 1 !== purchases.length && (
+                    <hr
+                      style={{
+                        borderTop: "1px solid orange",
+                        width: "70%",
+                        margin: "2px auto"
+                      }}
+                    />
+                  )}
                 </div>
               </Fragment>
             );

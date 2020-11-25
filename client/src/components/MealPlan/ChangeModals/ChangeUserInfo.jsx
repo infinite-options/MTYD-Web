@@ -6,6 +6,7 @@ import styles from "../../ChoosePlan/choosePlan.module.css";
 import modalStyle from "./changeModal.module.css";
 
 import {setUserInfo} from "../../../reducers/actions/subscriptionActions";
+import Axios from "axios";
 
 const ChangeUserInfo = props => {
   const [show, setShow] = useState(false);
@@ -14,6 +15,7 @@ const ChangeUserInfo = props => {
     props.setUserInfo({});
     props.changeOpen();
   };
+  const customer_uid = props.customer_uid;
   const {firstName, lastName, phoneNumber, email} = props.addressInfo;
   const {street, unit, city, state, zip} = props.address;
   const {number, cvv, month, year} = props.creditCard;
@@ -23,6 +25,32 @@ const ChangeUserInfo = props => {
     props.setUserInfo({[e.target.name]: e.target.value});
   };
 
+  const submitChange = () => {
+    const data = {
+      uid: customer_uid,
+      first_name: firstName,
+      last_name: lastName,
+      phone: phoneNumber,
+      email,
+      address: street,
+      unit,
+      city,
+      state,
+      zip,
+      noti: "NULL"
+    };
+    console.log("data sending: ", data);
+    Axios.post("http://localhost:2000/api/v2/UpdateProfile", data)
+      .then(res => {
+        //should update state right here
+        console.log(res);
+        // window.location.reload(false);
+      })
+      .catch(err => {
+        console.log("Error happened when changing user info.");
+        console.log(err);
+      });
+  };
   useEffect(() => {
     if (props.isShow) {
       setShow(!show);
@@ -164,7 +192,7 @@ const ChangeUserInfo = props => {
           <Button variant='secondary' onClick={handleClose}>
             Close
           </Button>
-          <Button variant='primary' onClick={handleClose}>
+          <Button variant='primary' onClick={submitChange}>
             Save Changes
           </Button>
         </Modal.Footer>
@@ -173,6 +201,7 @@ const ChangeUserInfo = props => {
   );
 };
 const mapStateToProps = state => ({
+  customer_uid: state.login.userInfo.customerId,
   addressInfo: state.subscribe.addressInfo,
   address: state.subscribe.address,
   creditCard: state.subscribe.creditCard

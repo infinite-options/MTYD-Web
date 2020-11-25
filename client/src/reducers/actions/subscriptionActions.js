@@ -524,6 +524,7 @@ export const fetchSubscribed = customerId => async dispatch => {
         payload: "Cannot Get Subscription Info"
       });
     } else {
+      console.log("return from customer_lplp: ", res);
       dispatch({
         type: FETCH_SUBSCRIBED_INFO,
         payload: res.data.result
