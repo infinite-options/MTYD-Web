@@ -40,7 +40,7 @@ const ChangeUserInfo = props => {
       noti: "NULL"
     };
     console.log("data sending: ", data);
-    Axios.post("http://localhost:2000/api/v2/UpdateProfile", data)
+    Axios.post("http://localhost:2000/api/v2/update_delivery_info", data)
       .then(res => {
         //should update state right here
         console.log(res);

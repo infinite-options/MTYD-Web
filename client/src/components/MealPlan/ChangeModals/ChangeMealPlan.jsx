@@ -93,7 +93,9 @@ const ChangeMealPlan = props => {
   const submitChangeMealPlan = () => {
     //get password salt and
     axios
-      .get(`http://127.0.0.1:2000/api/v2/Profile/${props.customerId}`)
+      .get(
+        `https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/Profile/${props.customerId}`
+      )
       .then(res => {
         console.log("res when submit: ", res);
 
@@ -119,7 +121,10 @@ const ChangeMealPlan = props => {
         };
         console.log("data sending: ", data);
         axios
-          .post("http://localhost:2000/api/v2/change_purchase", data)
+          .post(
+            "https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/change_purchase",
+            data
+          )
           .then(res => {
             console.log("Response after post: ", res);
             reset();
