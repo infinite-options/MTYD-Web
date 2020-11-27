@@ -152,7 +152,7 @@
   border-radius: 50%;
   font-size: 15px !important;
   border: none;
-  opacity: 0.3%;
+  opacity: 0.3;
 }
 .iconBtn:hover {
   opacity: 1;
