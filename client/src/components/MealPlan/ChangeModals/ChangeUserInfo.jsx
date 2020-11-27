@@ -27,7 +27,8 @@ const ChangeUserInfo = props => {
 
   const submitChange = () => {
     const data = {
-      uid: customer_uid,
+      customer_uid: customer_uid,
+      purchase_uid: props.purchase_uid,
       first_name: firstName,
       last_name: lastName,
       phone: phoneNumber,
@@ -37,14 +38,18 @@ const ChangeUserInfo = props => {
       city,
       state,
       zip,
-      noti: "NULL"
+      cc_num: props.creditCard.number.toString(),
+      cc_cvv: props.creditCard.cvv.toString(),
+      cc_zip: props.creditCard.zip.toString(),
+      cc_exp_date:
+        props.creditCard.year + "-" + props.creditCard.month + "-" + "01"
     };
     console.log("data sending: ", data);
     Axios.post("http://localhost:2000/api/v2/update_delivery_info", data)
       .then(res => {
         //should update state right here
         console.log(res);
-        // window.location.reload(false);
+        window.location.reload(false);
       })
       .catch(err => {
         console.log("Error happened when changing user info.");
@@ -202,6 +207,7 @@ const ChangeUserInfo = props => {
 };
 const mapStateToProps = state => ({
   customer_uid: state.login.userInfo.customerId,
+  purchase_uid: state.subscribe.currentPurchase,
   addressInfo: state.subscribe.addressInfo,
   address: state.subscribe.address,
   creditCard: state.subscribe.creditCard

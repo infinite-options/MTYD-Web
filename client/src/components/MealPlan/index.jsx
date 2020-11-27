@@ -117,8 +117,8 @@ const MealPlan = props => {
       cc_cvv,
       cc_zip,
       delivery_email,
-      customer_first_name,
-      customer_last_name,
+      delivery_first_name,
+      delivery_last_name,
       delivery_address,
       delivery_unit,
       delivery_city,
@@ -133,8 +133,8 @@ const MealPlan = props => {
       delivery_email,
       cc_cvv,
       cc_zip,
-      customer_first_name,
-      customer_last_name,
+      delivery_first_name,
+      delivery_last_name,
       delivery_address,
       delivery_unit,
       delivery_city,
@@ -142,6 +142,7 @@ const MealPlan = props => {
       delivery_zip,
       delivery_phone_num
     };
+    console.log(info);
     props.setUserInfo(info);
     props.setCurrentPurchase(props.subscribedPlans[id].purchase_uid);
     setModal(1);
