@@ -567,68 +567,51 @@ export const setUserInfo = info => dispatch => {
     dispatch({type: RESET_USER_INFO});
   } else {
     // set Address => change name and phone number
-    if (
-      info.customer_first_name !== undefined &&
-      info.customer_first_name !== "NULL"
-    )
+    if (info?.delivery_first_name && info.delivery_first_name !== "NULL")
       dispatch({
         type: CHANGE_ADDRESS_FIRST_NAME,
-        payload: info.customer_first_name
+        payload: info.delivery_first_name
       });
-    if (
-      info.customer_last_name !== undefined &&
-      info.customer_last_name !== "NULL"
-    )
+    if (info?.delivery_last_name && info.delivery_last_name !== "NULL")
       dispatch({
         type: CHANGE_ADDRESS_LAST_NAME,
-        payload: info.customer_last_name
+        payload: info.delivery_last_name
       });
     if (
-      info.delivery_email !== undefined &&
+      info?.delivery_email &&
       info.delivery_email !== "NULL" &&
       info.delivery_email !== null
     )
       dispatch({type: CHANGE_ADDRESS_EMAIL, payload: info.delivery_email});
-    if (
-      info.delivery_phone_num !== undefined &&
-      info.delivery_phone_num !== "NULL"
-    )
+    if (info?.delivery_phone_num && info.delivery_phone_num !== "NULL")
       dispatch({type: CHANGE_ADDRESS_PHONE, payload: info.delivery_phone_num});
     //set Address Info or delivery info
-    if (info.delivery_address !== undefined && info.delivery_address !== "NULL")
+    if (info?.delivery_address && info.delivery_address !== "NULL")
       dispatch({type: CHANGE_ADDRESS_STREET, payload: info.delivery_address});
-    if (info.delivery_unit !== undefined && info.delivery_unit !== "NULL")
+    if (info?.delivery_unit && info.delivery_unit !== "NULL")
       dispatch({type: CHANGE_ADDRESS_UNIT, payload: info.delivery_unit});
-    if (info.delivery_city !== undefined && info.delivery_city !== "NULL")
+    if (info?.delivery_city && info.delivery_city !== "NULL")
       dispatch({type: CHANGE_ADDRESS_CITY, payload: info.delivery_city});
-    if (info.delivery_state !== undefined && info.delivery_state !== "NULL")
+    if (info?.delivery_state && info.delivery_state !== "NULL")
       dispatch({type: CHANGE_ADDRESS_STATE, payload: info.delivery_state});
-    if (info.delivery_zip !== undefined && info.delivery_zip !== "NULL")
+    if (info?.delivery_zip && info.delivery_zip !== "NULL")
       dispatch({type: CHANGE_ADDRESS_ZIP, payload: info.delivery_zip});
     //set creditCard
-    if (info.cc_num !== undefined && info.cc_num !== "NULL")
+    if (info?.cc_num && info.cc_num !== "NULL")
       dispatch({type: CHANGE_CARD_NUMBER, payload: info.cc_num});
-    if (info.month !== undefined && info.month !== "NULL" && info.month != null)
+    if (info?.month && info.month !== "NULL" && info.month != null)
       dispatch({
         type: CHANGE_CARD_MONTH,
         payload: info.month
       });
-    if (info.year !== undefined && info.year !== "NULL" && info.year !== null)
+    if (info?.year && info.year !== "NULL" && info.year !== null)
       dispatch({
         type: CHANGE_CARD_YEAR,
         payload: info.year
       });
-    if (
-      info.cc_cvv !== undefined &&
-      info.cc_cvv !== "NULL" &&
-      info.cc_cvv !== null
-    )
+    if (info?.cc_cvv && info.cc_cvv !== "NULL" && info.cc_cvv !== null)
       dispatch({type: CHANGE_CARD_CVV, payload: info.cc_cvv});
-    if (
-      info.cc_zip !== undefined &&
-      info.cc_zip !== "NULL" &&
-      info.cc_zip !== null
-    )
+    if (info?.cc_zip && info.cc_zip !== "NULL" && info.cc_zip !== null)
       dispatch({type: CHANGE_CARD_ZIP, payload: info.cc_zip});
   }
 };
