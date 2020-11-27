@@ -36,7 +36,6 @@ import {
 import {LOAD_USER_INFO} from "../actions/loginTypes";
 
 import {API_URL, BING_LCOATION_API_URL} from "../constants";
-import {bindActionCreators} from "../../../../../../../Library/Caches/typescript/3.6/node_modules/redux";
 
 export const resetSubscription = () => dispatch => {
   dispatch({
