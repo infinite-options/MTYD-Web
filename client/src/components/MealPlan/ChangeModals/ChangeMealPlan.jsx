@@ -63,9 +63,12 @@ const ChangeMealPlan = props => {
   these functions handle showing Modal and send requests to server. These codes need to be cleaned and the runtime of props' functions need to be improved.
   */
   const checkPrice = () => {
-    axios(`http://127.0.0.1:2000/api/v2/refund_calculator`, {
-      params: {purchase_uid: props.currentPurchase}
-    })
+    axios(
+      `https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/refund_calculator`,
+      {
+        params: {purchase_uid: props.currentPurchase}
+      }
+    )
       .then(res => {
         console.log(res);
         if (res.data !== undefined) {
