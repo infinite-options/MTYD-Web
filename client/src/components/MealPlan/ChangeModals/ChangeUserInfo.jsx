@@ -45,7 +45,10 @@ const ChangeUserInfo = props => {
         props.creditCard.year + "-" + props.creditCard.month + "-" + "01"
     };
     console.log("data sending: ", data);
-    Axios.post("http://localhost:2000/api/v2/update_delivery_info", data)
+    Axios.post(
+      "https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/update_delivery_info",
+      data
+    )
       .then(res => {
         //should update state right here
         console.log(res);
