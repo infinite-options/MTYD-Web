@@ -13,6 +13,7 @@ import store from "../../reducers/store";
 import styles from "./navBar.module.css";
 import Cookies from "js-cookie";
 import User from "./User.svg";
+
 class SideNavBar extends React.Component {
   render() {
     return (
@@ -98,6 +99,7 @@ class NavBar extends React.Component {
     //check for logged in
     let currentState;
     const customer_uid = Cookies.get("customer_uid");
+    console.log("props: ", this.props.history.location.pathname);
     if (customer_uid) {
       this.setState({login: true});
       this.props.LoadUserInfo(customer_uid);
@@ -123,17 +125,31 @@ class NavBar extends React.Component {
           <h4 style={{color: "orange", fontSize: "20px"}}>LOGO</h4>
         </div>
         <ul>
-          <Link to='/'>HOME</Link>
+          <Link to='/home'>HOME</Link>
           <Link to='/about'>ABOUT</Link>
           {this.state.login ? (
-            <a href='/Profile' className={styles.profileIconWrapper}>
-              <input
-                className={styles.profileIcon}
-                readOnly
-                value={this.state.iconName}
-              />
-              <p>PROFILE</p>
-            </a>
+            <>
+              {this.props.history.location.pathname !== "/Profile" ? (
+                <a href='/Profile' className={styles.profileIconWrapper}>
+                  <input
+                    className={styles.profileIcon}
+                    readOnly
+                    value={this.state.iconName}
+                  />
+                  <p>PROFILE</p>
+                </a>
+              ) : (
+                <a
+                  className={styles.profileIconWrapper}
+                  onClick={this.logOut}
+                  style={{display: "flex", alignItem: "center"}}
+                >
+                  {"  "}
+                  LOGOUT&nbsp;
+                  <i className='fa fa-sign-out'> </i>
+                </a>
+              )}
+            </>
           ) : (
             <a href='/'>
               <img src={User} alt='User Logo' />
@@ -153,4 +169,5 @@ const WebNavBar = connect(mapStateToProps, {
   resetSubscription,
   LoadUserInfo
 })(withRouter(NavBar));
+
 export {WebNavBar, BottomNavBar, SideNavBar};

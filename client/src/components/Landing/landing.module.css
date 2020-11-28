@@ -1,10 +1,17 @@
 .root {
-  height: inherit;
+  height: 100vh;
   width: inherit;
-  background-image: url("../../images/landing.png");
+  background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
+    url("../../images/landing.png");
+  /* background-image: url("../../images/landing.png"); */
   background-size: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-
+.mainLogin {
+  height: 100%;
+}
 .mealHeader {
   height: 200px;
   text-align: center;

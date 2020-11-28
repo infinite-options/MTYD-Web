@@ -85,7 +85,6 @@ export default function(state = initialState, action) {
           refreshToken: action.payload.refreshToken
         }
       };
-
     case START_APPLE_SIGNUP:
       return {
         ...state,

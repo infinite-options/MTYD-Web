@@ -16,7 +16,9 @@ import MealPlan from "./components/MealPlan";
 import PaymentDetails from "./components/PaymentDetails";
 import Profile from "./components/Profile";
 import SelectMeal from "./components/SelectMeal";
+import About from "./components/About";
 import NotFound from "./components/NotFound";
+import Home from "./components/Home";
 import "./App.css";
 import AuthApi from "./components/AuthApi";
 import Cookies from "js-cookie";
@@ -44,6 +46,8 @@ function App() {
       <Provider store={store}>
         <Router history={history}>
           <Switch>
+            <AppliedRoute exact path='/home' component={Home} />
+            <AppliedRoute exact path='/about' component={About} />
             <AppliedRoute exact path='/' component={Landing} />
             <AppliedRoute exact path='/sign-up' component={SignUp} />
             <AppliedRoute

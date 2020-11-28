@@ -23,6 +23,7 @@ import {
 } from "./loginTypes";
 
 import {API_URL, BING_LCOATION_API_URL} from "../constants";
+import {setAlert} from "./alertActions";
 
 // Auxillary functions
 
@@ -133,8 +134,10 @@ export const loginAttempt = (email, password, callback) => dispatch => {
                   preCallback(customerInfo.customer_uid, callback);
                 } else if (res.data.code === 406 || res.data.code === 404) {
                   console.log("Invalid credentials");
+                  dispatch(setAlert("LoginError", res.data.message));
                 } else if (res.data.code === 401) {
                   console.log("Need to log in by social media");
+                  dispatch(setAlert("LoginError", res.data.message));
                 } else {
                   console.log("Unknown login error");
                 }
@@ -176,7 +179,11 @@ export const loginAttempt = (email, password, callback) => dispatch => {
         // No information from Account Salt endpoint, probably invalid credentials
       } else {
         // Status not 200
-        console.log("Invalid credentials");
+        if (res.data?.message) {
+          dispatch(setAlert("LoginError", res.data.message));
+        } else {
+          console.log("Something weird happened.");
+        }
       }
     })
     // Error for Account Salt endpoint
@@ -240,6 +247,8 @@ export const socialLoginAttempt = (
           }
         });
         signupCallback();
+      } else {
+        dispatch(setAlert("LoginError", res.data.message));
       }
     })
     // Catch Login endpoint error

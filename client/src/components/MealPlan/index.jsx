@@ -153,52 +153,55 @@ const MealPlan = props => {
   const loadHistory = () => {
     let items = props.orderHistory;
     let itemShow = [];
+
     for (let key of Object.keys(items)) {
-      let name = JSON.parse(items[key][0].items)[0].name;
-      let purchases = items[key];
-      itemShow.push(
-        <div key={key} className={"row pl-2 mb-5 " + styles.historyItemName}>
-          <p className={styles.itemName + " pl-0 text-uppercase"}>{name}</p>
-          {purchases.map((purchase, id) => {
-            let _date = purchase.purchase_date.split(" ");
-            let date = new Date(`${_date[0]}T00:00:00`);
-            let dateShow = date.toDateString().replace(" ", ", ");
-            return (
-              <Fragment key={purchase.purchase_uid}>
-                <div className={styles.historyItemName}>
-                  <p className='font-weight-bold'>{dateShow}</p>
-                  <p className='mt-0'>
-                    <span className={styles.title}>ORDER #:</span>{" "}
-                    {purchase.purchase_uid}
-                  </p>
-                  <p className={styles.title}>DELIVERY ADDRESS:</p>
-                  <p>{purchase.delivery_address}</p>
-                  <p>
-                    {
-                      (purchase.delivery_city +
-                        ", " +
-                        purchase.delivery_state +
-                        " ",
-                      purchase.delivery_zip + ".")
-                    }
-                  </p>
-                  <p className={styles.title}>PAYMENT CARD:</p>
-                  <p>{purchase.cc_num}</p>
-                  {id + 1 !== purchases.length && (
-                    <hr
-                      style={{
-                        borderTop: "1px solid orange",
-                        width: "70%",
-                        margin: "2px auto"
-                      }}
-                    />
-                  )}
-                </div>
-              </Fragment>
-            );
-          })}
-        </div>
-      );
+      if (items[key][0]?.items) {
+        let name = JSON.parse(items[key][0].items)[0].name;
+        let purchases = items[key];
+        itemShow.push(
+          <div key={key} className={"row pl-2 mb-5 " + styles.historyItemName}>
+            <p className={styles.itemName + " pl-0 text-uppercase"}>{name}</p>
+            {purchases.map((purchase, id) => {
+              let _date = purchase.purchase_date.split(" ");
+              let date = new Date(`${_date[0]}T00:00:00`);
+              let dateShow = date.toDateString().replace(" ", ", ");
+              return (
+                <Fragment key={purchase.purchase_uid}>
+                  <div className={styles.historyItemName}>
+                    <p className='font-weight-bold'>{dateShow}</p>
+                    <p className='mt-0'>
+                      <span className={styles.title}>ORDER #:</span>{" "}
+                      {purchase.purchase_uid}
+                    </p>
+                    <p className={styles.title}>DELIVERY ADDRESS:</p>
+                    <p>{purchase.delivery_address}</p>
+                    <p>
+                      {
+                        (purchase.delivery_city +
+                          ", " +
+                          purchase.delivery_state +
+                          " ",
+                        purchase.delivery_zip + ".")
+                      }
+                    </p>
+                    <p className={styles.title}>PAYMENT CARD:</p>
+                    <p>{purchase.cc_num}</p>
+                    {id + 1 !== purchases.length && (
+                      <hr
+                        style={{
+                          borderTop: "1px solid orange",
+                          width: "70%",
+                          margin: "2px auto"
+                        }}
+                      />
+                    )}
+                  </div>
+                </Fragment>
+              );
+            })}
+          </div>
+        );
+      }
     }
     return itemShow;
   };

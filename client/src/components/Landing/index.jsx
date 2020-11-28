@@ -14,12 +14,13 @@ import {Link} from "react-router-dom";
 import GoogleLogin from "react-google-login";
 import FacebookLogin from "react-facebook-login";
 import styles from "./landing.module.css";
-
+import Alert from "../Alert";
 class Landing extends React.Component {
   constructor() {
     super();
     this.state = {
-      mounted: false
+      mounted: false,
+      error: ""
     };
   }
 
@@ -117,6 +118,25 @@ class Landing extends React.Component {
       console.log("Facebook Login failed");
     }
   };
+  showError = err => {
+    console.log("this is error in show err: ", err);
+    return (
+      <div
+        style={{display: "flex", alignItem: "center", justifyContent: "center"}}
+      >
+        <p
+          style={{
+            color: "red",
+            fontSize: "15px",
+            fontWeight: "bold",
+            padding: "10px 10px"
+          }}
+        >
+          {err}
+        </p>
+      </div>
+    );
+  };
 
   render() {
     if (!this.state.mounted) {
@@ -124,12 +144,13 @@ class Landing extends React.Component {
     }
     return (
       <div className={styles.root}>
-        <div style={{backgroundColor: "#00000074"}}>
+        <div className={styles.mainLogin}>
           <div className={styles.mealHeader}>
             <p>NUTRITION MADE EASY</p>
             <p>LOCAL.ORGANIC.RESPONSIBLE</p>
           </div>
-          <div style={{height: "700px"}}>
+          <Alert />
+          <div>
             <div className={styles.loginSectionContainer}>
               <div className={styles.loginSectionItem}>
                 <input
@@ -274,7 +295,8 @@ Landing.propTypes = {
 
 const mapStateToProps = state => ({
   email: state.login.email,
-  password: state.login.password
+  password: state.login.password,
+  error: state.login.error
 });
 
 const functionList = {
