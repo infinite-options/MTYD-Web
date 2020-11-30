@@ -157,14 +157,32 @@ const MealPlan = props => {
     for (let key of Object.keys(items)) {
       if (items[key][0]?.items) {
         let name = JSON.parse(items[key][0].items)[0].name;
+        let item_uid = JSON.parse(items[key][0].items)[0].item_uid;
         let purchases = items[key];
+        let active_frequency = "";
+        if (Object.keys(props.plans).length > 0) {
+          let item_desc = props.plans[name.split(" ")[0]][item_uid].item_desc;
+          active_frequency = item_desc.split(" - ")[1].toUpperCase();
+        }
         itemShow.push(
           <div key={key} className={"row pl-2 mb-5 " + styles.historyItemName}>
-            <p className={styles.itemName + " pl-0 text-uppercase"}>{name}</p>
+            <p className={styles.itemName + " pl-0 text-uppercase"}>
+              {name} - {active_frequency}
+            </p>
             {purchases.map((purchase, id) => {
               let _date = purchase.purchase_date.split(" ");
               let date = new Date(`${_date[0]}T00:00:00`);
               let dateShow = date.toDateString().replace(" ", ", ");
+              let item_desc = "";
+              let purchase_items = JSON.parse(purchase.items)[0];
+
+              if (Object.keys(props.plans).length > 0) {
+                console.log(purchase_items);
+                item_desc =
+                  props.plans[purchase_items.name.split(" ")[0]][
+                    purchase_items.item_uid
+                  ].item_desc;
+              }
               return (
                 <Fragment key={purchase.purchase_uid}>
                   <div className={styles.historyItemName}>
@@ -172,6 +190,10 @@ const MealPlan = props => {
                     <p className='mt-0'>
                       <span className={styles.title}>ORDER #:</span>{" "}
                       {purchase.purchase_uid}
+                    </p>
+                    <p className='mt-0'>
+                      <span className={styles.title}>Item Description:</span>{" "}
+                      {item_desc}
                     </p>
                     <p className={styles.title}>DELIVERY ADDRESS:</p>
                     <p>{purchase.delivery_address}</p>

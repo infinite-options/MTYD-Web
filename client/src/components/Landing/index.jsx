@@ -149,7 +149,7 @@ class Landing extends React.Component {
             <p>NUTRITION MADE EASY</p>
             <p>LOCAL.ORGANIC.RESPONSIBLE</p>
           </div>
-          <Alert />
+
           <div>
             <div className={styles.loginSectionContainer}>
               <div className={styles.loginSectionItem}>
@@ -276,6 +276,7 @@ class Landing extends React.Component {
                 </div>
               </div>
             </div>
+            <Alert />
           </div>
         </div>
       </div>

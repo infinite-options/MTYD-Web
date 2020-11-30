@@ -125,8 +125,12 @@ class NavBar extends React.Component {
           <h4 style={{color: "orange", fontSize: "20px"}}>LOGO</h4>
         </div>
         <ul>
-          <Link to='/home'>HOME</Link>
-          <Link to='/about'>ABOUT</Link>
+          <Link to='/home' className={styles.narrowBtn}>
+            HOME
+          </Link>
+          <Link to='/about' className={styles.narrowBtn}>
+            ABOUT
+          </Link>
           {this.state.login ? (
             <>
               {this.props.history.location.pathname !== "/Profile" ? (

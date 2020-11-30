@@ -51,6 +51,10 @@
 .navbar > ul a:active {
   transform: translateY(2px);
 }
+
+.narrowBtn {
+  height: 50% !important;
+}
 .navContainer {
   display: flex;
   flex-flow: column;
@@ -118,6 +122,7 @@
   display: block;
   margin-bottom: 0px;
   font-weight: bold;
+  text-align: center;
 }
 
 @media (max-width: 500px) {
