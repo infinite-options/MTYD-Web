@@ -123,13 +123,13 @@ const ChangeMealPlan = props => {
           new_item_id: props.selectedPlan.item_uid
         };
         console.log("data sending: ", data);
-        // axios
-        //   .post(
-        //     "https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/change_purchase",
-        //     data
-        //   )
         axios
-          .post("http://localhost:2000/api/v2/change_purchase", data)
+          .post(
+            "https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/change_purchase",
+            data
+          )
+          //   axios
+          // .post("http://localhost:2000/api/v2/change_purchase", data)
           .then(res => {
             console.log("Response after post: ", res);
             reset();
