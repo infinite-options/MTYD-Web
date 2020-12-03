@@ -1,5 +1,5 @@
-import axios from "axios";
-import {history} from "../../App";
+import axios from 'axios';
+import {history} from '../../App';
 import {
   LOGOUT_SUBSCRIPTION,
   FETCH_PLAN_INFO,
@@ -31,25 +31,25 @@ import {
   SET_PAYMENT_OPTIONS,
   SET_SELECTED_PLAN,
   RESET_USER_INFO,
-  SET_CURRENT_PURCHASE
-} from "../actions/subscriptionTypes";
-import {LOAD_USER_INFO} from "../actions/loginTypes";
+  SET_CURRENT_PURCHASE,
+} from '../actions/subscriptionTypes';
+import {LOAD_USER_INFO} from '../actions/loginTypes';
 
-import {API_URL, BING_LCOATION_API_URL} from "../constants";
+import {API_URL, BING_LCOATION_API_URL} from '../constants';
 
 export const resetSubscription = () => dispatch => {
   dispatch({
-    type: LOGOUT_SUBSCRIPTION
+    type: LOGOUT_SUBSCRIPTION,
   });
 };
 
 export const fetchPlans = () => dispatch => {
   let plans = null;
   axios
-    .get(API_URL + "plans", {
+    .get(API_URL + 'plans', {
       params: {
-        business_uid: "200-000001"
-      }
+        business_uid: '200-000001',
+      },
     })
     .then(res => {
       let items = res.data.result;
@@ -78,8 +78,8 @@ export const fetchPlans = () => dispatch => {
         payload: {
           items: itemsReturn,
           numItems: distinctNumItems,
-          paymentFrequency: distinctPaymentFrequency
-        }
+          paymentFrequency: distinctPaymentFrequency,
+        },
       });
     })
     .catch(err => {
@@ -96,7 +96,7 @@ export const chooseMealsDelivery = (
   calculateTotalPayment(dispatch, plans, newMeal, paymentOption);
   dispatch({
     type: CHOOSE_MEALS_EACH_DELIVERY,
-    payload: newMeal
+    payload: newMeal,
   });
 };
 
@@ -108,12 +108,12 @@ export const choosePaymentOption = (
   calculateTotalPayment(dispatch, plans, meal, newPaymentOption);
   dispatch({
     type: CHOOSE_PAYMENT_OPTION,
-    payload: newPaymentOption
+    payload: newPaymentOption,
   });
 };
 
 const calculateTotalPayment = (dispatch, plans, meal, options) => {
-  if (meal !== "" && options !== "") {
+  if (meal !== '' && options !== '') {
     let mealNum = Number(meal);
     let optionsNum = Number(options);
     let selectedPlan = Object.values(plans[meal]).filter(
@@ -123,12 +123,12 @@ const calculateTotalPayment = (dispatch, plans, meal, options) => {
       let selectedItem = selectedPlan[0];
       dispatch({
         type: GET_TOTAL_PAYMENT,
-        payload: selectedItem
+        payload: selectedItem,
       });
     } else {
       dispatch({
         type: GET_TOTAL_PAYMENT,
-        payload: {}
+        payload: {},
       });
     }
   }
@@ -136,17 +136,17 @@ const calculateTotalPayment = (dispatch, plans, meal, options) => {
 
 export const fetchProfileInformation = customerId => dispatch => {
   axios
-    .get(API_URL + "Profile/" + customerId)
+    .get(API_URL + 'Profile/' + customerId)
     .then(res => {
       if (
         !res.data.result ||
         !res.data.result.length ||
         res.data.code !== 200
       ) {
-        history.push("/choose-plan");
+        history.push('/choose-plan');
         dispatch({
           type: ADD_ERROR,
-          payload: "Cannot get Profile Info."
+          payload: 'Cannot get Profile Info.',
         });
       } else {
         let customerInfo = res.data.result[0];
@@ -154,15 +154,15 @@ export const fetchProfileInformation = customerId => dispatch => {
         let socialMedia =
           customerInfo.user_social_media !== null
             ? customerInfo.user_social_media
-            : "NULL";
+            : 'NULL';
         console.log(res);
         dispatch({
           type: FETCH_PROFILE_INFO,
           payload: {
             customerId: customerId,
             email: email,
-            socialMedia: socialMedia
-          }
+            socialMedia: socialMedia,
+          },
         });
       }
     })
@@ -178,72 +178,72 @@ export const fetchProfileInformation = customerId => dispatch => {
 export const changeAddressFirstName = newFirstName => dispatch => {
   dispatch({
     type: CHANGE_ADDRESS_FIRST_NAME,
-    payload: newFirstName
+    payload: newFirstName,
   });
 };
 
 export const changeAddressLastName = newLastName => dispatch => {
   dispatch({
     type: CHANGE_ADDRESS_LAST_NAME,
-    payload: newLastName
+    payload: newLastName,
   });
 };
 
 export const changeAddressStreet = newStreet => dispatch => {
   dispatch({
     type: CHANGE_ADDRESS_STREET,
-    payload: newStreet
+    payload: newStreet,
   });
 };
 
 export const changeAddressUnit = newUnit => dispatch => {
   dispatch({
     type: CHANGE_ADDRESS_UNIT,
-    payload: newUnit
+    payload: newUnit,
   });
 };
 
 export const changeAddressCity = newCity => dispatch => {
   dispatch({
     type: CHANGE_ADDRESS_CITY,
-    payload: newCity
+    payload: newCity,
   });
 };
 
 export const changeAddressState = newState => dispatch => {
   dispatch({
     type: CHANGE_ADDRESS_STATE,
-    payload: newState
+    payload: newState,
   });
 };
 
 export const changeAddressZip = newZip => dispatch => {
   dispatch({
     type: CHANGE_ADDRESS_ZIP,
-    payload: newZip
+    payload: newZip,
   });
 };
 
 export const changeAddressPhone = newPhoneNum => dispatch => {
   dispatch({
     type: CHANGE_ADDRESS_PHONE,
-    payload: newPhoneNum
+    payload: newPhoneNum,
   });
 };
 
 export const changeDeliveryInstructions = newInstructions => dispatch => {
   dispatch({
     type: CHANGE_DELIVERY_INSTRUCTIONS,
-    payload: newInstructions
+    payload: newInstructions,
   });
 };
 
 export const changePaymentPassword = (newPassword, callback) => dispatch => {
   dispatch({
     type: CHANGE_PAYMENT_PASSWORD,
-    payload: newPassword
+    payload: newPassword,
   });
-  if (typeof callback !== "undefined") {
+  if (typeof callback !== 'undefined') {
     callback();
   }
 };
@@ -251,35 +251,35 @@ export const changePaymentPassword = (newPassword, callback) => dispatch => {
 export const changeCardNumber = number => dispatch => {
   dispatch({
     type: CHANGE_CARD_NUMBER,
-    payload: number
+    payload: number,
   });
 };
 
 export const changeCardZip = zip => dispatch => {
   dispatch({
     type: CHANGE_CARD_ZIP,
-    payload: zip
+    payload: zip,
   });
 };
 
 export const changeCardCvv = cvv => dispatch => {
   dispatch({
     type: CHANGE_CARD_CVV,
-    payload: cvv
+    payload: cvv,
   });
 };
 
 export const changeCardMonth = month => dispatch => {
   dispatch({
     type: CHANGE_CARD_MONTH,
-    payload: month
+    payload: month,
   });
 };
 
 export const changeCardYear = year => dispatch => {
   dispatch({
     type: CHANGE_CARD_YEAR,
-    payload: year
+    payload: year,
   });
 };
 
@@ -301,11 +301,11 @@ export const submitPayment = (
   callback
 ) => dispatch => {
   console.log(customerEmail, customerUid, loginMethod);
-  if (loginMethod === "NULL") {
+  if (loginMethod === 'NULL') {
     // Prepare to login
     axios
-      .post(API_URL + "accountsalt", {
-        email: customerEmail
+      .post(API_URL + 'accountsalt', {
+        email: customerEmail,
       })
       .then(res => {
         let saltObject = res;
@@ -314,8 +314,8 @@ export const submitPayment = (
           let salt = saltObject.data.result[0].password_salt;
           //Get hash algorithm
           switch (hashAlg) {
-            case "SHA512":
-              hashAlg = "SHA-512";
+            case 'SHA512':
+              hashAlg = 'SHA-512';
               break;
 
             default:
@@ -331,18 +331,18 @@ export const submitPayment = (
             let hash = res;
             let hashArray = Array.from(new Uint8Array(hash));
             let hashedPassword = hashArray
-              .map(byte => byte.toString(16).padStart(2, "0"))
-              .join("");
+              .map(byte => byte.toString(16).padStart(2, '0'))
+              .join('');
             axios
               .get(BING_LCOATION_API_URL, {
                 params: {
-                  CountryRegion: "US",
+                  CountryRegion: 'US',
                   adminDistrict: deliveryState,
                   locality: deliveryCity,
                   postalCode: deliveryZip,
                   addressLine: deliveryAddress,
-                  key: process.env.REACT_APP_BING_LOCATION_KEY
-                }
+                  key: process.env.REACT_APP_BING_LOCATION_KEY,
+                },
               })
               .then(res => {
                 let locationApiResult = res.data;
@@ -360,18 +360,18 @@ export const submitPayment = (
                   console.log(selectedPlan);
                   let purchasedItem = [
                     {
-                      qty: "1",
+                      qty: '1',
                       name: selectedPlan.item_name,
                       price: selectedPlan.item_price,
                       item_uid: selectedPlan.item_uid,
-                      itm_business_uid: "200-000001"
-                    }
+                      itm_business_uid: '200-000001',
+                    },
                   ];
                   console.log(purchasedItem);
                   let object = {
                     customer_uid: customerUid,
                     salt: hashedPassword,
-                    business_uid: "200-000001",
+                    business_uid: '200-000001',
                     delivery_first_name: deliveryFirstName,
                     delivery_last_name: deliveryLastName,
                     delivery_email: customerEmail,
@@ -386,21 +386,21 @@ export const submitPayment = (
                     delivery_latitude: lat.toString(),
                     items: purchasedItem,
                     amount_due: selectedPlan.item_price.toString(),
-                    amount_discount: "0",
-                    amount_paid: "0",
-                    cc_num: "4242424242424242",
-                    cc_exp_month: "04",
-                    cc_exp_year: "2024",
-                    cc_cvv: "424",
-                    cc_zip: "95120"
+                    amount_discount: '0',
+                    amount_paid: '0',
+                    cc_num: '4242424242424242',
+                    cc_exp_month: '04',
+                    cc_exp_year: '2024',
+                    cc_cvv: '424',
+                    cc_zip: '95120',
                   };
                   console.log(JSON.stringify(object));
                   axios
-                    .post(API_URL + "checkout", object)
+                    .post(API_URL + 'checkout', object)
                     .then(res => {
                       console.log(res);
                       dispatch({
-                        type: SUBMIT_PAYMENT
+                        type: SUBMIT_PAYMENT,
                       });
                       callback();
                     })
@@ -426,13 +426,13 @@ export const submitPayment = (
     axios
       .get(BING_LCOATION_API_URL, {
         params: {
-          CountryRegion: "US",
+          CountryRegion: 'US',
           adminDistrict: deliveryState,
           locality: deliveryCity,
           postalCode: deliveryZip,
           addressLine: deliveryAddress,
-          key: process.env.REACT_APP_BING_LOCATION_KEY
-        }
+          key: process.env.REACT_APP_BING_LOCATION_KEY,
+        },
       })
       .then(res => {
         let locationApiResult = res.data;
@@ -450,17 +450,17 @@ export const submitPayment = (
           console.log(selectedPlan);
           let purchasedItem = [
             {
-              qty: "1",
+              qty: '1',
               name: selectedPlan.item_name,
               price: selectedPlan.item_price,
               item_uid: selectedPlan.item_uid,
-              itm_business_uid: "200-000001"
-            }
+              itm_business_uid: '200-000001',
+            },
           ];
           console.log(purchasedItem);
           let object = {
             customer_uid: customerUid,
-            business_uid: "200-000001",
+            business_uid: '200-000001',
             delivery_first_name: deliveryFirstName,
             delivery_last_name: deliveryLastName,
             delivery_email: customerEmail,
@@ -475,21 +475,21 @@ export const submitPayment = (
             delivery_latitude: lat.toString(),
             items: purchasedItem,
             amount_due: selectedPlan.item_price.toString(),
-            amount_discount: "0",
-            amount_paid: "0",
-            cc_num: "4242424242424242",
-            cc_exp_month: "04",
-            cc_exp_year: "2024",
-            cc_cvv: "424",
-            cc_zip: "95120"
+            amount_discount: '0',
+            amount_paid: '0',
+            cc_num: '4242424242424242',
+            cc_exp_month: '04',
+            cc_exp_year: '2024',
+            cc_cvv: '424',
+            cc_zip: '95120',
           };
           console.log(JSON.stringify(object));
           axios
-            .post(API_URL + "checkout", object)
+            .post(API_URL + 'checkout', object)
             .then(res => {
               console.log(res);
               dispatch({
-                type: SUBMIT_PAYMENT
+                type: SUBMIT_PAYMENT,
               });
               callback();
             })
@@ -515,25 +515,29 @@ export const fetchSubscribed = customerId => async dispatch => {
   let purchaseIds = [];
   try {
     const res = await axios.get(`${API_URL}customer_lplp`, {
-      params: {customer_uid: customerId}
+      params: {customer_uid: customerId},
     });
     if (res.status !== 200) {
       dispatch({
         type: ADD_ERROR,
-        payload: "Cannot Get Subscription Info"
+        payload: 'Cannot Get Subscription Info',
       });
     } else {
-      console.log("return from customer_lplp: ", res);
+      console.log('return from customer_lplp: ', res);
+      let filtered = res.data.result.filter(
+        item => JSON.parse(item?.items)[0]?.itm_business_uid === '200-000001'
+      );
+      console.log('filtered: ', filtered);
       dispatch({
         type: FETCH_SUBSCRIBED_INFO,
-        payload: res.data.result
+        payload: filtered,
       });
       for (let items of res.data.result) {
         purchaseIds.push(items.purchase_id);
       }
     }
   } catch (err) {
-    let message = "";
+    let message = '';
     if (err.response) {
       message = err.response;
     } else {
@@ -541,7 +545,7 @@ export const fetchSubscribed = customerId => async dispatch => {
     }
     dispatch({
       type: ADD_ERROR,
-      payload: message
+      payload: message,
     });
   }
   return purchaseIds;
@@ -550,7 +554,7 @@ export const fetchSubscribed = customerId => async dispatch => {
 export const setCurrentMeal = meal => dispatch =>
   dispatch({
     type: SET_CURRENT_MEAL,
-    payload: meal
+    payload: meal,
   });
 export const setSelectedPlan = meal => dispatch =>
   dispatch({type: SET_SELECTED_PLAN, payload: meal});
@@ -559,7 +563,7 @@ export const setMeals = meal => dispatch =>
 export const setPaymentOption = option => dispatch =>
   dispatch({
     type: SET_PAYMENT_OPTIONS,
-    payload: option
+    payload: option,
   });
 
 export const setUserInfo = info => dispatch => {
@@ -567,51 +571,51 @@ export const setUserInfo = info => dispatch => {
     dispatch({type: RESET_USER_INFO});
   } else {
     // set Address => change name and phone number
-    if (info?.delivery_first_name && info.delivery_first_name !== "NULL")
+    if (info?.delivery_first_name && info.delivery_first_name !== 'NULL')
       dispatch({
         type: CHANGE_ADDRESS_FIRST_NAME,
-        payload: info.delivery_first_name
+        payload: info.delivery_first_name,
       });
-    if (info?.delivery_last_name && info.delivery_last_name !== "NULL")
+    if (info?.delivery_last_name && info.delivery_last_name !== 'NULL')
       dispatch({
         type: CHANGE_ADDRESS_LAST_NAME,
-        payload: info.delivery_last_name
+        payload: info.delivery_last_name,
       });
     if (
       info?.delivery_email &&
-      info.delivery_email !== "NULL" &&
+      info.delivery_email !== 'NULL' &&
       info.delivery_email !== null
     )
       dispatch({type: CHANGE_ADDRESS_EMAIL, payload: info.delivery_email});
-    if (info?.delivery_phone_num && info.delivery_phone_num !== "NULL")
+    if (info?.delivery_phone_num && info.delivery_phone_num !== 'NULL')
       dispatch({type: CHANGE_ADDRESS_PHONE, payload: info.delivery_phone_num});
     //set Address Info or delivery info
-    if (info?.delivery_address && info.delivery_address !== "NULL")
+    if (info?.delivery_address && info.delivery_address !== 'NULL')
       dispatch({type: CHANGE_ADDRESS_STREET, payload: info.delivery_address});
-    if (info?.delivery_unit && info.delivery_unit !== "NULL")
+    if (info?.delivery_unit && info.delivery_unit !== 'NULL')
       dispatch({type: CHANGE_ADDRESS_UNIT, payload: info.delivery_unit});
-    if (info?.delivery_city && info.delivery_city !== "NULL")
+    if (info?.delivery_city && info.delivery_city !== 'NULL')
       dispatch({type: CHANGE_ADDRESS_CITY, payload: info.delivery_city});
-    if (info?.delivery_state && info.delivery_state !== "NULL")
+    if (info?.delivery_state && info.delivery_state !== 'NULL')
       dispatch({type: CHANGE_ADDRESS_STATE, payload: info.delivery_state});
-    if (info?.delivery_zip && info.delivery_zip !== "NULL")
+    if (info?.delivery_zip && info.delivery_zip !== 'NULL')
       dispatch({type: CHANGE_ADDRESS_ZIP, payload: info.delivery_zip});
     //set creditCard
-    if (info?.cc_num && info.cc_num !== "NULL")
+    if (info?.cc_num && info.cc_num !== 'NULL')
       dispatch({type: CHANGE_CARD_NUMBER, payload: info.cc_num});
-    if (info?.month && info.month !== "NULL" && info.month != null)
+    if (info?.month && info.month !== 'NULL' && info.month != null)
       dispatch({
         type: CHANGE_CARD_MONTH,
-        payload: info.month
+        payload: info.month,
       });
-    if (info?.year && info.year !== "NULL" && info.year !== null)
+    if (info?.year && info.year !== 'NULL' && info.year !== null)
       dispatch({
         type: CHANGE_CARD_YEAR,
-        payload: info.year
+        payload: info.year,
       });
-    if (info?.cc_cvv && info.cc_cvv !== "NULL" && info.cc_cvv !== null)
+    if (info?.cc_cvv && info.cc_cvv !== 'NULL' && info.cc_cvv !== null)
       dispatch({type: CHANGE_CARD_CVV, payload: info.cc_cvv});
-    if (info?.cc_zip && info.cc_zip !== "NULL" && info.cc_zip !== null)
+    if (info?.cc_zip && info.cc_zip !== 'NULL' && info.cc_zip !== null)
       dispatch({type: CHANGE_CARD_ZIP, payload: info.cc_zip});
   }
 };
