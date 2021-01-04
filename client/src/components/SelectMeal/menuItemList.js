@@ -39,7 +39,7 @@ class MenuItemList extends Component {
 
   loadMealPlans = () => {
     const customer_uid = Cookies.get("customer_uid");
-    fetch(API_URL + `customer_lplp?customer_uid=${customer_uid}`)
+    fetch(`${API_URL}customer_lplp?customer_uid=${customer_uid}`)
       .then(response => response.json())
       .then(json => {
         let meals = [...json.result];
@@ -56,7 +56,7 @@ class MenuItemList extends Component {
 
   loadMenuItems = () => {
     fetch(
-      `https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/upcoming_menu`
+      `${API_URL}upcoming_menu`
     )
       .then(response => response.json())
       .then(json => {
@@ -82,7 +82,7 @@ class MenuItemList extends Component {
   selectedMeals = () => {
     let cust_id = Cookies.get("customer_uid");
     fetch(
-      `https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/meals_selected?customer_uid=${cust_id}`
+      `${API_URL}meals_selected?customer_uid=${cust_id}`
     )
       .then(response => response.json())
       .then(json => {
@@ -145,7 +145,7 @@ class MenuItemList extends Component {
   mealsOnChange = e => {
     let cust_id = Cookies.get("customer_uid");
     fetch(
-      `https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/meals_selected?customer_uid=${cust_id}`
+      `${API_URL}meals_selected?customer_uid=${cust_id}`
     )
       .then(response => response.json())
       .then(json => {
@@ -227,7 +227,7 @@ class MenuItemList extends Component {
   filterDates = event => {
     let cust_id = Cookies.get("customer_uid");
     fetch(
-      `https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/meals_selected?customer_uid=${cust_id}`
+      `${API_URL}meals_selected?customer_uid=${cust_id}`
     )
       .then(response => response.json())
       .then(json => {
@@ -312,7 +312,7 @@ class MenuItemList extends Component {
 
       axios
         .post(
-          "https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/meals_selection",
+          `${API_URL}meals_selection`,
           data2
         )
         .then(response => {
@@ -347,7 +347,7 @@ class MenuItemList extends Component {
 
         axios
           .post(
-            "https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/meals_selection",
+            `${API_URL}meals_selection`,
             data1
           )
           .then(response => {
@@ -392,7 +392,7 @@ class MenuItemList extends Component {
 
         axios
           .post(
-            "https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/meals_selection",
+            `${API_URL}meals_selection`,
             data1
           )
           .then(response => {
@@ -424,7 +424,7 @@ class MenuItemList extends Component {
       };
       axios
         .post(
-          "https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/meals_selection",
+          `${API_URL}meals_selection`,
           data2
         )
         .then(response => {
@@ -458,7 +458,7 @@ class MenuItemList extends Component {
       };
       axios
         .post(
-          "https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/meals_selection",
+          `${API_URL}meals_selection`,
           data
         )
         .then(response => {
