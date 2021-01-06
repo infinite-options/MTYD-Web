@@ -13,6 +13,7 @@ import store from "../../reducers/store";
 import styles from "./navBar.module.css";
 import Cookies from "js-cookie";
 import User from "./User.svg";
+import Logo from "./Logo.svg";
 
 class SideNavBar extends React.Component {
   render() {
@@ -122,7 +123,10 @@ class NavBar extends React.Component {
     return (
       <div className={styles.navbar}>
         <div>
-          <h4 style={{color: "orange", fontSize: "20px"}}>LOGO</h4>
+          <a href=''>
+            <img style={{width: "70%", height:"70%"}} src={Logo}/>
+          </a>
+          {/* <h4 style={{color: "orange", fontSize: "20px"}}>LOGO</h4> */}
         </div>
         <ul>
           <Link to='/home' className={styles.narrowBtn}>
