@@ -1,0 +1,33 @@
+.root {
+  height: 100vh;
+  width: 100%;
+  background-color: #fff0c6;
+}
+
+.container {
+  display: flex;
+}
+
+.box {
+  padding: 25px;
+  flex-grow: 1;
+}
+
+.stepsTitle {
+  text-align: center;
+  color: #ff9e19;
+}
+
+.stepsText {
+  text-align: center;
+  padding: 0 25% 0 25%;
+  font-size: 15;
+  color: #999;
+}
+
+.centerLink {
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+  color: #ff5349;
+}
