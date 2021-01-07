@@ -123,9 +123,9 @@ class NavBar extends React.Component {
     return (
       <div className={styles.navbar}>
         <div>
-          <a href=''>
+          <Link>
             <img style={{width: "70%", height:"70%"}} src={Logo}/>
-          </a>
+          </Link>
           {/* <h4 style={{color: "orange", fontSize: "20px"}}>LOGO</h4> */}
         </div>
         <ul>
