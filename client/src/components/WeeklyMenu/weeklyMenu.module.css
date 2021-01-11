@@ -1,0 +1,46 @@
+.menuCardContainer {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.menuCard {
+  text-align: center;
+  margin: 5px;
+  box-shadow: 0 4px 8px 0;
+  flex: 0 1 24%;
+  height: 30vh;
+}
+
+.imgRescale {
+  float: left;
+  width: 50%;
+  height: 90%;
+  margin: 5px;
+}
+
+.backLink {
+  text-align: center;
+  float: left;
+  color: #ff5349;
+}
+
+.signupLink {
+  text-align: center;
+  float: right;
+  color: #ff5349;
+}
+
+.backLink:hover {
+  color: var(--light-color);
+  cursor: pointer;
+  background-color: #5d7ebb;
+  border-radius: 20px;
+}
+
+.signupLink:hover {
+  color: var(--light-color);
+  cursor: pointer;
+  background-color: #5d7ebb;
+  border-radius: 20px;
+}

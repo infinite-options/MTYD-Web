@@ -123,10 +123,7 @@ class NavBar extends React.Component {
     return (
       <div className={styles.navbar}>
         <div>
-          <Link>
-            <img style={{width: "70%", height:"70%"}} src={Logo}/>
-          </Link>
-          {/* <h4 style={{color: "orange", fontSize: "20px"}}>LOGO</h4> */}
+          <img style={{width: "70%", height:"70%"}} src={Logo}/>
         </div>
         <ul>
           <Link to='/home' className={styles.narrowBtn}>

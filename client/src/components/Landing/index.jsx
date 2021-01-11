@@ -15,6 +15,7 @@ import GoogleLogin from "react-google-login";
 import FacebookLogin from "react-facebook-login";
 import styles from "./landing.module.css";
 import Alert from "../Alert";
+import Logo from "./Logo.svg"
 class Landing extends React.Component {
   constructor() {
     super();
@@ -146,6 +147,7 @@ class Landing extends React.Component {
       <div className={styles.root}>
         <div className={styles.mainLogin}>
           <div className={styles.mealHeader}>
+            <img style={{width: "65%", height:"65%"}} src={Logo}/>
             <p>NUTRITION MADE EASY</p>
             <p>LOCAL.ORGANIC.RESPONSIBLE</p>
           </div>

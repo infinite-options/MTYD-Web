@@ -18,7 +18,7 @@ const About = () => {
           Order what you want and eat healty.
         </h5>
         <h3 style = {{textAlign: "center", color: "#ff5349"}}>
-          <u>3 Easy Steps</u>
+          3 Easy Steps
         </h3>
         <div className = {styles.container}>
           <div className = {styles.box}> 
