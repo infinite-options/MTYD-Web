@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {Link} from "react-router-dom";
 import {WebNavBar} from "../NavBar";
 import Menu from "../Menu";
+import {API_URL} from "../../reducers/constants";
 import styles from "./weeklyMenu.module.css"
 
 class WeeklyMenu extends Component {
@@ -10,7 +11,7 @@ class WeeklyMenu extends Component {
     }
 
   componentDidMount() {
-    const menuUrl = "https://kur4j57ved.execute-api.us-west-1.amazonaws.com/dev/api/v2/upcoming_menu"
+    const menuUrl = `${API_URL}upcoming_menu`
     fetch(menuUrl)
       .then((response) => response.json())
       .then((data) => this.processData(data.result));

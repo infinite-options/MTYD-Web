@@ -9,9 +9,9 @@ class MenuItem extends React.Component {
 
     return (
       <Fragment>
-        {x.map(menuitem => (
+        {x.map((menuitem, index) => (
           <div
-            key={menuitem.meal_uid}
+            key={index}
             className={styles.menuitemIndividual + " px-5"}
           >
             <div
@@ -26,10 +26,10 @@ class MenuItem extends React.Component {
               <div className={styles.menuElements} id={styles.eyeBtn}></div>
 
               {cartItems.length > 0 &&
-                cartItems.map(item => {
+                cartItems.map((item, index) => {
                   return (
                     item.menu_meal_id === menuitem.menu_meal_id && (
-                      <p
+                      <p key = {index}
                         style={{
                           textAlign: "center",
                           padding: "0px",
