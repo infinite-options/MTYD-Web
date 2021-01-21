@@ -69,7 +69,7 @@ class SocialSignUp extends React.Component {
         <WebNavBar />
         <div className={styles.wrap_container}>
           <div className={styles.container + " row"}>
-            <div className={"col-7 " + styles.userInfo}>
+            <div className={"col-7 " + styles.userInfo} style = {{padding: '110px 0px'}}>
               <h6 className={styles.subHeading}> User Information </h6>
               <div className={styles.inputContainer}>
                 <div className={styles.inputItem}>

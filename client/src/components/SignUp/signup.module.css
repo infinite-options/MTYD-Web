@@ -1,5 +1,5 @@
 .root {
-  height: 950px;
+  height: 100vh;
   width: 100%;
   background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
     url("../../images/landing.png");
@@ -13,7 +13,7 @@
 }
 .container {
   width: 800px;
-  height: 650px;
+  height: 715px;
   margin: 70px auto;
   border: 2px solid #ffa500;
   border-radius: 15px;
@@ -165,7 +165,7 @@
 .buttonContainer {
   width: 100%;
   padding: 0px 20px;
-  margin: 10px 10px;
+  margin: -30px 10px 10px;
   display: flex;
   justify-content: center;
 }

@@ -1,0 +1,189 @@
+.topBackground {
+  background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
+    url("./images/background1.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  height: 90vh;
+  width: inherit;
+}
+
+.centerSubtitleText {
+  text-align: center;
+  color: white;
+  font-size: 50px;
+  white-space: nowrap;
+  margin-top: 200px;
+}
+
+.centerSubText {
+  text-align: center;
+  color: white;
+  white-space: nowrap;
+  margin: 10px 0;
+}
+
+.signUpLink {
+  background-color: #ff9e19;
+  color: white;
+  width: max-content;
+  text-align: center;
+  padding: 6px 20px 10px 20px;
+  border-radius: 30px;
+  justify-self: center;
+  font-size: 16px;
+  margin-top: 30px;
+  cursor: pointer;
+}
+
+.gridDisplayCenter {
+  display: grid;
+  justify-content: center;
+  align-items: center;
+}
+
+.stepsContainer {
+  margin: 0 20px 0 20px;
+  flex: 1 1 20%;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  display: grid;
+}
+
+.stepsNumber {
+  float: left;
+  background-color: #ffba00;
+  padding: 8px 14px;
+  border-radius: 50%;
+  font-weight: bold;
+  margin-left: 150px;
+}
+
+.stepsImage {
+  margin: 0 auto 20px;
+}
+
+.stepsTitle {
+  float: left;
+  margin-top: 9px;
+  margin-left: 15px;
+  font-weight: bold;
+}
+
+.stepsText {
+  color: #979797;
+  font-size: 15px;
+  padding: 0 50px;
+}
+
+.couponContainer {
+  text-align: center;
+  margin: 5px 50px;
+  flex: 0 1 300px;
+  height: 30vh;
+  border-radius: 20px;
+  box-shadow: 0px 3px 6px #00000029;
+}
+
+.couponImage {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.couponText {
+  color: #979797;
+  font-size: 19px;
+  padding: 0 50px;
+}
+
+.partnerContainer {
+  text-align: center;
+  margin: 5px 50px;
+  flex: 0 1 300px;
+  height: 30vh;
+}
+
+.partnerImage {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  height: 100%;
+  width: inherit;
+}
+
+.imageContainer {
+  display: inline-block;
+  text-align: center;
+  margin: 5px 10px;
+  height: 40vh;
+  width: 271px;
+  border-radius: 20px;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.menuContainer {
+  display: inline-block;
+  text-align: center;
+  margin: 5px 10px;
+  height: 40vh;
+  width: 271px;
+  border-radius: 20px;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.menuEye {
+  opacity: 80%;
+  float: left;
+  height: 23%;
+  margin: 2%;
+}
+
+.signUpPopUpHide {
+  z-index: 1;
+  display: none;
+}
+
+.signUpPopUpShow {
+  height: 100%;
+  width: 100%;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  overflow: auto;
+  position: fixed;
+  display: grid;
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+.signUpContainer {
+  position: relative;
+  justify-self: center;
+  align-self: center;
+  display: block;
+  border: orange solid thick;
+  background-color: white;
+  border-radius: 20px;
+  height: 80vh;
+  width: 500px;
+  z-index: 2;
+}
+
+.itemName {
+  white-space: normal;
+}
+
+.carouselButtons {
+  color: white;
+  height: 50px;
+  border: none;
+  border-radius: 20px;
+  text-align: center;
+  padding: 0px 20px;
+  background-color: orange;
+  margin: 5px;
+}
+
+.carouselButtons:focus {
+  outline: none;
+}

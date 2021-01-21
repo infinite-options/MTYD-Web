@@ -15,6 +15,7 @@ import GoogleLogin from "react-google-login";
 import FacebookLogin from "react-facebook-login";
 import styles from "./landing.module.css";
 import Alert from "../Alert";
+import SocialLogin from "./socialLogin"
 import Logo from "./Logo.svg"
 class Landing extends React.Component {
   constructor() {
@@ -50,7 +51,7 @@ class Landing extends React.Component {
     //check for logedIn
     const customerId = Cookies.get("customer_uid");
     if (customerId) {
-      this.props.history.push("/select-meal");
+      // this.props.history.push("/select-meal");
     } else {
       let queryString = this.props.location.search;
       let urlParams = new URLSearchParams(queryString);
@@ -141,14 +142,19 @@ class Landing extends React.Component {
 
   render() {
     if (!this.state.mounted) {
-      return null;
+      return (
+        <div>
+          You are already signed in
+        </div>
+      );
     }
     return (
       <div className={styles.root}>
         <div className={styles.mainLogin}>
+            {/* <h2 style = {{float: 'right' , color: '#FFBA00', transform: 'rotate(45deg)', fontSize: '45px'}}>+</h2> */}
           <div className={styles.mealHeader}>
             <img style={{width: "65%", height:"65%"}} src={Logo}/>
-            <p>NUTRITION MADE EASY</p>
+            <p style = {{color: 'black'}}>NUTRITION MADE EASY</p>
             <p>LOCAL.ORGANIC.RESPONSIBLE</p>
           </div>
 
@@ -187,16 +193,17 @@ class Landing extends React.Component {
                   </a>
                 </span>
               </div>
-              <p
+              <a
+                href = ''
                 style={{
                   margin: "auto",
                   fontSize: "1rem",
-                  color: "white",
+                  color: "black",
                   float: "right"
                 }}
               >
                 Forgot Password?
-              </p>
+              </a>
             </div>
             <div className={styles.buttonContainer}>
               <button
@@ -220,7 +227,7 @@ class Landing extends React.Component {
             ></hr>
             <p
               style={{
-                color: "white",
+                color: "black",
                 textAlign: "center",
                 fontSize: "1rem",
                 paddingTop: "1.2rem"
@@ -239,7 +246,7 @@ class Landing extends React.Component {
                 padding: "0rem 8.5rem"
               }}
             >
-              <div className={styles.socialLogin}>
+              {/* <div className={styles.socialLogin}>
                 <GoogleLogin
                   clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
                   render={renderProps => (
@@ -276,7 +283,10 @@ class Landing extends React.Component {
                     ></i>
                   </button>
                 </div>
-              </div>
+              </div> */}
+
+              <SocialLogin />
+
             </div>
             <Alert />
           </div>

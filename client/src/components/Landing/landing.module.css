@@ -1,14 +1,16 @@
 .root {
-  height: 100vh;
+  height: inherit;
   width: inherit;
-  background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
-    url("../../images/landing.png");
-  /* background-image: url("../../images/landing.png"); */
+  /* background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
+    url("../../images/landing.png"); */
+  /* background-color: white; */
   background-size: cover;
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 20px;
 }
+
 .mainLogin {
   height: 100%;
 }
@@ -19,13 +21,13 @@
 }
 
 p:nth-of-type(1) {
-  font-size: 2.5rem;
+  font-size: 30px;
   color: white;
   padding: 0px 80px;
 }
 p:nth-of-type(2) {
   margin-top: 20px;
-  font-size: 18px;
+  font-size: 15px;
   color: #fdca3e;
   padding: 5px 40px;
   font-weight: 600;
@@ -122,8 +124,14 @@ p:nth-of-type(2) {
   border-radius: 18px;
   background-color: #ffffffd0;
   border: none;
+  box-shadow: 0px 3px 6px #00000029;
   /* margin-bottom: 5px; */
 }
+
+.loginSectionInput:focus {
+  outline: none;
+}
+
 .loginSectionInput > input {
   width: 85%;
   float: left;
@@ -132,6 +140,12 @@ p:nth-of-type(2) {
   height: 90%;
   border: none;
 }
+
+.loginSectionInput > input:hover {
+  outline: none;
+  border: none;
+}
+
 .loginSectionInput > a {
   cursor: pointer;
   height: 100%;

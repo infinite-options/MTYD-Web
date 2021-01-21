@@ -1,49 +1,117 @@
-import React from "react";
+import React, { Component } from 'react';
 import {Link} from "react-router-dom";
 import {WebNavBar} from "../NavBar";
 import Menu from "../Menu";
 import styles from "./about.module.css"
+import oliveGLogo from "./oliveGarden.png"
+import paradiseBayLogo from "./paradiseBay.png"
 
-const About = () => {
-  return (
-    <>
-      <div className = {styles.root}>
+class About extends Component {
+  state = {  }
+  render() { 
+    return ( 
+      <>
+      <div className = {styles.top}>
         <WebNavBar />
-        <Menu show={false} />
-      
-        <h1 style = {{textAlign: "center"}}>Nutrition Made Easy</h1>
-        <h5 style = {{textAlign: "center", padding: "0 20% 0 20%", color: "#999"}}>
-          MealsFor.me makes it easy to have highly nutritious meals curated from a variety of sources delivered strait to your door. 
-          That way you are always sure to have a nutritious meal at your fingertips coupled with a wide variety of cuisines and tastes. 
-          Order what you want and eat healty.
-        </h5>
-        <h3 style = {{textAlign: "center", color: "#ff5349"}}>
-          3 Easy Steps
-        </h3>
-        <div className = {styles.container}>
-          <div className = {styles.box}> 
-            <h5 className = {styles.stepsTitle}>1) Find a subscription that works for you</h5>
-            <h6 className = {styles.stepsText}>Pay weekly or get discounted pricing by pre-ordering</h6>
-          </div>
-          <div className = {styles.box}> 
-            <h5 className = {styles.stepsTitle}>2) Select a meal you want and click save</h5>
-            <h6 className = {styles.stepsText}>Nutritional facts on each meal are provided</h6>
-          </div>
-          <div className = {styles.box}> 
-            <h5 className = {styles.stepsTitle}>3) Heat and enjoy</h5>
-            <h6 className = {styles.stepsText}>Place old containers outside on your next delivery date</h6>
-          </div>
+        <div className = {styles.centerBox}>
+          <h2 style = {{fontWeight: 'bold'}}>OUR STORY</h2>
+          <p style = {{color: 'black', fontSize: '23px', textAlign: 'left', padding: '0px ', marginTop: '60px'}}> 
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut ero labore et dolore magna aliqua. 
+          Ut enim ad minim veniam, quis nostrud exercitation ullamco poriti laboris nisi ut aliquip ex ea commodo consequat.
+           Duis aute irure dolor in reprehenderit in uienply voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
+           Excepteur sint occaecat cupidatat norin proident, sunt in culpa qui officia deserunt mollit anim id est laborum. 
+           Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut ero labore et dolore magna aliqua. 
+           Ut enim ad minim veniam, quis nostrud exercitation ullamco poriti laboris nisi ut aliquip ex ea commodo consequat.
+          </p>
         </div>
-        <Link to="weekly-menu" className = {styles.centerLink}>
-          <h3>Browse our menu for this week</h3>
-        </Link>
-        <Link to = "/sign-up" className = {styles.centerLink}>
-          <h3>Sign Up</h3>
-        </Link>
+      </div>
+      <div style = {{width: '80%', margin: '410px auto 0px auto'}}>
+        <h2  >OUR CHEFS</h2>
+      </div>
+      <div className = {styles.centerPageBar}>
+        <div style = {{backgroundColor: 'white', height: '500px', width: '860px', float: 'left', margin: '75px 80px'}}></div>
+        <div style = {{float: 'left', marginTop: '75px', marginLeft: '20px'}}>
+          <h3 style = {{fontWeight: 'bold'}}>CHEF RAMANAND</h3>
+          <p style = {{color: 'black', fontSize: '23px', padding: '0px ', marginTop: '60px', width: '800px'}}> 
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut ero labore et dolore magna aliqua. 
+          Ut enim ad minim veniam, quis nostrud exercitation ullamco poriti laboris nisi ut aliquip ex ea commodo consequat.
+           Duis aute irure dolor in reprehenderit in uienply voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
+           Excepteur sint occaecat cupidatat norin proident, sunt in culpa qui officia deserunt mollit anim id est laborum. 
+           Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut ero labore et dolore magna aliqua. 
+           Ut enim ad minim veniam, quis nostrud exercitation ullamco poriti laboris nisi ut aliquip ex ea commodo consequat.
+          </p>
+        </div>
+      </div>
+      <div style = {{height: '70vh', width: '100%'}}>
+        <div style = {{backgroundColor: 'black', height: '500px', width: '860px', float: 'right', margin: '75px 80px'}}></div>
+        <div style = {{float: 'left', marginTop: '75px', marginLeft: '80px'}}>
+          <h3 style = {{fontWeight: 'bold'}}>CHEF RAMANAND</h3>
+          <p style = {{color: 'black', fontSize: '23px', padding: '0px ', marginTop: '60px', width: '800px'}}> 
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut ero labore et dolore magna aliqua. 
+          Ut enim ad minim veniam, quis nostrud exercitation ullamco poriti laboris nisi ut aliquip ex ea commodo consequat.
+           Duis aute irure dolor in reprehenderit in uienply voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
+           Excepteur sint occaecat cupidatat norin proident, sunt in culpa qui officia deserunt mollit anim id est laborum. 
+           Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut ero labore et dolore magna aliqua. 
+           Ut enim ad minim veniam, quis nostrud exercitation ullamco poriti laboris nisi ut aliquip ex ea commodo consequat.
+          </p>
+        </div>
       </div>
 
-    </>
-  );
-};
+      <div style = {{width: '90%', margin: '0px 80px'}}>
+        <h3 style = {{fontWeight: 'bold'}}>OUR PARTNER</h3>
+        <img src = {oliveGLogo} style = {{display: 'inline-block', height: '100px', margin: '30px'}}></img>
+        <img src = {paradiseBayLogo} style = {{display: 'inline-block', height: '100px', margin: '30px'}}></img>
+      </div>
+      <div style = {{width: '90%', margin: '0px 80px'}}>
+        <h3 style = {{fontWeight: 'bold'}}>PARTNER PROFILES</h3>
+        <div>
+          
+          <div className = {styles.partnerProfileContainer}>
+            <div style = {{display: 'grid'}}>
+              <img src = {oliveGLogo} className = {styles.partnerProfileLogo}></img>
+              <div style = {{backgroundColor: 'black', height: '315px', width: '515px', margin: 'auto'}}></div>
+              <p style = {{color: 'black', fontSize: '18px', padding: '0px ', margin: '40px auto 0 auto', width: '515px'}}> 
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut ero labore et dolore magna aliqua. 
+                Ut enim ad minim veniam, quis nostrud exercitation ullamco poriti laboris nisi ut aliquip ex ea commodo consequat.
+                Duis aute irure dolor in reprehenderit in uienply voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
+                Excepteur sint occaecat cupidatat norin proident, sunt in culpa qui officia deserunt mollit anim id est laborum. 
+              </p>
+            </div>
+          </div>
+          <div className = {styles.partnerProfileContainer}>
+            <div style = {{display: 'grid'}}>
+              <img src = {oliveGLogo} className = {styles.partnerProfileLogo}></img>
+              <div style = {{backgroundColor: 'black', height: '315px', width: '515px', margin: 'auto'}}></div>
+              <p style = {{color: 'black', fontSize: '18px', padding: '0px ', margin: '40px auto 0 auto', width: '515px'}}> 
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut ero labore et dolore magna aliqua. 
+                Ut enim ad minim veniam, quis nostrud exercitation ullamco poriti laboris nisi ut aliquip ex ea commodo consequat.
+                Duis aute irure dolor in reprehenderit in uienply voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
+                Excepteur sint occaecat cupidatat norin proident, sunt in culpa qui officia deserunt mollit anim id est laborum. 
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
 
+      <div className= {styles.questionsPageBar}>
+        <div style = {{width: '80%', margin: '410px auto 0px auto', display: 'grid'}}>
+        <h3 style = {{fontWeight: 'bold', margin: '80px 0px'}}>ASK A QUESTION</h3>
+        <textarea className = {styles.questionBox} placeholder = 'Type your question'>
+
+        </textarea>
+          <div style = {{display: 'inline-block', width: '50%'}}>
+            <input className = {styles.emailBox} type = 'email' placeholder = 'Email'>
+
+            </input>
+            <button className = {styles.sendButton}> Send </button>
+          </div>
+        
+        </div>
+        
+      </div>
+    </>
+     );
+  }
+}
+ 
 export default About;

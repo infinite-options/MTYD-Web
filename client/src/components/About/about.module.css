@@ -1,33 +1,76 @@
-.root {
+.top {
   height: 100vh;
   width: 100%;
-  background-color: #fff0c6;
+  background-color: #FFF0C6;
 }
 
-.container {
-  display: flex;
+.centerBox {
+  width: 80%;
+  background-color: white;
+  margin: auto;
+  height: 65vh;
+  border-radius: 20px;
+  margin-top: 550px;
+  box-shadow: 0px 3px 6px #00000029;
+  padding: 5% 10%;
 }
 
-.box {
-  padding: 25px;
-  flex-grow: 1;
-}
-
-.stepsTitle {
-  text-align: center;
-  color: #ff9e19;
-}
-
-.stepsText {
-  text-align: center;
-  padding: 0 25% 0 25%;
-  font-size: 15;
-  color: #999;
-}
-
-.centerLink {
-  display: inline-block;
+.centerPageBar {
+  height: 70vh;
   width: 100%;
-  text-align: center;
-  color: #ff5349;
+  background-color: rgba(255,165,0, 0.1);
+}
+
+.questionsPageBar {
+  height: 60vh;
+  width: 100%;
+  background-color: rgba(255,165,0, 0.1);
+}
+
+.partnerProfileContainer {
+  width: 600px;
+  height: 90vh;
+  display: inline-block;
+  justify-content: center;
+  align-items: center;
+  margin: 100px 120px 0px 120px;
+  border-radius: 20px;
+  border: thick solid #FFBA00;
+}
+
+.partnerProfileLogo {
+  height: 150px;
+  margin: auto;
+  z-index: 1;
+  background-color: white;
+  transform: translateY(-80px);
+  padding: 0px 20px;
+}
+
+.questionBox {
+  width: 50%;
+  border-radius: 20px;
+  height: 20vh;
+  padding: 20px;
+}
+
+.emailBox {
+  width: 70%;
+  border-radius: 20px;
+  height: 3vh;
+  padding: 0px 20px;
+  margin: 30px 0px 0px 0px;
+}
+
+.sendButton {
+  border-radius: 20px;
+  color: white;
+  background-color: orange;
+  padding: 5px 20px;
+  margin: 0px 0px 0px 50px;
+  border: none;
+}
+
+.sendButton:focus {
+  outline: none;
 }

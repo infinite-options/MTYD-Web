@@ -17,6 +17,7 @@ import {
 } from "../../reducers/actions/loginActions";
 import {WebNavBar} from "../NavBar";
 import styles from "./signup.module.css";
+import SocialSignUp from "../Landing/socialLogin"
 
 class SignUp extends React.Component {
   signUpSuccess = () => {
@@ -184,7 +185,16 @@ class SignUp extends React.Component {
                 >
                   SIGN UP
                 </button>
+                
               </div>
+              <div>
+                <hr
+                  style={{marginTop: "2rem", color: "#E392409D", width: "300px"}}
+                ></hr>
+                <h6 className = {styles.subHeading} style = {{textAlign: 'center', margin: '20px 0px'}}>OR SIGN UP WITH</h6>
+                <SocialSignUp />
+              </div>
+  
             </div>
             <div className={"col-5 " + styles.explore}>
               <div className={"row " + styles.centerBtn}>
@@ -192,6 +202,7 @@ class SignUp extends React.Component {
                 <button> START >></button>
               </div>
             </div>
+  
           </div>
         </div>
       </div>
