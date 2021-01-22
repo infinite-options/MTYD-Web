@@ -13,11 +13,13 @@ import {withRouter} from "react-router";
 import {Link} from "react-router-dom";
 import GoogleLogin from "react-google-login";
 import FacebookLogin from "react-facebook-login";
-import styles from "./landing.module.css";
+import styles from "./login.module.css";
 import Alert from "../Alert";
-import SocialLogin from "./socialLogin"
-import Logo from "./Logo.svg"
-class Landing extends React.Component {
+import SocialLogin from "../Landing/socialLogin"
+import {WebNavBar} from "../NavBar";
+
+
+class Login extends React.Component {
   constructor() {
     super();
     this.state = {
@@ -51,7 +53,7 @@ class Landing extends React.Component {
     //check for logedIn
     const customerId = Cookies.get("customer_uid");
     if (customerId) {
-      // this.props.history.push("/select-meal");
+      this.props.history.push("/select-meal");
     } else {
       let queryString = this.props.location.search;
       let urlParams = new URLSearchParams(queryString);
@@ -138,73 +140,72 @@ class Landing extends React.Component {
         </p>
       </div>
     );
-  };
+  };   
 
   render() {
     if (!this.state.mounted) {
       return (
-        <div>
-          
-        </div>
+        null
       );
     }
     return (
       <div className={styles.root}>
-        <div className={styles.mainLogin}>
-            {/* <h2 style = {{float: 'right' , color: '#FFBA00', transform: 'rotate(45deg)', fontSize: '45px'}}>+</h2> */}
-          <div className={styles.mealHeader}>
-            <img style={{width: "65%", height:"65%"}} src={Logo}/>
-            <p style = {{color: 'black'}}>NUTRITION MADE EASY</p>
-            <p>LOCAL.ORGANIC.RESPONSIBLE</p>
-          </div>
-
-          <div>
-            <div className={styles.loginSectionContainer}>
-              <div className={styles.loginSectionItem}>
-                <input
-                  type='text'
-                  placeholder='USER NAME'
-                  className={styles.loginSectionInput}
-                  value={this.props.email}
-                  onChange={e => {
-                    this.props.changeEmail(e.target.value);
-                  }}
-                />
-              </div>
-              <div className={styles.loginSectionItem}>
-                <span className={styles.loginSectionInput}>
+        <WebNavBar />
+        {/* <div className={styles.mealHeader}>
+          <p>NUTRITION MADE EASY</p>
+          <p>LOCAL.ORGANIC.RESPONSIBLE</p>
+        </div> */}
+        <div className={styles.wrap_container}>
+          <div className={styles.container + " row"}>
+            <div className={"col-7 " + styles.userInfo} style = {{padding: '105px 7.5px'}}>            
+            <div>
+              <div className={styles.loginSectionContainer}>
+              <h5 style = {{marginLeft: '90px', fontSize: '30px', color: '#FF9E19', fontWeight: 'bold'}}>LOGIN</h5>
+                <div className={styles.loginSectionItem}>
                   <input
-                    style={{marginBottom: "0px"}}
-                    type='password'
-                    id='password'
-                    placeholder='PASSWORD'
-                    value={this.props.password}
+                    type='text'
+                    placeholder='USER NAME'
+                    className={styles.loginSectionInput}
+                    value={this.props.email}
                     onChange={e => {
-                      this.props.changePassword(e.target.value);
+                      this.props.changeEmail(e.target.value);
                     }}
                   />
+                </div>
+                <div className={styles.loginSectionItem}>
+                  <span className={styles.loginSectionInput}>
+                    <input
+                      style={{marginBottom: "0px"}}
+                      type='password'
+                      id='password'
+                      placeholder='PASSWORD'
+                      value={this.props.password}
+                      onChange={e => {
+                        this.props.changePassword(e.target.value);
+                      }}
+                    />
 
-                  <a className={styles.passwordShow}>
-                    <i
-                      className='far fa-eye'
-                      id='togglePassword'
-                      onClick={this.viewPassword}
-                    ></i>
-                  </a>
-                </span>
+                    <a className={styles.passwordShow}>
+                      <i
+                        className='far fa-eye'
+                        id='togglePassword'
+                        onClick={this.viewPassword}
+                      ></i>
+                    </a>
+                  </span>
+                </div>
+                <a
+                  href = ''
+                  style={{
+                    marginLeft: '235px',
+                    fontSize: "1rem",
+                    color: "black",
+                    float: "right"
+                  }}
+                >
+                  Forgot Password?
+                </a>
               </div>
-              <a
-                href = ''
-                style={{
-                  margin: "auto",
-                  fontSize: "1rem",
-                  color: "black",
-                  float: "right"
-                }}
-              >
-                Forgot Password?
-              </a>
-            </div>
             <div className={styles.buttonContainer}>
               <button
                 className={styles.button}
@@ -246,49 +247,20 @@ class Landing extends React.Component {
                 padding: "0rem 8.5rem"
               }}
             >
-              {/* <div className={styles.socialLogin}>
-                <GoogleLogin
-                  clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
-                  render={renderProps => (
-                    <button
-                      className={styles.googleBtn}
-                      onClick={renderProps.onClick}
-                      disabled={renderProps.disabled}
-                    ></button>
-                  )}
-                  onSuccess={this.responseGoogle}
-                  onFailure={this.responseGoogle}
-                  isSignedIn={false}
-                  disabled={false}
-                  cookiePolicy={"single_host_origin"}
-                />
-                <FacebookLogin
-                  appId={process.env.REACT_APP_FACEBOOK_APP_ID}
-                  autoLoad={false}
-                  fields={"name,email,picture"}
-                  callback={this.responseFacebook}
-                  cssClass={styles.fbLogin}
-                  textButton=''
-                />
-                <div>
-                  <button
-                    onClick={() => {
-                      window.AppleID.auth.signIn();
-                    }}
-                    className={styles.appleLogin}
-                  >
-                    <i
-                      className='fa fa-apple'
-                      style={{fontSize: "28px", color: "white"}}
-                    ></i>
-                  </button>
-                </div>
-              </div> */}
-
               <SocialLogin />
 
             </div>
             <Alert />
+          </div>
+
+            </div>
+            <div className={"col-5 " + styles.explore}>
+              <div className={"row " + styles.centerBtn}>
+                <p>EXPLORE WITHOUT LOGIN</p>
+                <button> START >></button>
+              </div>
+            </div>
+  
           </div>
         </div>
       </div>
@@ -296,7 +268,7 @@ class Landing extends React.Component {
   }
 }
 
-Landing.propTypes = {
+Login.propTypes = {
   bypassLogin: PropTypes.func.isRequired,
   changeEmail: PropTypes.func.isRequired,
   changePassword: PropTypes.func.isRequired,
@@ -320,4 +292,5 @@ const functionList = {
   socialLoginAttempt
 };
 
-export default connect(mapStateToProps, functionList)(withRouter(Landing));
+
+export default connect(mapStateToProps, functionList)(withRouter(Login));

@@ -24,7 +24,7 @@ import AuthApi from "./components/AuthApi";
 import Cookies from "js-cookie";
 
 import createBrowserHistory from "history/createBrowserHistory";
-import WeeklyMenu from "./components/WeeklyMenu";
+import Login from "./components/Login"
 
 export const history = createBrowserHistory();
 
@@ -65,7 +65,7 @@ function App() {
             />
             <AppliedRoute exact path='/profile' component={Profile} />
             <AppliedRoute exact path='/select-meal' component={SelectMeal} />
-            <AppliedRoute exact path='/weekly-menu' component={WeeklyMenu} />
+            <AppliedRoute exact path='/login' component={Login} />
             <AppliedRoute path='*' component={NotFound} />
           </Switch>
         </Router>

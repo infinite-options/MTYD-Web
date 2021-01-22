@@ -156,10 +156,14 @@ class NavBar extends React.Component {
               )}
             </>
           ) : (
-            <a href='/'>
+            <Link to = '/login'>
               <img src={User} alt='User Logo' />
-              SIGN IN
-            </a>
+                SIGN IN
+            </Link>
+            // <a href='/'>
+            //   <img src={User} alt='User Logo' />
+            //   SIGN IN
+            // </a>
           )}
         </ul>
       </div>

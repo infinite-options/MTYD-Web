@@ -52,9 +52,9 @@
   transform: translateY(2px);
 }
 
-.narrowBtn {
+/* .narrowBtn {
   height: 50% !important;
-}
+} */
 .navContainer {
   display: flex;
   flex-flow: column;
