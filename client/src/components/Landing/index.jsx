@@ -143,8 +143,15 @@ class Landing extends React.Component {
   render() {
     if (!this.state.mounted) {
       return (
-        <div>
-          
+        <div style = {{display: 'grid', alignContent: 'center', justifyContent: 'center', margin: '100px 0px'}}>
+          <h6 style = {{textAlign: 'center'}}>You are already logged in</h6>
+          <div>
+            <h6 style = {{textAlign: 'center'}}>Click the following button to navigate to your meal plan</h6>
+            <Link to = '/meal-plan' style = {{borderRadius: '20px', backgroundColor: 'orange', width: 'fit-content', margin: 'auto', padding: '10px 15px'}}>
+              Meal Plan
+            </Link>
+          </div>
+
         </div>
       );
     }

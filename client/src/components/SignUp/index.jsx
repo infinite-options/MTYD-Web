@@ -1,4 +1,5 @@
 import React from "react";
+import {Link} from "react-router-dom";
 import PropTypes from "prop-types";
 import {connect} from "react-redux";
 import {
@@ -199,7 +200,9 @@ class SignUp extends React.Component {
             <div className={"col-5 " + styles.explore}>
               <div className={"row " + styles.centerBtn}>
                 <p>EXPLORE WITHOUT LOGIN</p>
-                <button> START >></button>
+                <Link to = '/select-meal'>
+                  <button> START >></button>
+                </Link>
               </div>
             </div>
   

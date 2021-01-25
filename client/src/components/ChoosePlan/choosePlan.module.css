@@ -73,7 +73,7 @@
 
 .mealButtonSelected {
   /* border: 2px solid #ee9043; */
-  background-color: #ee9043;
+  background-color: #FFBA00;
   outline: 0;
 }
 .mealButtonSelected:focus {

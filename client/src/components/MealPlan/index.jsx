@@ -207,7 +207,7 @@ const MealPlan = props => {
                       }
                     </p>
                     <p className={styles.title}>PAYMENT CARD:</p>
-                    <p>{purchase.cc_num}</p>
+                    <p>************{purchase.cc_num.substring(purchase.cc_num.length-4, purchase.cc_num.length)}</p>
                     {id + 1 !== purchases.length && (
                       <hr
                         style={{

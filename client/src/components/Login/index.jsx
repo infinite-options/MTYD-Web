@@ -257,7 +257,9 @@ class Login extends React.Component {
             <div className={"col-5 " + styles.explore}>
               <div className={"row " + styles.centerBtn}>
                 <p>EXPLORE WITHOUT LOGIN</p>
-                <button> START >></button>
+                <Link to = '/select-meal'>
+                  <button> START >></button>
+                </Link>
               </div>
             </div>
   
