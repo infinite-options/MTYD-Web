@@ -194,17 +194,9 @@ class Login extends React.Component {
                     </a>
                   </span>
                 </div>
-                <a
-                  href = ''
-                  style={{
-                    marginLeft: '235px',
-                    fontSize: "1rem",
-                    color: "black",
-                    float: "right"
-                  }}
-                >
-                  Forgot Password?
-                </a>
+                <Link to ='/forgot-password' style = {{marginLeft: '235px'}}>
+                  <h6 style = {{ fontSize: '1rem', color: "black", float: "right"}}> Forgot Password?</h6>
+              </Link>
               </div>
             <div className={styles.buttonContainer}>
               <button

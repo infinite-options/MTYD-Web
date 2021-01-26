@@ -200,17 +200,9 @@ class Landing extends React.Component {
                   </a>
                 </span>
               </div>
-              <a
-                href = ''
-                style={{
-                  margin: "auto",
-                  fontSize: "1rem",
-                  color: "black",
-                  float: "right"
-                }}
-              >
-                Forgot Password?
-              </a>
+              <Link to ='/forgot-password' style = {{margin: 'auto'}}>
+                  <h6 style = {{margin: 'auto', fontSize: '1rem', color: "black", float: "right"}}> Forgot Password?</h6>
+              </Link>
             </div>
             <div className={styles.buttonContainer}>
               <button

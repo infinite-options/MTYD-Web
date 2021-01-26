@@ -3,11 +3,15 @@ import PropTypes from "prop-types";
 import {connect} from "react-redux";
 import {withRouter} from "react-router";
 import {WebNavBar} from "../NavBar";
+import {API_URL} from "../../reducers/constants";
 import Menu from "../Menu";
 import {
   resetProfile,
   fetchOrderHistory
 } from "../../reducers/actions/profileActions";
+import {
+  changePassword,
+} from "../../reducers/actions/loginActions";
 import {resetSubscription} from "../../reducers/actions/subscriptionActions";
 import {resetLogin} from "../../reducers/actions/loginActions";
 
@@ -20,14 +24,17 @@ import {
   faSearch,
   faSignOutAlt
 } from "@fortawesome/free-solid-svg-icons";
-
+import axios from 'axios'
 import styles from "./profile.module.css";
 
 class Profile extends React.Component {
   constructor() {
     super();
     this.state = {
-      mounted: false
+      mounted: false,
+      customer_uid: '',
+      oldPassword: '',
+      newPassword: ''
     };
   }
 
@@ -47,12 +54,57 @@ class Profile extends React.Component {
       // console.log(customerFirstName)
       this.props.fetchOrderHistory(customer_uid);
       this.setState({
-        mounted: true
+        mounted: true,
+        customer_uid: customer_uid
       });
     } else {
       // Reroute to log in page
       this.props.history.push("/");
     }
+  }
+
+  changePassword = (value, x) => {
+
+    if(x === 1) {
+      this.setState({
+        oldPassword: value
+      })
+    }
+    if(x ===2) {
+      this.setState({
+        newPassword: value
+      })
+    }
+
+    console.log(this.state.oldPassword)
+    console.log(this.state.newPassword)
+  }
+
+  updatePassword = () => {
+    console.log(this.state.customer_uid)
+    console.log(this.state.oldPassword)
+    console.log(this.state.newPassword)
+
+    axios.post(API_URL+'change_password', 
+      {
+      customer_uid: this.state.customer_uid,
+      old_password: this.state.oldPassword,
+      new_password: this.state.newPassword
+      }  
+    )
+    .then(res => {
+      console.log(res)
+    })
+    .catch(err => {
+      console.log(err)
+    })
+
+
+    // {
+    //   "customer_uid":"100-000001",
+    //   "old_password":"old",
+    //   "new_password":"new"
+    // }
   }
 
   render() {
@@ -167,6 +219,27 @@ class Profile extends React.Component {
             </div>
           </div>
         </div>
+
+        <input 
+          type = 'password'
+          placeholder = 'Old Password'
+          value = {this.props.oldPassword}
+          onChange={e => {
+            this.changePassword(e.target.value, 1);
+          }}
+        />
+
+        <input 
+          type = 'password'
+          placeholder = 'New Password'
+          value = {this.props.newPassword}
+          onChange={e => {
+            this.changePassword(e.target.value, 2);
+          }}
+        />
+
+        <button onClick = {this.updatePassword}> Submit </button>
+
       </>
     );
   }
@@ -175,18 +248,24 @@ class Profile extends React.Component {
 Profile.propTypes = {
   resetProfile: PropTypes.func.isRequired,
   fetchOrderHistory: PropTypes.func.isRequired,
-  orderHistory: PropTypes.array.isRequired
+  orderHistory: PropTypes.array.isRequired,
+  changePassword: PropTypes.func.isRequired,
+
 };
 
 const mapStateToProps = state => ({
-  orderHistory: state.profile.orderHistory
+  orderHistory: state.profile.orderHistory,
+  oldPassword: state.login.oldPassword,
+  newPassword: state.login.newPassword
+
 });
 
 const functionList = {
   resetLogin,
   resetProfile,
   resetSubscription,
-  fetchOrderHistory
+  fetchOrderHistory,
+  changePassword
 };
 
 export default connect(mapStateToProps, functionList)(withRouter(Profile));

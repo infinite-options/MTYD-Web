@@ -134,16 +134,6 @@ class NavBar extends React.Component {
           </Link>
           {this.state.login ? (
             <>
-              {this.props.history.location.pathname !== "/Profile" ? (
-                <a href='/Profile' className={styles.profileIconWrapper}>
-                  <input
-                    className={styles.profileIcon}
-                    readOnly
-                    value={this.state.iconName}
-                  />
-                  <p>PROFILE</p>
-                </a>
-              ) : (
                 <a
                   className={styles.profileIconWrapper}
                   onClick={this.logOut}
@@ -153,7 +143,6 @@ class NavBar extends React.Component {
                   LOGOUT&nbsp;
                   <i className='fa fa-sign-out'> </i>
                 </a>
-              )}
             </>
           ) : (
             <Link to = '/login'>

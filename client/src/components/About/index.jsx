@@ -58,7 +58,7 @@ class About extends Component {
       </div>
 
       <div style = {{width: '90%', margin: '0px 80px'}}>
-        <h3 style = {{fontWeight: 'bold'}}>OUR PARTNER</h3>
+        <h3 style = {{fontWeight: 'bold'}}>OUR PARTNERS</h3>
         <img src = {oliveGLogo} style = {{display: 'inline-block', height: '100px', margin: '30px'}}></img>
         <img src = {paradiseBayLogo} style = {{display: 'inline-block', height: '100px', margin: '30px'}}></img>
       </div>

@@ -19,6 +19,7 @@ import SelectMeal from "./components/SelectMeal";
 import About from "./components/About";
 import NotFound from "./components/NotFound";
 import Home from "./components/Home";
+import ForgotPassword from "./components/RecoverPassword"
 import "./App.css";
 import AuthApi from "./components/AuthApi";
 import Cookies from "js-cookie";
@@ -66,6 +67,7 @@ function App() {
             <AppliedRoute exact path='/profile' component={Profile} />
             <AppliedRoute exact path='/select-meal' component={SelectMeal} />
             <AppliedRoute exact path='/login' component={Login} />
+            <AppliedRoute exact path='/forgot-password' component={ForgotPassword} />
             <AppliedRoute path='*' component={NotFound} />
           </Switch>
         </Router>

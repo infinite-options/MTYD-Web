@@ -452,10 +452,22 @@ export const submitPasswordSignUp = (
             mobile_refresh_token: "FALSE"
           };
           console.log(JSON.stringify(object));
+          
           axios
             .post(API_URL + "createAccount", object)
             .then(res => {
               console.log(res);
+              axios.post(API_URL+'email_verification', 
+              {
+              email: object.email
+              }  
+                )
+                .then(res => {
+                  console.log(res)
+                })
+                .catch(err => {
+                  console.log(err)
+                })
               dispatch({
                 type: SUBMIT_SIGNUP
               });
@@ -469,6 +481,7 @@ export const submitPasswordSignUp = (
                 console.log(err.response);
               }
             });
+
         }
       })
       .catch(err => {

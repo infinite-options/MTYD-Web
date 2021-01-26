@@ -19,10 +19,12 @@ import {
 import {WebNavBar} from "../NavBar";
 import styles from "./signup.module.css";
 import SocialSignUp from "../Landing/socialLogin"
+import {API_URL} from "../../reducers/constants";
+import axios from 'axios'
 
 class SignUp extends React.Component {
   signUpSuccess = () => {
-    this.props.history.push("/");
+    this.props.history.push("/login");
   };
 
   render() {
