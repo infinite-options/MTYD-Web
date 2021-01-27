@@ -223,7 +223,7 @@ class Profile extends React.Component {
         <input 
           type = 'password'
           placeholder = 'Old Password'
-          value = {this.props.oldPassword}
+          value = {this.state.oldPassword}
           onChange={e => {
             this.changePassword(e.target.value, 1);
           }}
@@ -232,7 +232,7 @@ class Profile extends React.Component {
         <input 
           type = 'password'
           placeholder = 'New Password'
-          value = {this.props.newPassword}
+          value = {this.state.newPassword}
           onChange={e => {
             this.changePassword(e.target.value, 2);
           }}
