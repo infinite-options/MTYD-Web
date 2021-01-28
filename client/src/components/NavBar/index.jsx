@@ -94,6 +94,7 @@ class NavBar extends React.Component {
     this.props.resetLogin(() => {
       // Reroute to log in page
       this.props.history.push("/");
+      window.location.reload();
     });
   };
   componentDidMount() {

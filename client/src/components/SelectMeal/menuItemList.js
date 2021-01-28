@@ -420,7 +420,8 @@ class MenuItemList extends Component {
         items: skipData,
         purchase_id: this.state.purchaseID,
         menu_date: this.state.myDate,
-        delivery_day: this.state.deliveryDay
+        // delivery_day: this.state.deliveryDay
+        delivery_day: 'SKIP'
       };
       axios
         .post(
