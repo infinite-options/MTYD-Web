@@ -76,6 +76,27 @@ export const changePassword = newPassword => dispatch => {
   });
 };
 
+export const forgotPassword = (email) => dispatch => {
+  axios.get(API_URL + 'reset_password?email=' + email)
+         .then(res =>{
+             console.log(res)
+             if(res.status === 200) {
+              //  console.log(res)
+               console.log('temp password sent')
+               dispatch(setAlert("TempPassword", "A temporary password has been sent to " + email));
+             } else if (res.status === 204) {
+               console.log('account doesnt exist')
+              dispatch(setAlert("NoAccount", "There is no account with the email " + email));
+             } else {
+               console.log('some other error')
+               dispatch(setAlert("TempPasswordError", "An error has occured. Please try again later."));
+             }
+         })
+         .catch(err => {
+             console.log(err)
+         })
+}
+
 export const loginAttempt = (email, password, callback) => dispatch => {
   // Get salt for account
   axios

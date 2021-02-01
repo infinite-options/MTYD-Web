@@ -7,7 +7,8 @@ import {
   changeEmail,
   changePassword,
   loginAttempt,
-  socialLoginAttempt
+  socialLoginAttempt,
+  forgotPassword
 } from "../../reducers/actions/loginActions";
 import {withRouter} from "react-router";
 import {Link} from "react-router-dom";
@@ -18,14 +19,29 @@ import Alert from "../Alert";
 import SocialLogin from "../Landing/socialLogin"
 import {WebNavBar} from "../NavBar";
 
-
 class Login extends React.Component {
   constructor() {
     super();
     this.state = {
       mounted: false,
-      error: ""
+      error: "",
+      loginDisplay: 'flex',
+      forgotPasswordDisplay: 'none'
     };
+  }
+
+  toggleDisplay = () => {
+    if(this.state.loginDisplay === 'flex') {
+      this.setState({
+        loginDisplay: 'none',
+        forgotPasswordDisplay: 'flex'
+      })
+    } else {
+      this.setState({
+        loginDisplay: 'flex',
+        forgotPasswordDisplay: 'none'
+      })
+    }
   }
 
   successLogin = hasPurchases => {
@@ -50,6 +66,12 @@ class Login extends React.Component {
   };
 
   componentDidMount() {
+    if(this.props.location.state !== undefined) {
+      // console.log('forgot Password')
+      this.toggleDisplay()
+    }
+
+    // console.log(foo) // "bar"
     //check for logedIn
     const customerId = Cookies.get("customer_uid");
     if (customerId) {
@@ -156,7 +178,7 @@ class Login extends React.Component {
           <p>LOCAL.ORGANIC.RESPONSIBLE</p>
         </div> */}
         <div className={styles.wrap_container}>
-          <div className={styles.container + " row"}>
+          <div className={styles.container + " row"} style = {{display: this.state.loginDisplay}}>
             <div className={"col-7 " + styles.userInfo} style = {{padding: '105px 7.5px'}}>            
             <div>
               <div className={styles.loginSectionContainer}>
@@ -194,9 +216,10 @@ class Login extends React.Component {
                     </a>
                   </span>
                 </div>
-                <Link to ='/forgot-password' style = {{marginLeft: '235px'}}>
+                
+                <a style = {{marginLeft: '235px', cursor: 'pointer'}} onClick = {this.toggleDisplay}>
                   <h6 style = {{ fontSize: '1rem', color: "black", float: "right"}}> Forgot Password?</h6>
-              </Link>
+              </a>
               </div>
             <div className={styles.buttonContainer}>
               <button
@@ -254,7 +277,59 @@ class Login extends React.Component {
                 </Link>
               </div>
             </div>
-  
+              
+          </div>
+          <div className={styles.container + " row"} style = {{zIndex: '1', display: this.state.forgotPasswordDisplay}}>
+
+          <div className={"col-7 " + styles.userInfo} style = {{padding: '200px 7.5px'}}>            
+            <div>
+              <div className={styles.loginSectionContainer}>
+              <h5 style = {{marginLeft: '90px', fontSize: '30px', color: '#FF9E19', fontWeight: 'bold'}}>Forgot Password</h5>
+                <div className={styles.loginSectionItem}>
+                  <input
+                    type='text'
+                    placeholder='EMAIL'
+                    className={styles.loginSectionInput}
+                    value={this.props.email}
+                    onChange={e => {
+                      this.props.changeEmail(e.target.value);
+                    }}
+                  />
+                </div>
+                
+              </div>
+            <div className={styles.buttonContainer} style = {{marginBottom: '100px'}}>
+              <button
+                className={styles.button}
+                onClick = {this.toggleDisplay}
+              >
+                BACK
+              </button>
+              <button
+                className={styles.button}
+                onClick={() => {
+                  this.props.forgotPassword(
+                    this.props.email,
+                  );
+                }}
+              >
+                SEND
+              </button>
+            </div>
+            
+          </div>
+          <Alert />
+            </div>
+
+
+            <div className={"col-5 " + styles.explore}>
+                <div className={"row " + styles.centerBtn}>
+                  <p>EXPLORE WITHOUT LOGIN</p>
+                  <Link to = '/select-meal'>
+                    <button> START >></button>
+                  </Link>
+                </div>
+              </div>
           </div>
         </div>
       </div>
@@ -268,6 +343,7 @@ Login.propTypes = {
   changePassword: PropTypes.func.isRequired,
   loginAttempt: PropTypes.func.isRequired,
   socialLoginAttempt: PropTypes.func.isRequired,
+  forgotPassword: PropTypes.func.isRequired,
   email: PropTypes.string.isRequired,
   password: PropTypes.string.isRequired
 };
@@ -283,7 +359,8 @@ const functionList = {
   changeEmail,
   changePassword,
   loginAttempt,
-  socialLoginAttempt
+  socialLoginAttempt,
+  forgotPassword
 };
 
 

@@ -7,7 +7,8 @@ import {
   changeEmail,
   changePassword,
   loginAttempt,
-  socialLoginAttempt
+  socialLoginAttempt,
+  forgotPassword
 } from "../../reducers/actions/loginActions";
 import {withRouter} from "react-router";
 import {Link} from "react-router-dom";
@@ -17,12 +18,13 @@ import styles from "./landing.module.css";
 import Alert from "../Alert";
 import SocialLogin from "./socialLogin"
 import Logo from "./Logo.svg"
+import { ThemeConsumer } from "react-bootstrap/esm/ThemeProvider";
 class Landing extends React.Component {
   constructor() {
     super();
     this.state = {
       mounted: false,
-      error: ""
+      error: "",
     };
   }
 
@@ -200,7 +202,7 @@ class Landing extends React.Component {
                   </a>
                 </span>
               </div>
-              <Link to ='/forgot-password' style = {{margin: 'auto'}}>
+              <Link style = {{margin: 'auto'}} to={{ pathname: '/login', state: { forgotPassword: 'from Home'} }}>
                   <h6 style = {{margin: 'auto', fontSize: '1rem', color: "black", float: "right"}}> Forgot Password?</h6>
               </Link>
             </div>
@@ -245,45 +247,6 @@ class Landing extends React.Component {
                 padding: "0rem 8.5rem"
               }}
             >
-              {/* <div className={styles.socialLogin}>
-                <GoogleLogin
-                  clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
-                  render={renderProps => (
-                    <button
-                      className={styles.googleBtn}
-                      onClick={renderProps.onClick}
-                      disabled={renderProps.disabled}
-                    ></button>
-                  )}
-                  onSuccess={this.responseGoogle}
-                  onFailure={this.responseGoogle}
-                  isSignedIn={false}
-                  disabled={false}
-                  cookiePolicy={"single_host_origin"}
-                />
-                <FacebookLogin
-                  appId={process.env.REACT_APP_FACEBOOK_APP_ID}
-                  autoLoad={false}
-                  fields={"name,email,picture"}
-                  callback={this.responseFacebook}
-                  cssClass={styles.fbLogin}
-                  textButton=''
-                />
-                <div>
-                  <button
-                    onClick={() => {
-                      window.AppleID.auth.signIn();
-                    }}
-                    className={styles.appleLogin}
-                  >
-                    <i
-                      className='fa fa-apple'
-                      style={{fontSize: "28px", color: "white"}}
-                    ></i>
-                  </button>
-                </div>
-              </div> */}
-
               <SocialLogin />
 
             </div>
@@ -301,6 +264,7 @@ Landing.propTypes = {
   changePassword: PropTypes.func.isRequired,
   loginAttempt: PropTypes.func.isRequired,
   socialLoginAttempt: PropTypes.func.isRequired,
+  forgotPassword: PropTypes.func.isRequired,
   email: PropTypes.string.isRequired,
   password: PropTypes.string.isRequired
 };
@@ -316,7 +280,8 @@ const functionList = {
   changeEmail,
   changePassword,
   loginAttempt,
-  socialLoginAttempt
+  socialLoginAttempt,
+  forgotPassword
 };
 
 export default connect(mapStateToProps, functionList)(withRouter(Landing));

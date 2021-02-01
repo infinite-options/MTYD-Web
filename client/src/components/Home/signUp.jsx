@@ -1,23 +1,24 @@
 import React, { Component } from 'react';
+import { ThemeConsumer } from 'react-bootstrap/esm/ThemeProvider';
 import SignUp from '../Landing/index'
 import styles from './home.module.css'
 
 class SignUpHome extends Component {
     state = { 
         displayCheck: false,
-        toggleSignUp: styles.signUpPopUpHide
+        toggleSignUp: styles.signUpPopUpHide,
      }
 
      toggleDisplay = () => {
          if(this.state.displayCheck === false) {
             this.setState({
                 toggleSignUp: styles.signUpPopUpShow,
-                displayCheck: true
+                displayCheck: true,
             })
          }else{
             this.setState({
                 toggleSignUp: styles.signUpPopUpHide,
-                displayCheck: false
+                displayCheck: false,
             })
          }
          
@@ -26,7 +27,7 @@ class SignUpHome extends Component {
     render() { 
         return (
             <React.Fragment>
-                <a className = {styles.signUpLink} onClick = {this.toggleDisplay}>Start Your Subsciption</a>  
+                <a className = {styles.signUpLink} onClick = {this.toggleDisplay}>Start Your Subscription</a>  
                 <div className = {this.state.toggleSignUp}>
                     <div className = {styles.signUpContainer}>
                         
@@ -41,7 +42,7 @@ class SignUpHome extends Component {
                             cursor: 'pointer'}} 
                             
                             onClick = {this.toggleDisplay}>+</a>
-                        <SignUp />
+                        <SignUp value = {this.state.value}/>
                     </div>
                 </div>
                 

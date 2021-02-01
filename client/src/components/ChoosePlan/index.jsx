@@ -84,6 +84,22 @@ class ChoosePlan extends React.Component {
             console.log(err.response);
           }
         });
+        axios.get(API_URL + 'Profile/' + customer_uid)
+        .then(res => {
+          // console.log(res.data.result[0])
+          let data = res.data.result[0]
+          this.props.changeAddressFirstName(data.customer_first_name)
+          this.props.changeAddressLastName(data.customer_last_name)
+          this.props.changeAddressStreet(data.customer_address)
+          this.props.changeAddressUnit(data.customer_unit)
+          this.props.changeAddressCity(data.customer_city)
+          this.props.changeAddressState(data.customer_state)
+          this.props.changeAddressZip(data.customer_zip)
+          this.props.changeAddressPhone(data.customer_phone_num)
+        })
+        .catch(err => {
+          console.log(err)
+        })
     }
     // Check for logged in
     else if (
@@ -97,6 +113,22 @@ class ChoosePlan extends React.Component {
         .split("=")[1];
       this.props.fetchProfileInformation(customer_uid);
       this.props.fetchPlans();
+      axios.get(API_URL + 'Profile/' + customer_uid)
+        .then(res => {
+          // console.log(res.data.result[0])
+          let data = res.data.result[0]
+          this.props.changeAddressFirstName(data.customer_first_name)
+          this.props.changeAddressLastName(data.customer_last_name)
+          this.props.changeAddressStreet(data.customer_address)
+          this.props.changeAddressUnit(data.customer_unit)
+          this.props.changeAddressCity(data.customer_city)
+          this.props.changeAddressState(data.customer_state)
+          this.props.changeAddressZip(data.customer_zip)
+          this.props.changeAddressPhone(data.customer_phone_num)
+        })
+        .catch(err => {
+          console.log(err)
+        })
       this.setState({
         mounted: true
       });
@@ -104,6 +136,7 @@ class ChoosePlan extends React.Component {
       // Reroute to log in page
       this.props.history.push("/");
     }
+
   }
 
   mealsDelivery = () => {
