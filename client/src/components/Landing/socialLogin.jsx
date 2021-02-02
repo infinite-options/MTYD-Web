@@ -3,10 +3,10 @@ import PropTypes from "prop-types";
 import Cookies from "js-cookie";
 import {connect} from "react-redux";
 import {
-  bypassLogin,
-  changeEmail,
-  changePassword,
-  loginAttempt,
+  // bypassLogin,
+  // changeEmail,
+  // changePassword,
+  // loginAttempt,
   socialLoginAttempt
 } from "../../reducers/actions/loginActions";
 import {withRouter} from "react-router";
@@ -16,19 +16,14 @@ import styles from "./landing.module.css";
 
 
 class SocialLogin extends Component {
-    state = {  }
 
-    successLogin = hasPurchases => {
-        if (hasPurchases) {
-          this.props.history.push("/select-meal");
-        } else {
-          this.props.history.push("/choose-plan");
-        }
-      };
+  successLogin = page => {
+    this.props.history.push(`/${page}`);
+  };
 
-      socialSignUp = () => {
-        this.props.history.push("social-sign-up");
-      };
+  socialSignUp = () => {
+    this.props.history.push("social-sign-up");
+  };
 
     componentDidMount() {
         window.AppleID.auth.init({
@@ -155,17 +150,19 @@ SocialLogin.propTypes = {
     password: PropTypes.string.isRequired
   };
   
-  const mapStateToProps = state => ({
-    email: state.login.email,
-    password: state.login.password,
-    error: state.login.error
-  });
+  // const mapStateToProps = state => ({
+  //   email: state.login.email,
+  //   password: state.login.password,
+  //   error: state.login.error
+  // });
+
+  const mapStateToProps = state => ({});
   
   const functionList = {
-    bypassLogin,
-    changeEmail,
-    changePassword,
-    loginAttempt,
+    // bypassLogin,
+    // changeEmail,
+    // changePassword,
+    // loginAttempt,
     socialLoginAttempt
   };
  
