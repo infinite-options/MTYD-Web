@@ -29,7 +29,7 @@ class Login extends React.Component {
       forgotPasswordDisplay: 'none'
     };
   }
-
+  
   toggleDisplay = () => {
     if(this.state.loginDisplay === 'flex') {
       this.setState({
@@ -44,13 +44,9 @@ class Login extends React.Component {
     }
   }
 
-  successLogin = hasPurchases => {
-    if (hasPurchases) {
-      this.props.history.push("/select-meal");
-    } else {
-      this.props.history.push("/choose-plan");
-    }
-  };
+  successLogin = page => {
+    this.props.history.push(`/${page}`);
+  }; 
 
   viewPassword() {
     var x = document.getElementById("password");

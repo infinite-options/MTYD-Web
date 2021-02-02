@@ -27,23 +27,31 @@ import {setAlert} from "./alertActions";
 
 // Auxillary functions
 
-export const preCallback = (customer_uid, callback) => {
-  axios
-    .get(API_URL + "customer_lplp", {
-      params: {
-        customer_uid: customer_uid
-      }
-    })
-    .then(res => {
-      console.log(res);
-      callback(res.data.result !== undefined);
-    })
-    .catch(err => {
-      console.log(err);
-      if (err.response) {
-        console.log(err.response);
-      }
-    });
+export const preCallback = (customerInfo, callback) => {
+  console.log('Check login role',customerInfo);
+  const loginRole = customerInfo.role;
+  if(loginRole.toLowerCase() === "customer") {
+    // Logic to change customer page based on if purchased before not needed
+    // axios
+    //   .get(`${API_URL}customer_lplp`, {
+    //     params: {
+    //       customer_uid: customerInfo.customer_uid
+    //     }
+    //   })
+    //   .then(res => {
+    //     console.log(res);
+    //     callback(res.data.result !== undefined);
+    //   })
+    //   .catch(err => {
+    //     console.log(err);
+    //     if (err.response) {
+    //       console.log(err.response);
+    //     }
+    //   });
+    callback('meal-plan');
+  } else {
+    callback('admin');
+  }
 };
 
 export const resetLogin = callback => dispatch => {
@@ -152,7 +160,7 @@ export const loginAttempt = (email, password, callback) => dispatch => {
                   dispatch({
                     type: SUBMIT_PASSWORD
                   });
-                  preCallback(customerInfo.customer_uid, callback);
+                  preCallback(customerInfo, callback);
                 } else if (res.data.code === 406 || res.data.code === 404) {
                   console.log("Invalid credentials");
                   dispatch(setAlert("LoginError", res.data.message));
@@ -248,14 +256,14 @@ export const socialLoginAttempt = (
           })
           .then(res => {
             console.log(res);
-            preCallback(customerInfo.customer_uid, successCallback);
+            preCallback(customerInfo, successCallback);
           })
           .catch(err => {
             if (err.response) {
               console.log(err.response);
             }
             console.log(err);
-            preCallback(customerInfo.customer_uid, successCallback);
+            preCallback(customerInfo, successCallback);
           });
       } else if (res.data.code === 404) {
         dispatch({
@@ -294,7 +302,7 @@ export const bypassLogin = (email, hashedPassword, callback) => dispatch => {
         console.log("cookie", document.cookie);
         document.cookie = "customer_uid=" + customerInfo.customer_uid;
         console.log("cookie", document.cookie);
-        preCallback(customerInfo.customer_uid, callback);
+        preCallback(customerInfo, callback);
       }
     })
     .catch(err => {

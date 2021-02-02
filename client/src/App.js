@@ -3,6 +3,7 @@ import {Provider} from "react-redux";
 import store from "./reducers/store";
 import {
   BrowserRouter as Router,
+  Route,
   // Route, Redirect,
   Switch
 } from "react-router-dom";
@@ -27,6 +28,19 @@ import Cookies from "js-cookie";
 import createBrowserHistory from "history/createBrowserHistory";
 import Login from "./components/Login"
 
+import AdminNavBar from './components/Admin/AdminNavBar'
+import AdminHome from './components/Admin/Home';
+import AdminCreateMenu from './components/Admin/CreateMenu';
+import AdminEditMeal from './components/Admin/EditMeal';
+import AdminCreateMeal from './components/Admin/CreateMeal';
+import AdminEditMealRecipe from './components/Admin/EditMealRecipe';
+import AdminPlansCoupons from './components/Admin/PlansCoupons';
+import AdminOrderIngredients from './components/Admin/OrdersIngredients';
+import AdminCustomers from './components/Admin/Customers';
+import AdminGoogleAnalytics from './components/Admin/GoogleAnalytics';
+import AdminNotfications from './components/Admin/Notifications';
+import AdminZones from './components/Admin/Zones';
+
 export const history = createBrowserHistory();
 
 function App() {
@@ -42,6 +56,8 @@ function App() {
   React.useEffect(() => {
     readCookie();
   }, []);
+
+  const adminNavBar = <AdminNavBar />;
 
   return (
     <div className='root'>
@@ -68,6 +84,50 @@ function App() {
             <AppliedRoute exact path='/select-meal' component={SelectMeal} />
             <AppliedRoute exact path='/login' component={Login} />
             <AppliedRoute exact path='/forgot-password' component={ForgotPassword} />
+            <Route exact path="/admin">
+              {adminNavBar}
+              <AdminHome />
+            </Route>
+            <Route exact path="/admin/create-menu">
+              {adminNavBar}
+              <AdminCreateMenu />
+            </Route>
+            <Route exact path="/admin/edit-meal">
+              {adminNavBar}
+              <AdminEditMeal />
+            </Route>
+            <Route exact path="/admin/create-meal">
+              {adminNavBar}
+              <AdminCreateMeal />
+            </Route>
+            <Route exact path="/admin/edit-meal-recipe">
+              {adminNavBar}
+              <AdminEditMealRecipe />
+            </Route>
+            <Route exact path="/admin/plans-coupons">
+              {adminNavBar}
+              <AdminPlansCoupons />
+            </Route>
+            <Route exact path="/admin/order-ingredients">
+              {adminNavBar}
+              <AdminOrderIngredients />
+            </Route>
+            <Route exact path="/admin/customers">
+              {adminNavBar}
+              <AdminCustomers />
+            </Route>
+            <Route exact path="/admin/google-analytics">
+              {adminNavBar}
+              <AdminGoogleAnalytics />
+            </Route>
+            <Route exact path="/admin/notifications">
+              {adminNavBar}
+              <AdminNotfications />
+            </Route>
+            <Route exact path="/admin/zones">
+              {adminNavBar}
+              <AdminZones />
+            </Route>
             <AppliedRoute path='*' component={NotFound} />
           </Switch>
         </Router>
