@@ -316,7 +316,7 @@ const MealPlan = props => {
                                     className={styles.font10}
                                     style={{marginTop: '0px'}}
                                   >
-                                    {cc_num}
+                                  ************{cc_num.substring(cc_num.length-4,cc_num.length)}
                                   </p>
                                 </div>
                               </div>

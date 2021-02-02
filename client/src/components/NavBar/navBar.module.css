@@ -42,10 +42,18 @@
   font-weight: 500;
 }
 
-.navbar > ul a:hover {
+/* .navbar > ul a:hover {
   color: var(--light-color);
   cursor: pointer;
   background-color: #5d7ebb;
+  border-radius: 20px;
+} */
+
+.navbar > ul a:hover {
+  color: var(--light-color);
+  color: #FF9400;
+  cursor: pointer;
+  /* background-color: #5d7ebb; */
   border-radius: 20px;
 }
 .navbar > ul a:active {
