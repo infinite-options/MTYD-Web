@@ -21,16 +21,18 @@ class MenuItemList extends Component {
       data: [],
       cartItems: [],
       addOnItems: [],
+      addOnAmount: 0,
       meals: [],
       totalCount: 0,
       selectValue: "SURPRISE",
       saveButton: false,
       popUp: styles.popUpHide,
       popUpDisplay: false,
+      popUpText: 'Hello'
     };
   }
 
-  toggleDisplay = () => {
+  toggleDisplay = (option) => {
     if(this.state.popUpDisplay === false) {
        this.setState({
            popUp: styles.popUpShow,
@@ -42,7 +44,25 @@ class MenuItemList extends Component {
            popUpDisplay: false,
        })
     }
-    
+    if(option === "SAVE") {
+      let popUpText = 'You have saved your meals for this week. '
+      if (this.state.addOnAmount > 0) {
+        popUpText = popUpText.concat('You will be charged for ' + this.state.addOnAmount + ' Add On items at a later date')
+      }
+      this.setState({
+        popUpText
+      })
+    } else if (option === "SURPRISE") {
+      let popUpText = 'You will be delivered ' + this.state.totalMeals + ' random meals this week.'
+      this.setState({
+        popUpText
+      })
+    } else if (option === "SKIP") {
+      let popUpText = 'You will not be delivered meals for this week'
+      this.setState({
+        popUpText
+      })
+    }
 }
 
   async componentDidMount() {
@@ -114,6 +134,7 @@ class MenuItemList extends Component {
         let addOnArr = [];
         let delivery_Day = "";
         let myCounter = 0;
+        let addOnCount = 0;
         let pulledSelection = mealSelected.filter(
           item =>
             item.sel_purchase_id === this.state.purchaseID &&
@@ -173,6 +194,7 @@ class MenuItemList extends Component {
       
               if (myItem.name !== "SKIP" && myItem.name !== "SURPRISE") {
                 addOnArr.push(pushingObj);
+                addOnCount = addOnCount + myItem.qty;
                 // return this.setState({selectValue: "SAVE"});
               // } else {
               //   let select_val = myItem.name;
@@ -195,6 +217,7 @@ class MenuItemList extends Component {
           cartItems: [...cartItemsArr],
           addOnItems: [...addOnArr],
           totalCount: myCounter,
+          addOnAmount: addOnCount,
           displayCount: "block"
         });
       })
@@ -241,6 +264,7 @@ class MenuItemList extends Component {
     let addOnArr = [];
     let delivery_Day = "";
     let myCounter = 0;
+    let addOnCount = 0;
     let pulledSelection = this.state.mealSelected.filter(
       item =>
         item.sel_purchase_id === planName &&
@@ -298,6 +322,7 @@ class MenuItemList extends Component {
   
           if (myItem.name !== "SKIP" && myItem.name !== "SURPRISE") {
             addOnArr.push(pushingObj);
+            addOnCount = addOnCount + myItem.qty;
           //   return this.setState({selectValue: "SAVE"});
           // } else {
           //   let select_val = myItem.name;
@@ -319,6 +344,7 @@ class MenuItemList extends Component {
       cartItems: [...cartItemsArr],
       addOnItems: [...addOnArr],
       totalCount: myCounter,
+      addOnAmount: addOnCount,
       displayCount: "block"
     });
   };
@@ -342,6 +368,7 @@ class MenuItemList extends Component {
     let addOnArr = [];
     let delivery_Day = "";
     let myCounter = 0;
+    let addOnCount = 0;
     let pulledSelection = this.state.mealSelected.filter(
       item =>
         item.sel_purchase_id === this.state.purchaseID &&
@@ -394,6 +421,7 @@ class MenuItemList extends Component {
           
           if (myItem.name !== "SKIP" && myItem.name !== "SURPRISE") {
             addOnArr.push(pushingObj);
+            addOnCount = addOnCount + myItem.qty;
           //   return this.setState({selectValue: "SAVE"});
           // } else {
           //   let select_val = myItem.name;
@@ -420,7 +448,8 @@ class MenuItemList extends Component {
       myDate: event.target.value,
       cartItems: [...cartItemsArr],
       addOnItems: [...addOnArr],
-      totalCount: myCounter
+      totalCount: myCounter,
+      addOnAmount: addOnCount,
     });
   };
 
@@ -570,6 +599,7 @@ class MenuItemList extends Component {
             console.log(error);
           });
 
+          this.toggleDisplay("SURPRISE")
 
         return this.setState({
           totalCount: 0,
@@ -627,10 +657,13 @@ class MenuItemList extends Component {
           console.log(error);
         });
 
+      this.toggleDisplay("SKIP")
+
       return this.setState({
         totalCount: 0,
         cartItems: [],
-        addOnItems: []
+        addOnItems: [],
+        addOnAmount: 0,
       });
     } else {
       const myarr = [];
@@ -695,7 +728,7 @@ class MenuItemList extends Component {
           console.log(error);
         });
 
-        // this.toggleDisplay()
+        this.toggleDisplay('SAVE')
     }
   };
 
@@ -737,9 +770,10 @@ class MenuItemList extends Component {
         cartItems.push({...menuitem, count: 1});
       }
 
-      console.log(cartItems)
+      // console.log(cartItems)
       this.setState({
         addOnItems: cartItems,
+        addOnAmount: this.state.addOnAmount + 1,
         selectValue:
           this.state.totalCount != this.state.totalMeals &&
           this.state.totalCount != 0 &&
@@ -793,6 +827,7 @@ class MenuItemList extends Component {
           }
           this.setState({
             addOnItems: cartItems,
+            addOnAmount: this.state.addOnAmount - 1,
             selectValue:
               this.state.totalCount != this.state.totalMeals &&
               this.state.totalCount != 0 &&
@@ -807,10 +842,11 @@ class MenuItemList extends Component {
       ) {
         this.setState({
           addOnItems: cartItems.filter(x => x.menu_uid !== menuitem.menu_uid),
+          addOnAmount: this.state.addOnAmount - 1,
         });
       }
     });
-    console.log(cartItems)
+    // console.log(cartItems)
   };
 
   render() {
@@ -875,7 +911,7 @@ class MenuItemList extends Component {
         <div className = {this.state.popUp}>
               <div className = {styles.popUpContainer}>
 
-                <h6>Temporary text</h6>
+                <h6 style = {{margin: '20px 25px'}}>{this.state.popUpText}</h6>
 
                 <a className = {styles.popUpButton} onClick = {this.toggleDisplay}>OK</a>
               </div>

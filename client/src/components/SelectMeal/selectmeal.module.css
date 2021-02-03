@@ -472,7 +472,7 @@
   border: orange solid thick;
   background-color: white;
   border-radius: 20px;
-  height: 30vh;
+  height: max-content;
   width: 500px;
   z-index: 2;
 }
@@ -491,4 +491,5 @@
   padding: 0px 10px 4px;
   cursor: pointer;
   margin: auto;
+  margin-bottom: 15px;
 }
