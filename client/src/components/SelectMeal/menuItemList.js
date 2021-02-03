@@ -24,9 +24,26 @@ class MenuItemList extends Component {
       meals: [],
       totalCount: 0,
       selectValue: "SURPRISE",
-      saveButton: false
+      saveButton: false,
+      popUp: styles.popUpHide,
+      popUpDisplay: false,
     };
   }
+
+  toggleDisplay = () => {
+    if(this.state.popUpDisplay === false) {
+       this.setState({
+           popUp: styles.popUpShow,
+           popUpDisplay: true,
+       })
+    }else{
+       this.setState({
+           popUp: styles.popUpHide,
+           popUpDisplay: false,
+       })
+    }
+    
+}
 
   async componentDidMount() {
     this.loadMealPlans();
@@ -61,6 +78,7 @@ class MenuItemList extends Component {
     )
       .then(response => response.json())
       .then(json => {
+        console.log(json)
         let menuData = [...json.result];
         let myStr = menuData[0].delivery_days;
         let temp = myStr.replace(/[^a-zA-Z ]/g, "").split(" ");
@@ -155,14 +173,14 @@ class MenuItemList extends Component {
       
               if (myItem.name !== "SKIP" && myItem.name !== "SURPRISE") {
                 addOnArr.push(pushingObj);
-                return this.setState({selectValue: "SAVE"});
-              } else {
-                let select_val = myItem.name;
-                let myoutput =
-                  select_val[0].toUpperCase() +
-                  select_val.substring(1, select_val.length).toUpperCase();
+                // return this.setState({selectValue: "SAVE"});
+              // } else {
+              //   let select_val = myItem.name;
+              //   let myoutput =
+              //     select_val[0].toUpperCase() +
+              //     select_val.substring(1, select_val.length).toUpperCase();
       
-                return this.setState({selectValue: myoutput});
+              //   return this.setState({selectValue: myoutput});
               }
             });
     
@@ -208,7 +226,8 @@ class MenuItemList extends Component {
           .slice(0, 2)
           .replace(/\s/g, "");
         this.setState({
-          totalMeals: mystr,
+          // totalMeals: mystr,
+          totalMeals: parseInt(mystr),
           purchaseID: mealItem.purchase_id,
           saveButton: true
         });
@@ -277,14 +296,14 @@ class MenuItemList extends Component {
   
           if (myItem.name !== "SKIP" && myItem.name !== "SURPRISE") {
             addOnArr.push(pushingObj);
-            return this.setState({selectValue: "SAVE"});
-          } else {
-            let select_val = myItem.name;
-            let myoutput =
-              select_val[0].toUpperCase() +
-              select_val.substring(1, select_val.length).toUpperCase();
+          //   return this.setState({selectValue: "SAVE"});
+          // } else {
+          //   let select_val = myItem.name;
+          //   let myoutput =
+          //     select_val[0].toUpperCase() +
+          //     select_val.substring(1, select_val.length).toUpperCase();
   
-            return this.setState({selectValue: myoutput});
+          //   return this.setState({selectValue: myoutput});
           }
         });
 
@@ -372,14 +391,14 @@ class MenuItemList extends Component {
           
           if (myItem.name !== "SKIP" && myItem.name !== "SURPRISE") {
             addOnArr.push(pushingObj);
-            return this.setState({selectValue: "SAVE"});
-          } else {
-            let select_val = myItem.name;
-            let myoutput =
-              select_val[0].toUpperCase() +
-              select_val.substring(1, select_val.length).toUpperCase();
+          //   return this.setState({selectValue: "SAVE"});
+          // } else {
+          //   let select_val = myItem.name;
+          //   let myoutput =
+          //     select_val[0].toUpperCase() +
+          //     select_val.substring(1, select_val.length).toUpperCase();
   
-            return this.setState({selectValue: myoutput});
+          //   return this.setState({selectValue: myoutput});
           }
         });
 
@@ -494,9 +513,29 @@ class MenuItemList extends Component {
             item_uid: ""
           }
         ];
+
+        const addOns = []
+        this.state.addOnItems.map(meal => {
+          addOns.push({
+            qty: meal.count,
+            name: meal.meal_name,
+            price: meal.meal_price,
+            item_uid: meal.meal_uid
+          });
+          return meal;
+        });
+
         const data1 = {
           is_addon: false,
           items: supriseData,
+          purchase_id: this.state.purchaseID,
+          menu_date: this.state.myDate,
+          delivery_day: this.state.deliveryDay
+        };
+
+        const addOnData1 = {
+          is_addon: true,
+          items: addOns,
           purchase_id: this.state.purchaseID,
           menu_date: this.state.myDate,
           delivery_day: this.state.deliveryDay
@@ -513,6 +552,20 @@ class MenuItemList extends Component {
           .catch(error => {
             console.log(error);
           });
+
+          axios
+          .post(
+            `${API_URL}meals_selection`,
+            addOnData1
+          )
+          .then(response => {
+            console.log(response);
+          })
+          .catch(error => {
+            console.log(error);
+          });
+
+
         return this.setState({
           totalCount: 0,
           cartItems: []
@@ -527,6 +580,7 @@ class MenuItemList extends Component {
           item_uid: ""
         }
       ];
+      
       const data2 = {
         is_addon: false,
         items: skipData,
@@ -535,6 +589,15 @@ class MenuItemList extends Component {
         // delivery_day: this.state.deliveryDay
         delivery_day: 'SKIP'
       };
+
+      const addOnData2 = {
+        is_addon: true,
+        items: [],
+        purchase_id: this.state.purchaseID,
+        menu_date: this.state.myDate,
+        delivery_day: this.state.deliveryDay
+      };
+
       axios
         .post(
           `${API_URL}meals_selection`,
@@ -546,9 +609,23 @@ class MenuItemList extends Component {
         .catch(error => {
           console.log(error);
         });
+
+        axios
+        .post(
+          `${API_URL}meals_selection`,
+          addOnData2
+        )
+        .then(response => {
+          console.log(response);
+        })
+        .catch(error => {
+          console.log(error);
+        });
+
       return this.setState({
         totalCount: 0,
-        cartItems: []
+        cartItems: [],
+        addOnItems: []
       });
     } else {
       const myarr = [];
@@ -612,6 +689,8 @@ class MenuItemList extends Component {
         .catch(error => {
           console.log(error);
         });
+
+        // this.toggleDisplay()
     }
   };
 
@@ -756,6 +835,7 @@ class MenuItemList extends Component {
           purchaseID={this.state.purchaseID}
           mealSelected={this.state.mealSelected}
         />
+
         <div style = {{overflow: 'auto', height: '720px'}}>
             <div className={styles.menuItemsWrapper}>
               <MenuItem
@@ -786,6 +866,15 @@ class MenuItemList extends Component {
                 />
           </div>
         </div>
+
+        <div className = {this.state.popUp}>
+              <div className = {styles.popUpContainer}>
+
+                <h6>Temporary text</h6>
+
+                <a className = {styles.popUpButton} onClick = {this.toggleDisplay}>OK</a>
+              </div>
+          </div>
         
       </div>
     );
