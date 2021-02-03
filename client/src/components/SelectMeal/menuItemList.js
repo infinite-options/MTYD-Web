@@ -187,9 +187,11 @@ class MenuItemList extends Component {
           }
 
         }
+        
 
         return this.setState({
-          deliveryDay: delivery_Day !== "" ? delivery_Day : "Sunday",
+          deliveryDay: delivery_Day !== "" && delivery_Day !== "SKIP" ? delivery_Day : "Sunday",
+          // deliveryDay: delivery_Day !== ""  ? delivery_Day : "Sunday",
           cartItems: [...cartItemsArr],
           addOnItems: [...addOnArr],
           totalCount: myCounter,
@@ -312,7 +314,8 @@ class MenuItemList extends Component {
     }
 
     return this.setState({
-      deliveryDay: delivery_Day !== "" ? delivery_Day : "Sunday",
+      deliveryDay: delivery_Day !== "" && delivery_Day !== "SKIP" ? delivery_Day : "Sunday",
+      // deliveryDay: delivery_Day !== "" ? delivery_Day : "Sunday",
       cartItems: [...cartItemsArr],
       addOnItems: [...addOnArr],
       totalCount: myCounter,
@@ -412,7 +415,8 @@ class MenuItemList extends Component {
     }
 
     return this.setState({
-      deliveryDay: delivery_Day !== "" ? delivery_Day : "Sunday",
+      deliveryDay: delivery_Day !== "" && delivery_Day !== "SKIP" ? delivery_Day : "Sunday",
+      // deliveryDay: delivery_Day !== "" ? delivery_Day : "Sunday",
       myDate: event.target.value,
       cartItems: [...cartItemsArr],
       addOnItems: [...addOnArr],
@@ -440,7 +444,7 @@ class MenuItemList extends Component {
         menu_date: this.state.myDate,
         delivery_day: deliver
       };
-
+      
       axios
         .post(
           `${API_URL}meals_selection`,
@@ -540,6 +544,7 @@ class MenuItemList extends Component {
           menu_date: this.state.myDate,
           delivery_day: this.state.deliveryDay
         };
+        console.log(this.state.deliveryDay)
       
         axios
           .post(
