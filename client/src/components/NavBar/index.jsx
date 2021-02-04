@@ -135,6 +135,11 @@ class NavBar extends React.Component {
           </Link>
           {this.state.login ? (
             <>
+
+                <Link to='/profile' className={styles.narrowBtn}>
+                  PROFILE
+                </Link>
+
                 <a
                   className={styles.profileIconWrapper}
                   onClick={this.logOut}

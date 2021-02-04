@@ -84,6 +84,28 @@ export const changePassword = newPassword => dispatch => {
   });
 };
 
+export const changeOldPassword = (customerID ,oldPassword, newPassword, confirmPassword) => dispatch => {
+  if(newPassword !== confirmPassword) {
+    dispatch(setAlert("ConfirmNewPassword", "Please confirm that your password matches"));
+  } else {
+    axios.post(API_URL+'change_password', 
+      {
+      customer_uid: customerID,
+      old_password: oldPassword,
+      new_password: newPassword
+      }  
+    )
+    .then(res => {
+      console.log(res)
+      dispatch(setAlert("ChangePassword", "Your password has been changed"));
+    })
+    .catch(err => {
+      console.log(err)
+      dispatch(setAlert("ChangePasswordError", "An error has occured please try again later"));
+    })
+  }
+}
+
 export const forgotPassword = (email) => dispatch => {
   axios.get(API_URL + 'reset_password?email=' + email)
          .then(res =>{

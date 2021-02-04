@@ -11,6 +11,7 @@ import {
 } from "../../reducers/actions/profileActions";
 import {
   changePassword,
+  changeOldPassword
 } from "../../reducers/actions/loginActions";
 import {resetSubscription} from "../../reducers/actions/subscriptionActions";
 import {resetLogin} from "../../reducers/actions/loginActions";
@@ -25,6 +26,8 @@ import {
   faSignOutAlt
 } from "@fortawesome/free-solid-svg-icons";
 import axios from 'axios'
+import Alert from '../Alert'
+import {setAlert} from "../../reducers/actions/alertActions"
 import styles from "./profile.module.css";
 
 class Profile extends React.Component {
@@ -34,7 +37,8 @@ class Profile extends React.Component {
       mounted: false,
       customer_uid: '',
       oldPassword: '',
-      newPassword: ''
+      newPassword: '',
+      newPassword2: ''
     };
   }
 
@@ -75,29 +79,36 @@ class Profile extends React.Component {
         newPassword: value
       })
     }
+    if(x === 3) {
+      this.setState({
+        newPassword2: value
+      })
+    }
 
-    console.log(this.state.oldPassword)
-    console.log(this.state.newPassword)
+    // console.log(this.state.oldPassword)
+    // console.log(this.state.newPassword)
   }
 
   updatePassword = () => {
-    console.log(this.state.customer_uid)
-    console.log(this.state.oldPassword)
-    console.log(this.state.newPassword)
+    // console.log(this.state.customer_uid)
+    // console.log(this.state.oldPassword)
+    // console.log(this.state.newPassword)
 
-    axios.post(API_URL+'change_password', 
-      {
-      customer_uid: this.state.customer_uid,
-      old_password: this.state.oldPassword,
-      new_password: this.state.newPassword
-      }  
-    )
-    .then(res => {
-      console.log(res)
-    })
-    .catch(err => {
-      console.log(err)
-    })
+    // axios.post(API_URL+'change_password', 
+    //   {
+    //   customer_uid: this.state.customer_uid,
+    //   old_password: this.state.oldPassword,
+    //   new_password: this.state.newPassword
+    //   }  
+    // )
+    // .then(res => {
+    //   console.log(res)
+    //   setAlert("ChangePassword", "Your password has been changed")
+    //   // dispatch(setAlert("ChangePassword", "Your password has been changed"));
+    // })
+    // .catch(err => {
+    //   console.log(err)
+    // })
 
 
     // {
@@ -116,7 +127,7 @@ class Profile extends React.Component {
       <>
         <WebNavBar />
         <Menu show={false} />
-        <div className={styles.root}>
+        {/* <div className={styles.root}>
           <div className={styles.mealHeader}>
             <div className={styles.headerItemContainer}>
               <div className={styles.headerItem}>
@@ -208,7 +219,7 @@ class Profile extends React.Component {
               <div className={styles.orderHistoryItemContianer}>
                 <div className={styles.orderHistorySubItem}>
                   {/* <img alt-="Menu Item"/> */}
-                  <div> Image </div>
+                  {/* <div> Image </div>
                 </div>
                 <div className={styles.orderHistorySubItem}>
                   <p> Title </p>
@@ -218,27 +229,55 @@ class Profile extends React.Component {
               </div>
             </div>
           </div>
+        </div> */}
+        <div className  = {styles.root}>
+          <div style = {{display: 'block', width: '300px'}}>
+            <h6 style = {{margin: '5px', color: 'orange', fontWeight: 'bold', fontSize: '25px'}}>Change Password</h6>
+            <input 
+              className = {styles.changePasswordInput}
+              type = 'password'
+              placeholder = 'Old Password'
+              value = {this.state.oldPassword}
+              onChange={e => {
+                this.changePassword(e.target.value, 1);
+              }}
+            />
+
+            <input 
+              className = {styles.changePasswordInput}
+              type = 'password'
+              placeholder = 'New Password'
+              value = {this.state.newPassword}
+              onChange={e => {
+                this.changePassword(e.target.value, 2);
+              }}
+            />
+
+            <input 
+              className = {styles.changePasswordInput}
+              type = 'password'
+              placeholder = 'Confirm New Password'
+              value = {this.state.newPassword2}
+              onChange={e => {
+                this.changePassword(e.target.value, 3);
+              }}
+            />
+
+            <button className = {styles.changePasswordButton} 
+              onClick = {() => {
+                this.props.changeOldPassword(
+                  this.state.customer_uid,
+                  this.state.oldPassword,
+                  this.state.newPassword,
+                  this.state.newPassword2
+                );
+              }}
+              > Submit </button>
+            <Alert/>
+          </div>
+          
         </div>
-
-        <input 
-          type = 'password'
-          placeholder = 'Old Password'
-          value = {this.state.oldPassword}
-          onChange={e => {
-            this.changePassword(e.target.value, 1);
-          }}
-        />
-
-        <input 
-          type = 'password'
-          placeholder = 'New Password'
-          value = {this.state.newPassword}
-          onChange={e => {
-            this.changePassword(e.target.value, 2);
-          }}
-        />
-
-        <button onClick = {this.updatePassword}> Submit </button>
+        
 
       </>
     );
@@ -250,7 +289,7 @@ Profile.propTypes = {
   fetchOrderHistory: PropTypes.func.isRequired,
   orderHistory: PropTypes.array.isRequired,
   changePassword: PropTypes.func.isRequired,
-
+  changeOldPassword: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
@@ -265,7 +304,8 @@ const functionList = {
   resetProfile,
   resetSubscription,
   fetchOrderHistory,
-  changePassword
+  changePassword,
+  changeOldPassword
 };
 
 export default connect(mapStateToProps, functionList)(withRouter(Profile));
