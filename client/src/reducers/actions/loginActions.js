@@ -56,10 +56,6 @@ export const preCallback = (customerInfo, callback) => {
 
 export const resetLogin = callback => dispatch => {
   document.cookie = "customer_uid=1;max-age=0";
-  document.cookie = "customer_last_name=1;max-age=0";
-  document.cookie = "customer_first_name=1;max-age=0";
-  document.cookie = "customer_email=1;max-age=0";
-  document.cookie = "customer_social_media=1;max-age=0";
   if (typeof callback !== "undefined") {
     callback();
   }

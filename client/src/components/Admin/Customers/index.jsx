@@ -15,7 +15,9 @@ import {withRouter} from "react-router";
 
 const initialState = {
   mounted: false,
-  customers: [],
+  customersByName: [], // Sorted by Name
+  customersById: [], // Sorted by Id
+  customersByEmail: [], // Sorted by Email
   customerId: '',
   purchaseId: '',
   paymentId: '',
@@ -31,7 +33,9 @@ function reducer(state, action) {
     case 'FETCH_CUSTOMERS':
       return {
         ...state,
-        customers: action.payload,
+        customersByName: action.payload.byName,
+        customersById: action.payload.byId,
+        customersByEmail: action.payload.byEmail,
       }
     case 'SELECT_CUSTOMER':
       return {
@@ -61,7 +65,29 @@ function Customers({history, ...props}) {
         .split(";")
         .some(item => item.trim().startsWith("customer_uid="))
     ) {
-      dispatch({ type: 'MOUNT' });
+      // Logged in
+      let customer_uid = document.cookie
+        .split("; ")
+        .find(row => row.startsWith("customer_uid"))
+        .split("=")[1];
+      axios
+      .get(`${API_URL}Profile/${customer_uid}`)
+      .then((response) => {
+        const role = response.data.result[0].role.toLowerCase();
+        if(role === 'admin') {
+          dispatch({ type: 'MOUNT' });
+        } else {
+          history.push('/meal-plan');
+        }
+      })
+      .catch((err) => {
+        if (err.response) {
+          // eslint-disable-next-line no-console
+          console.log(err.response);
+        }
+        // eslint-disable-next-line no-console
+        console.log(err);
+      });
     } else {
       // Reroute to log in page
       history.push("/");
@@ -72,7 +98,10 @@ function Customers({history, ...props}) {
     axios
       .get(`${API_URL}customer_infos`)
       .then((response) => {
-        const customers_api = response.data.result;
+        // Response should be sorted by id
+        const customers_id = response.data.result;
+        const customers_api = [...customers_id] ;
+        // Make a copy, sort by name
         customers_api.sort((eltA, eltB) => {
           let result = -descendingComparator(eltA, eltB, 'customer_first_name');
           if(result !== 0) {
@@ -85,7 +114,17 @@ function Customers({history, ...props}) {
           result = -descendingComparator(eltA, eltB, 'customer_email');
           return result;
         })
-        dispatch({ type: 'FETCH_CUSTOMERS', payload: customers_api });
+        // Make a copy, sort by email
+        const customers_email = [...customers_id];
+        customers_email.sort((eltA, eltB) => {
+          let result = -descendingComparator(eltA, eltB, 'customer_email');
+          return result;
+        })
+        dispatch({ type: 'FETCH_CUSTOMERS', payload: {
+          byName: customers_api,
+          byId: customers_id,
+          byEmail: customers_email,
+         }});
       })
       .catch((err) => {
         if (err.response) {
@@ -126,10 +165,10 @@ function Customers({history, ...props}) {
             <Col>
               <Form>
                 <Form.Group as={Row}>
-                  <Form.Label column sm='2'>
+                  <Form.Label column sm='1'>
                     Customers
                   </Form.Label>
-                  <Col sm='6'>
+                  <Col sm='3'>
                     <Form.Control
                       as='select'
                       value={state.customerId}
@@ -137,15 +176,61 @@ function Customers({history, ...props}) {
                         (event) => selectCustomer(event.target.value)
                       }
                     >
-                      <option value="" hidden> Choose customer </option>
+                      <option value="" hidden> Choose customer by ID</option>
                       {
-                        state.customers.map(
+                        state.customersById.map(
+                          (customer) => (
+                            <option
+                              key={customer.customer_uid}
+                              value={customer.customer_uid}
+                            >
+                              {`${customer.customer_uid}`}
+                            </option>
+                          )
+                        )
+                      }
+                    </Form.Control>
+                  </Col>
+                  <Col sm='3'>
+                    <Form.Control
+                      as='select'
+                      value={state.customerId}
+                      onChange={
+                        (event) => selectCustomer(event.target.value)
+                      }
+                    >
+                      <option value="" hidden> Choose customer by name</option>
+                      {
+                        state.customersByName.map(
                           (customer) => (
                             <option
                               key={customer.customer_uid}
                               value={customer.customer_uid}
                             >
                               {`${customer.customer_first_name} ${customer.customer_last_name} ${customer.customer_email}`}
+                            </option>
+                          )
+                        )
+                      }
+                    </Form.Control>
+                  </Col>
+                  <Col sm='3'>
+                    <Form.Control
+                      as='select'
+                      value={state.customerId}
+                      onChange={
+                        (event) => selectCustomer(event.target.value)
+                      }
+                    >
+                      <option value="" hidden> Choose customer by email</option>
+                      {
+                        state.customersByEmail.map(
+                          (customer) => (
+                            <option
+                              key={customer.customer_uid}
+                              value={customer.customer_uid}
+                            >
+                              {`${customer.customer_email}`}
                             </option>
                           )
                         )
