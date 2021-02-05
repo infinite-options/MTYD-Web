@@ -6,6 +6,10 @@ import { sortedArray } from '../../../reducers/helperFuncs';
 import {
   Table, TableHead, TableSortLabel, TableBody, TableRow, TableCell
 } from '@material-ui/core';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faTrashAlt, 
+} from '@fortawesome/free-solid-svg-icons';
 
 const initialState = {
   customerActivity: [],
@@ -31,13 +35,31 @@ function reducer(state, action) {
         }
       }
     default:
-      return state
+      return state;
   }
 }
 
 function LatestActivity() {
   const customerContext = useContext(CustomerContext);
   const [state, dispatch] = useReducer(reducer, initialState);
+
+  const cancelPurchase = (purchaseId) => {
+    axios
+      .put(`${API_URL}cancel_purchase`,{
+
+      })
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((err) => {
+        if(err.response) {
+          // eslint-disable-next-line no-console
+          console.log(err.response);
+        }
+        // eslint-disable-next-line no-console
+        console.log(err);
+      })
+  }
 
   useEffect(() => {
     if(customerContext.state.customerId !== '') {
@@ -127,6 +149,7 @@ function LatestActivity() {
                 Purchase Status
               </TableSortLabel>
             </TableCell>
+            <TableCell> Cancel Subscription </TableCell>
             <TableCell>
               Meal Plan ID
             </TableCell>
@@ -223,6 +246,20 @@ function LatestActivity() {
                     <TableCell> {activity.customer_phone_num} </TableCell>
                     <TableCell> {activity.purchase_uid} </TableCell>
                     <TableCell> {activity.purchase_status} </TableCell>
+                    <TableCell>
+                      <button
+                        className={'icon-button'}
+                        onClick={
+                          () => {
+                            cancelPurchase(activity.purchase_uid)
+                          }
+                        }
+                      >
+                        <FontAwesomeIcon
+                          icon={faTrashAlt}
+                        />
+                      </button>
+                    </TableCell>
                     <TableCell> {activity.items[0].item_uid} </TableCell>
                     <TableCell> {activity.items[0].name} </TableCell>
                     <TableCell> {activity.delivery_first_name} </TableCell>

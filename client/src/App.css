@@ -55,6 +55,17 @@ body {
   height: var(--navBarHeight);
 }
 
+/* General icon buttons*/
+.icon-button {
+  background-color: inherit;
+  border: none;
+}
+
+.novSpace {
+  margin: 0;
+  padding: 0;
+}
+
 /* Choose your Meal */
 
 .mealMain {
