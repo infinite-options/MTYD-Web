@@ -29,6 +29,7 @@ import axios from 'axios'
 import Alert from '../Alert'
 import {setAlert} from "../../reducers/actions/alertActions"
 import styles from "./profile.module.css";
+import ChangePassword from "../ChangePassword"
 
 class Profile extends React.Component {
   constructor() {
@@ -274,6 +275,7 @@ class Profile extends React.Component {
               }}
               > Submit </button>
             <Alert/>
+            <ChangePassword/>
           </div>
           
         </div>

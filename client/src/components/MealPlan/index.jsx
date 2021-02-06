@@ -21,6 +21,8 @@ import prepay from '../ChoosePlan/static/prepay.png';
 import delivery from '../ChoosePlan/static/delivery.png';
 import ChangeMealPlan from './ChangeModals/ChangeMealPlan';
 import ChangeUserInfo from './ChangeModals/ChangeUserInfo';
+import ChangePassword from '../ChangePassword'
+import axios from 'axios';
 
 const MealPlan = props => {
   //check for logged in user
@@ -39,6 +41,13 @@ const MealPlan = props => {
   // we can replace hooks by store.subscribe(listener)
 
   const [modal, setModal] = useState(null);
+  const [changePassword, setChangePassword] = useState(
+  <>
+    <div>
+    </div>
+  </>
+  );
+
   const modalShow = [
     <ChangeMealPlan isShow={true} changeOpen={() => setModal(null)} />,
     <ChangeUserInfo isShow={true} changeOpen={() => setModal(null)} />,
@@ -56,6 +65,16 @@ const MealPlan = props => {
       } catch (err) {
         console.log(err);
       }
+      axios.get(process.env.REACT_APP_SERVER_BASE_URI + 'Profile/' + customerId)
+      .then(res => {
+        console.log(res.data.result[0].user_social_media)
+        if(res.data.result[0].user_social_media === "NULL") {
+          setChangePassword(<ChangePassword/>)
+        }
+      })
+      .catch(error => {
+        console.log(error)
+      })
     }
     //eslint-disable-next-line
   }, []);
@@ -227,11 +246,12 @@ const MealPlan = props => {
     }
     return itemShow;
   };
+
   return (
     <>
       <WebNavBar />
       <div className={styles.container}>
-        <Menu show={false} />
+        <Menu show={true} message={changePassword}/>
         {modal !== null && modalShow[modal]}
         {props.subscribedPlans.length ? (
           <div className={styles.box1}>
@@ -350,6 +370,7 @@ const MealPlan = props => {
                               >
                                 <i className="fa fa-pencil ml-4"></i>
                               </button>
+                            
                             </div>
                             <p>{plan.delivery_address}.</p>
                             <p>
@@ -368,6 +389,7 @@ const MealPlan = props => {
 
                             <p>{'Phone: ' + plan.delivery_phone_num}</p>
                           </div>
+                          <i className = "fa fa-trash" style = {{height: 'fit-content', fontSize: '30px', margin: 'auto'}} />
                         </div>
                         {index + 1 !== props.subscribedPlans.length && (
                           <hr className={styles.separatedLine + ' mx-5'} />
@@ -376,6 +398,7 @@ const MealPlan = props => {
                     );
                   })}
                 </div>
+                
               </div>
               <div className={'col-3 text-left pl-5 ' + styles.fixedHeight}>
                 <h6 className="mb-4" style={{fontSize: '25px'}}>

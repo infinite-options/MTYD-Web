@@ -213,7 +213,7 @@ class Login extends React.Component {
                   </span>
                 </div>
                 
-                <a style = {{marginLeft: '235px', cursor: 'pointer'}} onClick = {this.toggleDisplay}>
+                <a style = {{marginLeft: '90px', cursor: 'pointer'}} onClick = {this.toggleDisplay}>
                   <h6 style = {{ fontSize: '1rem', color: "black", float: "right"}}> Forgot Password?</h6>
               </a>
               </div>
@@ -230,7 +230,7 @@ class Login extends React.Component {
               >
                 LOGIN
               </button>
-              <Link to='sign-up'>
+              <Link style = {{textDecoration: 'none'}} to='sign-up'>
                 <button className={styles.button}>SIGNUP</button>
               </Link>
             </div>
@@ -268,8 +268,8 @@ class Login extends React.Component {
             <div className={"col-5 " + styles.explore}>
               <div className={"row " + styles.centerBtn}>
                 <p>EXPLORE WITHOUT LOGIN</p>
-                <Link to = '/select-meal'>
-                  <button> START >></button>
+                <Link style = {{textDecoration: 'none'}} to = '/select-meal'>
+                  <button style = {{color: 'white'}}> START >></button>
                 </Link>
               </div>
             </div>

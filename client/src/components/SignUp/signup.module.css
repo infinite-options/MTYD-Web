@@ -97,9 +97,10 @@
   justify-content: center;
   flex-wrap: wrap;
   width: inherit;
-  margin: 5px auto;
+  /* margin: 5px auto; */
   padding: 10px 10px;
-  width: 70%;
+  /* width: 70%; */
+  width: 100%;
 }
 
 .inputItem {
@@ -183,12 +184,14 @@
   width: 102px;
   font-size: larger;
   font-weight: 500;
-  box-shadow: 0 3px #999;
+  /* box-shadow: 0 3px #999; */
+  box-shadow: 0px 3px 6px #00000029;
 }
 .button:focus {
   outline: none;
 }
 .button:active {
   transform: translateY(4px);
-  box-shadow: 0px 1px #666;
+  /* box-shadow: 0px 1px #666; */
+  box-shadow: 0px 3px 6px #00000029; 
 }

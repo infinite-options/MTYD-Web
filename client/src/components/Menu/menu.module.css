@@ -49,7 +49,8 @@
   vertical-align: center;
 }
 .selectBtn a:hover {
-  background-color: #7fa4dd;
+  /* background-color: #7fa4dd; */
+  color: #FF9400;
   border-radius: 20px;
   outline-offset: 5px;
 }

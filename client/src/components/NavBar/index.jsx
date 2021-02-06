@@ -114,7 +114,10 @@ class NavBar extends React.Component {
           this.setState(state => ({
             ...state,
             ...userInfo,
-            iconName
+            iconName,
+            firstName: userInfo.firstName,
+            lastName: userInfo.lastName,
+            email: userInfo.email,
           }));
         }
       });
@@ -136,8 +139,21 @@ class NavBar extends React.Component {
           {this.state.login ? (
             <>
 
-                <Link to='/profile' className={styles.narrowBtn}>
+                {/* <Link to='/profile' className={styles.narrowBtn}>
                   PROFILE
+                </Link> */}
+
+                <Link to='/meal-plan' className={styles.profileIconWrapper} style = {{display: 'flex', border: '4px solid orange', borderRadius: '20px', height: '90%', margin: '5px 0px'}}>
+                  <input
+                    className={styles.profileIcon}
+                    readOnly
+                    value={this.state.iconName}
+                    style = {{cursor: 'pointer'}}
+                  />
+                  <div style = {{marginLeft:'5px', width: '200px'}}>
+                    <h6 style = {{margin: '0', fontSize: '20px', textAlign: 'center'}}>{this.state.firstName} {this.state.lastName}</h6>
+                    <h6 style = {{margin: '0', fontSize: '15px', textAlign: 'center'}}>{this.state.email}</h6>
+                  </div> 
                 </Link>
 
                 <a

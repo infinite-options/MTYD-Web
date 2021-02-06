@@ -82,7 +82,7 @@ export const changePassword = newPassword => dispatch => {
 
 export const changeOldPassword = (customerID ,oldPassword, newPassword, confirmPassword) => dispatch => {
   if(newPassword !== confirmPassword) {
-    dispatch(setAlert("ConfirmNewPassword", "Please confirm that your password matches"));
+    dispatch(setAlert("ConfirmNewPassword", "Passwords do not match"));
   } else {
     axios.post(API_URL+'change_password', 
       {
@@ -105,7 +105,7 @@ export const changeOldPassword = (customerID ,oldPassword, newPassword, confirmP
 export const forgotPassword = (email) => dispatch => {
   axios.get(API_URL + 'reset_password?email=' + email)
          .then(res =>{
-             console.log(res)
+            //  console.log(res)
              if(res.status === 200) {
               //  console.log(res)
                console.log('temp password sent')
@@ -668,13 +668,15 @@ export const submitSocialSignUp = (
 
 export const LoadUserInfo = customerId => dispatch => {
   axios.get(API_URL + "Profile/" + customerId).then(res => {
+    console.log(res)
     if (res.data.result) {
       dispatch({
         type: LOAD_USER_INFO,
         payload: {
           customerId: res.data.result[0].customer_uid,
           firstName: res.data.result[0].customer_first_name,
-          lastName: res.data.result[0].customer_last_name
+          lastName: res.data.result[0].customer_last_name,
+          email: res.data.result[0].customer_email
         }
       });
     }

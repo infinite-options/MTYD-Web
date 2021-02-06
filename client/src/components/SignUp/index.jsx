@@ -166,7 +166,9 @@ class SignUp extends React.Component {
                 </div>
               </div>
               <div className={styles.buttonContainer}>
-                <button className={styles.button + " mr-3"}>BACK</button>
+                <Link style = {{textDecoration: 'none'}} to = "/login">
+                  <button className={styles.button + " mr-3"}>BACK</button>
+                </Link>
                 <button
                   className={styles.button + " ml-3"}
                   onClick={() => {
@@ -202,8 +204,8 @@ class SignUp extends React.Component {
             <div className={"col-5 " + styles.explore}>
               <div className={"row " + styles.centerBtn}>
                 <p>EXPLORE WITHOUT LOGIN</p>
-                <Link to = '/select-meal'>
-                  <button> START >></button>
+                <Link style = {{textDecoration: 'none'}} to = '/select-meal'>
+                  <button style = {{color: 'white'}}> START >></button>
                 </Link>
               </div>
             </div>
