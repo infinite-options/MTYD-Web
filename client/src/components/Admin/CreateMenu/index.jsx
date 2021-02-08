@@ -33,6 +33,10 @@ const initialState = {
     menu_category: '',
     menu_type: '',
   },
+  showAddDate: false,
+  newDate: {
+    menu_date: '',
+  },
 };
 
 function reducer(state, action) {
@@ -89,6 +93,19 @@ function reducer(state, action) {
         ...state,
         newMeal: action.payload,
       };
+    case 'TOGGLE_ADD_MENU_DATE':
+      return {
+        ...state,
+        showAddDate: !(state.showAddDate),
+        newDate: {
+          ...initialState.newDate,
+        },
+      }
+    case 'EDIT_NEW_MENU_DATE':
+      return {
+        ...state,
+        newDate: action.payload,
+      }
     default:
       return state;
   }
@@ -233,12 +250,7 @@ function CreateMenu({history, ...props}) {
     const curMenu = getMenuData(newDate);
     const sortedMenu = sortedArray(curMenu, state.sortEditMenu.field, state.sortEditMenu.direction);
     dispatch({ type: 'EDIT_MENU', payload: sortedMenu });
-  };
-
-  // Toggle Add Menu modal
-  const toggleAddMenu = () => {
-    dispatch({ type: 'TOGGLE_ADD_MENU_ITEM' });
-  };
+  };  
 
   const changeSortOptions = (field) => {
     const isAsc = (state.sortEditMenu.field === field && state.sortEditMenu.direction === 'asc');
@@ -296,6 +308,124 @@ function CreateMenu({history, ...props}) {
       })
   }
 
+  // Toggle Add Menu modal
+  const toggleAddMenu = () => {
+    dispatch({ type: 'TOGGLE_ADD_MENU_ITEM' });
+  };
+
+  // Toggle Add Date Modal
+  const toggleAddDate = () => {
+    dispatch({ type: 'TOGGLE_ADD_MENU_DATE'})
+  }
+
+  const saveMenuTemplate = () => {
+    const menuDate = `${state.newDate.menu_date} 00:00:00`;
+    console.log(menuDate);
+    const menuDateFormatted = new Date(menuDate).toDateString();
+    dispatch({ type: 'TOGGLE_ADD_MENU_DATE'})
+    menuDates.push({
+      value: menuDate,
+      display: menuDateFormatted,
+    });
+    const menuTemplate = [
+      {
+        menu_type: 'Weekly Entree',
+        meal_uid: '',
+        meal_category: 'Entree',
+        meal_cat: 'Entree',
+        menu_category: 'WKLY_SPCL_1',
+        default_meal: 'FALSE',
+      },
+      {
+        menu_type: 'Weekly Salad',
+        meal_uid: '',
+        meal_category: 'Salad',
+        meal_cat: 'Salad',
+        menu_category: 'WKLY_SPCL_2',
+        default_meal: 'FALSE',
+      },
+      {
+        menu_type: 'Weekly Soup',
+        meal_uid: '',
+        meal_category: 'Soup',
+        meal_cat: 'Soup',
+        menu_category: 'WKLY_SPCL_3',
+        default_meal: 'FALSE',
+      },
+      {
+        menu_type: 'Seasonal Entree',
+        meal_uid: '',
+        meal_category: 'Entree',
+        meal_cat: 'Entree',
+        menu_category: 'SEAS_FAVE_1',
+        default_meal: 'FALSE',
+      },
+      {
+        menu_type: 'Seasonal Salad',
+        meal_uid: '',
+        meal_category: 'Salad',
+        meal_cat: 'Salad',
+        menu_category: 'SEAS_FAVE_2',
+        default_meal: 'FALSE',
+      },
+      {
+        menu_type: 'Breakfast',
+        meal_uid: '',
+        meal_category: 'Breakfast',
+        meal_cat: 'Breakfast',
+        menu_category: 'SEAS_FAVE_3',
+        default_meal: 'FALSE',
+      },
+      {
+        menu_type: 'Smoothie',
+        meal_uid: '',
+        meal_category: 'Smoothie',
+        meal_cat: 'Smoothie',
+        menu_category: 'SMOOTHIE_1',
+        default_meal: 'FALSE',
+      },
+      {
+        menu_type: 'Smoothie',
+        meal_uid: '',
+        meal_category: 'Smoothie',
+        meal_cat: 'Smoothie',
+        menu_category: 'SMOOTHIE_2',
+        default_meal: 'FALSE',
+      },
+      {
+        menu_type: 'Smoothie',
+        meal_uid: '',
+        meal_category: 'Smoothie',
+        meal_cat: 'Smoothie',
+        menu_category: 'SMOOTHIE_3',
+        default_meal: 'FALSE',
+      },
+      {
+        menu_type: 'Local Treat',
+        meal_uid: '',
+        meal_cat: 'Add-On',
+        menu_category: 'ADD_ON_1',
+        default_meal: 'FALSE',
+      },
+      {
+        menu_type: 'Local Treat',
+        meal_uid: '',
+        meal_cat: 'Add-On',
+        menu_category: 'ADD_ON_2',
+        default_meal: 'FALSE',
+      },
+      {
+        menu_type: 'Local Treat',
+        meal_uid: '',
+        meal_cat: 'Add-On',
+        menu_category: 'ADD_ON_3',
+        default_meal: 'TRUE',
+      },
+    ]
+    dispatch({ type: 'CHANGE_DATE', payload: menuDate });
+    dispatch({ type: 'EDIT_MENU', payload: menuTemplate });
+  }
+
   if (!state.mounted) {
     return null;
   }
@@ -341,7 +471,20 @@ function CreateMenu({history, ...props}) {
             </Form>
           </Col>
           <Col
-            sm={{ span: 3, offset: 3 }}
+            sm="3"
+            style={{
+              textAlign: 'right',
+            }}
+          >
+            <Button
+              variant="primary"
+              onClick={toggleAddDate}
+            >
+              Add Menu Date
+            </Button>
+          </Col>
+          <Col
+            sm="3"
             style={{
               textAlign: 'right',
             }}
@@ -403,7 +546,7 @@ function CreateMenu({history, ...props}) {
                 {
                   state.editedMenu.map(
                     (mealMenu, mealMenuIndex) => {
-                      const otherMealCategories = getMealsByCategory(mealMenu.meal_category);
+                      const otherMealCategories = mealMenu.meal_category ?getMealsByCategory(mealMenu.meal_category) : state.mealData;
                       return (
                         <TableRow
                           key={mealMenu.menu_uid}
@@ -433,6 +576,7 @@ function CreateMenu({history, ...props}) {
                                   }
                                 }
                               >
+                                <option value="" hidden> Choose Meal </option>
                                 {
                                   otherMealCategories.map(
                                     (meal) => (
@@ -729,6 +873,49 @@ function CreateMenu({history, ...props}) {
             }
           >
             Save Menu Item
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <Modal
+        show={state.showAddDate}
+        onHide={toggleAddDate}
+        animation={false}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title> Add Menu Date </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group>
+              <Form.Label>
+                Menu Date
+              </Form.Label>
+              <Form.Control
+                type="date"
+                value={state.newDate.menu_date}
+                onChange={
+                  (event) => {
+                    const newDate = event.target.value;
+                    const newDateObject = {
+                      ...state.newDate,
+                      menu_date: newDate,
+                    }
+                    dispatch({ type: 'EDIT_NEW_MENU_DATE', payload: newDateObject });
+                  }
+                }
+              />
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={toggleAddDate}>
+            Close
+          </Button>
+          <Button
+            variant="primary"
+            onClick={saveMenuTemplate}
+          >
+            Save Menu Date with Template
           </Button>
         </Modal.Footer>
       </Modal>
