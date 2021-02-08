@@ -27,6 +27,18 @@ const ChangeMealPlan = props => {
   const [errorShow, setErrorShow] = useState(null);
 
   const [refundAmount, setRefundAmount] = useState(null);
+  const [newDeliveryDate, setDeliveryDate] = useState('');
+
+  axios.get(process.env.REACT_APP_SERVER_BASE_URI + 'upcoming_menu')
+   .then(result => {
+    //  console.log(result.data.result[0].menu_date)
+     setDeliveryDate(result.data.result[0].menu_date)
+   })
+   .catch(error => {
+     console.log(error)
+   })
+  //  console.log(newDeliveryDate)
+
   // need to called Salting to get this password instead get it directly from endpoint.
   const [password, setPassword] = useState("");
 
@@ -103,6 +115,8 @@ const ChangeMealPlan = props => {
         console.log("res when submit: ", res);
 
         let items = props.selectedPlan;
+        // const current = new Date();
+        // const date = `${current.getFullYear()}-${current.getMonth()+1}-${current.getDate()}`;
         const data = {
           customer_email: props.profile.email,
           password: res.data.result[0].password_hashed,
@@ -120,7 +134,9 @@ const ChangeMealPlan = props => {
           cc_exp_date: `${props.creditCard.year}-${props.creditCard.month}-01`,
           cc_cvv: props.creditCard.cvv,
           cc_zip: props.creditCard.zip,
-          new_item_id: props.selectedPlan.item_uid
+          new_item_id: props.selectedPlan.item_uid,
+          start_delivery_date: newDeliveryDate
+          
         };
         console.log("data sending: ", data);
         axios

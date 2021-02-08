@@ -172,6 +172,7 @@ const MealPlan = props => {
   const loadHistory = () => {
     let items = props.orderHistory;
     let itemShow = [];
+    console.log(items)
 
     for (let key of Object.keys(items)) {
       if (items[key][0]?.items) {

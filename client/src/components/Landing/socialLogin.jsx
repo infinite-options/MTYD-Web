@@ -141,13 +141,13 @@ class SocialLogin extends Component {
 }
 
 SocialLogin.propTypes = {
-    bypassLogin: PropTypes.func.isRequired,
-    changeEmail: PropTypes.func.isRequired,
-    changePassword: PropTypes.func.isRequired,
-    loginAttempt: PropTypes.func.isRequired,
+    // bypassLogin: PropTypes.func.isRequired,
+    // changeEmail: PropTypes.func.isRequired,
+    // changePassword: PropTypes.func.isRequired,
+    // loginAttempt: PropTypes.func.isRequired,
     socialLoginAttempt: PropTypes.func.isRequired,
-    email: PropTypes.string.isRequired,
-    password: PropTypes.string.isRequired
+    // email: PropTypes.string.isRequired,
+    // password: PropTypes.string.isRequired
   };
   
   // const mapStateToProps = state => ({
