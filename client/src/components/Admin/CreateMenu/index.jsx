@@ -268,44 +268,84 @@ function CreateMenu({history, ...props}) {
 
   // Save Upodate menu item
   const updateMenuItem = (menuItem) => {
-    axios
-      .put(`${API_URL}menu`,menuItem)
-      .then(() => {
-          updateMenu();
-      })
-      .catch((err) => {
-        if(err.response) {
+    if(menuItem.menu_uid) {
+      // Update previous item
+      axios
+        .put(`${API_URL}menu`,menuItem)
+        .then(() => {
+            updateMenu();
+        })
+        .catch((err) => {
+          if(err.response) {
+            // eslint-disable-next-line no-console
+            console.log(err.response)
+          }
           // eslint-disable-next-line no-console
-          console.log(err.response)
-        }
-        // eslint-disable-next-line no-console
-        console.log(err)
-      })
+          console.log(err)
+        })
+    } else {
+      // Saving item from template
+      const newMenuItem = {
+        ...menuItem,
+        delivery_days:['Sunday', 'Monday'],
+        meal_price:'10',
+      };
+      axios
+        .post(`${API_URL}menu`,newMenuItem)
+        .then((response) => {
+          const newMenuId = response.data.meal_uid;
+          const newMenuItemId = {
+            ...newMenuItem,
+            menu_uid: newMenuId,
+          }
+          const oldIndex = state.editedMenu.indexOf(menuItem);
+          const newEditedMenu = [...state.editedMenu];
+          newEditedMenu[oldIndex] = newMenuItemId;
+          dispatch({ type: 'EDIT_MENU', payload: newEditedMenu });
+        })
+        .catch((err) => {
+          if(err.response) {
+            // eslint-disable-next-line no-console
+            console.log(err.response)
+          }
+          // eslint-disable-next-line no-console
+          console.log(err)
+        })
+    }
   }
 
   // Delete menu item
-  const deleteMenuItem = (menuId) => {
-    axios
-      .delete(`${API_URL}menu`,{
-        params: {
-          menu_uid: menuId,
-        }
-      })
-      .then(() => {
-        const newMenu = [...state.editedMenu];
-        const menuIndex = newMenu.findIndex((elt) => elt.menu_uid === menuId);
-        newMenu.splice(menuIndex, 1);
-        dispatch({ type: 'EDIT_MENU', payload: newMenu });
-        updateMenu();
-      })
-      .catch((err) => {
-        if(err.response) {
+  const deleteMenuItem = (menuItem) => {
+    const menuId = menuItem.menu_uid;
+    const menuIndex = state.editedMenu.indexOf(menuItem);
+    if(menuId) {
+      // Delete from database
+      axios
+        .delete(`${API_URL}menu`,{
+          params: {
+            menu_uid: menuId,
+          }
+        })
+        .then(() => {
+          const newMenu = [...state.editedMenu];
+          newMenu.splice(menuIndex, 1);
+          dispatch({ type: 'EDIT_MENU', payload: newMenu });
+          updateMenu();
+        })
+        .catch((err) => {
+          if(err.response) {
+            // eslint-disable-next-line no-console
+            console.log(err.response)
+          }
           // eslint-disable-next-line no-console
-          console.log(err.response)
-        }
-        // eslint-disable-next-line no-console
-        console.log(err)
-      })
+          console.log(err)
+        })
+    } else {
+      // Delete from template
+      const newMenu = [...state.editedMenu];
+      newMenu.splice(menuIndex, 1);
+      dispatch({ type: 'EDIT_MENU', payload: newMenu });
+    }
   }
 
   // Toggle Add Menu modal
@@ -330,6 +370,7 @@ function CreateMenu({history, ...props}) {
     const menuTemplate = [
       {
         menu_type: 'Weekly Entree',
+        menu_date: menuDate,
         meal_uid: '',
         meal_category: 'Entree',
         meal_cat: 'Entree',
@@ -338,6 +379,7 @@ function CreateMenu({history, ...props}) {
       },
       {
         menu_type: 'Weekly Salad',
+        menu_date: menuDate,
         meal_uid: '',
         meal_category: 'Salad',
         meal_cat: 'Salad',
@@ -346,6 +388,7 @@ function CreateMenu({history, ...props}) {
       },
       {
         menu_type: 'Weekly Soup',
+        menu_date: menuDate,
         meal_uid: '',
         meal_category: 'Soup',
         meal_cat: 'Soup',
@@ -354,6 +397,7 @@ function CreateMenu({history, ...props}) {
       },
       {
         menu_type: 'Seasonal Entree',
+        menu_date: menuDate,
         meal_uid: '',
         meal_category: 'Entree',
         meal_cat: 'Entree',
@@ -362,6 +406,7 @@ function CreateMenu({history, ...props}) {
       },
       {
         menu_type: 'Seasonal Salad',
+        menu_date: menuDate,
         meal_uid: '',
         meal_category: 'Salad',
         meal_cat: 'Salad',
@@ -370,6 +415,7 @@ function CreateMenu({history, ...props}) {
       },
       {
         menu_type: 'Breakfast',
+        menu_date: menuDate,
         meal_uid: '',
         meal_category: 'Breakfast',
         meal_cat: 'Breakfast',
@@ -378,6 +424,7 @@ function CreateMenu({history, ...props}) {
       },
       {
         menu_type: 'Smoothie',
+        menu_date: menuDate,
         meal_uid: '',
         meal_category: 'Smoothie',
         meal_cat: 'Smoothie',
@@ -386,6 +433,7 @@ function CreateMenu({history, ...props}) {
       },
       {
         menu_type: 'Smoothie',
+        menu_date: menuDate,
         meal_uid: '',
         meal_category: 'Smoothie',
         meal_cat: 'Smoothie',
@@ -394,6 +442,7 @@ function CreateMenu({history, ...props}) {
       },
       {
         menu_type: 'Smoothie',
+        menu_date: menuDate,
         meal_uid: '',
         meal_category: 'Smoothie',
         meal_cat: 'Smoothie',
@@ -402,6 +451,7 @@ function CreateMenu({history, ...props}) {
       },
       {
         menu_type: 'Local Treat',
+        menu_date: menuDate,
         meal_uid: '',
         meal_cat: 'Add-On',
         menu_category: 'ADD_ON_1',
@@ -409,6 +459,7 @@ function CreateMenu({history, ...props}) {
       },
       {
         menu_type: 'Local Treat',
+        menu_date: menuDate,
         meal_uid: '',
         meal_cat: 'Add-On',
         menu_category: 'ADD_ON_2',
@@ -416,6 +467,7 @@ function CreateMenu({history, ...props}) {
       },
       {
         menu_type: 'Local Treat',
+        menu_date: menuDate,
         meal_uid: '',
         meal_cat: 'Add-On',
         menu_category: 'ADD_ON_3',
@@ -549,7 +601,7 @@ function CreateMenu({history, ...props}) {
                       const otherMealCategories = mealMenu.meal_category ?getMealsByCategory(mealMenu.meal_category) : state.mealData;
                       return (
                         <TableRow
-                          key={mealMenu.menu_uid}
+                          key={`${mealMenuIndex} ${mealMenu.menu_uid}`}
                           hover
                         >
                           <TableCell>
@@ -623,7 +675,7 @@ function CreateMenu({history, ...props}) {
                               className={'icon-button'}
                               onClick={
                                 () => {
-                                  deleteMenuItem(mealMenu.menu_uid);
+                                  deleteMenuItem(mealMenu);
                                 }
                               }
                             >
