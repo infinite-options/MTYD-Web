@@ -77,7 +77,7 @@ function LatestActivity() {
       .put(`${API_URL}cancel_purchase`,{
         purchase_uid: purchaseId,
       })
-      .then((response) => {
+      .then((_) => {
         updateLatestActivity(customerContext.state.customerId)
       })
       .catch((err) => {

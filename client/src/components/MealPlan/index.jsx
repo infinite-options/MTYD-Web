@@ -23,6 +23,7 @@ import ChangeMealPlan from './ChangeModals/ChangeMealPlan';
 import ChangeUserInfo from './ChangeModals/ChangeUserInfo';
 import ChangePassword from '../ChangePassword'
 import axios from 'axios';
+import { API_URL } from '../../reducers/constants';
 
 const MealPlan = props => {
   //check for logged in user
@@ -390,7 +391,28 @@ const MealPlan = props => {
 
                             <p>{'Phone: ' + plan.delivery_phone_num}</p>
                           </div>
+                          <button
+                            className='icon-button'
+                            onClick={(_) => {
+                              axios
+                                .put(`${API_URL}cancel_purchase`,{
+                                  purchase_uid: plan.purchase_uid,
+                                })
+                                .then((response) => {
+                                  console.log(response);
+                                })
+                                .catch((err) => {
+                                  if(err.response) {
+                                    // eslint-disable-next-line no-console
+                                    console.log(err.response);
+                                  }
+                                  // eslint-disable-next-line no-console
+                                  console.log(err);
+                                })
+                            }}
+                          >
                           <i className = "fa fa-trash" style = {{height: 'fit-content', fontSize: '30px', margin: 'auto'}} />
+                          </button>
                         </div>
                         {index + 1 !== props.subscribedPlans.length && (
                           <hr className={styles.separatedLine + ' mx-5'} />
