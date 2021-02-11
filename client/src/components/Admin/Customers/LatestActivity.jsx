@@ -43,13 +43,42 @@ function LatestActivity() {
   const customerContext = useContext(CustomerContext);
   const [state, dispatch] = useReducer(reducer, initialState);
 
+  const updateLatestActivity = (customerId) => {
+    axios
+      .get(`${API_URL}customer_lplp`,{
+        params: {
+          customer_uid: customerId,
+        }
+      })
+      .then((response) => {
+        const customerActivity = response.data.result;
+        if(customerActivity) {
+          // Parse JSON object in items
+          for(let index = 0; index < customerActivity.length; index++) {
+            customerActivity[index].items = JSON.parse(customerActivity[index].items);
+          }
+          dispatch({ type: 'FETCH_CUSTOMER_ACTIVITY', payload: customerActivity });
+        } else {
+          dispatch({ type: 'FETCH_CUSTOMER_ACTIVITY', payload: initialState.customerActivity });
+        }
+      })
+      .catch((err) => {
+        if(err.response) {
+          // eslint-disable-next-line no-console
+          console.log(err.response);
+        }
+        // eslint-disable-next-line no-console
+        console.log(err);
+      })
+  }
+
   const cancelPurchase = (purchaseId) => {
     axios
       .put(`${API_URL}cancel_purchase`,{
-
+        purchase_uid: purchaseId,
       })
       .then((response) => {
-        console.log(response);
+        updateLatestActivity(customerContext.state.customerId)
       })
       .catch((err) => {
         if(err.response) {
@@ -63,32 +92,7 @@ function LatestActivity() {
 
   useEffect(() => {
     if(customerContext.state.customerId !== '') {
-      axios
-        .get(`${API_URL}customer_lplp`,{
-          params: {
-            customer_uid: customerContext.state.customerId
-          }
-        })
-        .then((response) => {
-          const customerActivity = response.data.result;
-          if(customerActivity) {
-            // Parse JSON object in items
-            for(let index = 0; index < customerActivity.length; index++) {
-              customerActivity[index].items = JSON.parse(customerActivity[index].items);
-            }
-            dispatch({ type: 'FETCH_CUSTOMER_ACTIVITY', payload: customerActivity });
-          } else {
-            dispatch({ type: 'FETCH_CUSTOMER_ACTIVITY', payload: initialState.customerActivity });
-          }
-        })
-        .catch((err) => {
-          if(err.response) {
-            // eslint-disable-next-line no-console
-            console.log(err.response);
-          }
-          // eslint-disable-next-line no-console
-          console.log(err);
-        })
+      updateLatestActivity(customerContext.state.customerId)
     }
   },[customerContext.state.customerId])
 
