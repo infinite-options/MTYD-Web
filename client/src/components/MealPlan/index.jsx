@@ -48,6 +48,9 @@ const MealPlan = props => {
     </div>
   </>
   );
+  
+  const activePlans = props.subscribedPlans.filter((elt) => elt.purchase_status === 'ACTIVE');
+  const cancelledPlans = props.subscribedPlans.filter((elt) => elt.purchase_status !== 'ACTIVE');
 
   const modalShow = [
     <ChangeMealPlan isShow={true} changeOpen={() => setModal(null)} />,
@@ -81,7 +84,7 @@ const MealPlan = props => {
   }, []);
   const setMealChange = id => {
     //get current meal
-    let currentItem = JSON.parse(props.subscribedPlans[id].items)[0];
+    let currentItem = JSON.parse(activePlans[id].items)[0];
     let currentItemUid = currentItem.item_uid;
     console.log('currentItemUid: ', currentItemUid);
     for (let items of Object.values(props.plans)) {
@@ -121,7 +124,7 @@ const MealPlan = props => {
           };
           console.log(info);
           props.setUserInfo(info);
-          props.setCurrentPurchase(props.subscribedPlans[id].purchase_uid);
+          props.setCurrentPurchase(activePlans[id].purchase_uid);
           // props.setSelectedMeal(items[key]);
         }
       }
@@ -145,7 +148,7 @@ const MealPlan = props => {
       delivery_state,
       delivery_zip,
       delivery_phone_num,
-    } = props.subscribedPlans[id];
+    } = activePlans[id];
     const info = {
       cc_num,
       month: cc_exp_date.split(' ')[0].split('-')[1],
@@ -164,7 +167,7 @@ const MealPlan = props => {
     };
     console.log(info);
     props.setUserInfo(info);
-    props.setCurrentPurchase(props.subscribedPlans[id].purchase_uid);
+    props.setCurrentPurchase(activePlans[id].purchase_uid);
     setModal(1);
   };
   const loadLetters = () =>
@@ -286,7 +289,7 @@ const MealPlan = props => {
                       <p className={styles.header1}>DELIVERY INFORMATION</p>
                     </div>
                   </div>
-                  {props.subscribedPlans.map((plan, index) => {
+                  {activePlans.map((plan, index) => {
                     let item = JSON.parse(plan.items)[0];
                     let cc_num = plan.cc_num;
                     let frequency = ' ';
@@ -400,6 +403,9 @@ const MealPlan = props => {
                                 })
                                 .then((response) => {
                                   console.log(response);
+                                  props
+                                    .fetchSubscribed(customerId)
+                                    .then(ids => props.fetchOrderHistory(ids));
                                 })
                                 .catch((err) => {
                                   if(err.response) {
@@ -414,12 +420,131 @@ const MealPlan = props => {
                           <i className = "fa fa-trash" style = {{height: 'fit-content', fontSize: '30px', margin: 'auto'}} />
                           </button>
                         </div>
-                        {index + 1 !== props.subscribedPlans.length && (
+                        {index + 1 !== activePlans.length && (
                           <hr className={styles.separatedLine + ' mx-5'} />
                         )}
                       </Fragment>
                     );
                   })}
+                  {cancelledPlans.length > 0 &&
+                    <>
+                      <div className={styles.pastSubscriptions}>
+                        <p className={styles.header1}>PAST SUBSCRIPTIONS</p>
+                      </div>
+                      {cancelledPlans.map((plan, index) => {
+                        let item = JSON.parse(plan.items)[0];
+                        let cc_num = plan.cc_num;
+                        let frequency = ' ';
+                        if (Object.keys(props.plans).length > 0) {
+                          if (props.plans[item.name.split(' ')[0]]) {
+                            let item_desc =
+                              props.plans[item.name.split(' ')[0]][item.item_uid]
+                                .item_desc;
+                            frequency = item_desc.split(' - ')[1].toUpperCase();
+                          }
+                        }
+                        return (
+                          <Fragment key={index}>
+                            <div className="row">
+                              <div className="col-4 ml-5">
+                                <input
+                                  value={item.name}
+                                  className={styles.infoBtn}
+                                  readOnly
+                                />
+                                {/* <button
+                                  className={styles.iconBtn}
+                                  onClick={() => setMealChange(index)}
+                                >
+                                  <i className="fa fa-pencil"></i>
+                                </button> */}
+                              </div>
+                              <div className="col">
+                                <div className={'row mt-3'}>
+                                  <div className={'col ' + styles.cardInfo}>
+                                    <div className="row">
+                                      <p className="mt-0 mr-2">CARD</p>
+                                      {/* <button
+                                        className={styles.iconBtn}
+                                        onClick={() => setUserInfoChange(index)}
+                                      >
+                                        <i className="fa fa-pencil align-top ml-3"></i>
+                                      </button> */}
+                                    </div>
+                                    <div className={'row  d-block'}>
+                                      <i
+                                        className="fa fa-credit-card"
+                                        style={{
+                                          fontSize: '50px',
+                                          textAlign: 'center',
+                                        }}
+                                      ></i>
+                                      <p
+                                        className={styles.font10}
+                                        style={{marginTop: '0px'}}
+                                      >
+                                      ************{cc_num.substring(cc_num.length-4,cc_num.length)}
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <div className={'col ' + styles.cardInfo}>
+                                    <div className="row">
+                                      <p>FOR {frequency}</p>
+                                      {/* <button
+                                        className={styles.iconBtn}
+                                        onClick={() => setMealChange(index)}
+                                      >
+                                        <i className="fa fa-pencil align-top ml-4"></i>
+                                      </button> */}
+                                    </div>
+                                    <input
+                                      className={styles.circleInput}
+                                      readOnly
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+                              <div className={'col  mx-5 ' + styles.deliveryInfo}>
+                                <div className="row">
+                                  <p className="ml-3 mt-3">
+                                    {plan.delivery_first_name +
+                                      ' ' +
+                                      plan.delivery_last_name}
+                                  </p>
+                                  {/* <button
+                                    className={styles.iconBtn}
+                                    onClick={() => setUserInfoChange(index)}
+                                  >
+                                    <i className="fa fa-pencil ml-4"></i>
+                                  </button> */}
+                                
+                                </div>
+                                <p>{plan.delivery_address}.</p>
+                                <p>
+                                  {plan.delivery_unit !== 'NULL' && (
+                                    <span>
+                                      Apt. {' ' + plan.delivery_unit + ', '}
+                                    </span>
+                                  )}
+                                  {plan.delivery_city +
+                                    ', ' +
+                                    plan.delivery_state +
+                                    ' ' +
+                                    plan.delivery_zip +
+                                    '.'}
+                                </p>
+
+                                <p>{'Phone: ' + plan.delivery_phone_num}</p>
+                              </div>
+                            </div>
+                            {index + 1 !== activePlans.length && (
+                              <hr className={styles.separatedLine + ' mx-5'} />
+                            )}
+                          </Fragment>
+                        );
+                      })}
+                    </>
+                  }
                 </div>
                 
               </div>
