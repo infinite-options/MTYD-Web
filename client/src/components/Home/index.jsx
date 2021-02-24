@@ -5,7 +5,7 @@ import SignUp from "./signUp"
 import Menu from "../Menu";
 import MenuCarousel from "./menuCarousel"
 import styles from "./home.module.css"
-import whiteLogo from "./images/whiteLogo.svg"
+import Logo from "../../images/LOGO_NoBG_MealsForMe.png";
 import exploreImg from "./images/explore.svg"
 import purchaseImg from "./images/purchase.svg"
 import chooseImg from "./images/choose.svg"
@@ -27,7 +27,7 @@ class Home extends Component {
         <div className = {styles.topBackground}>
           <WebNavBar />
           <div className = {styles.gridDisplayCenter}>
-            <h1 className = {styles.centerSubtitleText}>WELCOME TO <img style = {{height: '140px', width: '400px', marginTop: '-50px'}} src = {whiteLogo}></img></h1>
+            <h1 className = {styles.centerSubtitleText}>WELCOME TO <img style = {{height: '140px', width: '400px', marginTop: '-50px'}} src = {Logo} alt="logo" /></h1>
             <h3 className = {styles.centerSubText}>Get the freshly cooked meal options for your healthy lifestyle</h3>
             {/* <a className = {this.state.signUpDisplay} onClick = {this.changeCSS}>Get Started</a> */}
             <SignUp />

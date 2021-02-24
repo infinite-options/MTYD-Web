@@ -13,7 +13,7 @@ import store from "../../reducers/store";
 import styles from "./navBar.module.css";
 import Cookies from "js-cookie";
 import User from "./User.svg";
-import Logo from "./Logo.svg";
+import Logo from "../../images/LOGO_White_BG_MealsForMe.png";
 
 class SideNavBar extends React.Component {
   render() {
@@ -127,7 +127,7 @@ class NavBar extends React.Component {
     return (
       <div className={styles.navbar}>
         <div>
-          <img style={{width: "70%", height:"70%"}} src={Logo}/>
+          <img style={{width: "60%", height:"60%"}} src={Logo} alt="logo" />
         </div>
         <ul>
           <Link to='/home' className={styles.narrowBtn}>
