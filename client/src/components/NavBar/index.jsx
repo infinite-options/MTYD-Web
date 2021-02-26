@@ -14,6 +14,8 @@ import styles from "./navBar.module.css";
 import Cookies from "js-cookie";
 import User from "./User.svg";
 import Logo from "../../images/LOGO_White_BG_MealsForMe.png";
+import axios from 'axios';
+import { API_URL } from '../../reducers/constants';
 
 class SideNavBar extends React.Component {
   render() {
@@ -85,7 +87,8 @@ class NavBar extends React.Component {
       iconName: "",
       firstName: "",
       lastName: "",
-      customerId: ""
+      customerId: "",
+      profileRole: ""
     };
   }
   logOut = () => {
@@ -101,7 +104,7 @@ class NavBar extends React.Component {
     //check for logged in
     let currentState;
     const customer_uid = Cookies.get("customer_uid");
-    console.log("props: ", this.props.history.location.pathname);
+    console.log("[NavBar/index.jsx] props: ", this.props.history.location.pathname);
     if (customer_uid) {
       this.setState({login: true});
       this.props.LoadUserInfo(customer_uid);
@@ -122,6 +125,22 @@ class NavBar extends React.Component {
         }
       });
     }
+      
+    // Get user role
+    axios
+      .get(`${API_URL}Profile/${customer_uid}`)
+      .then((response) => {
+        const role = response.data.result[0].role.toLowerCase();
+        this.setState({profileRole: role});
+        console.log("[NavBar/index.jsx] Profile role: " + this.state.profileRole);
+      })
+      .catch((err) => {
+        if (err.response) {
+          console.log("[NavBar/index.jsx] " + err.response);
+        }
+        console.log("[NavBar/index.jsx] " + err);
+      });
+      
   }
   render() {
     return (
@@ -130,6 +149,17 @@ class NavBar extends React.Component {
           <img style={{width: "60%", height:"60%"}} src={Logo} alt="logo" />
         </div>
         <ul>
+          <div>
+            {(() => {
+              if (this.state.profileRole === 'admin') {
+                return (
+                  <Link to='/admin' className={styles.narrowBtn}>
+                    ADMIN
+                  </Link>
+                );
+              }
+            })()}
+            </div>
           <Link to='/home' className={styles.narrowBtn}>
             HOME
           </Link>
