@@ -58,7 +58,7 @@ function App() {
   }, []);
 
   const adminNavBar = <AdminNavBar />;
-
+    
   return (
     <div className='root'>
       <Provider store={store}>

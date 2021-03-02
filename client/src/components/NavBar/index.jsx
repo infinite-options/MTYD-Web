@@ -104,7 +104,7 @@ class NavBar extends React.Component {
     //check for logged in
     let currentState;
     const customer_uid = Cookies.get("customer_uid");
-    console.log("[NavBar/index.jsx] props: ", this.props.history.location.pathname);
+    console.log("props: ", this.props.history.location.pathname);
     if (customer_uid) {
       this.setState({login: true});
       this.props.LoadUserInfo(customer_uid);
@@ -132,13 +132,13 @@ class NavBar extends React.Component {
       .then((response) => {
         const role = response.data.result[0].role.toLowerCase();
         this.setState({profileRole: role});
-        console.log("[NavBar/index.jsx] Profile role: " + this.state.profileRole);
+        console.log("Profile role: " + this.state.profileRole);
       })
       .catch((err) => {
         if (err.response) {
-          console.log("[NavBar/index.jsx] " + err.response);
+          console.log(err.response);
         }
-        console.log("[NavBar/index.jsx] " + err);
+        console.log(err);
       });
       
   }
@@ -149,17 +149,17 @@ class NavBar extends React.Component {
           <img style={{width: "60%", height:"60%"}} src={Logo} alt="logo" />
         </div>
         <ul>
-          <div>
-            {(() => {
-              if (this.state.profileRole === 'admin') {
-                return (
+          {(() => {
+            if (this.state.profileRole === 'admin') {
+              return (
+                <div>
                   <Link to='/admin' className={styles.narrowBtn}>
                     ADMIN
                   </Link>
-                );
-              }
-            })()}
-            </div>
+                </div>
+              );
+            }
+          })()}
           <Link to='/home' className={styles.narrowBtn}>
             HOME
           </Link>
@@ -168,10 +168,6 @@ class NavBar extends React.Component {
           </Link>
           {this.state.login ? (
             <>
-
-                {/* <Link to='/profile' className={styles.narrowBtn}>
-                  PROFILE
-                </Link> */}
 
                 <Link to='/meal-plan' className={styles.profileIconWrapper} style = {{display: 'flex', border: '4px solid orange', borderRadius: '20px', height: '90%', margin: '5px 0px'}}>
                   <input

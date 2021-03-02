@@ -130,6 +130,13 @@
   max-height: 720px;
   overflow: scroll;
 }
+.flexHeight {
+  display: flex;
+}
+.dynamicHeight {
+  height: 100%;
+  overflow: scroll;
+}
 .subscribeNotice {
   border: 1px solid;
   border-radius: 20px;

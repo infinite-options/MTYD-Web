@@ -1,7 +1,6 @@
 import { Nav, Navbar, NavDropdown } from 'react-bootstrap';
 
 function NavBar() {
-  console.log("[AdminNavBar/index.jsx] Rendering...");
   return (
     <div>
       <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">

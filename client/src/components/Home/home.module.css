@@ -3,8 +3,13 @@
     url("./images/background1.png");
   background-size: cover;
   background-repeat: no-repeat;
-  height: 90vh;
+  background-position: center;
+  height: 600px;
   width: inherit;
+}
+
+.stepsHeader {
+  justify-self: center;
 }
 
 .centerSubtitleText {

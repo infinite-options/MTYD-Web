@@ -32,7 +32,7 @@ class Home extends Component {
             {/* <a className = {this.state.signUpDisplay} onClick = {this.changeCSS}>Get Started</a> */}
             <SignUp />
 
-            <div className = {styles.gridDisplayCenter}>
+              {/*<div className = {styles.gridDisplayCenter}>
               <h3 style = {{textAlign: 'center', marginTop: '100px', fontWeight: 'bold', color: 'white'}}>HOW IT WORKS</h3>
               <p style = {{color: '#979797', fontSize: '18px', width: '600px', textAlign: 'center', marginTop: '10px', marginBottom: '0',color: 'white'}}>
                 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
@@ -40,7 +40,7 @@ class Home extends Component {
               <p style = {{color: 'black', fontSize: '18px', width: '600px', textAlign: 'center', marginTop: '0', fontWeight: 'bold', color: 'white'}}>
                 Explore -> Pay -> Choose -> Enjoy
               </p>
-          </div>
+          </div>*/}
           </div>
         </div>
         {/* <div className = {styles.gridDisplayCenter}>
@@ -52,7 +52,13 @@ class Home extends Component {
             Explore -> Pay -> Choose -> Enjoy
           </p>
         </div> */}
-        <div style = {{display: 'inline-flex', width: '100%', marginTop: '100px'}}>
+        <div>
+          <h3 style = {{textAlign: 'center', marginTop: '15px', fontWeight: 'bold'}}>HOW IT WORKS</h3>
+          <p style = {{color: '#979797', fontSize: '18px', textAlign: 'center', marginTop: '10px'}}>
+                Explore meals and cuisines. Choose a meal plan that is right for you.
+              </p>
+        </div>
+        <div style = {{display: 'inline-flex', width: '100%', marginTop: '30px'}}>
           <div className = {styles.stepsContainer}>
             <img className = {styles.stepsImage} src = {exploreImg}></img>
            <div>

@@ -21,7 +21,7 @@ const Menu = props => {
         </Link>
         <Link to='/select-meal'>
           <img src={calendar} alt='MEALS AVAILABLE' />
-          MEALS AVAILABLE
+          SELECT MEAL
         </Link>
       </div>
     </div>

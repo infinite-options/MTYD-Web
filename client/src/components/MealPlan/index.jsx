@@ -61,32 +61,26 @@ const MealPlan = props => {
       props.history.push('/');
     } else {
       try {
+        console.log("Customer ID: " + customerId);
         props.fetchProfileInformation(customerId);
+        console.log("fetch profile info: " + props.fetchProfileInformation(customerId));
         props.fetchPlans();
         props
           .fetchSubscribed(customerId)
           .then(ids => props.fetchOrderHistory(ids));
+        //console.log("Meal Plan Props: " + JSON.stringify(props));
       } catch (err) {
         console.log(err);
       }
-      axios.get(process.env.REACT_APP_SERVER_BASE_URI + 'Profile/' + customerId)
-      .then(res => {
-        console.log(res.data.result[0].user_social_media)
-        if(res.data.result[0].user_social_media === "NULL") {
-          setChangePassword(<ChangePassword/>)
-        }
-      })
-      .catch(error => {
-        console.log(error)
-      })
     }
     //eslint-disable-next-line
   }, []);
   const setMealChange = id => {
+    console.log("Editing meal plan...");
     //get current meal
     let currentItem = JSON.parse(activePlans[id].items)[0];
     let currentItemUid = currentItem.item_uid;
-    console.log('currentItemUid: ', currentItemUid);
+    //console.log('currentItemUid: ', currentItemUid);
     for (let items of Object.values(props.plans)) {
       for (let key of Object.keys(items)) {
         if (key.toString() === currentItemUid) {
@@ -176,10 +170,17 @@ const MealPlan = props => {
   const loadHistory = () => {
     let items = props.orderHistory;
     let itemShow = [];
-    console.log(items)
+    console.log(items);
+      
+    itemShow.push(
+      <h6 className="mb-4" style={{fontSize: '25px'}}>
+        ORDER HISTORY
+      </h6>
+    );
 
     for (let key of Object.keys(items)) {
       if (items[key][0]?.items) {
+        let status = items[key][0].purchase_status;
         let name = JSON.parse(items[key][0].items)[0].name;
         let item_uid = JSON.parse(items[key][0].items)[0].item_uid;
         let purchases = items[key];
@@ -188,6 +189,7 @@ const MealPlan = props => {
           let item_desc = props.plans[name.split(' ')[0]][item_uid].item_desc;
           active_frequency = item_desc.split(' - ')[1].toUpperCase();
         }
+        if(status === 'ACTIVE'){
         itemShow.push(
           <div key={key} className={'row pl-2 mb-5 ' + styles.historyItemName}>
             <p className={styles.itemName + ' pl-0 text-uppercase'}>
@@ -210,7 +212,30 @@ const MealPlan = props => {
               return (
                 <Fragment key={purchase.purchase_uid}>
                   <div className={styles.historyItemName}>
-                    <p className="font-weight-bold">{dateShow}</p>
+                    <p className="mt-0">
+                      <span className={styles.title}>PURCHASE DATE:</span>{' '}
+                      {dateShow}
+                    </p>
+                    {(() => {
+                      if (active_frequency === 'WEEKLY') {
+                        return (
+                          <div>
+                          <p className="mt-0">
+                            <span className={styles.title}>NEXT CHARGE DATE:</span>{' '}
+                              --
+                          </p>
+                          <p className="mt-0">
+                            <span className={styles.title}>NEXT CHARGE AMOUNT:</span>{' '}
+                              --
+                          </p>
+                          </div>
+                        );
+                      }
+                    })()}
+                    <p className="mt-0">
+                      <span className={styles.title}>DELIVERIES REMAINING:</span>{' '}
+                      --
+                    </p>
                     <p className="mt-0">
                       <span className={styles.title}>ORDER #:</span>{' '}
                       {purchase.purchase_uid}
@@ -220,15 +245,15 @@ const MealPlan = props => {
                       {item_desc}
                     </p>
                     <p className={styles.title}>DELIVERY ADDRESS:</p>
-                    <p>{purchase.delivery_address}</p>
-                    <p>
-                      {
-                        (purchase.delivery_city +
-                          ', ' +
-                          purchase.delivery_state +
-                          ' ',
-                        purchase.delivery_zip + '.')
-                      }
+                    <p>{purchase.delivery_address + ',\n '}
+                       {purchase.delivery_unit !== 'NULL' && (
+                         <span>
+                           Apt. {' ' + purchase.delivery_unit + ', '}
+                         </span>)}
+                        <br></br>
+                       {purchase.delivery_city + ', ' + 
+                        purchase.delivery_state + ', ' +
+                        purchase.delivery_zip + '.'}
                     </p>
                     <p className={styles.title}>PAYMENT CARD:</p>
                     <p>************{purchase.cc_num.substring(purchase.cc_num.length-4, purchase.cc_num.length)}</p>
@@ -247,6 +272,7 @@ const MealPlan = props => {
             })}
           </div>
         );
+        }
       }
     }
     return itemShow;
@@ -261,7 +287,7 @@ const MealPlan = props => {
         {props.subscribedPlans.length ? (
           <div className={styles.box1}>
             <div className={'row ' + styles.fixedHeight}>
-              <div className={'col-9 ' + styles.fixedHeight}>
+              <div className={'col-9 ' + styles.flexHeight}>
                 <div className={styles.box}>
                   <div className="row">
                     <input
@@ -377,7 +403,7 @@ const MealPlan = props => {
                               </button>
                             
                             </div>
-                            <p>{plan.delivery_address}.</p>
+                            <p>{plan.delivery_address},</p>
                             <p>
                               {plan.delivery_unit !== 'NULL' && (
                                 <span>
@@ -511,12 +537,6 @@ const MealPlan = props => {
                                       ' ' +
                                       plan.delivery_last_name}
                                   </p>
-                                  {/* <button
-                                    className={styles.iconBtn}
-                                    onClick={() => setUserInfoChange(index)}
-                                  >
-                                    <i className="fa fa-pencil ml-4"></i>
-                                  </button> */}
                                 
                                 </div>
                                 <p>{plan.delivery_address}.</p>
@@ -546,13 +566,12 @@ const MealPlan = props => {
                     </>
                   }
                 </div>
-                
               </div>
-              <div className={'col-3 text-left pl-5 ' + styles.fixedHeight}>
-                <h6 className="mb-4" style={{fontSize: '25px'}}>
-                  ORDER HISTORY
-                </h6>
-                {loadHistory()}
+            
+              <div className={'col-3 text-left pl-5 ' + styles.flexHeight}>
+                <div>
+                  {loadHistory()}
+                </div>
               </div>
             </div>
           </div>
@@ -568,6 +587,7 @@ const MealPlan = props => {
     </>
   );
 };
+
 const mapStateToProps = state => ({
   subscribe: state.subscribe,
   customerId: state.subscribe.profile.customerId,
