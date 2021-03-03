@@ -44,7 +44,7 @@ class Home extends Component {
              <h6 className = {styles.stepsNumber}>1</h6>
              <h6 className = {styles.stepsTitle}>Explore</h6>
            </div>
-           <h6 className = {styles.stepsText}>Explore Meal Plans. Choose one that is right for you.</h6>
+           <h6 className = {styles.stepsText}>Let your pallete be your guide. Explore the different cuisines (we have three!) and dishes available.</h6>
           </div>
           <div className = {styles.stepsContainer}>
           <img className = {styles.stepsImage} src = {purchaseImg}></img>
@@ -52,7 +52,7 @@ class Home extends Component {
              <h6 className = {styles.stepsNumber}>2</h6>
              <h6 className = {styles.stepsTitle}>Purchase</h6>
            </div>
-           <h6 className = {styles.stepsText}>Pre-pay with PayPal or Stripe. Get discounts if you purchase 2 or 4 weeks in advance.</h6>
+           <h6 className = {styles.stepsText}>Purchase a Meal Plan. Pre-pay with PayPal or Stripe. Get discounts if you purchase 2 or 4 weeks in advance.</h6>
           </div>
           <div className = {styles.stepsContainer}>
           <img className = {styles.stepsImage} src = {chooseImg}></img>
@@ -60,7 +60,7 @@ class Home extends Component {
              <h6 className = {styles.stepsNumber}>3</h6>
              <h6 className = {styles.stepsTitle}>Choose</h6>
            </div>
-           <h6 className = {styles.stepsText}>Choose the meals you want up to 4 weeks in advance.</h6>
+           <h6 className = {styles.stepsText}>Choose the meals you want to receive each delivery up to 4 weeks in advance.</h6>
           </div>
           <div className = {styles.stepsContainer}>
           <img className = {styles.stepsImage} src = {enjoyImg}></img>
