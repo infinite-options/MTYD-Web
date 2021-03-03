@@ -8,10 +8,6 @@
   width: inherit;
 }
 
-.stepsHeader {
-  justify-self: center;
-}
-
 .centerSubtitleText {
   text-align: center;
   color: white;
@@ -61,7 +57,7 @@
   padding: 8px 14px;
   border-radius: 50%;
   font-weight: bold;
-  margin-left: 150px;
+  margin-left: 20%;
 }
 
 .stepsImage {
@@ -79,6 +75,7 @@
   color: #979797;
   font-size: 15px;
   padding: 0 50px;
+  height: 80px;
 }
 
 .couponContainer {

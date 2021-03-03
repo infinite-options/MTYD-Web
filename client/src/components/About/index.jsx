@@ -3,8 +3,7 @@ import {Link} from "react-router-dom";
 import {WebNavBar} from "../NavBar";
 import Menu from "../Menu";
 import styles from "./about.module.css"
-import oliveGLogo from "./oliveGarden.png"
-import paradiseBayLogo from "./paradiseBay.png"
+import ponoHawaiian from "./PONOHAWAIIAN_LOGO.png"
 
 class About extends Component {
   state = {  }
@@ -59,8 +58,7 @@ class About extends Component {
 
       <div style = {{width: '90%', margin: '0px 80px'}}>
         <h3 style = {{fontWeight: 'bold'}}>OUR PARTNERS</h3>
-        <img src = {oliveGLogo} style = {{display: 'inline-block', height: '100px', margin: '30px'}}></img>
-        <img src = {paradiseBayLogo} style = {{display: 'inline-block', height: '100px', margin: '30px'}}></img>
+        <img src = {ponoHawaiian} style = {{display: 'inline-block', height: '100px', margin: '30px'}}></img>
       </div>
       <div style = {{width: '90%', margin: '0px 80px'}}>
         <h3 style = {{fontWeight: 'bold'}}>PARTNER PROFILES</h3>
@@ -68,19 +66,7 @@ class About extends Component {
           
           <div className = {styles.partnerProfileContainer}>
             <div style = {{display: 'grid'}}>
-              <img src = {oliveGLogo} className = {styles.partnerProfileLogo}></img>
-              <div style = {{backgroundColor: 'black', height: '315px', width: '515px', margin: 'auto'}}></div>
-              <p style = {{color: 'black', fontSize: '18px', padding: '0px ', margin: '40px auto 0 auto', width: '515px'}}> 
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut ero labore et dolore magna aliqua. 
-                Ut enim ad minim veniam, quis nostrud exercitation ullamco poriti laboris nisi ut aliquip ex ea commodo consequat.
-                Duis aute irure dolor in reprehenderit in uienply voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
-                Excepteur sint occaecat cupidatat norin proident, sunt in culpa qui officia deserunt mollit anim id est laborum. 
-              </p>
-            </div>
-          </div>
-          <div className = {styles.partnerProfileContainer}>
-            <div style = {{display: 'grid'}}>
-              <img src = {oliveGLogo} className = {styles.partnerProfileLogo}></img>
+              <img src = {ponoHawaiian} className = {styles.partnerProfileLogo}></img>
               <div style = {{backgroundColor: 'black', height: '315px', width: '515px', margin: 'auto'}}></div>
               <p style = {{color: 'black', fontSize: '18px', padding: '0px ', margin: '40px auto 0 auto', width: '515px'}}> 
                 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut ero labore et dolore magna aliqua. 

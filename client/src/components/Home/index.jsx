@@ -11,8 +11,7 @@ import purchaseImg from "./images/purchase.svg"
 import chooseImg from "./images/choose.svg"
 import enjoyImg from "./images/enjoy.svg"
 import inchins from "./images/inchins.png"
-import oliveGarden from "./images/oliveGarden.png"
-import paradiseBay from "./images/paradiseBay.png"
+import ponoHawaiian from "./images/PONOHAWAIIAN_LOGO.png"
 
 class Home extends Component {
   state = { 
@@ -29,29 +28,9 @@ class Home extends Component {
           <div className = {styles.gridDisplayCenter}>
             <h1 className = {styles.centerSubtitleText}>WELCOME TO <img style = {{height: '140px', width: '400px', marginTop: '-50px'}} src = {Logo} alt="logo" /></h1>
             <h3 className = {styles.centerSubText}>Get the freshly cooked meal options for your healthy lifestyle</h3>
-            {/* <a className = {this.state.signUpDisplay} onClick = {this.changeCSS}>Get Started</a> */}
             <SignUp />
-
-              {/*<div className = {styles.gridDisplayCenter}>
-              <h3 style = {{textAlign: 'center', marginTop: '100px', fontWeight: 'bold', color: 'white'}}>HOW IT WORKS</h3>
-              <p style = {{color: '#979797', fontSize: '18px', width: '600px', textAlign: 'center', marginTop: '10px', marginBottom: '0',color: 'white'}}>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-              </p>
-              <p style = {{color: 'black', fontSize: '18px', width: '600px', textAlign: 'center', marginTop: '0', fontWeight: 'bold', color: 'white'}}>
-                Explore -> Pay -> Choose -> Enjoy
-              </p>
-          </div>*/}
           </div>
         </div>
-        {/* <div className = {styles.gridDisplayCenter}>
-          <h3 style = {{textAlign: 'center', marginTop: '100px', fontWeight: 'bold'}}>HOW IT WORKS</h3>
-          <p style = {{color: '#979797', fontSize: '15px', width: '600px', textAlign: 'center', marginTop: '10px', marginBottom: '0'}}>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-          </p>
-          <p style = {{color: 'black', fontSize: '15px', width: '600px', textAlign: 'center', marginTop: '0', fontWeight: 'bold'}}>
-            Explore -> Pay -> Choose -> Enjoy
-          </p>
-        </div> */}
         <div>
           <h3 style = {{textAlign: 'center', marginTop: '15px', fontWeight: 'bold'}}>HOW IT WORKS</h3>
           <p style = {{color: '#979797', fontSize: '18px', textAlign: 'center', marginTop: '10px'}}>
@@ -65,7 +44,7 @@ class Home extends Component {
              <h6 className = {styles.stepsNumber}>1</h6>
              <h6 className = {styles.stepsTitle}>Explore</h6>
            </div>
-           <h6 className = {styles.stepsText}>tempor incididunt ut labore et dolore magna aliqua.</h6>
+           <h6 className = {styles.stepsText}>Explore Meal Plans. Choose one that is right for you.</h6>
           </div>
           <div className = {styles.stepsContainer}>
           <img className = {styles.stepsImage} src = {purchaseImg}></img>
@@ -73,7 +52,7 @@ class Home extends Component {
              <h6 className = {styles.stepsNumber}>2</h6>
              <h6 className = {styles.stepsTitle}>Purchase</h6>
            </div>
-           <h6 className = {styles.stepsText}>tempor incididunt ut labore et dolore magna aliqua.</h6>
+           <h6 className = {styles.stepsText}>Pre-pay with PayPal or Stripe. Get discounts if you purchase 2 or 4 weeks in advance.</h6>
           </div>
           <div className = {styles.stepsContainer}>
           <img className = {styles.stepsImage} src = {chooseImg}></img>
@@ -81,7 +60,7 @@ class Home extends Component {
              <h6 className = {styles.stepsNumber}>3</h6>
              <h6 className = {styles.stepsTitle}>Choose</h6>
            </div>
-           <h6 className = {styles.stepsText}>tempor incididunt ut labore et dolore magna aliqua.</h6>
+           <h6 className = {styles.stepsText}>Choose the meals you want up to 4 weeks in advance.</h6>
           </div>
           <div className = {styles.stepsContainer}>
           <img className = {styles.stepsImage} src = {enjoyImg}></img>
@@ -89,10 +68,10 @@ class Home extends Component {
              <h6 className = {styles.stepsNumber}>4</h6>
              <h6 className = {styles.stepsTitle}>Enjoy</h6>
            </div>
-           <h6 className = {styles.stepsText}>tempor incididunt ut labore et dolore magna aliqua.</h6>
+           <h6 className = {styles.stepsText}>Heat, enjoy, and stay healthy!</h6>
           </div>
         </div>
-        <div style = {{display: 'inline-flex', width: '100%', marginTop: '50px'}}>
+        <div style = {{display: 'inline-flex', width: '100%', marginTop: '10px'}}>
           <h3 style = {{textAlign: 'left', marginTop: '100px', fontWeight: 'bold', marginLeft: '5%'}}>ENJOY SPECIAL DISCOUNTS</h3>
         </div>
         <div style = {{display: 'flex',flexWrap: 'wrap', width: '100%', marginTop: '50px', padding: '0 50px'}}>
@@ -113,13 +92,7 @@ class Home extends Component {
         </div>
         <div style = {{display: 'flex',flexWrap: 'wrap', width: '100%', marginTop: '50px', padding: '0 50px'}}>
           <div className = {styles.partnerContainer}>
-           <img className = {styles.partnerImage} src = {inchins}></img>
-          </div>
-          <div className = {styles.partnerContainer}>
-            <img className = {styles.partnerImage} src = {oliveGarden}></img>
-          </div>
-          <div className = {styles.partnerContainer}>
-           <img className = {styles.partnerImage} src = {paradiseBay}></img>
+           <img className = {styles.partnerImage} src = {ponoHawaiian}></img>
           </div>
         </div>
       
