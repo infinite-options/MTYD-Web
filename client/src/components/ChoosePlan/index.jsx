@@ -53,6 +53,7 @@ class ChoosePlan extends React.Component {
   }
 
   componentDidMount() {
+    console.log("choose-plan props: " + JSON.stringify(this.props));
     let queryString = this.props.location.search;
     let urlParams = new URLSearchParams(queryString);
     // Clear Query parameters
@@ -144,8 +145,34 @@ class ChoosePlan extends React.Component {
     let selectedMealButton =
       styles.mealButton + " " + styles.mealButtonSelected;
     let mealButtons = [];
-    for (const plan of this.props.numItems) {
+    /*for (const plan of this.props.numItems) {
+      console.log("numItems: " + this.props.numItems);
+      console.log("plan: " + plan);
+      if(plan !== undefined){
       let planStr = plan.toString();
+      mealButtons.push(
+        <button
+          key={planStr}
+          className={
+            this.props.meals === planStr
+              ? selectedMealButton
+              : deselectedMealButton
+          }
+          onClick={() =>
+            this.props.chooseMealsDelivery(
+              planStr,
+              this.props.paymentOption,
+              this.props.plans
+            )
+          }
+        >
+          {planStr} MEALS
+        </button>
+      );
+      }
+    }*/
+    for (var numMeals = 2; numMeals<=6; numMeals++) {
+      let planStr = numMeals.toString();
       mealButtons.push(
         <button
           key={planStr}
@@ -180,6 +207,9 @@ class ChoosePlan extends React.Component {
 
     for (const [i, option] of this.props.paymentFrequency.entries()) {
       let active = false;
+      console.log("i: " + i);
+      console.log("options: " + option);
+      if(option !== undefined){
       let optionStr = option.toString();
       if (this.props.meals === "") {
         active = true;
@@ -210,6 +240,7 @@ class ChoosePlan extends React.Component {
           </button>
         </div>
       );
+      }
     }
     return paymentOptionButtons;
   };

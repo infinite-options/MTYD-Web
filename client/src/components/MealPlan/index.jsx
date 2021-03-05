@@ -38,15 +38,23 @@ const MealPlan = props => {
       .find(item => item.startsWith('customer_uid='))
       .split('=')[1];
   }
-
+    
   // we can replace hooks by store.subscribe(listener)
 
   const [modal, setModal] = useState(null);
   const [changePassword, setChangePassword] = useState(
-  <>
-    <div>
-    </div>
-  </>
+    <>
+      <div>
+        {(() => {
+          console.log("Social Media: " + props.socialMedia);
+          if (props.socialMedia === "NULL") {
+            return (
+              <ChangePassword />
+            );
+          }
+        })()}
+      </div>
+    </>
   );
   
   const activePlans = props.subscribedPlans.filter((elt) => elt.purchase_status === 'ACTIVE');
@@ -321,6 +329,13 @@ const MealPlan = props => {
                     let frequency = ' ';
                     if (Object.keys(props.plans).length > 0) {
                       if (props.plans[item.name.split(' ')[0]]) {
+                        //console.log("props: " + JSON.stringify(props));
+                        console.log("plan: " + JSON.stringify(props.plans[item.name.split(' ')[0]]));
+                        //console.log("plans: " + JSON.stringify(props.plans));
+                        console.log("item name: " + item.name);
+                        console.log("(1) " + item.name.split(' ')[0]);
+                        console.log("(2) " + item.item_uid);
+                        console.log("plans[" + item.name.split(' ')[0] + "][" + item.item_uid + "]: " + JSON.stringify(props.plans[item.name.split(' ')[0]][item.item_uid]));
                         let item_desc =
                           props.plans[item.name.split(' ')[0]][item.item_uid]
                             .item_desc;
@@ -598,6 +613,7 @@ const mapStateToProps = state => ({
   plans: state.subscribe.plans,
   firstName: state.login.userInfo.firstName,
   lastName: state.login.userInfo.lastName,
+  socialMedia: state.subscribe.profile.socialMedia
 });
 
 export default connect(mapStateToProps, {

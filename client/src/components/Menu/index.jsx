@@ -6,6 +6,19 @@ import group from "./static/Group 1682.svg";
 import lunch from "./static/lunch.svg";
 import {Link} from "react-router-dom";
 
+const getCircularReplacer = () => {
+  const seen = new WeakSet();
+  return (key, value) => {
+    if (typeof value === "object" && value !== null) {
+      if (seen.has(value)) {
+        return;
+      }
+      seen.add(value);
+    }
+    return value;
+  };
+};
+
 const Menu = props => {
   return (
     <div className={props.show ? styles.menu : styles.menu1}>

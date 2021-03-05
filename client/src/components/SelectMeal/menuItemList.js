@@ -877,7 +877,7 @@ class MenuItemList extends Component {
           mealSelected={this.state.mealSelected}
         />
 
-        <div style = {{overflow: 'auto', height: '691px'}}>
+        <div style = {{overflow: 'auto', height: '100vh'}}>
             <div className={styles.menuItemsWrapper}>
               <MenuItem
                 addToCart={this.addToCart}
