@@ -42,8 +42,33 @@ const MealPlan = props => {
   // we can replace hooks by store.subscribe(listener)
 
   const [modal, setModal] = useState(null);
-  const [changePassword, setChangePassword] = useState(
+  /*const [changePassword, setChangePassword] = useState(
     <>
+      <div>
+        {(() => {
+          //console.log("Social Media: " + props.socialMedia);
+          if (props.socialMedia === "NULL") {
+            return (
+              <ChangePassword />
+            );
+          }
+        })()}
+      </div>
+    </>
+  );*/
+  
+  const activePlans = props.subscribedPlans.filter((elt) => elt.purchase_status === 'ACTIVE');
+  const cancelledPlans = props.subscribedPlans.filter((elt) => elt.purchase_status !== 'ACTIVE');
+
+  const modalShow = [
+    <ChangeMealPlan isShow={true} changeOpen={() => setModal(null)} />,
+    <ChangeUserInfo isShow={true} changeOpen={() => setModal(null)} />,
+  ];
+    
+  const [changePassword, setChangePassword] = useState(null);
+    
+  useEffect(() => {
+    setChangePassword(
       <div>
         {(() => {
           console.log("Social Media: " + props.socialMedia);
@@ -54,16 +79,10 @@ const MealPlan = props => {
           }
         })()}
       </div>
-    </>
-  );
-  
-  const activePlans = props.subscribedPlans.filter((elt) => elt.purchase_status === 'ACTIVE');
-  const cancelledPlans = props.subscribedPlans.filter((elt) => elt.purchase_status !== 'ACTIVE');
-
-  const modalShow = [
-    <ChangeMealPlan isShow={true} changeOpen={() => setModal(null)} />,
-    <ChangeUserInfo isShow={true} changeOpen={() => setModal(null)} />,
-  ];
+    );
+  }, [props.socialMedia]);
+    
+    
   useEffect(() => {
     if (!customerId) {
       props.history.push('/');
@@ -178,7 +197,7 @@ const MealPlan = props => {
   const loadHistory = () => {
     let items = props.orderHistory;
     let itemShow = [];
-    console.log(items);
+    //console.log("items: " + JSON.stringify(items));
       
     itemShow.push(
       <h6 className="mb-4" style={{fontSize: '25px'}}>
@@ -188,22 +207,41 @@ const MealPlan = props => {
 
     for (let key of Object.keys(items)) {
       if (items[key][0]?.items) {
+          
+        // Endpoints where data comes from: 
+        // plans?business_uid=200-000001
+        // pid_history/400-000021
+        
+        //console.log("(1) items[" + key + "][" + 0 + "]: " + JSON.stringify(items[key][0]));
+        //console.log("(2) items[" + key + "][" + 0 + "]: " + JSON.stringify(items));
+          
+        console.log();
+        console.log("orderHistory: " + JSON.stringify(props.orderHistory));
+        console.log("plans: " + JSON.stringify(props.plans));
+        console.log();
+          
         let status = items[key][0].purchase_status;
         let name = JSON.parse(items[key][0].items)[0].name;
-        let item_uid = JSON.parse(items[key][0].items)[0].item_uid;
+        let qty = JSON.parse(items[key][0].items)[0].qty;
+        console.log("qty: " + JSON.stringify(qty));
+        let remaining = props.plans[name.split(' ')[0]][qty].num_deliveries;
         let purchases = items[key];
         let active_frequency = '';
         if (Object.keys(props.plans).length > 0) {
-          let item_desc = props.plans[name.split(' ')[0]][item_uid].item_desc;
-          active_frequency = item_desc.split(' - ')[1].toUpperCase();
+          //let item_desc = props.plans[name.split(' ')[0]][item_uid].item_desc;
+          //active_frequency = item_desc.split(' - ')[1].toUpperCase();
+          //active_frequency = props.plans[name.split(' ')[0]][item_uid].num_deliveries;
+          active_frequency = qty;
         }
         if(status === 'ACTIVE'){
         itemShow.push(
           <div key={key} className={'row pl-2 mb-5 ' + styles.historyItemName}>
             <p className={styles.itemName + ' pl-0 text-uppercase'}>
-              {name} - {active_frequency}
+              {name} - {active_frequency} TOTAL DELIVERIE(S)
             </p>
             {purchases.map((purchase, id) => {
+              //console.log("purchase: " + JSON.stringify(purchase));
+              //console.log("id: " + id);
               let _date = purchase.purchase_date.split(' ');
               let date = new Date(`${_date[0]}T00:00:00`);
               let dateShow = date.toDateString().replace(' ', ', ');
@@ -211,12 +249,14 @@ const MealPlan = props => {
               let purchase_items = JSON.parse(purchase.items)[0];
 
               if (Object.keys(props.plans).length > 0) {
-                console.log(purchase_items);
-                item_desc =
+                //console.log("purchase_items:" + JSON.stringify(purchase_items));
+                /*item_desc =
                   props.plans[purchase_items.name.split(' ')[0]][
-                    purchase_items.item_uid
-                  ].item_desc;
+                    purchase_items.qty
+                  ].item_desc;*/
+                item_desc = name + " for " + active_frequency + " weeks"
               }
+                           
               return (
                 <Fragment key={purchase.purchase_uid}>
                   <div className={styles.historyItemName}>
@@ -242,7 +282,7 @@ const MealPlan = props => {
                     })()}
                     <p className="mt-0">
                       <span className={styles.title}>DELIVERIES REMAINING:</span>{' '}
-                      --
+                      {remaining}
                     </p>
                     <p className="mt-0">
                       <span className={styles.title}>ORDER #:</span>{' '}
@@ -290,6 +330,13 @@ const MealPlan = props => {
     <>
       <WebNavBar />
       <div className={styles.container}>
+            <hr
+                        style={{
+                          borderTop: '1px solid orange',
+                          width: '1000px',
+                          margin: '2px auto',
+                        }}
+                      />
         <Menu show={true} message={changePassword}/>
         {modal !== null && modalShow[modal]}
         {props.subscribedPlans.length ? (
@@ -324,22 +371,29 @@ const MealPlan = props => {
                     </div>
                   </div>
                   {activePlans.map((plan, index) => {
+                        
+                    // Endpoints where data comes from: 
+                    // pid_history/400-000021
+                        
+                    console.log("activePlans: " + JSON.stringify(activePlans));
+                        
                     let item = JSON.parse(plan.items)[0];
                     let cc_num = plan.cc_num;
                     let frequency = ' ';
                     if (Object.keys(props.plans).length > 0) {
                       if (props.plans[item.name.split(' ')[0]]) {
-                        //console.log("props: " + JSON.stringify(props));
-                        console.log("plan: " + JSON.stringify(props.plans[item.name.split(' ')[0]]));
-                        //console.log("plans: " + JSON.stringify(props.plans));
+
                         console.log("item name: " + item.name);
                         console.log("(1) " + item.name.split(' ')[0]);
-                        console.log("(2) " + item.item_uid);
-                        console.log("plans[" + item.name.split(' ')[0] + "][" + item.item_uid + "]: " + JSON.stringify(props.plans[item.name.split(' ')[0]][item.item_uid]));
-                        let item_desc =
-                          props.plans[item.name.split(' ')[0]][item.item_uid]
-                            .item_desc;
-                        frequency = item_desc.split(' - ')[1].toUpperCase();
+                        console.log("(2) " + item.qty);
+                        console.log("plans[" + item.name.split(' ')[0] + "][" + item.qty + "]: " + JSON.stringify(props.plans[item.name.split(' ')[0]][item.qty]));
+                          
+                        /*let item_desc =
+                          props.plans[item.name.split(' ')[0]][item.qty]
+                            .item_desc;*/
+                        //frequency = item_desc.split(' - ')[1].toUpperCase();
+                          
+                        frequency = props.plans[item.name.split(' ')[0]][item.qty].payment_frequency;
                       }
                     }
                     return (
@@ -388,7 +442,7 @@ const MealPlan = props => {
                               </div>
                               <div className={'col ' + styles.cardInfo}>
                                 <div className="row">
-                                  <p>FOR {frequency}</p>
+                                  <p>EVERY {frequency} WEEK(S)</p>
                                   <button
                                     className={styles.iconBtn}
                                     onClick={() => setMealChange(index)}
@@ -479,7 +533,7 @@ const MealPlan = props => {
                         if (Object.keys(props.plans).length > 0) {
                           if (props.plans[item.name.split(' ')[0]]) {
                             let item_desc =
-                              props.plans[item.name.split(' ')[0]][item.item_uid]
+                              props.plans[item.name.split(' ')[0]][item.qty]
                                 .item_desc;
                             frequency = item_desc.split(' - ')[1].toUpperCase();
                           }

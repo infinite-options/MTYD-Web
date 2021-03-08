@@ -48,31 +48,40 @@ export const fetchPlans = () => dispatch => {
   axios
     .get(API_URL + 'plans', {
       params: {
-        business_uid: '200-000001',
+        business_uid: '200-000002',
       },
     })
     .then(res => {
       let items = res.data.result;
+      //console.log();
+      //console.log("===< SUBSCRIPTION ACTIONS >===");
+      //console.log("items: " + JSON.stringify(items));
       let itemsReturn = {};
       for (let item of items) {
+        //console.log("item: " + JSON.stringify(item));
         if (item.num_items in itemsReturn) {
-          itemsReturn[item.num_items][item.item_uid] = item;
+          itemsReturn[item.num_items][item.num_deliveries] = item;
         } else {
-          itemsReturn[item.num_items] = {[item.item_uid]: item};
+          itemsReturn[item.num_items] = {[item.num_deliveries]: item};
         }
       }
 
       let numItems = items.map(curValue => curValue.num_items);
+      //console.log("numItems: " + numItems);
       let distinctNumItems = numItems.filter(
         (elt, index) => numItems.indexOf(elt) === index
       );
       distinctNumItems.sort((a, b) => a - b);
-      let paymentFrequency = items.map(curValue => curValue.payment_frequency);
+      let paymentFrequency = items.map(curValue => curValue.num_deliveries);
       let distinctPaymentFrequency = paymentFrequency.filter(
         (elt, index) => paymentFrequency.indexOf(elt) === index
       );
       distinctPaymentFrequency.sort((a, b) => a - b);
       plans = itemsReturn;
+      //console.log("itemsReturn: " + JSON.stringify(itemsReturn));
+      //console.log("distinctNumItems: " + distinctNumItems);
+      //console.log("distinctPaymentFrequency: " + distinctPaymentFrequency);
+      //console.log();
       dispatch({
         type: FETCH_PLAN_INFO,
         payload: {
@@ -113,14 +122,24 @@ export const choosePaymentOption = (
 };
 
 const calculateTotalPayment = (dispatch, plans, meal, options) => {
+  //console.log("Calculating total payment...");
   if (meal !== '' && options !== '') {
     let mealNum = Number(meal);
+    //console.log("mealNum: " + mealNum);
     let optionsNum = Number(options);
+    //console.log("optionsNum: " + optionsNum);
     let selectedPlan = Object.values(plans[meal]).filter(
-      elt => elt.num_items === mealNum && elt.payment_frequency === optionsNum
+      elt => elt.num_items === mealNum && elt.num_deliveries === optionsNum
     );
+    //console.log("selected plan: " + JSON.stringify(selectedPlan));
     if (selectedPlan.length !== 0) {
       let selectedItem = selectedPlan[0];
+      //console.log("selectedItem: " + JSON.stringify(selectedItem));
+      /*selectedItem["item_price"] = (
+          selectedItem.num_items *
+          selectedItem.num_deliveries *
+          12 * (1 - (selectedItem.delivery_discount*0.01))
+      ).toFixed(2);*/
       dispatch({
         type: GET_TOTAL_PAYMENT,
         payload: selectedItem,
@@ -360,18 +379,18 @@ export const submitPayment = (
                   console.log(selectedPlan);
                   let purchasedItem = [
                     {
-                      qty: '1',
+                      qty: (selectedPlan.num_deliveries).toString(),
                       name: selectedPlan.item_name,
-                      price: selectedPlan.item_price,
+                      price: (selectedPlan.item_price*selectedPlan.num_deliveries*(1-(selectedPlan.delivery_discount*0.01))),
                       item_uid: selectedPlan.item_uid,
-                      itm_business_uid: '200-000001',
+                      itm_business_uid: '200-000002',
                     },
                   ];
                   console.log(purchasedItem);
                   let object = {
                     customer_uid: customerUid,
                     salt: hashedPassword,
-                    business_uid: '200-000001',
+                    business_uid: '200-000002',
                     delivery_first_name: deliveryFirstName,
                     delivery_last_name: deliveryLastName,
                     delivery_email: customerEmail,
@@ -454,13 +473,13 @@ export const submitPayment = (
               name: selectedPlan.item_name,
               price: selectedPlan.item_price,
               item_uid: selectedPlan.item_uid,
-              itm_business_uid: '200-000001',
+              itm_business_uid: '200-000002',
             },
           ];
           console.log(purchasedItem);
           let object = {
             customer_uid: customerUid,
-            business_uid: '200-000001',
+            business_uid: '200-000002',
             delivery_first_name: deliveryFirstName,
             delivery_last_name: deliveryLastName,
             delivery_email: customerEmail,
@@ -525,9 +544,9 @@ export const fetchSubscribed = customerId => async dispatch => {
     } else {
       console.log('return from customer_lplp: ', res);
       let filtered = res.data.result.filter(
-        item => JSON.parse(item?.items)[0]?.itm_business_uid === '200-000001'
+        item => JSON.parse(item?.items)[0]?.itm_business_uid === '200-000002'
       );
-      console.log('filtered: ', filtered);
+      //console.log('filtered: ', filtered);
       dispatch({
         type: FETCH_SUBSCRIBED_INFO,
         payload: filtered,

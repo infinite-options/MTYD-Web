@@ -143,34 +143,8 @@ class ChoosePlan extends React.Component {
   mealsDelivery = () => {
     let deselectedMealButton = styles.mealButton;
     let selectedMealButton =
-      styles.mealButton + " " + styles.mealButtonSelected;
+    styles.mealButton + " " + styles.mealButtonSelected;
     let mealButtons = [];
-    /*for (const plan of this.props.numItems) {
-      console.log("numItems: " + this.props.numItems);
-      console.log("plan: " + plan);
-      if(plan !== undefined){
-      let planStr = plan.toString();
-      mealButtons.push(
-        <button
-          key={planStr}
-          className={
-            this.props.meals === planStr
-              ? selectedMealButton
-              : deselectedMealButton
-          }
-          onClick={() =>
-            this.props.chooseMealsDelivery(
-              planStr,
-              this.props.paymentOption,
-              this.props.plans
-            )
-          }
-        >
-          {planStr} MEALS
-        </button>
-      );
-      }
-    }*/
     for (var numMeals = 2; numMeals<=6; numMeals++) {
       let planStr = numMeals.toString();
       mealButtons.push(
@@ -201,23 +175,19 @@ class ChoosePlan extends React.Component {
       {image: paymentOption2, desc: "FOR 2 WEEKS"},
       {image: paymentOption3, desc: "FOR 4 WEEKS"}
     ];
-    let deselectedPaymentOption = styles.box2;
-    let selectedPaymentOption = styles.box2 + " " + styles.ButtonSelected;
+    let deselectedPaymentOption = styles.deliveryButton;
+    let selectedPaymentOption = styles.deliveryButton + " " + styles.deliveryButtonSelected;
     let paymentOptionButtons = [];
-
-    for (const [i, option] of this.props.paymentFrequency.entries()) {
+    for (var numDeliveries = 1; numDeliveries<=10; numDeliveries++) {
       let active = false;
-      console.log("i: " + i);
-      console.log("options: " + option);
-      if(option !== undefined){
-      let optionStr = option.toString();
+      let optionStr = numDeliveries.toString();
       if (this.props.meals === "") {
         active = true;
       } else {
         active = false;
       }
       paymentOptionButtons.push(
-        <div className={styles.sameLine} key={i}>
+        <div className={styles.sameLine} key={numDeliveries}>
           <button
             disabled={active}
             className={
@@ -228,19 +198,22 @@ class ChoosePlan extends React.Component {
               (active && styles.disabledBtn)
             }
             onClick={() =>
+              {
+                console.log("optionStr: " + optionStr);
+                console.log("meals: " + this.props.meals);
+                console.log("plans: " + JSON.stringify(this.props.plans));
               this.props.choosePaymentOption(
                 optionStr,
                 this.props.meals,
                 this.props.plans
               )
+              }
             }
           >
-            <img src={myArr[i].image} />
-            <p>{myArr[i].desc}</p>
+          {numDeliveries} DELIVERIES
           </button>
         </div>
       );
-      }
     }
     return paymentOptionButtons;
   };
@@ -416,7 +389,7 @@ class ChoosePlan extends React.Component {
                           <div className={styles.center}>
                             <img src={one} alt='one' className={styles.forty} />
                             <span className={styles.bold}>
-                              CHOOSE MEAL PLANS
+                              MEALS PER DELIVERY
                             </span>
                           </div>
                         </div>
@@ -432,7 +405,7 @@ class ChoosePlan extends React.Component {
                         <div className='row'>
                           <div className={styles.center}>
                             <img src={two} alt='two' className={styles.forty} />
-                            <span className={styles.bold}>PREPAY OPTIONS</span>
+                            <span className={styles.bold}>NUMBER OF DELIVERIES</span>
                           </div>
                         </div>
                         <div className='row'>{this.paymentFrequency2()}</div>
@@ -669,8 +642,13 @@ class ChoosePlan extends React.Component {
                 </div>
 
                 <div className='row'>
+                  {console.log("choose-plan selectedPlan: " + JSON.stringify(this.props.selectedPlan))}
                   <p className={styles.totalBtn}>
-                    $ {this.props.selectedPlan.item_price}
+                    $ {(
+                          this.props.selectedPlan.item_price *
+                          this.props.selectedPlan.num_deliveries *
+                          (1-(this.props.selectedPlan.delivery_discount*0.01))
+                      ).toFixed(2)}
                   </p>
                   <button
                     className={styles.finishBtn}
