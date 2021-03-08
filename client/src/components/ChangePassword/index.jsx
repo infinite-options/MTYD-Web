@@ -18,8 +18,8 @@ class ChangePassword extends Component {
           oldPassword: '',
           newPassword: '',
           newPassword2: '',
-          toggleChangePassword: styles.changePasswordPopUpShow,
-          displayCheck: true,
+          toggleChangePassword: styles.changePasswordPopUpHide,
+          displayCheck: false,
         };
       }
 
@@ -48,7 +48,7 @@ class ChangePassword extends Component {
         }
       }
 
-      /*toggleDisplay = () => {
+      toggleDisplay = () => {
             if(this.state.displayCheck === false) {
             this.setState({
                 toggleChangePassword: styles.changePasswordPopUpShow,
@@ -64,7 +64,7 @@ class ChangePassword extends Component {
             })
             }
         
-        }*/
+        }
 
       changePassword = (value, x) => {
 
@@ -91,12 +91,23 @@ class ChangePassword extends Component {
     render() { 
         return ( 
         <>
-        
+        <a className = {styles.changePasswordButtonMenu} onClick = {this.toggleDisplay}> <i className='fa fa-lock' style = {{margin: '4px 7px'}}> </i> Change Password</a>  
         <div className = {this.state.toggleChangePassword}>
             <div className  = {styles.changePasswordContainer}>
+                    <a  style = {{
+                            color: 'black',
+                            textAlign: 'center', 
+                            fontSize: '45px', 
+                            zIndex: '2', 
+                            float: 'right', 
+                            position: 'absolute', top: '0px', left: '350px', 
+                            transform: 'rotate(45deg)', 
+                            cursor: 'pointer'}} 
+                            
+                            onClick = {this.toggleDisplay}>+</a>
 
-                <div style = {{display: 'block', width: '300px', margin: '0px auto 0px'}}>
-                    <h6 style = {{margin: '5px', color: 'orange', fontWeight: 'bold', fontSize: '20px'}}>Change Password</h6>
+                <div style = {{display: 'block', width: '300px', margin: '40px auto 0px'}}>
+                    <h6 style = {{margin: '5px', color: 'orange', fontWeight: 'bold', fontSize: '25px'}}>Change Password</h6>
                     <input 
                     className = {styles.changePasswordInput}
                     type = 'password'
