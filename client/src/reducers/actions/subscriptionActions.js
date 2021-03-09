@@ -53,12 +53,8 @@ export const fetchPlans = () => dispatch => {
     })
     .then(res => {
       let items = res.data.result;
-      //console.log();
-      //console.log("===< SUBSCRIPTION ACTIONS >===");
-      //console.log("items: " + JSON.stringify(items));
       let itemsReturn = {};
       for (let item of items) {
-        //console.log("item: " + JSON.stringify(item));
         if (item.num_items in itemsReturn) {
           itemsReturn[item.num_items][item.num_deliveries] = item;
         } else {
@@ -67,7 +63,6 @@ export const fetchPlans = () => dispatch => {
       }
 
       let numItems = items.map(curValue => curValue.num_items);
-      //console.log("numItems: " + numItems);
       let distinctNumItems = numItems.filter(
         (elt, index) => numItems.indexOf(elt) === index
       );
@@ -78,10 +73,6 @@ export const fetchPlans = () => dispatch => {
       );
       distinctPaymentFrequency.sort((a, b) => a - b);
       plans = itemsReturn;
-      //console.log("itemsReturn: " + JSON.stringify(itemsReturn));
-      //console.log("distinctNumItems: " + distinctNumItems);
-      //console.log("distinctPaymentFrequency: " + distinctPaymentFrequency);
-      //console.log();
       dispatch({
         type: FETCH_PLAN_INFO,
         payload: {
@@ -122,24 +113,14 @@ export const choosePaymentOption = (
 };
 
 const calculateTotalPayment = (dispatch, plans, meal, options) => {
-  //console.log("Calculating total payment...");
   if (meal !== '' && options !== '') {
     let mealNum = Number(meal);
-    //console.log("mealNum: " + mealNum);
     let optionsNum = Number(options);
-    //console.log("optionsNum: " + optionsNum);
     let selectedPlan = Object.values(plans[meal]).filter(
       elt => elt.num_items === mealNum && elt.num_deliveries === optionsNum
     );
-    //console.log("selected plan: " + JSON.stringify(selectedPlan));
     if (selectedPlan.length !== 0) {
       let selectedItem = selectedPlan[0];
-      //console.log("selectedItem: " + JSON.stringify(selectedItem));
-      /*selectedItem["item_price"] = (
-          selectedItem.num_items *
-          selectedItem.num_deliveries *
-          12 * (1 - (selectedItem.delivery_discount*0.01))
-      ).toFixed(2);*/
       dispatch({
         type: GET_TOTAL_PAYMENT,
         payload: selectedItem,
@@ -404,7 +385,7 @@ export const submitPayment = (
                     delivery_longitude: long.toString(),
                     delivery_latitude: lat.toString(),
                     items: purchasedItem,
-                    amount_due: (selectedPlan.item_price*selectedPlan.num_deliveries*(1-(selectedPlan.delivery_discount*0.01))).toString(),
+                    amount_due: (selectedPlan.item_price*selectedPlan.num_deliveries*(1-(selectedPlan.delivery_discount*0.01))).toFixed(2),
                     amount_discount: '0',
                     amount_paid: '0',
                     cc_num: '4242424242424242',
@@ -493,7 +474,7 @@ export const submitPayment = (
             delivery_longitude: long.toString(),
             delivery_latitude: lat.toString(),
             items: purchasedItem,
-            amount_due: (selectedPlan.item_price*selectedPlan.num_deliveries*(1-(selectedPlan.delivery_discount*0.01))).toString(),
+            amount_due: (selectedPlan.item_price*selectedPlan.num_deliveries*(1-(selectedPlan.delivery_discount*0.01))).toFixed(2),
             amount_discount: '0',
             amount_paid: '0',
             cc_num: '4242424242424242',
@@ -542,11 +523,9 @@ export const fetchSubscribed = customerId => async dispatch => {
         payload: 'Cannot Get Subscription Info',
       });
     } else {
-      console.log('return from customer_lplp: ', res);
       let filtered = res.data.result.filter(
         item => JSON.parse(item?.items)[0]?.itm_business_uid === '200-000002'
       );
-      //console.log('filtered: ', filtered);
       dispatch({
         type: FETCH_SUBSCRIBED_INFO,
         payload: filtered,

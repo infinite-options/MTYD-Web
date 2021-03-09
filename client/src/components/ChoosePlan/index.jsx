@@ -116,7 +116,6 @@ class ChoosePlan extends React.Component {
       this.props.fetchPlans();
       axios.get(API_URL + 'Profile/' + customer_uid)
         .then(res => {
-          // console.log(res.data.result[0])
           let data = res.data.result[0]
           this.props.changeAddressFirstName(data.customer_first_name)
           this.props.changeAddressLastName(data.customer_last_name)
