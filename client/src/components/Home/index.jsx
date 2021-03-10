@@ -32,9 +32,9 @@ class Home extends Component {
             <h1 className = {styles.centerSubtitleText}>WELCOME TO <img style = {{height: '140px', width: '400px', marginTop: '-50px'}} src = {Logo} alt="logo" /></h1>
             <h3 className = {styles.centerSubText}>Get the freshly cooked meal options for your healthy lifestyle</h3>
             <div style = {{display: 'inline-flex', justifyContent: 'space-between'}}>
-              <HomeLink text = "Explore Meals"/>
-              <HomeLink text = "Explore Subscriptions"/>
-              <HomeLink text = "Explore Delivery Options"/>
+              <HomeLink text = "Explore Meals" link = '/select-meal'/>
+              <HomeLink text = "Explore Subscriptions" link = '/choose-plan'/>
+              <HomeLink text = "Explore Delivery Options" link = '/choose-plan'/>
             </div>
           </div>
         </div>
@@ -130,10 +130,10 @@ class Home extends Component {
         <div className = {styles.gridDisplayCenter}>
           <div style = {{display: 'inline-flex', margin: 'auto'}}>
             <div style = {{marginLeft: '50px', marginRight: '50px', marginBottom: '50px'}}>
-              <HomeLink text = "Explore Subscriptions"/>
+              <HomeLink text = "Explore Subscriptions" link = '/choose-plan'/>
             </div>
             <div style = {{marginLeft: '50px', marginRight: '50px', marginBottom: '50px'}}>
-              <HomeLink text = "Enter Your Address"/>
+              <HomeLink text = "Enter Your Address" link = '/home'/>
             </div>
           </div>
         </div>
@@ -142,17 +142,17 @@ class Home extends Component {
           <img className = {styles.footerLogo} src = {Logo} alt="logo" />
           <div className = {styles.footerLinks}>
             <div>
-              <FootLink text = "Buy a Gift Card"/>
+              <FootLink text = "Buy a Gift Card" link = '/home'/>
             </div>
             <div>
-              <FootLink text = "Join our Crew"/>
+              <FootLink text = "Join our Crew" link = '/home'/>
             </div>
             <div>
-              <FootLink text = "Contact Us"/>
+              <FootLink text = "Contact Us" link = '/home'/>
             </div>
           </div>
           <div className = {styles.footerRight}>
-            <AmbassadorLink text = "Become an Ambassador"/>
+            <AmbassadorLink text = "Become an Ambassador"  link = '/home'/>
             <img src = {facebookImg} style = {{marginTop: '50px', height: '100px', width: '100px'}}/>
             <img src = {googleImg} style = {{marginLeft: '25px', marginTop: '50px', height: '100px', width: '100px'}}/>
           </div>

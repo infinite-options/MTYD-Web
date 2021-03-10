@@ -143,7 +143,7 @@ class NavBar extends React.Component {
       
   }
   render() {
-    return (
+    /*return (
       <div className={styles.navbar}>
         <div>
           <img style={{width: "60%", height:"60%"}} src={Logo} alt="logo" />
@@ -153,18 +153,18 @@ class NavBar extends React.Component {
             if (this.state.profileRole === 'admin') {
               return (
                 <div>
-                  <Link to='/admin' className={styles.narrowBtn}>
-                    ADMIN
+                  <Link to='/admin' className={styles.adminBtn}>
+                    Admin
                   </Link>
                 </div>
               );
             }
           })()}
-          <Link to='/home' className={styles.narrowBtn}>
-            HOME
+          <Link to='/home' className={styles.signUpBtn}>
+            Sign Up
           </Link>
-          <Link to='/about' className={styles.narrowBtn}>
-            ABOUT
+          <Link to='/about' className={styles.signInBtn}>
+            Sign In
           </Link>
           {this.state.login ? (
             <>
@@ -197,10 +197,67 @@ class NavBar extends React.Component {
               <img src={User} alt='User Logo' />
                 SIGN IN
             </Link>
-            // <a href='/'>
-            //   <img src={User} alt='User Logo' />
-            //   SIGN IN
-            // </a>
+          )}
+        </ul>
+      </div>
+    );*/
+    return (
+      <div className={styles.navbar}>
+        <div>
+          <img style={{width: "60%", height:"60%"}} src={Logo} alt="logo" />
+        </div>
+        <ul>
+          {this.state.login ? (
+            <>
+          {(() => {
+            if (this.state.profileRole === 'admin') {
+              return (
+                <div>
+                  <Link to='/admin' className={styles.narrowBtn}>
+                    ADMIN
+                  </Link>
+                </div>
+              );
+            }
+          })()}
+          <Link to='/home' className={styles.narrowBtn}>
+            HOME
+          </Link>
+          <Link to='/about' className={styles.narrowBtn}>
+            ABOUT
+          </Link>
+                <Link to='/meal-plan' className={styles.profileIconWrapper} style = {{display: 'flex', border: '4px solid orange', borderRadius: '20px', height: '90%', margin: '5px 0px'}}>
+                  <input
+                    className={styles.profileIcon}
+                    readOnly
+                    value={this.state.iconName}
+                    style = {{cursor: 'pointer'}}
+                  />
+                  <div style = {{marginLeft:'5px', width: '200px'}}>
+                    <h6 style = {{margin: '0', fontSize: '20px', textAlign: 'center'}}>{this.state.firstName} {this.state.lastName}</h6>
+                    <h6 style = {{margin: '0', fontSize: '15px', textAlign: 'center'}}>{this.state.email}</h6>
+                  </div> 
+                </Link>
+
+                <a
+                  className={styles.profileIconWrapper}
+                  onClick={this.logOut}
+                  style={{display: "flex", alignItem: "center"}}
+                >
+                  {"  "}
+                  LOGOUT&nbsp;
+                  <i className='fa fa-sign-out'> </i>
+                </a>
+            </>
+          ) : (
+            <>
+              <Link to='/home' className={styles.signUpBtn}>
+                Sign Up
+              </Link>
+              <Link to='/login' className={styles.signInBtn}>
+                Sign In
+              </Link>
+            </>
           )}
         </ul>
       </div>

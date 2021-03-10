@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
 import { ThemeConsumer } from 'react-bootstrap/esm/ThemeProvider';
 import styles from './home.module.css'
+import {Link} from "react-router-dom";
 
 class HomeLink extends Component {
     render() { 
+        let buttonStyle = this.props.style
         return (
-            <React.Fragment>
-                <a className = {styles.orangeButton}>{this.props.text}</a>     
-            </React.Fragment>
+            <Link className = {styles.orangeButton} to={this.props.link}>
+              {this.props.text}
+            </Link>
          );
     }
 }
@@ -15,9 +17,9 @@ class HomeLink extends Component {
 class FootLink extends Component {
     render() { 
         return (
-            <React.Fragment>
-                <a className = {styles.footerButton}>{this.props.text}</a>     
-            </React.Fragment>
+            <Link className = {styles.footerButton} to={this.props.link}>
+              {this.props.text}
+            </Link>
          );
     }
 }
@@ -25,9 +27,9 @@ class FootLink extends Component {
 class AmbassadorLink extends Component {
     render() { 
         return (
-            <React.Fragment>
-                <a className = {styles.ambassadorButton}>{this.props.text}</a>     
-            </React.Fragment>
+            <Link className = {styles.ambassadorButton} to={this.props.link}>
+              {this.props.text}
+            </Link>
          );
     }
 }
