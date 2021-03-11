@@ -13,13 +13,14 @@ import chooseImg from "./images/choose.svg"
 import enjoyImg from "./images/enjoy.svg"
 import inchins from "./images/inchins.png"
 import ponoHawaiian from "./images/PONOHAWAIIAN_LOGO.png"
+import nityaAyurveda from "./images/Nitya_Ayurveda Clear_Logo.png"
 import facebookImg from "../../images/facebook.svg"
 import googleImg from "../../images/google-plus.svg"
 
 class Home extends Component {
   state = { 
     signUpDisplay: styles.signUpLink,
-   }
+  }
    
   
   render() { 
@@ -91,9 +92,16 @@ class Home extends Component {
         <div style = {{display: 'inline-flex', width: '100%', marginTop: '50px'}}>
           <h3 style = {{textAlign: 'left', marginTop: '100px', fontWeight: 'bold', marginLeft: '5%'}}>OUR PARTNER CHEFS & RESTAURANTS</h3>
         </div>
-        <div style = {{display: 'flex',flexWrap: 'wrap', width: '100%', marginTop: '50px', padding: '0 50px'}}>
-          <div className = {styles.partnerContainer}>
-           <img className = {styles.partnerImage} src = {ponoHawaiian}></img>
+        <div style = {{display: 'inline-flex'}}>
+          <div style = {{display: 'flex',flexWrap: 'wrap', width: '100%', marginTop: '50px'}}>
+            <div className = {styles.partnerContainer}>
+              <img className = {styles.partnerImage} src = {ponoHawaiian}></img>
+            </div>
+          </div>
+          <div style = {{display: 'flex',flexWrap: 'wrap', width: '100%', marginTop: '50px'}}>
+            <div className = {styles.partnerContainer}>
+              <img className = {styles.partnerImage} src = {nityaAyurveda}></img>
+            </div>
           </div>
         </div>
         
@@ -129,10 +137,10 @@ class Home extends Component {
         </div>
         <div className = {styles.gridDisplayCenter}>
           <div style = {{display: 'inline-flex', margin: 'auto'}}>
-            <div style = {{marginLeft: '50px', marginRight: '50px', marginBottom: '50px'}}>
+            <div style = {{marginLeft: '50px', marginRight: '50px', marginBottom: '100px'}}>
               <HomeLink text = "Explore Subscriptions" link = '/choose-plan'/>
             </div>
-            <div style = {{marginLeft: '50px', marginRight: '50px', marginBottom: '50px'}}>
+            <div style = {{marginLeft: '50px', marginRight: '50px', marginBottom: '100px'}}>
               <HomeLink text = "Enter Your Address" link = '/home'/>
             </div>
           </div>
