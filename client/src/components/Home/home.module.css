@@ -14,6 +14,12 @@
   position: relative;
 }
 
+.footerBackgroundNarrow {
+  background-color: #FF9E19;
+  height: 500px;
+  position: relative;
+}
+
 .footerLogo {
     margin: 0;
     background: white;
@@ -25,6 +31,23 @@
     left: 15%;
     margin-right: -50%;
     transform: translate(-50%, -50%);
+    height: auto; 
+    width: auto; 
+    max-width: 300px; 
+    max-height: 300px;
+}
+
+.footerLogoNarrow {
+    margin: 0;
+    background: white;
+    border: solid;
+    border-color: white;
+    border-radius: 10px; 
+    top: 15%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+    position: absolute;
     height: auto; 
     width: auto; 
     max-width: 300px; 
@@ -46,6 +69,21 @@
     max-height: 200px;
 }
 
+.footerLinksNarrow {
+    display: inline-block;
+    text-align: center;
+    margin: 0;
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+    height: auto; 
+    width: auto; 
+    max-width: 300px; 
+    max-height: 200px;
+}
+
 .centerSubtitleText {
   text-align: center;
   color: white;
@@ -54,11 +92,26 @@
   margin-top: 200px;
 }
 
+.centerSubtitleNarrow {
+  text-align: center;
+  color: white;
+  font-size: 50px;
+  white-space: nowrap;
+  margin-top: 20px;
+}
+
 .centerSubText {
   text-align: center;
   color: white;
   white-space: nowrap;
   margin: 10px 0;
+}
+
+.centerSubTextNarrow {
+  text-align: center;
+  color: white;
+  margin: 10px 20px;
+  width: 90%;
 }
 
 .orangeButton {
@@ -83,6 +136,21 @@
     position: absolute;
     top: 40%;
     left: 85%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+    height: auto; 
+    width: auto; 
+    max-width: 300px; 
+    max-height: 200px;
+}
+
+.footerRightNarrow {
+    display: inline-block;
+    text-align: center;
+    margin: 0;
+    position: absolute;
+    top: 75%;
+    left: 50%;
     margin-right: -50%;
     transform: translate(-50%, -50%);
     height: auto; 
@@ -160,12 +228,25 @@
   margin-left: 20%;
 }
 
+.stepsNumberNarrow {
+  background-color: #ffba00;
+  padding: 8px 14px;
+  border-radius: 50%;
+  font-weight: bold;
+}
+
 .stepsImage {
   margin: 0 auto 20px;
 }
 
 .stepsTitle {
   float: left;
+  margin-top: 9px;
+  margin-left: 15px;
+  font-weight: bold;
+}
+
+.stepsTitleNarrow {
   margin-top: 9px;
   margin-left: 15px;
   font-weight: bold;
@@ -185,6 +266,21 @@
 }
 
 .stepsText {
+  color: #979797;
+  font-size: 15px;
+  padding: 0 50px;
+  height: 140px;
+}
+
+.stepsTextMid {
+  color: #979797;
+  font-size: 15px;
+  padding: 0 50px;
+  height: 140px;
+  margin-bottom: 80px;
+}
+
+.stepsTextNarrow {
   color: #979797;
   font-size: 15px;
   padding: 0 50px;
@@ -225,11 +321,32 @@
   height: 30vh;
 }
 
+.partnerContainerNarrow {
+  text-align: center;
+  border: solid;
+  height: 30vh;
+  justify-content: center;
+}
+
+.partnerCenteredNarrow {
+    display: 'inline-block';
+    top: 40%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+}
+
 .partnerImage {
   margin-top: 20px;
   margin-bottom: 20px;
   height: 100%;
   width: inherit;
+}
+
+.partnerImageNarrow {
+  margin-top: 10px;
+  height: 100%;
+  width: 60%;
 }
 
 .imageContainer {
