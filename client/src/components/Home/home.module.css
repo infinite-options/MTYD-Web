@@ -8,12 +8,96 @@
   width: inherit;
 }
 
+.footerBackground {
+  background-color: #FF9E19;
+  height: 200px;
+  position: relative;
+}
+
+.footerBackgroundNarrow {
+  background-color: #FF9E19;
+  height: 500px;
+  position: relative;
+}
+
+.footerLogo {
+    margin: 0;
+    background: white;
+    border: solid;
+    border-color: white;
+    border-radius: 10px; 
+    position: absolute;
+    top: 50%;
+    left: 15%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+    height: auto; 
+    width: auto; 
+    max-width: 300px; 
+    max-height: 300px;
+}
+
+.footerLogoNarrow {
+    margin: 0;
+    background: white;
+    border: solid;
+    border-color: white;
+    border-radius: 10px; 
+    top: 15%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+    position: absolute;
+    height: auto; 
+    width: auto; 
+    max-width: 300px; 
+    max-height: 300px;
+}
+
+.footerLinks {
+    display: inline-block;
+    text-align: center;
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+    height: auto; 
+    width: auto; 
+    max-width: 300px; 
+    max-height: 200px;
+}
+
+.footerLinksNarrow {
+    display: inline-block;
+    text-align: center;
+    margin: 0;
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+    height: auto; 
+    width: auto; 
+    max-width: 300px; 
+    max-height: 200px;
+}
+
 .centerSubtitleText {
   text-align: center;
   color: white;
   font-size: 50px;
   white-space: nowrap;
   margin-top: 200px;
+}
+
+.centerSubtitleNarrow {
+  text-align: center;
+  color: white;
+  font-size: 50px;
+  white-space: nowrap;
+  margin-top: 20px;
 }
 
 .centerSubText {
@@ -23,9 +107,92 @@
   margin: 10px 0;
 }
 
+.centerSubTextNarrow {
+  text-align: center;
+  color: white;
+  margin: 10px 20px;
+  width: 90%;
+}
+
+.orangeButton {
+  background-color: #ff9e19;
+  color: black;
+  min-width: 220px;
+  width: max-content;
+  text-align: center;
+  padding: 6px 20px 6px 20px;
+  border-radius: 30px;
+  justify-self: center;
+  font-size: 16px;
+  margin-top: 30px;
+  cursor: pointer;
+  justify-content: center;
+}
+
+.footerRight {
+    display: inline-block;
+    text-align: center;
+    margin: 0;
+    position: absolute;
+    top: 40%;
+    left: 85%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+    height: auto; 
+    width: auto; 
+    max-width: 300px; 
+    max-height: 200px;
+}
+
+.footerRightNarrow {
+    display: inline-block;
+    text-align: center;
+    margin: 0;
+    position: absolute;
+    top: 75%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+    height: auto; 
+    width: auto; 
+    max-width: 300px; 
+    max-height: 200px;
+}
+
+.ambassadorButton {
+  background-color: white;
+  color: black;
+  min-width: 200px;
+  width: max-content;
+  text-align: center;
+  padding: 6px 20px 6px 20px;
+  border-radius: 30px;
+  justify-self: center;
+  font-size: 16px;
+  margin-top: 30px;
+  cursor: pointer;
+  justify-content: center;
+}
+
+.footerButton {
+  background-color: #ff9e19;
+  color: black;
+  text-align: center;
+  border-radius: 30px;
+  justify-self: center;
+  font-size: 16px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  cursor: pointer;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 25px;
+}
+
 .signUpLink {
   background-color: #ff9e19;
   color: white;
+  min-width: 200px;
   width: max-content;
   text-align: center;
   padding: 6px 20px 10px 20px;
@@ -34,6 +201,7 @@
   font-size: 16px;
   margin-top: 30px;
   cursor: pointer;
+  justify-content: center;
 }
 
 .gridDisplayCenter {
@@ -60,6 +228,13 @@
   margin-left: 20%;
 }
 
+.stepsNumberNarrow {
+  background-color: #ffba00;
+  padding: 8px 14px;
+  border-radius: 50%;
+  font-weight: bold;
+}
+
 .stepsImage {
   margin: 0 auto 20px;
 }
@@ -71,11 +246,52 @@
   font-weight: bold;
 }
 
+.stepsTitleNarrow {
+  margin-top: 9px;
+  margin-left: 15px;
+  font-weight: bold;
+}
+
+.stepsContainer2 {
+  margin: 0 20px 0 20px;
+  flex: 1 1 20%;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  display: grid;
+}
+
+.stepsTitle2 {
+  font-weight: bold;
+}
+
 .stepsText {
   color: #979797;
   font-size: 15px;
   padding: 0 50px;
+  height: 140px;
+}
+
+.stepsTextMid {
+  color: #979797;
+  font-size: 15px;
+  padding: 0 50px;
+  height: 140px;
+  margin-bottom: 80px;
+}
+
+.stepsTextNarrow {
+  color: #979797;
+  font-size: 15px;
+  padding: 0 50px;
   height: 80px;
+}
+
+.stepsText2 {
+  color: #979797;
+  font-size: 15px;
+  padding: 0 50px;
+  height: 100%;
 }
 
 .couponContainer {
@@ -105,11 +321,32 @@
   height: 30vh;
 }
 
+.partnerContainerNarrow {
+  text-align: center;
+  border: solid;
+  height: 30vh;
+  justify-content: center;
+}
+
+.partnerCenteredNarrow {
+    display: 'inline-block';
+    top: 40%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+}
+
 .partnerImage {
   margin-top: 20px;
   margin-bottom: 20px;
   height: 100%;
   width: inherit;
+}
+
+.partnerImageNarrow {
+  margin-top: 10px;
+  height: 100%;
+  width: 60%;
 }
 
 .imageContainer {

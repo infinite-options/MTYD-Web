@@ -51,7 +51,7 @@
 
 .navbar > ul a:hover {
   color: var(--light-color);
-  color: #FF9400;
+  color: blue;
   cursor: pointer;
   /* background-color: #5d7ebb; */
   border-radius: 20px;
@@ -63,6 +63,29 @@
 /* .narrowBtn {
   height: 50% !important;
 } */
+
+.signInBtn {
+  height: 50% !important;
+  width: 110px;
+  border-radius: 30px;
+  background-color: #ff9e19;
+  justify-content: center;
+} 
+
+.signUpBtn {
+  height: 50% !important;
+  width: 110px;
+  border-radius: 30px;
+  background-color: red;
+  justify-content: center;
+} 
+
+.adminBtn {
+  height: 50% !important;
+  border: solid;
+  border-radius: 30px;
+} 
+
 .navContainer {
   display: flex;
   flex-flow: column;

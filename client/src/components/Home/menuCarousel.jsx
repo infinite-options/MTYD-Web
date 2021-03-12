@@ -11,25 +11,44 @@ class MenuCarousel extends Component {
     }
     state = {
         menuItems: []
-        }
+    }
     
       componentDidMount() {
-        const menuUrl = `${API_URL}upcoming_menu`
+        const menuUrl = `${API_URL}upcoming_menu`;
+        
+        //console.log("menuURL: " + menuUrl);
+        
         fetch(menuUrl)
           .then((response) => response.json())
-          .then((data) => this.processData(data.result));
+          .then((data) => {
+            this.processData(data.result);
+          });
       }
     
       processData = (data) => {
         // console.log(data)
-        const date = data[0].menu_date
-        // console.log(date)
-        let filteredData = []
+        const date1 = data[0].menu_date;
+          
+        var date2 = null;
+        
         for (var x = 0; x < data.length; x++) {
-          if(data[x].menu_date === date) {
-            filteredData.push(data[x])
+          if(data[x].menu_date !== date1 && date2 === null) {
+            date2 = data[x].menu_date;
+            console.log("date2: " + date2);
           } else { 
-            break
+            console.log("invalid date: " + data[x].menu_date);
+          }
+        }
+          
+        // console.log(date)
+        let filteredData = [];
+        for (var x = 0; x < data.length; x++) {
+          if(data[x].menu_date === date1 || data[x].menu_date === date2) {
+            //console.log("VALID: " + JSON.stringify(data[x]));
+            filteredData.push(data[x]);
+          } else { 
+            //console.log("REJECTED: " + JSON.stringify(data[x]));
+            break;
           }
         }
     
@@ -49,6 +68,8 @@ class MenuCarousel extends Component {
 
     menuLoop = () => {
         let menuHTML
+        
+        //console.log("menu items: " + JSON.stringify(this.state.menuItems));
     
         if (this.state.menuItems.length) {
           menuHTML = this.state.menuItems.map((item, index) =>
