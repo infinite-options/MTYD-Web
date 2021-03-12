@@ -48,7 +48,7 @@ class Home extends Component {
           if (this.state.windowWidth >= 800) {
             return (
         <div className = {styles.topBackground}>
-          <WebNavBar />
+          <WebNavBar narrowView = {false}/>
           <div className = {styles.gridDisplayCenter}>
             <h1 className = {styles.centerSubtitleText}>WELCOME TO <img style = {{height: '140px', width: '400px', marginTop: '-50px'}} src = {Logo} alt="logo" /></h1>
             <h3 className = {styles.centerSubText}>Get the freshly cooked meal options for your healthy lifestyle</h3>
@@ -65,7 +65,7 @@ class Home extends Component {
       } else {
         return (
         <div className = {styles.topBackground}>
-          <WebNavBar />
+          <WebNavBar narrowView = {true}/>
           <div className = {styles.gridDisplayCenter}>
               <h1 className = {styles.centerSubtitleNarrow}>WELCOME TO</h1> 
               <h1 className = {styles.centerSubtitleNarrow}>
@@ -346,9 +346,9 @@ class Home extends Component {
         })()}
         </div>
         
-      <span>
+      {/*<span>
         {this.state.windowWidth} x {this.state.windowHeight}
-      </span>
+      </span>*/}
 
         {(() => {
           if (this.state.windowWidth >= 800) {

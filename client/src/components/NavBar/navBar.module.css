@@ -66,14 +66,18 @@
 
 .signInBtn {
   height: 50% !important;
+  width: 110px;
   border-radius: 30px;
   background-color: #ff9e19;
+  justify-content: center;
 } 
 
 .signUpBtn {
   height: 50% !important;
+  width: 110px;
   border-radius: 30px;
   background-color: red;
+  justify-content: center;
 } 
 
 .adminBtn {
