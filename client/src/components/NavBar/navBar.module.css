@@ -66,14 +66,12 @@
 
 .signInBtn {
   height: 50% !important;
-  border: solid;
   border-radius: 30px;
   background-color: #ff9e19;
 } 
 
 .signUpBtn {
   height: 50% !important;
-  border: solid;
   border-radius: 30px;
   background-color: red;
 } 

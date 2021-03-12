@@ -98,7 +98,7 @@ class MenuItemList extends Component {
     )
       .then(response => response.json())
       .then(json => {
-        console.log(json)
+        console.log("json: " + JSON.stringify(json))
         let menuData = [...json.result];
         let myStr = menuData[0].delivery_days;
         let temp = myStr.replace(/[^a-zA-Z ]/g, "").split(" ");
