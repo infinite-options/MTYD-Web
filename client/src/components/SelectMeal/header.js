@@ -5,6 +5,9 @@ import menuStyles from "../Menu/menu.module.css";
 import {WebNavBar} from "../NavBar";
 import MenuBar from "../Menu";
 import {connect} from "react-redux";
+import Moment from 'react-moment';
+import moment from 'moment';
+
 class Header extends Component {
   showDeliveryDay = () => {
     const mySet = new Set();
@@ -69,9 +72,18 @@ class Header extends Component {
     return selections;
   };
 
+
+
+
+
+
+
+
   render() {
     const {meals, totalCount, totalMeals} = this.props;
     let mealsCount = parseInt(totalMeals);
+
+    // console.log(this.props.dates)
 
     //To disable and enable save button
     if (document.getElementById("SAVE") !== null) {
@@ -120,6 +132,16 @@ class Header extends Component {
       <>
         <WebNavBar />
         <MenuBar show={true} message={message} />
+        {this.props.dates.map(date => (
+              <button key={date} value={date} onClick={this.props.filterDates} className={styles.datebutton}>
+
+              {moment(date.split(" ")[0]).format("ddd")}
+              <br/>{moment(date.split(" ")[0]).format("MMM")}
+              <br/>{moment(date.split(" ")[0]).format("D")}
+              
+              </button>
+              ))}
+
         {this.props.subscribedPlans.length ? (
           <div className={styles.stickyHeader + " px-5 "}>
             <select
@@ -140,18 +162,10 @@ class Header extends Component {
                 );
               })}
             </select>
-            <select
-              onChange={this.props.filterDates}
-              name='date'
-              id={styles.date}
-              className={styles.pickers}
-            >
-              {this.props.dates.map(date => (
-                <option key={date} value={date}>
-                  {date.split(" ")[0]}
-                </option>
-              ))}
-            </select>
+
+
+            
+
             <MealIndicator
               totalCount={this.props.totalCount}
               totalMeals={this.props.totalMeals}
@@ -160,8 +174,7 @@ class Header extends Component {
               {this.showSelectionOptions()}
             </div>
           </div>
-        ) : (
-          ""
+        ) : (""
         )}
       </>
     );

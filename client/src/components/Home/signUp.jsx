@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { ThemeConsumer } from 'react-bootstrap/esm/ThemeProvider';
 import SignUp from '../Landing/index'
 import styles from './home.module.css'
+import {Link} from "react-router-dom";
 
 class SignUpHome extends Component {
     state = { 
@@ -28,6 +29,10 @@ class SignUpHome extends Component {
         return (
             <React.Fragment>
                 <a className = {styles.signUpLink} onClick = {this.toggleDisplay}>Start Your Subscription</a>  
+                <Link to='/select-meal' className = {styles.signUpLink}>
+                  Explore the menu
+                </Link>  
+
                 <div className = {this.state.toggleSignUp}>
                     <div className = {styles.signUpContainer}>
                         

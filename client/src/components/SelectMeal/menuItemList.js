@@ -350,7 +350,15 @@ class MenuItemList extends Component {
   };
 
   filterDates = event => {
+
+    if(Cookies.get("customer_uid")==null){
+      return this.setState({
+        myDate: event.target.value,
+      });
+    }
+
     let cust_id = Cookies.get("customer_uid");
+    console.log(cust_id)
     fetch(
       `${API_URL}meals_selected?customer_uid=${cust_id}`
     )
@@ -374,7 +382,8 @@ class MenuItemList extends Component {
         item.sel_purchase_id === this.state.purchaseID &&
         item.sel_menu_date === event.target.value
     );
-    // console.log(pulledSelection)
+    
+    console.log(pulledSelection)
     if (pulledSelection.length > 0) {
       let selection = JSON.parse(pulledSelection[0].meal_selection);
       let addOnSelection = JSON.parse(pulledSelection[0].addon_selection);
