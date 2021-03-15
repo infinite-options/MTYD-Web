@@ -70,6 +70,7 @@
   border-radius: 30px;
   background-color: #ff9e19;
   justify-content: center;
+  border:1px solid black;
 } 
 
 .signUpBtn {
@@ -79,6 +80,31 @@
   background-color: red;
   justify-content: center;
 } 
+
+.whiteBackBtn {
+  height: 50% !important;
+  width: 110px;
+  border-radius: 30px;
+  background-color: rgb(255, 255, 255);
+  justify-content: center;
+  border:1px solid black;
+} 
+
+.showNameBtn {
+  height: 50% !important;
+  width: 150px;
+  padding: 14px 28px;
+  border-radius: 30px;
+  background-color: rgb(255, 0, 0);
+  justify-content: center;
+  border:1px solid black;
+} 
+
+.divider{
+  width:10px;
+  height:auto;
+  display:inline-block;
+}
 
 .adminBtn {
   height: 50% !important;

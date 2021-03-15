@@ -132,19 +132,8 @@ class Header extends Component {
       <>
         <WebNavBar />
         <MenuBar show={true} message={message} />
-        {this.props.dates.map(date => (
-              <button key={date} value={date} onClick={this.props.filterDates} className={styles.datebutton}>
-
-              {moment(date.split(" ")[0]).format("ddd")}
-              <br/>{moment(date.split(" ")[0]).format("MMM")}
-              <br/>{moment(date.split(" ")[0]).format("D")}
-              
-              </button>
-              ))}
-
-        {this.props.subscribedPlans.length ? (
-          <div className={styles.stickyHeader + " px-5 "}>
-            <select
+        <div>
+          <select
               onChange={this.props.mealsOnChange}
               className={styles.pickers}
               id={styles.mealPlanPicker}
@@ -161,10 +150,27 @@ class Header extends Component {
                   </option>
                 );
               })}
-            </select>
+        </select>
+        </div>
 
+        <div class={styles.divider}/>
+        <div class={styles.divider}/>
 
-            
+        {this.props.dates.map(date => (
+          <>
+            <button key={date} value={date} onClick={this.props.filterDates} className={styles.datebutton}>
+              {moment(date.split(" ")[0]).format("ddd")}
+              <br/>{moment(date.split(" ")[0]).format("MMM")}
+              <br/>{moment(date.split(" ")[0]).format("D")}
+              </button>
+              <div class={styles.divider}/>
+          </>
+          ))}
+
+        {this.props.subscribedPlans.length ? (
+          
+          <div className={styles.stickyHeader + " px-5 "}>
+            <h4 style = {{padding: '10px 90px', fontSize: '30px', display:'inline-block',overflow:'hidden',whiteSpace:'nowrap'}}>Featured Meals</h4>
 
             <MealIndicator
               totalCount={this.props.totalCount}

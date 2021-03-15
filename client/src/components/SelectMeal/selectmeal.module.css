@@ -243,15 +243,19 @@
   position: relative;
   border: none;
   border-radius: 5%;
-  width: 320px;
+  width: 200px;
   height: 320px;
   margin: 0.2rem 0.2rem 0.2rem 0.2rem;
   box-shadow: 1px 1px #888888;
   z-index: 1;
+  /* padding-top: 50px;
+  padding-right: 30px;
+  padding-bottom: 50px;
+  padding-left: 80px; */
 }
 .menuitemIndividual {
   height: 380px;
-  width: 380px;
+  width: 200px;
   margin: 0.5rem 0.5rem;
   text-align: center;
 }
@@ -300,21 +304,68 @@
   padding: 0rem;
 }
 
-.infoButton {
-  top:0px;
-  right:0px;
-  position: absolute;
+.numElements {
   color: #000000;
-  font-size: 0.7rem;
+  font-size: 1.5rem;
   font-weight: 600;
   text-align: center !important;
+  position: absolute;
   margin: 0.5rem;
   background-color: white;
   border-radius: 50%;
   border: none;
+  white-space: nowrap;
+  vertical-align: baseline;
   height: 3rem;
   width: 3rem;
-  margin-left: 260px;
+  padding: 0rem;
+  margin-right: 38%;
+  margin-top: 262px;
+}
+
+.heartButton {
+  background-image: url("./images/empty-heart.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 35px 35px;
+  position:relative;
+  left:0;
+  color: #000000;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-align: center !important;
+  position: absolute;
+  margin: 0.5rem;
+  background-color: white;
+  border-radius: 50%;
+  border: none;
+  white-space: nowrap;
+  vertical-align: baseline;
+  height: 3rem;
+  width: 3rem;
+  padding: 0rem;
+}
+.heartButton:focus {
+  background-image: url("./images/full-heart.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 35px 35px;
+  position:relative;
+  left:0;
+  color: #000000;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-align: center !important;
+  position: absolute;
+  margin: 0.5rem;
+  background-color: white;
+  border-radius: 50%;
+  border: none;
+  white-space: nowrap;
+  vertical-align: baseline;
+  height: 3rem;
+  width: 3rem;
+  padding: 0rem;
 }
 
 .datebutton {
@@ -325,7 +376,26 @@
   width: 80px;
   height:80px;
   border-radius: 10px;
-  
+  border: 1px solid #000000; 
+}
+
+
+.datebutton:focus {
+  background-image: url("../../images/button.png");
+  background-Position: 'center';
+  background-repeat: no-repeat;
+  background-size: 80px 80px;
+  width: 80px;
+  height:80px;
+  border-radius: 10px;
+  border: 4px solid #ff0606; 
+  outline:none;
+}
+
+.divider{
+  width:10px;
+  height:auto;
+  display:inline-block;
 }
 
 #mealCounter {

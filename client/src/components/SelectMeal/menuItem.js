@@ -23,46 +23,21 @@ class MenuItem extends React.Component {
         key={index}
         className={styles.menuitemIndividual + " px-5"}
       >
-        {console.log(menuitem)}
 
         <div
           style={{
             backgroundImage: `url(${menuitem.meal_photo_URL})`,
             backgroundSize: "cover",
-            boxShadow:
-              "0 4px 4px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)"
+            backgroundPosition:'center'
+            
           }}
           className={styles.menuItem}
         >
-          <div className={styles.menuElements} id={styles.eyeBtn}></div>
+          {/* <div className={styles.menuElements} id={styles.eyeBtn}></div> */}
 
-          {cartItems.length > 0 &&
-            cartItems.map((item, index) => {
-              return (
-                item.menu_meal_id === menuitem.menu_meal_id && (
-                  <p key = {index}
-                    style={{
-                      textAlign: "center",
-                      padding: "0px",
-                      color: "black",
-                      fontSize: "25px",
-                      lineHeight: "2"
-                    }}
-                    className={styles.menuElements}
-                    id={styles.mealCounter}
-                  >
-                    {item.count}
-                  </p>
-                )
-              );
-            })}
-              <Tooltip title={menuitem.meal_desc}>
-              <button
-                // onClick={() => this.props.removeFromCart(menuitem)}
-                className={styles.infoButton}
-              >
-                i
-              </button>
+
+            <Tooltip title={menuitem.meal_desc}>
+              <button className={styles.heartButton}/>
             </Tooltip>
 
           {show ? (
@@ -71,13 +46,50 @@ class MenuItem extends React.Component {
                 onClick={() => this.props.removeFromCart(menuitem)}
                 id={styles.minusButton}
                 className={styles.menuElements}
+                style={{
+                  width: '50px',
+                  borderTopRightRadius: 0,
+                  borderBottomRightRadius: 0,
+                  borderTopLeftRadius: 0,
+                  borderBottomLeftRadius: 0,
+                }}
               >
                 -
               </button>
+
+              {cartItems.length > 0 &&
+                cartItems.map((item, index) => {
+                return (
+                  item.menu_meal_id === menuitem.menu_meal_id && (
+                    <div key = {index}
+                      style={{
+                        border: '1px solid',
+                        borderRadius: 5,
+                        backgroundColor: 'white',
+                        opacity: 0.9,
+                        width: '50px',
+                        height: '50px',
+                      }}
+                      className={styles.numElements}
+                      id={styles.mealCounter}
+                    >
+                      {item.count}
+                    </div>
+                  )
+                );
+            })}
+
               <button
                 onClick={() => this.props.addToCart(menuitem)}
                 id={styles.plusButton}
                 className={styles.menuElements}
+                style={{
+                  width: '50px',
+                  borderTopRightRadius: 0,
+                  borderBottomRightRadius: 0,
+                  borderTopLeftRadius: 0,
+                  borderBottomLeftRadius: 0,
+                }}
               >
                 +
               </button> 
@@ -87,7 +99,7 @@ class MenuItem extends React.Component {
           )}
         </div>
         <p id={styles.menuItemTitle}>{menuitem.meal_name}</p>
-        <p id={styles.menuItemDesc}>${menuitem.meal_price}</p>
+        <p id={styles.menuItemTitle}>cal:{menuitem.meal_calories}</p>
       </div>
     ))
 
