@@ -24,6 +24,7 @@ import {
   faShareAlt,
   faSearch
 } from "@fortawesome/free-solid-svg-icons";
+import {WebNavBar, BottomNavBar} from "../NavBar";
 
 import styles from "./paymentDetails.module.css";
 
@@ -65,22 +66,7 @@ class PaymentDetails extends React.Component {
     }
     return (
       <div className={styles.root}>
-        <div className={styles.mealHeader}>
-          <p
-            style={{
-              flex: "6",
-              textAlign: "center",
-              fontSize: "1.6rem",
-              color: "black",
-              fontWeight: "bold",
-              paddingLeft: "50px"
-            }}
-          >
-            DELIVERY INFO
-          </p>
-
-          <div className={styles.avatar}></div>
-        </div>
+        <WebNavBar />
         <div
           style={{
             alignSelf: "center",
@@ -94,36 +80,8 @@ class PaymentDetails extends React.Component {
           <div className={styles.topHeading}>
             <h6 className={styles.subHeading}> DELIVERY ADDRESS </h6>
           </div>
-          <div className={styles.cardContainer}>
-            <div className={styles.cardItem}></div>
-            <div className={styles.cardItem}></div>
-            <div className={styles.cardItem}></div>
-            <div className={styles.cardItem}></div>
-          </div>
-          {/* <h6 className={styles.subHeading}> Address Details </h6> */}
-          <div className={styles.inputContainer}>
-            <div className={styles.inputItem}>
-              <input
-                type='text'
-                placeholder='First Name*'
-                className={styles.input}
-                value={this.props.firstName}
-                onChange={e => {
-                  this.props.changeAddressFirstName(e.target.value);
-                }}
-              />
-            </div>
-            <div className={styles.inputItem}>
-              <input
-                type='text'
-                placeholder='Last Name*'
-                className={styles.input}
-                value={this.props.lastName}
-                onChange={e => {
-                  this.props.changeAddressLastName(e.target.value);
-                }}
-              />
-            </div>
+            
+         <div className={styles.inputContainer}>
             <div className={styles.inputItem}>
               <input
                 type='text'
@@ -133,14 +91,6 @@ class PaymentDetails extends React.Component {
                 onChange={e => {
                   this.props.changeAddressStreet(e.target.value);
                 }}
-              />
-            </div>
-            <div style={{flexBasis: "100%"}} className={styles.inputItem}>
-              <input
-                type='email'
-                placeholder='Email**'
-                className={styles.input}
-                // value={this.props.street}
               />
             </div>
 
@@ -188,6 +138,44 @@ class PaymentDetails extends React.Component {
                 }}
               />
             </div>
+          </div>
+            
+          <div className={styles.topHeading}>
+            <h6 className={styles.subHeading}>CONTACT  INFO</h6>
+          </div>
+            
+          {/* <h6 className={styles.subHeading}> Address Details </h6> */}
+          <div className={styles.inputContainer}>
+            <div className={styles.inputItem}>
+              <input
+                type='text'
+                placeholder='First Name*'
+                className={styles.input}
+                value={this.props.firstName}
+                onChange={e => {
+                  this.props.changeAddressFirstName(e.target.value);
+                }}
+              />
+            </div>
+            <div className={styles.inputItem}>
+              <input
+                type='text'
+                placeholder='Last Name*'
+                className={styles.input}
+                value={this.props.lastName}
+                onChange={e => {
+                  this.props.changeAddressLastName(e.target.value);
+                }}
+              />
+            </div>
+            <div style={{flexBasis: "100%"}} className={styles.inputItem}>
+              <input
+                type='email'
+                placeholder='Email**'
+                className={styles.input}
+                // value={this.props.street}
+              />
+            </div>
             <div className={styles.inputItem}>
               <input
                 type='text'
@@ -199,39 +187,68 @@ class PaymentDetails extends React.Component {
                 }}
               />
             </div>
-            <div className={styles.inputItem}>
-              <textarea
-                rows='7'
-                cols='42'
-                placeholder='Delivery Instructions'
-                style={{
-                  border: "none",
-                  backgroundColor: "#fff0c6",
-                  borderRadius: "18px"
-                }}
-                value={this.props.instructions}
-                onChange={e => {
-                  this.props.changeDeliveryInstructions(e.target.value);
-                }}
-              />
-            </div>
-            {loggedInByPassword && (
-              <div className={styles.inputItem}>
-                <input
-                  type='password'
-                  placeholder='Password'
-                  className={styles.input}
-                  value={this.props.password}
-                  onChange={e => {
-                    this.props.changePaymentPassword(e.target.value);
-                  }}
-                />
-              </div>
-            )}
           </div>
+            
+          <div style = {{margin: '30px 0 20px 20px', fontWeight: 'bold'}}>
+              Terms and Conditions
+          </div>
+            
+          <div className={styles.topHeading}>
+            <h6 className={styles.subHeading}>PAYMENT SUMMARY</h6>
+          </div>
+            
+          <div className={styles.summaryText}>
+              Meal Subscription:
+          </div>
+          <div className={styles.summaryText}>
+              Add-Ons:
+          </div>
+          <div className={styles.summaryText}>
+              Total Delivery Fee For All 8 Deliveries:
+          </div>
+          <div className={styles.summaryText}>
+              Service Fee:
+          </div>
+          <div className={styles.summaryText}>
+              Taxes: 
+          </div>
+          <div className={styles.summaryText}>
+              Chef and Driver Tip:
+          </div>
+            
+            <button className={styles.tipButton}>
+              No Tip
+            </button>
+            <button className={styles.tipButton}>
+              $2
+            </button>
+            <button className={styles.tipButton}>
+              $3
+            </button>
+            <button className={styles.tipButton}>
+              $5
+            </button>
+            
           <div style={{marginTop: "2rem"}} className={styles.topHeading}>
-            <h6 className={styles.subHeading}> BILLING INFORMATION </h6>
+            <h6 className={styles.subHeading}>PAYMENT OPTIONS</h6>
           </div>
+            
+          <div className={styles.buttonContainer}>
+            <button className={styles.button}>
+              STRIPE
+            </button>
+          </div>
+          <div className={styles.buttonContainer}>
+            <button className={styles.button}>
+              PAYPAL
+            </button>
+          </div>
+          <div className={styles.buttonContainer}>
+            <button className={styles.button}>
+              VENMO
+            </button>
+          </div>
+            
           <div className={styles.inputContainer}>
             <div style={{flexBasis: "100%"}} className={styles.inputItem}>
               <input

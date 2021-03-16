@@ -20,11 +20,41 @@
   margin-right: 20px;
 }
 
+.menuSection {
+  margin: 50px 0px 50px 30px;
+}
+
+.priceCalculation {
+  display: inline-flex;
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin-top: 200px;
+  padding-bottom: 100px;
+  text-align: center;
+}
+
+.priceFormula {
+  font-weight: bold;
+  font-size: 70px;
+  text-align: center;
+}
+
+.priceSymbol {
+  font-weight: bold;
+  font-size: 70px;
+  text-align: center;
+  margin: 0px 30px 0px 30px;
+}
+
+.priceSubtext {
+  font-size: 30px;
+  text-align: center;
+}
+
 .box {
   /* padding: 20px; */
   margin: 0px 30px;
-  border: 1px solid #d3d3d3;
-  border-radius: 10px;
   text-align: left;
 }
 .box1 {
@@ -45,7 +75,6 @@
   margin: 5px;
 }
 .bold {
-  margin: 5px;
   padding: 10px 10px 10px 0px;
   font-size: 15px;
   font-weight: bold;
@@ -55,6 +84,13 @@
   display: block;
   margin: auto;
 }
+
+.mealButtonWrapper {
+  display: inline-block;
+  margin-left: 35px;
+  width: 150px;
+}
+
 .mealButton {
   color: #000000;
   border: 1px solid #e4e4e4;
@@ -63,13 +99,13 @@
   border-radius: 25px;
   padding: 0.75rem 0.75rem;
   margin-top: 15px;
-  margin-left: 35px;
   align-content: center;
   flex: 1;
   min-width: 20%;
   font-size: 13px;
   font-weight: 600;
   outline: 0;
+  width: 100%;
 }
 
 .mealButtonSelected {
@@ -113,8 +149,9 @@
 .sameLine {
   display: flex;
   justify-items: center;
-  width: 150px;
-  padding: 0px 10px 0px 30px;
+  width: 110px;
+  height: 110px;
+  margin-left: 10px;
 }
 .sameLine img {
   width: 50px;
@@ -142,6 +179,29 @@
   border-radius: 20px;
   padding: 5px;
 }
+
+.proceedBtn {
+  text-align: center;
+  justify-content: center;
+  padding: 5px !important;
+  color: black !important;
+  font-size: 16px !important;
+  border: 1px solid rgb(187, 174, 174);
+  border-radius: 10px;
+  min-width: 100px !important;
+  font-weight: bold;
+  background-color: #ffba00;
+  width: 300px;
+}
+
+.proceedWrapper {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin-top: 400px;
+  padding-bottom: 100px;
+}
+
 .totalBtn,
 .finishBtn {
   text-align: center;
