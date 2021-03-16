@@ -1,6 +1,17 @@
 import React, {Fragment} from "react";
 import styles from "./selectmeal.module.css";
 import Tooltip from '@material-ui/core/Tooltip';
+import emptyHeart from './images/empty-heart.png'
+import fullHeart from  './images/full-heart.png'
+
+function changeHeart(e){
+  console.log("button clicked")
+  e.target.setAttribute('src',fullHeart)
+  e.target.setAttribute('width',35)
+  e.target.setAttribute('height',35)
+
+}
+
 class MenuItem extends React.Component {
 
   menuItemFilter = () => {
@@ -36,23 +47,38 @@ class MenuItem extends React.Component {
           {/* <div className={styles.menuElements} id={styles.eyeBtn}></div> */}
 
 
-            <Tooltip title={menuitem.meal_desc}>
-              <button className={styles.heartButton}/>
-            </Tooltip>
+          <Tooltip title={menuitem.meal_desc}>
+            <button className={styles.infoButton}>
+              i
+            </button>
+          </Tooltip>
+
+          <button 
+          onClick={changeHeart}
+          className={styles.heartButton}
+          >
+            <img src={emptyHeart}
+                  style={{
+                    height:35,
+                    width:35,
+                  }}
+            ></img>
+          </button>
 
           {show ? (
             <Fragment>
               <button
                 onClick={() => this.props.removeFromCart(menuitem)}
-                id={styles.minusButton}
-                className={styles.menuElements}
                 style={{
+                  border: 'none',
+                  borderRadius: 5,
+                  backgroundColor: 'white',
                   width: '50px',
-                  borderTopRightRadius: 0,
-                  borderBottomRightRadius: 0,
-                  borderTopLeftRadius: 0,
-                  borderBottomLeftRadius: 0,
+                  height: '50px',
+                  top:'50'
                 }}
+                className={styles.minusElements}
+                id={styles.mealCounter}
               >
                 -
               </button>
@@ -63,12 +89,12 @@ class MenuItem extends React.Component {
                   item.menu_meal_id === menuitem.menu_meal_id && (
                     <div key = {index}
                       style={{
-                        border: '1px solid',
+                        border: 'none',
                         borderRadius: 5,
                         backgroundColor: 'white',
-                        opacity: 0.9,
                         width: '50px',
                         height: '50px',
+                        top:'50'
                       }}
                       className={styles.numElements}
                       id={styles.mealCounter}
@@ -77,19 +103,20 @@ class MenuItem extends React.Component {
                     </div>
                   )
                 );
-            })}
-
+              })}
+            
               <button
                 onClick={() => this.props.addToCart(menuitem)}
-                id={styles.plusButton}
-                className={styles.menuElements}
                 style={{
+                  border: 'none',
+                  borderRadius: 5,
+                  backgroundColor: 'white',
                   width: '50px',
-                  borderTopRightRadius: 0,
-                  borderBottomRightRadius: 0,
-                  borderTopLeftRadius: 0,
-                  borderBottomLeftRadius: 0,
+                  height: '50px',
+                  top:'50'
                 }}
+                className={styles.plusElements}
+                id={styles.mealCounter}
               >
                 +
               </button> 
@@ -98,8 +125,15 @@ class MenuItem extends React.Component {
             ""
           )}
         </div>
-        <p id={styles.menuItemTitle}>{menuitem.meal_name}</p>
-        <p id={styles.menuItemTitle}>cal:{menuitem.meal_calories}</p>
+        <p id={styles.menuItemTitle}
+        style = {{
+          display:'inline-block',
+          overflow:'hidden',
+          whiteSpace:'nowrap'
+          }}>
+            {menuitem.meal_name}
+            <br/>cal:{menuitem.meal_calories}
+          </p>
       </div>
     ))
 

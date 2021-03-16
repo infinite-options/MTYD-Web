@@ -257,7 +257,6 @@
   height: 380px;
   width: 200px;
   margin: 0.5rem 0.5rem;
-  text-align: center;
 }
 .menuitemIndividual p {
   text-align: left;
@@ -306,7 +305,7 @@
 
 .numElements {
   color: #000000;
-  font-size: 1.5rem;
+  font-size: 1.7rem;
   font-weight: 600;
   text-align: center !important;
   position: absolute;
@@ -320,11 +319,48 @@
   width: 3rem;
   padding: 0rem;
   margin-right: 38%;
-  margin-top: 262px;
+  margin-top: 263px;
+}
+
+.plusElements {
+  color: #000000;
+  font-size: 1.7rem;
+  font-weight: 600;
+  text-align: center !important;
+  position: absolute;
+  margin: 0.5rem;
+  background-color: white;
+  border-radius: 50%;
+  border: none;
+  white-space: nowrap;
+  vertical-align: baseline;
+  height: 3rem;
+  width: 3rem;
+  padding: 0rem;
+  margin-right: 5%;
+  margin-top: 263px;
+}
+
+.minusElements {
+  color: #000000;
+  font-size: 1.7rem;
+  font-weight: 600;
+  text-align: center !important;
+  position: absolute;
+  margin: 0.5rem;
+  background-color: white;
+  border-radius: 50%;
+  border: none;
+  white-space: nowrap;
+  vertical-align: baseline;
+  height: 3rem;
+  width: 3rem;
+  padding: 0rem;
+  margin-right: 70%;
+  margin-top: 263px;
 }
 
 .heartButton {
-  background-image: url("./images/empty-heart.png");
   background-repeat: no-repeat;
   background-position: center;
   background-size: 35px 35px;
@@ -345,7 +381,7 @@
   width: 3rem;
   padding: 0rem;
 }
-.heartButton:focus {
+.clickedHeartButton {
   background-image: url("./images/full-heart.png");
   background-repeat: no-repeat;
   background-position: center;
@@ -367,6 +403,24 @@
   width: 3rem;
   padding: 0rem;
 }
+
+.infoButton {
+  top:0px;
+  right:0px;
+  position: absolute;
+  color: #000000;
+  font-size: 1.0rem;
+  font-weight: 600;
+  text-align: center !important;
+  margin: 0.5rem;
+  background-color: white;
+  border-radius: 50%;
+  border: none;
+  height: 3rem;
+  width: 3rem;
+  margin-left: 260px;
+}
+
 
 .datebutton {
   background-image: url("../../images/button.png");
@@ -403,6 +457,13 @@
   top: 0;
   right: 0;
   z-index: 2;
+}
+
+#numButton {
+  bottom: 0;
+  left: 0;
+  z-index: 2;
+  font-size: 25px;
 }
 
 #minusButton {

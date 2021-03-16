@@ -133,6 +133,7 @@ class Header extends Component {
         <WebNavBar />
         <MenuBar show={true} message={message} />
         <div>
+        {this.props.subscribedPlans.length ? (
           <select
               onChange={this.props.mealsOnChange}
               className={styles.pickers}
@@ -151,6 +152,9 @@ class Header extends Component {
                 );
               })}
         </select>
+        ) : (""
+        )}
+          
         </div>
 
         <div class={styles.divider}/>
