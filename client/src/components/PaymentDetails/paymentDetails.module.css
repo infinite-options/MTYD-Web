@@ -216,8 +216,6 @@ select {
   background-color: #F0F0F0;
   border-width: 1px;
   border-radius: 25px;
-  margin-top: 2rem;
-  margin-left: 50px;
   height: 52px;
   width: 108px;
   font-size: larger;
@@ -227,7 +225,7 @@ select {
 .tipRight {
   float: right;
   font-weight: bold;
-  margin-top: 2rem;
+  margin-top: 50px;
   margin-right: 50px;
 }
 

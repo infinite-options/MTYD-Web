@@ -67,7 +67,7 @@ class PaymentDetails extends React.Component {
       loggedInByPassword = true;
     }
     return (
-      <div className={styles.root}>
+      <div>
         <WebNavBar />
         <div
           style={{
@@ -195,6 +195,7 @@ class PaymentDetails extends React.Component {
               Terms and Conditions
           </div>
             
+        {/*
           <div className={styles.topHeading}>
             <h6 className={styles.subHeading}>PAYMENT SUMMARY</h6>
           </div>
@@ -263,6 +264,7 @@ class PaymentDetails extends React.Component {
           </div>
           <br></br>
             
+          <div>
             <button className={styles.tipButton}>
               No Tip
             </button>
@@ -278,7 +280,7 @@ class PaymentDetails extends React.Component {
             <div className={styles.tipRight}>
               ${this.state.tip}
             </div>
-            
+          </div>
             
           <div className={styles.codeContainer}>
             <div style={{flexBasis: "100%"}} className={styles.inputItem}>
@@ -295,7 +297,94 @@ class PaymentDetails extends React.Component {
             
           <br></br>
             
-          <hr className={styles.sumLine}></hr>
+          <hr className={styles.sumLine}></hr>*/}
+            
+          <div className={styles.paymentContainer}>
+            <div className={styles.topHeading}>
+              <h6 className={styles.subHeading}>PAYMENT SUMMARY</h6>
+            </div>
+          </div>
+            
+              <div style = {{display: 'inline-flex', width: '100%', height: '50px', marginTop: '30px', border: 'solid'}}>
+                <div style={{width: '100%', border: 'dotted', textAlign: 'left'}}>
+                  Meal Subscription ({
+                    this.props.selectedPlan.num_items
+                  } Meals for {
+                    this.props.selectedPlan.num_deliveries
+                  } Deliveries):
+                </div>
+                <div style={{width: '100%', border: 'dotted', textAlign: 'right'}}>
+                  ${(
+                    this.props.selectedPlan.item_price *
+                    this.props.selectedPlan.num_deliveries
+                  )}
+                </div>
+              </div>
+              <div style = {{display: 'inline-flex', width: '100%', height: '50px', marginTop: '30px', border: 'solid'}}>
+                <div style={{width: '100%', border: 'dotted', textAlign: 'left'}}>
+                  Meal Subscription ({
+                    this.props.selectedPlan.num_items
+                  } Meals for {
+                    this.props.selectedPlan.num_deliveries
+                  } Deliveries):
+                </div>
+                <div style={{width: '100%', border: 'dotted', textAlign: 'right'}}>
+                  ${(
+                    this.props.selectedPlan.item_price *
+                    this.props.selectedPlan.num_deliveries
+                  )}
+                </div>
+                  {/*<h6 style={{float: 'left', width: '100%', border: 'solid'}}>Who has time?</h6>
+                  <h6 style={{float: 'right', width: '100%', border: 'solid'}}>Peanuts</h6>
+                  <h6 style={{float: 'left', width: '100%', border: 'solid'}}>Better value</h6>
+                  <h6 style={{float: 'right', width: '100%', border: 'solid'}}>Cheese</h6>*/}
+              </div>
+            
+<div style={{display: 'flex', border: 'solid', borderColor: 'red'}}>
+    
+        <div style = {{display: 'inline-block', width: '80%', height: '500px', border: 'solid'}}>
+                <div style={{width: '100%', border: 'dotted', textAlign: 'left'}}>
+                  Meal Subscription ({
+                    this.props.selectedPlan.num_items
+                  } Meals for {
+                    this.props.selectedPlan.num_deliveries
+                  } Deliveries):
+                </div>
+                <div style={{width: '100%', border: 'dotted', textAlign: 'left'}}>
+                  ${(
+                    this.props.selectedPlan.item_price *
+                    this.props.selectedPlan.num_deliveries
+                  )}
+                </div>
+                  
+            <div style={{width: '100%', border: 'dotted', textAlign: 'left'}}>
+            <button className={styles.tipButton}>
+              No Tip
+            </button>
+            <button className={styles.tipButton}>
+              $2
+            </button>
+            <button className={styles.tipButton}>
+              $3
+            </button>
+            <button className={styles.tipButton}>
+              $5
+            </button>
+            </div>
+        </div>
+            
+              <div style = {{display: 'inline-block', width: '20%', height: '500px', border: 'solid'}}>
+                <div style={{width: '100%', border: 'dotted', textAlign: 'right'}}>
+                  Meal Subscription
+                </div>
+                <div style={{width: '100%', border: 'dotted', textAlign: 'right'}}>
+                  ${(
+                    this.props.selectedPlan.item_price *
+                    this.props.selectedPlan.num_deliveries
+                  )}
+                </div>
+              </div>
+</div>
             
           <div style={{marginTop: "2rem"}} className={styles.topHeading}>
             <h6 className={styles.subHeading}>PAYMENT OPTIONS</h6>
