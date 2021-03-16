@@ -29,7 +29,7 @@
   position: absolute;
   left: 50%;
   transform: translate(-50%, -50%);
-  margin-top: 200px;
+  margin-top: 150px;
   padding-bottom: 100px;
   text-align: center;
 }
@@ -38,13 +38,20 @@
   font-weight: bold;
   font-size: 70px;
   text-align: center;
+  margin: 50px 50px 50px 50px;
+}
+
+.priceWaitMessage {
+  font-weight: bold;
+  font-size: 50px;
+  text-align: center;
+  margin: 50px 0px 0px 0px;
 }
 
 .priceSymbol {
   font-weight: bold;
   font-size: 70px;
   text-align: center;
-  margin: 0px 30px 0px 30px;
 }
 
 .priceSubtext {
@@ -119,6 +126,23 @@
 .mealButtonSelected:active {
   outline: 0 !important;
 }
+
+.deliverySubtext {
+  color: #000000;
+  border: 1px solid #e4e4e4;
+  box-shadow: 2px 2px #d3d3d3;
+  background-color: #ffffff;
+  border-radius: 5px;
+  padding: 0.5rem 0.5rem;
+  margin: 5px;
+  text-align: center;
+  flex: 1;
+  min-width: 20%;
+  font-size: 13px;
+  font-weight: 600;
+  outline: 0;
+}
+
 .deliveryButton {
   color: #000000;
   border: 1px solid #e4e4e4;
@@ -133,6 +157,8 @@
   font-size: 13px;
   font-weight: 600;
   outline: 0;
+  height: 100px;
+  width: 100px;
 }
 
 .deliveryButtonSelected {
@@ -149,8 +175,8 @@
 .sameLine {
   display: flex;
   justify-items: center;
-  width: 110px;
-  height: 110px;
+  width: 100x;
+  height: 170px;
   margin-left: 10px;
 }
 .sameLine img {
@@ -198,7 +224,7 @@
   position: absolute;
   left: 50%;
   transform: translate(-50%, -50%);
-  margin-top: 400px;
+  margin-top: 350px;
   padding-bottom: 100px;
 }
 

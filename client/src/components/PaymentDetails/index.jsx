@@ -32,11 +32,13 @@ class PaymentDetails extends React.Component {
   constructor() {
     super();
     this.state = {
-      mounted: false
+      mounted: false,
+      tip: 0
     };
   }
 
   componentDidMount() {
+    console.log("PaymentDetails selected plan: " + JSON.stringify(this.props.selectedPlan));
     if (
       document.cookie
         .split(";")
@@ -198,23 +200,68 @@ class PaymentDetails extends React.Component {
           </div>
             
           <div className={styles.summaryText}>
-              Meal Subscription:
+            <div className={styles.summaryLeft}>
+              Meal Subscription ({
+                this.props.selectedPlan.num_items
+              } Meals for {
+                this.props.selectedPlan.num_deliveries
+              } Deliveries):
+            </div>
+            <div className={styles.summaryRight}>
+              ${(
+                this.props.selectedPlan.item_price *
+                this.props.selectedPlan.num_deliveries
+              )}
+            </div>
           </div>
+          <br></br>
           <div className={styles.summaryText}>
+            <div className={styles.summaryLeft}>
               Add-Ons:
+            </div>
+            <div className={styles.summaryRight}>
+              $0
+            </div>
           </div>
+          <br></br>
           <div className={styles.summaryText}>
-              Total Delivery Fee For All 8 Deliveries:
+            <div className={styles.summaryLeft}>
+              Total Delivery Fee For All {
+                this.props.selectedPlan.num_deliveries
+              } Deliveries:
+            </div>
+            <div className={styles.summaryRight}>
+              ${2 * this.props.selectedPlan.num_deliveries}
+            </div>
           </div>
+          <br></br>
           <div className={styles.summaryText}>
+            <div className={styles.summaryLeft}>
               Service Fee:
+            </div>
+            <div className={styles.summaryRight}>
+              $2
+            </div>
           </div>
+          <br></br>
           <div className={styles.summaryText}>
+            <div className={styles.summaryLeft}>
               Taxes: 
+            </div>
+            <div className={styles.summaryRight}>
+              $3.86
+            </div>
           </div>
+          <br></br>
           <div className={styles.summaryText}>
+            <div className={styles.summaryLeft}>
               Chef and Driver Tip:
+            </div>
+            <div className={styles.summaryRight}>
+              $--
+            </div>
           </div>
+          <br></br>
             
             <button className={styles.tipButton}>
               No Tip
@@ -228,6 +275,27 @@ class PaymentDetails extends React.Component {
             <button className={styles.tipButton}>
               $5
             </button>
+            <div className={styles.tipRight}>
+              ${this.state.tip}
+            </div>
+            
+            
+          <div className={styles.codeContainer}>
+            <div style={{flexBasis: "100%"}} className={styles.inputItem}>
+              <input
+                type='text'
+                placeholder='Enter Ambassador Code'
+                className={styles.inputAmbassador}
+              />
+            </div>
+                      <div className={styles.codeRight}>
+              ${this.state.tip}
+            </div>
+          </div>
+            
+          <br></br>
+            
+          <hr className={styles.sumLine}></hr>
             
           <div style={{marginTop: "2rem"}} className={styles.topHeading}>
             <h6 className={styles.subHeading}>PAYMENT OPTIONS</h6>
