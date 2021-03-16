@@ -31,6 +31,7 @@ import {withRouter} from "react-router";
 import styles from "./choosePlan.module.css";
 import menuStyles from "../Menu/menu.module.css";
 import {WebNavBar, BottomNavBar} from "../NavBar";
+import PaymentDetails from "../PaymentDetails";
 import Menu from "../Menu";
 import takeaway from "./static/take-away.svg";
 import chooseMeals from "./static/choose_meals.svg";
@@ -147,6 +148,7 @@ class ChoosePlan extends React.Component {
     for (var numMeals = 2; numMeals<=6; numMeals++) {
       let planStr = numMeals.toString();
       mealButtons.push(
+        <div className={styles.mealButtonWrapper}>
         <button
           key={planStr}
           className={
@@ -164,19 +166,20 @@ class ChoosePlan extends React.Component {
         >
           {planStr} MEALS
         </button>
+        <div style={{textAlign: 'center', marginTop: '10px'}}>
+          ${numMeals * 12}
+        </div>
+        </div>
       );
     }
     return mealButtons;
   };
   paymentFrequency2 = () => {
-    let myArr = [
-      {image: paymentOption1, desc: "WEEKLY"},
-      {image: paymentOption2, desc: "FOR 2 WEEKS"},
-      {image: paymentOption3, desc: "FOR 4 WEEKS"}
-    ];
     let deselectedPaymentOption = styles.deliveryButton;
     let selectedPaymentOption = styles.deliveryButton + " " + styles.deliveryButtonSelected;
     let paymentOptionButtons = [];
+    //console.log("PLANS: " + JSON.stringify(this.props.plans));
+      
     for (var numDeliveries = 1; numDeliveries<=10; numDeliveries++) {
       let active = false;
       let optionStr = numDeliveries.toString();
@@ -185,32 +188,103 @@ class ChoosePlan extends React.Component {
       } else {
         active = false;
       }
+        
+      var discounts = this.props.plans["2"];
+      var discount = null;
+        
+      try{
+        discount = discounts[numDeliveries].delivery_discount;
+        console.log("discount: " + discount);
+      } catch(e) {
+        console.log("discount UNDEFINED");
+      }
+        
       paymentOptionButtons.push(
         <div className={styles.sameLine} key={numDeliveries}>
-          <button
-            disabled={active}
-            className={
-              (this.props.paymentOption === optionStr
-                ? selectedPaymentOption
-                : deselectedPaymentOption) +
-              " " +
-              (active && styles.disabledBtn)
+          {(() => {
+            if (discount !== null && numDeliveries % 3 !== 0) {
+              return (
+                <button
+                  disabled={active}
+                  className={
+                    (this.props.paymentOption === optionStr
+                      ? selectedPaymentOption
+                      : deselectedPaymentOption) +
+                    " " + (active && styles.disabledBtn)
+                  }
+                  onClick={() => {
+                    this.props.choosePaymentOption(
+                      optionStr,
+                      this.props.meals,
+                      this.props.plans
+                    )
+                  }}
+                >
+                  <span style={{fontSize: '35px'}}>
+                    {numDeliveries}
+                  </span>
+                  <br></br>
+                  {(() => {
+                    if (discount > 0) {
+                      return (
+                        <span>(Save {discount}%)</span>
+                      );
+                    }
+                  })()}  
+                </button>
+              );
+            } else if (discount !== null && numDeliveries % 3 === 0) {
+              return (
+                <div style={{display: 'inline-block'}}>
+                <button
+                  disabled={active}
+                  className={
+                    (this.props.paymentOption === optionStr
+                      ? selectedPaymentOption
+                      : deselectedPaymentOption) +
+                    " " + (active && styles.disabledBtn)
+                  }
+                  onClick={() => {
+                    this.props.choosePaymentOption(
+                      optionStr,
+                      this.props.meals,
+                      this.props.plans
+                    )
+                  }}
+                >
+                  <span style={{fontSize: '35px'}}>
+                    {numDeliveries}
+                  </span>
+                  <br></br>
+                  {(() => {
+                    if (discount > 0) {
+                      return (
+                        <span>(Save {discount}%)</span>
+                      );
+                    }
+                  })()}  
+                </button>
+                  <div className={styles.deliverySubtext}>
+                    {(() => {
+                      if (numDeliveries/3 === 1) {
+                        return (
+                          <>
+                            {numDeliveries/3} WEEK
+                          </>
+                        );
+                      } else {
+                        return (
+                          <>
+                            {numDeliveries/3} WEEKS
+                          </>
+                        );
+                      }
+                    })()}
+                  </div>
+                </div>
+              );
             }
-            onClick={() =>
-              {
-                console.log("optionStr: " + optionStr);
-                console.log("meals: " + this.props.meals);
-                console.log("plans: " + JSON.stringify(this.props.plans));
-              this.props.choosePaymentOption(
-                optionStr,
-                this.props.meals,
-                this.props.plans
-              )
-              }
-            }
-          >
-          {numDeliveries} DELIVERIES
-          </button>
+          })()}     
         </div>
       );
     }
@@ -231,6 +305,7 @@ class ChoosePlan extends React.Component {
         </p>
       </div>
     );
+    console.log("===== SELECTED PLAN: " + JSON.stringify(this.props.selectedPlan));
     return (
       /*for mobile's screen*/
       <>
@@ -352,9 +427,6 @@ class ChoosePlan extends React.Component {
             <Menu show={true} message={message} />
             <div className={styles.box}>
               <div className={styles.box1}>
-                <h5>
-                  GET SUBSCRIBE BY SELECTING YOUR MEAL PLAN AND PAYMENT OPTIONS
-                </h5>
 
                 <div className='row'>
                   <div className='col'>
@@ -379,306 +451,120 @@ class ChoosePlan extends React.Component {
                     <img src={delivery} alt='delivery' />
                   </div>
                 </div>
-
-                <div className='row'>
-                  <div className='col'>
-                    <div className='row'>
-                      <div className='col'>
-                        <div className='row'>
+                  
+                        <div className={styles.menuSection}>
                           <div className={styles.center}>
-                            <img src={one} alt='one' className={styles.forty} />
                             <span className={styles.bold}>
                               MEALS PER DELIVERY
                             </span>
                           </div>
-                        </div>
-                        <div className={"row " + styles.center}>
-                          <div className={styles.mealNumber}>
-                            <div className={styles.buttonWrapper}>
-                              {this.mealsDelivery()}
-                            </div>
+                          <div className={styles.buttonWrapper}>
+                            {this.mealsDelivery()}
                           </div>
                         </div>
-                      </div>
-                      <div className='col'>
-                        <div className='row'>
+                  
+                        <div className={styles.menuSection}>
                           <div className={styles.center}>
-                            <img src={two} alt='two' className={styles.forty} />
-                            <span className={styles.bold}>NUMBER OF DELIVERIES</span>
+                            <span className={styles.bold}>
+                              NUMBER OF DELIVERIES
+                            </span>
+                          </div>
+                          <div className='row' style={{marginTop: '20px'}}>
+                            {this.paymentFrequency2()}
                           </div>
                         </div>
-                        <div className='row'>{this.paymentFrequency2()}</div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className='col pl-5'>
-                    <div className={"row"}>
-                      {/* <div className={styles.center}> */}
-                      <img src={three} alt='three' className={styles.forty} />
-                      <span className={styles.bold}>DELIVERY INFORMATION</span>
-                      {/* </div> */}
-                    </div>
-                    <div className={"row " + styles.center}>
-                      <form>
-                        <div className='row'>
-                          <div className='col'>
-                            <div className='row'>
-                              <div className='col px-1'>
-                                <input
-                                  type='text'
-                                  name='firstName'
-                                  value={this.props.firstName}
-                                  className={styles.inputBox}
-                                  placeholder='First Name'
-                                  onChange={e =>
-                                    this.props.changeAddressFirstName(
-                                      e.target.value
-                                    )
-                                  }
-                                />
-                              </div>
-                              <div className='col px-1'>
-                                <input
-                                  type='text'
-                                  value={this.props.lastName}
-                                  className={styles.inputBox}
-                                  placeholder='Last Name'
-                                  onChange={e =>
-                                    this.props.changeAddressLastName(
-                                      e.target.value
-                                    )
-                                  }
-                                />
-                              </div>
+                  
+                        <div className={styles.menuSection}>
+                            
+                                                {(() => {
+                      if (JSON.stringify(this.props.selectedPlan) !== '{}') {
+                        return (
+                            
+                            <>
+                            
+                          <div className={styles.priceCalculation}>
+                            <div>
+                              <span className={styles.priceFormula}>
+                                {this.props.selectedPlan.num_items} 
+                              </span>
+                              <br></br>
+                              <span className={styles.priceSubtext}>
+                                Meals
+                              </span>
                             </div>
-                            <div className='row'>
-                              <div className='col px-1'>
-                                <input
-                                  type='email'
-                                  value={this.props.email}
-                                  className={styles.inputBox}
-                                  placeholder='Email'
-                                  readOnly
-                                />
-                              </div>
+                            <div className={styles.priceSymbol}>
+                              x
                             </div>
-                            <div className='row'>
-                              <div className='col px-1'>
-                                <input
-                                  type='text'
-                                  value={this.props.street}
-                                  className={styles.inputBox}
-                                  placeholder='Street'
-                                  onChange={e =>
-                                    this.props.changeAddressStreet(
-                                      e.target.value
-                                    )
-                                  }
-                                />
-                              </div>
+                            <div>
+                              <span className={styles.priceFormula}>
+                                {this.props.selectedPlan.num_deliveries} 
+                              </span>
+                              <br></br>
+                              <span className={styles.priceSubtext}>
+                                Deliveries
+                              </span>
                             </div>
-                            <div className='row'>
-                              <div className='col px-1'>
-                                <input
-                                  type='text'
-                                  className={styles.inputBox}
-                                  placeholder='Unit'
-                                  value={this.props.unit}
-                                  onChange={e =>
-                                    this.props.changeAddressUnit(e.target.value)
-                                  }
-                                />
-                              </div>
-                              <div className='col px-1'>
-                                <input
-                                  type='text'
-                                  className={styles.inputBox}
-                                  placeholder='City'
-                                  value={this.props.city}
-                                  onChange={e =>
-                                    this.props.changeAddressCity(e.target.value)
-                                  }
-                                />
-                              </div>
-                              <div className='col px-1'>
-                                <input
-                                  type='text'
-                                  className={styles.inputBox}
-                                  placeholder='State'
-                                  value={this.props.state}
-                                  onChange={e =>
-                                    this.props.changeAddressState(
-                                      e.target.value
-                                    )
-                                  }
-                                />
-                              </div>
+                            <div className={styles.priceSymbol}>
+                              -
                             </div>
-                            <div className='row'>
-                              <div className='col-4 px-1'>
-                                <input
-                                  type='text'
-                                  className={styles.inputBox}
-                                  placeholder='Zip'
-                                  value={this.props.zip}
-                                  onChange={e =>
-                                    this.props.changeAddressZip(e.target.value)
-                                  }
-                                />
-                              </div>
-                              <div className='col px-1'>
-                                <input
-                                  type='text'
-                                  className={styles.inputBox}
-                                  placeholder='Phone Number'
-                                  value={this.props.phone}
-                                  onChange={e =>
-                                    this.props.changeAddressPhone(
-                                      e.target.value
-                                    )
-                                  }
-                                />
-                              </div>
+                            <div>
+                              <span className={styles.priceFormula}>
+                                {this.props.selectedPlan.delivery_discount}%
+                              </span>
+                              <br></br>
+                              <span className={styles.priceSubtext}>
+                                Discount
+                              </span>
                             </div>
-                            <div className='row'>
-                              <div className='col px-1'>
-                                <textarea
-                                  className={styles.inputBox}
-                                  style={{
-                                    borderRadius: "7px",
-                                    padding: "0px",
-                                    fontSize: "12px",
-                                    minHeight: "100px"
-                                  }}
-                                  placeholder='Delivery Instruction'
-                                  value={this.props.instructions}
-                                  onChange={e =>
-                                    this.props.changeDeliveryInstructions(
-                                      e.target.value
-                                    )
-                                  }
-                                />
-                              </div>
+                            <div className={styles.priceSymbol}>
+                              =
+                            </div>
+                            <div>
+                              <span className={styles.priceFormula}>
+                                ${(
+                                this.props.selectedPlan.item_price *
+                                this.props.selectedPlan.num_deliveries *
+                                (1-(this.props.selectedPlan.delivery_discount*0.01))
+                                ).toFixed(2)}
+                              </span>
+                              <br></br>
+                              <span className={styles.priceSubtext}>
+                                Total
+                              </span>
                             </div>
                           </div>
-                          <div className='col'>
-                            <div className='row'>
-                              <div className='col px-1'>
-                                <input
-                                  className={styles.inputBox}
-                                  placeholder='Credit Card Number'
-                                  value={this.props.cc_num}
-                                  onChange={e =>
-                                    this.props.changeCardNumber(e.target.value)
-                                  }
-                                />
-                              </div>
+                            
+<div className={styles.proceedWrapper}>
+                  <Link className={styles.proceedBtn} to='/payment-details'>
+                    PROCEED
+                  </Link>
+                </div> 
+                            
+                            </>
+                            
+                        );
+                      } else {
+                        return (
+                          <div className={styles.priceCalculation}>
+                            <div className={styles.priceWaitMessage}>
+                              Select a meal plan and deliveries to see your discount.
                             </div>
-                            <div className='row'>
-                              <div className='col px-1'>
-                                <input
-                                  className={styles.inputBox}
-                                  placeholder='CVC/CVV'
-                                  value={this.props.cc_cvv}
-                                  onChange={e =>
-                                    this.props.changeCardCvv(e.target.value)
-                                  }
-                                />
-                              </div>
-                              <div className='col px-1'>
-                                <input
-                                  className={styles.inputBox}
-                                  placeholder='Zip'
-                                  value={this.props.cc_zip}
-                                  onChange={e =>
-                                    this.props.changeCardZip(e.target.value)
-                                  }
-                                />
-                              </div>
-                            </div>
-                            <div className='row'>
-                              <div className='col px-1'>
-                                <input
-                                  className={styles.inputBox}
-                                  placeholder='Month'
-                                  value={this.props.cc_month}
-                                  onChange={e =>
-                                    this.props.changeCardMonth(e.target.value)
-                                  }
-                                />
-                              </div>
-                              <div className='col px-1'>
-                                <input
-                                  className={styles.inputBox}
-                                  placeholder='Year'
-                                  value={this.props.cc_year}
-                                  onChange={e =>
-                                    this.props.changeCardYear(e.target.value)
-                                  }
-                                />
-                              </div>
-                            </div>
-                            {this.props.socialMedia === "NULL" && (
-                              <div className='row'>
-                                <input
-                                  type='password'
-                                  className={styles.inputBox}
-                                  placeholder='password'
-                                  value={this.props.password}
-                                  onChange={e =>
-                                    this.props.changePaymentPassword(
-                                      e.target.value
-                                    )
-                                  }
-                                />
-                              </div>
-                            )}
                           </div>
+                        );
+                      }
+                    })()}
+                            
                         </div>
-                      </form>
-                    </div>
-                  </div>
-                </div>
-
-                <div className='row'>
-                  {console.log("choose-plan selectedPlan: " + JSON.stringify(this.props.selectedPlan))}
-                  <p className={styles.totalBtn}>
-                    $ {(
-                          this.props.selectedPlan.item_price *
-                          this.props.selectedPlan.num_deliveries *
-                          (1-(this.props.selectedPlan.delivery_discount*0.01))
-                      ).toFixed(2)}
-                  </p>
-                  <button
-                    className={styles.finishBtn}
-                    onClick={() =>
-                      this.props.submitPayment(
-                        this.props.email,
-                        this.props.customerId,
-                        this.props.socialMedia,
-                        this.props.password,
-                        this.props.firstName,
-                        this.props.lastName,
-                        this.props.phone,
-                        this.props.street,
-                        this.props.unit,
-                        this.props.city,
-                        this.props.state,
-                        this.props.zip,
-                        this.props.instructions,
-                        this.props.selectedPlan,
-                        () => {
-                          this.props.history.push("/meal-plan");
-                        }
-                      )
-                    }
-                  >
-                    {" "}
-                    FINISH{" "}
-                  </button>
-                </div>
+                  
               </div>
-            </div>
+                
+                {/*<div className={styles.proceedWrapper}>
+                  <Link className={styles.proceedBtn} to='/payment-details'>
+                    PROCEED
+                  </Link>
+                </div> */}
+                
+            </div>   
           </div>
         </div>
       </>
