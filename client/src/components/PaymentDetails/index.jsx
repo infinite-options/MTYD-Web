@@ -79,11 +79,11 @@ class PaymentDetails extends React.Component {
             boxShadow: "1px 1px 1px 2px #d3d3d3 "
           }}
         >
-          <div className={styles.topHeading}>
+            {/*<div className={styles.topHeading}>
             <h6 className={styles.subHeading}> DELIVERY ADDRESS </h6>
           </div>
             
-         <div className={styles.inputContainer}>
+          <div className={styles.inputContainer}>
             <div className={styles.inputItem}>
               <input
                 type='text'
@@ -144,10 +144,10 @@ class PaymentDetails extends React.Component {
             
           <div className={styles.topHeading}>
             <h6 className={styles.subHeading}>CONTACT  INFO</h6>
-          </div>
+          </div>*/}
             
           {/* <h6 className={styles.subHeading}> Address Details </h6> */}
-          <div className={styles.inputContainer}>
+            {/*<div className={styles.inputContainer}>
             <div className={styles.inputItem}>
               <input
                 type='text'
@@ -193,200 +193,234 @@ class PaymentDetails extends React.Component {
             
           <div style = {{margin: '30px 0 20px 20px', fontWeight: 'bold'}}>
               Terms and Conditions
-          </div>
+          </div>*/}
             
-        {/*
+ {/****************************************/}
           <div className={styles.topHeading}>
-            <h6 className={styles.subHeading}>PAYMENT SUMMARY</h6>
+            <h6 className={styles.subHeading}> DELIVERY ADDRESS </h6>
           </div>
             
-          <div className={styles.summaryText}>
-            <div className={styles.summaryLeft}>
-              Meal Subscription ({
-                this.props.selectedPlan.num_items
-              } Meals for {
-                this.props.selectedPlan.num_deliveries
-              } Deliveries):
+          <div style={{display: 'flex'}}>
+            <div style = {{display: 'inline-block', width: '80%', height: '200px', border: 'dotted'}}>
+              <input
+                type='text'
+                placeholder='Search for an Address'
+                className={styles.input}
+                value={this.props.street}
+                onChange={e => {
+                  this.props.changeAddressStreet(e.target.value);
+                }}
+              />
+              <input
+                type='text'
+                placeholder='Address Line 2 (Apartment number, Suite, Building, Floor, etc.)'
+                className={styles.input}
+                value={this.props.street}
+                onChange={e => {
+                  this.props.changeAddressStreet(e.target.value);
+                }}
+              />
+              <input
+                type='text'
+                placeholder='Delivery Instructions (Gate code, Ring bell, Call on arrival, etc.)'
+                className={styles.input}
+                value={this.props.street}
+                onChange={e => {
+                  this.props.changeAddressStreet(e.target.value);
+                }}
+              />
             </div>
-            <div className={styles.summaryRight}>
-              ${(
-                this.props.selectedPlan.item_price *
-                this.props.selectedPlan.num_deliveries
-              )}
-            </div>
-          </div>
-          <br></br>
-          <div className={styles.summaryText}>
-            <div className={styles.summaryLeft}>
-              Add-Ons:
-            </div>
-            <div className={styles.summaryRight}>
-              $0
-            </div>
-          </div>
-          <br></br>
-          <div className={styles.summaryText}>
-            <div className={styles.summaryLeft}>
-              Total Delivery Fee For All {
-                this.props.selectedPlan.num_deliveries
-              } Deliveries:
-            </div>
-            <div className={styles.summaryRight}>
-              ${2 * this.props.selectedPlan.num_deliveries}
-            </div>
-          </div>
-          <br></br>
-          <div className={styles.summaryText}>
-            <div className={styles.summaryLeft}>
-              Service Fee:
-            </div>
-            <div className={styles.summaryRight}>
-              $2
+              
+            <div style = {{width: '20%', textAlign: 'right', paddingRight: '10px', height: '200px', border: 'dotted'}}>
+              <button className={styles.saveButton}>
+                Save
+              </button>
             </div>
           </div>
-          <br></br>
-          <div className={styles.summaryText}>
-            <div className={styles.summaryLeft}>
-              Taxes: 
-            </div>
-            <div className={styles.summaryRight}>
-              $3.86
-            </div>
-          </div>
-          <br></br>
-          <div className={styles.summaryText}>
-            <div className={styles.summaryLeft}>
-              Chef and Driver Tip:
-            </div>
-            <div className={styles.summaryRight}>
-              $--
-            </div>
-          </div>
-          <br></br>
+
             
-          <div>
-            <button className={styles.tipButton}>
-              No Tip
-            </button>
-            <button className={styles.tipButton}>
-              $2
-            </button>
-            <button className={styles.tipButton}>
-              $3
-            </button>
-            <button className={styles.tipButton}>
-              $5
-            </button>
-            <div className={styles.tipRight}>
-              ${this.state.tip}
+          <div style = {{display: 'inline-block', width: '80%', height: '200px', border: 'dotted'}}>
+            <div className = {styles.googleMap}>
+              Google Map
             </div>
           </div>
             
-          <div className={styles.codeContainer}>
-            <div style={{flexBasis: "100%"}} className={styles.inputItem}>
+            
+          <div className={styles.topHeading}>
+            <h6 className={styles.subHeading}> CONTACT INFO </h6>
+          </div>
+            
+          <div style={{display: 'flex'}}>
+            <div style = {{display: 'inline-block', width: '40%', height: '150px', border: 'dotted'}}>
+              <input
+                type='text'
+                placeholder='First Name'
+                className={styles.input}
+                value={this.props.street}
+                onChange={e => {
+                  this.props.changeAddressStreet(e.target.value);
+                }}
+              />
+              <input
+                type='text'
+                placeholder='Phone Number'
+                className={styles.input}
+                value={this.props.street}
+                onChange={e => {
+                  this.props.changeAddressStreet(e.target.value);
+                }}
+              />
+            </div>
+              
+            <div style = {{display: 'inline-block', width: '40%', height: '150px', border: 'dotted'}}>
+              <input
+                type='text'
+                placeholder='Last Name'
+                className={styles.input}
+                value={this.props.street}
+                onChange={e => {
+                  this.props.changeAddressStreet(e.target.value);
+                }}
+              />
+              <input
+                type='text'
+                placeholder='Email'
+                className={styles.input}
+                value={this.props.street}
+                onChange={e => {
+                  this.props.changeAddressStreet(e.target.value);
+                }}
+              />
+            </div>
+              
+            <div style = {{width: '20%', textAlign: 'right', paddingRight: '10px', height: '150px', border: 'dotted'}}>
+                <button className={styles.saveButton}>
+                  Save
+                </button>
+            </div>
+          </div>
+            
+          <div style = {{margin: '30px 0 10px 20px'}}>
+              Terms and Conditions
+          </div>
+            
+          <div className={styles.paymentContainer}>
+            <div className={styles.topHeading}>
+              <h6 className={styles.subHeading}>PAYMENT SUMMARY</h6>
+            </div>
+       
+            </div>
+            
+          <div style={{display: 'flex'}}>
+              
+            <div style = {{display: 'inline-block', width: '80%', height: '480px'}}>
+              <div className={styles.summaryLeft}>
+                Meal Subscription ({
+                  this.props.selectedPlan.num_items
+                } Meals for {
+                  this.props.selectedPlan.num_deliveries
+                } Deliveries):
+              </div>
+              <div className={styles.summaryLeft}>
+                Add-Ons:
+              </div>
+              <div className={styles.summaryLeft}>
+                Total Delivery Fee For All {
+                  this.props.selectedPlan.num_deliveries
+                } Deliveries:
+              </div>
+              <div className={styles.summaryLeft}>
+                Service Fee:
+              </div>
+              <div className={styles.summaryLeft}>
+                Taxes:
+              </div>
+              <div className={styles.summaryLeft}>
+                Chef and Driver Tip:
+              </div>
+                  
+              <div className={styles.summaryLeft}>
+                <button className={styles.tipButton}>
+                  No Tip
+                </button>
+                <button className={styles.tipButton}>
+                  $2
+                </button>
+                <button className={styles.tipButton}>
+                  $3
+                </button>
+                <button className={styles.tipButton}>
+                  $5
+                </button>
+              </div>
+                
               <input
                 type='text'
                 placeholder='Enter Ambassador Code'
                 className={styles.inputAmbassador}
               />
             </div>
-                      <div className={styles.codeRight}>
-              ${this.state.tip}
+            
+            <div style = {{display: 'inline-block', width: '20%', height: '480px'}}>
+              <div className={styles.summaryRight}>
+                ${(
+                  this.props.selectedPlan.item_price *
+                  this.props.selectedPlan.num_deliveries
+                )}
+              </div>
+              <div className={styles.summaryRight}>
+                ${(
+                  this.props.selectedPlan.item_price *
+                  this.props.selectedPlan.num_deliveries
+                )}
+              </div>
+              <div className={styles.summaryRight}>
+                ${(
+                  this.props.selectedPlan.item_price *
+                  this.props.selectedPlan.num_deliveries
+                )}
+              </div>
+              <div className={styles.summaryRight}>
+                ${(
+                  this.props.selectedPlan.item_price *
+                  this.props.selectedPlan.num_deliveries
+                )}
+              </div>
+              <div className={styles.summaryRight}>
+                ${(
+                  this.props.selectedPlan.item_price *
+                  this.props.selectedPlan.num_deliveries
+                )}
+              </div>
+              <div className={styles.summaryRight}>
+                ${(
+                  this.props.selectedPlan.item_price *
+                  this.props.selectedPlan.num_deliveries
+                )}
+              </div>
+              <div className={styles.summaryRight2}>
+                ${(
+                  this.props.selectedPlan.item_price *
+                  this.props.selectedPlan.num_deliveries
+                )}
+              </div>
+              <div className={styles.summaryRight2}>
+                ${(
+                  this.props.selectedPlan.item_price *
+                  this.props.selectedPlan.num_deliveries
+                )}
+              </div>
+              <hr className={styles.sumLine}></hr>
+              <div className={styles.summaryRight2}>
+                ${(
+                  this.props.selectedPlan.item_price *
+                  this.props.selectedPlan.num_deliveries
+                )}
+              </div>
             </div>
           </div>
             
-          <br></br>
-            
-          <hr className={styles.sumLine}></hr>*/}
-            
-          <div className={styles.paymentContainer}>
-            <div className={styles.topHeading}>
-              <h6 className={styles.subHeading}>PAYMENT SUMMARY</h6>
-            </div>
-          </div>
-            
-              <div style = {{display: 'inline-flex', width: '100%', height: '50px', marginTop: '30px', border: 'solid'}}>
-                <div style={{width: '100%', border: 'dotted', textAlign: 'left'}}>
-                  Meal Subscription ({
-                    this.props.selectedPlan.num_items
-                  } Meals for {
-                    this.props.selectedPlan.num_deliveries
-                  } Deliveries):
-                </div>
-                <div style={{width: '100%', border: 'dotted', textAlign: 'right'}}>
-                  ${(
-                    this.props.selectedPlan.item_price *
-                    this.props.selectedPlan.num_deliveries
-                  )}
-                </div>
-              </div>
-              <div style = {{display: 'inline-flex', width: '100%', height: '50px', marginTop: '30px', border: 'solid'}}>
-                <div style={{width: '100%', border: 'dotted', textAlign: 'left'}}>
-                  Meal Subscription ({
-                    this.props.selectedPlan.num_items
-                  } Meals for {
-                    this.props.selectedPlan.num_deliveries
-                  } Deliveries):
-                </div>
-                <div style={{width: '100%', border: 'dotted', textAlign: 'right'}}>
-                  ${(
-                    this.props.selectedPlan.item_price *
-                    this.props.selectedPlan.num_deliveries
-                  )}
-                </div>
-                  {/*<h6 style={{float: 'left', width: '100%', border: 'solid'}}>Who has time?</h6>
-                  <h6 style={{float: 'right', width: '100%', border: 'solid'}}>Peanuts</h6>
-                  <h6 style={{float: 'left', width: '100%', border: 'solid'}}>Better value</h6>
-                  <h6 style={{float: 'right', width: '100%', border: 'solid'}}>Cheese</h6>*/}
-              </div>
-            
-<div style={{display: 'flex', border: 'solid', borderColor: 'red'}}>
-    
-        <div style = {{display: 'inline-block', width: '80%', height: '500px', border: 'solid'}}>
-                <div style={{width: '100%', border: 'dotted', textAlign: 'left'}}>
-                  Meal Subscription ({
-                    this.props.selectedPlan.num_items
-                  } Meals for {
-                    this.props.selectedPlan.num_deliveries
-                  } Deliveries):
-                </div>
-                <div style={{width: '100%', border: 'dotted', textAlign: 'left'}}>
-                  ${(
-                    this.props.selectedPlan.item_price *
-                    this.props.selectedPlan.num_deliveries
-                  )}
-                </div>
-                  
-            <div style={{width: '100%', border: 'dotted', textAlign: 'left'}}>
-            <button className={styles.tipButton}>
-              No Tip
-            </button>
-            <button className={styles.tipButton}>
-              $2
-            </button>
-            <button className={styles.tipButton}>
-              $3
-            </button>
-            <button className={styles.tipButton}>
-              $5
-            </button>
-            </div>
-        </div>
-            
-              <div style = {{display: 'inline-block', width: '20%', height: '500px', border: 'solid'}}>
-                <div style={{width: '100%', border: 'dotted', textAlign: 'right'}}>
-                  Meal Subscription
-                </div>
-                <div style={{width: '100%', border: 'dotted', textAlign: 'right'}}>
-                  ${(
-                    this.props.selectedPlan.item_price *
-                    this.props.selectedPlan.num_deliveries
-                  )}
-                </div>
-              </div>
-</div>
-            
-          <div style={{marginTop: "2rem"}} className={styles.topHeading}>
+          <div className={styles.topHeading}>
             <h6 className={styles.subHeading}>PAYMENT OPTIONS</h6>
           </div>
             
@@ -406,7 +440,102 @@ class PaymentDetails extends React.Component {
             </button>
           </div>
             
-          <div className={styles.inputContainer}>
+          <div style={{display: 'flex'}}>
+            <div style = {{display: 'inline-block', width: '80%', height: '480px', border: 'dotted'}}>
+              <input
+                type='text'
+                placeholder='Card Holder Name'
+                className={styles.input}
+                value={this.props.street}
+                onChange={e => {
+                  this.props.changeAddressStreet(e.target.value);
+                }}
+              />
+              <input
+                type='text'
+                placeholder='Credit Card Number'
+                className={styles.input}
+                value={this.props.street}
+                onChange={e => {
+                  this.props.changeAddressStreet(e.target.value);
+                }}
+              />
+            <div style = {{display: 'inline-flex', height: '240px', border: 'dotted', width: '122%'}}>
+              <input
+                type='text'
+                placeholder='MM'
+                className={styles.monthInput}
+                value={this.props.street}
+                onChange={e => {
+                  this.props.changeAddressStreet(e.target.value);
+                }}
+              />
+              <div className={styles.dateSlash}>/</div>
+              <input
+                type='text'
+                placeholder='YEAR'
+                className={styles.yearInput}
+                value={this.props.street}
+                onChange={e => {
+                  this.props.changeAddressStreet(e.target.value);
+                }}
+              />
+              <input
+                type='text'
+                placeholder='CVV'
+                className={styles.cvvInput}
+                value={this.props.street}
+                onChange={e => {
+                  this.props.changeAddressStreet(e.target.value);
+                }}
+              />
+              <input
+                type='text'
+                placeholder='ZIPCODE'
+                className={styles.zipInput}
+                value={this.props.street}
+                onChange={e => {
+                  this.props.changeAddressStreet(e.target.value);
+                }}
+              />
+                          <button
+              className={styles.finishButton}
+              onClick={() => {
+                this.props.submitPayment(
+                  this.props.email,
+                  this.props.customerId,
+                  this.props.socialMedia,
+                  this.props.password,
+                  this.props.firstName,
+                  this.props.lastName,
+                  this.props.phone,
+                  this.props.street,
+                  this.props.unit,
+                  this.props.city,
+                  this.props.state,
+                  this.props.zip,
+                  this.props.instructions,
+                  this.props.selectedPlan,
+                  () => {
+                    this.props.history.push("/select-meal");
+                  }
+                );
+              }}
+            >
+              FINISH
+            </button>
+                </div>
+            </div>
+              
+            <div style = {{width: '20%', textAlign: 'right', paddingRight: '10px', height: '100px', border: 'dotted'}}>
+                <button className={styles.saveButton}>
+                  Save
+                </button>
+            </div>
+          </div>
+            
+            
+            {/*<div className={styles.inputContainer}>
             <div style={{flexBasis: "100%"}} className={styles.inputItem}>
               <input
                 type='text'
@@ -436,35 +565,7 @@ class PaymentDetails extends React.Component {
                 <option>Year </option>
               </select>
             </div>
-          </div>
-          <div className={styles.buttonContainer}>
-            <button
-              className={styles.button}
-              onClick={() => {
-                this.props.submitPayment(
-                  this.props.email,
-                  this.props.customerId,
-                  this.props.socialMedia,
-                  this.props.password,
-                  this.props.firstName,
-                  this.props.lastName,
-                  this.props.phone,
-                  this.props.street,
-                  this.props.unit,
-                  this.props.city,
-                  this.props.state,
-                  this.props.zip,
-                  this.props.instructions,
-                  this.props.selectedPlan,
-                  () => {
-                    this.props.history.push("/select-meal");
-                  }
-                );
-              }}
-            >
-              SAVE
-            </button>
-          </div>
+          </div>*/}
         </div>
       </div>
     );
