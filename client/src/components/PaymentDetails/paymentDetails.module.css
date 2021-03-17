@@ -198,17 +198,6 @@ select {
 }
 
 .yearInput {
-  width: 20%;
-  height: 2.2rem;
-  border-radius: 10px;
-  border: solid;
-  border-width: 1px;
-  background-color: #F0F0F0;
-  margin: 0px 0px 15px 20px;
-  padding: 6px 0px 6px 10px;
-}
-
-.cvvInput {
   width: 15%;
   height: 2.2rem;
   border-radius: 10px;
@@ -219,8 +208,19 @@ select {
   padding: 6px 0px 6px 10px;
 }
 
+.cvvInput {
+  width: 12%;
+  height: 2.2rem;
+  border-radius: 10px;
+  border: solid;
+  border-width: 1px;
+  background-color: #F0F0F0;
+  margin: 0px 0px 15px 20px;
+  padding: 6px 0px 6px 10px;
+}
+
 .zipInput {
-  width: 30%;
+  width: 25%;
   height: 2.2rem;
   border-radius: 10px;
   border: solid;
@@ -231,7 +231,7 @@ select {
 }
 
 .finishButton {
-  width: 25%;
+  width: 200px;
   height: 40px;
   border: solid;
   background-color: #ff9400;
@@ -241,7 +241,7 @@ select {
   margin-bottom: 20px;
   font-size: larger;
   font-weight: 500;
-  margin: 0px 0px 0px 50px;
+  margin: 30px 20px 0px 100px;
 }
 
 .googleMap {
@@ -255,8 +255,6 @@ select {
   vertical-align: middle;
 }
 
-/*border: 'solid', margin: '0px 0px 15px 20px', width: '90%', backgroundColor: '#F0F0F0', borderRadius: '10px'*/
-
 .inputAmbassador {
   width: 300px;
   height: 2.2rem;
@@ -267,21 +265,6 @@ select {
   margin-left: 30px;
   padding: 6px 0px 6px 10px;
 }
-
-/*
-  background-color: #ff9e19;
-  color: black;
-  min-width: 220px;
-  width: max-content;
-  text-align: center;
-  padding: 6px 20px 6px 20px;
-  border-radius: 30px;
-  justify-self: center;
-  font-size: 16px;
-  margin-top: 30px;
-  cursor: pointer;
-  justify-content: center;
-*/
 
 .input::placeholder {
   position: absolute;
@@ -360,6 +343,18 @@ select {
   margin-right: 30px;
 }
 
+.tipButton:focus {
+  border: solid;
+  background-color: #ff9400;
+  border-width: 1px;
+  border-radius: 25px;
+  height: 52px;
+  width: 108px;
+  font-size: larger;
+  font-weight: 500;
+  margin-right: 30px;
+}
+
 .saveButton {
   width: 100px;
   height: 40px;
@@ -372,10 +367,6 @@ select {
   font-size: larger;
   font-weight: 500;
   text-align: center;
-}
-
-.saveContainer {
-  
 }
 
 .tipRight {

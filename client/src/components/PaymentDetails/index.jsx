@@ -201,7 +201,7 @@ class PaymentDetails extends React.Component {
           </div>
             
           <div style={{display: 'flex'}}>
-            <div style = {{display: 'inline-block', width: '80%', height: '200px', border: 'dotted'}}>
+            <div style = {{display: 'inline-block', width: '80%', height: '200px'}}>
               <input
                 type='text'
                 placeholder='Search for an Address'
@@ -231,7 +231,7 @@ class PaymentDetails extends React.Component {
               />
             </div>
               
-            <div style = {{width: '20%', textAlign: 'right', paddingRight: '10px', height: '200px', border: 'dotted'}}>
+            <div style = {{width: '20%', textAlign: 'right', paddingRight: '10px', height: '200px'}}>
               <button className={styles.saveButton}>
                 Save
               </button>
@@ -239,7 +239,7 @@ class PaymentDetails extends React.Component {
           </div>
 
             
-          <div style = {{display: 'inline-block', width: '80%', height: '200px', border: 'dotted'}}>
+          <div style = {{display: 'inline-block', width: '80%', height: '200px'}}>
             <div className = {styles.googleMap}>
               Google Map
             </div>
@@ -251,7 +251,7 @@ class PaymentDetails extends React.Component {
           </div>
             
           <div style={{display: 'flex'}}>
-            <div style = {{display: 'inline-block', width: '40%', height: '150px', border: 'dotted'}}>
+            <div style = {{display: 'inline-block', width: '40%', height: '150px'}}>
               <input
                 type='text'
                 placeholder='First Name'
@@ -272,7 +272,7 @@ class PaymentDetails extends React.Component {
               />
             </div>
               
-            <div style = {{display: 'inline-block', width: '40%', height: '150px', border: 'dotted'}}>
+            <div style = {{display: 'inline-block', width: '40%', height: '150px'}}>
               <input
                 type='text'
                 placeholder='Last Name'
@@ -293,7 +293,7 @@ class PaymentDetails extends React.Component {
               />
             </div>
               
-            <div style = {{width: '20%', textAlign: 'right', paddingRight: '10px', height: '150px', border: 'dotted'}}>
+            <div style = {{width: '20%', textAlign: 'right', paddingRight: '10px', height: '150px'}}>
                 <button className={styles.saveButton}>
                   Save
                 </button>
@@ -424,24 +424,33 @@ class PaymentDetails extends React.Component {
             <h6 className={styles.subHeading}>PAYMENT OPTIONS</h6>
           </div>
             
-          <div className={styles.buttonContainer}>
-            <button className={styles.button}>
+          <div style={{display: 'flex'}}>
+            <div style = {{display: 'inline-block', width: '80%', height: '280px'}}>
+            <div className={styles.buttonContainer}>
+                <button className={styles.button}>
               STRIPE
             </button>
-          </div>
-          <div className={styles.buttonContainer}>
-            <button className={styles.button}>
+            </div>
+            <div className={styles.buttonContainer}>
+                <button className={styles.button}>
               PAYPAL
             </button>
-          </div>
-          <div className={styles.buttonContainer}>
-            <button className={styles.button}>
+            </div>
+            <div className={styles.buttonContainer}>
+                <button className={styles.button}>
               VENMO
             </button>
+            </div>
+          </div>
+          <div style = {{width: '20%', textAlign: 'right', paddingRight: '10px', height: '270px'}}>
+                <button className={styles.saveButton}>
+                  Save
+                </button>
+            </div>
           </div>
             
           <div style={{display: 'flex'}}>
-            <div style = {{display: 'inline-block', width: '80%', height: '480px', border: 'dotted'}}>
+            <div style = {{display: 'inline-block', width: '80%', height: '200px'}}>
               <input
                 type='text'
                 placeholder='Card Holder Name'
@@ -460,7 +469,7 @@ class PaymentDetails extends React.Component {
                   this.props.changeAddressStreet(e.target.value);
                 }}
               />
-            <div style = {{display: 'inline-flex', height: '240px', border: 'dotted', width: '122%'}}>
+            <div style = {{display: 'inline-flex', height: '100px', width: '125%'}}>
               <input
                 type='text'
                 placeholder='MM'
@@ -527,11 +536,6 @@ class PaymentDetails extends React.Component {
                 </div>
             </div>
               
-            <div style = {{width: '20%', textAlign: 'right', paddingRight: '10px', height: '100px', border: 'dotted'}}>
-                <button className={styles.saveButton}>
-                  Save
-                </button>
-            </div>
           </div>
             
             
