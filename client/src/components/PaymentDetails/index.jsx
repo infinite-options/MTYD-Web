@@ -79,123 +79,6 @@ class PaymentDetails extends React.Component {
             boxShadow: "1px 1px 1px 2px #d3d3d3 "
           }}
         >
-            {/*<div className={styles.topHeading}>
-            <h6 className={styles.subHeading}> DELIVERY ADDRESS </h6>
-          </div>
-            
-          <div className={styles.inputContainer}>
-            <div className={styles.inputItem}>
-              <input
-                type='text'
-                placeholder='Address*'
-                className={styles.input}
-                value={this.props.street}
-                onChange={e => {
-                  this.props.changeAddressStreet(e.target.value);
-                }}
-              />
-            </div>
-
-            <div className={styles.inputItem}>
-              <input
-                type='text'
-                placeholder='Unit*'
-                className={styles.input}
-                value={this.props.unit}
-                onChange={e => {
-                  this.props.changeAddressUnit(e.target.value);
-                }}
-              />
-            </div>
-            <div className={styles.inputItem}>
-              <input
-                type='text'
-                placeholder='City*'
-                className={styles.input}
-                value={this.props.city}
-                onChange={e => {
-                  this.props.changeAddressCity(e.target.value);
-                }}
-              />
-            </div>
-            <div className={styles.inputItem}>
-              <input
-                type='text'
-                placeholder='State*'
-                className={styles.input}
-                value={this.props.state}
-                onChange={e => {
-                  this.props.changeAddressState(e.target.value);
-                }}
-              />
-            </div>
-            <div className={styles.inputItem}>
-              <input
-                type='text'
-                placeholder='Zip*'
-                className={styles.input}
-                value={this.props.zip}
-                onChange={e => {
-                  this.props.changeAddressZip(e.target.value);
-                }}
-              />
-            </div>
-          </div>
-            
-          <div className={styles.topHeading}>
-            <h6 className={styles.subHeading}>CONTACT  INFO</h6>
-          </div>*/}
-            
-          {/* <h6 className={styles.subHeading}> Address Details </h6> */}
-            {/*<div className={styles.inputContainer}>
-            <div className={styles.inputItem}>
-              <input
-                type='text'
-                placeholder='First Name*'
-                className={styles.input}
-                value={this.props.firstName}
-                onChange={e => {
-                  this.props.changeAddressFirstName(e.target.value);
-                }}
-              />
-            </div>
-            <div className={styles.inputItem}>
-              <input
-                type='text'
-                placeholder='Last Name*'
-                className={styles.input}
-                value={this.props.lastName}
-                onChange={e => {
-                  this.props.changeAddressLastName(e.target.value);
-                }}
-              />
-            </div>
-            <div style={{flexBasis: "100%"}} className={styles.inputItem}>
-              <input
-                type='email'
-                placeholder='Email**'
-                className={styles.input}
-                // value={this.props.street}
-              />
-            </div>
-            <div className={styles.inputItem}>
-              <input
-                type='text'
-                placeholder='Phone Number*'
-                className={styles.input}
-                value={this.props.phone}
-                onChange={e => {
-                  this.props.changeAddressPhone(e.target.value);
-                }}
-              />
-            </div>
-          </div>
-            
-          <div style = {{margin: '30px 0 20px 20px', fontWeight: 'bold'}}>
-              Terms and Conditions
-          </div>*/}
-            
- {/****************************************/}
           <div className={styles.topHeading}>
             <h6 className={styles.subHeading}> DELIVERY ADDRESS </h6>
           </div>
@@ -251,11 +134,11 @@ class PaymentDetails extends React.Component {
           </div>
             
           <div style={{display: 'flex'}}>
-            <div style = {{display: 'inline-block', width: '40%', height: '150px'}}>
+            <div style = {{display: 'inline-block', width: '38%', height: '150px'}}>
               <input
                 type='text'
                 placeholder='First Name'
-                className={styles.input}
+                className={styles.inputContactLeft}
                 value={this.props.street}
                 onChange={e => {
                   this.props.changeAddressStreet(e.target.value);
@@ -264,7 +147,7 @@ class PaymentDetails extends React.Component {
               <input
                 type='text'
                 placeholder='Phone Number'
-                className={styles.input}
+                className={styles.inputContactLeft}
                 value={this.props.street}
                 onChange={e => {
                   this.props.changeAddressStreet(e.target.value);
@@ -272,11 +155,11 @@ class PaymentDetails extends React.Component {
               />
             </div>
               
-            <div style = {{display: 'inline-block', width: '40%', height: '150px'}}>
+            <div style = {{display: 'inline-block', width: '42%', height: '150px'}}>
               <input
                 type='text'
                 placeholder='Last Name'
-                className={styles.input}
+                className={styles.inputContactRight}
                 value={this.props.street}
                 onChange={e => {
                   this.props.changeAddressStreet(e.target.value);
@@ -285,7 +168,7 @@ class PaymentDetails extends React.Component {
               <input
                 type='text'
                 placeholder='Email'
-                className={styles.input}
+                className={styles.inputContactRight}
                 value={this.props.street}
                 onChange={e => {
                   this.props.changeAddressStreet(e.target.value);
@@ -535,41 +418,7 @@ class PaymentDetails extends React.Component {
             </button>
                 </div>
             </div>
-              
           </div>
-            
-            
-            {/*<div className={styles.inputContainer}>
-            <div style={{flexBasis: "100%"}} className={styles.inputItem}>
-              <input
-                type='text'
-                placeholder='Credit Card Number'
-                className={styles.input}
-              />
-            </div>
-            <div style={{flexBasis: "25%"}} className={styles.inputItem}>
-              <input
-                type='text'
-                placeholder='CVC/CVV'
-                className={styles.input}
-              />
-            </div>
-            <div style={{flexBasis: "25%"}} className={styles.inputItem}>
-              <input type='text' placeholder='Zip' className={styles.input} />
-            </div>
-            <div style={{flexBasis: "40%"}} className={styles.inputItem}>
-              <select className={styles.input}>
-                {" "}
-                <option>Month </option>
-              </select>
-            </div>
-            <div style={{flexBasis: "40%"}} className={styles.inputItem}>
-              <select className={styles.input}>
-                {" "}
-                <option>Year </option>
-              </select>
-            </div>
-          </div>*/}
         </div>
       </div>
     );

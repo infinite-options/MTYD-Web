@@ -186,6 +186,28 @@ select {
   padding: 6px 0px 6px 10px;
 }
 
+.inputContactLeft {
+  width: 91%;
+  height: 2.2rem;
+  border-radius: 10px;
+  border: solid;
+  border-width: 1px;
+  background-color: #F0F0F0;
+  margin: 0px 0px 15px 20px;
+  padding: 6px 0px 6px 10px;
+}
+
+.inputContactRight {
+  width: 81%;
+  height: 2.2rem;
+  border-radius: 10px;
+  border: solid;
+  border-width: 1px;
+  background-color: #F0F0F0;
+  margin: 0px 0px 15px 20px;
+  padding: 6px 0px 6px 10px;
+}
+
 .monthInput {
   width: 10%;
   height: 2.2rem;
@@ -267,6 +289,20 @@ select {
 }
 
 .input::placeholder {
+  position: absolute;
+  font-size: large;
+  color: red;
+  opacity: 0.8;
+}
+
+.inputContactLeft::placeholder {
+  position: absolute;
+  font-size: large;
+  color: red;
+  opacity: 0.8;
+}
+
+.inputContactRight::placeholder {
   position: absolute;
   font-size: large;
   color: red;
