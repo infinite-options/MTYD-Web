@@ -67,7 +67,7 @@ class PaymentDetails extends React.Component {
       loggedInByPassword = true;
     }
     return (
-      <div className={styles.root}>
+      <div>
         <WebNavBar />
         <div
           style={{
@@ -83,11 +83,29 @@ class PaymentDetails extends React.Component {
             <h6 className={styles.subHeading}> DELIVERY ADDRESS </h6>
           </div>
             
-         <div className={styles.inputContainer}>
-            <div className={styles.inputItem}>
+          <div style={{display: 'flex'}}>
+            <div style = {{display: 'inline-block', width: '80%', height: '200px'}}>
               <input
                 type='text'
-                placeholder='Address*'
+                placeholder='Search for an Address'
+                className={styles.input}
+                value={this.props.street}
+                onChange={e => {
+                  this.props.changeAddressStreet(e.target.value);
+                }}
+              />
+              <input
+                type='text'
+                placeholder='Address Line 2 (Apartment number, Suite, Building, Floor, etc.)'
+                className={styles.input}
+                value={this.props.street}
+                onChange={e => {
+                  this.props.changeAddressStreet(e.target.value);
+                }}
+              />
+              <input
+                type='text'
+                placeholder='Delivery Instructions (Gate code, Ring bell, Call on arrival, etc.)'
                 className={styles.input}
                 value={this.props.street}
                 onChange={e => {
@@ -95,262 +113,285 @@ class PaymentDetails extends React.Component {
                 }}
               />
             </div>
-
-            <div className={styles.inputItem}>
-              <input
-                type='text'
-                placeholder='Unit*'
-                className={styles.input}
-                value={this.props.unit}
-                onChange={e => {
-                  this.props.changeAddressUnit(e.target.value);
-                }}
-              />
-            </div>
-            <div className={styles.inputItem}>
-              <input
-                type='text'
-                placeholder='City*'
-                className={styles.input}
-                value={this.props.city}
-                onChange={e => {
-                  this.props.changeAddressCity(e.target.value);
-                }}
-              />
-            </div>
-            <div className={styles.inputItem}>
-              <input
-                type='text'
-                placeholder='State*'
-                className={styles.input}
-                value={this.props.state}
-                onChange={e => {
-                  this.props.changeAddressState(e.target.value);
-                }}
-              />
-            </div>
-            <div className={styles.inputItem}>
-              <input
-                type='text'
-                placeholder='Zip*'
-                className={styles.input}
-                value={this.props.zip}
-                onChange={e => {
-                  this.props.changeAddressZip(e.target.value);
-                }}
-              />
+              
+            <div style = {{width: '20%', textAlign: 'right', paddingRight: '10px', height: '200px'}}>
+              <button className={styles.saveButton}>
+                Save
+              </button>
             </div>
           </div>
+
+            
+          <div style = {{display: 'inline-block', width: '80%', height: '200px'}}>
+            <div className = {styles.googleMap}>
+              Google Map
+            </div>
+          </div>
+            
             
           <div className={styles.topHeading}>
-            <h6 className={styles.subHeading}>CONTACT  INFO</h6>
+            <h6 className={styles.subHeading}> CONTACT INFO </h6>
           </div>
             
-          {/* <h6 className={styles.subHeading}> Address Details </h6> */}
-          <div className={styles.inputContainer}>
-            <div className={styles.inputItem}>
+          <div style={{display: 'flex'}}>
+            <div style = {{display: 'inline-block', width: '38%', height: '150px'}}>
               <input
                 type='text'
-                placeholder='First Name*'
-                className={styles.input}
-                value={this.props.firstName}
+                placeholder='First Name'
+                className={styles.inputContactLeft}
+                value={this.props.street}
                 onChange={e => {
-                  this.props.changeAddressFirstName(e.target.value);
+                  this.props.changeAddressStreet(e.target.value);
+                }}
+              />
+              <input
+                type='text'
+                placeholder='Phone Number'
+                className={styles.inputContactLeft}
+                value={this.props.street}
+                onChange={e => {
+                  this.props.changeAddressStreet(e.target.value);
                 }}
               />
             </div>
-            <div className={styles.inputItem}>
+              
+            <div style = {{display: 'inline-block', width: '42%', height: '150px'}}>
               <input
                 type='text'
-                placeholder='Last Name*'
-                className={styles.input}
-                value={this.props.lastName}
+                placeholder='Last Name'
+                className={styles.inputContactRight}
+                value={this.props.street}
                 onChange={e => {
-                  this.props.changeAddressLastName(e.target.value);
+                  this.props.changeAddressStreet(e.target.value);
+                }}
+              />
+              <input
+                type='text'
+                placeholder='Email'
+                className={styles.inputContactRight}
+                value={this.props.street}
+                onChange={e => {
+                  this.props.changeAddressStreet(e.target.value);
                 }}
               />
             </div>
-            <div style={{flexBasis: "100%"}} className={styles.inputItem}>
-              <input
-                type='email'
-                placeholder='Email**'
-                className={styles.input}
-                // value={this.props.street}
-              />
-            </div>
-            <div className={styles.inputItem}>
-              <input
-                type='text'
-                placeholder='Phone Number*'
-                className={styles.input}
-                value={this.props.phone}
-                onChange={e => {
-                  this.props.changeAddressPhone(e.target.value);
-                }}
-              />
+              
+            <div style = {{width: '20%', textAlign: 'right', paddingRight: '10px', height: '150px'}}>
+                <button className={styles.saveButton}>
+                  Save
+                </button>
             </div>
           </div>
             
-          <div style = {{margin: '30px 0 20px 20px', fontWeight: 'bold'}}>
+          <div style = {{margin: '30px 0 10px 20px'}}>
               Terms and Conditions
           </div>
             
-          <div className={styles.topHeading}>
-            <h6 className={styles.subHeading}>PAYMENT SUMMARY</h6>
-          </div>
-            
-          <div className={styles.summaryText}>
-            <div className={styles.summaryLeft}>
-              Meal Subscription ({
-                this.props.selectedPlan.num_items
-              } Meals for {
-                this.props.selectedPlan.num_deliveries
-              } Deliveries):
+          <div className={styles.paymentContainer}>
+            <div className={styles.topHeading}>
+              <h6 className={styles.subHeading}>PAYMENT SUMMARY</h6>
             </div>
-            <div className={styles.summaryRight}>
-              ${(
-                this.props.selectedPlan.item_price *
-                this.props.selectedPlan.num_deliveries
-              )}
-            </div>
-          </div>
-          <br></br>
-          <div className={styles.summaryText}>
-            <div className={styles.summaryLeft}>
-              Add-Ons:
-            </div>
-            <div className={styles.summaryRight}>
-              $0
-            </div>
-          </div>
-          <br></br>
-          <div className={styles.summaryText}>
-            <div className={styles.summaryLeft}>
-              Total Delivery Fee For All {
-                this.props.selectedPlan.num_deliveries
-              } Deliveries:
-            </div>
-            <div className={styles.summaryRight}>
-              ${2 * this.props.selectedPlan.num_deliveries}
-            </div>
-          </div>
-          <br></br>
-          <div className={styles.summaryText}>
-            <div className={styles.summaryLeft}>
-              Service Fee:
-            </div>
-            <div className={styles.summaryRight}>
-              $2
-            </div>
-          </div>
-          <br></br>
-          <div className={styles.summaryText}>
-            <div className={styles.summaryLeft}>
-              Taxes: 
-            </div>
-            <div className={styles.summaryRight}>
-              $3.86
-            </div>
-          </div>
-          <br></br>
-          <div className={styles.summaryText}>
-            <div className={styles.summaryLeft}>
-              Chef and Driver Tip:
-            </div>
-            <div className={styles.summaryRight}>
-              $--
-            </div>
-          </div>
-          <br></br>
-            
-            <button className={styles.tipButton}>
-              No Tip
-            </button>
-            <button className={styles.tipButton}>
-              $2
-            </button>
-            <button className={styles.tipButton}>
-              $3
-            </button>
-            <button className={styles.tipButton}>
-              $5
-            </button>
-            <div className={styles.tipRight}>
-              ${this.state.tip}
+       
             </div>
             
-            
-          <div className={styles.codeContainer}>
-            <div style={{flexBasis: "100%"}} className={styles.inputItem}>
+          <div style={{display: 'flex'}}>
+              
+            <div style = {{display: 'inline-block', width: '80%', height: '480px'}}>
+              <div className={styles.summaryLeft}>
+                Meal Subscription ({
+                  this.props.selectedPlan.num_items
+                } Meals for {
+                  this.props.selectedPlan.num_deliveries
+                } Deliveries):
+              </div>
+              <div className={styles.summaryLeft}>
+                Add-Ons:
+              </div>
+              <div className={styles.summaryLeft}>
+                Total Delivery Fee For All {
+                  this.props.selectedPlan.num_deliveries
+                } Deliveries:
+              </div>
+              <div className={styles.summaryLeft}>
+                Service Fee:
+              </div>
+              <div className={styles.summaryLeft}>
+                Taxes:
+              </div>
+              <div className={styles.summaryLeft}>
+                Chef and Driver Tip:
+              </div>
+                  
+              <div className={styles.summaryLeft}>
+                <button className={styles.tipButton}>
+                  No Tip
+                </button>
+                <button className={styles.tipButton}>
+                  $2
+                </button>
+                <button className={styles.tipButton}>
+                  $3
+                </button>
+                <button className={styles.tipButton}>
+                  $5
+                </button>
+              </div>
+                
               <input
                 type='text'
                 placeholder='Enter Ambassador Code'
                 className={styles.inputAmbassador}
               />
             </div>
-                      <div className={styles.codeRight}>
-              ${this.state.tip}
+            
+            <div style = {{display: 'inline-block', width: '20%', height: '480px'}}>
+              <div className={styles.summaryRight}>
+                ${(
+                  this.props.selectedPlan.item_price *
+                  this.props.selectedPlan.num_deliveries
+                )}
+              </div>
+              <div className={styles.summaryRight}>
+                ${(
+                  this.props.selectedPlan.item_price *
+                  this.props.selectedPlan.num_deliveries
+                )}
+              </div>
+              <div className={styles.summaryRight}>
+                ${(
+                  this.props.selectedPlan.item_price *
+                  this.props.selectedPlan.num_deliveries
+                )}
+              </div>
+              <div className={styles.summaryRight}>
+                ${(
+                  this.props.selectedPlan.item_price *
+                  this.props.selectedPlan.num_deliveries
+                )}
+              </div>
+              <div className={styles.summaryRight}>
+                ${(
+                  this.props.selectedPlan.item_price *
+                  this.props.selectedPlan.num_deliveries
+                )}
+              </div>
+              <div className={styles.summaryRight}>
+                ${(
+                  this.props.selectedPlan.item_price *
+                  this.props.selectedPlan.num_deliveries
+                )}
+              </div>
+              <div className={styles.summaryRight2}>
+                ${(
+                  this.props.selectedPlan.item_price *
+                  this.props.selectedPlan.num_deliveries
+                )}
+              </div>
+              <div className={styles.summaryRight2}>
+                ${(
+                  this.props.selectedPlan.item_price *
+                  this.props.selectedPlan.num_deliveries
+                )}
+              </div>
+              <hr className={styles.sumLine}></hr>
+              <div className={styles.summaryRight2}>
+                ${(
+                  this.props.selectedPlan.item_price *
+                  this.props.selectedPlan.num_deliveries
+                )}
+              </div>
             </div>
           </div>
             
-          <br></br>
-            
-          <hr className={styles.sumLine}></hr>
-            
-          <div style={{marginTop: "2rem"}} className={styles.topHeading}>
+          <div className={styles.topHeading}>
             <h6 className={styles.subHeading}>PAYMENT OPTIONS</h6>
           </div>
             
-          <div className={styles.buttonContainer}>
-            <button className={styles.button}>
+          <div style={{display: 'flex'}}>
+            <div style = {{display: 'inline-block', width: '80%', height: '280px'}}>
+            <div className={styles.buttonContainer}>
+                <button className={styles.button}>
               STRIPE
             </button>
-          </div>
-          <div className={styles.buttonContainer}>
-            <button className={styles.button}>
+            </div>
+            <div className={styles.buttonContainer}>
+                <button className={styles.button}>
               PAYPAL
             </button>
-          </div>
-          <div className={styles.buttonContainer}>
-            <button className={styles.button}>
+            </div>
+            <div className={styles.buttonContainer}>
+                <button className={styles.button}>
               VENMO
             </button>
+            </div>
+          </div>
+          <div style = {{width: '20%', textAlign: 'right', paddingRight: '10px', height: '270px'}}>
+                <button className={styles.saveButton}>
+                  Save
+                </button>
+            </div>
           </div>
             
-          <div className={styles.inputContainer}>
-            <div style={{flexBasis: "100%"}} className={styles.inputItem}>
+          <div style={{display: 'flex'}}>
+            <div style = {{display: 'inline-block', width: '80%', height: '200px'}}>
+              <input
+                type='text'
+                placeholder='Card Holder Name'
+                className={styles.input}
+                value={this.props.street}
+                onChange={e => {
+                  this.props.changeAddressStreet(e.target.value);
+                }}
+              />
               <input
                 type='text'
                 placeholder='Credit Card Number'
                 className={styles.input}
+                value={this.props.street}
+                onChange={e => {
+                  this.props.changeAddressStreet(e.target.value);
+                }}
               />
-            </div>
-            <div style={{flexBasis: "25%"}} className={styles.inputItem}>
+            <div style = {{display: 'inline-flex', height: '100px', width: '125%'}}>
               <input
                 type='text'
-                placeholder='CVC/CVV'
-                className={styles.input}
+                placeholder='MM'
+                className={styles.monthInput}
+                value={this.props.street}
+                onChange={e => {
+                  this.props.changeAddressStreet(e.target.value);
+                }}
               />
-            </div>
-            <div style={{flexBasis: "25%"}} className={styles.inputItem}>
-              <input type='text' placeholder='Zip' className={styles.input} />
-            </div>
-            <div style={{flexBasis: "40%"}} className={styles.inputItem}>
-              <select className={styles.input}>
-                {" "}
-                <option>Month </option>
-              </select>
-            </div>
-            <div style={{flexBasis: "40%"}} className={styles.inputItem}>
-              <select className={styles.input}>
-                {" "}
-                <option>Year </option>
-              </select>
-            </div>
-          </div>
-          <div className={styles.buttonContainer}>
-            <button
-              className={styles.button}
+              <div className={styles.dateSlash}>/</div>
+              <input
+                type='text'
+                placeholder='YEAR'
+                className={styles.yearInput}
+                value={this.props.street}
+                onChange={e => {
+                  this.props.changeAddressStreet(e.target.value);
+                }}
+              />
+              <input
+                type='text'
+                placeholder='CVV'
+                className={styles.cvvInput}
+                value={this.props.street}
+                onChange={e => {
+                  this.props.changeAddressStreet(e.target.value);
+                }}
+              />
+              <input
+                type='text'
+                placeholder='ZIPCODE'
+                className={styles.zipInput}
+                value={this.props.street}
+                onChange={e => {
+                  this.props.changeAddressStreet(e.target.value);
+                }}
+              />
+                          <button
+              className={styles.finishButton}
               onClick={() => {
                 this.props.submitPayment(
                   this.props.email,
@@ -373,8 +414,10 @@ class PaymentDetails extends React.Component {
                 );
               }}
             >
-              SAVE
+              FINISH
             </button>
+                </div>
+            </div>
           </div>
         </div>
       </div>
