@@ -135,6 +135,7 @@ class ChoosePlan extends React.Component {
       });
     } else {
       // Reroute to log in page
+      console.log("No login");
       this.props.history.push("/");
     }
 
@@ -194,9 +195,9 @@ class ChoosePlan extends React.Component {
         
       try{
         discount = discounts[numDeliveries].delivery_discount;
-        console.log("discount: " + discount);
+        //console.log("discount: " + discount);
       } catch(e) {
-        console.log("discount UNDEFINED");
+        console.log("discount undefined");
       }
         
       paymentOptionButtons.push(

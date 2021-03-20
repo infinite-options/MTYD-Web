@@ -4,6 +4,9 @@ import {
   CHOOSE_MEALS_EACH_DELIVERY,
   CHOOSE_PAYMENT_OPTION,
   GET_TOTAL_PAYMENT,
+  CHANGE_DELIVERY_DETAILS,
+  CHANGE_PAYMENT_DETAILS,
+  CHANGE_CONTACT_DETAILS,
   CHANGE_ADDRESS_FIRST_NAME,
   CHANGE_ADDRESS_LAST_NAME,
   CHANGE_ADDRESS_EMAIL,
@@ -68,7 +71,26 @@ const initialState = {
   subscribedPlans: [],
   deliveryInstructions: "",
   paymentPassword: "",
-  errors: []
+  errors: [],
+  savedDeliveryDetails: {
+    deliveryAddress1: "",
+    deliveryAddress2: "",
+    deliveryInstructions: ""
+  },
+  savedContactDetails: {
+    contactFirstName: "",
+    contactLastName: "",
+    contactPhone: "",
+    contactEmail: ""
+  },
+  savedPaymentDetails: {
+    cardName: "",
+    cardNumber: "",
+    cardMonth: "",
+    cardYear: "",
+    cardCvv: "",
+    cardZip: ""
+  }
 };
 
 export default function(state = initialState, action) {
@@ -112,7 +134,40 @@ export default function(state = initialState, action) {
           customerId: action.payload.customerId
         }
       };
-
+    case CHANGE_DELIVERY_DETAILS:
+      return {
+        ...state,
+        savedDeliveryDetails: {
+          ...state.savedDeliveryDetails,
+          deliveryAddress1: action.payload.deliveryAddress1,
+          deliveryAddress2: action.payload.deliveryAddress2,
+          deliveryInstructions: action.payload.deliveryInstructions
+        }
+      };
+    case CHANGE_PAYMENT_DETAILS:
+      return {
+        ...state,
+        savedPaymentDetails: {
+          ...state.savedPaymentDetails,
+          cardName: action.payload.cardName,
+          cardNumber: action.payload.cardNumber,
+          cardMonth: action.payload.cardMonth,
+          cardYear: action.payload.cardYear,
+          cardCvv: action.payload.cardCvv,
+          cardZip: action.payload.cardZip
+        }
+      };
+    case CHANGE_CONTACT_DETAILS:
+      return {
+        ...state,
+        savedContactDetails: {
+          ...state.savedContactDetails,
+          contactFirstName: action.payload.contactFirstName,
+          contactLastName: action.payload.contactLastName,
+          contactPhone: action.payload.contactPhone,
+          contactEmail: action.payload.contactEmail
+        }
+      };
     case CHANGE_ADDRESS_FIRST_NAME:
       return {
         ...state,
@@ -121,7 +176,6 @@ export default function(state = initialState, action) {
           firstName: action.payload
         }
       };
-
     case CHANGE_ADDRESS_LAST_NAME:
       return {
         ...state,

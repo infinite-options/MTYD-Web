@@ -39,6 +39,8 @@ const MealPlan = props => {
       .split('=')[1];
   }
     
+  console.log("Profile UID: " + customerId);
+    
   // we can replace hooks by store.subscribe(listener)
 
   const [modal, setModal] = useState(null);
@@ -82,6 +84,7 @@ const MealPlan = props => {
         console.log(err);
       }
     }
+    console.log("subbed plans: " + JSON.stringify(props.subscribedPlans));
     //eslint-disable-next-line
   }, []);
   const setMealChange = id => {

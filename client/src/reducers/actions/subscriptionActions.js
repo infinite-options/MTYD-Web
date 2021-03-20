@@ -6,6 +6,9 @@ import {
   CHOOSE_MEALS_EACH_DELIVERY,
   CHOOSE_PAYMENT_OPTION,
   GET_TOTAL_PAYMENT,
+  CHANGE_DELIVERY_DETAILS,
+  CHANGE_PAYMENT_DETAILS,
+  CHANGE_CONTACT_DETAILS,
   CHANGE_ADDRESS_FIRST_NAME,
   CHANGE_ADDRESS_LAST_NAME,
   CHANGE_ADDRESS_EMAIL,
@@ -173,6 +176,40 @@ export const fetchProfileInformation = customerId => dispatch => {
         console.log(err.toString());
       }
     });
+};
+
+export const changeAddressEmail = newEmail => dispatch => {
+  dispatch({
+    type: CHANGE_ADDRESS_EMAIL,
+    payload: newEmail,
+  });
+};
+
+export const changeDeliveryDetails = newDeliveryDetails => dispatch => {
+  console.log("CHANGE_DELIVERY_DETAILS");
+  console.log("New delivery details: " + JSON.stringify(newDeliveryDetails));
+  dispatch({
+    type: CHANGE_DELIVERY_DETAILS,
+    payload: newDeliveryDetails,
+  });
+};
+
+export const changePaymentDetails = newPaymentDetails => dispatch => {
+  console.log("CHANGE_PAYMENT_DETAILS");
+  console.log("New payment details: " + JSON.stringify(newPaymentDetails));
+  dispatch({
+    type: CHANGE_PAYMENT_DETAILS,
+    payload: newPaymentDetails,
+  });
+};
+
+export const changeContactDetails = newContactDetails => dispatch => {
+  console.log("CHANGE_CONTACT_DETAILS");
+  console.log("New contact details: " + JSON.stringify(newContactDetails));
+  dispatch({
+    type: CHANGE_CONTACT_DETAILS,
+    payload: newContactDetails,
+  });
 };
 
 export const changeAddressFirstName = newFirstName => dispatch => {

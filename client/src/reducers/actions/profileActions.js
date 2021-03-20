@@ -18,7 +18,7 @@ export const fetchOrderHistory = purchaseId => async dispatch => {
       const res = await axios(`${API_URL}pid_history/${id}`);
       object[id] = res.data.result;
     }
-    console.log("fetchOrderHistory object: " + JSON.stringify(object));
+    //console.log("fetchOrderHistory object: " + JSON.stringify(object));
     await dispatch({
       type: FETCH_ORDER_HISTORY,
       payload: object
