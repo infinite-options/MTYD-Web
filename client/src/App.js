@@ -40,6 +40,7 @@ import AdminCustomers from './components/Admin/Customers';
 import AdminGoogleAnalytics from './components/Admin/GoogleAnalytics';
 import AdminNotfications from './components/Admin/Notifications';
 import AdminZones from './components/Admin/Zones';
+import Congrats from "./components/Congrats";
 
 export const history = createBrowserHistory();
 
@@ -84,6 +85,7 @@ function App() {
             <AppliedRoute exact path='/select-meal' component={SelectMeal} />
             <AppliedRoute exact path='/login' component={Login} />
             <AppliedRoute exact path='/forgot-password' component={ForgotPassword} />
+            <AppliedRoute exact path='/congrats' component={Congrats} />
             <Route exact path="/admin">
               {adminNavBar}
               <AdminHome />

@@ -1,4 +1,4 @@
-import React, {Fragment} from "react";
+import React, {Fragment,useState, useEffect, useRef} from "react";
 import Subscribe from "../NavBar/subscribe.png";
 import Select from "../NavBar/select.png";
 import Profile from "../NavBar/profile.png";
@@ -16,6 +16,7 @@ import User from "./User.svg";
 import Logo from "../../images/LOGO_White_BG_MealsForMe.png";
 import axios from 'axios';
 import { API_URL } from '../../reducers/constants';
+import PopLogin from "../PopLogin";
 
 class SideNavBar extends React.Component {
   render() {
@@ -88,9 +89,10 @@ class NavBar extends React.Component {
       firstName: "",
       lastName: "",
       customerId: "",
-      profileRole: ""
+      profileRole: "",
     };
   }
+
   logOut = () => {
     this.props.resetProfile();
     this.props.resetSubscription();
@@ -100,6 +102,7 @@ class NavBar extends React.Component {
       window.location.reload();
     });
   };
+
   componentDidMount() {
     //check for logged in
     let currentState;
@@ -133,6 +136,7 @@ class NavBar extends React.Component {
         const role = response.data.result[0].role.toLowerCase();
         this.setState({profileRole: role});
         console.log("Profile role: " + this.state.profileRole);
+        console.log(response)
       })
       .catch((err) => {
         if (err.response) {
@@ -169,7 +173,7 @@ class NavBar extends React.Component {
           <Link to='/about' className={styles.narrowBtn}>
             ABOUT
           </Link>
-                <Link to='/meal-plan' className={styles.profileIconWrapper} 
+            <Link to='/meal-plan' className={styles.profileIconWrapper} 
                 style = {{display: 'flex', border: '4px solid orange', borderRadius: '20px', height: '90%', margin: '5px 0px'}}>
                   <input
                     className={styles.profileIcon}
@@ -258,6 +262,18 @@ class NavBar extends React.Component {
             </>
           )}
         </ul>
+
+
+{/* 
+        <div onClick={this.props.poplogin}>
+          <button>Pop login</button>
+        </div> */}
+
+
+
+
+
+
       </div>
         );
     }

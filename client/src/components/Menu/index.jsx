@@ -19,24 +19,38 @@ const getCircularReplacer = () => {
   };
 };
 
+
 const Menu = props => {
   return (
     <div className={props.show ? styles.menu : styles.menu1}>
       {props.show && props.message}
-      <div className={styles.selectBtn + " " + (!props.show && styles.w5)}>
-        <Link to='/choose-plan'>
-          <img src={group} alt='Subscription' />
-          SUBSCRIPTION
-        </Link>
-        <Link to='/meal-plan'>
-          <img src={lunch} alt='MEAL PLAN' />
-          MEAL PLAN
-        </Link>
-        <Link to='/select-meal'>
-          <img src={calendar} alt='MEALS AVAILABLE' />
-          SELECT MEAL
-        </Link>
-      </div>
+
+        {(props.login===3)?
+        <button class={styles.signInBtn}>
+          <Link to="/choose-plan">
+          Click to subscribe
+          </Link>
+        </button>
+
+          :(
+          <div className={styles.selectBtn + " " + (!props.show && styles.w5)}>
+          <Link to='/choose-plan'>
+            <img src={group} alt='Subscription' />
+            SUBSCRIPTION
+          </Link>
+          <Link to='/meal-plan'>
+            <img src={lunch} alt='MEAL PLAN' />
+            MEAL PLAN
+          </Link>
+          <Link to='/select-meal'>
+            <img src={calendar} alt='MEALS AVAILABLE' />
+            SELECT MEAL
+          </Link>
+        </div>)
+        }
+        
+
+      
     </div>
   );
 };

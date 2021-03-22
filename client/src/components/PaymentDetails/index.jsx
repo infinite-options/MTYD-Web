@@ -54,14 +54,14 @@ class PaymentDetails extends React.Component {
       this.props.fetchProfileInformation(customerUid);
     } else {
       // Reroute to log in page
-      this.props.history.push("/");
+      // this.props.history.push("/");
     }
   }
 
   render() {
-    if (!this.state.mounted) {
-      return null;
-    }
+    // if (!this.state.mounted) {
+    //   return null;
+    // }
     let loggedInByPassword = false;
     if (this.props.socialMedia === "NULL") {
       loggedInByPassword = true;

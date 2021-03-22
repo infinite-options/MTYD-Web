@@ -18,13 +18,22 @@ import facebookImg from "../../images/facebook.svg"
 import googleImg from "../../images/google-plus.svg"
 import Box from '@material-ui/core/Box';
 import { makeStyles } from '@material-ui/core/styles';
+import PopLogin from '../PopLogin';
 
 class Home extends Component {   
   state = { 
     signUpDisplay: styles.signUpLink,
     windowHeight: undefined,
-    windowWidth: undefined
+    windowWidth: undefined,
+    login_seen:false,
   }
+
+  togglePop = () => {
+    console.log('home page pop login clicked')
+    this.setState({
+     login_seen: !this.state.login_seen
+    });
+   };
 
   handleResize = () => this.setState({
     windowHeight: window.innerHeight,
@@ -43,12 +52,16 @@ class Home extends Component {
   render() { 
     return (
       <>
+      <div>
+        <WebNavBar poplogin = {this.togglePop}/>
+        {this.state.login_seen ? <PopLogin toggle={this.togglePop} /> : null}
+      </div>
+
         
       {(() => {
           if (this.state.windowWidth >= 800) {
             return (
         <div className = {styles.topBackground}>
-          <WebNavBar narrowView = {false}/>
           <div className = {styles.gridDisplayCenter}>
             <h1 className = {styles.centerSubtitleText}>WELCOME TO <img style = {{height: '140px', width: '400px', marginTop: '-50px'}} src = {Logo} alt="logo" /></h1>
             <h3 className = {styles.centerSubText}>Get the freshly cooked meal options for your healthy lifestyle</h3>
@@ -65,7 +78,8 @@ class Home extends Component {
       } else {
         return (
         <div className = {styles.topBackground}>
-          <WebNavBar narrowView = {true}/>
+          
+
           <div className = {styles.gridDisplayCenter}>
               <h1 className = {styles.centerSubtitleNarrow}>WELCOME TO</h1> 
               <h1 className = {styles.centerSubtitleNarrow}>
@@ -87,6 +101,10 @@ class Home extends Component {
         }
        })()}
         
+
+
+
+
         <div>
           <h3 style = {{textAlign: 'center', marginTop: '15px', fontWeight: 'bold'}}>HOW IT WORKS</h3>
           <p style = {{color: '#979797', fontSize: '18px', textAlign: 'center', marginTop: '10px'}}>
