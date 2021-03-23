@@ -54,7 +54,8 @@ class ChoosePlan extends React.Component {
   }
 
   componentDidMount() {
-    console.log("choose-plan props: " + JSON.stringify(this.props));
+    //console.log("choose-plan props: " + JSON.stringify(this.props));
+    console.log("choose-plan address props: " + JSON.stringify(this.props.address));
     let queryString = this.props.location.search;
     let urlParams = new URLSearchParams(queryString);
     // Clear Query parameters
@@ -98,6 +99,7 @@ class ChoosePlan extends React.Component {
           this.props.changeAddressState(data.customer_state)
           this.props.changeAddressZip(data.customer_zip)
           this.props.changeAddressPhone(data.customer_phone_num)
+          console.log("(2) choose-plan address props: " + JSON.stringify(this.props.address));
         })
         .catch(err => {
           console.log(err)
@@ -126,6 +128,7 @@ class ChoosePlan extends React.Component {
           this.props.changeAddressState(data.customer_state)
           this.props.changeAddressZip(data.customer_zip)
           this.props.changeAddressPhone(data.customer_phone_num)
+          console.log("(3) choose-plan address props: " + JSON.stringify(this.props.address));
         })
         .catch(err => {
           console.log(err)
@@ -135,8 +138,11 @@ class ChoosePlan extends React.Component {
       });
     } else {
       // Reroute to log in page
-      console.log("No login");
-      this.props.history.push("/");
+      console.log("Choose-plan NOT LOGGED IN");
+      this.setState({
+        mounted: true
+      });
+      //this.props.history.push("/");
     }
 
   }
@@ -203,7 +209,7 @@ class ChoosePlan extends React.Component {
       paymentOptionButtons.push(
         <div className={styles.sameLine} key={numDeliveries}>
           {(() => {
-            if (discount !== null && numDeliveries % 3 !== 0) {
+            if (numDeliveries % 3 !== 0) {
               return (
                 <button
                   disabled={active}
@@ -234,7 +240,7 @@ class ChoosePlan extends React.Component {
                   })()}  
                 </button>
               );
-            } else if (discount !== null && numDeliveries % 3 === 0) {
+            } else if (numDeliveries % 3 === 0) {
               return (
                 <div style={{display: 'inline-block'}}>
                 <button
@@ -608,7 +614,8 @@ const mapStateToProps = state => ({
   cc_year: state.subscribe.creditCard.year,
   phone: state.subscribe.addressInfo.phoneNumber,
   instructions: state.subscribe.deliveryInstructions,
-  password: state.subscribe.paymentPassword
+  password: state.subscribe.paymentPassword,
+  address: state.subscribe.address
 });
 
 export default connect(mapStateToProps, {

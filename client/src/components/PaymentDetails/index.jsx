@@ -50,28 +50,34 @@ class PaymentDetails extends React.Component {
       serviceFee: 0,
       deliveryFee: 0,
       taxRate: 0,
-      ambassadorDiscount: 0,
+      ambassadorDiscount: 15,
+      ambassadorCode: "",
       validCode: true,
-      cardName: "",
-      cardNumber: "",
-      cardMonth: "",
-      cardYear: "",
-      cardCvv: "",
+      name: "",
+      number: "",
+      month: "",
+      year: "",
+      cvv: "",
+      email: "",
+      firstName: "",
+      lastName: "",
+      phone: "",
+      instructions: "",
+      street: "",
+      city: "",
+      state: "",
       cardZip: "",
-      contactEmail: "",
-      contactFirstName: "",
-      contactLastName: "",
-      contactPhone: "",
-      deliveryInstructions: "",
-      deliveryAddress1: "",
-      deliveryAddress2: "",
-      deliveryLatitude: 37.2270928,
-      deliveryLongitude: -121.8866517,
+      addressZip: "",
+      unit: "",
+      latitude: 37.2270928,
+      longitude: -121.8866517,
+      customerUid: ""
     };
   }
 
   componentDidMount() {
-    console.log("PaymentDetails selected plan: " + JSON.stringify(this.props.selectedPlan));
+    //console.log("customer uid: " + this.state.customerId);
+    //console.log("PaymentDetails selected plan: " + JSON.stringify(this.props.selectedPlan));
     if (
       document.cookie
         .split(";")
@@ -81,41 +87,57 @@ class PaymentDetails extends React.Component {
         .split("; ")
         .find(item => item.startsWith("customer_uid="))
         .split("=")[1];
+      console.log("customer uid: " + customerUid);
       this.setState({
-        mounted: true
+        mounted: true,
+        customerUid: customerUid
       });
       this.props.fetchProfileInformation(customerUid);
+      console.log("payment details props: " + JSON.stringify(this.props));
     } else {
       // Reroute to log in page
-      this.props.history.push("/");
+      console.log("Payment-details NOT LOGGED IN");
+      //this.props.history.push("/");
     }
       
-    console.log("delivery details: " + JSON.stringify(this.props.deliveryDetails));
+    console.log("profile email: " + this.props.email);
+    console.log("address email: " + this.props.addressInfo.email);
+    console.log("instructions: " + this.props.instructions);
+    console.log("instructions: " + this.props.deliveryInstructions);
+      
+    console.log("(MOUNT) delivery details: " + JSON.stringify(this.props.address));
+    console.log("(MOUNT) contact details: " + JSON.stringify(this.props.addressInfo));
+    console.log("(MOUNT) card details: " + JSON.stringify(this.props.creditCard));
+      
     this.setState({
-      deliveryAddress1: this.props.deliveryDetails.deliveryAddress1,
-      deliveryAddress2: this.props.deliveryDetails.deliveryAddress2,
-      deliveryInstructions: this.props.deliveryDetails.deliveryInstructions,
-      contactFirstName: this.props.contactDetails.contactFirstName,
-      contactLastName: this.props.contactDetails.contactLastName,
-      contactEmail: this.props.contactDetails.contactEmail,
-      contactPhone: this.props.contactDetails.contactPhone,
-      cardName: this.props.paymentDetails.cardName,
-      cardNumber: this.props.paymentDetails.cardNumber,
-      cardCvv: this.props.paymentDetails.cardCvv,
-      cardMonth: this.props.paymentDetails.cardMonth,
-      cardYear: this.props.paymentDetails.cardYear,
-      cardZip: this.props.paymentDetails.cardZip
+      street: this.props.address.street,
+      city: this.props.address.city,
+      state: this.props.address.state,
+      addressZip: this.props.address.zip,
+      unit: this.props.address.unit,
+      instructions: this.props.instructions,
+      firstName: this.props.addressInfo.firstName,
+      lastName: this.props.addressInfo.lastName,
+      email: this.props.email,
+      phone: this.props.addressInfo.phoneNumber,
+      name: this.props.creditCard.name,
+      number: this.props.creditCard.number,
+      cvv: this.props.creditCard.cvv,
+      month: this.props.creditCard.month,
+      year: this.props.creditCard.year,
+      cardZip: this.props.creditCard.zip
     });
     
     /*https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/categoricalOptions/-121.8866517,37.2270928*/
     // Get payment summary details
     axios
-      .get(`${API_URL}categoricalOptions/${this.state.deliveryLongitude},${this.state.deliveryLatitude}`)
+      .get(`${API_URL}categoricalOptions/${this.state.longitude},${this.state.latitude}`)
       .then((response) => {
         //console.log("categorical options data: " + JSON.stringify(response));
         this.setState({
           serviceFee: response.data.result[1].service_fee,
-          deliveryFee: response.data.result[1].delivery_fee
+          deliveryFee: response.data.result[1].delivery_fee,
+          taxRate: response.data.result[1].tax_rate
         });
       })
       .catch((err) => {
@@ -135,33 +157,104 @@ class PaymentDetails extends React.Component {
     
   saveDeliveryDetails() {
     console.log("Saving delivery details...");
+
+    console.log("address street: " + this.state.street);
+    console.log("address city: " + this.state.city);
+    console.log("address state: " + this.state.state);
+    console.log("address zip: " + this.state.addressZip);
+      
+    let object = {
+      uid: this.state.customerUid,
+      first_name: this.props.addressInfo.firstName,
+      last_name: this.props.addressInfo.lastName,
+      phone: this.props.addressInfo.phoneNumber,
+      email: this.props.email,
+      address: this.state.street,
+      unit: this.state.unit,
+      city: this.state.city,
+      state: this.state.state,
+      zip: this.state.addressZip,
+      noti: "false"
+    };
+                  
+    console.log("(delivery details) update profile URL:" + API_URL + 'UpdateProfile');
+    console.log(JSON.stringify(object));
+      
+    axios
+      .post(API_URL + 'UpdateProfile', object)
+      .then(res => {
+        console.log(res);
+      })
+      .catch(err => {
+        console.log(err);
+        if (err.response) {
+          console.log("error: " + JSON.stringify(err.response));
+        }
+      });
+      
     this.props.changeDeliveryDetails({
-      deliveryAddress1: this.state.deliveryAddress1,
-      deliveryAddress2: this.state.deliveryAddress2,
-      deliveryInstructions: this.state.deliveryInstructions
+      street: this.state.street,
+      city: this.state.city,
+      state: this.state.state,
+      zip: this.state.addressZip,
+      unit: this.state.unit,
+      instructions: this.state.instructions
     });
-    //this.props.changeAddressFirstName(e.target.value);
   }
     
   saveContactDetails() {
     console.log("Saving contact details...");
+    console.log("firstName: " + this.props.addressInfo.firstName);
+    console.log("lastName: " + this.props.addressInfo.lastName);
+    console.log("email: " + this.props.email);
+    console.log("phone: " + this.props.addressInfo.phone);
+      
+    let object = {
+      uid: this.state.customerUid,
+      first_name: this.state.firstName,
+      last_name: this.state.lastName,
+      phone: this.state.phone,
+      email: this.props.email,
+      address: this.props.street,
+      unit: this.props.address.unit,
+      city: this.props.address.city,
+      state: this.props.address.state,
+      zip: this.props.address.zip,
+      noti: "false"
+    };
+                  
+    console.log("(contact details) update profile URL:" + API_URL + 'UpdateProfile');
+    console.log(JSON.stringify(object));
+      
+    axios
+      .post(API_URL + 'UpdateProfile', object)
+      .then(res => {
+        console.log(res);
+      })
+      .catch(err => {
+        console.log(err);
+        if (err.response) {
+          console.log("error: " + JSON.stringify(err.response));
+        }
+      });
+      
     this.props.changeContactDetails({
-      contactFirstName: this.state.contactFirstName,
-      contactLastName: this.state.contactLastName,
-      contactEmail: this.state.contactEmail,
-      contactPhone: this.state.contactPhone
+      firstName: this.state.firstName,
+      lastName: this.state.lastName,
+      email: this.state.email,
+      phone: this.state.phone
     });
   }
     
   savePaymentDetails() {
     console.log("Saving payment details...");
     this.props.changePaymentDetails({
-      cardName: this.state.cardName,
-      cardNumber: this.state.cardNumber,
-      cardCvv: this.state.cardCvv,
-      cardMonth: this.state.cardMonth,
-      cardYear: this.state.cardYear,
-      cardZip: this.state.cardZip
+      name: this.state.name,
+      number: this.state.number,
+      cvv: this.state.cvv,
+      month: this.state.month,
+      year: this.state.year,
+      zip: this.state.cardZip
     });
   }
     
@@ -173,44 +266,56 @@ class PaymentDetails extends React.Component {
        
     }*/
     this.props.submitPayment(
-                  this.props.email,
-                  this.props.customerId,
-                  this.props.socialMedia,
-                  this.props.password,
-                  this.props.firstName,
-                  this.props.lastName,
-                  this.props.phone,
-                  this.props.street,
-                  this.props.unit,
-                  this.props.city,
-                  this.props.state,
-                  this.props.zip,
-                  this.props.instructions,
-                  this.props.selectedPlan,
-                  () => {
-                    this.props.history.push("/congratulations");
-                  }
-                );
+      this.props.email,
+      this.state.customerUid,
+      this.props.socialMedia,
+      this.props.password,
+      this.state.firstName,
+      this.state.lastName,
+      this.state.phone,
+      this.state.street,
+      this.state.unit,
+      this.state.city,
+      this.state.state,
+      this.state.addressZip,
+      this.state.instructions,
+      this.props.selectedPlan,
+      () => {
+        this.props.history.push("/congratulations");
+      }
+    );
   }
     
   applyAmbassadorCode() {
     console.log("Applying ambassador code...");
-    /*axios
-      .get(API_URL + 'brandAmbassador', {
-        params: {
-          business_uid: '200-000002',
+      
+    axios
+      .post(API_URL + 'brandAmbassador/generate_coupon',
+        {
+          amb_email: this.state.ambassadorCode,
+          cust_email: this.props.email
         }
-      })
+      )
       .then(res => {
-        let items = res.data.result;
+        let items = res.data.result[0];
+        console.log("ambassador code response: " + JSON.stringify(items));
+        if(items.valid === "TRUE") {
+          this.setState({
+            validCode: true,
+            ambassadorDiscount: (
+              items.discount_amount +
+              items.discount_shipping
+            )
+          });
+        } else {
+          this.setState({
+            validCode: false
+          });
+        }
       })
       .catch(err => {
         console.log(err);
       });
-    */
-    this.setState({
-      validCode: false
-    });
   }
 
   render() {
@@ -239,15 +344,15 @@ class PaymentDetails extends React.Component {
           </div>
             
           <div style={{display: 'flex'}}>
-            <div style = {{display: 'inline-block', width: '80%', height: '200px'}}>
+            <div style = {{display: 'inline-block', width: '80%', height: '350px'}}>
               <input
                 type='text'
                 placeholder='Search for an Address'
                 className={styles.input}
-                value={this.state.deliveryAddress1}
+                value={this.state.street}
                 onChange={e => {
                   this.setState({
-                    deliveryAddress1: e.target.value
+                    street: e.target.value
                   });
                   //console.log("new address line 1: " + this.state.deliveryAddress1);
                 }}
@@ -256,29 +361,62 @@ class PaymentDetails extends React.Component {
                 type='text'
                 placeholder='Address Line 2 (Apartment number, Suite, Building, Floor, etc.)'
                 className={styles.input}
-                value={this.state.deliveryAddress2}
+                value={this.state.unit}
                 onChange={e => {
                   this.setState({
-                    deliveryAddress2: e.target.value
+                    unit: e.target.value
                   });
                   //console.log("new address line 2: " + this.state.deliveryAddress2);
                 }}
               />
               <input
                 type='text'
-                placeholder='Delivery Instructions (Gate code, Ring bell, Call on arrival, etc.)'
+                placeholder='City'
                 className={styles.input}
-                value={this.state.deliveryInstructions}
+                value={this.state.city}
                 onChange={e => {
                   this.setState({
-                    deliveryInstructions: e.target.value
+                    city: e.target.value
+                  });
+                }}
+              />
+              <input
+                type='text'
+                placeholder='State'
+                className={styles.input}
+                value={this.state.state}
+                onChange={e => {
+                  this.setState({
+                    state: e.target.value
+                  });
+                }}
+              />
+              <input
+                type='text'
+                placeholder='Zipcode'
+                className={styles.input}
+                value={this.state.addressZip}
+                onChange={e => {
+                  this.setState({
+                    addressZip: e.target.value
+                  });
+                }}
+              />
+              <input
+                type='text'
+                placeholder='Delivery Instructions (Gate code, Ring bell, Call on arrival, etc.)'
+                className={styles.input}
+                value={this.state.instructions}
+                onChange={e => {
+                  this.setState({
+                    instructions: e.target.value
                   });
                   //console.log("new instructions: " + this.state.deliveryInstructions);
                 }}
               />
             </div>
               
-            <div style = {{width: '20%', textAlign: 'right', paddingRight: '10px', height: '200px'}}>
+            <div style = {{width: '20%', textAlign: 'right', paddingRight: '10px', height: '350px'}}>
               <button 
                 className={styles.saveButton}
                 onClick={() => this.saveDeliveryDetails()}
@@ -286,6 +424,7 @@ class PaymentDetails extends React.Component {
                 SAVE
               </button>
             </div>
+              
           </div>
 
             
@@ -314,10 +453,10 @@ class PaymentDetails extends React.Component {
                 type='text'
                 placeholder='First Name'
                 className={styles.inputContactLeft}
-                value={this.state.contactFirstName}
+                value={this.state.firstName}
                 onChange={e => {
                   this.setState({
-                    contactFirstName: e.target.value
+                    firstName: e.target.value
                   });
                 }}
               />
@@ -325,10 +464,10 @@ class PaymentDetails extends React.Component {
                 type='text'
                 placeholder='Phone Number'
                 className={styles.inputContactLeft}
-                value={this.state.contactPhone}
+                value={this.state.phone}
                 onChange={e => {
                   this.setState({
-                    contactPhone: e.target.value
+                    phone: e.target.value
                   });
                 }}
               />
@@ -339,10 +478,10 @@ class PaymentDetails extends React.Component {
                 type='text'
                 placeholder='Last Name'
                 className={styles.inputContactRight}
-                value={this.state.contactLastName}
+                value={this.state.lastName}
                 onChange={e => {
                   this.setState({
-                    contactLastName: e.target.value
+                    lastName: e.target.value
                   });
                 }}
               />
@@ -350,11 +489,8 @@ class PaymentDetails extends React.Component {
                 type='text'
                 placeholder='Email'
                 className={styles.inputContactRight}
-                value={this.state.contactEmail}
+                value={this.props.email}
                 onChange={e => {
-                  this.setState({
-                    contactEmail: e.target.value
-                  });
                 }}
               />
             </div>
@@ -475,6 +611,12 @@ class PaymentDetails extends React.Component {
                 type='text'
                 placeholder='Enter Ambassador Code'
                 className={styles.inputAmbassador}
+                onChange={e => {
+                  this.setState({
+                    ambassadorCode: e.target.value
+                  });
+                  console.log("ambassador code: " + this.state.ambassadorCode);
+                }}
               />
                 
               <button 
@@ -535,7 +677,7 @@ class PaymentDetails extends React.Component {
                 )}
               </div>
               <div className={styles.summaryRight2}>
-                ${this.state.ambassadorDiscount}
+                ${(-1)*this.state.ambassadorDiscount}
               </div>
               <hr className={styles.sumLine}></hr>
               <div className={styles.summaryRight2}>
@@ -549,7 +691,7 @@ class PaymentDetails extends React.Component {
                   this.props.selectedPlan.num_deliveries *
                   this.state.taxRate * 0.01) + 
                   this.state.tip +
-                  this.state.ambassadorDiscount
+                  (-1)*this.state.ambassadorDiscount
                 )}
               </div>
             </div>
@@ -593,10 +735,10 @@ class PaymentDetails extends React.Component {
                 type='text'
                 placeholder='Card Holder Name'
                 className={styles.input}
-                value={this.state.cardName}
+                value={this.state.name}
                 onChange={e => {
                   this.setState({
-                    cardName: e.target.value
+                    name: e.target.value
                   });
                 }}
               />
@@ -604,10 +746,10 @@ class PaymentDetails extends React.Component {
                 type='text'
                 placeholder='Credit Card Number'
                 className={styles.input}
-                value={this.state.cardNumber}
+                value={this.state.number}
                 onChange={e => {
                   this.setState({
-                    cardNumber: e.target.value
+                    number: e.target.value
                   });
                 }}
               />
@@ -616,10 +758,10 @@ class PaymentDetails extends React.Component {
                 type='text'
                 placeholder='MM'
                 className={styles.monthInput}
-                value={this.state.cardMonth}
+                value={this.state.month}
                 onChange={e => {
                   this.setState({
-                    cardMonth: e.target.value
+                    month: e.target.value
                   });
                 }}
               />
@@ -628,10 +770,10 @@ class PaymentDetails extends React.Component {
                 type='text'
                 placeholder='YEAR'
                 className={styles.yearInput}
-                value={this.state.cardYear}
+                value={this.state.year}
                 onChange={e => {
                   this.setState({
-                    cardYear: e.target.value
+                    year: e.target.value
                   });
                 }}
               />
@@ -639,10 +781,10 @@ class PaymentDetails extends React.Component {
                 type='text'
                 placeholder='CVV'
                 className={styles.cvvInput}
-                value={this.state.cardCvv}
+                value={this.state.cvv}
                 onChange={e => {
                   this.setState({
-                    cardCvv: e.target.value
+                    cvv: e.target.value
                   });
                 }}
               />
@@ -741,9 +883,9 @@ const mapStateToProps = state => ({
   instructions: state.subscribe.deliveryInstructions,
   selectedPlan: state.subscribe.selectedPlan,
   password: state.subscribe.paymentPassword,
-  deliveryDetails: state.subscribe.savedDeliveryDetails,
-  contactDetails: state.subscribe.savedContactDetails,
-  paymentDetails: state.subscribe.savedPaymentDetails
+  address: state.subscribe.address,
+  addressInfo: state.subscribe.addressInfo,
+  creditCard: state.subscribe.creditCard
 });
 
 const functionList = {

@@ -62,6 +62,7 @@ const initialState = {
     zip: ""
   },
   creditCard: {
+    name: "",
     number: "",
     cvv: "",
     zip: "",
@@ -71,26 +72,7 @@ const initialState = {
   subscribedPlans: [],
   deliveryInstructions: "",
   paymentPassword: "",
-  errors: [],
-  savedDeliveryDetails: {
-    deliveryAddress1: "",
-    deliveryAddress2: "",
-    deliveryInstructions: ""
-  },
-  savedContactDetails: {
-    contactFirstName: "",
-    contactLastName: "",
-    contactPhone: "",
-    contactEmail: ""
-  },
-  savedPaymentDetails: {
-    cardName: "",
-    cardNumber: "",
-    cardMonth: "",
-    cardYear: "",
-    cardCvv: "",
-    cardZip: ""
-  }
+  errors: []
 };
 
 export default function(state = initialState, action) {
@@ -137,35 +119,39 @@ export default function(state = initialState, action) {
     case CHANGE_DELIVERY_DETAILS:
       return {
         ...state,
-        savedDeliveryDetails: {
-          ...state.savedDeliveryDetails,
-          deliveryAddress1: action.payload.deliveryAddress1,
-          deliveryAddress2: action.payload.deliveryAddress2,
-          deliveryInstructions: action.payload.deliveryInstructions
-        }
-      };
+        address: {
+          ...state.address,
+          street: action.payload.street,
+          unit: action.payload.unit,
+          city: action.payload.city,
+          state: action.payload.state,
+          zip: action.payload.zip
+        },
+        deliveryInstructions: action.payload.instructions
+      };  
+          
     case CHANGE_PAYMENT_DETAILS:
       return {
         ...state,
-        savedPaymentDetails: {
-          ...state.savedPaymentDetails,
-          cardName: action.payload.cardName,
-          cardNumber: action.payload.cardNumber,
-          cardMonth: action.payload.cardMonth,
-          cardYear: action.payload.cardYear,
-          cardCvv: action.payload.cardCvv,
-          cardZip: action.payload.cardZip
+        creditCard: {
+          ...state.creditCard,
+          name: action.payload.name,
+          number: action.payload.number,
+          month: action.payload.month,
+          year: action.payload.year,
+          cvv: action.payload.cvv,
+          zip: action.payload.zip
         }
       };
     case CHANGE_CONTACT_DETAILS:
       return {
         ...state,
-        savedContactDetails: {
-          ...state.savedContactDetails,
-          contactFirstName: action.payload.contactFirstName,
-          contactLastName: action.payload.contactLastName,
-          contactPhone: action.payload.contactPhone,
-          contactEmail: action.payload.contactEmail
+        addressInfo: {
+          ...state.addressInfo,
+          firstName: action.payload.firstName,
+          lastName: action.payload.lastName,
+          phoneNumber: action.payload.phone,
+          email: action.payload.email
         }
       };
     case CHANGE_ADDRESS_FIRST_NAME:
