@@ -50,7 +50,7 @@ class PaymentDetails extends React.Component {
       serviceFee: 0,
       deliveryFee: 0,
       taxRate: 0,
-      ambassadorDiscount: 15,
+      ambassadorDiscount: 0,
       ambassadorCode: "",
       validCode: true,
       name: "",
@@ -94,11 +94,26 @@ class PaymentDetails extends React.Component {
       });
       this.props.fetchProfileInformation(customerUid);
       console.log("payment details props: " + JSON.stringify(this.props));
+      //console.log("(logged in) customerUid: " + this.state.customerUid);
     } else {
       // Reroute to log in page
       console.log("Payment-details NOT LOGGED IN");
+      this.setState({
+        mounted: true,
+        customerUid: "NULL"
+      });
+      //console.log("(not logged in) customerUid: " + this.state.customerUid);
       //this.props.history.push("/");
     }
+      
+    /*console.log();
+    console.log("=====| PROFILE DETAILS |=====");
+    console.log("customerUid: " + this.state.customerUid);
+    console.log("customerId: " + this.props.customerId);
+    console.log("email: " + this.props.email);
+    console.log();*/
+      
+    /*console.log("(MOUNT) selected meal plan: " + JSON.stringify(this.props.selectedPlan));
       
     console.log("profile email: " + this.props.email);
     console.log("address email: " + this.props.addressInfo.email);
@@ -107,7 +122,7 @@ class PaymentDetails extends React.Component {
       
     console.log("(MOUNT) delivery details: " + JSON.stringify(this.props.address));
     console.log("(MOUNT) contact details: " + JSON.stringify(this.props.addressInfo));
-    console.log("(MOUNT) card details: " + JSON.stringify(this.props.creditCard));
+    console.log("(MOUNT) card details: " + JSON.stringify(this.props.creditCard));*/
       
     this.setState({
       street: this.props.address.street,
@@ -146,6 +161,8 @@ class PaymentDetails extends React.Component {
         }
         console.log(err);
       });
+      
+    //console.log("customerUid: " + this.state.customerUid);
   }
     
   changeTip(newTip) {
@@ -260,11 +277,108 @@ class PaymentDetails extends React.Component {
     
   handleCheckout() {
     console.log("Processing payment...");
-    /*if() {
-       
+      
+    console.log("customerUid: " + this.state.customerUid);
+      
+    console.log("item(s) to be purchased: " + JSON.stringify(this.props.selectedPlan));
+      
+    /*
+    createAccount w/ info from guest
+    => response gives customerUid
+    => call profile endpoint w/ new customerUid
+    => response gives hashed_password
+    => use hashed_password as salt in checkout JSON object
+    */
+      
+    if(this.state.customerUid === "NULL") {
+        
+      let newUid;
+      let newPassword;
+        
+          /*let object = {
+            email: email,
+            password: password,
+            first_name: firstName,
+            last_name: lastName,
+            phone_number: phone,
+            address: street,
+            unit: unit,
+            city: city,
+            state: state,
+            zip_code: zip,
+            latitude: lat.toString(),
+            longitude: long.toString(),
+            referral_source: "WEB",
+            role: "CUSTOMER",
+            social: "FALSE",
+            social_id: "NULL",
+            user_access_token: "FALSE",
+            user_refresh_token: "FALSE",
+            mobile_access_token: "FALSE",
+            mobile_refresh_token: "FALSE"
+          };
+          console.log(JSON.stringify(object));
+          
+          axios
+            .post(API_URL + "createAccount", object)
+            .then(res => {
+              console.log(res);
+              axios.post(API_URL+'email_verification', 
+              {
+              email: object.email
+              }  
+                )
+                .then(res => {
+                  console.log(res)
+                })
+                .catch(err => {
+                  console.log(err)
+                })
+              dispatch({
+                type: SUBMIT_SIGNUP
+              });
+              if (typeof callback !== "undefined") {
+                callback();
+              }
+            })
+            .catch(err => {
+              console.log(err);
+              if (err.response) {
+                console.log(err.response);
+              }
+            });*/
+        
+      axios
+        .post(API_URL + 'createAccount', {})
+        .then(res => {
+          console.log(res);
+          newUid = res.customerUid;
+        })
+        .catch(err => {
+          console.log(err);
+          if (err.response) {
+            console.log("error: " + JSON.stringify(err.response));
+          }
+        });
+        
+      axios
+        .get(API_URL + 'Profile/' + newUid)
+        .then(res => {
+          console.log(res);
+        })
+        .catch(err => {
+          console.log(err);
+          if (err.response) {
+            console.log("error: " + JSON.stringify(err.response));
+          }
+        });
+      
     } else {
        
-    }*/
+    }
+
+    console.log("(1) submitting payment...");
+      
     this.props.submitPayment(
       this.props.email,
       this.state.customerUid,
@@ -280,6 +394,11 @@ class PaymentDetails extends React.Component {
       this.state.addressZip,
       this.state.instructions,
       this.props.selectedPlan,
+      this.state.number,
+      this.state.month,
+      this.state.year,
+      this.state.cvv,
+      this.state.zip,
       () => {
         this.props.history.push("/congratulations");
       }

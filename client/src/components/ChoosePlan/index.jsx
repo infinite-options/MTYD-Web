@@ -232,7 +232,7 @@ class ChoosePlan extends React.Component {
                   </span>
                   <br></br>
                   {(() => {
-                    if (discount > 0) {
+                    if (typeof(discount) !== "undefined" && discount > 0) {
                       return (
                         <span>(Save {discount}%)</span>
                       );
@@ -264,7 +264,7 @@ class ChoosePlan extends React.Component {
                   </span>
                   <br></br>
                   {(() => {
-                    if (discount > 0) {
+                    if (typeof(discount) !== "undefined" && discount > 0) {
                       return (
                         <span>(Save {discount}%)</span>
                       );
