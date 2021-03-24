@@ -25,6 +25,8 @@ import {
   submitPayment
 } from "../../reducers/actions/subscriptionActions";
 
+import {submitPasswordSignUp} from "../../reducers/actions/loginActions";
+
 import {withRouter} from "react-router";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
@@ -275,6 +277,12 @@ class PaymentDetails extends React.Component {
     });
   }
     
+  handleGuestCheckout = () => {
+    //this.props.history.push("/login");
+    console.log("Guest sign up successful!");
+
+  };
+
   handleCheckout() {
     console.log("Processing payment...");
       
@@ -291,116 +299,59 @@ class PaymentDetails extends React.Component {
     */
       
     if(this.state.customerUid === "NULL") {
-        
-      let newUid;
-      let newPassword;
-        
-          /*let object = {
-            email: email,
-            password: password,
-            first_name: firstName,
-            last_name: lastName,
-            phone_number: phone,
-            address: street,
-            unit: unit,
-            city: city,
-            state: state,
-            zip_code: zip,
-            latitude: lat.toString(),
-            longitude: long.toString(),
-            referral_source: "WEB",
-            role: "CUSTOMER",
-            social: "FALSE",
-            social_id: "NULL",
-            user_access_token: "FALSE",
-            user_refresh_token: "FALSE",
-            mobile_access_token: "FALSE",
-            mobile_refresh_token: "FALSE"
-          };
-          console.log(JSON.stringify(object));
-          
-          axios
-            .post(API_URL + "createAccount", object)
-            .then(res => {
-              console.log(res);
-              axios.post(API_URL+'email_verification', 
-              {
-              email: object.email
-              }  
-                )
-                .then(res => {
-                  console.log(res)
-                })
-                .catch(err => {
-                  console.log(err)
-                })
-              dispatch({
-                type: SUBMIT_SIGNUP
-              });
-              if (typeof callback !== "undefined") {
-                callback();
-              }
-            })
-            .catch(err => {
-              console.log(err);
-              if (err.response) {
-                console.log(err.response);
-              }
-            });*/
-        
-      axios
-        .post(API_URL + 'createAccount', {})
-        .then(res => {
-          console.log(res);
-          newUid = res.customerUid;
-        })
-        .catch(err => {
-          console.log(err);
-          if (err.response) {
-            console.log("error: " + JSON.stringify(err.response));
-          }
-        });
-        
-      axios
-        .get(API_URL + 'Profile/' + newUid)
-        .then(res => {
-          console.log(res);
-        })
-        .catch(err => {
-          console.log(err);
-          if (err.response) {
-            console.log("error: " + JSON.stringify(err.response));
-          }
-        });
+
+      let streetNum = this.state.street.substring(0,this.state.street.indexOf(" "));
+
+      console.log("=== GUEST PASSWORD ===");
+      console.log("street: " + this.state.street);
+      console.log("name: " + this.state.firstName);
+      console.log("street #: " + streetNum);
+
+      let guestPassword = this.state.firstName + streetNum;
+
+      console.log("password: '" + guestPassword + "'");
+
+      /*this.props.submitPasswordSignUp(
+        this.state.email,
+        guestPassword,
+        guestPassword,
+        this.state.firstName,
+        this.state.lastName,
+        this.state.phone,
+        this.state.street,
+        this.state.unit,
+        this.state.city,
+        this.state.state,
+        this.state.zip,
+        this.handleGuestCheckout
+      );*/
       
     } else {
-       
+      this.props.submitPayment(
+        this.props.email,
+        this.state.customerUid,
+        this.props.socialMedia,
+        this.props.password,
+        this.state.firstName,
+        this.state.lastName,
+        this.state.phone,
+        this.state.street,
+        this.state.unit,
+        this.state.city,
+        this.state.state,
+        this.state.addressZip,
+        this.state.instructions,
+        this.props.selectedPlan,
+        this.state.number,
+        this.state.month,
+        this.state.year,
+        this.state.cvv,
+        this.state.zip,
+        () => {
+          this.props.history.push("/congratulations");
+        }
+      );
     }
-      
-    this.props.submitPayment(
-      this.props.email,
-      this.state.customerUid,
-      this.props.socialMedia,
-      this.props.password,
-      this.state.firstName,
-      this.state.lastName,
-      this.state.phone,
-      this.state.street,
-      this.state.unit,
-      this.state.city,
-      this.state.state,
-      this.state.addressZip,
-      this.state.instructions,
-      this.props.selectedPlan,
-      this.state.number,
-      this.state.month,
-      this.state.year,
-      this.state.cvv,
-      this.state.zip,
-      () => {
-        this.props.history.push("/congratulations");
-      }
-    );
   }
     
   applyAmbassadorCode() {
@@ -973,6 +924,7 @@ PaymentDetails.propTypes = {
   changeDeliveryInstructions: PropTypes.func.isRequired,
   changePaymentPassword: PropTypes.func.isRequired,
   submitPayment: PropTypes.func.isRequired,
+  submitPasswordSignUp: PropTypes.func.isRequired,
   firstName: PropTypes.string.isRequired,
   lastName: PropTypes.string.isRequired,
   street: PropTypes.string.isRequired,
@@ -1026,7 +978,8 @@ const functionList = {
   changeCardYear,
   changeCardZip,
   changeCardCvv,
-  submitPayment
+  submitPayment,
+  submitPasswordSignUp
 };
 
 export default connect(
