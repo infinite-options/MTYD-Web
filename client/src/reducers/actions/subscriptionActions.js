@@ -88,6 +88,8 @@ export const fetchPlans = () => dispatch => {
     .catch(err => {
       console.log(err);
     });
+    
+  console.log(plans)
   return plans;
 };
 

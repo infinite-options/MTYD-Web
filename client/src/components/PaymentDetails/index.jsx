@@ -387,9 +387,9 @@ class PaymentDetails extends React.Component {
   }
 
   render() {
-    if (!this.state.mounted) {
-      return null;
-    }
+    // if (!this.state.mounted) {
+    //   return null;
+    // }
     let loggedInByPassword = false;
     if (this.props.socialMedia === "NULL") {
       loggedInByPassword = true;

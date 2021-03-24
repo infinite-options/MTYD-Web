@@ -115,12 +115,15 @@ class Header extends Component {
         document.getElementById("meal-plan-picker").disabled = false;
       }
     }
+    let login = 1;
     let message = this.props.subscribedPlans.length ? (
       <p className={menuStyles.navMessage}>
+        {login=1}
         Please Complete Your Meal Selection For Your Meal Subscriptions
       </p>
     ) : (
       <p className={menuStyles.navMessage + " text-left"}>
+        {login=3}
         Below are this weeks Meals.{" "}
         <span style={{display: "block"}}>
           Please buy a Subscription before selecting
@@ -131,7 +134,7 @@ class Header extends Component {
     return (
       <>
         <WebNavBar />
-        <MenuBar show={true} message={message} />
+        <MenuBar show={true} message={message} login = {login}/>
         <div>
         {this.props.subscribedPlans.length ? (
           <select

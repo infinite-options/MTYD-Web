@@ -203,13 +203,13 @@ class Login extends React.Component {
                       }}
                     />
 
-                    <a className={styles.passwordShow}>
+                    {/* <a >
                       <i
                         className='far fa-eye'
                         id='togglePassword'
                         onClick={this.viewPassword}
                       ></i>
-                    </a>
+                    </a> */}
                   </span>
                 </div>
                 
