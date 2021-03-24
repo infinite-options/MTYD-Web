@@ -264,10 +264,10 @@ class NavBar extends React.Component {
         </ul>
 
 
-{/* 
-        <div onClick={this.props.poplogin}>
-          <button>Pop login</button>
-        </div> */}
+
+        <div onClick={this.props.poplogin} >
+          <button className={styles.signInBtn}>Pop login</button>
+        </div>
 
 
 
