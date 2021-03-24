@@ -376,8 +376,6 @@ class PaymentDetails extends React.Component {
     } else {
        
     }
-
-    console.log("(1) submitting payment...");
       
     this.props.submitPayment(
       this.props.email,

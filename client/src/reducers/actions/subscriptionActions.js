@@ -343,7 +343,6 @@ export const submitPayment = (
   callback
 ) => dispatch => {
   console.log(customerEmail, customerUid, loginMethod);
-  console.log("(2) submitting payment...");
   if (loginMethod === 'NULL') {
     // Prepare to login
     axios
@@ -410,7 +409,6 @@ export const submitPayment = (
                       itm_business_uid: '200-000002',
                     },
                   ];
-                  console.log("(3) submitting payment...");
                   console.log("purchased item: " + JSON.stringify(purchasedItem));
                   let object = {
                     customer_uid: customerUid,
@@ -492,15 +490,6 @@ export const submitPayment = (
             long = location.geocodePoints[1].coordinates[1];
           }
           console.log(selectedPlan);
-          /*let purchasedItem = [
-            {
-              qty: '1';
-              name: selectedPlan.item_name,
-              price: (selectedPlan.item_price*selectedPlan.num_deliveries*(1-(selectedPlan.delivery_discount*0.01))),
-              item_uid: selectedPlan.item_uid,
-              itm_business_uid: '200-000002',
-            },
-          ];*/
           let purchasedItem = [
             {
               qty: (selectedPlan.num_deliveries).toString(),
@@ -510,8 +499,7 @@ export const submitPayment = (
               itm_business_uid: '200-000002',
             },
           ];
-          console.log("(4) submitting payment...");
-          console.log(purchasedItem);
+          console.log("purchased item: " + JSON.stringify(purchasedItem));
           let object = {
             customer_uid: customerUid,
             business_uid: '200-000002',
@@ -531,11 +519,11 @@ export const submitPayment = (
             amount_due: (selectedPlan.item_price*selectedPlan.num_deliveries*(1-(selectedPlan.delivery_discount*0.01))).toFixed(2),
             amount_discount: '0',
             amount_paid: '0',
-            cc_num: '4242424242424242',
-            cc_exp_month: '04',
-            cc_exp_year: '2024',
-            cc_cvv: '424',
-            cc_zip: '95120',
+            cc_num: cardNumber,
+            cc_exp_month: cardMonth,
+            cc_exp_year: cardYear,
+            cc_cvv: cardCvv,
+            cc_zip: cardZip
           };
           console.log(JSON.stringify(object));
           axios
