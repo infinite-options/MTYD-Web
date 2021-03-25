@@ -41,6 +41,7 @@ import axios from 'axios';
 import { API_URL } from '../../reducers/constants';
 
 import styles from "./paymentDetails.module.css";
+import { ThemeProvider } from "react-bootstrap";
 
 class PaymentDetails extends React.Component {
   constructor() {
@@ -265,7 +266,77 @@ class PaymentDetails extends React.Component {
     console.log("Guest sign up successful!");
     console.log("New guest info: " + JSON.stringify(guestInfo));
 
-    this.props.submitPayment(
+    axios
+    .get(API_URL + 'Profile/' + guestInfo.customer_uid)
+    .then(res => {
+        //console.log("new guest profile fetch info: " + JSON.stringify(res));
+
+        let profileInfo = res.data.result[0];
+
+        console.log("Guest profileInfo: " + JSON.stringify(profileInfo));
+
+        let purchasedItem = [
+          {
+            qty: (this.props.selectedPlan.num_deliveries).toString(),
+            name: this.props.selectedPlan.item_name,
+            price: (this.props.selectedPlan.item_price*this.props.selectedPlan.num_deliveries*(1-(this.props.selectedPlan.delivery_discount*0.01))).toFixed(2),
+            item_uid: this.props.selectedPlan.item_uid,
+            itm_business_uid: '200-000002',
+          },
+        ];
+
+        let checkoutInfo = {
+          customer_uid: profileInfo.customer_uid,
+          salt: profileInfo.password_hashed,
+          business_uid: '200-000002',
+          delivery_first_name: profileInfo.customer_first_name,
+          delivery_last_name: profileInfo.customer_last_name,
+          delivery_email: profileInfo.customer_email,
+          delivery_phone: profileInfo.customer_phone_num,
+          delivery_address: profileInfo.customer_address,
+          delivery_unit: profileInfo.customer_unit,
+          delivery_city: profileInfo.customer_city,
+          delivery_state: profileInfo.customer_state,
+          delivery_zip: profileInfo.customer_zip,
+          delivery_instructions: this.state.instructions,
+          delivery_longitude: profileInfo.customer_long,
+          delivery_latitude: profileInfo.customer_lat,
+          items: purchasedItem,
+          amount_due: (this.props.selectedPlan.item_price*this.props.selectedPlan.num_deliveries*(1-(this.props.selectedPlan.delivery_discount*0.01))).toFixed(2),
+          amount_discount: '0',
+          amount_paid: '0',
+          cc_num: this.state.number,
+          cc_exp_month: this.state.month,
+          cc_exp_year: this.state.year,
+          cc_cvv: this.state.cvv,
+          cc_zip: this.state.cardZip
+        };
+        console.log("guest checkoutInfo: " + JSON.stringify(checkoutInfo));
+        axios
+          .post(API_URL + 'checkout', checkoutInfo)
+          .then(res2 => {
+            console.log(res2);
+            this.props.history.push("/congrats");
+          })
+          .catch(err2 => {
+            console.log(err2);
+            if (err2.response) {
+              console.log(err2.response);
+            }
+          });
+
+    })
+    .catch(err => {
+      if (err.response) {
+        console.log(err.response);
+      } else {
+        console.log(err.toString());
+      }
+    });
+
+
+    
+    /*this.props.submitPayment(
       this.state.email,
       guestInfo.customer_uid,
       this.props.socialMedia,
@@ -286,9 +357,9 @@ class PaymentDetails extends React.Component {
       this.state.cvv,
       this.state.zip,
       () => {
-        this.props.history.push("/congratulations");
+        this.props.history.push("/congrats");
       }
-    );
+    );*/
   };
 
   handleCheckout() {
@@ -355,7 +426,7 @@ class PaymentDetails extends React.Component {
         this.state.cvv,
         this.state.zip,
         () => {
-          this.props.history.push("/congratulations");
+          this.props.history.push("/congrats");
         }
       );
     }
@@ -929,7 +1000,7 @@ class PaymentDetails extends React.Component {
                   this.props.instructions,
                   this.props.selectedPlan,
                   () => {
-                    this.props.history.push("/congratulations");
+                    this.props.history.push("/congrats");
                   }
                 );*/
               }}
