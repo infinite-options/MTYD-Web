@@ -25,7 +25,7 @@ import {
   submitPayment
 } from "../../reducers/actions/subscriptionActions";
 
-import {submitPasswordSignUp} from "../../reducers/actions/loginActions";
+import {submitGuestSignUp} from "../../reducers/actions/loginActions";
 
 import {withRouter} from "react-router";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -108,24 +108,6 @@ class PaymentDetails extends React.Component {
       //this.props.history.push("/");
     }
       
-    /*console.log();
-    console.log("=====| PROFILE DETAILS |=====");
-    console.log("customerUid: " + this.state.customerUid);
-    console.log("customerId: " + this.props.customerId);
-    console.log("email: " + this.props.email);
-    console.log();*/
-      
-    /*console.log("(MOUNT) selected meal plan: " + JSON.stringify(this.props.selectedPlan));
-      
-    console.log("profile email: " + this.props.email);
-    console.log("address email: " + this.props.addressInfo.email);
-    console.log("instructions: " + this.props.instructions);
-    console.log("instructions: " + this.props.deliveryInstructions);
-      
-    console.log("(MOUNT) delivery details: " + JSON.stringify(this.props.address));
-    console.log("(MOUNT) contact details: " + JSON.stringify(this.props.addressInfo));
-    console.log("(MOUNT) card details: " + JSON.stringify(this.props.creditCard));*/
-      
     this.setState({
       street: this.props.address.street,
       city: this.props.address.city,
@@ -163,62 +145,63 @@ class PaymentDetails extends React.Component {
         }
         console.log(err);
       });
-      
-    //console.log("customerUid: " + this.state.customerUid);
   }
     
   changeTip(newTip) {
     this.setState({
       tip: newTip
     });
-    //console.log("new tip: " + this.state.tip);
   }
     
   saveDeliveryDetails() {
-    console.log("Saving delivery details...");
+    if(this.state.customerUid !== "NULL"){
+      console.log("Saving delivery details...");
 
-    console.log("address street: " + this.state.street);
-    console.log("address city: " + this.state.city);
-    console.log("address state: " + this.state.state);
-    console.log("address zip: " + this.state.addressZip);
+      console.log("address street: " + this.state.street);
+      console.log("address city: " + this.state.city);
+      console.log("address state: " + this.state.state);
+      console.log("address zip: " + this.state.addressZip);
       
-    let object = {
-      uid: this.state.customerUid,
-      first_name: this.props.addressInfo.firstName,
-      last_name: this.props.addressInfo.lastName,
-      phone: this.props.addressInfo.phoneNumber,
-      email: this.props.email,
-      address: this.state.street,
-      unit: this.state.unit,
-      city: this.state.city,
-      state: this.state.state,
-      zip: this.state.addressZip,
-      noti: "false"
-    };
+      let object = {
+        uid: this.state.customerUid,
+        first_name: this.props.addressInfo.firstName,
+        last_name: this.props.addressInfo.lastName,
+        phone: this.props.addressInfo.phoneNumber,
+        email: this.props.email,
+        address: this.state.street,
+        unit: this.state.unit,
+        city: this.state.city,
+        state: this.state.state,
+        zip: this.state.addressZip,
+        noti: "false"
+      };
                   
-    console.log("(delivery details) update profile URL:" + API_URL + 'UpdateProfile');
-    console.log(JSON.stringify(object));
+      console.log("(delivery details) update profile URL:" + API_URL + 'UpdateProfile');
+      console.log(JSON.stringify(object));
       
-    axios
-      .post(API_URL + 'UpdateProfile', object)
-      .then(res => {
-        console.log(res);
-      })
-      .catch(err => {
-        console.log(err);
-        if (err.response) {
-          console.log("error: " + JSON.stringify(err.response));
-        }
+      axios
+        .post(API_URL + 'UpdateProfile', object)
+        .then(res => {
+          console.log(res);
+        })
+        .catch(err => {
+          console.log(err);
+          if (err.response) {
+            console.log("error: " + JSON.stringify(err.response));
+          }
+        });
+      
+      this.props.changeDeliveryDetails({
+        street: this.state.street,
+        city: this.state.city,
+        state: this.state.state,
+        zip: this.state.addressZip,
+        unit: this.state.unit,
+        instructions: this.state.instructions
       });
-      
-    this.props.changeDeliveryDetails({
-      street: this.state.street,
-      city: this.state.city,
-      state: this.state.state,
-      zip: this.state.addressZip,
-      unit: this.state.unit,
-      instructions: this.state.instructions
-    });
+    } else {
+      console.log("Could not save delivery details: not signed in");
+    }
   }
     
   saveContactDetails() {
@@ -277,10 +260,35 @@ class PaymentDetails extends React.Component {
     });
   }
     
-  handleGuestCheckout = () => {
+  handleGuestCheckout = (guestInfo) => {
     //this.props.history.push("/login");
     console.log("Guest sign up successful!");
+    console.log("New guest info: " + JSON.stringify(guestInfo));
 
+    this.props.submitPayment(
+      this.state.email,
+      guestInfo.customer_uid,
+      this.props.socialMedia,
+      this.props.password,
+      this.state.firstName,
+      this.state.lastName,
+      this.state.phone,
+      this.state.street,
+      this.state.unit,
+      this.state.city,
+      this.state.state,
+      this.state.addressZip,
+      this.state.instructions,
+      this.props.selectedPlan,
+      this.state.number,
+      this.state.month,
+      this.state.year,
+      this.state.cvv,
+      this.state.zip,
+      () => {
+        this.props.history.push("/congratulations");
+      }
+    );
   };
 
   handleCheckout() {
@@ -311,9 +319,8 @@ class PaymentDetails extends React.Component {
 
       console.log("password: '" + guestPassword + "'");
 
-      /*this.props.submitPasswordSignUp(
+      this.props.submitGuestSignUp(
         this.state.email,
-        guestPassword,
         guestPassword,
         this.state.firstName,
         this.state.lastName,
@@ -322,9 +329,9 @@ class PaymentDetails extends React.Component {
         this.state.unit,
         this.state.city,
         this.state.state,
-        this.state.zip,
+        this.state.addressZip,
         this.handleGuestCheckout
-      );*/
+      );
       
     } else {
       this.props.submitPayment(
@@ -553,14 +560,43 @@ class PaymentDetails extends React.Component {
                   });
                 }}
               />
-              <input
+              {/*<input
                 type='text'
                 placeholder='Email'
                 className={styles.inputContactRight}
                 value={this.props.email}
                 onChange={e => {
                 }}
-              />
+              />*/}
+              {(() => {
+                  if (this.state.customerUid === "NULL") {
+                    return (
+                      <input
+                        type='text'
+                        placeholder='Email'
+                        className={styles.inputContactRight}
+                        value={this.state.email}
+                        onChange={e => {
+                          this.setState({
+                            email: e.target.value
+                          })
+                        }}
+                      />
+                    );
+                  } else {
+                    return (
+                      <input
+                        type='text'
+                        placeholder='Email'
+                        className={styles.inputContactRight}
+                        value={this.props.email}
+                        onChange={e => {
+                    
+                        }}
+                      />
+                    );
+                  }
+                })()} 
             </div>
               
             <div style = {{width: '20%', textAlign: 'right', paddingRight: '10px', height: '150px'}}>
@@ -924,7 +960,7 @@ PaymentDetails.propTypes = {
   changeDeliveryInstructions: PropTypes.func.isRequired,
   changePaymentPassword: PropTypes.func.isRequired,
   submitPayment: PropTypes.func.isRequired,
-  submitPasswordSignUp: PropTypes.func.isRequired,
+  submitGuestSignUp: PropTypes.func.isRequired,
   firstName: PropTypes.string.isRequired,
   lastName: PropTypes.string.isRequired,
   street: PropTypes.string.isRequired,
@@ -979,7 +1015,7 @@ const functionList = {
   changeCardZip,
   changeCardCvv,
   submitPayment,
-  submitPasswordSignUp
+  submitGuestSignUp
 };
 
 export default connect(

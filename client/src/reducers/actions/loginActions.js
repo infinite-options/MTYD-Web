@@ -542,6 +542,109 @@ export const submitPasswordSignUp = (
   }
 };
 
+export const submitGuestSignUp = (
+  email,
+  password,
+  firstName,
+  lastName,
+  phone,
+  street,
+  unit,
+  city,
+  state,
+  zip,
+  callback
+) => dispatch => {
+    axios
+      .get(BING_LCOATION_API_URL, {
+        params: {
+          CountryRegion: "US",
+          adminDistrict: state,
+          locality: city,
+          postalCode: zip,
+          addressLine: street,
+          key: process.env.REACT_APP_BING_LOCATION_KEY
+        }
+      })
+      .then(res => {
+        console.log(state);
+        let locationApiResult = res.data;
+        if (locationApiResult.statusCode === 200) {
+          let locations = locationApiResult.resourceSets[0].resources;
+          /* Possible improvement: choose better location in case first one not desired
+           */
+          let location = locations[0];
+          let lat = location.geocodePoints[0].coordinates[0];
+          let long = location.geocodePoints[0].coordinates[1];
+          if (location.geocodePoints.length === 2) {
+            lat = location.geocodePoints[1].coordinates[0];
+            long = location.geocodePoints[1].coordinates[1];
+          }
+          let object = {
+            email: email,
+            password: password,
+            first_name: firstName,
+            last_name: lastName,
+            phone_number: phone,
+            address: street,
+            unit: unit,
+            city: city,
+            state: state,
+            zip_code: zip,
+            latitude: lat.toString(),
+            longitude: long.toString(),
+            referral_source: "WEB",
+            role: "CUSTOMER",
+            social: "FALSE",
+            social_id: "NULL",
+            user_access_token: "FALSE",
+            user_refresh_token: "FALSE",
+            mobile_access_token: "FALSE",
+            mobile_refresh_token: "FALSE"
+          };
+          console.log("Guest sign up POST data: " + JSON.stringify(object));
+          
+          axios
+            .post(API_URL + "createAccount", object)
+            .then(res => {
+              console.log("guest create account response: " + JSON.stringify(res));
+              axios.post(API_URL+'email_verification', 
+              {
+              email: object.email
+              }  
+                )
+                .then(res => {
+                  console.log(res)
+                })
+                .catch(err => {
+                  console.log(err)
+                })
+              dispatch({
+                type: SUBMIT_SIGNUP
+              });
+              if (typeof callback !== "undefined") {
+                callback(res.data.result);
+              }
+            })
+            .catch(err => {
+              console.log(err);
+              if (err.response) {
+                console.log(err.response);
+              }
+            });
+
+        } else {
+          console.log("Not a valid location");
+        }
+      })
+      .catch(err => {
+        console.log(err);
+        if (err.response) {
+          console.log(err.response);
+        }
+      });
+};
+
 export const submitSocialSignUp = (
   isApple,
   customerId,
