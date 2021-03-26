@@ -366,6 +366,9 @@ export const submitPayment = (
               break;
           }
           let saltedPassword = customerPassword + salt;
+          console.log("saltedPW: " + saltedPassword);
+          console.log("customerPW: " + customerPassword);
+          console.log("salt: " + salt);
           // Encode salted password to prepare for hashing
           const encoder = new TextEncoder();
           const data = encoder.encode(saltedPassword);
@@ -377,6 +380,7 @@ export const submitPayment = (
             let hashedPassword = hashArray
               .map(byte => byte.toString(16).padStart(2, '0'))
               .join('');
+            console.log("hashed password: " + hashedPassword);
             axios
               .get(BING_LCOATION_API_URL, {
                 params: {
@@ -438,7 +442,7 @@ export const submitPayment = (
                     cc_cvv: cardCvv,
                     cc_zip: cardZip
                   };
-                  console.log(JSON.stringify(object));
+                  console.log("password checkoutInfo: " + JSON.stringify(object));
                   axios
                     .post(API_URL + 'checkout', object)
                     .then(res => {
@@ -449,6 +453,7 @@ export const submitPayment = (
                       callback();
                     })
                     .catch(err => {
+                      console.log("Error attempting to complete purchase");
                       console.log(err);
                       if (err.response) {
                         console.log(err.response);

@@ -74,7 +74,8 @@ class PaymentDetails extends React.Component {
       unit: "",
       latitude: 37.2270928,
       longitude: -121.8866517,
-      customerUid: ""
+      customerUid: "",
+      customerPassword: "",
     };
   }
 
@@ -333,33 +334,6 @@ class PaymentDetails extends React.Component {
         console.log(err.toString());
       }
     });
-
-
-    
-    /*this.props.submitPayment(
-      this.state.email,
-      guestInfo.customer_uid,
-      this.props.socialMedia,
-      this.props.password,
-      this.state.firstName,
-      this.state.lastName,
-      this.state.phone,
-      this.state.street,
-      this.state.unit,
-      this.state.city,
-      this.state.state,
-      this.state.addressZip,
-      this.state.instructions,
-      this.props.selectedPlan,
-      this.state.number,
-      this.state.month,
-      this.state.year,
-      this.state.cvv,
-      this.state.zip,
-      () => {
-        this.props.history.push("/congrats");
-      }
-    );*/
   };
 
   handleCheckout() {
@@ -409,7 +383,7 @@ class PaymentDetails extends React.Component {
         this.props.email,
         this.state.customerUid,
         this.props.socialMedia,
-        this.props.password,
+        this.state.customerPassword,
         this.state.firstName,
         this.state.lastName,
         this.state.phone,
@@ -424,7 +398,7 @@ class PaymentDetails extends React.Component {
         this.state.month,
         this.state.year,
         this.state.cvv,
-        this.state.zip,
+        this.state.addressZip,
         () => {
           this.props.history.push("/congrats");
         }
@@ -928,6 +902,17 @@ class PaymentDetails extends React.Component {
                   });
                 }}
               />
+              <input
+                type='text'
+                placeholder='Enter Password'
+                className={styles.input}
+                value={this.state.customerPassword}
+                onChange={e => {
+                  this.setState({
+                    customerPassword: e.target.value
+                  });
+                }}
+              />
             <div style = {{display: 'inline-flex', height: '100px', width: '125%'}}>
               <input
                 type='text'
@@ -978,31 +963,6 @@ class PaymentDetails extends React.Component {
               className={styles.finishButton}
               onClick={() => {
                 this.handleCheckout();
-                /*console.log("this.props.email: " + this.props.email);
-                console.log("this.props.customerId: " + this.props.customerId);
-                console.log("this.props.socialMedia: " + this.props.socialMedia);
-                console.log("this.props.password: " + this.props.email);
-                console.log("this.props.email: " + this.props.email);
-                console.log("this.props.email: " + this.props.email);*/
-                /*this.props.submitPayment(
-                  this.props.email,
-                  this.props.customerId,
-                  this.props.socialMedia,
-                  this.props.password,
-                  this.props.firstName,
-                  this.props.lastName,
-                  this.props.phone,
-                  this.props.street,
-                  this.props.unit,
-                  this.props.city,
-                  this.props.state,
-                  this.props.zip,
-                  this.props.instructions,
-                  this.props.selectedPlan,
-                  () => {
-                    this.props.history.push("/congrats");
-                  }
-                );*/
               }}
             >
               FINISH
