@@ -82,8 +82,6 @@ class PaymentDetails extends React.Component {
   }
 
   componentDidMount() {
-    //console.log("customer uid: " + this.state.customerId);
-    //console.log("PaymentDetails selected plan: " + JSON.stringify(this.props.selectedPlan));
     if (
       document.cookie
         .split(";")
@@ -100,7 +98,6 @@ class PaymentDetails extends React.Component {
       });
       this.props.fetchProfileInformation(customerUid);
       console.log("payment details props: " + JSON.stringify(this.props));
-      //console.log("(logged in) customerUid: " + this.state.customerUid);
     } else {
       // Reroute to log in page
       console.log("Payment-details NOT LOGGED IN");
@@ -108,8 +105,6 @@ class PaymentDetails extends React.Component {
         mounted: true,
         customerUid: "NULL"
       });
-      //console.log("(not logged in) customerUid: " + this.state.customerUid);
-      //this.props.history.push("/");
     }
 
     console.log("(mount) LOGIN password: " + this.props.loginPassword);
@@ -417,7 +412,6 @@ class PaymentDetails extends React.Component {
             console.log("Payment submission failure!");
             this.toggleDisplay();
           }
-          //this.props.history.push("/congrats");
         }
       );
     }
@@ -472,10 +466,6 @@ class PaymentDetails extends React.Component {
 }
 
   render() {
-    // if (!this.state.mounted) {
-    //   return null;
-    // }
-    {/*console.log("\ndisplay error message? " + this.state.displayError + "\n");*/}
     let loggedInByPassword = false;
     if (this.props.socialMedia === "NULL") {
       loggedInByPassword = true;
@@ -530,14 +520,13 @@ class PaymentDetails extends React.Component {
             <div style = {{display: 'inline-block', width: '80%', height: '350px'}}>
               <input
                 type='text'
-                placeholder='Search for an Address'
+                placeholder='Street'
                 className={styles.input}
                 value={this.state.street}
                 onChange={e => {
                   this.setState({
                     street: e.target.value
                   });
-                  //console.log("new address line 1: " + this.state.deliveryAddress1);
                 }}
               />
               <input
@@ -549,7 +538,6 @@ class PaymentDetails extends React.Component {
                   this.setState({
                     unit: e.target.value
                   });
-                  //console.log("new address line 2: " + this.state.deliveryAddress2);
                 }}
               />
               <input
@@ -594,7 +582,6 @@ class PaymentDetails extends React.Component {
                   this.setState({
                     instructions: e.target.value
                   });
-                  //console.log("new instructions: " + this.state.deliveryInstructions);
                 }}
               />
             </div>
@@ -612,9 +599,6 @@ class PaymentDetails extends React.Component {
 
             
           <div style = {{display: 'inline-block', width: '80%', height: '300px'}}>
-            {/*<div className = {styles.googleMap}>
-              Google Map
-            </div>*/}
             <div className = {styles.googleMap}>
               <WrappedMap 
                 googleMapURL={`https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places`} 
@@ -668,14 +652,6 @@ class PaymentDetails extends React.Component {
                   });
                 }}
               />
-              {/*<input
-                type='text'
-                placeholder='Email'
-                className={styles.inputContactRight}
-                value={this.props.email}
-                onChange={e => {
-                }}
-              />*/}
               {(() => {
                   if (this.state.customerUid === "NULL") {
                     return (
@@ -827,7 +803,6 @@ class PaymentDetails extends React.Component {
                   this.setState({
                     ambassadorCode: e.target.value
                   });
-                  console.log("ambassador code: " + this.state.ambassadorCode);
                 }}
               />
                 
@@ -966,7 +941,7 @@ class PaymentDetails extends React.Component {
                 }}
               />
               <input
-                type='text'
+                type='password'
                 placeholder='Enter Password'
                 className={styles.input}
                 value={this.state.customerPassword}
