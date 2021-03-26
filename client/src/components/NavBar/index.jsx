@@ -260,18 +260,19 @@ class NavBar extends React.Component {
                 Sign In
               </Link> */}
 
-              <button 
-                onClick={this.props.poplogin}
-                className={styles.signInBtn}
-              >
-                Plogin
-              </button>
+              
 
               <button 
                 onClick={this.props.popSignup}
                 className={styles.signUpBtn}
               >
-                PSignUp
+                Sign Up
+              </button>
+              <button 
+                onClick={this.props.poplogin}
+                className={styles.signInBtn}
+              >
+                Login
               </button>
             </>
           )}
