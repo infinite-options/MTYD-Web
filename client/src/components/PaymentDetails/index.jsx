@@ -25,7 +25,7 @@ import {
   submitPayment
 } from "../../reducers/actions/subscriptionActions";
 
-import {submitPasswordSignUp} from "../../reducers/actions/loginActions";
+import {submitGuestSignUp} from "../../reducers/actions/loginActions";
 
 import {withRouter} from "react-router";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -36,11 +36,12 @@ import {
   faSearch
 } from "@fortawesome/free-solid-svg-icons";
 import {WebNavBar, BottomNavBar} from "../NavBar";
-import {WrappedMap} from "../Map"
+import {WrappedMap} from "../Map";
 import axios from 'axios';
 import { API_URL } from '../../reducers/constants';
 
 import styles from "./paymentDetails.module.css";
+import { ThemeProvider } from "react-bootstrap";
 
 class PaymentDetails extends React.Component {
   constructor() {
@@ -73,13 +74,14 @@ class PaymentDetails extends React.Component {
       unit: "",
       latitude: 37.2270928,
       longitude: -121.8866517,
-      customerUid: ""
+      customerUid: "",
+      customerPassword: "",
+      checkoutMessage: "",
+      displayError: false
     };
   }
 
   componentDidMount() {
-    //console.log("customer uid: " + this.state.customerId);
-    //console.log("PaymentDetails selected plan: " + JSON.stringify(this.props.selectedPlan));
     if (
       document.cookie
         .split(";")
@@ -96,7 +98,6 @@ class PaymentDetails extends React.Component {
       });
       this.props.fetchProfileInformation(customerUid);
       console.log("payment details props: " + JSON.stringify(this.props));
-      //console.log("(logged in) customerUid: " + this.state.customerUid);
     } else {
       // Reroute to log in page
       console.log("Payment-details NOT LOGGED IN");
@@ -104,27 +105,10 @@ class PaymentDetails extends React.Component {
         mounted: true,
         customerUid: "NULL"
       });
-      //console.log("(not logged in) customerUid: " + this.state.customerUid);
-      //this.props.history.push("/");
     }
-      
-    /*console.log();
-    console.log("=====| PROFILE DETAILS |=====");
-    console.log("customerUid: " + this.state.customerUid);
-    console.log("customerId: " + this.props.customerId);
-    console.log("email: " + this.props.email);
-    console.log();*/
-      
-    /*console.log("(MOUNT) selected meal plan: " + JSON.stringify(this.props.selectedPlan));
-      
-    console.log("profile email: " + this.props.email);
-    console.log("address email: " + this.props.addressInfo.email);
-    console.log("instructions: " + this.props.instructions);
-    console.log("instructions: " + this.props.deliveryInstructions);
-      
-    console.log("(MOUNT) delivery details: " + JSON.stringify(this.props.address));
-    console.log("(MOUNT) contact details: " + JSON.stringify(this.props.addressInfo));
-    console.log("(MOUNT) card details: " + JSON.stringify(this.props.creditCard));*/
+
+    console.log("(mount) LOGIN password: " + this.props.loginPassword);
+    console.log("(mount) LOGIN userinfo: " + JSON.stringify(this.props.userInfo));
       
     this.setState({
       street: this.props.address.street,
@@ -163,62 +147,63 @@ class PaymentDetails extends React.Component {
         }
         console.log(err);
       });
-      
-    //console.log("customerUid: " + this.state.customerUid);
   }
     
   changeTip(newTip) {
     this.setState({
       tip: newTip
     });
-    //console.log("new tip: " + this.state.tip);
   }
     
   saveDeliveryDetails() {
-    console.log("Saving delivery details...");
+    if(this.state.customerUid !== "NULL"){
+      console.log("Saving delivery details...");
 
-    console.log("address street: " + this.state.street);
-    console.log("address city: " + this.state.city);
-    console.log("address state: " + this.state.state);
-    console.log("address zip: " + this.state.addressZip);
+      console.log("address street: " + this.state.street);
+      console.log("address city: " + this.state.city);
+      console.log("address state: " + this.state.state);
+      console.log("address zip: " + this.state.addressZip);
       
-    let object = {
-      uid: this.state.customerUid,
-      first_name: this.props.addressInfo.firstName,
-      last_name: this.props.addressInfo.lastName,
-      phone: this.props.addressInfo.phoneNumber,
-      email: this.props.email,
-      address: this.state.street,
-      unit: this.state.unit,
-      city: this.state.city,
-      state: this.state.state,
-      zip: this.state.addressZip,
-      noti: "false"
-    };
+      let object = {
+        uid: this.state.customerUid,
+        first_name: this.props.addressInfo.firstName,
+        last_name: this.props.addressInfo.lastName,
+        phone: this.props.addressInfo.phoneNumber,
+        email: this.props.email,
+        address: this.state.street,
+        unit: this.state.unit,
+        city: this.state.city,
+        state: this.state.state,
+        zip: this.state.addressZip,
+        noti: "false"
+      };
                   
-    console.log("(delivery details) update profile URL:" + API_URL + 'UpdateProfile');
-    console.log(JSON.stringify(object));
+      console.log("(delivery details) update profile URL:" + API_URL + 'UpdateProfile');
+      console.log(JSON.stringify(object));
       
-    axios
-      .post(API_URL + 'UpdateProfile', object)
-      .then(res => {
-        console.log(res);
-      })
-      .catch(err => {
-        console.log(err);
-        if (err.response) {
-          console.log("error: " + JSON.stringify(err.response));
-        }
+      axios
+        .post(API_URL + 'UpdateProfile', object)
+        .then(res => {
+          console.log(res);
+        })
+        .catch(err => {
+          console.log(err);
+          if (err.response) {
+            console.log("error: " + JSON.stringify(err.response));
+          }
+        });
+      
+      this.props.changeDeliveryDetails({
+        street: this.state.street,
+        city: this.state.city,
+        state: this.state.state,
+        zip: this.state.addressZip,
+        unit: this.state.unit,
+        instructions: this.state.instructions
       });
-      
-    this.props.changeDeliveryDetails({
-      street: this.state.street,
-      city: this.state.city,
-      state: this.state.state,
-      zip: this.state.addressZip,
-      unit: this.state.unit,
-      instructions: this.state.instructions
-    });
+    } else {
+      console.log("Could not save delivery details: not signed in");
+    }
   }
     
   saveContactDetails() {
@@ -277,10 +262,78 @@ class PaymentDetails extends React.Component {
     });
   }
     
-  handleGuestCheckout = () => {
+  handleGuestCheckout = (guestInfo) => {
     //this.props.history.push("/login");
     console.log("Guest sign up successful!");
+    console.log("New guest info: " + JSON.stringify(guestInfo));
 
+    axios
+    .get(API_URL + 'Profile/' + guestInfo.customer_uid)
+    .then(res => {
+        //console.log("new guest profile fetch info: " + JSON.stringify(res));
+
+        let profileInfo = res.data.result[0];
+
+        console.log("Guest profileInfo: " + JSON.stringify(profileInfo));
+
+        let purchasedItem = [
+          {
+            qty: (this.props.selectedPlan.num_deliveries).toString(),
+            name: this.props.selectedPlan.item_name,
+            price: (this.props.selectedPlan.item_price*this.props.selectedPlan.num_deliveries*(1-(this.props.selectedPlan.delivery_discount*0.01))).toFixed(2),
+            item_uid: this.props.selectedPlan.item_uid,
+            itm_business_uid: '200-000002',
+          },
+        ];
+
+        let checkoutInfo = {
+          customer_uid: profileInfo.customer_uid,
+          salt: profileInfo.password_hashed,
+          business_uid: '200-000002',
+          delivery_first_name: profileInfo.customer_first_name,
+          delivery_last_name: profileInfo.customer_last_name,
+          delivery_email: profileInfo.customer_email,
+          delivery_phone: profileInfo.customer_phone_num,
+          delivery_address: profileInfo.customer_address,
+          delivery_unit: profileInfo.customer_unit,
+          delivery_city: profileInfo.customer_city,
+          delivery_state: profileInfo.customer_state,
+          delivery_zip: profileInfo.customer_zip,
+          delivery_instructions: this.state.instructions,
+          delivery_longitude: profileInfo.customer_long,
+          delivery_latitude: profileInfo.customer_lat,
+          items: purchasedItem,
+          amount_due: (this.props.selectedPlan.item_price*this.props.selectedPlan.num_deliveries*(1-(this.props.selectedPlan.delivery_discount*0.01))).toFixed(2),
+          amount_discount: '0',
+          amount_paid: '0',
+          cc_num: this.state.number,
+          cc_exp_month: this.state.month,
+          cc_exp_year: this.state.year,
+          cc_cvv: this.state.cvv,
+          cc_zip: this.state.cardZip
+        };
+        console.log("guest checkoutInfo: " + JSON.stringify(checkoutInfo));
+        axios
+          .post(API_URL + 'checkout', checkoutInfo)
+          .then(res2 => {
+            console.log(res2);
+            this.props.history.push("/congrats");
+          })
+          .catch(err2 => {
+            console.log(err2);
+            if (err2.response) {
+              console.log(err2.response);
+            }
+          });
+
+    })
+    .catch(err => {
+      if (err.response) {
+        console.log(err.response);
+      } else {
+        console.log(err.toString());
+      }
+    });
   };
 
   handleCheckout() {
@@ -311,9 +364,8 @@ class PaymentDetails extends React.Component {
 
       console.log("password: '" + guestPassword + "'");
 
-      /*this.props.submitPasswordSignUp(
+      this.props.submitGuestSignUp(
         this.state.email,
-        guestPassword,
         guestPassword,
         this.state.firstName,
         this.state.lastName,
@@ -322,16 +374,16 @@ class PaymentDetails extends React.Component {
         this.state.unit,
         this.state.city,
         this.state.state,
-        this.state.zip,
+        this.state.addressZip,
         this.handleGuestCheckout
-      );*/
+      );
       
     } else {
       this.props.submitPayment(
         this.props.email,
         this.state.customerUid,
         this.props.socialMedia,
-        this.props.password,
+        this.state.customerPassword,
         this.state.firstName,
         this.state.lastName,
         this.state.phone,
@@ -346,9 +398,20 @@ class PaymentDetails extends React.Component {
         this.state.month,
         this.state.year,
         this.state.cvv,
-        this.state.zip,
-        () => {
-          this.props.history.push("/congratulations");
+        this.state.cardZip,
+        (response) => {
+          console.log("RESPONSE FROM CHECKOUT: " + JSON.stringify(response));
+          this.setState({
+            checkoutMessage: response.data.message,
+            checkoutCode: response.status
+          });
+          if (response.status >= 200 && response.status <= 299) {
+            console.log("Payment submission success!");
+            this.props.history.push("/congrats");
+          } else if (response.status >= 400 && response.status <= 499) {
+            console.log("Payment submission failure!");
+            this.toggleDisplay();
+          }
         }
       );
     }
@@ -386,10 +449,23 @@ class PaymentDetails extends React.Component {
       });
   }
 
+  toggleDisplay = () => {
+    if(this.state.displayError === false) {
+    this.setState({
+        toggleErrorModal: styles.changeErrorModalPopUpShow,
+        displayError: true,
+    })
+    }else{
+    this.setState({
+        toggleErrorModal: styles.changeErrorModalPopUpHide,
+        displayError: false
+    })
+    }
+    console.log("\ndisplay error toggled to " + this.state.displayError + "\n\n");
+
+}
+
   render() {
-    // if (!this.state.mounted) {
-    //   return null;
-    // }
     let loggedInByPassword = false;
     if (this.props.socialMedia === "NULL") {
       loggedInByPassword = true;
@@ -397,6 +473,35 @@ class PaymentDetails extends React.Component {
     return (
       <div>
         <WebNavBar />
+        {(() => {
+          console.log("\ndisplay error message? " + this.state.displayError + "\n\n");
+          if (this.state.displayError === true) {
+            return (
+              <>
+              <div className = {this.state.toggleErrorModal}>
+                <div className  = {styles.changeErrorModalContainer}>
+                    <a  style = {{
+                            color: 'black',
+                            textAlign: 'center', 
+                            fontSize: '45px', 
+                            zIndex: '2', 
+                            float: 'right', 
+                            position: 'absolute', top: '0px', left: '350px', 
+                            transform: 'rotate(45deg)', 
+                            cursor: 'pointer'}} 
+                            
+                            onClick = {this.toggleDisplay}>+</a>
+
+                    <div style = {{display: 'block', width: '300px', margin: '40px auto 0px'}}>
+                      <h6 style = {{margin: '5px', color: 'orange', fontWeight: 'bold', fontSize: '25px'}}>PAYMENT ERROR</h6>
+                      <text>{this.state.checkoutMessage}</text>
+                    </div> 
+                  </div>
+                </div>
+              </>
+            );
+          }
+        })()} 
         <div
           style={{
             alignSelf: "center",
@@ -415,14 +520,13 @@ class PaymentDetails extends React.Component {
             <div style = {{display: 'inline-block', width: '80%', height: '350px'}}>
               <input
                 type='text'
-                placeholder='Search for an Address'
+                placeholder='Street'
                 className={styles.input}
                 value={this.state.street}
                 onChange={e => {
                   this.setState({
                     street: e.target.value
                   });
-                  //console.log("new address line 1: " + this.state.deliveryAddress1);
                 }}
               />
               <input
@@ -434,7 +538,6 @@ class PaymentDetails extends React.Component {
                   this.setState({
                     unit: e.target.value
                   });
-                  //console.log("new address line 2: " + this.state.deliveryAddress2);
                 }}
               />
               <input
@@ -479,7 +582,6 @@ class PaymentDetails extends React.Component {
                   this.setState({
                     instructions: e.target.value
                   });
-                  //console.log("new instructions: " + this.state.deliveryInstructions);
                 }}
               />
             </div>
@@ -497,9 +599,6 @@ class PaymentDetails extends React.Component {
 
             
           <div style = {{display: 'inline-block', width: '80%', height: '300px'}}>
-            {/*<div className = {styles.googleMap}>
-              Google Map
-            </div>*/}
             <div className = {styles.googleMap}>
               <WrappedMap 
                 googleMapURL={`https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places`} 
@@ -553,14 +652,35 @@ class PaymentDetails extends React.Component {
                   });
                 }}
               />
-              <input
-                type='text'
-                placeholder='Email'
-                className={styles.inputContactRight}
-                value={this.props.email}
-                onChange={e => {
-                }}
-              />
+              {(() => {
+                  if (this.state.customerUid === "NULL") {
+                    return (
+                      <input
+                        type='text'
+                        placeholder='Email'
+                        className={styles.inputContactRight}
+                        value={this.state.email}
+                        onChange={e => {
+                          this.setState({
+                            email: e.target.value
+                          })
+                        }}
+                      />
+                    );
+                  } else {
+                    return (
+                      <input
+                        type='text'
+                        placeholder='Email'
+                        className={styles.inputContactRight}
+                        value={this.props.email}
+                        onChange={e => {
+                    
+                        }}
+                      />
+                    );
+                  }
+                })()} 
             </div>
               
             <div style = {{width: '20%', textAlign: 'right', paddingRight: '10px', height: '150px'}}>
@@ -683,7 +803,6 @@ class PaymentDetails extends React.Component {
                   this.setState({
                     ambassadorCode: e.target.value
                   });
-                  console.log("ambassador code: " + this.state.ambassadorCode);
                 }}
               />
                 
@@ -821,6 +940,17 @@ class PaymentDetails extends React.Component {
                   });
                 }}
               />
+              <input
+                type='password'
+                placeholder='Enter Password'
+                className={styles.input}
+                value={this.state.customerPassword}
+                onChange={e => {
+                  this.setState({
+                    customerPassword: e.target.value
+                  });
+                }}
+              />
             <div style = {{display: 'inline-flex', height: '100px', width: '125%'}}>
               <input
                 type='text'
@@ -871,31 +1001,6 @@ class PaymentDetails extends React.Component {
               className={styles.finishButton}
               onClick={() => {
                 this.handleCheckout();
-                /*console.log("this.props.email: " + this.props.email);
-                console.log("this.props.customerId: " + this.props.customerId);
-                console.log("this.props.socialMedia: " + this.props.socialMedia);
-                console.log("this.props.password: " + this.props.email);
-                console.log("this.props.email: " + this.props.email);
-                console.log("this.props.email: " + this.props.email);*/
-                /*this.props.submitPayment(
-                  this.props.email,
-                  this.props.customerId,
-                  this.props.socialMedia,
-                  this.props.password,
-                  this.props.firstName,
-                  this.props.lastName,
-                  this.props.phone,
-                  this.props.street,
-                  this.props.unit,
-                  this.props.city,
-                  this.props.state,
-                  this.props.zip,
-                  this.props.instructions,
-                  this.props.selectedPlan,
-                  () => {
-                    this.props.history.push("/congratulations");
-                  }
-                );*/
               }}
             >
               FINISH
@@ -924,7 +1029,7 @@ PaymentDetails.propTypes = {
   changeDeliveryInstructions: PropTypes.func.isRequired,
   changePaymentPassword: PropTypes.func.isRequired,
   submitPayment: PropTypes.func.isRequired,
-  submitPasswordSignUp: PropTypes.func.isRequired,
+  submitGuestSignUp: PropTypes.func.isRequired,
   firstName: PropTypes.string.isRequired,
   lastName: PropTypes.string.isRequired,
   street: PropTypes.string.isRequired,
@@ -934,6 +1039,7 @@ PaymentDetails.propTypes = {
   zip: PropTypes.string.isRequired,
   phone: PropTypes.string.isRequired,
   instructions: PropTypes.string.isRequired,
+  loginPassword: PropTypes.string.isRequired,
   password: PropTypes.string.isRequired
 };
 
@@ -951,6 +1057,8 @@ const mapStateToProps = state => ({
   phone: state.subscribe.addressInfo.phoneNumber,
   instructions: state.subscribe.deliveryInstructions,
   selectedPlan: state.subscribe.selectedPlan,
+  loginPassword: state.login.password,
+  userInfo: state.login.newUserInfo,
   password: state.subscribe.paymentPassword,
   address: state.subscribe.address,
   addressInfo: state.subscribe.addressInfo,
@@ -979,7 +1087,7 @@ const functionList = {
   changeCardZip,
   changeCardCvv,
   submitPayment,
-  submitPasswordSignUp
+  submitGuestSignUp
 };
 
 export default connect(
