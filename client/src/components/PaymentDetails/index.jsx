@@ -36,7 +36,7 @@ import {
   faSearch
 } from "@fortawesome/free-solid-svg-icons";
 import {WebNavBar, BottomNavBar} from "../NavBar";
-import {WrappedMap} from "../Map"
+import {WrappedMap} from "../Map";
 import axios from 'axios';
 import { API_URL } from '../../reducers/constants';
 
@@ -76,6 +76,8 @@ class PaymentDetails extends React.Component {
       longitude: -121.8866517,
       customerUid: "",
       customerPassword: "",
+      checkoutMessage: "",
+      displayError: false
     };
   }
 
@@ -109,6 +111,9 @@ class PaymentDetails extends React.Component {
       //console.log("(not logged in) customerUid: " + this.state.customerUid);
       //this.props.history.push("/");
     }
+
+    console.log("(mount) LOGIN password: " + this.props.loginPassword);
+    console.log("(mount) LOGIN userinfo: " + JSON.stringify(this.props.userInfo));
       
     this.setState({
       street: this.props.address.street,
@@ -398,9 +403,21 @@ class PaymentDetails extends React.Component {
         this.state.month,
         this.state.year,
         this.state.cvv,
-        this.state.addressZip,
-        () => {
-          this.props.history.push("/congrats");
+        this.state.cardZip,
+        (response) => {
+          console.log("RESPONSE FROM CHECKOUT: " + JSON.stringify(response));
+          this.setState({
+            checkoutMessage: response.data.message,
+            checkoutCode: response.status
+          });
+          if (response.status >= 200 && response.status <= 299) {
+            console.log("Payment submission success!");
+            this.props.history.push("/congrats");
+          } else if (response.status >= 400 && response.status <= 499) {
+            console.log("Payment submission failure!");
+            this.toggleDisplay();
+          }
+          //this.props.history.push("/congrats");
         }
       );
     }
@@ -438,10 +455,27 @@ class PaymentDetails extends React.Component {
       });
   }
 
+  toggleDisplay = () => {
+    if(this.state.displayError === false) {
+    this.setState({
+        toggleErrorModal: styles.changeErrorModalPopUpShow,
+        displayError: true,
+    })
+    }else{
+    this.setState({
+        toggleErrorModal: styles.changeErrorModalPopUpHide,
+        displayError: false
+    })
+    }
+    console.log("\ndisplay error toggled to " + this.state.displayError + "\n\n");
+
+}
+
   render() {
     // if (!this.state.mounted) {
     //   return null;
     // }
+    {/*console.log("\ndisplay error message? " + this.state.displayError + "\n");*/}
     let loggedInByPassword = false;
     if (this.props.socialMedia === "NULL") {
       loggedInByPassword = true;
@@ -449,6 +483,35 @@ class PaymentDetails extends React.Component {
     return (
       <div>
         <WebNavBar />
+        {(() => {
+          console.log("\ndisplay error message? " + this.state.displayError + "\n\n");
+          if (this.state.displayError === true) {
+            return (
+              <>
+              <div className = {this.state.toggleErrorModal}>
+                <div className  = {styles.changeErrorModalContainer}>
+                    <a  style = {{
+                            color: 'black',
+                            textAlign: 'center', 
+                            fontSize: '45px', 
+                            zIndex: '2', 
+                            float: 'right', 
+                            position: 'absolute', top: '0px', left: '350px', 
+                            transform: 'rotate(45deg)', 
+                            cursor: 'pointer'}} 
+                            
+                            onClick = {this.toggleDisplay}>+</a>
+
+                    <div style = {{display: 'block', width: '300px', margin: '40px auto 0px'}}>
+                      <h6 style = {{margin: '5px', color: 'orange', fontWeight: 'bold', fontSize: '25px'}}>PAYMENT ERROR</h6>
+                      <text>{this.state.checkoutMessage}</text>
+                    </div> 
+                  </div>
+                </div>
+              </>
+            );
+          }
+        })()} 
         <div
           style={{
             alignSelf: "center",
@@ -1001,6 +1064,7 @@ PaymentDetails.propTypes = {
   zip: PropTypes.string.isRequired,
   phone: PropTypes.string.isRequired,
   instructions: PropTypes.string.isRequired,
+  loginPassword: PropTypes.string.isRequired,
   password: PropTypes.string.isRequired
 };
 
@@ -1018,6 +1082,8 @@ const mapStateToProps = state => ({
   phone: state.subscribe.addressInfo.phoneNumber,
   instructions: state.subscribe.deliveryInstructions,
   selectedPlan: state.subscribe.selectedPlan,
+  loginPassword: state.login.password,
+  userInfo: state.login.newUserInfo,
   password: state.subscribe.paymentPassword,
   address: state.subscribe.address,
   addressInfo: state.subscribe.addressInfo,

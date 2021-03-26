@@ -446,17 +446,19 @@ export const submitPayment = (
                   axios
                     .post(API_URL + 'checkout', object)
                     .then(res => {
-                      console.log(res);
+                      console.log("checkout successful!");
+                      //console.log("checkout response: " + JSON.stringify(res));
                       dispatch({
                         type: SUBMIT_PAYMENT,
                       });
-                      callback();
+                      callback(res);
                     })
                     .catch(err => {
-                      console.log("Error attempting to complete purchase");
-                      console.log(err);
+                      //console.log("Error attempting to complete purchase");
+                      console.log("Error: " + err);
                       if (err.response) {
-                        console.log(err.response);
+                        console.log("error.response: " + JSON.stringify(err.response));
+                        callback(err.response);
                       }
                     });
                 }
