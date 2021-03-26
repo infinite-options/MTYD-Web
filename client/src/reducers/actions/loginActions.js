@@ -125,6 +125,7 @@ export const forgotPassword = (email) => dispatch => {
 
 export const loginAttempt = (email, password, callback) => dispatch => {
   // Get salt for account
+  console.log('inside login attempt')
   axios
     .post(API_URL + "accountsalt", {
       email: email

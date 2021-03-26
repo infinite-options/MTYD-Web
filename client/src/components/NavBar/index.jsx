@@ -253,21 +253,33 @@ class NavBar extends React.Component {
             </>
           ) : (
             <>
-              <Link to='/home' className={styles.signUpBtn}>
+              {/* <Link to='/home' className={styles.signUpBtn}>
                 Sign Up
               </Link>
               <Link to='/login' className={styles.signInBtn}>
                 Sign In
-              </Link>
+              </Link> */}
+
+              <button 
+                onClick={this.props.poplogin}
+                className={styles.signInBtn}
+              >
+                Plogin
+              </button>
+
+              <button 
+                onClick={this.props.popSignup}
+                className={styles.signUpBtn}
+              >
+                PSignUp
+              </button>
             </>
           )}
         </ul>
 
 
 
-        <div onClick={this.props.poplogin} >
-          <button className={styles.signInBtn}>Pop login</button>
-        </div>
+
 
 
 

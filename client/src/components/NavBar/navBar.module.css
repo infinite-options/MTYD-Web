@@ -70,7 +70,10 @@
   border-radius: 30px;
   background-color: #ff9e19;
   justify-content: center;
-  border:1px solid black;
+  font-weight: 500;
+  font-size: 20px;
+  margin:0.25rem;
+  border-color:#ff9e19;
 } 
 
 .signUpBtn {
@@ -79,7 +82,22 @@
   border-radius: 30px;
   background-color: red;
   justify-content: center;
+  margin:0.25rem;
+  font-weight: 500;
+  font-size: 20px;
+  border-color: red;
 } 
+.signUpBtn:hover{
+  height: 50% !important;
+  width: 110px;
+  border-radius: 30px;
+  background-color: red;
+  justify-content: center;
+  margin:0.25rem;
+  font-weight: 500;
+  font-size: 20px;  
+} 
+
 
 .whiteBackBtn {
   height: 50% !important;

@@ -40,97 +40,118 @@ export class PopLogin extends Component {
   render() {
     return (
       <div          
-        className="model_content"
+        className="pop_content"
       >
         <div>
-          <span className="close" onClick={this.handleClick}>
+          <div className="close" onClick={this.handleClick}>
             &times;
-          </span>
-          <div>
-            <p style={{
-              textAlign:'center',
-              color:'black'
-              }} 
-            >
-            Login
-            </p>
           </div>
 
-          <div className="loginSectionItem">
+          <p style={{
+            textAlign:'center',
+            top: '25px',
+            // left: '217px',
+            // width: '194px',
+            height: '28px',
+            letterSpacing: '0.38px',
+            color: '#136D74',
+            fontSize:'24px',
+            opacity: 1,
+            marginTop:'15px',
+            }} 
+          >
+          Login
+          </p>
+          <div class="inputContainer">
             <input
               type='text'
               placeholder='USER NAME'
-              className="loginSectionInput"
-              size="56"
+              className="loginSectionItem"
               onChange={e => {
                 this.props.changeEmail(e.target.value);
                 console.log(e.target.value);
               }}
             />
+            
           </div>
+          
 
-          <div className="loginSectionItem">
-              <input
-                className="loginSectionInput"
-                style={{marginBottom: "0px"}}
-                type='password'
-                id='password'
-                placeholder='PASSWORD'
-                size="56"
-                value={this.props.password}
-                onChange={e => {
-                  this.props.changePassword(e.target.value);
-                }}
-              />
-          </div>
-          <div
-          styles={{
-            margin: 0,
-            position: 'absolute',
-            top: '50%',
-            transform: 'translateY(-50%)',
-          }}
+
+
+
+
+          <input
+            className="loginSectionItem"
+            style={{marginBottom: "0px"}}
+            type='password'
+            id='password'
+            placeholder='PASSWORD'
+            size="56"
+            value={this.props.password}
+            onChange={e => {
+              this.props.changePassword(e.target.value);
+            }}
+          />
+
+          <button
+            className='signInBtn'
+            onClick={() => {
+              this.props.loginAttempt(
+                this.props.email,
+                this.props.password,
+                this.successLogin
+              );
+
+              console.log(this.props.email)
+              console.log(this.props.password)
+            }}
           >
-            <button
-              className='signInBtn'
-              onClick={() => {
-                this.props.loginAttempt(
-                  this.props.email,
-                  this.props.password,
-                  this.successLogin
-                );
-              }}
-            >
-              <p
-              style={{
-                textAlign: 'center',
-                letterSpacing: '0.32px',
-                color: '#FFFFFF',
-                opacity: 1,
-              }}>
-                Login
-              </p>
-              
-            </button>
-            <Button
-              style={{
-                background: '#FF8500 0% 0% no-repeat padding-box',
-                borderRadius: '8px',
-                opacity: 1,
-                top: '19px',
-                left: '45px',
-                width: '362px',
-                height: '61px',
-              }}>
-                Login
-            </Button>
-          </div>
 
+            <p
+            style={{
+              textAlign: 'center',
+              letterSpacing: '0.32px',
+              color: '#FFFFFF',
+              opacity: 1,
+            }}>
+              Login
+            </p>
+          </button>
+
+          <p
+          style={{
+            textAlign: 'center',
+            letterSpacing: '0.32px',
+            color: '#FFFFFF',
+            opacity: 1,
+            fontSize:14,
+            color:'#6D7278',
+            paddingTop:0,
+            marginTop:10,
+          }}>
+            Reset password
+          </p>
+
+          <p
+            style={{
+              textAlign: 'center',
+              letterSpacing: '0.32px',
+              color: '#FFFFFF',
+              opacity: 1,
+              fontSize:24,
+              color:'#136D74',
+              fontWeight:'500',
+              paddingTop:0,
+              marginTop:10,
+            }}
+          >
+            Or login with
+          </p>
 
 
           <div
               style={{
-                marginTop: "3.5rem",
+                marginTop: "24",
                 display: "flex",
                 flexDirection: "row",
                 alignContent: "center",

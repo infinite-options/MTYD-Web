@@ -1,47 +1,30 @@
 .close {
   color: Black;
-  float: right;
 }
 
-.model_content {
-  background-color: #E0E6F2;
+.pop_content {
   position: absolute;
   top: 10%;
-  left: 75%;
-  width: 25%;
-  padding: 10px;
+  left: 67%;
+  width: 627px;
+  height: 403px;
+  background: #E0E6E6F2 0% 0% no-repeat padding-box;
   border-radius: 20px;
-  border: 2px solid black;
-}
-
-.paperStyle{
-  position: absolute;
-  width: '500px';
-  text-align: 'center';
-  display: 'inline-block';
-  padding: '20px';
-  margin-top: '50px';
-  background-color: #E0E6F2;
-};
-
-.loginSectionInput {
-  width: 100%;
-  height: 100%;
-  padding: 0px 15px;
-  border-radius: 18px;
-  background-color: #ffffffd0;
-  border: none;
-  box-shadow: 0px 3px 6px #00000029;
-  /* margin-bottom: 5px; */
+  opacity: 1;
 }
 
 .loginSectionItem {
-  margin: 7px 10px;
+  margin: 7px 35px;
 
   display: flex;
   flex-direction: column;
   align-items: center;
   background-color: #ffffffd0;
+  border-color:#E0E6E6F2  ;
+  margin-bottom: 10px;
+  top: 63px;
+  width: 558px;
+  height: 53px;
 }
 
 .signInBtn {
@@ -52,5 +35,15 @@
   left: 138px;
   width: 362px;
   height: 61px;
-  margin-left: 10%;
+  margin-left:138px;
+  margin-top:10px;
+  border-color: #FF8500;
 } 
+
+.inputContainer i {
+  position: absolute;
+}
+.inputContainer {
+  width: 100%;
+  margin-bottom: 10px;
+}

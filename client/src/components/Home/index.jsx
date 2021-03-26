@@ -19,6 +19,7 @@ import googleImg from "../../images/google-plus.svg"
 import Box from '@material-ui/core/Box';
 import { makeStyles } from '@material-ui/core/styles';
 import PopLogin from '../PopLogin';
+import Popsignup from '../PopSignup';
 
 class Home extends Component {   
   state = { 
@@ -26,12 +27,20 @@ class Home extends Component {
     windowHeight: undefined,
     windowWidth: undefined,
     login_seen:false,
+    signUpSeen:false,
   }
 
-  togglePop = () => {
+  togglePopLogin = () => {
     console.log('home page pop login clicked')
     this.setState({
      login_seen: !this.state.login_seen
+    });
+   };
+
+   togglePopSignup = () => {
+    console.log('home page signup login clicked')
+    this.setState({
+     signUpSeen: !this.state.signUpSeen
     });
    };
 
@@ -53,8 +62,12 @@ class Home extends Component {
     return (
       <>
       <div>
-        <WebNavBar poplogin = {this.togglePop}/>
-        {this.state.login_seen ? <PopLogin toggle={this.togglePop} /> : null}
+        <WebNavBar 
+        poplogin = {this.togglePopLogin}
+        popSignup = {this.togglePopSignup}
+        />
+        {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
+        {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
       </div>
 
         
