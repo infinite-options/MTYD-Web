@@ -84,6 +84,7 @@ class PaymentDetails extends React.Component {
   }
 
   componentDidMount() {
+    console.log("payment details props: " + JSON.stringify(this.props));
     if (
       document.cookie
         .split(";")
@@ -99,7 +100,7 @@ class PaymentDetails extends React.Component {
         customerUid: customerUid
       });
       this.props.fetchProfileInformation(customerUid);
-      console.log("payment details props: " + JSON.stringify(this.props));
+      //console.log("payment details props: " + JSON.stringify(this.props));
     } else {
       // Reroute to log in page
       console.log("Payment-details NOT LOGGED IN");
@@ -210,10 +211,14 @@ class PaymentDetails extends React.Component {
     
   saveContactDetails() {
     console.log("Saving contact details...");
-    console.log("firstName: " + this.props.addressInfo.firstName);
+    /*console.log("firstName: " + this.props.addressInfo.firstName);
     console.log("lastName: " + this.props.addressInfo.lastName);
     console.log("email: " + this.props.email);
-    console.log("phone: " + this.props.addressInfo.phone);
+    console.log("phone: " + this.props.addressInfo.phone);*/
+    console.log("firstName: " + this.state.firstName);
+    console.log("lastName: " + this.state.lastName);
+    console.log("email: " + this.state.email);
+    console.log("phone: " + this.state.phone);
       
     let object = {
       uid: this.state.customerUid,
@@ -789,9 +794,9 @@ displayAmbassadorError = () => {
                   this.props.selectedPlan.num_deliveries
                 } Deliveries):
               </div>
-              <div className={styles.summaryLeft}>
+              {/*<div className={styles.summaryLeft}>
                 Add-Ons:
-              </div>
+              </div>*/}
               <div className={styles.summaryLeft}>
                 Total Delivery Fee For All {
                   this.props.selectedPlan.num_deliveries
@@ -911,9 +916,9 @@ displayAmbassadorError = () => {
                   this.props.selectedPlan.num_deliveries
                 )}
               </div>
-              <div className={styles.summaryRight}>
+              {/*<div className={styles.summaryRight}>
                 ${this.state.addOns}
-              </div>
+              </div>*/}
               <div className={styles.summaryRight}>
                 ${this.state.deliveryFee}
               </div>

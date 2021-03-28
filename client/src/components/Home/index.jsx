@@ -50,6 +50,7 @@ class Home extends Component {
   });
 
   componentDidMount() {
+    console.log("Home page props: " + JSON.stringify(this.props));
     this.handleResize();
     window.addEventListener('resize', this.handleResize);
   }
