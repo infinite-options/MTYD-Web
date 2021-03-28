@@ -77,7 +77,9 @@ class PaymentDetails extends React.Component {
       customerUid: "",
       customerPassword: "",
       checkoutMessage: "",
-      displayError: false
+      checkoutError: false,
+      ambassadorMessage: "",
+      ambassadorError: false
     };
   }
 
@@ -408,9 +410,9 @@ class PaymentDetails extends React.Component {
           if (response.status >= 200 && response.status <= 299) {
             console.log("Payment submission success!");
             this.props.history.push("/congrats");
-          } else if (response.status >= 400 && response.status <= 499) {
+          } else if (response.status >= 400 && response.status <= 599) {
             console.log("Payment submission failure!");
-            this.toggleDisplay();
+            this.displayCheckoutError();
           }
         }
       );
@@ -419,18 +421,48 @@ class PaymentDetails extends React.Component {
     
   applyAmbassadorCode() {
     console.log("Applying ambassador code...");
+    console.log("this.state.ambassadorCode: " + this.state.ambassadorCode);
+    console.log("this.props.email: " + this.props.email);
+    console.log("this.state.email: {" + this.state.email + "}");
+
+    if(this.state.email !== ""){
+      console.log("(Ambassador code) Valid email");
+    } else {
+      console.log("(Ambassador code) Invalid email");
+    }
       
     axios
       .post(API_URL + 'brandAmbassador/generate_coupon',
         {
           amb_email: this.state.ambassadorCode,
-          cust_email: this.props.email
+          cust_email: "codetest3@gmail.com"
         }
       )
       .then(res => {
-        let items = res.data.result[0];
-        console.log("ambassador code response: " + JSON.stringify(items));
-        if(items.valid === "TRUE") {
+        let items = res.data
+        console.log("ambassador code response: " + JSON.stringify(res));
+
+        if(typeof(items) === "string") {
+          console.log("Invalid code");
+          this.setState({
+            validCode: false,
+            ambassadorMessage: items
+          });
+          this.displayAmbassadorError();
+        } else {
+          console.log("Valid code");
+          items = items.result[0];
+          console.log("result: " + JSON.stringify(items));
+          this.setState({
+            validCode: true,
+            ambassadorDiscount: (
+              items.discount_amount +
+              items.discount_shipping
+            )
+          });
+        }
+
+        /*if(items.valid === "TRUE") {
           this.setState({
             validCode: true,
             ambassadorDiscount: (
@@ -442,27 +474,41 @@ class PaymentDetails extends React.Component {
           this.setState({
             validCode: false
           });
-        }
+        }*/
       })
       .catch(err => {
-        console.log(err);
+        console.log("Ambassador code error: " + err);
       });
   }
 
-  toggleDisplay = () => {
-    if(this.state.displayError === false) {
+  displayCheckoutError = () => {
+    if(this.state.checkoutError === false) {
     this.setState({
-        toggleErrorModal: styles.changeErrorModalPopUpShow,
-        displayError: true,
+        checkoutErrorModal: styles.changeErrorModalPopUpShow,
+        checkoutError: true,
     })
     }else{
     this.setState({
-        toggleErrorModal: styles.changeErrorModalPopUpHide,
-        displayError: false
+        checkoutErrorModal: styles.changeErrorModalPopUpHide,
+        checkoutError: false
     })
     }
-    console.log("\ndisplay error toggled to " + this.state.displayError + "\n\n");
+    console.log("\ncheckout error toggled to " + this.state.checkoutError + "\n\n");
+}
 
+displayAmbassadorError = () => {
+  if(this.state.ambassadorError === false) {
+  this.setState({
+      ambassadorErrorModal: styles.changeErrorModalPopUpShow,
+      ambassadorError: true,
+  })
+  }else{
+  this.setState({
+      ambassadorErrorModal: styles.changeErrorModalPopUpHide,
+      ambassadorError: false
+  })
+  }
+  console.log("\nambassador error toggled to " + this.state.ambassadorError + "\n\n");
 }
 
   render() {
@@ -474,11 +520,11 @@ class PaymentDetails extends React.Component {
       <div>
         <WebNavBar />
         {(() => {
-          console.log("\ndisplay error message? " + this.state.displayError + "\n\n");
-          if (this.state.displayError === true) {
+          console.log("\ndisplay checkout error message? " + this.state.checkoutError + "\n\n");
+          if (this.state.checkoutError === true) {
             return (
               <>
-              <div className = {this.state.toggleErrorModal}>
+              <div className = {this.state.checkoutErrorModal}>
                 <div className  = {styles.changeErrorModalContainer}>
                     <a  style = {{
                             color: 'black',
@@ -490,11 +536,40 @@ class PaymentDetails extends React.Component {
                             transform: 'rotate(45deg)', 
                             cursor: 'pointer'}} 
                             
-                            onClick = {this.toggleDisplay}>+</a>
+                            onClick = {this.displayCheckoutError}>+</a>
 
                     <div style = {{display: 'block', width: '300px', margin: '40px auto 0px'}}>
                       <h6 style = {{margin: '5px', color: 'orange', fontWeight: 'bold', fontSize: '25px'}}>PAYMENT ERROR</h6>
                       <text>{this.state.checkoutMessage}</text>
+                    </div> 
+                  </div>
+                </div>
+              </>
+            );
+          }
+        })()} 
+        {(() => {
+          console.log("\ndisplay ambassador error message? " + this.state.ambassadorError + "\n\n");
+          if (this.state.ambassadorError === true) {
+            return (
+              <>
+              <div className = {this.state.ambassadorErrorModal}>
+                <div className  = {styles.changeErrorModalContainer}>
+                    <a  style = {{
+                            color: 'black',
+                            textAlign: 'center', 
+                            fontSize: '45px', 
+                            zIndex: '2', 
+                            float: 'right', 
+                            position: 'absolute', top: '0px', left: '350px', 
+                            transform: 'rotate(45deg)', 
+                            cursor: 'pointer'}} 
+                            
+                            onClick = {this.displayAmbassadorError}>+</a>
+
+                    <div style = {{display: 'block', width: '300px', margin: '40px auto 0px'}}>
+                      <h6 style = {{margin: '5px', color: 'orange', fontWeight: 'bold', fontSize: '25px'}}>AMBASSADOR CODE ERROR</h6>
+                      <text>{this.state.ambassadorMessage}</text>
                     </div> 
                   </div>
                 </div>
@@ -794,6 +869,11 @@ class PaymentDetails extends React.Component {
                   }
                 })()}
               </div>
+
+              {/**{
+                "amb_email":"parva.shah808@gmail.com",
+                "cust_email": "pks0@utdallas.edu"
+              } */}
                 
               <input
                 type='text'
@@ -813,7 +893,7 @@ class PaymentDetails extends React.Component {
                 APPLY CODE
               </button>
                 
-              {(() => {
+              {/*(() => {
                 if (this.state.validCode === false) {
                   return (
                     <text style={{marginLeft: '15px', color: 'red'}}>
@@ -821,7 +901,7 @@ class PaymentDetails extends React.Component {
                     </text>
                   );
                 }
-              })()} 
+              })()*/} 
             </div>
             
             <div style = {{display: 'inline-block', width: '20%', height: '480px'}}>
@@ -900,19 +980,19 @@ class PaymentDetails extends React.Component {
                   PAYPAL
                 </button>
               </div>
-              <div className={styles.buttonContainer}>
+              {/*<div className={styles.buttonContainer}>
                 <button className={styles.button}>
                   VENMO
                 </button>
-              </div>
+                  </div>*/}
             </div>
-          <div style = {{width: '20%', textAlign: 'right', paddingRight: '10px', height: '270px'}}>
-                <button 
+            <div style = {{width: '20%', textAlign: 'right', paddingRight: '10px', height: '270px'}}>
+                {/*<button 
                   className={styles.saveButton}
                   onClick={() => this.savePaymentDetails()}
                 >
                   SAVE
-                </button>
+                </button>*/}
             </div>
           </div>
             

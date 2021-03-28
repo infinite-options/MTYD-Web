@@ -58,6 +58,11 @@ class Home extends Component {
     window.removeEventListener('resize', this.handleResize);
   }
 
+  goToLink(navlink){
+    console.log("LINK CLICKED");
+    this.props.history.push(navlink);
+  }
+
   render() { 
     return (
       <>
@@ -128,7 +133,7 @@ class Home extends Component {
           if (this.state.windowWidth >= 1000) {
             return (
               <div style = {{display: 'inline-flex', width: '100%', marginTop: '30px'}}>
-                <div className = {styles.stepsContainer}>
+                <div className = {styles.stepsContainer} onClick={() => this.goToLink('select-meal')}>
                   <img className = {styles.stepsImage} src = {exploreImg}></img>
                   <div>
                     <h6 className = {styles.stepsNumber}>1</h6>
@@ -136,7 +141,7 @@ class Home extends Component {
                   </div>
                   <h6 className = {styles.stepsText}>Let your pallete be your guide. Explore the different cuisines (we have three!) and dishes available.</h6>
                 </div>
-                <div className = {styles.stepsContainer}>
+                <div className = {styles.stepsContainer} onClick={() => this.goToLink('choose-plan')}>
                   <img className = {styles.stepsImage} src = {purchaseImg}></img>
                   <div>
                     <h6 className = {styles.stepsNumber}>2</h6>
@@ -165,7 +170,7 @@ class Home extends Component {
           } else if (this.state.windowWidth >= 800) {
             return (
               <div style = {{display: 'inline-flex', width: '100%', marginTop: '30px'}}>
-                <div className = {styles.stepsContainer}>
+                <div className = {styles.stepsContainer} onClick={() => this.goToLink('select-meal')}>
                   <img className = {styles.stepsImage} src = {exploreImg}></img>
                   <div style = {{justifyContent: 'center', display: 'inline-flex'}}>
                     <h6 className = {styles.stepsNumberNarrow}>1</h6>
@@ -173,7 +178,7 @@ class Home extends Component {
                   </div>
                   <h6 className = {styles.stepsTextMid}>Let your pallete be your guide. Explore the different cuisines (we have three!) and dishes available.</h6>
                 </div>
-                <div className = {styles.stepsContainer}>
+                <div className = {styles.stepsContainer} onClick={() => this.goToLink('choose-plan')}>
                   <img className = {styles.stepsImage} src = {purchaseImg}></img>
                   <div style = {{justifyContent: 'center', display: 'inline-flex'}}>
                     <h6 className = {styles.stepsNumberNarrow}>2</h6>
@@ -202,7 +207,7 @@ class Home extends Component {
           } else {
             return (
               <div style = {{display: 'inline-block', width: '100%', marginTop: '30px'}}>
-                <div className = {styles.stepsContainer}>
+                <div className = {styles.stepsContainer} onClick={() => this.goToLink('select-meal')}>
                   <img className = {styles.stepsImage} src = {exploreImg}></img>
                   <div style = {{justifyContent: 'center', display: 'inline-flex'}}>
                     <h6 className = {styles.stepsNumberNarrow}>1</h6>
@@ -210,7 +215,7 @@ class Home extends Component {
                   </div>
                   <h6 className = {styles.stepsTextNarrow}>Let your pallete be your guide. Explore the different cuisines (we have three!) and dishes available.</h6>
                 </div>
-                <div className = {styles.stepsContainer}>
+                <div className = {styles.stepsContainer} onClick={() => this.goToLink('choose-plan')}>
                   <img className = {styles.stepsImage} src = {purchaseImg}></img>
                   <div style = {{justifyContent: 'center', display: 'inline-flex'}}>
                     <h6 className = {styles.stepsNumberNarrow}>2</h6>
@@ -386,7 +391,7 @@ class Home extends Component {
             return (
         <div className = {styles.footerBackground}>
           <img className = {styles.footerLogo} src = {Logo} alt="logo" />
-          <div className = {styles.footerLinks}>
+          {/*<div className = {styles.footerLinks}>
             <div>
               <FootLink text = "Buy a Gift Card" link = '/home'/>
             </div>
@@ -396,9 +401,9 @@ class Home extends Component {
             <div>
               <FootLink text = "Contact Us" link = '/home'/>
             </div>
-          </div>
+            </div>*/}
           <div className = {styles.footerRight}>
-            <AmbassadorLink text = "Become an Ambassador"  link = '/home'/>
+            {/*<AmbassadorLink text = "Become an Ambassador"  link = '/home'/>*/}
             <img src = {facebookImg} style = {{marginTop: '25px', height: '75px', width: '75px'}}/>
             <img src = {googleImg} style = {{marginLeft: '25px', marginTop: '25px', height: '75px', width: '75px'}}/>
           </div>
@@ -408,7 +413,7 @@ class Home extends Component {
             return (
         <div className = {styles.footerBackgroundNarrow}>
           <img className = {styles.footerLogoNarrow} src = {Logo} alt="logo" />
-          <div className = {styles.footerLinksNarrow}>
+          {/*<div className = {styles.footerLinksNarrow}>
             <div>
               <FootLink text = "Buy a Gift Card" link = '/home'/>
             </div>
@@ -418,9 +423,9 @@ class Home extends Component {
             <div>
               <FootLink text = "Contact Us" link = '/home'/>
             </div>
-          </div>
+            </div>*/}
           <div className = {styles.footerRightNarrow}>
-            <AmbassadorLink text = "Become an Ambassador"  link = '/home'/>
+            {/*<AmbassadorLink text = "Become an Ambassador"  link = '/home'/>*/}
             <img src = {facebookImg} style = {{marginTop: '25px', height: '75px', width: '75px'}}/>
             <img src = {googleImg} style = {{marginLeft: '25px', marginTop: '25px', height: '75px', width: '75px'}}/>
           </div>

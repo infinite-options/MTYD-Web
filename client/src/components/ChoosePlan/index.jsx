@@ -151,37 +151,81 @@ class ChoosePlan extends React.Component {
   }
 
   mealsDelivery = () => {
+    //console.log("(meals delivery) CHOOSE PLANS PROPS: " + JSON.stringify(this.props));
+
+
+
     let deselectedMealButton = styles.mealButton;
     let selectedMealButton =
     styles.mealButton + " " + styles.mealButtonSelected;
     let mealButtons = [];
-    for (var numMeals = 2; numMeals<=6; numMeals++) {
-      let planStr = numMeals.toString();
+    let singleMealData;
+
+    // this.props.plans
+    let mealPlans = this.props.plans;
+    for (const [mealIndex, mealData] of Object.entries(mealPlans)) {
+
+      singleMealData = mealData["1"];
+      //console.log("data for single delivery of " + mealIndex + " meal plan: " + JSON.stringify(singleMealData));
+
       mealButtons.push(
         <div className={styles.mealButtonWrapper}>
         <button
-          key={planStr}
+          key={mealIndex}
           className={
-            this.props.meals === planStr
+            this.props.meals === mealIndex
               ? selectedMealButton
               : deselectedMealButton
           }
           onClick={() =>
             this.props.chooseMealsDelivery(
-              planStr,
+              mealIndex,
               this.props.paymentOption,
               this.props.plans
             )
           }
         >
-          {planStr} MEALS
+          {mealIndex} MEALS
         </button>
         <div style={{textAlign: 'center', marginTop: '10px'}}>
-          ${numMeals * 12}
+          ${singleMealData.item_price}
         </div>
         </div>
       );
     }
+
+      /*for (const [deliveryIndex, planData] of Object.entries(mealData)) {
+        console.log(mealIndex + " meals, " + deliveryIndex + " deliveries");
+        //console.log("Data: " + JSON.stringify(planData));
+
+        mealButtons.push(
+          <div className={styles.mealButtonWrapper}>
+          <button
+            key={mealIndex}
+            className={
+              this.props.meals === mealIndex
+                ? selectedMealButton
+                : deselectedMealButton
+            }
+            onClick={() =>
+              this.props.chooseMealsDelivery(
+                mealIndex,
+                this.props.paymentOption,
+                this.props.plans
+              )
+            }
+          >
+            {mealIndex} MEALS
+          </button>
+          <div style={{textAlign: 'center', marginTop: '10px'}}>
+            ${parseInt(mealIndex) * 12}
+          </div>
+          </div>
+        );
+
+      }
+    }*/
+
     return mealButtons;
   };
 
@@ -194,29 +238,31 @@ class ChoosePlan extends React.Component {
     console.log(this.props.plans);
     console.log(this.state.unlogin_plans);
       
-    for (var numDeliveries = 1; numDeliveries<=10; numDeliveries++) {
+    var discounts = this.props.plans["2"];
+    var discount = null;
+    let numDeliveries;
+
+    //for (var numDeliveries = 1; numDeliveries<=10; numDeliveries++) {
+    for (const [deliveryIndex, deliveryData] of Object.entries(discounts)) {
       let active = false;
-      let optionStr = numDeliveries.toString();
+      //let optionStr = numDeliveries.toString();
+      numDeliveries = deliveryIndex.toString();
       if (this.props.meals === "") {
         active = true;
       } else {
         active = false;
       }
       // console.log(this.props.meals);
-
-        
-      var discounts = this.props.plans["2"];
-      var discount = null;
         
       try{
-        discount = discounts[numDeliveries].delivery_discount;
+        discount = discounts[deliveryIndex].delivery_discount;
         // console.log("discount: " + discount);
       } catch(e) {
         // console.log("discount UNDEFINED");
       }
         
       paymentOptionButtons.push(
-        <div className={styles.sameLine} key={numDeliveries}>
+        <div className={styles.sameLine} key={deliveryIndex}>
           {(() => {
             // if (discount !== null && numDeliveries % 3 !== 0) {
               let tempPlan = null;
@@ -232,21 +278,21 @@ class ChoosePlan extends React.Component {
                   <button
                   disabled={active}
                   className={
-                    (this.props.paymentOption === optionStr
+                    (this.props.paymentOption === deliveryIndex
                       ? selectedPaymentOption
                       : deselectedPaymentOption) +
                     " " + (active && styles.disabledBtn)
                   }
                   onClick={() => {
                     this.props.choosePaymentOption(
-                      optionStr,
+                      deliveryIndex,
                       this.props.meals,
                       tempPlan
                     )
                   }}
                 >
                   <span style={{fontSize: '35px'}}>
-                    {numDeliveries}
+                    {deliveryIndex}
                   </span>
                   <br></br>
                   {(() => {
