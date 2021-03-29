@@ -74,6 +74,19 @@
   font-size: 20px;
   margin:0.25rem;
   border-color:#ff9e19;
+  outline: none;
+} 
+.signInBtn:focus{
+  height: 50% !important;
+  width: 110px;
+  border-radius: 30px;
+  background-color: #ff9e19;
+  justify-content: center;
+  font-weight: 500;
+  font-size: 20px;
+  margin:0.25rem;
+  border-color:#ff9e19;
+  outline: none;
 } 
 
 .signUpBtn {
@@ -86,8 +99,9 @@
   font-weight: 500;
   font-size: 20px;
   border-color: red;
+  outline: none;
 } 
-.signUpBtn:hover{
+.signUpBtn:focus{
   height: 50% !important;
   width: 110px;
   border-radius: 30px;
@@ -96,6 +110,7 @@
   margin:0.25rem;
   font-weight: 500;
   font-size: 20px;  
+  outline: none;
 } 
 
 

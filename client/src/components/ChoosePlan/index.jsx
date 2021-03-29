@@ -45,15 +45,46 @@ import paymentOption1 from "./Group 2029.svg";
 import paymentOption2 from "./Group 2016.svg";
 import paymentOption3 from "./Group 2030.svg";
 
+import PopLogin from '../PopLogin';
+import Popsignup from '../PopSignup';
+
+
 
 class ChoosePlan extends React.Component {
   constructor() {
     super();
     this.state = {
       mounted: false,
-      unlogin_plans:null
+      unlogin_plans:null,
+      login_seen:false,
+    signUpSeen:false, 
     };
   }
+
+  togglePopLogin = () => {
+    this.setState({
+     login_seen: !this.state.login_seen,
+    });
+
+    if(!this.state.login_seen){
+      this.setState({
+        signUpSeen:false
+      })
+    }
+
+   };
+
+   togglePopSignup = () => {
+    this.setState({
+     signUpSeen: !this.state.signUpSeen
+    });
+
+    if(!this.state.signUpSeen){
+      this.setState({
+        login_seen:false
+      })
+    }
+   };
 
   componentDidMount() {
     console.log("choose-plan props: " + JSON.stringify(this.props));
@@ -422,7 +453,12 @@ class ChoosePlan extends React.Component {
         </div>
         {/* For Full Screen */}
         <div className={styles.full_screen}>
-          <WebNavBar />
+          <WebNavBar 
+            poplogin = {this.togglePopLogin}
+            popSignup = {this.togglePopSignup}
+          />
+          {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
+          {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
           <div className={styles.container}>
             <Menu show={true} message={message} />
             <div className={styles.box}>

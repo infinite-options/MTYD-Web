@@ -31,17 +31,28 @@ class Home extends Component {
   }
 
   togglePopLogin = () => {
-    console.log('home page pop login clicked')
     this.setState({
-     login_seen: !this.state.login_seen
+     login_seen: !this.state.login_seen,
     });
+
+    if(!this.state.login_seen){
+      this.setState({
+        signUpSeen:false
+      })
+    }
+
    };
 
    togglePopSignup = () => {
-    console.log('home page signup login clicked')
     this.setState({
      signUpSeen: !this.state.signUpSeen
     });
+
+    if(!this.state.signUpSeen){
+      this.setState({
+        login_seen:false
+      })
+    }
    };
 
   handleResize = () => this.setState({

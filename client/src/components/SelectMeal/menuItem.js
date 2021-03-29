@@ -1,20 +1,52 @@
 import React, {Fragment} from "react";
 import styles from "./selectmeal.module.css";
 import Tooltip from '@material-ui/core/Tooltip';
-import emptyHeart from './images/empty-heart.png'
-import fullHeart from  './images/full-heart.png'
+import emptyHeart from './images/emptyHeart.svg'
+import fullHeart from  './images/fullHeart.svg'
+import info from  './images/info.svg'
+import {API_URL} from "../../reducers/constants";
+import axios from "axios";
 
 function changeHeart(e){
   console.log("button clicked")
   e.target.setAttribute('src',fullHeart)
-  e.target.setAttribute('width',35)
-  e.target.setAttribute('height',35)
+  e.target.setAttribute('width',40)
+  e.target.setAttribute('height',40)
+
+}
+
+function favoriteGet(customer_uid){
+  const data = {
+    customer_uid: customer_uid
+  }
+  axios
+  .post(
+    `${API_URL}favourite_food/get`,
+    data
+  ).then(response => {
+    console.log(response);
+  })
+}
+
+function favoritePost(customer_uid,meal_uid){
+  const data = {
+    customer_uid: customer_uid,
+    favorite:meal_uid,
+  }
+  axios
+  .post(
+    `${API_URL}favourite_food/post`,
+    data
+  ).then(response => {
+    console.log(response);
+  })
 
 }
 
 class MenuItem extends React.Component {
 
   menuItemFilter = () => {
+    favoriteGet(this.props.customer_uid);
     const {cartItems, show} = this.props;
     let x = this.props.data.filter(
       date => date.menu_date === this.props.myDate
@@ -30,11 +62,14 @@ class MenuItem extends React.Component {
     // console.log(x)
 
     menuHTML = x.map((menuitem, index) => (
+      
       <div
         key={index}
         className={styles.menuitemIndividual + " px-5"}
       >
-
+        {
+          // console.log(menuitem)
+        }
         <div
           style={{
             backgroundImage: `url(${menuitem.meal_photo_URL})`,
@@ -49,7 +84,12 @@ class MenuItem extends React.Component {
 
           <Tooltip title={menuitem.meal_desc}>
             <button className={styles.infoButton}>
-              i
+              <img src={info}
+                    style={{
+                      height:40,
+                      width:40,
+                    }}
+              ></img>
             </button>
           </Tooltip>
 
@@ -59,8 +99,8 @@ class MenuItem extends React.Component {
           >
             <img src={emptyHeart}
                   style={{
-                    height:35,
-                    width:35,
+                    height:40,
+                    width:40,
                   }}
             ></img>
           </button>

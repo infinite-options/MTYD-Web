@@ -98,7 +98,7 @@ class MenuItemList extends Component {
     )
       .then(response => response.json())
       .then(json => {
-        console.log("json: " + JSON.stringify(json))
+        // console.log("json: " + JSON.stringify(json))
         let menuData = [...json.result];
         let myStr = menuData[0].delivery_days;
         let temp = myStr.replace(/[^a-zA-Z ]/g, "").split(" ");
@@ -898,6 +898,7 @@ class MenuItemList extends Component {
                 purchaseID={this.state.purchaseID}
                 show={this.props.subscribedPlans.length}
                 addon = {false}
+                customer_uid = {Cookies.get("customer_uid")}
               />
           
             </div>

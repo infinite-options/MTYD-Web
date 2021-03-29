@@ -8,7 +8,40 @@ import {connect} from "react-redux";
 import Moment from 'react-moment';
 import moment from 'moment';
 
+import PopLogin from '../PopLogin';
+import Popsignup from '../PopSignup';
+
 class Header extends Component {
+
+  state = {     
+    login_seen:false,
+    signUpSeen:false, 
+  }
+
+  togglePopLogin = () => {
+    this.setState({
+     login_seen: !this.state.login_seen,
+    });
+
+    if(!this.state.login_seen){
+      this.setState({
+        signUpSeen:false
+      })
+    }
+
+   };
+
+   togglePopSignup = () => {
+    this.setState({
+     signUpSeen: !this.state.signUpSeen
+    });
+
+    if(!this.state.signUpSeen){
+      this.setState({
+        login_seen:false
+      })
+    }
+   };
   showDeliveryDay = () => {
     const mySet = new Set();
     this.props.data.map(menuitem => {
@@ -115,25 +148,30 @@ class Header extends Component {
         document.getElementById("meal-plan-picker").disabled = false;
       }
     }
-    let login = 1;
+
+    let login = this.props.subscribedPlans.length?(1):(3);
+
     let message = this.props.subscribedPlans.length ? (
       <p className={menuStyles.navMessage}>
-        {login=1}
         Please Complete Your Meal Selection For Your Meal Subscriptions
       </p>
     ) : (
       <p className={menuStyles.navMessage + " text-left"}>
-        {login=3}
         Below are this weeks Meals.{" "}
-        <span style={{display: "block"}}>
-          Please buy a Subscription before selecting
-        </span>
-        Meals
+        {/* <span style={{display: "block"}}>
+          Please buy a Subscription before selecting meals
+        </span> */}
+        
       </p>
     );
     return (
       <>
-        <WebNavBar />
+        <WebNavBar 
+          poplogin = {this.togglePopLogin}
+          popSignup = {this.togglePopSignup}
+        />
+        {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
+        {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
         <MenuBar show={true} message={message} login = {login}/>
         <div>
         {this.props.subscribedPlans.length ? (

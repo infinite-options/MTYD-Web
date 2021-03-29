@@ -361,47 +361,37 @@
 }
 
 .heartButton {
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 35px 35px;
   position:relative;
   left:0;
   color: #000000;
-  font-size: 0.7rem;
-  font-weight: 600;
-  text-align: center !important;
   position: absolute;
   margin: 0.5rem;
   background-color: white;
-  border-radius: 50%;
+  border-radius: 25%;
   border: none;
   white-space: nowrap;
   vertical-align: baseline;
   height: 3rem;
   width: 3rem;
   padding: 0rem;
+  outline: none;
 }
-.clickedHeartButton {
-  background-image: url("./images/full-heart.png");
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 35px 35px;
+
+.heartButton:focus {
   position:relative;
   left:0;
   color: #000000;
-  font-size: 0.7rem;
-  font-weight: 600;
-  text-align: center !important;
   position: absolute;
   margin: 0.5rem;
   background-color: white;
-  border-radius: 50%;
+  border-radius: 25%;
   border: none;
   white-space: nowrap;
   vertical-align: baseline;
   height: 3rem;
   width: 3rem;
   padding: 0rem;
+  outline: none;
 }
 
 .infoButton {
@@ -421,6 +411,23 @@
   margin-left: 260px;
 }
 
+.infoButton:focus{
+  top:0px;
+  right:0px;
+  position: absolute;
+  color: #000000;
+  font-size: 1.0rem;
+  font-weight: 600;
+  text-align: center !important;
+  margin: 0.5rem;
+  background-color: white;
+  border-radius: 50%;
+  border: none;
+  height: 3rem;
+  width: 3rem;
+  margin-left: 260px;
+  outline:none;
+}
 
 .datebutton {
   background-image: url("../../images/button.png");

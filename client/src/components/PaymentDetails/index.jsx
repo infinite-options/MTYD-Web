@@ -42,6 +42,9 @@ import { API_URL } from '../../reducers/constants';
 
 import styles from "./paymentDetails.module.css";
 import { ThemeProvider } from "react-bootstrap";
+import PopLogin from '../PopLogin';
+import Popsignup from '../PopSignup';
+
 
 class PaymentDetails extends React.Component {
   constructor() {
@@ -77,9 +80,35 @@ class PaymentDetails extends React.Component {
       customerUid: "",
       customerPassword: "",
       checkoutMessage: "",
-      displayError: false
+      displayError: false,
+      login_seen:false,
+      signUpSeen:false, 
     };
   }
+  togglePopLogin = () => {
+    this.setState({
+     login_seen: !this.state.login_seen,
+    });
+
+    if(!this.state.login_seen){
+      this.setState({
+        signUpSeen:false
+      })
+    }
+
+   };
+
+   togglePopSignup = () => {
+    this.setState({
+     signUpSeen: !this.state.signUpSeen
+    });
+
+    if(!this.state.signUpSeen){
+      this.setState({
+        login_seen:false
+      })
+    }
+   };
 
   componentDidMount() {
     if (
@@ -472,7 +501,13 @@ class PaymentDetails extends React.Component {
     }
     return (
       <div>
-        <WebNavBar />
+        <WebNavBar 
+        poplogin = {this.togglePopLogin}
+        popSignup = {this.togglePopSignup}
+        />
+        {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
+        {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
+
         {(() => {
           console.log("\ndisplay error message? " + this.state.displayError + "\n\n");
           if (this.state.displayError === true) {
