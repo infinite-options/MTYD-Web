@@ -55,7 +55,7 @@ class PaymentDetails extends React.Component {
       tip: 2,
       serviceFee: 0,
       deliveryFee: 0,
-      taxRate: 0,
+      taxRate: 9.25,
       ambassadorDiscount: 0,
       ambassadorCode: "",
       validCode: true,
@@ -83,6 +83,9 @@ class PaymentDetails extends React.Component {
       displayError: false,
       login_seen:false,
       signUpSeen:false, 
+      checkoutError: false,
+      ambassadorMessage: "",
+      ambassadorError: false
     };
   }
   togglePopLogin = () => {
@@ -111,6 +114,7 @@ class PaymentDetails extends React.Component {
    };
 
   componentDidMount() {
+    console.log("payment details props: " + JSON.stringify(this.props));
     if (
       document.cookie
         .split(";")
@@ -126,7 +130,7 @@ class PaymentDetails extends React.Component {
         customerUid: customerUid
       });
       this.props.fetchProfileInformation(customerUid);
-      console.log("payment details props: " + JSON.stringify(this.props));
+      //console.log("payment details props: " + JSON.stringify(this.props));
     } else {
       // Reroute to log in page
       console.log("Payment-details NOT LOGGED IN");
@@ -164,10 +168,14 @@ class PaymentDetails extends React.Component {
       .get(`${API_URL}categoricalOptions/${this.state.longitude},${this.state.latitude}`)
       .then((response) => {
         //console.log("categorical options data: " + JSON.stringify(response));
-        this.setState({
+        /*this.setState({
           serviceFee: response.data.result[1].service_fee,
           deliveryFee: response.data.result[1].delivery_fee,
           taxRate: response.data.result[1].tax_rate
+        });*/
+        this.setState({
+          serviceFee: response.data.result[1].service_fee,
+          deliveryFee: response.data.result[1].delivery_fee
         });
       })
       .catch((err) => {
@@ -185,14 +193,9 @@ class PaymentDetails extends React.Component {
   }
     
   saveDeliveryDetails() {
-    if(this.state.customerUid !== "NULL"){
-      console.log("Saving delivery details...");
-
-      console.log("address street: " + this.state.street);
-      console.log("address city: " + this.state.city);
-      console.log("address state: " + this.state.state);
-      console.log("address zip: " + this.state.addressZip);
+    console.log("Saving delivery details...");
       
+    if(this.state.customerUid !== "NULL"){
       let object = {
         uid: this.state.customerUid,
         first_name: this.props.addressInfo.firstName,
@@ -207,8 +210,7 @@ class PaymentDetails extends React.Component {
         noti: "false"
       };
                   
-      console.log("(delivery details) update profile URL:" + API_URL + 'UpdateProfile');
-      console.log(JSON.stringify(object));
+      console.log("(saveDeliveryDetails) updateProfile object: " + JSON.stringify(object));
       
       axios
         .post(API_URL + 'UpdateProfile', object)
@@ -221,55 +223,52 @@ class PaymentDetails extends React.Component {
             console.log("error: " + JSON.stringify(err.response));
           }
         });
-      
-      this.props.changeDeliveryDetails({
-        street: this.state.street,
-        city: this.state.city,
-        state: this.state.state,
-        zip: this.state.addressZip,
-        unit: this.state.unit,
-        instructions: this.state.instructions
-      });
-    } else {
-      console.log("Could not save delivery details: not signed in");
     }
+      
+    this.props.changeDeliveryDetails({
+      street: this.state.street,
+      city: this.state.city,
+      state: this.state.state,
+      zip: this.state.addressZip,
+      unit: this.state.unit,
+      instructions: this.state.instructions
+    });
+
+    console.log("delivery props: " + JSON.stringify(this.props));
   }
     
   saveContactDetails() {
     console.log("Saving contact details...");
-    console.log("firstName: " + this.props.addressInfo.firstName);
-    console.log("lastName: " + this.props.addressInfo.lastName);
-    console.log("email: " + this.props.email);
-    console.log("phone: " + this.props.addressInfo.phone);
       
-    let object = {
-      uid: this.state.customerUid,
-      first_name: this.state.firstName,
-      last_name: this.state.lastName,
-      phone: this.state.phone,
-      email: this.props.email,
-      address: this.props.street,
-      unit: this.props.address.unit,
-      city: this.props.address.city,
-      state: this.props.address.state,
-      zip: this.props.address.zip,
-      noti: "false"
-    };
+    if(this.state.customerUid !== "NULL"){
+      let object = {
+        uid: this.state.customerUid,
+        first_name: this.state.firstName,
+        last_name: this.state.lastName,
+        phone: this.state.phone,
+        email: this.props.email,
+        address: this.props.street,
+        unit: this.props.address.unit,
+        city: this.props.address.city,
+        state: this.props.address.state,
+        zip: this.props.address.zip,
+        noti: "false"
+      };
                   
-    console.log("(contact details) update profile URL:" + API_URL + 'UpdateProfile');
-    console.log(JSON.stringify(object));
+      console.log("(saveContactDetails) updateProfile object: " + JSON.stringify(object));
       
-    axios
-      .post(API_URL + 'UpdateProfile', object)
-      .then(res => {
-        console.log(res);
-      })
-      .catch(err => {
-        console.log(err);
-        if (err.response) {
-          console.log("error: " + JSON.stringify(err.response));
-        }
-      });
+      axios
+        .post(API_URL + 'UpdateProfile', object)
+        .then(res => {
+          console.log(res);
+        })
+        .catch(err => {
+          console.log(err);
+          if (err.response) {
+            console.log("error: " + JSON.stringify(err.response));
+          }
+        });
+    }
       
     this.props.changeContactDetails({
       firstName: this.state.firstName,
@@ -279,7 +278,7 @@ class PaymentDetails extends React.Component {
     });
   }
     
-  savePaymentDetails() {
+  /*savePaymentDetails() {
     console.log("Saving payment details...");
     this.props.changePaymentDetails({
       name: this.state.name,
@@ -289,7 +288,7 @@ class PaymentDetails extends React.Component {
       year: this.state.year,
       zip: this.state.cardZip
     });
-  }
+  }*/
     
   handleGuestCheckout = (guestInfo) => {
     //this.props.history.push("/login");
@@ -299,7 +298,7 @@ class PaymentDetails extends React.Component {
     axios
     .get(API_URL + 'Profile/' + guestInfo.customer_uid)
     .then(res => {
-        //console.log("new guest profile fetch info: " + JSON.stringify(res));
+        console.log("new profile fetch info: " + JSON.stringify(res));
 
         let profileInfo = res.data.result[0];
 
@@ -314,6 +313,8 @@ class PaymentDetails extends React.Component {
             itm_business_uid: '200-000002',
           },
         ];
+
+        console.log("(1)");
 
         let checkoutInfo = {
           customer_uid: profileInfo.customer_uid,
@@ -341,6 +342,9 @@ class PaymentDetails extends React.Component {
           cc_cvv: this.state.cvv,
           cc_zip: this.state.cardZip
         };
+
+        console.log("(2)");
+
         console.log("guest checkoutInfo: " + JSON.stringify(checkoutInfo));
         axios
           .post(API_URL + 'checkout', checkoutInfo)
@@ -352,6 +356,17 @@ class PaymentDetails extends React.Component {
             console.log(err2);
             if (err2.response) {
               console.log(err2.response);
+              this.setState({
+                checkoutMessage: err2.response.data.message,
+                checkoutCode: err2.response.status
+              });
+              if (err2.response.status >= 200 && err2.response.status <= 299) {
+                console.log("Payment submission success!");
+                this.props.history.push("/congrats");
+              } else if (err2.response.status >= 400 && err2.response.status <= 599) {
+                console.log("Payment submission failure!");
+                this.displayCheckoutError();
+              }
             }
           });
 
@@ -359,6 +374,17 @@ class PaymentDetails extends React.Component {
     .catch(err => {
       if (err.response) {
         console.log(err.response);
+        this.setState({
+          checkoutMessage: err.response.data.message,
+          checkoutCode: err.response.status
+        });
+        if (err.response.status >= 200 && err.response.status <= 299) {
+          console.log("Payment submission success!");
+          this.props.history.push("/congrats");
+        } else if (err.response.status >= 400 && err.response.status <= 599) {
+          console.log("Payment submission failure!");
+          this.displayCheckoutError();
+        }
       } else {
         console.log(err.toString());
       }
@@ -437,9 +463,9 @@ class PaymentDetails extends React.Component {
           if (response.status >= 200 && response.status <= 299) {
             console.log("Payment submission success!");
             this.props.history.push("/congrats");
-          } else if (response.status >= 400 && response.status <= 499) {
+          } else if (response.status >= 400 && response.status <= 599) {
             console.log("Payment submission failure!");
-            this.toggleDisplay();
+            this.displayCheckoutError();
           }
         }
       );
@@ -448,18 +474,38 @@ class PaymentDetails extends React.Component {
     
   applyAmbassadorCode() {
     console.log("Applying ambassador code...");
+    console.log("this.state.ambassadorCode: " + this.state.ambassadorCode);
+    console.log("this.props.email: " + this.props.email);
+    console.log("this.state.email: {" + this.state.email + "}");
+
+    if(this.state.email !== ""){
+      console.log("(Ambassador code) Valid email");
+    } else {
+      console.log("(Ambassador code) Invalid email");
+    }
       
     axios
       .post(API_URL + 'brandAmbassador/generate_coupon',
         {
           amb_email: this.state.ambassadorCode,
-          cust_email: this.props.email
+          cust_email: this.state.email
         }
       )
       .then(res => {
-        let items = res.data.result[0];
-        console.log("ambassador code response: " + JSON.stringify(items));
-        if(items.valid === "TRUE") {
+        let items = res.data
+        console.log("ambassador code response: " + JSON.stringify(res));
+
+        if(typeof(items) === "string") {
+          console.log("Invalid code");
+          this.setState({
+            validCode: false,
+            ambassadorMessage: items
+          });
+          this.displayAmbassadorError();
+        } else {
+          console.log("Valid code");
+          items = items.result[0];
+          console.log("result: " + JSON.stringify(items));
           this.setState({
             validCode: true,
             ambassadorDiscount: (
@@ -467,31 +513,41 @@ class PaymentDetails extends React.Component {
               items.discount_shipping
             )
           });
-        } else {
-          this.setState({
-            validCode: false
-          });
         }
       })
       .catch(err => {
-        console.log(err);
+        console.log("Ambassador code error: " + err);
       });
   }
 
-  toggleDisplay = () => {
-    if(this.state.displayError === false) {
+  displayCheckoutError = () => {
+    if(this.state.checkoutError === false) {
     this.setState({
-        toggleErrorModal: styles.changeErrorModalPopUpShow,
-        displayError: true,
+        checkoutErrorModal: styles.changeErrorModalPopUpShow,
+        checkoutError: true,
     })
     }else{
     this.setState({
-        toggleErrorModal: styles.changeErrorModalPopUpHide,
-        displayError: false
+        checkoutErrorModal: styles.changeErrorModalPopUpHide,
+        checkoutError: false
     })
     }
-    console.log("\ndisplay error toggled to " + this.state.displayError + "\n\n");
+    console.log("\ncheckout error toggled to " + this.state.checkoutError + "\n\n");
+}
 
+displayAmbassadorError = () => {
+  if(this.state.ambassadorError === false) {
+  this.setState({
+      ambassadorErrorModal: styles.changeErrorModalPopUpShow,
+      ambassadorError: true,
+  })
+  }else{
+  this.setState({
+      ambassadorErrorModal: styles.changeErrorModalPopUpHide,
+      ambassadorError: false
+  })
+  }
+  console.log("\nambassador error toggled to " + this.state.ambassadorError + "\n\n");
 }
 
   render() {
@@ -509,11 +565,11 @@ class PaymentDetails extends React.Component {
         {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
 
         {(() => {
-          console.log("\ndisplay error message? " + this.state.displayError + "\n\n");
-          if (this.state.displayError === true) {
+          console.log("\ndisplay checkout error message? " + this.state.checkoutError + "\n\n");
+          if (this.state.checkoutError === true) {
             return (
               <>
-              <div className = {this.state.toggleErrorModal}>
+              <div className = {this.state.checkoutErrorModal}>
                 <div className  = {styles.changeErrorModalContainer}>
                     <a  style = {{
                             color: 'black',
@@ -525,11 +581,40 @@ class PaymentDetails extends React.Component {
                             transform: 'rotate(45deg)', 
                             cursor: 'pointer'}} 
                             
-                            onClick = {this.toggleDisplay}>+</a>
+                            onClick = {this.displayCheckoutError}>+</a>
 
                     <div style = {{display: 'block', width: '300px', margin: '40px auto 0px'}}>
                       <h6 style = {{margin: '5px', color: 'orange', fontWeight: 'bold', fontSize: '25px'}}>PAYMENT ERROR</h6>
                       <text>{this.state.checkoutMessage}</text>
+                    </div> 
+                  </div>
+                </div>
+              </>
+            );
+          }
+        })()} 
+        {(() => {
+          console.log("\ndisplay ambassador error message? " + this.state.ambassadorError + "\n\n");
+          if (this.state.ambassadorError === true) {
+            return (
+              <>
+              <div className = {this.state.ambassadorErrorModal}>
+                <div className  = {styles.changeErrorModalContainer}>
+                    <a  style = {{
+                            color: 'black',
+                            textAlign: 'center', 
+                            fontSize: '45px', 
+                            zIndex: '2', 
+                            float: 'right', 
+                            position: 'absolute', top: '0px', left: '350px', 
+                            transform: 'rotate(45deg)', 
+                            cursor: 'pointer'}} 
+                            
+                            onClick = {this.displayAmbassadorError}>+</a>
+
+                    <div style = {{display: 'block', width: '300px', margin: '40px auto 0px'}}>
+                      <h6 style = {{margin: '5px', color: 'orange', fontWeight: 'bold', fontSize: '25px'}}>AMBASSADOR CODE ERROR</h6>
+                      <text>{this.state.ambassadorMessage}</text>
                     </div> 
                   </div>
                 </div>
@@ -749,9 +834,9 @@ class PaymentDetails extends React.Component {
                   this.props.selectedPlan.num_deliveries
                 } Deliveries):
               </div>
-              <div className={styles.summaryLeft}>
+              {/*<div className={styles.summaryLeft}>
                 Add-Ons:
-              </div>
+              </div>*/}
               <div className={styles.summaryLeft}>
                 Total Delivery Fee For All {
                   this.props.selectedPlan.num_deliveries
@@ -829,6 +914,11 @@ class PaymentDetails extends React.Component {
                   }
                 })()}
               </div>
+
+              {/**{
+                "amb_email":"parva.shah808@gmail.com",
+                "cust_email": "pks0@utdallas.edu"
+              } */}
                 
               <input
                 type='text'
@@ -848,7 +938,7 @@ class PaymentDetails extends React.Component {
                 APPLY CODE
               </button>
                 
-              {(() => {
+              {/*(() => {
                 if (this.state.validCode === false) {
                   return (
                     <text style={{marginLeft: '15px', color: 'red'}}>
@@ -856,19 +946,20 @@ class PaymentDetails extends React.Component {
                     </text>
                   );
                 }
-              })()} 
+              })()*/} 
             </div>
             
             <div style = {{display: 'inline-block', width: '20%', height: '480px'}}>
               <div className={styles.summaryRight}>
                 ${(
-                  this.props.selectedPlan.item_price *
-                  this.props.selectedPlan.num_deliveries
-                )}
+                    this.props.selectedPlan.item_price *
+                    this.props.selectedPlan.num_deliveries *
+                    (1-(this.props.selectedPlan.delivery_discount*0.01))
+                  ).toFixed(2)}
               </div>
-              <div className={styles.summaryRight}>
+              {/*<div className={styles.summaryRight}>
                 ${this.state.addOns}
-              </div>
+              </div>*/}
               <div className={styles.summaryRight}>
                 ${this.state.deliveryFee}
               </div>
@@ -935,19 +1026,19 @@ class PaymentDetails extends React.Component {
                   PAYPAL
                 </button>
               </div>
-              <div className={styles.buttonContainer}>
+              {/*<div className={styles.buttonContainer}>
                 <button className={styles.button}>
                   VENMO
                 </button>
-              </div>
+                  </div>*/}
             </div>
-          <div style = {{width: '20%', textAlign: 'right', paddingRight: '10px', height: '270px'}}>
-                <button 
+            <div style = {{width: '20%', textAlign: 'right', paddingRight: '10px', height: '270px'}}>
+                {/*<button 
                   className={styles.saveButton}
                   onClick={() => this.savePaymentDetails()}
                 >
                   SAVE
-                </button>
+                </button>*/}
             </div>
           </div>
             

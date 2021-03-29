@@ -56,8 +56,12 @@ class ChoosePlan extends React.Component {
     this.state = {
       mounted: false,
       unlogin_plans:null,
+      plansFetched: false,
+      customerUid: "",
+      loggedIn: false,
+      deliveryDays: [],
       login_seen:false,
-    signUpSeen:false, 
+      signUpSeen:false
     };
   }
 
@@ -85,6 +89,10 @@ class ChoosePlan extends React.Component {
       })
     }
    };
+  
+
+  // http://localhost:2000/api/v2/delivery_weekdays
+  // https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/delivery_weekdays
 
   componentDidMount() {
     console.log("choose-plan props: " + JSON.stringify(this.props));
@@ -93,6 +101,7 @@ class ChoosePlan extends React.Component {
     let urlParams = new URLSearchParams(queryString);
     // Clear Query parameters
     window.history.pushState({}, document.title, window.location.pathname);
+
     // Logged in from Apple
     if (urlParams.has("customer_uid")) {
       let customer_uid = urlParams.get("customer_uid");
@@ -111,7 +120,9 @@ class ChoosePlan extends React.Component {
           }
           this.props.fetchPlans();
           this.setState({
-            mounted: true
+            mounted: true,
+            customerUid: customer_uid,
+            loggedIn: true
           });
         })
         .catch(err => {
@@ -167,48 +178,142 @@ class ChoosePlan extends React.Component {
           console.log(err)
         })
       this.setState({
-        mounted: true
+        mounted: true,
+        customerUid: customer_uid,
+        loggedIn: true
       });
     } else {
       // Reroute to log in page
       console.log("Choose-plan NOT LOGGED IN");
+      this.props.fetchPlans();
       this.setState({
-        mounted: true
+        mounted: true,
+        customerUid: "NULL",
+        loggedIn: false
       });
       //this.props.history.push("/");
-        this.props.fetchPlans();
     }
 
+    // Fetch delivery days
+    axios.get(API_URL + 'delivery_weekdays')
+      .then(res => {
+        // console.log(res.data.result[0])
+        let resultDays = res.data.result;
+        console.log("delivery_weekdays response: " + JSON.stringify(resultDays));
+        this.setState({
+          deliveryDays: resultDays
+        });
+      })
+      .catch(err => {
+        console.log(err)
+      })
+  }
+
+  /*componentDidUpdate(plans) {
+    console.log("new plans: " + JSON.stringify(plans));
+    console.log("new plans[2]: " + JSON.stringify(plans[2]));
+    this.setState({
+      plansFetched: true
+    });
+  }*/
+
+  showDeliveryDates = () => {
+    let messageDays = [];
+
+    for (const [dateKey, dateData] of Object.entries(this.state.deliveryDays)) {
+      console.log("showDeliveryDates() key: " + dateKey + ", dateData: " + JSON.stringify(dateData));
+      //console.log("weekday integer: " + dateData["weekday(menu_date)"]);
+
+      let dayInt = dateData["weekday(menu_date)"];
+
+      console.log("weekday int: " + dayInt);
+
+      let dayString = "";
+
+      switch (dayInt) {
+        case 0:
+          dayString = "MONDAY";
+          break;
+        case 1:
+          dayString = "TUESDAY";
+          break;
+        case 2:
+          dayString = "WEDNESDAY";
+          break;
+        case 3:
+          dayString = "THURSDAY";
+          break;
+        case 4:
+          dayString = "FRIDAY";
+          break;
+        case 5:
+          dayString = "SATURDAY";
+          break;
+        case 6:
+          dayString = "SUNDAY";
+          break;
+        default:
+          dayString = "";
+      }
+
+      if(messageDays.includes(dayString) === false) {
+        messageDays.push(dayString);
+      }
+    }
+
+    let deliveryDaysString = " ";
+
+    for(var i = 0; i < messageDays.length; i++) {
+      if(i === messageDays.length-1){
+        deliveryDaysString = deliveryDaysString.concat(messageDays[i]);
+      } else {
+        deliveryDaysString = deliveryDaysString.concat(messageDays[i] + ", ");
+      }
+      //deliveryDaysString = deliveryDaysString.concat(messageDays[i] + ", ");
+    }
+
+    console.log("final deliveryDaysString: " + deliveryDaysString);
+
+    return deliveryDaysString;
   }
 
   mealsDelivery = () => {
+    //console.log("(meals delivery) CHOOSE PLANS: " + JSON.stringify(this.props.plans));
+
     let deselectedMealButton = styles.mealButton;
     let selectedMealButton =
     styles.mealButton + " " + styles.mealButtonSelected;
     let mealButtons = [];
-    for (var numMeals = 2; numMeals<=6; numMeals++) {
-      let planStr = numMeals.toString();
+    let singleMealData;
+
+    // this.props.plans
+    let mealPlans = this.props.plans;
+    for (const [mealIndex, mealData] of Object.entries(mealPlans)) {
+
+      singleMealData = mealData["1"];
+      //console.log("data for single delivery of " + mealIndex + " meal plan: " + JSON.stringify(singleMealData));
+
       mealButtons.push(
         <div className={styles.mealButtonWrapper}>
         <button
-          key={planStr}
+          key={mealIndex}
           className={
-            this.props.meals === planStr
+            this.props.meals === mealIndex
               ? selectedMealButton
               : deselectedMealButton
           }
           onClick={() =>
             this.props.chooseMealsDelivery(
-              planStr,
+              mealIndex,
               this.props.paymentOption,
               this.props.plans
             )
           }
         >
-          {planStr} MEALS
+          {mealIndex} MEALS
         </button>
         <div style={{textAlign: 'center', marginTop: '10px'}}>
-          ${numMeals * 12}
+          ${singleMealData.item_price}
         </div>
         </div>
       );
@@ -216,40 +321,38 @@ class ChoosePlan extends React.Component {
     return mealButtons;
   };
 
-
   paymentFrequency2 = () => {
     let deselectedPaymentOption = styles.deliveryButton;
     let selectedPaymentOption = styles.deliveryButton + " " + styles.deliveryButtonSelected;
     let paymentOptionButtons = [];
-    //console.log("PLANS: " + JSON.stringify(this.props.plans));
     console.log(this.props.plans);
     console.log(this.state.unlogin_plans);
       
-    for (var numDeliveries = 1; numDeliveries<=10; numDeliveries++) {
+    var discounts = this.props.plans[2];
+    var discount = null;
+
+    console.log("discounts: " + discounts);
+    console.log("typeof(discounts) " + typeof(discounts));
+
+    if(typeof(discounts) !== "undefined"){
+    for (const [deliveryIndex, deliveryData] of Object.entries(discounts)) {
       let active = false;
-      let optionStr = numDeliveries.toString();
       if (this.props.meals === "") {
         active = true;
       } else {
         active = false;
       }
-      // console.log(this.props.meals);
-
-        
-      var discounts = this.props.plans["2"];
-      var discount = null;
         
       try{
-        discount = discounts[numDeliveries].delivery_discount;
+        discount = discounts[deliveryIndex].delivery_discount;
         // console.log("discount: " + discount);
       } catch(e) {
         // console.log("discount UNDEFINED");
       }
         
       paymentOptionButtons.push(
-        <div className={styles.sameLine} key={numDeliveries}>
+        <div className={styles.sameLine} key={deliveryIndex}>
           {(() => {
-            // if (discount !== null && numDeliveries % 3 !== 0) {
               let tempPlan = null;
               if(this.state.unlogin_plans===null){
                 tempPlan=this.props.plans
@@ -257,27 +360,26 @@ class ChoosePlan extends React.Component {
               else{
                 tempPlan = this.state.unlogin_plans
               }
-              // if (numDeliveries % 3 !== 0) {
               return (
                 <div style={{display: 'inline-block'}}>
                   <button
                   disabled={active}
                   className={
-                    (this.props.paymentOption === optionStr
+                    (this.props.paymentOption === deliveryIndex
                       ? selectedPaymentOption
                       : deselectedPaymentOption) +
                     " " + (active && styles.disabledBtn)
                   }
                   onClick={() => {
                     this.props.choosePaymentOption(
-                      optionStr,
+                      deliveryIndex,
                       this.props.meals,
                       tempPlan
                     )
                   }}
                 >
                   <span style={{fontSize: '35px'}}>
-                    {numDeliveries}
+                    {deliveryIndex}
                   </span>
                   <br></br>
                   {(() => {
@@ -289,21 +391,21 @@ class ChoosePlan extends React.Component {
                   })()}  
                   </button>
                   {(()=>{
-                    if(numDeliveries % 3 === 0){
+                    if(deliveryIndex % 3 === 0){
                       console.log("is 3");
                       return(
                         <div className={styles.deliverySubtext}>
                           {(() => {
-                            if (numDeliveries/3 === 1) {
+                            if (deliveryIndex/3 === 1) {
                               return (
                                 <>
-                                  {numDeliveries/3} WEEK
+                                  {deliveryIndex/3} WEEK
                                 </>
                               );
                             } else {
                               return (
                                 <>
-                                  {numDeliveries/3} WEEKS
+                                  {deliveryIndex/3} WEEKS
                                 </>
                               );
                             }
@@ -318,21 +420,23 @@ class ChoosePlan extends React.Component {
           })()}     
         </div>
       );
-    }
+    }}
     return paymentOptionButtons;
   };
 
   render() {
-    // if (!this.state.mounted) {
-    //   return null;
-    // }
+    if (!this.state.mounted) {
+      return null;
+    }
     let message = (
       <div className={menuStyles.logo}>
         <img src={takeaway} alt='Logo' />
         <p style={{color: "black"}}>
           {" "}
           MEALS DELIVERIES ARE
-          <span style={{color: "#FF9E19"}}> MONDAY,WEDNESDAY,FRIDAY</span>
+          {/*<span style={{color: "#FF9E19"}}> MONDAY,WEDNESDAY,FRIDAY</span>*/}
+          <br></br>
+          {<span style={{color: "#FF9E19"}}>{this.showDeliveryDates()}</span>}
         </p>
       </div>
     );
@@ -396,9 +500,18 @@ class ChoosePlan extends React.Component {
                   </h6>
                 </div>
                 <div className={styles.mealNumber}>
-                  <div className={styles.buttonWrapper}>
-                    {this.mealsDelivery()}
-                  </div>
+                  {(()=>{
+                    if(JSON.stringify(this.props.plans) === "{}"){
+                      console.log("(mobile) meals not yet fetched");
+                    } else {
+                      console.log("(mobile) meals fetched!");
+                      return(
+                        <div className={styles.buttonWrapper}>
+                          {this.mealsDelivery()}
+                        </div>
+                      );
+                    }
+                  })()}
                 </div>
                 <hr style={{color: "#FFBA00"}} />
                 <p
@@ -412,9 +525,18 @@ class ChoosePlan extends React.Component {
                 >
                   PRE PAY OPTIONS
                 </p>
-                <div className={styles.paymentWrapper}>
-                  {this.paymentFrequency2()}
-                </div>
+                {(()=>{
+                  if(JSON.stringify(this.props.plans) === "{}"){
+                    console.log("(mobile) plans not yet fetched");
+                  } else {
+                    console.log("(mobile) plans fetched!");
+                    return(
+                      <div className='row' style={{marginTop: '20px'}}>
+                        {this.paymentFrequency2()}
+                      </div>
+                    );
+                  }
+                })()}
                 <div className={styles.amount}>
                   <p
                     style={{
@@ -460,7 +582,20 @@ class ChoosePlan extends React.Component {
           {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
           {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
           <div className={styles.container}>
-            <Menu show={true} message={message} />
+            {/*<Menu show={this.state.loggedIn} message={message} />*/}
+            {(()=>{
+              if(this.state.loggedIn === true){
+                console.log("Show navbuttons -- logged in");
+                return(
+                  <Menu show={true} message={message} />
+                );
+              } else {
+                console.log("Hide navbuttons -- not logged in");
+                return(
+                  <Menu show={true} message={message} />
+                );
+              }
+            })()}
             <div className={styles.box}>
               <div className={styles.box1}>
 
@@ -494,9 +629,18 @@ class ChoosePlan extends React.Component {
                       MEALS PER DELIVERY
                     </span>
                   </div>
-                  <div className={styles.buttonWrapper}>
-                    {this.mealsDelivery()}
-                  </div>
+                  {(()=>{
+                    if(JSON.stringify(this.props.plans) === "{}"){
+                      console.log("(web) meals not yet fetched");
+                    } else {
+                      console.log("(web) meals fetched!");
+                      return(
+                        <div className={styles.buttonWrapper}>
+                          {this.mealsDelivery()}
+                        </div>
+                      );
+                    }
+                  })()}
                 </div>
                   
                 <div className={styles.menuSection}>
@@ -505,9 +649,18 @@ class ChoosePlan extends React.Component {
                       NUMBER OF DELIVERIES
                     </span>
                   </div>
-                  <div className='row' style={{marginTop: '20px'}}>
-                    {this.paymentFrequency2()}
-                  </div>
+                  {(()=>{
+                    if(JSON.stringify(this.props.plans) === "{}"){
+                      console.log("(web) plans not yet fetched");
+                    } else {
+                      console.log("(web) plans fetched!");
+                      return(
+                        <div className='row' style={{marginTop: '20px'}}>
+                          {this.paymentFrequency2()}
+                        </div>
+                      );
+                    }
+                  })()}
                 </div>
                   
                 <div className={styles.menuSection}>     
