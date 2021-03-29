@@ -159,14 +159,9 @@ class PaymentDetails extends React.Component {
   }
     
   saveDeliveryDetails() {
-    if(this.state.customerUid !== "NULL"){
-      console.log("Saving delivery details...");
-
-      console.log("address street: " + this.state.street);
-      console.log("address city: " + this.state.city);
-      console.log("address state: " + this.state.state);
-      console.log("address zip: " + this.state.addressZip);
+    console.log("Saving delivery details...");
       
+    if(this.state.customerUid !== "NULL"){
       let object = {
         uid: this.state.customerUid,
         first_name: this.props.addressInfo.firstName,
@@ -181,8 +176,7 @@ class PaymentDetails extends React.Component {
         noti: "false"
       };
                   
-      console.log("(delivery details) update profile URL:" + API_URL + 'UpdateProfile');
-      console.log(JSON.stringify(object));
+      console.log("(saveDeliveryDetails) updateProfile object: " + JSON.stringify(object));
       
       axios
         .post(API_URL + 'UpdateProfile', object)
@@ -195,59 +189,52 @@ class PaymentDetails extends React.Component {
             console.log("error: " + JSON.stringify(err.response));
           }
         });
-      
-      this.props.changeDeliveryDetails({
-        street: this.state.street,
-        city: this.state.city,
-        state: this.state.state,
-        zip: this.state.addressZip,
-        unit: this.state.unit,
-        instructions: this.state.instructions
-      });
-    } else {
-      console.log("Could not save delivery details: not signed in");
     }
+      
+    this.props.changeDeliveryDetails({
+      street: this.state.street,
+      city: this.state.city,
+      state: this.state.state,
+      zip: this.state.addressZip,
+      unit: this.state.unit,
+      instructions: this.state.instructions
+    });
+
+    console.log("delivery props: " + JSON.stringify(this.props));
   }
     
   saveContactDetails() {
     console.log("Saving contact details...");
-    /*console.log("firstName: " + this.props.addressInfo.firstName);
-    console.log("lastName: " + this.props.addressInfo.lastName);
-    console.log("email: " + this.props.email);
-    console.log("phone: " + this.props.addressInfo.phone);*/
-    console.log("firstName: " + this.state.firstName);
-    console.log("lastName: " + this.state.lastName);
-    console.log("email: " + this.state.email);
-    console.log("phone: " + this.state.phone);
       
-    let object = {
-      uid: this.state.customerUid,
-      first_name: this.state.firstName,
-      last_name: this.state.lastName,
-      phone: this.state.phone,
-      email: this.props.email,
-      address: this.props.street,
-      unit: this.props.address.unit,
-      city: this.props.address.city,
-      state: this.props.address.state,
-      zip: this.props.address.zip,
-      noti: "false"
-    };
+    if(this.state.customerUid !== "NULL"){
+      let object = {
+        uid: this.state.customerUid,
+        first_name: this.state.firstName,
+        last_name: this.state.lastName,
+        phone: this.state.phone,
+        email: this.props.email,
+        address: this.props.street,
+        unit: this.props.address.unit,
+        city: this.props.address.city,
+        state: this.props.address.state,
+        zip: this.props.address.zip,
+        noti: "false"
+      };
                   
-    console.log("(contact details) update profile URL:" + API_URL + 'UpdateProfile');
-    console.log(JSON.stringify(object));
+      console.log("(saveContactDetails) updateProfile object: " + JSON.stringify(object));
       
-    axios
-      .post(API_URL + 'UpdateProfile', object)
-      .then(res => {
-        console.log(res);
-      })
-      .catch(err => {
-        console.log(err);
-        if (err.response) {
-          console.log("error: " + JSON.stringify(err.response));
-        }
-      });
+      axios
+        .post(API_URL + 'UpdateProfile', object)
+        .then(res => {
+          console.log(res);
+        })
+        .catch(err => {
+          console.log(err);
+          if (err.response) {
+            console.log("error: " + JSON.stringify(err.response));
+          }
+        });
+    }
       
     this.props.changeContactDetails({
       firstName: this.state.firstName,
@@ -257,7 +244,7 @@ class PaymentDetails extends React.Component {
     });
   }
     
-  savePaymentDetails() {
+  /*savePaymentDetails() {
     console.log("Saving payment details...");
     this.props.changePaymentDetails({
       name: this.state.name,
@@ -267,7 +254,7 @@ class PaymentDetails extends React.Component {
       year: this.state.year,
       zip: this.state.cardZip
     });
-  }
+  }*/
     
   handleGuestCheckout = (guestInfo) => {
     //this.props.history.push("/login");
@@ -277,7 +264,7 @@ class PaymentDetails extends React.Component {
     axios
     .get(API_URL + 'Profile/' + guestInfo.customer_uid)
     .then(res => {
-        //console.log("new guest profile fetch info: " + JSON.stringify(res));
+        console.log("new profile fetch info: " + JSON.stringify(res));
 
         let profileInfo = res.data.result[0];
 
@@ -292,6 +279,8 @@ class PaymentDetails extends React.Component {
             itm_business_uid: '200-000002',
           },
         ];
+
+        console.log("(1)");
 
         let checkoutInfo = {
           customer_uid: profileInfo.customer_uid,
@@ -319,6 +308,9 @@ class PaymentDetails extends React.Component {
           cc_cvv: this.state.cvv,
           cc_zip: this.state.cardZip
         };
+
+        console.log("(2)");
+
         console.log("guest checkoutInfo: " + JSON.stringify(checkoutInfo));
         axios
           .post(API_URL + 'checkout', checkoutInfo)
@@ -330,6 +322,17 @@ class PaymentDetails extends React.Component {
             console.log(err2);
             if (err2.response) {
               console.log(err2.response);
+              this.setState({
+                checkoutMessage: err2.response.data.message,
+                checkoutCode: err2.response.status
+              });
+              if (err2.response.status >= 200 && err2.response.status <= 299) {
+                console.log("Payment submission success!");
+                this.props.history.push("/congrats");
+              } else if (err2.response.status >= 400 && err2.response.status <= 599) {
+                console.log("Payment submission failure!");
+                this.displayCheckoutError();
+              }
             }
           });
 
@@ -337,6 +340,17 @@ class PaymentDetails extends React.Component {
     .catch(err => {
       if (err.response) {
         console.log(err.response);
+        this.setState({
+          checkoutMessage: err.response.data.message,
+          checkoutCode: err.response.status
+        });
+        if (err.response.status >= 200 && err.response.status <= 299) {
+          console.log("Payment submission success!");
+          this.props.history.push("/congrats");
+        } else if (err.response.status >= 400 && err.response.status <= 599) {
+          console.log("Payment submission failure!");
+          this.displayCheckoutError();
+        }
       } else {
         console.log(err.toString());
       }
@@ -440,7 +454,7 @@ class PaymentDetails extends React.Component {
       .post(API_URL + 'brandAmbassador/generate_coupon',
         {
           amb_email: this.state.ambassadorCode,
-          cust_email: "codetest3@gmail.com"
+          cust_email: this.state.email
         }
       )
       .then(res => {
@@ -466,20 +480,6 @@ class PaymentDetails extends React.Component {
             )
           });
         }
-
-        /*if(items.valid === "TRUE") {
-          this.setState({
-            validCode: true,
-            ambassadorDiscount: (
-              items.discount_amount +
-              items.discount_shipping
-            )
-          });
-        } else {
-          this.setState({
-            validCode: false
-          });
-        }*/
       })
       .catch(err => {
         console.log("Ambassador code error: " + err);

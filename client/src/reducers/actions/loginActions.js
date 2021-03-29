@@ -609,11 +609,10 @@ export const submitGuestSignUp = (
             .post(API_URL + "createAccount", object)
             .then(res => {
               console.log("guest create account response: " + JSON.stringify(res));
-              axios.post(API_URL+'email_verification', 
-              {
-              email: object.email
-              }  
-                )
+              if(res.data.code >= 400 && res.data.code <= 599){
+                callback(res);
+              }
+              axios.post(API_URL+'email_verification', {email: object.email})
                 .then(res => {
                   console.log(res)
                 })
@@ -624,7 +623,7 @@ export const submitGuestSignUp = (
                 type: SUBMIT_SIGNUP
               });
               if (typeof callback !== "undefined") {
-                callback(res.data.result);
+                callback(res);
               }
             })
             .catch(err => {

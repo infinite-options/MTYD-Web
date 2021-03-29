@@ -78,9 +78,9 @@ class Home extends Component {
 
         
       {(() => {
-          if (this.state.windowWidth >= 800) {
-            return (
-        <div className = {styles.topBackground}>
+        if (this.state.windowWidth >= 800) {
+          return (
+          <div className = {styles.topBackground}>
           <div className = {styles.gridDisplayCenter}>
             <h1 className = {styles.centerSubtitleText}>WELCOME TO <img style = {{height: '140px', width: '400px', marginTop: '-50px'}} src = {Logo} alt="logo" /></h1>
             <h3 className = {styles.centerSubText}>Get the freshly cooked meal options for your healthy lifestyle</h3>
@@ -92,13 +92,11 @@ class Home extends Component {
             </div>   
               
           </div>
-        </div>
-       );
-      } else {
-        return (
-        <div className = {styles.topBackground}>
-          
-
+          </div>
+          );
+        } else {
+          return (
+          <div className = {styles.topBackground}>
           <div className = {styles.gridDisplayCenter}>
               <h1 className = {styles.centerSubtitleNarrow}>WELCOME TO</h1> 
               <h1 className = {styles.centerSubtitleNarrow}>
@@ -113,12 +111,11 @@ class Home extends Component {
               <HomeLink text = "Explore Delivery Options" link = '/choose-plan'/>
             </div>   
             </div>
-              
           </div>
-        </div>
+          </div>
           );
         }
-       })()}
+      })()}
         
 
 
@@ -273,41 +270,40 @@ class Home extends Component {
         {(() => {
           if (this.state.windowWidth >= 800) {
             return (
-                <>
-        <div style = {{display: 'inline-flex', width: '100%', marginTop: '50px'}}>
-          <h3 style = {{textAlign: 'left', marginTop: '100px', fontWeight: 'bold', marginLeft: '5%'}}>OUR PARTNER CHEFS & RESTAURANTS</h3>
-        </div>
-<div style = {{display: 'inline-flex'}}>
-          <div style = {{display: 'flex',flexWrap: 'wrap', width: '100%', marginTop: '50px'}}>
-            <div className = {styles.partnerContainer}>
-              <img className = {styles.partnerImage} src = {ponoHawaiian}></img>
-            </div>
-          </div>
-          <div style = {{display: 'flex',flexWrap: 'wrap', width: '100%', marginTop: '50px'}}>
-            <div className = {styles.partnerContainer}>
-              <img className = {styles.partnerImage} src = {nityaAyurveda}></img>
-            </div>
-          </div>
-        </div>
-                </>
-                );
+              <>
+                <div style = {{display: 'inline-flex', width: '100%', marginTop: '50px'}}>
+                  <h3 style = {{textAlign: 'left', marginTop: '100px', fontWeight: 'bold', marginLeft: '5%'}}>OUR PARTNER CHEFS & RESTAURANTS</h3>
+                </div>
+                <div style = {{display: 'inline-flex'}}>
+                  <div style = {{display: 'flex',flexWrap: 'wrap', width: '100%', marginTop: '50px'}}>
+                    <div className = {styles.partnerContainer}>
+                      <img className = {styles.partnerImage} src = {ponoHawaiian}></img>
+                    </div>
+                  </div>
+                  <div style = {{display: 'flex',flexWrap: 'wrap', width: '100%', marginTop: '50px'}}>
+                    <div className = {styles.partnerContainer}>
+                      <img className = {styles.partnerImage} src = {nityaAyurveda}></img>
+                    </div>
+                  </div>
+                </div>
+              </>
+            );
           } else {
-              return (
-                  <>
-<div style = {{display: 'inline-flex', width: '100%', marginTop: '50px', justifyContent: 'center'}}>
-          <h3 style = {{textAlign: 'center', marginTop: '100px', fontWeight: 'bold'}}>OUR PARTNER CHEFS & RESTAURANTS</h3>
-        </div>
-                  
-        <div style = {{display: 'inline-block'}}>
-          <div style = {{display: 'flex', width: '100%', marginTop: '20px', justifyContent: 'center'}}>
-          <img className = {styles.partnerImageNarrow} src = {ponoHawaiian}></img>
-        </div>
-          <div style = {{display: 'flex', width: '100%', marginTop: '20px', justifyContent: 'center'}}>
-              <img className = {styles.partnerImageNarrow} src = {nityaAyurveda}></img>
-          </div>
-        </div> 
-                  </>
-              );
+            return (
+              <>
+                <div style = {{display: 'inline-flex', width: '100%', marginTop: '50px', justifyContent: 'center'}}>
+                  <h3 style = {{textAlign: 'center', marginTop: '100px', fontWeight: 'bold'}}>OUR PARTNER CHEFS & RESTAURANTS</h3>
+                </div>
+                <div style = {{display: 'inline-block'}}>
+                  <div style = {{display: 'flex', width: '100%', marginTop: '20px', justifyContent: 'center'}}>
+                    <img className = {styles.partnerImageNarrow} src = {ponoHawaiian}></img>
+                  </div>
+                  <div style = {{display: 'flex', width: '100%', marginTop: '20px', justifyContent: 'center'}}>
+                    <img className = {styles.partnerImageNarrow} src = {nityaAyurveda}></img>
+                  </div>
+                </div> 
+              </>
+            );
           }
         })()}
         
@@ -359,25 +355,25 @@ class Home extends Component {
         {(() => {
           if (this.state.windowWidth >= 800) {
             return (
-        <div style = {{display: 'inline-flex', margin: 'auto'}}>
+            <div style = {{display: 'inline-flex', margin: 'auto'}}>
             <div style = {{marginLeft: '50px', marginRight: '50px', marginBottom: '80px'}}>
               <HomeLink text = "Explore Subscriptions" link = '/choose-plan'/>
             </div>
             <div style = {{marginLeft: '50px', marginRight: '50px', marginBottom: '80px'}}>
               <HomeLink text = "Enter Your Address" link = '/home'/>
             </div>
-          </div>
+            </div>
             );
           } else {
             return (
-        <div style = {{display: 'inline-block', margin: 'auto'}}>
+            <div style = {{display: 'inline-block', margin: 'auto'}}>
             <div style = {{marginLeft: '50px', marginRight: '50px', marginBottom: '20px'}}>
               <HomeLink text = "Explore Subscriptions" link = '/choose-plan'/>
             </div>
             <div style = {{marginLeft: '50px', marginRight: '50px', marginBottom: '50px'}}>
               <HomeLink text = "Enter Your Address" link = '/home'/>
             </div>
-          </div>
+            </div>
             );
           }
         })()}
@@ -390,9 +386,9 @@ class Home extends Component {
         {(() => {
           if (this.state.windowWidth >= 800) {
             return (
-        <div className = {styles.footerBackground}>
-          <img className = {styles.footerLogo} src = {Logo} alt="logo" />
-          {/*<div className = {styles.footerLinks}>
+            <div className = {styles.footerBackground}>
+            <img className = {styles.footerLogo} src = {Logo} alt="logo" />
+            {/*<div className = {styles.footerLinks}>
             <div>
               <FootLink text = "Buy a Gift Card" link = '/home'/>
             </div>
@@ -403,18 +399,18 @@ class Home extends Component {
               <FootLink text = "Contact Us" link = '/home'/>
             </div>
             </div>*/}
-          <div className = {styles.footerRight}>
+            <div className = {styles.footerRight}>
             {/*<AmbassadorLink text = "Become an Ambassador"  link = '/home'/>*/}
             <img src = {facebookImg} style = {{marginTop: '25px', height: '75px', width: '75px'}}/>
             <img src = {googleImg} style = {{marginLeft: '25px', marginTop: '25px', height: '75px', width: '75px'}}/>
-          </div>
-        </div>
+            </div>
+            </div>
             );
           } else {
             return (
-        <div className = {styles.footerBackgroundNarrow}>
-          <img className = {styles.footerLogoNarrow} src = {Logo} alt="logo" />
-          {/*<div className = {styles.footerLinksNarrow}>
+            <div className = {styles.footerBackgroundNarrow}>
+            <img className = {styles.footerLogoNarrow} src = {Logo} alt="logo" />
+            {/*<div className = {styles.footerLinksNarrow}>
             <div>
               <FootLink text = "Buy a Gift Card" link = '/home'/>
             </div>
@@ -425,12 +421,12 @@ class Home extends Component {
               <FootLink text = "Contact Us" link = '/home'/>
             </div>
             </div>*/}
-          <div className = {styles.footerRightNarrow}>
+            <div className = {styles.footerRightNarrow}>
             {/*<AmbassadorLink text = "Become an Ambassador"  link = '/home'/>*/}
             <img src = {facebookImg} style = {{marginTop: '25px', height: '75px', width: '75px'}}/>
             <img src = {googleImg} style = {{marginLeft: '25px', marginTop: '25px', height: '75px', width: '75px'}}/>
-          </div>
-        </div>
+            </div>
+            </div>
             );
           }
         })()}
