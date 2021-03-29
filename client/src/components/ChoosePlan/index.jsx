@@ -54,10 +54,13 @@ class ChoosePlan extends React.Component {
       unlogin_plans: null,
       plansFetched: false,
       customerUid: "",
-      loggedIn: false
+      loggedIn: false,
+      deliveryDays: []
     };
   }
 
+  // http://localhost:2000/api/v2/delivery_weekdays
+  // https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/delivery_weekdays
   componentDidMount() {
     console.log("choose-plan props: " + JSON.stringify(this.props));
     console.log(this.props)
@@ -65,6 +68,7 @@ class ChoosePlan extends React.Component {
     let urlParams = new URLSearchParams(queryString);
     // Clear Query parameters
     window.history.pushState({}, document.title, window.location.pathname);
+
     // Logged in from Apple
     if (urlParams.has("customer_uid")) {
       let customer_uid = urlParams.get("customer_uid");
@@ -156,6 +160,20 @@ class ChoosePlan extends React.Component {
       });
       //this.props.history.push("/");
     }
+
+    // Fetch delivery days
+    axios.get(API_URL + 'delivery_weekdays')
+      .then(res => {
+        // console.log(res.data.result[0])
+        let resultDays = res.data.result;
+        console.log("delivery_weekdays response: " + JSON.stringify(resultDays));
+        this.setState({
+          deliveryDays: resultDays
+        });
+      })
+      .catch(err => {
+        console.log(err)
+      })
   }
 
   /*componentDidUpdate(plans) {
@@ -165,6 +183,66 @@ class ChoosePlan extends React.Component {
       plansFetched: true
     });
   }*/
+
+  showDeliveryDates = () => {
+    let messageDays = [];
+
+    for (const [dateKey, dateData] of Object.entries(this.state.deliveryDays)) {
+      console.log("showDeliveryDates() key: " + dateKey + ", dateData: " + JSON.stringify(dateData));
+      //console.log("weekday integer: " + dateData["weekday(menu_date)"]);
+
+      let dayInt = dateData["weekday(menu_date)"];
+
+      console.log("weekday int: " + dayInt);
+
+      let dayString = "";
+
+      switch (dayInt) {
+        case 0:
+          dayString = "MONDAY";
+          break;
+        case 1:
+          dayString = "TUESDAY";
+          break;
+        case 2:
+          dayString = "WEDNESDAY";
+          break;
+        case 3:
+          dayString = "THURSDAY";
+          break;
+        case 4:
+          dayString = "FRIDAY";
+          break;
+        case 5:
+          dayString = "SATURDAY";
+          break;
+        case 6:
+          dayString = "SUNDAY";
+          break;
+        default:
+          dayString = "";
+      }
+
+      if(messageDays.includes(dayString) === false) {
+        messageDays.push(dayString);
+      }
+    }
+
+    let deliveryDaysString = " ";
+
+    for(var i = 0; i < messageDays.length; i++) {
+      if(i === messageDays.length-1){
+        deliveryDaysString = deliveryDaysString.concat(messageDays[i]);
+      } else {
+        deliveryDaysString = deliveryDaysString.concat(messageDays[i] + ", ");
+      }
+      //deliveryDaysString = deliveryDaysString.concat(messageDays[i] + ", ");
+    }
+
+    console.log("final deliveryDaysString: " + deliveryDaysString);
+
+    return deliveryDaysString;
+  }
 
   mealsDelivery = () => {
     //console.log("(meals delivery) CHOOSE PLANS: " + JSON.stringify(this.props.plans));
@@ -323,7 +401,9 @@ class ChoosePlan extends React.Component {
         <p style={{color: "black"}}>
           {" "}
           MEALS DELIVERIES ARE
-          <span style={{color: "#FF9E19"}}> MONDAY,WEDNESDAY,FRIDAY</span>
+          {/*<span style={{color: "#FF9E19"}}> MONDAY,WEDNESDAY,FRIDAY</span>*/}
+          <br></br>
+          {<span style={{color: "#FF9E19"}}>{this.showDeliveryDates()}</span>}
         </p>
       </div>
     );
@@ -477,12 +557,15 @@ class ChoosePlan extends React.Component {
             {/*<Menu show={this.state.loggedIn} message={message} />*/}
             {(()=>{
               if(this.state.loggedIn === true){
-                console.log("Show Menu -- logged in");
+                console.log("Show navbuttons -- logged in");
                 return(
                   <Menu show={true} message={message} />
                 );
               } else {
-                console.log("Hide Menu -- not logged in");
+                console.log("Hide navbuttons -- not logged in");
+                return(
+                  <Menu show={true} message={message} />
+                );
               }
             })()}
             <div className={styles.box}>

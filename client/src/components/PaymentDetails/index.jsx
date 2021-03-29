@@ -52,7 +52,7 @@ class PaymentDetails extends React.Component {
       tip: 2,
       serviceFee: 0,
       deliveryFee: 0,
-      taxRate: 0,
+      taxRate: 9.25,
       ambassadorDiscount: 0,
       ambassadorCode: "",
       validCode: true,
@@ -138,10 +138,14 @@ class PaymentDetails extends React.Component {
       .get(`${API_URL}categoricalOptions/${this.state.longitude},${this.state.latitude}`)
       .then((response) => {
         //console.log("categorical options data: " + JSON.stringify(response));
-        this.setState({
+        /*this.setState({
           serviceFee: response.data.result[1].service_fee,
           deliveryFee: response.data.result[1].delivery_fee,
           taxRate: response.data.result[1].tax_rate
+        });*/
+        this.setState({
+          serviceFee: response.data.result[1].service_fee,
+          deliveryFee: response.data.result[1].delivery_fee
         });
       })
       .catch((err) => {
@@ -912,9 +916,10 @@ displayAmbassadorError = () => {
             <div style = {{display: 'inline-block', width: '20%', height: '480px'}}>
               <div className={styles.summaryRight}>
                 ${(
-                  this.props.selectedPlan.item_price *
-                  this.props.selectedPlan.num_deliveries
-                )}
+                    this.props.selectedPlan.item_price *
+                    this.props.selectedPlan.num_deliveries *
+                    (1-(this.props.selectedPlan.delivery_discount*0.01))
+                  ).toFixed(2)}
               </div>
               {/*<div className={styles.summaryRight}>
                 ${this.state.addOns}
