@@ -25,6 +25,7 @@ import {
   submitPayment
 } from "../../reducers/actions/subscriptionActions";
 
+
 import {submitGuestSignUp} from "../../reducers/actions/loginActions";
 
 import {withRouter} from "react-router";
@@ -38,10 +39,32 @@ import {
 import {WebNavBar, BottomNavBar} from "../NavBar";
 import {WrappedMap} from "../Map";
 import axios from 'axios';
+//import { loadStripe } from '@stripe/stripe-js';
+//import { Elements, CardElement, useStripe } from '@stripe/react-stripe-js';
 import { API_URL } from '../../reducers/constants';
 
 import styles from "./paymentDetails.module.css";
 import { ThemeProvider } from "react-bootstrap";
+import PopLogin from '../PopLogin';
+import Popsignup from '../PopSignup';
+import StripeElement from './StripeElement';
+
+
+import { Elements, CardElement, useStripe } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
+// import storeContext from "customer/storeContext";
+// import axios from "axios";
+
+// Make sure to call `loadStripe` outside of a component’s render to avoid
+// recreating the `Stripe` object on every render.
+const stripePromise = loadStripe(
+  process.env.NODE_ENV === 'production'
+    ? process.env.REACT_APP_STRIPE_PUBLIC_KEY_LIVE
+    : process.env.REACT_APP_STRIPE_PUBLIC_KEY
+);
+
+
+
 
 class PaymentDetails extends React.Component {
   constructor() {
@@ -77,11 +100,39 @@ class PaymentDetails extends React.Component {
       customerUid: "",
       customerPassword: "",
       checkoutMessage: "",
+      displayError: false,
+      login_seen:false,
+      signUpSeen:false, 
       checkoutError: false,
       ambassadorMessage: "",
-      ambassadorError: false
+      ambassadorError: false,
+      paymentType: 'NONE'
     };
   }
+  togglePopLogin = () => {
+    this.setState({
+     login_seen: !this.state.login_seen,
+    });
+
+    if(!this.state.login_seen){
+      this.setState({
+        signUpSeen:false
+      })
+    }
+
+   };
+
+   togglePopSignup = () => {
+    this.setState({
+     signUpSeen: !this.state.signUpSeen
+    });
+
+    if(!this.state.signUpSeen){
+      this.setState({
+        login_seen:false
+      })
+    }
+   };
 
   componentDidMount() {
     console.log("payment details props: " + JSON.stringify(this.props));
@@ -248,7 +299,7 @@ class PaymentDetails extends React.Component {
     });
   }
     
-  /*savePaymentDetails() {
+  savePaymentDetails() {
     console.log("Saving payment details...");
     this.props.changePaymentDetails({
       name: this.state.name,
@@ -258,7 +309,7 @@ class PaymentDetails extends React.Component {
       year: this.state.year,
       zip: this.state.cardZip
     });
-  }*/
+  }
     
   handleGuestCheckout = (guestInfo) => {
     //this.props.history.push("/login");
@@ -492,33 +543,39 @@ class PaymentDetails extends React.Component {
 
   displayCheckoutError = () => {
     if(this.state.checkoutError === false) {
-    this.setState({
+      this.setState({
         checkoutErrorModal: styles.changeErrorModalPopUpShow,
         checkoutError: true,
-    })
+      });
     }else{
-    this.setState({
+      this.setState({
         checkoutErrorModal: styles.changeErrorModalPopUpHide,
         checkoutError: false
-    })
+      });
     }
     console.log("\ncheckout error toggled to " + this.state.checkoutError + "\n\n");
-}
-
-displayAmbassadorError = () => {
-  if(this.state.ambassadorError === false) {
-  this.setState({
-      ambassadorErrorModal: styles.changeErrorModalPopUpShow,
-      ambassadorError: true,
-  })
-  }else{
-  this.setState({
-      ambassadorErrorModal: styles.changeErrorModalPopUpHide,
-      ambassadorError: false
-  })
   }
-  console.log("\nambassador error toggled to " + this.state.ambassadorError + "\n\n");
-}
+
+  displayAmbassadorError = () => {
+    if(this.state.ambassadorError === false) {
+      this.setState({
+        ambassadorErrorModal: styles.changeErrorModalPopUpShow,
+        ambassadorError: true,
+      })
+    }else{
+      this.setState({
+        ambassadorErrorModal: styles.changeErrorModalPopUpHide,
+        ambassadorError: false
+      })
+    }
+    console.log("\nambassador error toggled to " + this.state.ambassadorError + "\n\n");
+  }
+
+  setPaymentType(type){
+    this.setState({
+      paymentType: type
+    });
+  }
 
   render() {
     let loggedInByPassword = false;
@@ -527,7 +584,13 @@ displayAmbassadorError = () => {
     }
     return (
       <div>
-        <WebNavBar />
+        <WebNavBar 
+        poplogin = {this.togglePopLogin}
+        popSignup = {this.togglePopSignup}
+        />
+        {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
+        {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
+
         {(() => {
           console.log("\ndisplay checkout error message? " + this.state.checkoutError + "\n\n");
           if (this.state.checkoutError === true) {
@@ -980,11 +1043,20 @@ displayAmbassadorError = () => {
             
           <div style={{display: 'flex'}}>
             <div style = {{display: 'inline-block', width: '80%', height: '280px'}}>
-              <div className={styles.buttonContainer}>
-                <button className={styles.button}>
-                  STRIPE
-                </button>
-              </div>
+              <Elements stripe={stripePromise}>
+                <div className={styles.buttonContainer}>
+                  <button className={styles.button} onClick={() => this.setPaymentType('STRIPE')}>
+                    STRIPE
+                  </button>
+                  {this.state.paymentType === 'STRIPE' && (
+                    <StripeElement
+                      deliveryInstructions={this.state.instructions}
+                      setPaymentType={this.setPaymentType}
+                      //subscribeInfo={this.props.subscribeInfo}
+                    />
+                  )}
+                </div>
+              </Elements>
               <div className={styles.buttonContainer}>
                 <button className={styles.button}>
                   PAYPAL
@@ -997,12 +1069,12 @@ displayAmbassadorError = () => {
                   </div>*/}
             </div>
             <div style = {{width: '20%', textAlign: 'right', paddingRight: '10px', height: '270px'}}>
-                {/*<button 
+                {<button 
                   className={styles.saveButton}
                   onClick={() => this.savePaymentDetails()}
                 >
                   SAVE
-                </button>*/}
+                </button>}
             </div>
           </div>
             
@@ -1134,6 +1206,7 @@ PaymentDetails.propTypes = {
 };
 
 const mapStateToProps = state => ({
+  //subscribeInfo: state.subscribe,
   customerId: state.subscribe.profile.customerId,
   socialMedia: state.subscribe.profile.socialMedia,
   email: state.subscribe.profile.email,
