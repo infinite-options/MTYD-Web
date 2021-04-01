@@ -37,6 +37,11 @@ const initialState = {
   newDate: {
     menu_date: '',
   },
+  showCopyDate: false,
+  copyDate: {
+    date1: '',
+    date2: '',
+  },
 };
 
 function reducer(state, action) {
@@ -105,6 +110,19 @@ function reducer(state, action) {
       return {
         ...state,
         newDate: action.payload,
+      }
+    case 'TOGGLE_COPY_MENU_DATE':
+      return {
+        ...state,
+        showCopyDate: !(state.showCopyDate),
+        copyDate: {
+          ...initialState.newDate,
+        },
+      }
+    case 'COPY_FROM_MENU_DATE':
+      return {
+        ...state,
+        copyDate: action.payload,
       }
     default:
       return state;
@@ -348,6 +366,13 @@ function CreateMenu({history, ...props}) {
     }
   }
 
+  const copyDate = (newDate) => {
+    dispatch({ type: 'CHANGE_DATE', payload: newDate });
+    const curMenu = getMenuData(newDate);
+    const sortedMenu = sortedArray(curMenu, state.sortEditMenu.field, state.sortEditMenu.direction);
+    dispatch({ type: 'EDIT_MENU', payload: sortedMenu });
+  };
+
   // Toggle Add Menu modal
   const toggleAddMenu = () => {
     dispatch({ type: 'TOGGLE_ADD_MENU_ITEM' });
@@ -356,6 +381,10 @@ function CreateMenu({history, ...props}) {
   // Toggle Add Date Modal
   const toggleAddDate = () => {
     dispatch({ type: 'TOGGLE_ADD_MENU_DATE'})
+  }
+
+  const toggleCopyDate = () => {
+    dispatch({ type: 'TOGGLE_COPY_MENU_DATE'})
   }
 
   const saveMenuTemplate = () => {
@@ -523,7 +552,20 @@ function CreateMenu({history, ...props}) {
             </Form>
           </Col>
           <Col
-            sm="3"
+            sm="2"
+            style={{
+              textAlign: 'right',
+            }}
+          >
+            <Button
+              variant="primary"
+              onClick={toggleCopyDate}
+            >
+              Copy Menu
+            </Button>
+          </Col>
+          <Col
+            sm="2"
             style={{
               textAlign: 'right',
             }}
@@ -536,7 +578,7 @@ function CreateMenu({history, ...props}) {
             </Button>
           </Col>
           <Col
-            sm="3"
+            sm="2"
             style={{
               textAlign: 'right',
             }}
@@ -968,6 +1010,94 @@ function CreateMenu({history, ...props}) {
             onClick={saveMenuTemplate}
           >
             Save Menu Date with Template
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <Modal
+        show={state.showCopyDate}
+        onHide={toggleCopyDate}
+        animation={false}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title> Copy Menu </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group>
+              <Form.Label>
+                Copy From Date
+              </Form.Label>
+                <Form.Control
+                as="select"
+                type="date"
+                value={state.copyDate.date1}
+                onChange={
+                  (event) => {copyDate(event.target.value)
+                    const copyToDate = event.target.value;
+                    const newDateObject = {
+                      ...state.copyDate,
+                      date1: copyToDate,
+                    }
+                    dispatch({ type: 'COPY_FROM_MENU_DATE', payload: newDateObject });
+                  }
+                }
+              >
+                <option value="" hidden>Choose date</option>
+                {
+                  menuDates.map(
+                    (date) => (
+                      <option value={date.value} key={date.value}>
+                        {date.display}
+                      </option>
+                    ),
+                  )
+                }
+              </Form.Control>
+              </Form.Group>
+              <Form.Group>
+              <Form.Label>
+                Copy To Date
+              </Form.Label>
+              <Form.Control
+                type="date"
+                value={state.copyDate.date2}
+                onChange={
+                  (event) => {
+                    const copyToDate = event.target.value;
+                    const newDateObject = {
+                      ...state.copyDate,
+                      date2: copyToDate,
+                    }
+                    dispatch({ type: 'COPY_FROM_MENU_DATE', payload: newDateObject });
+                  }
+                }
+              />
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={toggleCopyDate}>
+            Close
+          </Button>
+          <Button
+            variant="primary"
+            // this is where i will call the endpoint to copy over date1 -> date2
+            onClick={
+              () => {
+                // YYYY-MM-DD seems to work for request parameter, no need to add HH:MM:SS
+                const newDateObject = {
+                  ...state.copyDate,
+                  date1: state.copyDate.date1,
+                  date2: state.copyDate.date2,
+                };
+              axios.post(`${API_URL}Copy_Menu`, newDateObject)
+              .then((response) => {
+                toggleCopyDate()
+              })
+            }
+          }
+          >
+            Copy Menu
           </Button>
         </Modal.Footer>
       </Modal>
