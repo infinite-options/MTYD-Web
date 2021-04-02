@@ -249,6 +249,10 @@ class MenuItemList extends Component {
         console.error(error);
       });
 
+      this.dateButtonArray();
+
+    
+
     let planName = e.target.value;
     this.state.meals.map(mealItem => {
       if (mealItem.purchase_id === planName) {
@@ -714,7 +718,8 @@ class MenuItemList extends Component {
       buttonStyle = styles.datebuttonSave;
       let tempNewButton = (
         <button key={this.state.myDate} value={this.state.myDate} onClick={this.filterDates} className={buttonStyle} autoFocus>
-        {moment(this.state.myDate.split(" ")[0]).format("ddd")}
+        
+        <p>{moment(this.state.myDate.split(" ")[0]).format("ddd")} </p>
         <br/>{moment(this.state.myDate.split(" ")[0]).format("MMM")}
         <br/>{moment(this.state.myDate.split(" ")[0]).format("D")} 
       </button>
