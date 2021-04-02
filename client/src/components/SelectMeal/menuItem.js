@@ -7,46 +7,68 @@ import info from  './images/info.svg'
 import {API_URL} from "../../reducers/constants";
 import axios from "axios";
 
-function changeHeart(e){
-  console.log("button clicked")
-  e.target.setAttribute('src',fullHeart)
-  e.target.setAttribute('width',40)
-  e.target.setAttribute('height',40)
 
-}
 
-function favoriteGet(customer_uid){
-  const data = {
-    customer_uid: customer_uid
-  }
-  axios
-  .post(
-    `${API_URL}favourite_food/get`,
-    data
-  ).then(response => {
-    console.log(response);
-  })
-}
 
-function favoritePost(customer_uid,meal_uid){
-  const data = {
-    customer_uid: customer_uid,
-    favorite:meal_uid,
-  }
-  axios
-  .post(
-    `${API_URL}favourite_food/post`,
-    data
-  ).then(response => {
-    console.log(response);
-  })
 
-}
+
 
 class MenuItem extends React.Component {
 
+  constructor(props){
+    super();
+    this.props={
+      favList:[],
+    }
+  }
+
+  changeHeart(e){
+    e.target.setAttribute('src',fullHeart)
+    e.target.setAttribute('width',40)
+    e.target.setAttribute('height',40)
+  
+  }
+
+
+  favoritePost(customer_uid,meal_uid){
+    const data = {
+      customer_uid: customer_uid,
+      favorite:meal_uid,
+    }
+    axios
+    .post(
+      `${API_URL}favourite_food/post`,
+      data
+    ).then(response => {
+      console.log(response);
+    })
+  
+  }
+
+  favoriteGet(customer_uid){
+    const data = {
+      customer_uid: customer_uid
+    }
+    axios
+    .post(
+      `${API_URL}favourite_food/get`,
+      data
+    ).then(response => {
+      // console.log(response.data.result);
+    })
+  }
+
   menuItemFilter = () => {
-    favoriteGet(this.props.customer_uid);
+
+    if(this.props.customer_uid==null){
+      // console.log("user not login")
+    }
+    else{
+      // console.log(this.props.customer_uid)
+      this.favoriteGet(this.props.customer_uid);
+    }
+
+    
     const {cartItems, show} = this.props;
     let x = this.props.data.filter(
       date => date.menu_date === this.props.myDate
@@ -67,9 +89,9 @@ class MenuItem extends React.Component {
         key={index}
         className={styles.menuitemIndividual + " px-5"}
       >
-        {
-          // console.log(menuitem)
-        }
+        {/* {
+          console.log(menuitem)
+        } */}
         <div
           style={{
             backgroundImage: `url(${menuitem.meal_photo_URL})`,
@@ -94,7 +116,7 @@ class MenuItem extends React.Component {
           </Tooltip>
 
           <button 
-          onClick={changeHeart}
+          onClick={this.changeHeart}
           className={styles.heartButton}
           >
             <img src={emptyHeart}

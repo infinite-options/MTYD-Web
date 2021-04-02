@@ -247,7 +247,7 @@
   height: 320px;
   margin: 0.2rem 0.2rem 0.2rem 0.2rem;
   box-shadow: 1px 1px #888888;
-  z-index: 1;
+  /* z-index: -1; */
   /* padding-top: 50px;
   padding-right: 30px;
   padding-bottom: 50px;
@@ -430,7 +430,7 @@
 }
 
 .datebutton {
-  background-image: url("../../images/button.png");
+  background-image: url("../../images/buttonNormal.png");
   background-Position: 'center';
   background-repeat: no-repeat;
   background-size: 80px 80px;
@@ -438,11 +438,96 @@
   height:80px;
   border-radius: 10px;
   border: 1px solid #000000; 
+  margin:5px;
 }
 
+.datebutton:focus {
+  background-image: url("../../images/buttonNormal.png");
+  background-Position: 'center';
+  background-repeat: no-repeat;
+  background-size: 80px 80px;
+  width: 80px;
+  height:80px;
+  border-radius: 10px;
+  border: 4px solid #ff0606; 
+  outline:none;
+}
+
+.datebuttonSkip {
+  background-image: url("../../images/buttonSkip.png");
+  background-Position: 'center';
+  background-color: rgb(173, 154, 154);
+  background-repeat: no-repeat;
+  background-size: 80px 80px;
+  width: 80px;
+  height:80px;
+  border-radius: 10px;
+  border: 1px solid #000000; 
+  margin:5px;
+}
+
+.datebuttonSkip:focus {
+  background-image: url("../../images/buttonSkip.png");
+  background-Position: 'center';
+  background-repeat: no-repeat;
+  background-size: 80px 80px;
+  width: 80px;
+  height:80px;
+  border-radius: 10px;
+  border: 4px solid #ff0606; 
+  outline:none;
+}
+
+.datebuttonSurprise {
+  background-image: url("../../images/buttonSurprise.png");
+  background-Position: 'center';
+  background-color:#f01f1f;
+  background-repeat: no-repeat;
+  background-size: 80px 80px;
+  width: 80px;
+  height:80px;
+  border-radius: 10px;
+  border: 1px solid #000000; 
+  margin:5px;
+}
+.datebuttonSurprise:focus {
+  background-image: url("../../images/buttonSurprise.png");
+  background-Position: 'center';
+  background-repeat: no-repeat;
+  background-size: 80px 80px;
+  width: 80px;
+  height:80px;
+  border-radius: 10px;
+  border: 4px solid #ff0606; 
+  outline:none;
+}
+
+.datebuttonSave {
+  background-image: url("../../images/buttonSave.png");
+  background-Position: 'center';
+  background-color:#f08e1f;
+  background-repeat: no-repeat;
+  background-size: 80px 80px;
+  width: 80px;
+  height:80px;
+  border-radius: 10px;
+  border: 1px solid #000000; 
+  margin:5px;
+}
+.datebuttonSave:focus {
+  background-image: url("../../images/buttonSave.png");
+  background-Position: 'center';
+  background-repeat: no-repeat;
+  background-size: 80px 80px;
+  width: 80px;
+  height:80px;
+  border-radius: 10px;
+  border: 4px solid #ff0606; 
+  outline:none;
+}
 
 .datebutton:focus {
-  background-image: url("../../images/button.png");
+  background-image: url("../../images/buttonNormal.png");
   background-Position: 'center';
   background-repeat: no-repeat;
   background-size: 80px 80px;
