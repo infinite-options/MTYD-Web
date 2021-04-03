@@ -24,7 +24,7 @@ import {
   changeCardCvv,
   submitPayment
 } from "../../reducers/actions/subscriptionActions";
-
+import PayPal from './Paypal';
 
 import {submitGuestSignUp} from "../../reducers/actions/loginActions";
 
@@ -861,6 +861,9 @@ class PaymentDetails extends React.Component {
                   this.props.selectedPlan.num_deliveries
                 } Deliveries):
               </div>
+              <div className={styles.summaryLeft}>
+                Discount ({this.props.selectedPlan.delivery_discount}%):
+              </div>
               {/*<div className={styles.summaryLeft}>
                 Add-Ons:
               </div>*/}
@@ -978,30 +981,49 @@ class PaymentDetails extends React.Component {
             
             <div style = {{display: 'inline-block', width: '20%', height: '480px'}}>
               <div className={styles.summaryRight}>
-                ${(
+                ${/*(
                     this.props.selectedPlan.item_price *
                     this.props.selectedPlan.num_deliveries *
                     (1-(this.props.selectedPlan.delivery_discount*0.01))
-                  ).toFixed(2)}
+                ).toFixed(2)*/}
+                {(
+                  this.props.selectedPlan.item_price *
+                  this.props.selectedPlan.num_deliveries
+                ).toFixed(2)}
+
               </div>
               {/*<div className={styles.summaryRight}>
                 ${this.state.addOns}
               </div>*/}
               <div className={styles.summaryRight}>
-                ${this.state.deliveryFee}
+              {console.log("item price: " + this.props.selectedPlan.item_price)}
+              ${(
+                  this.props.selectedPlan.item_price *
+                  this.props.selectedPlan.num_deliveries *
+                  this.props.selectedPlan.delivery_discount * 0.01
+                ).toFixed(2)}
               </div>
               <div className={styles.summaryRight}>
-                ${this.state.serviceFee}
+                ${(this.state.deliveryFee).toFixed(2)}
               </div>
               <div className={styles.summaryRight}>
-                ${(
+                ${(this.state.serviceFee).toFixed(2)}
+              </div>
+              <div className={styles.summaryRight}>
+                ${/*(
                   this.props.selectedPlan.item_price *
                   this.props.selectedPlan.num_deliveries *
                   this.state.taxRate * 0.01
-                )}
+                )*/}
+                {(
+                    this.props.selectedPlan.item_price *
+                    this.props.selectedPlan.num_deliveries *
+                    (1-(this.props.selectedPlan.delivery_discount*0.01)) *
+                    this.state.taxRate * 0.01
+                ).toFixed(2)}
               </div>
               <div className={styles.summaryRight}>
-                ${this.state.tip}
+                ${(this.state.tip).toFixed(2)}
               </div>
               <div className={styles.summaryRight2}>
                 ${(
@@ -1017,7 +1039,7 @@ class PaymentDetails extends React.Component {
                 )}
               </div>
               <div className={styles.summaryRight2}>
-                ${(-1)*this.state.ambassadorDiscount}
+                ${((-1)*this.state.ambassadorDiscount).toFixed(2)}
               </div>
               <hr className={styles.sumLine}></hr>
               <div className={styles.summaryRight2}>
@@ -1042,25 +1064,31 @@ class PaymentDetails extends React.Component {
           </div>
             
           <div style={{display: 'flex'}}>
-            <div style = {{display: 'inline-block', width: '80%', height: '280px'}}>
-              <Elements stripe={stripePromise}>
-                <div className={styles.buttonContainer}>
-                  <button className={styles.button} onClick={() => this.setPaymentType('STRIPE')}>
-                    STRIPE
-                  </button>
-                  {this.state.paymentType === 'STRIPE' && (
-                    <StripeElement
-                      deliveryInstructions={this.state.instructions}
-                      setPaymentType={this.setPaymentType}
-                      //subscribeInfo={this.props.subscribeInfo}
-                    />
-                  )}
-                </div>
-              </Elements>
+            <div style = {{display: 'inline-block', width: '80%', height: '400px'}}>
               <div className={styles.buttonContainer}>
-                <button className={styles.button}>
+                <button className={styles.button} onClick={() => this.setPaymentType('STRIPE')}>
+                  STRIPE
+                </button>
+                {/*console.log("Password entered: " + this.state.customerPassword)*/}
+                {this.state.paymentType === 'STRIPE' && (
+                  <StripeElement
+                    customerPassword={this.state.customerPassword}
+                    deliveryInstructions={this.state.instructions}
+                    setPaymentType={this.setPaymentType}
+                    //subscribeInfo={this.props.subscribeInfo}
+                  />
+                )}
+              </div>
+              <div className={styles.buttonContainer}>
+                <button className={styles.button} onClick={() => this.setPaymentType('PAYPAL')}>
                   PAYPAL
                 </button>
+                {this.state.paymentType === 'PAYPAL' && (
+                  <PayPal
+                    value={1000}
+                    deliveryInstructions={this.state.instructions}
+                  />
+                )}
               </div>
               {/*<div className={styles.buttonContainer}>
                 <button className={styles.button}>
@@ -1078,7 +1106,7 @@ class PaymentDetails extends React.Component {
             </div>
           </div>
             
-          <div style={{display: 'flex'}}>
+          {/*<div style={{display: 'flex'}}>
             <div style = {{display: 'inline-block', width: '80%', height: '200px'}}>
               <input
                 type='text'
@@ -1169,7 +1197,7 @@ class PaymentDetails extends React.Component {
             </button>
                 </div>
             </div>
-          </div>
+          </div>*/}
         </div>
       </div>
     );

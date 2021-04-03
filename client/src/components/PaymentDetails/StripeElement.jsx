@@ -74,7 +74,7 @@ const useStyles = makeStyles({
 
 export default function StripeElement(props) {
 
-console.log("Stripe Element setpaymentType: " + props.setPaymentType);
+//console.log("Stripe Element setpaymentType: " + props.setPaymentType);
 
   const classes = useStyles();
   const stripePromise = loadStripe(
@@ -83,16 +83,17 @@ console.log("Stripe Element setpaymentType: " + props.setPaymentType);
       ? process.env.REACT_APP_STRIPE_PUBLIC_KEY_LIVE
       : process.env.REACT_APP_STRIPE_PUBLIC_KEY
   );
-  console.log("stripePromise: " + stripePromise);
-  console.log("(string) stripePromise: " + JSON.stringify(stripePromise));
-  console.log("key: " + process.env.NODE_ENV === 'production' &&
+  //console.log("stripePromise: " + stripePromise);
+  console.log("stripePromise: " + JSON.stringify(stripePromise));
+  /*console.log("key: " + process.env.NODE_ENV === 'production' &&
   props.deliveryInstructions !== 'M4METEST'
   ? process.env.REACT_APP_STRIPE_PUBLIC_KEY_LIVE
-  : process.env.REACT_APP_STRIPE_PUBLIC_KEY);
+  : process.env.REACT_APP_STRIPE_PUBLIC_KEY);*/
 
   return (
     <Elements stripe={stripePromise}>
       <StripeCheckout
+        customerPassword={props.customerPassword}
         deliveryInstructions={props.deliveryInstructions}
         setPaymentType={props.setPaymentType}
         classes={classes}
