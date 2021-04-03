@@ -15,9 +15,7 @@ import {
   submitPayment
 } from "../../reducers/actions/subscriptionActions";
 
-const storeContext = createContext();
-const AuthContext = createContext();
-const checkoutContext = createContext();
+//import checkoutItems from '../../utils/CheckoutItems';
 
 const appColors = {
   primary: '#e88330',
@@ -68,33 +66,6 @@ function useResponsiveFontSize() {
   return fontSize;
 }
 
-function onPurchaseComplete(props) {
-  props.store.setCartItems({});
-  props.store.setCartTotal(0);
-  props.store.setDayClicked('');
-  props.store.setStartDeliveryDate('');
-  props.store.setFarmsClicked(new Set());
-  props.checkout.setPurchaseMade(props.checkout.purchaseMade + 1);
-  localStorage.removeItem('selectedDay');
-  localStorage.removeItem('cartTotal');
-  localStorage.removeItem('cartItems');
-  localStorage.removeItem('startDeliveryDate');
-
-  props
-    .confirm({
-      variant: 'info',
-      title: 'Purchase Completed',
-      description:
-        'Thank you! Your order should arrive by ' +
-        props.store.expectedDelivery +
-        '.',
-    })
-    .then(() => {
-      props.store.setExpectedDelivery('');
-    })
-    .catch(() => {});
-}
-
 const ConfirmationServiceContext = React.createContext(Promise.reject);
 
 export const useConfirmation = () => useContext(ConfirmationServiceContext);
@@ -126,12 +97,6 @@ const useOptions = () => {
 
 const StripeCheckout = (props) => {
 
-  const auth = useContext(AuthContext);
-
-  const store = useContext(storeContext);
-  const checkout = useContext(checkoutContext);
-  const confirm = useConfirmation();
-
   const elements = useElements();
   const stripe = useStripe();
   const options = useOptions();
@@ -156,7 +121,7 @@ const StripeCheckout = (props) => {
     setProcessing(true);
 
     let formSending = new FormData();
-    formSending.append('amount', 1000);
+    formSending.append('amount', props.paymentSummary.total);
     formSending.append('note', props.instructions);
 
     try {
@@ -180,14 +145,14 @@ const StripeCheckout = (props) => {
         }
       });
       let client_secret = stripeIntentResponse.data.client_secret;
+      let charge_id = stripeIntentResponse.data.id;
 
-      const items = {
+      const items = [{
         qty: props.selectedPlan.num_deliveries.toString(),
         name: props.selectedPlan.item_name,
-        price: props.selectedPlan.item_price,
+        price: props.selectedPlan.item_price.toString(),
         item_uid: props.selectedPlan.item_uid,
-        itm_business_uid: props.selectedPlan.itm_business_uid
-      };
+      }];
 
       const cardElement = await elements.getElement(CardElement);
 
@@ -201,7 +166,90 @@ const StripeCheckout = (props) => {
         payment_method: paymentMethod.paymentMethod.id,
       });
 
-      props.submitPayment(
+      console.log("payment_method: " + JSON.stringify(confirmed));
+      console.log("confirmed: " + JSON.stringify(paymentMethod));
+      console.log("id from intent: " + charge_id);
+
+      // New checkout
+      //checkoutItems(props, {() => console.log("CHECKOUT TEST")});
+
+      //console.log("props before stripe checkout: " + JSON.stringify(props));
+
+      const dataSending = {
+        customer_uid: props.customerId,
+        business_uid: '200-000001',
+        items,
+        salt: "",
+        order_instructions: 'fast',
+        delivery_instructions: props.deliveryInstructions,
+        delivery_first_name: props.firstName,
+        delivery_last_name: props.lastName,
+        delivery_phone: props.phone,
+        delivery_email: props.email,
+        delivery_address: props.address.street,
+        delivery_unit: props.unit,
+        delivery_city: props.city,
+        delivery_state: props.state,
+        delivery_zip: props.zip,
+        delivery_latitude: '37.2270928',
+        delivery_longitude: '-121.8866517',
+        purchase_notes: 'purchase_notes',
+        amount_due: props.paymentSummary.total,
+        amount_discount: props.paymentSummary.discountAmount,
+        amount_paid: props.paymentSummary.total,
+        cc_num: 'NULL',
+        cc_exp_year: 'NULL',
+        cc_exp_month: 'NULL',
+        cc_cvv: 'NULL',
+        cc_zip: 'NULL',
+        charge_id: charge_id,
+        payment_type: 'STRIPE',
+        service_fee: props.paymentSummary.serviceFee,
+        delivery_fee: props.paymentSummary.deliveryFee,
+        tip: props.paymentSummary.tip,
+        tax: props.paymentSummary.taxAmount,
+        subtotal: props.paymentSummary.mealSubPrice
+      };
+      console.log('data sending: ', JSON.stringify(dataSending));
+
+      /*
+      paymentSummary: {
+        mealSubPrice: "0.00",
+        discountAmount: "0.00",
+        addOns: "0.00",
+        tip: "2.00",
+        serviceFee: "0.00",
+        deliveryFee: "0.00",
+        taxRate: 0,
+        taxAmount: "0.00",
+        ambassadorDiscount: "0.00",
+      },
+      */
+
+      axios
+        .post(
+          process.env.REACT_APP_SERVER_BASE_URI + 'checkout',
+          dataSending
+        )
+        .then((res) => {
+          console.log("Response: " + JSON.stringify(res));
+          /*onPurchaseComplete({
+            store: store,
+            checkout: checkout,
+            confirm: confirm,
+          });*/
+          console.log("Stripe purchase complete");
+        }).catch((err) => {
+          console.log(
+            'error happened while posting to checkoutapi',
+            err
+          );
+          if(err.response){
+            console.log("err.response: " + JSON.stringify(err.response));
+          }
+        });
+
+      /*props.submitPayment(
         props.email,
         props.customerId,
         props.socialMedia,
@@ -229,7 +277,7 @@ const StripeCheckout = (props) => {
           } else {
             console.log("Payment submission failure! Error code: " + response.status);
           }
-        });
+        });*/
 
     
     } catch (err) {

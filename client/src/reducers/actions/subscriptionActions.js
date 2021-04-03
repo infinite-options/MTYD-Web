@@ -38,7 +38,7 @@ import {
 } from '../actions/subscriptionTypes';
 import {LOAD_USER_INFO} from '../actions/loginTypes';
 
-import {API_URL, BING_LCOATION_API_URL} from '../constants';
+import {API_URL, BING_LOCATION_API_URL} from '../constants';
 
 export const resetSubscription = () => dispatch => {
   dispatch({
@@ -382,7 +382,7 @@ export const submitPayment = (
               .join('');
             console.log("hashed password: " + hashedPassword);
             axios
-              .get(BING_LCOATION_API_URL, {
+              .get(BING_LOCATION_API_URL, {
                 params: {
                   CountryRegion: 'US',
                   adminDistrict: deliveryState,
@@ -476,7 +476,7 @@ export const submitPayment = (
   } else {
     // Skip sign in part
     axios
-      .get(BING_LCOATION_API_URL, {
+      .get(BING_LOCATION_API_URL, {
         params: {
           CountryRegion: 'US',
           adminDistrict: deliveryState,

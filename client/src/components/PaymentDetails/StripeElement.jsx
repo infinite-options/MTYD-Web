@@ -96,6 +96,8 @@ export default function StripeElement(props) {
         customerPassword={props.customerPassword}
         deliveryInstructions={props.deliveryInstructions}
         setPaymentType={props.setPaymentType}
+        paymentSummary={props.paymentSummary}
+        custUID={props.custUID}
         classes={classes}
         //subscribeInfo={props.subscribeInfo}
       />
