@@ -18,11 +18,137 @@ import {
 } from "../../reducers/actions/loginActions";
 import {connect} from "react-redux";
 import { Route , withRouter} from 'react-router-dom';
+import axios from 'axios';
+
+const google = window.google;
 
 export class PopSignup extends Component {
 
-  constructor(){
-    super();
+  constructor(props){
+    super(props);
+    this.handlePlaceSelect = this.handlePlaceSelect.bind(this)
+    this.handleChange = this.handleChange.bind(this)
+    this.autocomplete = null
+    this.state = this.initialState()
+  }
+
+  initialState() {
+    return {
+      name: '',
+      street_address: '',
+      city: '',
+      state: '',
+      zip_code: '',
+      lat:'',
+      lng:''
+    }
+  }
+
+  componentDidMount(){
+
+    this.autocomplete = new google.maps.places.Autocomplete(document.getElementById('ship-address'),{
+      componentRestrictions: { country: ["us", "ca"] },
+    })
+    this.autocomplete.addListener("place_changed", this.handlePlaceSelect)
+
+    console.log(this.autocomplete)
+  }
+
+
+  handlePlaceSelect() {
+
+    console.log('here')
+
+
+    let address1Field = document.querySelector("#ship-address");
+    let postalField = document.querySelector("#postcode");
+
+    let addressObject = this.autocomplete.getPlace()
+    console.log(addressObject.address_components);
+
+    let address1 = "";
+    let postcode = "";
+    let city = '';
+    let state = '';
+
+
+
+    for (const component of addressObject.address_components) {
+      const componentType = component.types[0];
+      switch (componentType) {
+        case "street_number": {
+          address1 = `${component.long_name} ${address1}`;
+          break;
+        }
+  
+        case "route": {
+          address1 += component.short_name;
+          break;
+        }
+  
+        case "postal_code": {
+          postcode = `${component.long_name}${postcode}`;
+          break;
+        }
+
+        case "locality":
+          document.querySelector("#locality").value = component.long_name;
+          city = component.long_name;
+          break;
+  
+        case "administrative_area_level_1": {
+          document.querySelector("#state").value = component.short_name;
+          state= component.short_name;
+          break;
+        }
+        
+      }
+    }
+
+    address1Field.value = address1;
+    postalField.value = postcode;
+
+    console.log(address1);
+    console.log(postcode)
+
+    this.setState({
+      name: addressObject.name,
+      street_address: address1,
+      city: city,
+      state: state,
+      zip_code: postcode,
+      lat:addressObject.geometry.location.lat(),
+      lng:addressObject.geometry.location.lng(),
+    })
+
+    axios.get(`https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/categoricalOptions/${this.state.lng},${this.state.lat}`)
+      .then(res=>{
+        console.log(res)
+        if(res.data.result.length==0){
+          alert('cannot deliver to this address')
+          console.log('cannot deliver to this address')
+        }else{
+          console.log('we can deliver to this address')
+        }
+      })
+      .catch((err) => {
+        if (err.response) {
+          console.log(err.response);
+        }
+        console.log(err);
+      });
+
+
+
+    console.log(this.state)
+  }
+
+  handleChange(event) {
+
+      this.setState({[event.target.name]: event.target.value})
+      console.log(event.target.name)
+      console.log(event.target.value)
+    
   }
 
   handleClick = () => {
@@ -40,7 +166,7 @@ export class PopSignup extends Component {
   }
 
   wrapperFunction=()=>{
-    console.log(this.props.password)
+    console.log(this.state)
     this.props.submitPasswordSignUp(
       this.props.email,
       this.props.password,
@@ -48,18 +174,18 @@ export class PopSignup extends Component {
       this.props.firstName,
       this.props.lastName,
       this.props.phone,
-      this.props.street,
+      this.state.street_address,
       this.props.unit,
-      this.props.city,
-      this.props.state,
-      this.props.zip,
+      this.state.city,
+      this.state.state,
+      this.state.zip_code,
     );
     let temppd= this.props.password
     let tempem = this.props.email
 
     console.log('finish signup function');
 
-    this.sleep(5000).then(()=>{
+    this.sleep(1000).then(()=>{
       this.props.loginAttempt(
         tempem,
         temppd,
@@ -71,8 +197,12 @@ export class PopSignup extends Component {
   }
 
 
+
+
+
   render() {
     return (
+      
       <div
         className="model_content"
       >
@@ -230,11 +360,14 @@ export class PopSignup extends Component {
               opacity: 1,
               marginBottom: '13px',
             }} 
-            placeholder='Address'
-            value={this.props.street}
-            onChange={e => {
-              this.props.changeNewAddress(e.target.value);
-            }}
+            // name={'street_address'}
+
+            // onChange={this.handleChange}
+
+            id="ship-address"
+            name="ship-address"
+
+            placeholder='Street Address'
           />
 
           <input 
@@ -274,10 +407,9 @@ export class PopSignup extends Component {
               marginBottom: '13px',
               }} 
             placeholder='City'
-            value={this.props.city}
-            onChange={e => {
-                this.props.changeNewCity(e.target.value);
-              }}
+            id="locality" name="locality"
+            // value = {this.state.city}
+            // onChange={this.handleChange}
             />
 
 
@@ -295,10 +427,9 @@ export class PopSignup extends Component {
               marginBottom: '13px',
               }} 
             placeholder='State'
-            value={this.props.state}
-            onChange={e => {
-              this.props.changeNewState(e.target.value);
-              }}
+            id="state" name="state"
+            // value = {this.state.state}
+            // onChange={this.handleChange}
             />
 
 
@@ -315,10 +446,8 @@ export class PopSignup extends Component {
               marginBottom: '13px',
             }} 
               placeholder='Zip'
-              value={this.props.zip}
-              onChange={e => {
-                this.props.changeNewZip(e.target.value);
-              }}
+              id="postcode" name="postcode"
+
             />
         </div>
 
@@ -348,6 +477,12 @@ export class PopSignup extends Component {
           </p>
           
         </button>
+
+        {/* <GooglePlacesAutocomplete
+          placeholder="Type in an address"
+        /> */}
+
+        {/* <input id="autocompletexx"/> */}
 
 
 

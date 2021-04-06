@@ -336,7 +336,8 @@ const MealPlan = props => {
                     let frequency = ' ';
                     if (Object.keys(props.plans).length > 0) {
                       if (props.plans[item.name.split(' ')[0]]) { 
-                        frequency = props.plans[item.name.split(' ')[0]][item.qty].payment_frequency;
+                        //frequency = props.plans[item.name.split(' ')[0]][item.qty].payment_frequency;
+                        frequency = props.plans[item.name.split(' ')[0]][item.qty].num_deliveries;
                       }
                     }
                     return (
@@ -385,7 +386,7 @@ const MealPlan = props => {
                               </div>
                               <div className={'col ' + styles.cardInfo}>
                                 <div className="row">
-                                  <p>EVERY {frequency} WEEK(S)</p>
+                                  <p>EVERY {frequency} DELIVERIE(S)</p>
                                   <button
                                     className={styles.iconBtn}
                                     onClick={() => setMealChange(index)}
