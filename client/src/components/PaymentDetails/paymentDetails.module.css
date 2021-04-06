@@ -186,6 +186,17 @@ select {
   padding: 6px 0px 6px 10px;
 }
 
+.inputPassword {
+  width: 90%;
+  height: 2.2rem;
+  border-radius: 10px;
+  border: solid;
+  border-width: 1px;
+  background-color: #F0F0F0;
+  margin: 0px 0px 15px 0px;
+  padding: 6px 0px 6px 10px;
+}
+
 .inputContactLeft {
   width: 91%;
   height: 2.2rem;
@@ -289,6 +300,13 @@ select {
 }
 
 .input::placeholder {
+  position: absolute;
+  font-size: large;
+  color: red;
+  opacity: 0.8;
+}
+
+.inputPassword::placeholder {
   position: absolute;
   font-size: large;
   color: red;

@@ -55,13 +55,6 @@ class PaymentDetails extends React.Component {
     super();
     this.state = {
       mounted: false,
-      /*mealSubPrice: "0.00",
-      addOns: "0.00",
-      tip: "2.00",
-      serviceFee: "0.00",
-      deliveryFee: "0.00",
-      taxRate: 9.25,
-      ambassadorDiscount: "0.00",*/
       ambassadorCode: "",
       paymentSummary: {
         mealSubPrice: "0.00",
@@ -745,7 +738,7 @@ class PaymentDetails extends React.Component {
 
   render() {
     let loggedInByPassword = false;
-    if (this.props.socialMedia === "NULL") {
+    if (this.state.customerUid !== "GUEST" && this.props.socialMedia === "NULL") {
       loggedInByPassword = true;
     }
     return (
@@ -1213,7 +1206,7 @@ class PaymentDetails extends React.Component {
           </div>
             
           <div style={{display: 'flex'}}>
-            <div style = {{display: 'inline-block', width: '80%', height: '400px'}}>
+            <div style = {{display: 'inline-block', width: '80%', height: '500px'}}>
               <div className={styles.buttonContainer}>
                 <button className={styles.button} onClick={() => {
                   if(this.state.paymentType === 'STRIPE'){
@@ -1236,9 +1229,25 @@ class PaymentDetails extends React.Component {
                     setPaymentType={this.setPaymentType}
                     paymentSummary={this.state.paymentSummary}
                     custUID={this.state.customerUid}
-                    //subscribeInfo={this.props.subscribeInfo}
                   />
                 )}
+                {(() => {
+                  if (this.state.paymentType === 'STRIPE' && loggedInByPassword === true) {
+                    return (
+                      <input
+                        type='password'
+                        placeholder='Enter Password'
+                        className={styles.inputPassword}
+                        value={this.state.customerPassword}
+                        onChange={e => {
+                          this.setState({
+                            customerPassword: e.target.value
+                          });
+                        }}
+                      />
+                    );
+                  }
+                })()}
               </div>
               <div className={styles.buttonContainer}>
                 <button className={styles.button} onClick={() => {
@@ -1258,8 +1267,26 @@ class PaymentDetails extends React.Component {
                     value={1000}
                     deliveryInstructions={this.state.instructions}
                     paymentSummary={this.state.paymentSummary}
+                    customerPassword={this.state.customerPassword}
                   />
                 )}
+                {(() => {
+                  if (this.state.paymentType === 'PAYPAL' && loggedInByPassword === true) {
+                    return (
+                      <input
+                        type='password'
+                        placeholder='Enter Password'
+                        className={styles.inputPassword}
+                        value={this.state.customerPassword}
+                        onChange={e => {
+                          this.setState({
+                            customerPassword: e.target.value
+                          });
+                        }}
+                      />
+                    );
+                  }
+                })()}
               </div>
               {/*<div className={styles.buttonContainer}>
                 <button className={styles.button}>

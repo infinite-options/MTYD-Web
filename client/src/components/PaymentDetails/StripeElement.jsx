@@ -33,7 +33,7 @@ const useStyles = makeStyles({
     outline: 0,
     borderRadius: '4px',
     background: 'white',
-    width: '650px',
+    width: '550px',
   },
   section: {
     textAlign: 'left',
@@ -61,6 +61,7 @@ const useStyles = makeStyles({
   button: {
     color: appColors.primary,
     width: '300px',
+    marginBottom: '20px'
   },
   showButton: {
     color: 'white',
@@ -83,12 +84,8 @@ export default function StripeElement(props) {
       ? process.env.REACT_APP_STRIPE_PUBLIC_KEY_LIVE
       : process.env.REACT_APP_STRIPE_PUBLIC_KEY
   );
-  //console.log("stripePromise: " + stripePromise);
+
   console.log("stripePromise: " + JSON.stringify(stripePromise));
-  /*console.log("key: " + process.env.NODE_ENV === 'production' &&
-  props.deliveryInstructions !== 'M4METEST'
-  ? process.env.REACT_APP_STRIPE_PUBLIC_KEY_LIVE
-  : process.env.REACT_APP_STRIPE_PUBLIC_KEY);*/
 
   return (
     <Elements stripe={stripePromise}>
@@ -99,7 +96,6 @@ export default function StripeElement(props) {
         paymentSummary={props.paymentSummary}
         custUID={props.custUID}
         classes={classes}
-        //subscribeInfo={props.subscribeInfo}
       />
     </Elements>
   );

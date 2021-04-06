@@ -2,6 +2,7 @@ import React, { useMemo, useContext, useState, useEffect, createContext } from '
 import { useElements, useStripe, CardElement } from '@stripe/react-stripe-js';
 import axios from 'axios';
 import Stripe from 'stripe';
+import { useHistory } from "react-router";
 
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
@@ -16,6 +17,8 @@ import {
 } from "../../reducers/actions/subscriptionActions";
 
 //import checkoutItems from '../../utils/CheckoutItems';
+import hashPassword from '../../utils/HashPassword';
+import checkoutItems from '../../utils/CheckoutItems';
 
 const appColors = {
   primary: '#e88330',
@@ -100,6 +103,7 @@ const StripeCheckout = (props) => {
   const elements = useElements();
   const stripe = useStripe();
   const options = useOptions();
+  const history = useHistory();
 
   const [processing, setProcessing] = useState(false);
 
@@ -147,11 +151,13 @@ const StripeCheckout = (props) => {
       let client_secret = stripeIntentResponse.data.client_secret;
       let charge_id = stripeIntentResponse.data.id;
 
+
       const items = [{
         qty: props.selectedPlan.num_deliveries.toString(),
         name: props.selectedPlan.item_name,
         price: props.selectedPlan.item_price.toString(),
         item_uid: props.selectedPlan.item_uid,
+        itm_business_uid: props.selectedPlan.itm_business_uid
       }];
 
       const cardElement = await elements.getElement(CardElement);
@@ -170,16 +176,59 @@ const StripeCheckout = (props) => {
       console.log("confirmed: " + JSON.stringify(paymentMethod));
       console.log("id from intent: " + charge_id);
 
-      // New checkout
-      //checkoutItems(props, {() => console.log("CHECKOUT TEST")});
+      hashPassword(
+        props.customerPassword, 
+        props.email,
+        (hashedPassword) => {
+          console.log("(StripeCheckout) hashed password: " + hashedPassword);
+          checkoutItems(
+            {
+              customer_uid: props.customerId,
+              business_uid: 'WEB',
+              items,
+              salt: hashedPassword,
+              order_instructions: 'fast',
+              delivery_instructions: props.deliveryInstructions,
+              delivery_first_name: props.firstName,
+              delivery_last_name: props.lastName,
+              delivery_phone: props.phone,
+              delivery_email: props.email,
+              delivery_address: props.address.street,
+              delivery_unit: props.unit,
+              delivery_city: props.city,
+              delivery_state: props.state,
+              delivery_zip: props.zip,
+              delivery_latitude: '37.2270928',
+              delivery_longitude: '-121.8866517',
+              purchase_notes: 'purchase_notes',
+              amount_due: props.paymentSummary.total,
+              amount_discount: props.paymentSummary.discountAmount,
+              amount_paid: props.paymentSummary.total,
+              cc_num: 'NULL',
+              cc_exp_year: 'NULL',
+              cc_exp_month: 'NULL',
+              cc_cvv: 'NULL',
+              cc_zip: 'NULL',
+              charge_id: charge_id,
+              payment_type: 'STRIPE',
+              service_fee: props.paymentSummary.serviceFee,
+              delivery_fee: props.paymentSummary.deliveryFee,
+              tip: props.paymentSummary.tip,
+              tax: props.paymentSummary.taxAmount,
+              subtotal: props.paymentSummary.mealSubPrice
+            },
+            () => {
+              history.push("/congrats")
+            }
+          );
+        }
+      );
 
-      //console.log("props before stripe checkout: " + JSON.stringify(props));
-
-      const dataSending = {
+      /*const dataSending = {
         customer_uid: props.customerId,
         business_uid: '200-000001',
         items,
-        salt: "",
+        salt: saltedPassword,
         order_instructions: 'fast',
         delivery_instructions: props.deliveryInstructions,
         delivery_first_name: props.firstName,
@@ -212,20 +261,6 @@ const StripeCheckout = (props) => {
       };
       console.log('data sending: ', JSON.stringify(dataSending));
 
-      /*
-      paymentSummary: {
-        mealSubPrice: "0.00",
-        discountAmount: "0.00",
-        addOns: "0.00",
-        tip: "2.00",
-        serviceFee: "0.00",
-        deliveryFee: "0.00",
-        taxRate: 0,
-        taxAmount: "0.00",
-        ambassadorDiscount: "0.00",
-      },
-      */
-
       axios
         .post(
           process.env.REACT_APP_SERVER_BASE_URI + 'checkout',
@@ -233,11 +268,6 @@ const StripeCheckout = (props) => {
         )
         .then((res) => {
           console.log("Response: " + JSON.stringify(res));
-          /*onPurchaseComplete({
-            store: store,
-            checkout: checkout,
-            confirm: confirm,
-          });*/
           console.log("Stripe purchase complete");
         }).catch((err) => {
           console.log(
@@ -247,7 +277,7 @@ const StripeCheckout = (props) => {
           if(err.response){
             console.log("err.response: " + JSON.stringify(err.response));
           }
-        });
+        });*/
 
       /*props.submitPayment(
         props.email,
@@ -296,7 +326,7 @@ const StripeCheckout = (props) => {
       </Box>
       <Box mt={1}>
         <label className={props.classes.label}>
-          Enter Card details Below:
+          Enter Card Details Below:
           <CardElement
             elementRef={(c) => (this._element = c)}
             className={props.classes.element}
