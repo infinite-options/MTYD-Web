@@ -4,14 +4,50 @@ import {WebNavBar} from "../NavBar";
 import Menu from "../Menu";
 import styles from "./about.module.css"
 import ponoHawaiian from "./PONOHAWAIIAN_LOGO.png"
+import PopLogin from '../PopLogin';
+import Popsignup from '../PopSignup';
 
 class About extends Component {
-  state = {  }
+  state = {     
+    login_seen:false,
+    signUpSeen:false, 
+  }
+  togglePopLogin = () => {
+    this.setState({
+     login_seen: !this.state.login_seen,
+    });
+
+    if(!this.state.login_seen){
+      this.setState({
+        signUpSeen:false
+      })
+    }
+
+   };
+
+   togglePopSignup = () => {
+    this.setState({
+     signUpSeen: !this.state.signUpSeen
+    });
+
+    if(!this.state.signUpSeen){
+      this.setState({
+        login_seen:false
+      })
+    }
+   };
+
   render() { 
     return ( 
       <>
       <div className = {styles.top}>
-        <WebNavBar />
+        <WebNavBar 
+          poplogin = {this.togglePopLogin}
+          popSignup = {this.togglePopSignup}
+        />
+        {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
+        {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
+
         <div className = {styles.centerBox}>
           <h2 style = {{fontWeight: 'bold'}}>OUR STORY</h2>
           <p style = {{color: 'black', fontSize: '23px', textAlign: 'left', padding: '0px ', marginTop: '60px'}}> 

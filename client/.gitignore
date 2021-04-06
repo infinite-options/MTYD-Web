@@ -1,10 +1,21 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# Meals For Me Git Ignore File
+# MTYD-Web
+
+# For more about ignoring files:
+# See https://help.github.com/articles/ignoring-files/
+# https://www.atlassian.com/git/tutorials/saving-changes/gitignore
+
+
+# Web Specific project files 
+*.pem
 
 # dependencies
 /node_modules/
 /.pnp
-.pnp.js
-/.vscode/
+.pnp
+.js
+.vscode
+
 # testing
 /coverage
 
@@ -25,5 +36,9 @@ yarn-error.log*
 
 /Skip and save options.txt
 /client/.vscode/
+/ms-master/
+/mtydenv/
+/.vscode
+/node_modules/
 /ms-master/
 /mtydenv/

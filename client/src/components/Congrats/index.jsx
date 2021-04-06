@@ -7,15 +7,44 @@ import { API_URL } from '../../reducers/constants';
 import {Link} from "react-router-dom";
 import SocialLogin from "../Landing/socialLogin"
 
+import PopLogin from '../PopLogin';
+import Popsignup from '../PopSignup';
+
 export class Congrats extends Component {
 
   constructor(props){
     super();
     this.state = {
       user_id:'',
-      user_address:''
+      user_address:'',
+      login_seen:false,
+      signUpSeen:false, 
     };
   }
+  togglePopLogin = () => {
+    this.setState({
+     login_seen: !this.state.login_seen,
+    });
+
+    if(!this.state.login_seen){
+      this.setState({
+        signUpSeen:false
+      })
+    }
+
+   };
+
+   togglePopSignup = () => {
+    this.setState({
+     signUpSeen: !this.state.signUpSeen
+    });
+
+    if(!this.state.signUpSeen){
+      this.setState({
+        login_seen:false
+      })
+    }
+   };
 
   componentDidMount(){
     const customer_uid = Cookies.get("customer_uid");
@@ -45,7 +74,12 @@ export class Congrats extends Component {
   render() {
     return (
       <div>
-        <WebNavBar />
+        <WebNavBar 
+          poplogin = {this.togglePopLogin}
+          popSignup = {this.togglePopSignup}
+        />
+        {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
+        {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
         <h1>CONGRATULATIONS</h1>
         <h2>YOUR FIRST DELIVERY WILL ARRIVE ON:March 8 between 4-6pm</h2>
         <h2>TO YOUR ADDRESS:{this.state.user_address}</h2>

@@ -147,11 +147,21 @@ class NavBar extends React.Component {
       
   }
   render() {
+
+    const nameLength = this.state.firstName.length*14+this.state.lastName.length*14+30;
+    const nameFormat = {
+      width: nameLength,
+    }
+
     if(this.props.narrowView === false){
     return (
       <div className={styles.navbar}>
         <div>
-          <img style={{width: "60%", height:"60%"}} src={Logo} alt="logo" />
+        <Link to='/home'>
+          <img style={{width: "60%", height:"60%"}} src={Logo} alt="logo"/>
+        </Link>
+          
+
         </div>
         <ul>
           {this.state.login ? (
@@ -214,7 +224,11 @@ class NavBar extends React.Component {
     return (
       <div className={styles.navbar}>
         <div>
-          <img style={{width: "60%", height:"60%"}} src={Logo} alt="logo" />
+        <a href='/home' style={{
+          margin:0
+        }}>
+          <img style={{width: "60%", height:"60%", margin:0}} src={Logo} alt="logo"/>
+        </a>
         </div>
         <ul>
           {this.state.login ? (
@@ -237,7 +251,9 @@ class NavBar extends React.Component {
 
           <div class={styles.divider}/>
 
-          <Link to='/meal-plan' className={styles.showNameBtn} >
+          <Link to='/meal-plan' className={styles.showNameBtn} 
+            style={nameFormat}
+          >
               {this.state.firstName} {this.state.lastName}
           </Link>
 
@@ -253,15 +269,6 @@ class NavBar extends React.Component {
             </>
           ) : (
             <>
-              {/* <Link to='/home' className={styles.signUpBtn}>
-                Sign Up
-              </Link>
-              <Link to='/login' className={styles.signInBtn}>
-                Sign In
-              </Link> */}
-
-              
-
               <button 
                 onClick={this.props.popSignup}
                 className={styles.signUpBtn}
