@@ -126,7 +126,7 @@ class PaymentDetails extends React.Component {
    };
 
   componentDidMount() {
-    console.log("payment details props: " + JSON.stringify(this.props));
+    console.log("payment details props: " + this.props);
     if (
       document.cookie
         .split(";")
