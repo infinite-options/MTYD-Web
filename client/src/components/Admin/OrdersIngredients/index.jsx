@@ -19,12 +19,18 @@ const initialState = {
     field: '',
     direction: '',
   },
+  customersData: [],
+  sortedCustomersData: [],
+  sortCustomers: {
+    field: '',
+    direction: '',
+  },
   ingredientsData: [],
   sortedIngredientsData: [],
   sortIngredients: {
     field: '',
     direction: '',
-  }
+  },
 }
 
 function reducer(state, action) {
@@ -71,6 +77,24 @@ function reducer(state, action) {
       return {
         ...state,
         sortIngredients: {
+          field: action.payload.field,
+          direction: action.payload.direction,
+        }
+      }
+    case 'FETCH_CUSTOMERS':
+      return {
+        ...state,
+        customersData: action.payload,
+      }
+    case 'FILTER_CUSTOMERS':
+      return {
+        ...state,
+        sortedCustomersData: action.payload
+      }
+    case 'SORT_CUSTOMERS':
+      return {
+        ...state,
+        sortCustomers: {
           field: action.payload.field,
           direction: action.payload.direction,
         }
@@ -145,6 +169,11 @@ function OrdersIngredients({history, ...props}) {
     return curIngredients;
   }
 
+  const getCustomerData = (date) => {
+    const curCustomers = state.customersData.filter((customer) => customer.d_menu_date === date);
+    return curCustomers;
+  }
+
   // Fetch orders
   useEffect(() => {
     axios
@@ -181,6 +210,23 @@ function OrdersIngredients({history, ...props}) {
       });
   },[])
 
+  // Fetch Customer Names
+  useEffect(() => {
+    axios.get(`${API_URL}orders_by_customers`)
+         .then((response) => {
+           const customersApi = response.data.result;
+           dispatch({ type: 'FETCH_CUSTOMERS', payload: customersApi})
+         })
+         .catch((err) => {
+          if (err.response) {
+            // eslint-disable-next-line no-console
+            console.log(err.response);
+          }
+          // eslint-disable-next-line no-console
+          console.log(err);
+        });
+  },[])
+
   const changeSortOrder = (field) => {
     const isAsc = (state.sortOrders.field === field && state.sortOrders.direction === 'asc');
     const direction = isAsc ? 'desc' : 'asc';
@@ -209,6 +255,20 @@ function OrdersIngredients({history, ...props}) {
     dispatch({ type: 'FILTER_INGREDIENTS', payload: sortedIngredients })
   }
 
+  const changeSortCustomer = (field) => {
+    const isAsc = (state.sortCustomers.field === field && state.sortCustomers.direction === 'asc');
+    const direction = isAsc ? 'desc' : 'asc';
+    dispatch({
+      type: 'SORT_CUSTOMERS',
+      payload: {
+        field: field,
+        direction: direction,
+      }
+    })
+    const sortedCustomers = sortedArray(state.sortedCustomersData, field, direction);
+    dispatch({ type: 'FILTER_CUSTOMERS', payload: sortedCustomers })
+  }
+
   // Change date 
   const changeDate = (newDate) => {
     dispatch({ type: 'CHANGE_DATE', payload: newDate });
@@ -216,8 +276,11 @@ function OrdersIngredients({history, ...props}) {
     const sortedOrders = sortedArray(newOrders, state.sortOrders.field, state.sortOrders.direction);
     const newIngredients = getIngredientsData(newDate);
     const sortedIngredients = sortedArray(newIngredients, state.sortIngredients.field, state.sortIngredients.direction);
+    const newCustomers = getCustomerData(newDate)
+    const sortedCustomers = sortedArray(newCustomers, state.sortCustomers.field, state.sortCustomers.direction);
     dispatch({ type: 'FILTER_ORDERS', payload: sortedOrders});
     dispatch({ type: 'FILTER_INGREDIENTS', payload: sortedIngredients});
+    dispatch({ type: 'FILTER_CUSTOMERS', payload: sortedCustomers})
   }
 
   return (
@@ -376,6 +439,90 @@ function OrdersIngredients({history, ...props}) {
                           <TableCell> {ingredient.units} </TableCell>
                         </TableRow>
                       )
+                    }
+                  )
+                }
+              </TableBody>
+            </Table>
+          </Col>
+        </Row>
+        <Row
+          style={{
+            marginTop: '4rem',
+            marginBottom: '1rem',
+          }}
+        ></Row>
+        <Row>
+          <Col>
+            <h5> Meals Ordered By Customer </h5>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>
+                    Menu Date
+                  </TableCell>
+                  <TableCell>
+                    <TableSortLabel
+                      active={state.sortCustomers.field === 'jt_name'}
+                      direction={state.sortCustomers.field === 'jt_name' ? state.sortCustomers.direction : 'asc'}
+                      onClick={() => changeSortCustomer('jt_name')}
+                    >
+                      Meal Name
+                    </TableSortLabel>
+                  </TableCell>
+                  <TableCell>
+                    <TableSortLabel
+                      active={state.sortCustomers.field === 'First_Name'}
+                      direction={state.sortCustomers.field === 'First_Name' ? state.sortCustomers.direction : 'asc'}
+                      onClick={() => changeSortCustomer('First_Name')}
+                    >
+                      Customer
+                    </TableSortLabel>
+                  </TableCell>
+                  <TableCell>
+                    <TableSortLabel
+                      
+                    >
+                      Customer UID
+                    </TableSortLabel>
+                  </TableCell>
+                  <TableCell>
+                    <TableSortLabel
+                      
+                    >
+                      Purchase UID
+                    </TableSortLabel>
+                  </TableCell>
+                  <TableCell>
+                    <TableSortLabel
+                      
+                    >
+                      Quantity
+                    </TableSortLabel>
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {
+                  state.sortedCustomersData.map(
+                    (customer, customerIndex) => {
+                      return (
+                        <TableRow
+                          key={customerIndex}
+                          hover
+                        >
+                          <TableCell> {customer.d_menu_date} </TableCell>
+                          <TableCell> {customer.jt_name} </TableCell>
+                          <TableCell> {customer.First_Name} {customer.Last_Name} </TableCell>
+                          <TableCell> {customer.customer_uid} </TableCell>
+                          <TableCell> {customer.lplpibr_purchase_id} </TableCell>
+                          <TableCell> {customer.Qty} </TableCell>
+                        </TableRow>
+                      );
                     }
                   )
                 }
