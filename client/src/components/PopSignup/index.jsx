@@ -20,8 +20,6 @@ import {connect} from "react-redux";
 import { Route , withRouter} from 'react-router-dom';
 import axios from 'axios';
 
-import GooglePlacesAutocomplete from "react-google-places-autocomplete";
-
 const google = window.google;
 
 export class PopSignup extends Component {
@@ -52,10 +50,14 @@ export class PopSignup extends Component {
       componentRestrictions: { country: ["us", "ca"] },
     })
     this.autocomplete.addListener("place_changed", this.handlePlaceSelect)
+
+    console.log(this.autocomplete)
   }
 
 
   handlePlaceSelect() {
+
+    console.log('here')
 
 
     let address1Field = document.querySelector("#ship-address");
@@ -147,7 +149,6 @@ export class PopSignup extends Component {
       console.log(event.target.name)
       console.log(event.target.value)
     
-
   }
 
   handleClick = () => {
@@ -446,8 +447,7 @@ export class PopSignup extends Component {
             }} 
               placeholder='Zip'
               id="postcode" name="postcode"
-              // value = {this.state.zip_code}
-              // onChange={this.handleChange}
+
             />
         </div>
 
