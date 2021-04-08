@@ -22,6 +22,8 @@ import {
   changeCardYear,
   changeCardZip,
   changeCardCvv,
+  chooseMealsDelivery,
+  choosePaymentOption,
   submitPayment
 } from "../../reducers/actions/subscriptionActions";
 import PayPal from './Paypal';
@@ -128,6 +130,7 @@ class PaymentDetails extends React.Component {
   componentDidMount() {
     console.log("google client id: " + process.env.REACT_APP_GOOGLE_CLIENT_ID);
     console.log("payment details props: " + JSON.stringify(this.props));
+
     if (
       document.cookie
         .split(";")
@@ -1221,7 +1224,6 @@ class PaymentDetails extends React.Component {
                 }}>
                   STRIPE
                 </button>
-                {/*console.log("Password entered: " + this.state.customerPassword)*/}
               </div>
               <div className = {styles.buttonContainer}>
                 {console.log("stripe payment summary: " + JSON.stringify(this.state.paymentSummary))}
@@ -1238,23 +1240,6 @@ class PaymentDetails extends React.Component {
                     customerUid={this.state.customerUid}
                   />
                 )}
-                {/*(() => {
-                  if (this.state.paymentType === 'STRIPE' && loggedInByPassword === true) {
-                    return (
-                      <input
-                        type='password'
-                        placeholder='Enter Password'
-                        className={styles.inputPassword}
-                        value={this.state.customerPassword}
-                        onChange={e => {
-                          this.setState({
-                            customerPassword: e.target.value
-                          });
-                        }}
-                      />
-                    );
-                  }
-                })()*/}
               </div>
               <div className={styles.buttonContainer}>
                 <button className={styles.button} onClick={() => {
@@ -1284,23 +1269,6 @@ class PaymentDetails extends React.Component {
                     customerUid={this.state.customerUid}
                   />
                 )}
-                {/*(() => {
-                  if (this.state.paymentType === 'PAYPAL' && loggedInByPassword === true) {
-                    return (
-                      <input
-                        type='password'
-                        placeholder='Enter Password'
-                        className={styles.inputPassword}
-                        value={this.state.customerPassword}
-                        onChange={e => {
-                          this.setState({
-                            customerPassword: e.target.value
-                          });
-                        }}
-                      />
-                    );
-                  }
-                })()*/}
               </div>
               {/*<div className={styles.buttonContainer}>
                 <button className={styles.button}>
@@ -1317,99 +1285,6 @@ class PaymentDetails extends React.Component {
                 </button>}
                 </div>*/}
           </div>
-            
-          {/*<div style={{display: 'flex'}}>
-            <div style = {{display: 'inline-block', width: '80%', height: '200px'}}>
-              <input
-                type='text'
-                placeholder='Card Holder Name'
-                className={styles.input}
-                value={this.state.name}
-                onChange={e => {
-                  this.setState({
-                    name: e.target.value
-                  });
-                }}
-              />
-              <input
-                type='text'
-                placeholder='Credit Card Number'
-                className={styles.input}
-                value={this.state.number}
-                onChange={e => {
-                  this.setState({
-                    number: e.target.value
-                  });
-                }}
-              />
-              <input
-                type='password'
-                placeholder='Enter Password'
-                className={styles.input}
-                value={this.state.customerPassword}
-                onChange={e => {
-                  this.setState({
-                    customerPassword: e.target.value
-                  });
-                }}
-              />
-            <div style = {{display: 'inline-flex', height: '100px', width: '125%'}}>
-              <input
-                type='text'
-                placeholder='MM'
-                className={styles.monthInput}
-                value={this.state.month}
-                onChange={e => {
-                  this.setState({
-                    month: e.target.value
-                  });
-                }}
-              />
-              <div className={styles.dateSlash}>/</div>
-              <input
-                type='text'
-                placeholder='YEAR'
-                className={styles.yearInput}
-                value={this.state.year}
-                onChange={e => {
-                  this.setState({
-                    year: e.target.value
-                  });
-                }}
-              />
-              <input
-                type='text'
-                placeholder='CVV'
-                className={styles.cvvInput}
-                value={this.state.cvv}
-                onChange={e => {
-                  this.setState({
-                    cvv: e.target.value
-                  });
-                }}
-              />
-              <input
-                type='text'
-                placeholder='ZIPCODE'
-                className={styles.zipInput}
-                value={this.state.cardZip}
-                onChange={e => {
-                  this.setState({
-                    cardZip: e.target.value
-                  });
-                }}
-              />
-            <button
-              className={styles.finishButton}
-              onClick={() => {
-                this.handleCheckout();
-              }}
-            >
-              FINISH
-            </button>
-                </div>
-            </div>
-          </div>*/}
         </div>
       </div>
     );
@@ -1490,6 +1365,8 @@ const functionList = {
   changeCardZip,
   changeCardCvv,
   submitPayment,
+  chooseMealsDelivery,
+  choosePaymentOption,
   submitGuestSignUp
 };
 

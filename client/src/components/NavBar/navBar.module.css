@@ -113,9 +113,11 @@
   width: 150px;
   padding: 14px 28px;
   border-radius: 30px;
-  background-color: rgb(255, 0, 0);
+  /*background-color: rgb(255, 0, 0);*/
+  background-color: #ff6505;
   justify-content: center;
-  border:1px solid black;
+  /*border:1px solid black;*/
+  border: 0;
 } 
 
 .divider{

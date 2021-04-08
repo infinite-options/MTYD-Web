@@ -11,8 +11,8 @@ import {
   submitPayment
 } from "../../reducers/actions/subscriptionActions";
 
-import hashPassword from '../../utils/HashPassword';
 import checkoutItems from '../../utils/CheckoutItems';
+import createGuestAccount from '../../utils/CreateGuestAccount';
 
 const PayPal = (props, { value, deliveryInstructions }) => {
 
@@ -71,17 +71,15 @@ const PayPal = (props, { value, deliveryInstructions }) => {
             .captures[0]
             .id;
 
-          hashPassword(
-            props.customerPassword, 
-            props.email,
-            (hashedPassword) => {
-              console.log("(PayPal) hashed password: " + hashedPassword);
+            if(props.customerUid !== 'GUEST') {
+              console.log("PAYPAL CHECKOUT (1) -- not a guest");
+      
               checkoutItems(
                 {
-                  customer_uid: props.customerId,
+                  customer_uid: props.customerUid,
                   business_uid: 'WEB',
                   items,
-                  salt: hashedPassword,
+                  salt: "",
                   order_instructions: 'fast',
                   delivery_instructions: props.deliveryInstructions,
                   delivery_first_name: props.firstName,
@@ -93,8 +91,8 @@ const PayPal = (props, { value, deliveryInstructions }) => {
                   delivery_city: props.city,
                   delivery_state: props.state,
                   delivery_zip: props.zip,
-                  delivery_latitude: '37.2270928',
-                  delivery_longitude: '-121.8866517',
+                  delivery_latitude: props.latitude,
+                  delivery_longitude: props.longitude,
                   purchase_notes: 'purchase_notes',
                   amount_due: props.paymentSummary.total,
                   amount_discount: props.paymentSummary.discountAmount,
@@ -116,87 +114,80 @@ const PayPal = (props, { value, deliveryInstructions }) => {
                   history.push("/congrats")
                 }
               );
-            }
-          );
-
-            /*console.log("mealsubprice (Paypal): " + props.paymentSummary.mealSubPrice);
-            const dataSending = {
-              customer_uid: props.customerId,
-              business_uid: '200-000001',
-              items,
-              salt: "",
-              order_instructions: 'fast',
-              delivery_instructions: props.deliveryInstructions,
-              delivery_first_name: props.firstName,
-              delivery_last_name: props.lastName,
-              delivery_phone: props.phone,
-              delivery_email: props.email,
-              delivery_address: props.address.street,
-              delivery_unit: props.unit,
-              delivery_city: props.city,
-              delivery_state: props.state,
-              delivery_zip: props.zip,
-              delivery_latitude: '37.2270928',
-              delivery_longitude: '-121.8866517',
-              purchase_notes: 'purchase_notes',
-              amount_due: props.paymentSummary.total,
-              amount_discount: props.paymentSummary.discountAmount,
-              amount_paid: props.paymentSummary.total,
-              cc_num: 'NULL',
-              cc_exp_year: 'NULL',
-              cc_exp_month: 'NULL',
-              cc_cvv: 'NULL',
-              cc_zip: 'NULL',
-              charge_id: 'testRun',
-              payment_type: 'PAYPAL',
-              service_fee: props.paymentSummary.serviceFee,
-              delivery_fee: props.paymentSummary.deliveryFee,
-              tip: props.paymentSummary.tip,
-              tax: props.paymentSummary.taxAmount,
-              subtotal: props.paymentSummary.mealSubPrice
-            };
-            console.log('PayPal data sending: ', JSON.stringify(dataSending));
-
-            axios
-              .post(
-                process.env.REACT_APP_SERVER_BASE_URI + 'checkout',
-                dataSending
-              )
-              .then(() => {
-                console.log("PayPal purchase complete");
-              }).catch((err) => {
-                console.log(
-                  'error happened while posting to checkoutapi',
-                  err
-                );
-                if(err.response){
-                  console.log("err.response: " + JSON.stringify(err.response));
+      
+            } else if (props.customerUid === 'GUEST') {
+              console.log("PAYPAL CHECKOUT (2) -- guest");
+      
+              createGuestAccount(
+                {
+                  email: props.email,
+                  first_name: props.firstName,
+                  last_name: props.lastName,
+                  phone_number: props.phone,
+                  address: props.street,
+                  unit: props.unit,
+                  city: props.city,
+                  state: props.state,
+                  zip_code: props.zip,
+                  latitude: props.latitude,
+                  longitude: props.longitude,
+                  referral_source: "WEB",
+                  role: "CUSTOMER",
+                  social: "FALSE",
+                  social_id: "NULL",
+                  user_access_token: "FALSE",
+                  user_refresh_token: "FALSE",
+                  mobile_access_token: "FALSE",
+                  mobile_refresh_token: "FALSE"
+                },
+                () => {
+                  checkoutItems(
+                    {
+                      customer_uid: props.customerUid,
+                      business_uid: 'WEB',
+                      items,
+                      salt: "",
+                      order_instructions: 'fast',
+                      delivery_instructions: props.deliveryInstructions,
+                      delivery_first_name: props.firstName,
+                      delivery_last_name: props.lastName,
+                      delivery_phone: props.phone,
+                      delivery_email: props.email,
+                      delivery_address: props.address.street,
+                      delivery_unit: props.unit,
+                      delivery_city: props.city,
+                      delivery_state: props.state,
+                      delivery_zip: props.zip,
+                      delivery_latitude: props.latitude,
+                      delivery_longitude: props.longitude,
+                      purchase_notes: 'purchase_notes',
+                      amount_due: props.paymentSummary.total,
+                      amount_discount: props.paymentSummary.discountAmount,
+                      amount_paid: props.paymentSummary.total,
+                      cc_num: 'NULL',
+                      cc_exp_year: 'NULL',
+                      cc_exp_month: 'NULL',
+                      cc_cvv: 'NULL',
+                      cc_zip: 'NULL',
+                      charge_id: chargeId,
+                      payment_type: 'PAYPAL',
+                      service_fee: props.paymentSummary.serviceFee,
+                      delivery_fee: props.paymentSummary.deliveryFee,
+                      tip: props.paymentSummary.tip,
+                      tax: props.paymentSummary.taxAmount,
+                      subtotal: props.paymentSummary.mealSubPrice
+                    },
+                    () => {
+                      history.push("/congrats")
+                    }
+                  );
                 }
-              });*/
-
-          //}
-
-          /*axios
-            .post(
-              process.env.REACT_APP_SERVER_BASE_URI + 'checkout',
-              dataSending
-            )
-            .then(() => {
-              onPurchaseComplete({
-                store: store,
-                checkout: checkout,
-                confirm: confirm,
-              });
-              console.log("PayPal purchase complete");
-            }).catch((err) => {
-              console.log(
-                'error happened while posting to checkoutapi',
-                err
               );
-              if(err.response){
-                console.log("err.response: " + JSON.stringify(err.response));
-              }
-            });*/
+      
+            } else {
+              console.log("PAYPAL CHECKOUT (3) -- error; wrong data");
+            }
+
         }}
         options={{
           clientId: CLIENT_ID,

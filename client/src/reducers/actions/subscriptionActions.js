@@ -118,6 +118,9 @@ export const choosePaymentOption = (
 };
 
 const calculateTotalPayment = (dispatch, plans, meal, options) => {
+  //console.log("+++++ plans: " + JSON.stringify(plans));
+  console.log("(calculateTotalPayment) meal: " + meal);
+  console.log("(calculateTotalPayment) options: " + options);
   if (meal !== '' && options !== '') {
     let mealNum = Number(meal);
     let optionsNum = Number(options);
@@ -126,6 +129,7 @@ const calculateTotalPayment = (dispatch, plans, meal, options) => {
     );
     if (selectedPlan.length !== 0) {
       let selectedItem = selectedPlan[0];
+      console.log("(calculateTotalPayment) selectedItem: " + JSON.stringify(selectedItem));
       dispatch({
         type: GET_TOTAL_PAYMENT,
         payload: selectedItem,
@@ -160,7 +164,7 @@ export const fetchProfileInformation = customerId => dispatch => {
           customerInfo.user_social_media !== null
             ? customerInfo.user_social_media
             : 'NULL';
-        console.log(res);
+        //console.log(res);
         dispatch({
           type: FETCH_PROFILE_INFO,
           payload: {
