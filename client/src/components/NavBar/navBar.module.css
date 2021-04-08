@@ -80,18 +80,18 @@
   height: 50% !important;
   width: 110px;
   border-radius: 30px;
-  background-color: red;
+  background-color: #ff6505;
   justify-content: center;
   margin:0.25rem;
   font-weight: 500;
   font-size: 20px;
-  border-color: red;
+  border-color: #ff6505;
 } 
 .signUpBtn:hover{
   height: 50% !important;
   width: 110px;
   border-radius: 30px;
-  background-color: red;
+  background-color: #ff6505;
   justify-content: center;
   margin:0.25rem;
   font-weight: 500;

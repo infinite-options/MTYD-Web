@@ -126,6 +126,7 @@ class PaymentDetails extends React.Component {
    };
 
   componentDidMount() {
+    console.log("google client id: " + process.env.REACT_APP_GOOGLE_CLIENT_ID);
     console.log("payment details props: " + JSON.stringify(this.props));
     if (
       document.cookie
@@ -603,10 +604,10 @@ class PaymentDetails extends React.Component {
   }*/
     
   applyAmbassadorCode() {
-    console.log("Applying ambassador code...");
+    /*console.log("Applying ambassador code...");
     console.log("this.state.ambassadorCode: " + this.state.ambassadorCode);
     console.log("this.props.email: " + this.props.email);
-    console.log("this.state.email: {" + this.state.email + "}");
+    console.log("this.state.email: {" + this.state.email + "}");*/
 
     if(this.state.email !== ""){
       console.log("(Ambassador code) Valid email");
@@ -725,8 +726,8 @@ class PaymentDetails extends React.Component {
   setTotal() {
     let total = this.calculateTotal();
     let subtotal = this.calculateSubtotal();
-    console.log("setTotal total: " + total);
-    console.log("setTotal subtotal: " + subtotal);
+    /*console.log("setTotal total: " + total);
+    console.log("setTotal subtotal: " + subtotal);*/
     this.setState(prevState => ({
       paymentSummary: {
         ...prevState.paymentSummary,
@@ -751,7 +752,7 @@ class PaymentDetails extends React.Component {
         {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
 
         {(() => {
-          console.log("\ndisplay checkout error message? " + this.state.checkoutError + "\n\n");
+          //console.log("\ndisplay checkout error message? " + this.state.checkoutError + "\n\n");
           if (this.state.checkoutError === true) {
             return (
               <>
@@ -780,7 +781,7 @@ class PaymentDetails extends React.Component {
           }
         })()} 
         {(() => {
-          console.log("\ndisplay ambassador error message? " + this.state.ambassadorError + "\n\n");
+          //console.log("\ndisplay ambassador error message? " + this.state.ambassadorError + "\n\n");
           if (this.state.ambassadorError === true) {
             return (
               <>
@@ -1214,6 +1215,8 @@ class PaymentDetails extends React.Component {
                   } else {
                     this.setPaymentType('STRIPE');
                   }
+                  this.saveContactDetails();
+                  this.saveDeliveryDetails();
                   this.setTotal();
                 }}>
                   STRIPE
@@ -1228,10 +1231,14 @@ class PaymentDetails extends React.Component {
                     deliveryInstructions={this.state.instructions}
                     setPaymentType={this.setPaymentType}
                     paymentSummary={this.state.paymentSummary}
-                    custUID={this.state.customerUid}
+                    loggedInByPassword={loggedInByPassword}
+                    latitude={this.state.latitude.toString()}
+                    longitude={this.state.longitude.toString()}
+                    email={this.state.email}
+                    customerUid={this.state.customerUid}
                   />
                 )}
-                {(() => {
+                {/*(() => {
                   if (this.state.paymentType === 'STRIPE' && loggedInByPassword === true) {
                     return (
                       <input
@@ -1247,7 +1254,7 @@ class PaymentDetails extends React.Component {
                       />
                     );
                   }
-                })()}
+                })()*/}
               </div>
               <div className={styles.buttonContainer}>
                 <button className={styles.button} onClick={() => {
@@ -1256,6 +1263,8 @@ class PaymentDetails extends React.Component {
                   } else {
                     this.setPaymentType('PAYPAL');
                   }
+                  this.saveContactDetails();
+                  this.saveDeliveryDetails();
                   this.setTotal();
                 }}>
                   PAYPAL
@@ -1268,9 +1277,14 @@ class PaymentDetails extends React.Component {
                     deliveryInstructions={this.state.instructions}
                     paymentSummary={this.state.paymentSummary}
                     customerPassword={this.state.customerPassword}
+                    loggedInByPassword={loggedInByPassword}
+                    latitude={this.state.latitude.toString()}
+                    longitude={this.state.longitude.toString()}
+                    email={this.state.email}
+                    customerUid={this.state.customerUid}
                   />
                 )}
-                {(() => {
+                {/*(() => {
                   if (this.state.paymentType === 'PAYPAL' && loggedInByPassword === true) {
                     return (
                       <input
@@ -1286,7 +1300,7 @@ class PaymentDetails extends React.Component {
                       />
                     );
                   }
-                })()}
+                })()*/}
               </div>
               {/*<div className={styles.buttonContainer}>
                 <button className={styles.button}>

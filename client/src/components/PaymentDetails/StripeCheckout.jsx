@@ -16,9 +16,9 @@ import {
   submitPayment
 } from "../../reducers/actions/subscriptionActions";
 
-//import checkoutItems from '../../utils/CheckoutItems';
 import hashPassword from '../../utils/HashPassword';
 import checkoutItems from '../../utils/CheckoutItems';
+import createGuestAccount from '../../utils/CreateGuestAccount';
 
 const appColors = {
   primary: '#e88330',
@@ -121,6 +121,8 @@ const StripeCheckout = (props) => {
         postal_code: props.zip,
       },
     };
+
+    console.log("billing details: " + JSON.stringify(billingDetails));
     
     setProcessing(true);
 
@@ -172,57 +174,293 @@ const StripeCheckout = (props) => {
         payment_method: paymentMethod.paymentMethod.id,
       });
 
-      console.log("payment_method: " + JSON.stringify(confirmed));
-      console.log("confirmed: " + JSON.stringify(paymentMethod));
-      console.log("id from intent: " + charge_id);
+      /*if(props.loggedInByPassword === false && props.customerUid !== 'GUEST') {
+        console.log("STRIPE CHECKOUT (1) -- no password; not a guest");
 
-      hashPassword(
-        props.customerPassword, 
-        props.email,
-        (hashedPassword) => {
-          console.log("(StripeCheckout) hashed password: " + hashedPassword);
-          checkoutItems(
-            {
-              customer_uid: props.customerId,
-              business_uid: 'WEB',
-              items,
-              salt: hashedPassword,
-              order_instructions: 'fast',
-              delivery_instructions: props.deliveryInstructions,
-              delivery_first_name: props.firstName,
-              delivery_last_name: props.lastName,
-              delivery_phone: props.phone,
-              delivery_email: props.email,
-              delivery_address: props.address.street,
-              delivery_unit: props.unit,
-              delivery_city: props.city,
-              delivery_state: props.state,
-              delivery_zip: props.zip,
-              delivery_latitude: '37.2270928',
-              delivery_longitude: '-121.8866517',
-              purchase_notes: 'purchase_notes',
-              amount_due: props.paymentSummary.total,
-              amount_discount: props.paymentSummary.discountAmount,
-              amount_paid: props.paymentSummary.total,
-              cc_num: 'NULL',
-              cc_exp_year: 'NULL',
-              cc_exp_month: 'NULL',
-              cc_cvv: 'NULL',
-              cc_zip: 'NULL',
-              charge_id: charge_id,
-              payment_type: 'STRIPE',
-              service_fee: props.paymentSummary.serviceFee,
-              delivery_fee: props.paymentSummary.deliveryFee,
-              tip: props.paymentSummary.tip,
-              tax: props.paymentSummary.taxAmount,
-              subtotal: props.paymentSummary.mealSubPrice
-            },
-            () => {
-              history.push("/congrats")
-            }
-          );
-        }
-      );
+        checkoutItems(
+          {
+            customer_uid: props.customerUid,
+            business_uid: 'WEB',
+            items,
+            salt: "",
+            order_instructions: 'fast',
+            delivery_instructions: props.deliveryInstructions,
+            delivery_first_name: props.firstName,
+            delivery_last_name: props.lastName,
+            delivery_phone: props.phone,
+            delivery_email: props.email,
+            delivery_address: props.address.street,
+            delivery_unit: props.unit,
+            delivery_city: props.city,
+            delivery_state: props.state,
+            delivery_zip: props.zip,
+            delivery_latitude: props.latitude,
+            delivery_longitude: props.longitude,
+            purchase_notes: 'purchase_notes',
+            amount_due: props.paymentSummary.total,
+            amount_discount: props.paymentSummary.discountAmount,
+            amount_paid: props.paymentSummary.total,
+            cc_num: 'NULL',
+            cc_exp_year: 'NULL',
+            cc_exp_month: 'NULL',
+            cc_cvv: 'NULL',
+            cc_zip: 'NULL',
+            charge_id: charge_id,
+            payment_type: 'STRIPE',
+            service_fee: props.paymentSummary.serviceFee,
+            delivery_fee: props.paymentSummary.deliveryFee,
+            tip: props.paymentSummary.tip,
+            tax: props.paymentSummary.taxAmount,
+            subtotal: props.paymentSummary.mealSubPrice
+          },
+          () => {
+            history.push("/congrats")
+          }
+        );
+
+      } else if(props.loggedInByPassword === true && props.customerUid !== 'GUEST') {
+        console.log("STRIPE CHECKOUT (2) -- password; not a guest");
+
+        hashPassword(
+          props.customerPassword, 
+          props.email,
+          (hashedPassword) => {
+            console.log("(StripeCheckout) hashed password: " + hashedPassword);
+            checkoutItems(
+              {
+                customer_uid: props.customerUid,
+                business_uid: 'WEB',
+                items,
+                salt: hashedPassword,
+                order_instructions: 'fast',
+                delivery_instructions: props.deliveryInstructions,
+                delivery_first_name: props.firstName,
+                delivery_last_name: props.lastName,
+                delivery_phone: props.phone,
+                delivery_email: props.email,
+                delivery_address: props.address.street,
+                delivery_unit: props.unit,
+                delivery_city: props.city,
+                delivery_state: props.state,
+                delivery_zip: props.zip,
+                delivery_latitude: '37.2270928',
+                delivery_longitude: '-121.8866517',
+                purchase_notes: 'purchase_notes',
+                amount_due: props.paymentSummary.total,
+                amount_discount: props.paymentSummary.discountAmount,
+                amount_paid: props.paymentSummary.total,
+                cc_num: 'NULL',
+                cc_exp_year: 'NULL',
+                cc_exp_month: 'NULL',
+                cc_cvv: 'NULL',
+                cc_zip: 'NULL',
+                charge_id: charge_id,
+                payment_type: 'STRIPE',
+                service_fee: props.paymentSummary.serviceFee,
+                delivery_fee: props.paymentSummary.deliveryFee,
+                tip: props.paymentSummary.tip,
+                tax: props.paymentSummary.taxAmount,
+                subtotal: props.paymentSummary.mealSubPrice
+              },
+              () => {
+                history.push("/congrats")
+              }
+            );
+          }
+        );
+
+      } else if(props.customerUid === 'GUEST') {
+        console.log("STRIPE CHECKOUT (3) -- guest signup");
+
+        createGuestAccount(
+          {
+            email: props.email,
+            first_name: props.firstName,
+            last_name: props.lastName,
+            phone_number: props.phone,
+            address: props.street,
+            unit: props.unit,
+            city: props.city,
+            state: props.state,
+            zip_code: props.zip,
+            latitude: props.latitude,
+            longitude: props.longitude,
+            referral_source: "WEB",
+            role: "CUSTOMER",
+            social: "FALSE",
+            social_id: "NULL",
+            user_access_token: "FALSE",
+            user_refresh_token: "FALSE",
+            mobile_access_token: "FALSE",
+            mobile_refresh_token: "FALSE"
+          },
+          (guestPassword) => {
+            hashPassword(
+              guestPassword, 
+              props.email,
+              (hashedPassword) => {
+                console.log("(StripeCheckout) hashed password: " + hashedPassword);
+                checkoutItems(
+                  {
+                    customer_uid: props.customerUid,
+                    business_uid: 'WEB',
+                    items,
+                    salt: hashedPassword,
+                    order_instructions: 'fast',
+                    delivery_instructions: props.deliveryInstructions,
+                    delivery_first_name: props.firstName,
+                    delivery_last_name: props.lastName,
+                    delivery_phone: props.phone,
+                    delivery_email: props.email,
+                    delivery_address: props.address.street,
+                    delivery_unit: props.unit,
+                    delivery_city: props.city,
+                    delivery_state: props.state,
+                    delivery_zip: props.zip,
+                    delivery_latitude: props.latitude,
+                    delivery_longitude: props.longitude,
+                    purchase_notes: 'purchase_notes',
+                    amount_due: props.paymentSummary.total,
+                    amount_discount: props.paymentSummary.discountAmount,
+                    amount_paid: props.paymentSummary.total,
+                    cc_num: 'NULL',
+                    cc_exp_year: 'NULL',
+                    cc_exp_month: 'NULL',
+                    cc_cvv: 'NULL',
+                    cc_zip: 'NULL',
+                    charge_id: charge_id,
+                    payment_type: 'STRIPE',
+                    service_fee: props.paymentSummary.serviceFee,
+                    delivery_fee: props.paymentSummary.deliveryFee,
+                    tip: props.paymentSummary.tip,
+                    tax: props.paymentSummary.taxAmount,
+                    subtotal: props.paymentSummary.mealSubPrice
+                  },
+                  () => {
+                    history.push("/congrats")
+                  }
+                );
+              }
+            );
+          }
+        );*/
+
+      if(props.customerUid !== 'GUEST') {
+        console.log("STRIPE CHECKOUT (1) -- not a guest");
+
+        checkoutItems(
+          {
+            customer_uid: props.customerUid,
+            business_uid: 'WEB',
+            items,
+            salt: "",
+            order_instructions: 'fast',
+            delivery_instructions: props.deliveryInstructions,
+            delivery_first_name: props.firstName,
+            delivery_last_name: props.lastName,
+            delivery_phone: props.phone,
+            delivery_email: props.email,
+            delivery_address: props.address.street,
+            delivery_unit: props.unit,
+            delivery_city: props.city,
+            delivery_state: props.state,
+            delivery_zip: props.zip,
+            delivery_latitude: props.latitude,
+            delivery_longitude: props.longitude,
+            purchase_notes: 'purchase_notes',
+            amount_due: props.paymentSummary.total,
+            amount_discount: props.paymentSummary.discountAmount,
+            amount_paid: props.paymentSummary.total,
+            cc_num: 'NULL',
+            cc_exp_year: 'NULL',
+            cc_exp_month: 'NULL',
+            cc_cvv: 'NULL',
+            cc_zip: 'NULL',
+            charge_id: charge_id,
+            payment_type: 'STRIPE',
+            service_fee: props.paymentSummary.serviceFee,
+            delivery_fee: props.paymentSummary.deliveryFee,
+            tip: props.paymentSummary.tip,
+            tax: props.paymentSummary.taxAmount,
+            subtotal: props.paymentSummary.mealSubPrice
+          },
+          () => {
+            history.push("/congrats")
+          }
+        );
+
+      } else if (props.customerUid === 'GUEST') {
+        console.log("STRIPE CHECKOUT (2) -- guest");
+
+        createGuestAccount(
+          {
+            email: props.email,
+            first_name: props.firstName,
+            last_name: props.lastName,
+            phone_number: props.phone,
+            address: props.street,
+            unit: props.unit,
+            city: props.city,
+            state: props.state,
+            zip_code: props.zip,
+            latitude: props.latitude,
+            longitude: props.longitude,
+            referral_source: "WEB",
+            role: "CUSTOMER",
+            social: "FALSE",
+            social_id: "NULL",
+            user_access_token: "FALSE",
+            user_refresh_token: "FALSE",
+            mobile_access_token: "FALSE",
+            mobile_refresh_token: "FALSE"
+          },
+          () => {
+            checkoutItems(
+              {
+                customer_uid: props.customerUid,
+                business_uid: 'WEB',
+                items,
+                salt: "",
+                order_instructions: 'fast',
+                delivery_instructions: props.deliveryInstructions,
+                delivery_first_name: props.firstName,
+                delivery_last_name: props.lastName,
+                delivery_phone: props.phone,
+                delivery_email: props.email,
+                delivery_address: props.address.street,
+                delivery_unit: props.unit,
+                delivery_city: props.city,
+                delivery_state: props.state,
+                delivery_zip: props.zip,
+                delivery_latitude: props.latitude,
+                delivery_longitude: props.longitude,
+                purchase_notes: 'purchase_notes',
+                amount_due: props.paymentSummary.total,
+                amount_discount: props.paymentSummary.discountAmount,
+                amount_paid: props.paymentSummary.total,
+                cc_num: 'NULL',
+                cc_exp_year: 'NULL',
+                cc_exp_month: 'NULL',
+                cc_cvv: 'NULL',
+                cc_zip: 'NULL',
+                charge_id: charge_id,
+                payment_type: 'STRIPE',
+                service_fee: props.paymentSummary.serviceFee,
+                delivery_fee: props.paymentSummary.deliveryFee,
+                tip: props.paymentSummary.tip,
+                tax: props.paymentSummary.taxAmount,
+                subtotal: props.paymentSummary.mealSubPrice
+              },
+              () => {
+                history.push("/congrats")
+              }
+            );
+          }
+        );
+
+      } else {
+        console.log("STRIPE CHECKOUT (3) -- error; wrong data");
+      }
 
       /*const dataSending = {
         customer_uid: props.customerId,
@@ -355,9 +593,7 @@ StripeCheckout.propTypes = {
 
 const mapStateToProps = state => ({
   subscribeInfo: state.subscribe,
-  customerId: state.subscribe.profile.customerId,
   socialMedia: state.subscribe.profile.socialMedia,
-  email: state.subscribe.profile.email,
   firstName: state.subscribe.addressInfo.firstName,
   lastName: state.subscribe.addressInfo.lastName,
   street: state.subscribe.address.street,
@@ -368,9 +604,6 @@ const mapStateToProps = state => ({
   phone: state.subscribe.addressInfo.phoneNumber,
   instructions: state.subscribe.deliveryInstructions,
   selectedPlan: state.subscribe.selectedPlan,
-  loginPassword: state.login.password,
-  userInfo: state.login.newUserInfo,
-  password: state.subscribe.paymentPassword,
   address: state.subscribe.address,
   addressInfo: state.subscribe.addressInfo,
   creditCard: state.subscribe.creditCard
