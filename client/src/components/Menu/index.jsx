@@ -23,15 +23,19 @@ const getCircularReplacer = () => {
 const Menu = props => {
   return (
     <div className={props.show ? styles.menu : styles.menu1}>
-      {props.show && props.message}
 
         {(props.login===3)?
-        <button class={styles.signInBtn}>
-          <Link to="/choose-plan">
-          Click to subscribe
-          </Link>
-        </button>
-
+          <div>
+            {props.show && props.message}
+            
+            <button class={styles.subscribe}>
+              <a href="/choose-plan" style={{
+                color:"black",
+              }}>
+              Click to subscribe
+              </a>
+            </button>
+          </div>
           :(
           <div className={styles.selectBtn + " " + (!props.show && styles.w5)}>
           <Link to='/choose-plan'>
