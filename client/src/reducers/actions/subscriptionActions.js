@@ -570,9 +570,41 @@ export const fetchSubscribed = customerId => async dispatch => {
   //fetch  data from server
   let purchaseIds = [];
   try {
-    const res = await axios.get(`${API_URL}customer_lplp`, {
+    console.log("fetchSubscribed (1)");
+    const response = await axios.get(`${API_URL}customer_lplp`, {
       params: {customer_uid: customerId},
+    })
+    .then((res) => {
+      console.log("res: " + JSON.stringify(res));
+      if (res.status !== 200) {
+        dispatch({
+          type: ADD_ERROR,
+          payload: 'Cannot Get Subscription Info',
+        });
+      } else {
+        let filtered = res.data.result.filter(
+          item => JSON.parse(item?.items)[0]?.itm_business_uid === '200-000002'
+        );
+        dispatch({
+          type: FETCH_SUBSCRIBED_INFO,
+          payload: filtered,
+        });
+        for (let items of res.data.result) {
+          purchaseIds.push(items.purchase_id);
+        }
+      }
+      console.log("fetchSubscribed (2)");
+      return purchaseIds;
+    })
+    .catch((err) => {
+      if(err.response) {
+        // eslint-disable-next-line no-console
+        console.log(err.response);
+      }
+      // eslint-disable-next-line no-console
+      console.log(err);
     });
+    /*
     if (res.status !== 200) {
       dispatch({
         type: ADD_ERROR,
@@ -590,6 +622,7 @@ export const fetchSubscribed = customerId => async dispatch => {
         purchaseIds.push(items.purchase_id);
       }
     }
+    console.log("fetchSubscribed (2)");*/
   } catch (err) {
     let message = '';
     if (err.response) {
@@ -601,8 +634,9 @@ export const fetchSubscribed = customerId => async dispatch => {
       type: ADD_ERROR,
       payload: message,
     });
+    return purchaseIds;
   }
-  return purchaseIds;
+  //return purchaseIds;
 };
 
 export const setCurrentMeal = meal => dispatch =>

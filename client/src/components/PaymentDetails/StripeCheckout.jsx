@@ -130,15 +130,16 @@ const StripeCheckout = (props) => {
     
     setProcessing(true);
 
-    console.log("props.paymentSummary.total: " + props.paymentSummary.total);
+    console.log("STRIPE props.paymentSummary.total: " + props.paymentSummary.total);
 
     let formSending = new FormData();
     formSending.append('amount', props.paymentSummary.total);
     formSending.append('note', props.instructions);
 
-    console.log("formSending: " + JSON.stringify(formSending));
+    console.log("formSending (1): " + JSON.stringify(formSending));
 
     try {
+      console.log("formSending (2): " + JSON.stringify(formSending));
       let stripeIntentResponse;
       await axios.post(
         'https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/Stripe_Intent',
@@ -185,6 +186,7 @@ const StripeCheckout = (props) => {
 
       if(props.customerUid !== 'GUEST') {
         console.log("STRIPE CHECKOUT (1) -- not a guest");
+        console.log("STRIPE CHECKOUT (1) -- amount_due: " + props.paymentSummary.total);
 
         checkoutItems(
           {
@@ -229,6 +231,7 @@ const StripeCheckout = (props) => {
 
       } else if (props.customerUid === 'GUEST') {
         console.log("STRIPE CHECKOUT (2) -- guest");
+        console.log("STRIPE CHECKOUT (2) -- amount_due: " + props.paymentSummary.total);
 
         createGuestAccount(
           {
