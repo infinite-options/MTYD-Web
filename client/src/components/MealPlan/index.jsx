@@ -39,14 +39,36 @@ const MealPlan = props => {
       .split('=')[1];
   }
     
-  console.log("Profile UID: " + customerId);
+  //console.log("Profile UID: " + customerId);
     
   // we can replace hooks by store.subscribe(listener)
 
   const [modal, setModal] = useState(null);
+
+  const [activePlans, updateActivePlans] = useState(props.subscribedPlans.filter((elt) => elt.purchase_status === 'ACTIVE'));
+  const [cancelledPlans, updateCancelledPlans] = useState(props.subscribedPlans.filter((elt) => elt.purchase_status !== 'ACTIVE'));
+
+  /*const [activeIDs, updateActiveIDs] = useState({
+
+  });*/
   
-  const activePlans = props.subscribedPlans.filter((elt) => elt.purchase_status === 'ACTIVE');
-  const cancelledPlans = props.subscribedPlans.filter((elt) => elt.purchase_status !== 'ACTIVE');
+  //const activePlans = props.subscribedPlans.filter((elt) => elt.purchase_status === 'ACTIVE');
+  //const cancelledPlans = props.subscribedPlans.filter((elt) => elt.purchase_status !== 'ACTIVE');
+
+  useEffect(() => {
+    console.log("SUBSCRIBED PLANS: " + JSON.stringify(props.subscribedPlans));
+    console.log("NEW ACTIVE PLANS: " + JSON.stringify(activePlans));
+    updateActivePlans(props.subscribedPlans.filter((elt) => elt.purchase_status === 'ACTIVE'));
+    updateCancelledPlans(props.subscribedPlans.filter((elt) => elt.purchase_status !== 'ACTIVE'));
+  }, [props.subscribedPlans]);
+
+  useEffect(() => {
+    console.log("RERENDER ON ACTIVE PLANS CHANGE");
+  }, [activePlans]);
+
+  useEffect(() => {
+    console.log("RERENDER ON CANCELLED PLANS CHANGE");
+  }, [cancelledPlans]);
 
   const modalShow = [
     <ChangeMealPlan isShow={true} changeOpen={() => setModal(null)} />,
@@ -80,11 +102,13 @@ const MealPlan = props => {
         props
           .fetchSubscribed(customerId)
           .then(ids => props.fetchOrderHistory(ids));
+        updateActivePlans(props.subscribedPlans.filter((elt) => elt.purchase_status === 'ACTIVE'));
+        updateCancelledPlans(props.subscribedPlans.filter((elt) => elt.purchase_status !== 'ACTIVE'));
       } catch (err) {
         console.log(err);
       }
     }
-    console.log("subbed plans: " + JSON.stringify(props.subscribedPlans));
+    //console.log("subbed plans: " + JSON.stringify(props.subscribedPlans));
     //eslint-disable-next-line
   }, []);
   const setMealChange = id => {
@@ -292,6 +316,116 @@ const MealPlan = props => {
     return itemShow;
   };
 
+  const loadActiveSubscriptions = () => {
+    let items = props.subscribedPlans;
+    let itemShow = [];
+    //console.log("items: " + JSON.stringify(items));
+
+    for (let key of Object.keys(items)) {
+      if (items[key][0]?.items) {
+          
+        // Endpoints where data comes from: 
+        // plans?business_uid=200-000001
+        // pid_history/400-000021
+
+        //console.log("ITEMS: " + JSON.stringify(items));
+          
+        let status = items[key][0].purchase_status;
+        let name = JSON.parse(items[key][0].items)[0].name;
+        let qty = JSON.parse(items[key][0].items)[0].qty;
+        let remaining = props.plans[name.split(' ')[0]][qty].num_deliveries;
+        let purchases = items[key];
+        let active_frequency = '';
+        if (Object.keys(props.plans).length > 0) {
+          active_frequency = qty;
+        }
+        if(status === 'ACTIVE'){
+        itemShow.push(
+          <div key={key} className={'row pl-2 mb-5 ' + styles.historyItemName}>
+            <p className={styles.itemName + ' pl-0 text-uppercase'}>
+              {name} - {active_frequency} TOTAL DELIVERIES
+            </p>
+            {/*console.log("PURCHASES: " + JSON.stringify(purchases))*/}
+            {purchases.map((purchase, id) => {
+              let _date = purchase.purchase_date.split(' ');
+              let date = new Date(`${_date[0]}T00:00:00`);
+              let dateShow = date.toDateString().replace(' ', ', ');
+              let item_desc = '';
+              let purchase_items = JSON.parse(purchase.items)[0];
+
+              if (Object.keys(props.plans).length > 0) {
+                item_desc = name + " for " + active_frequency + " deliveries"
+              }
+                           
+              return (
+                <Fragment key={purchase.purchase_uid}>
+                  <div className={styles.historyItemName}>
+                    <p className="mt-0">
+                      <span className={styles.title}>PURCHASE DATE:</span>{' '}
+                      {dateShow}
+                    </p>
+                    {(() => {
+                      if (active_frequency === 'WEEKLY') {
+                        return (
+                          <div>
+                          <p className="mt-0">
+                            <span className={styles.title}>NEXT CHARGE DATE:</span>{' '}
+                              --
+                          </p>
+                          <p className="mt-0">
+                            <span className={styles.title}>NEXT CHARGE AMOUNT:</span>{' '}
+                              --
+                          </p>
+                          </div>
+                        );
+                      }
+                    })()}
+                    <p className="mt-0">
+                      <span className={styles.title}>DELIVERIES REMAINING:</span>{' '}
+                      {remaining}
+                    </p>
+                    <p className="mt-0">
+                      <span className={styles.title}>ORDER #:</span>{' '}
+                      {purchase.purchase_uid}
+                    </p>
+                    <p className="mt-0">
+                      <span className={styles.title}>Item Description:</span>{' '}
+                      {item_desc}
+                    </p>
+                    <p className={styles.title}>DELIVERY ADDRESS:</p>
+                    <p>{purchase.delivery_address + ',\n '}
+                       {purchase.delivery_unit !== 'NULL' && (
+                         <span>
+                           Apt. {' ' + purchase.delivery_unit + ', '}
+                         </span>)}
+                        <br></br>
+                       {purchase.delivery_city + ', ' + 
+                        purchase.delivery_state + ', ' +
+                        purchase.delivery_zip + '.'}
+                    </p>
+                    <p className={styles.title}>PAYMENT CARD:</p>
+                    <p>************{purchase.cc_num.substring(purchase.cc_num.length-4, purchase.cc_num.length)}</p>
+                    {id + 1 !== purchases.length && (
+                      <hr
+                        style={{
+                          borderTop: '1px solid orange',
+                          width: '70%',
+                          margin: '2px auto',
+                        }}
+                      />
+                    )}
+                  </div>
+                </Fragment>
+              );
+            })}
+          </div>
+        );
+        }
+      }
+    }
+    return itemShow;
+  };
+
   return (
     <>
       <WebNavBar />
@@ -329,15 +463,16 @@ const MealPlan = props => {
                       <p className={styles.header1}>DELIVERY INFORMATION</p>
                     </div>
                   </div>
-                  {/*console.log("ACTIVE PLANS " + JSON.stringify(activePlans))*/}
+                  {/*console.log("ACTIVE PLANS " + JSON.stringify(activePlans))}
+                  {console.log("CANCELLED PLANS " + JSON.stringify(cancelledPlans))*/}
                   {activePlans.map((plan, index) => {
                         
                     // Endpoints where data comes from: 
                     // pid_history/400-000021
                         
-                    console.log("plan " + index + ": " + JSON.stringify(plan));
+                    console.log("plan " + index + ": " + JSON.stringify(plan.items));
                     let item = JSON.parse(plan.items)[0];
-                    console.log("ITEM " + index + ": " + JSON.stringify(item));
+                    //console.log("ITEM " + index + ": " + JSON.stringify(item));
                     let cc_num = plan.cc_num;
                     let frequency = ' ';
                     let numMeals = item.name.substring(0,item.name.indexOf(" "));
@@ -527,10 +662,16 @@ const MealPlan = props => {
                                   purchase_uid: plan.purchase_uid,
                                 })
                                 .then((response) => {
-                                  console.log(response);
+                                  console.log("cancel_purchase response: " + JSON.stringify(response));
+                                  console.log("cancel_purchase customerId: " + customerId);
                                   props
                                     .fetchSubscribed(customerId)
-                                    .then(ids => props.fetchOrderHistory(ids));
+                                    .then(ids => {
+                                      console.log("cancel_purchase ids: " + ids);
+                                      props.fetchOrderHistory(ids);
+                                    });
+                                  /*updateActivePlans(props.subscribedPlans.filter((elt) => elt.purchase_status === 'ACTIVE'));
+                                  console.log("updated active plans: " + JSON.stringify(activePlans));*/
                                 })
                                 .catch((err) => {
                                   if(err.response) {
