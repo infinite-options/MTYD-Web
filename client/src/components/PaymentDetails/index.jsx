@@ -139,7 +139,7 @@ class PaymentDetails extends React.Component {
         console.log(this.state.latitude);
         console.log(this.state.longitude);
       })
-    console.log(this.props.customerId)
+    console.log(this.props)
 
     let temp_lat;
     let temp_lng;
@@ -724,13 +724,13 @@ class PaymentDetails extends React.Component {
             <div style = {{display: 'inline-block', width: '80%', height: '350px'}}>
               <input
                 type='text'
-                placeholder='Street'
+                placeholder={this.props.address.street==''?"street":this.props.address.street}
                 className={styles.input}
                 id="pac-input"
               />
               <input
                 type='text'
-                placeholder='Address Line 2 (Apartment number, Suite, Building, Floor, etc.)'
+                placeholder={this.props.address.unit==''?'Address Line 2 (Apartment number, Suite, Building, Floor, etc.)':this.props.address.unit}
                 className={styles.input}
                 value={this.state.unit}
                 onChange={e => {
@@ -741,21 +741,21 @@ class PaymentDetails extends React.Component {
               />
               <input
                 type='text'
-                placeholder='City'
+                placeholder={this.props.address.city==''?"city":this.props.address.city}
                 id="locality" name="locality"
 
                 className={styles.input}
               />
               <input
                 type='text'
-                placeholder='State'
+                placeholder={this.props.address.state==''?"State":this.props.address.state}
                 
                 className={styles.input}
                 id="state" name="state"
               />
               <input
                 type='text'
-                placeholder='Zipcode'
+                placeholder={this.props.address.zip==''?"zip":this.props.address.zip}
                 className={styles.input}
                 id="postcode" name="postcode"
 
