@@ -93,8 +93,6 @@ function App() {
 
             {/* <AppliedRoute exact path='/test' component={MapTest} /> */}
 
-
-
             <Route exact path="/admin">
               {adminNavBar}
               <AdminHome />
