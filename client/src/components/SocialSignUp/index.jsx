@@ -90,7 +90,7 @@ class SocialSignUp extends React.Component {
     let postalField = document.querySelector("#postcode");
 
     let addressObject = this.autocomplete_social.getPlace()
-    console.log(addressObject.address_components);
+    console.log(addressObject);
 
     let address1 = "";
     let postcode = "";
