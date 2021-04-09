@@ -106,7 +106,12 @@ const StripeCheckout = (props) => {
 
   const [processing, setProcessing] = useState(false);
 
+  console.log("StripeCheckout price: " + JSON.stringify(props.paymentSummary));
+
   const onPay = async (event) => {
+
+    console.log("StripeCheckout onPay: " + JSON.stringify(props.paymentSummary));
+    console.log("StripeCheckout tax: " + props.paymentSummary.taxAmount);
 
     event.preventDefault();
 
@@ -125,9 +130,13 @@ const StripeCheckout = (props) => {
     
     setProcessing(true);
 
+    console.log("props.paymentSummary.total: " + props.paymentSummary.total);
+
     let formSending = new FormData();
     formSending.append('amount', props.paymentSummary.total);
     formSending.append('note', props.instructions);
+
+    console.log("formSending: " + JSON.stringify(formSending));
 
     try {
       let stripeIntentResponse;
@@ -152,7 +161,6 @@ const StripeCheckout = (props) => {
       let client_secret = stripeIntentResponse.data.client_secret;
       let charge_id = stripeIntentResponse.data.id;
 
-
       const items = [{
         qty: props.selectedPlan.num_deliveries.toString(),
         name: props.selectedPlan.item_name,
@@ -160,6 +168,8 @@ const StripeCheckout = (props) => {
         item_uid: props.selectedPlan.item_uid,
         itm_business_uid: props.selectedPlan.itm_business_uid
       }];
+
+      console.log("checkout items: " + JSON.stringify(items));
 
       const cardElement = await elements.getElement(CardElement);
 
@@ -198,7 +208,7 @@ const StripeCheckout = (props) => {
             purchase_notes: 'purchase_notes',
             amount_due: props.paymentSummary.total,
             amount_discount: props.paymentSummary.discountAmount,
-            amount_paid: props.paymentSummary.total,
+            amount_paid: '0.00',
             cc_num: 'NULL',
             cc_exp_year: 'NULL',
             cc_exp_month: 'NULL',
@@ -265,7 +275,7 @@ const StripeCheckout = (props) => {
                 purchase_notes: 'purchase_notes',
                 amount_due: props.paymentSummary.total,
                 amount_discount: props.paymentSummary.discountAmount,
-                amount_paid: props.paymentSummary.total,
+                amount_paid: '0.00',
                 cc_num: 'NULL',
                 cc_exp_year: 'NULL',
                 cc_exp_month: 'NULL',

@@ -14,7 +14,7 @@ import {
 import checkoutItems from '../../utils/CheckoutItems';
 import createGuestAccount from '../../utils/CreateGuestAccount';
 
-const PayPal = (props, { value, deliveryInstructions }) => {
+const PayPal = (props, { deliveryInstructions }) => {
 
   const history = useHistory();
 

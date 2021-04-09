@@ -211,6 +211,7 @@ const MealPlan = props => {
             <p className={styles.itemName + ' pl-0 text-uppercase'}>
               {name} - {active_frequency} TOTAL DELIVERIES
             </p>
+            {/*console.log("PURCHASES: " + JSON.stringify(purchases))*/}
             {purchases.map((purchase, id) => {
               let _date = purchase.purchase_date.split(' ');
               let date = new Date(`${_date[0]}T00:00:00`);
@@ -328,13 +329,15 @@ const MealPlan = props => {
                       <p className={styles.header1}>DELIVERY INFORMATION</p>
                     </div>
                   </div>
+                  {/*console.log("ACTIVE PLANS " + JSON.stringify(activePlans))*/}
                   {activePlans.map((plan, index) => {
                         
                     // Endpoints where data comes from: 
                     // pid_history/400-000021
                         
+                    console.log("plan " + index + ": " + JSON.stringify(plan));
                     let item = JSON.parse(plan.items)[0];
-                    console.log("ITEM: " + JSON.stringify(item));
+                    console.log("ITEM " + index + ": " + JSON.stringify(item));
                     let cc_num = plan.cc_num;
                     let frequency = ' ';
                     let numMeals = item.name.substring(0,item.name.indexOf(" "));
@@ -344,6 +347,7 @@ const MealPlan = props => {
                         frequency = props.plans[item.name.split(' ')[0]][item.qty].num_deliveries;
                       }
                     }
+                    if(plan.purchase_status === 'ACTIVE') {
                     return (
                       <Fragment key={index}>
                         <div className="row">
@@ -546,6 +550,7 @@ const MealPlan = props => {
                         )}
                       </Fragment>
                     );
+                    }
                   })}
                   {cancelledPlans.length > 0 &&
                     <>
