@@ -302,8 +302,8 @@ select {
 .input::placeholder {
   position: absolute;
   font-size: large;
-  color: red;
-  opacity: 0.8;
+  color: rgb(0, 0, 0);
+  opacity: 1;
 }
 
 .inputPassword::placeholder {

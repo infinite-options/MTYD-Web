@@ -35,11 +35,7 @@ class SocialSignUp extends React.Component {
     super(props);
     this.handlePlaceSelect_signup = this.handlePlaceSelect_signup.bind(this)
     this.autocomplete_social = null
-    this.state = this.initialState()
-  }
-
-  initialState() {
-    return {
+    this.state = {
       mounted: false,
       name: '',
       street_address: '',
@@ -50,6 +46,19 @@ class SocialSignUp extends React.Component {
       lng:''
     }
   }
+
+  // initialState() {
+  //   return {
+  //     mounted: false,
+  //     name: '',
+  //     street_address: '',
+  //     city: '',
+  //     state: '',
+  //     zip_code: '',
+  //     lat:'',
+  //     lng:''
+  //   }
+  // }
 
   componentDidMount() {
     let queryString = this.props.location.search;
@@ -81,7 +90,7 @@ class SocialSignUp extends React.Component {
     let postalField = document.querySelector("#postcode");
 
     let addressObject = this.autocomplete_social.getPlace()
-    console.log(addressObject.address_components);
+    console.log(addressObject);
 
     let address1 = "";
     let postcode = "";
