@@ -571,6 +571,47 @@ export const fetchSubscribed = customerId => async dispatch => {
   let purchaseIds = [];
   try {
     console.log("fetchSubscribed (1)");
+    const res = await axios.get(`${API_URL}customer_lplp`, {
+      params: {customer_uid: customerId},
+    });
+    if (res.status !== 200) {
+      dispatch({
+        type: ADD_ERROR,
+        payload: 'Cannot Get Subscription Info',
+      });
+    } else {
+      let filtered = res.data.result.filter(
+        item => JSON.parse(item?.items)[0]?.itm_business_uid === '200-000002'
+      );
+      dispatch({
+        type: FETCH_SUBSCRIBED_INFO,
+        payload: filtered,
+      });
+      for (let items of res.data.result) {
+        purchaseIds.push(items.purchase_id);
+      }
+    }
+    console.log("fetchSubscribed (2)");
+  } catch (err) {
+    let message = '';
+    if (err.response) {
+      message = err.response;
+    } else {
+      message = err.toString();
+    }
+    dispatch({
+      type: ADD_ERROR,
+      payload: message,
+    });
+  }
+  return purchaseIds;
+};
+
+/*export const fetchSubscribed = customerId => async dispatch => {
+  //fetch  data from server
+  let purchaseIds = [];
+  try {
+    console.log("fetchSubscribed (1)");
     const response = await axios.get(`${API_URL}customer_lplp`, {
       params: {customer_uid: customerId},
     })
@@ -603,7 +644,7 @@ export const fetchSubscribed = customerId => async dispatch => {
       }
       // eslint-disable-next-line no-console
       console.log(err);
-    });
+    });*/
     /*
     if (res.status !== 200) {
       dispatch({
@@ -623,7 +664,7 @@ export const fetchSubscribed = customerId => async dispatch => {
       }
     }
     console.log("fetchSubscribed (2)");*/
-  } catch (err) {
+  /*} catch (err) {
     let message = '';
     if (err.response) {
       message = err.response;
@@ -637,7 +678,7 @@ export const fetchSubscribed = customerId => async dispatch => {
     return purchaseIds;
   }
   //return purchaseIds;
-};
+};*/
 
 export const setCurrentMeal = meal => dispatch =>
   dispatch({
