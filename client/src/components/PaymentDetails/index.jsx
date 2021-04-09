@@ -22,6 +22,8 @@ import {
   changeCardYear,
   changeCardZip,
   changeCardCvv,
+  chooseMealsDelivery,
+  choosePaymentOption,
   submitPayment
 } from "../../reducers/actions/subscriptionActions";
 import PayPal from './Paypal';
@@ -57,6 +59,7 @@ class PaymentDetails extends React.Component {
     super();
     this.state = {
       mounted: false,
+      showPaymentInfo: false,
       ambassadorCode: "",
       paymentSummary: {
         mealSubPrice: "0.00",
@@ -290,6 +293,9 @@ class PaymentDetails extends React.Component {
           ).toFixed(2)
         }
       }));
+      console.log("paymentSummary: " + JSON.stringify(this.state.paymentSummary));
+      console.log("taxAmount toFixed: " + this.state.taxAmount);
+      console.log("discountAmount toFixed: " + this.state.discountAmount);
       this.props.fetchProfileInformation(customerUid);
       //console.log("payment details props: " + JSON.stringify(this.props));
     } else {
@@ -421,6 +427,7 @@ class PaymentDetails extends React.Component {
                   ).toFixed(2)
                 }
               }));
+              console.log("catOptions taxAmount: " + this.state.paymentSummary.taxAmount);
             } else {
               this.setState(prevState => ({
                 paymentSummary: {
@@ -501,10 +508,10 @@ class PaymentDetails extends React.Component {
   }
     
   applyAmbassadorCode() {
-    console.log("Applying ambassador code...");
+    /*console.log("Applying ambassador code...");
     console.log("this.state.ambassadorCode: " + this.state.ambassadorCode);
     console.log("this.props.email: " + this.props.email);
-    console.log("this.state.email: {" + this.state.email + "}");
+    console.log("this.state.email: {" + this.state.email + "}");*/
 
     if(this.state.email !== ""){
       console.log("(Ambassador code) Valid email");
@@ -623,8 +630,8 @@ class PaymentDetails extends React.Component {
   setTotal() {
     let total = this.calculateTotal();
     let subtotal = this.calculateSubtotal();
-    console.log("setTotal total: " + total);
-    console.log("setTotal subtotal: " + subtotal);
+    /*console.log("setTotal total: " + total);
+    console.log("setTotal subtotal: " + subtotal);*/
     this.setState(prevState => ({
       paymentSummary: {
         ...prevState.paymentSummary,
@@ -871,8 +878,26 @@ class PaymentDetails extends React.Component {
                 </button>
             </div>
           </div>
-            
-          <div style = {{margin: '30px 0 10px 20px'}}>
+
+
+
+          {(() => {
+            if (this.state.showPaymentInfo === false) {
+              return (
+                <button className={styles.proceedButton} onClick={() => {
+                  this.setState({
+                    showPaymentInfo: true
+                  });
+                  this.saveDeliveryDetails();
+                  this.saveContactDetails();
+                }}>
+                  Proceed to Payment
+                </button>
+              );
+            } else {
+              return (
+                <>
+                          <div style = {{margin: '30px 0 10px 20px'}}>
               Terms and Conditions
           </div>
             
@@ -895,9 +920,6 @@ class PaymentDetails extends React.Component {
               <div className={styles.summaryLeft}>
                 Discount ({this.props.selectedPlan.delivery_discount}%):
               </div>
-              {/*<div className={styles.summaryLeft}>
-                Add-Ons:
-              </div>*/}
               <div className={styles.summaryLeft}>
                 Total Delivery Fee For All {
                   this.props.selectedPlan.num_deliveries
@@ -975,11 +997,6 @@ class PaymentDetails extends React.Component {
                   }
                 })()}
               </div>
-
-              {/**{
-                "amb_email":"parva.shah808@gmail.com",
-                "cust_email": "pks0@utdallas.edu"
-              } */}
                 
               <input
                 type='text'
@@ -999,52 +1016,35 @@ class PaymentDetails extends React.Component {
                 APPLY CODE
               </button>
                 
-              {/*(() => {
-                if (this.state.validCode === false) {
-                  return (
-                    <text style={{marginLeft: '15px', color: 'red'}}>
-                      Invalid code
-                    </text>
-                  );
-                }
-              })()*/} 
             </div>
             
             <div style = {{display: 'inline-block', width: '20%', height: '480px'}}>
               <div className={styles.summaryRight}>
-                {/* Meal Subscription (4 Meals for 9 Deliveries): */}
                 ${this.state.paymentSummary.mealSubPrice}
               </div>
-              {/*<div className={styles.summaryRight}>
-                ${this.state.addOns}
-              </div>*/}
               <div className={styles.summaryRight}>
-                {/* Discount (13%): */}
+                {console.log("----- discount: " + this.state.paymentSummary.discountAmount)}
                 -${this.state.paymentSummary.discountAmount}
               </div>
               <div className={styles.summaryRight}>
-                {/* Total Delivery Fee For All 9 Deliveries: */}
                 ${(this.state.paymentSummary.deliveryFee)}
               </div>
               <div className={styles.summaryRight}>
-                {/* Service Fee: */}
                 ${(this.state.paymentSummary.serviceFee)}
               </div>
               <div className={styles.summaryRight}>
-                {/* Taxes */}
+                {console.log("----- tax: " + this.state.paymentSummary.taxAmount)}
                 ${(this.state.paymentSummary.taxAmount)}
               </div>
               <div className={styles.summaryRight}>
-                {/* Chef and Driver Tip: */}
                 ${(this.state.paymentSummary.tip)}
               </div>
               <div className={styles.summaryRight2}>
                 ${this.calculateSubtotal()}
               </div>
               <div className={styles.summaryRight2}>
-                {/* {console.log("ambassador discount: " + this.state.ambassadorDiscount)} */}
-                -${/*((-1)*this.state.ambassadorDiscount).toFixed(2)*/}
-                {this.state.paymentSummary.ambassadorDiscount}
+                {console.log("ambassador discount: " + this.state.ambassadorDiscount)}
+                -${this.state.paymentSummary.ambassadorDiscount}
               </div>
               <hr className={styles.sumLine}></hr>
               <div className={styles.summaryRight2}>
@@ -1070,7 +1070,6 @@ class PaymentDetails extends React.Component {
                 }}>
                   STRIPE
                 </button>
-                {/*console.log("Password entered: " + this.state.customerPassword)*/}
               </div>
               <div className = {styles.buttonContainer}>
                 {/* {console.log("stripe payment summary: " + JSON.stringify(this.state.paymentSummary))} */}
@@ -1080,26 +1079,234 @@ class PaymentDetails extends React.Component {
                     deliveryInstructions={this.state.instructions}
                     setPaymentType={this.setPaymentType}
                     paymentSummary={this.state.paymentSummary}
-                    custUID={this.state.customerUid}
+                    loggedInByPassword={loggedInByPassword}
+                    latitude={this.state.latitude.toString()}
+                    longitude={this.state.longitude.toString()}
+                    email={this.state.email}
+                    customerUid={this.state.customerUid}
                   />
                 )}
+              </div>
+              <div className={styles.buttonContainer}>
+                <button className={styles.button} onClick={() => {
+                  if(this.state.paymentType === 'PAYPAL'){
+                    this.setPaymentType('NULL');
+                  } else {
+                    this.setPaymentType('PAYPAL');
+                  }
+                  this.setTotal();
+                }}>
+                  PAYPAL
+                </button>
+                {console.log("paypal payment summary: " + JSON.stringify(this.state.paymentSummary))}
+                {this.state.paymentType === 'PAYPAL' && 
+                 parseFloat(this.state.paymentSummary.total) > 0  && (
+                  <PayPal
+                    deliveryInstructions={this.state.instructions}
+                    paymentSummary={this.state.paymentSummary}
+                    customerPassword={this.state.customerPassword}
+                    loggedInByPassword={loggedInByPassword}
+                    latitude={this.state.latitude.toString()}
+                    longitude={this.state.longitude.toString()}
+                    email={this.state.email}
+                    customerUid={this.state.customerUid}
+                  />
+                )}
+              </div>
+            </div>
+          </div>
+                </>
+              );
+            }
+          })()} 
+            
+          {/*<div style = {{margin: '30px 0 10px 20px'}}>
+              Terms and Conditions
+          </div>
+            
+          <div className={styles.paymentContainer}>
+            <div className={styles.topHeading}>
+              <h6 className={styles.subHeading}>PAYMENT SUMMARY</h6>
+            </div>
+          </div>
+            
+          <div style={{display: 'flex'}}>
+              
+            <div style = {{display: 'inline-block', width: '80%', height: '480px'}}>
+              <div className={styles.summaryLeft}>
+                Meal Subscription ({
+                  this.props.selectedPlan.num_items
+                } Meals for {
+                  this.props.selectedPlan.num_deliveries
+                } Deliveries):
+              </div>
+              <div className={styles.summaryLeft}>
+                Discount ({this.props.selectedPlan.delivery_discount}%):
+              </div>
+              <div className={styles.summaryLeft}>
+                Total Delivery Fee For All {
+                  this.props.selectedPlan.num_deliveries
+                } Deliveries:
+              </div>
+              <div className={styles.summaryLeft}>
+                Service Fee:
+              </div>
+              <div className={styles.summaryLeft}>
+                Taxes:
+              </div>
+              <div className={styles.summaryLeft}>
+                Chef and Driver Tip:
+              </div>
+                  
+              <div className={styles.summaryLeft}>
                 {(() => {
-                  if (this.state.paymentType === 'STRIPE' && loggedInByPassword === true) {
+                  if (this.state.paymentSummary.tip === "0.00") {
                     return (
-                      <input
-                        type='password'
-                        placeholder='Enter Password'
-                        className={styles.inputPassword}
-                        value={this.state.customerPassword}
-                        onChange={e => {
-                          this.setState({
-                            customerPassword: e.target.value
-                          });
-                        }}
-                      />
+                      <button className={styles.tipButtonSelected} onClick={() => this.changeTip("0.00")}>
+                        No Tip
+                      </button>
+                    );
+                  } else {
+                    return (
+                      <button className={styles.tipButton} onClick={() => this.changeTip("0.00")}>
+                        No Tip
+                      </button>
                     );
                   }
                 })()}
+                {(() => {
+                  if (this.state.paymentSummary.tip === "2.00") {
+                    return (
+                      <button className={styles.tipButtonSelected} onClick={() => this.changeTip("2.00")}>
+                        $2
+                      </button>
+                    );
+                  } else {
+                    return (
+                      <button className={styles.tipButton} onClick={() => this.changeTip("2.00")}>
+                        $2
+                      </button>
+                    );
+                  }
+                })()} 
+                {(() => {
+                  if (this.state.paymentSummary.tip === "3.00") {
+                    return (
+                      <button className={styles.tipButtonSelected} onClick={() => this.changeTip("3.00")}>
+                        $3
+                      </button>
+                    );
+                  } else {
+                    return (
+                      <button className={styles.tipButton} onClick={() => this.changeTip("3.00")}>
+                        $3
+                      </button>
+                    );
+                  }
+                })()} 
+                {(() => {
+                  if (this.state.paymentSummary.tip === "5.00") {
+                    return (
+                      <button className={styles.tipButtonSelected} onClick={() => this.changeTip("5.00")}>
+                        $5
+                      </button>
+                    );
+                  } else {
+                    return (
+                      <button className={styles.tipButton} onClick={() => this.changeTip("5.00")}>
+                        $5
+                      </button>
+                    );
+                  }
+                })()}
+              </div>
+                
+              <input
+                type='text'
+                placeholder='Enter Ambassador Code'
+                className={styles.inputAmbassador}
+                onChange={e => {
+                  this.setState({
+                    ambassadorCode: e.target.value
+                  });
+                }}
+              />
+                
+              <button 
+                className={styles.codeButton}
+                onClick={() => this.applyAmbassadorCode()}
+              >
+                APPLY CODE
+              </button>
+                
+            </div>
+            
+            <div style = {{display: 'inline-block', width: '20%', height: '480px'}}>
+              <div className={styles.summaryRight}>
+                ${this.state.paymentSummary.mealSubPrice}
+              </div>
+              <div className={styles.summaryRight}>
+                -${this.state.paymentSummary.discountAmount}
+              </div>
+              <div className={styles.summaryRight}>
+                ${(this.state.paymentSummary.deliveryFee)}
+              </div>
+              <div className={styles.summaryRight}>
+                ${(this.state.paymentSummary.serviceFee)}
+              </div>
+              <div className={styles.summaryRight}>
+                ${(this.state.paymentSummary.taxAmount)}
+              </div>
+              <div className={styles.summaryRight}>
+                ${(this.state.paymentSummary.tip)}
+              </div>
+              <div className={styles.summaryRight2}>
+                ${this.calculateSubtotal()}
+              </div>
+              <div className={styles.summaryRight2}>
+                {console.log("ambassador discount: " + this.state.ambassadorDiscount)}
+                -${this.state.paymentSummary.ambassadorDiscount}
+              </div>
+              <hr className={styles.sumLine}></hr>
+              <div className={styles.summaryRight2}>
+                ${this.calculateTotal()}
+              </div>
+            </div>
+          </div>
+            
+          <div className={styles.topHeading}>
+            <h6 className={styles.subHeading}>PAYMENT OPTIONS</h6>
+          </div>
+            
+          <div style={{display: 'flex'}}>
+            <div style = {{display: 'inline-block', width: '80%', height: '500px'}}>
+              <div className={styles.buttonContainer}>
+                <button className={styles.button} onClick={() => {
+                  if(this.state.paymentType === 'STRIPE'){
+                    this.setPaymentType('NULL');
+                  } else {
+                    this.setPaymentType('STRIPE');
+                  }
+                  this.setTotal();
+                }}>
+                  STRIPE
+                </button>
+              </div>
+              <div className = {styles.buttonContainer}>
+                {console.log("stripe payment summary: " + JSON.stringify(this.state.paymentSummary))}
+                {this.state.paymentType === 'STRIPE' && (
+                  <StripeElement
+                    customerPassword={this.state.customerPassword}
+                    deliveryInstructions={this.state.instructions}
+                    setPaymentType={this.setPaymentType}
+                    paymentSummary={this.state.paymentSummary}
+                    loggedInByPassword={loggedInByPassword}
+                    latitude={this.state.latitude.toString()}
+                    longitude={this.state.longitude.toString()}
+                    email={this.state.email}
+                    customerUid={this.state.customerUid}
+                  />
+                )}
               </div>
               <div className={styles.buttonContainer}>
                 <button className={styles.button} onClick={() => {
@@ -1120,132 +1327,14 @@ class PaymentDetails extends React.Component {
                     deliveryInstructions={this.state.instructions}
                     paymentSummary={this.state.paymentSummary}
                     customerPassword={this.state.customerPassword}
+                    loggedInByPassword={loggedInByPassword}
+                    latitude={this.state.latitude.toString()}
+                    longitude={this.state.longitude.toString()}
+                    email={this.state.email}
+                    customerUid={this.state.customerUid}
                   />
                 )}
-                {(() => {
-                  if (this.state.paymentType === 'PAYPAL' && loggedInByPassword === true) {
-                    return (
-                      <input
-                        type='password'
-                        placeholder='Enter Password'
-                        className={styles.inputPassword}
-                        value={this.state.customerPassword}
-                        onChange={e => {
-                          this.setState({
-                            customerPassword: e.target.value
-                          });
-                        }}
-                      />
-                    );
-                  }
-                })()}
               </div>
-              {/*<div className={styles.buttonContainer}>
-                <button className={styles.button}>
-                  VENMO
-                </button>
-                  </div>*/}
-            </div>
-            {/*<div style = {{width: '20%', textAlign: 'right', paddingRight: '10px', height: '270px'}}>
-                {<button 
-                  className={styles.saveButton}
-                  onClick={() => this.savePaymentDetails()}
-                >
-                  SAVE
-                </button>}
-                </div>*/}
-          </div>
-            
-          {/*<div style={{display: 'flex'}}>
-            <div style = {{display: 'inline-block', width: '80%', height: '200px'}}>
-              <input
-                type='text'
-                placeholder='Card Holder Name'
-                className={styles.input}
-                value={this.state.name}
-                onChange={e => {
-                  this.setState({
-                    name: e.target.value
-                  });
-                }}
-              />
-              <input
-                type='text'
-                placeholder='Credit Card Number'
-                className={styles.input}
-                value={this.state.number}
-                onChange={e => {
-                  this.setState({
-                    number: e.target.value
-                  });
-                }}
-              />
-              <input
-                type='password'
-                placeholder='Enter Password'
-                className={styles.input}
-                value={this.state.customerPassword}
-                onChange={e => {
-                  this.setState({
-                    customerPassword: e.target.value
-                  });
-                }}
-              />
-            <div style = {{display: 'inline-flex', height: '100px', width: '125%'}}>
-              <input
-                type='text'
-                placeholder='MM'
-                className={styles.monthInput}
-                value={this.state.month}
-                onChange={e => {
-                  this.setState({
-                    month: e.target.value
-                  });
-                }}
-              />
-              <div className={styles.dateSlash}>/</div>
-              <input
-                type='text'
-                placeholder='YEAR'
-                className={styles.yearInput}
-                value={this.state.year}
-                onChange={e => {
-                  this.setState({
-                    year: e.target.value
-                  });
-                }}
-              />
-              <input
-                type='text'
-                placeholder='CVV'
-                className={styles.cvvInput}
-                value={this.state.cvv}
-                onChange={e => {
-                  this.setState({
-                    cvv: e.target.value
-                  });
-                }}
-              />
-              <input
-                type='text'
-                placeholder='ZIPCODE'
-                className={styles.zipInput}
-                value={this.state.cardZip}
-                onChange={e => {
-                  this.setState({
-                    cardZip: e.target.value
-                  });
-                }}
-              />
-            <button
-              className={styles.finishButton}
-              onClick={() => {
-                this.handleCheckout();
-              }}
-            >
-              FINISH
-            </button>
-                </div>
             </div>
           </div>*/}
         </div>
@@ -1284,7 +1373,6 @@ PaymentDetails.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  //subscribeInfo: state.subscribe,
   customerId: state.subscribe.profile.customerId,
   socialMedia: state.subscribe.profile.socialMedia,
   email: state.subscribe.profile.email,
@@ -1328,6 +1416,8 @@ const functionList = {
   changeCardZip,
   changeCardCvv,
   submitPayment,
+  chooseMealsDelivery,
+  choosePaymentOption,
   submitGuestSignUp
 };
 

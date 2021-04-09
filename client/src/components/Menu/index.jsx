@@ -24,6 +24,10 @@ const Menu = props => {
   return (
     <div className={props.show ? styles.menu : styles.menu1}>
 
+      {/*console.log("Menu message: " + props.message)}
+      {console.log("Menu show?: " + props.show)}
+      {console.log("Menu login: " + props.login)*/}
+
         {(props.login===3)?
           <div>
             {props.show && props.message}

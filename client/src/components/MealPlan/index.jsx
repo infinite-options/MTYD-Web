@@ -193,6 +193,8 @@ const MealPlan = props => {
         // Endpoints where data comes from: 
         // plans?business_uid=200-000001
         // pid_history/400-000021
+
+        //console.log("ITEMS: " + JSON.stringify(items));
           
         let status = items[key][0].purchase_status;
         let name = JSON.parse(items[key][0].items)[0].name;
@@ -207,8 +209,9 @@ const MealPlan = props => {
         itemShow.push(
           <div key={key} className={'row pl-2 mb-5 ' + styles.historyItemName}>
             <p className={styles.itemName + ' pl-0 text-uppercase'}>
-              {name} - {active_frequency} TOTAL DELIVERIE(S)
+              {name} - {active_frequency} TOTAL DELIVERIES
             </p>
+            {/*console.log("PURCHASES: " + JSON.stringify(purchases))*/}
             {purchases.map((purchase, id) => {
               let _date = purchase.purchase_date.split(' ');
               let date = new Date(`${_date[0]}T00:00:00`);
@@ -217,7 +220,7 @@ const MealPlan = props => {
               let purchase_items = JSON.parse(purchase.items)[0];
 
               if (Object.keys(props.plans).length > 0) {
-                item_desc = name + " for " + active_frequency + " deliverie(s)"
+                item_desc = name + " for " + active_frequency + " deliveries"
               }
                            
               return (
@@ -326,20 +329,25 @@ const MealPlan = props => {
                       <p className={styles.header1}>DELIVERY INFORMATION</p>
                     </div>
                   </div>
+                  {/*console.log("ACTIVE PLANS " + JSON.stringify(activePlans))*/}
                   {activePlans.map((plan, index) => {
                         
                     // Endpoints where data comes from: 
                     // pid_history/400-000021
                         
+                    console.log("plan " + index + ": " + JSON.stringify(plan));
                     let item = JSON.parse(plan.items)[0];
+                    console.log("ITEM " + index + ": " + JSON.stringify(item));
                     let cc_num = plan.cc_num;
                     let frequency = ' ';
+                    let numMeals = item.name.substring(0,item.name.indexOf(" "));
                     if (Object.keys(props.plans).length > 0) {
                       if (props.plans[item.name.split(' ')[0]]) { 
                         //frequency = props.plans[item.name.split(' ')[0]][item.qty].payment_frequency;
                         frequency = props.plans[item.name.split(' ')[0]][item.qty].num_deliveries;
                       }
                     }
+                    if(plan.purchase_status === 'ACTIVE') {
                     return (
                       <Fragment key={index}>
                         <div className="row">
@@ -349,9 +357,34 @@ const MealPlan = props => {
                               className={styles.infoBtn}
                               readOnly
                             />
-                            <button
+                            {/*<button
                               className={styles.iconBtn}
                               onClick={() => setMealChange(index)}
+                            >
+                              <i className="fa fa-pencil"></i>
+                            </button>*/}
+                            <button
+                              className={styles.iconBtn}
+                              /*onClick={() => props.history.push({
+                                pathname: '/choose-plan',
+                                preselectedPlan: {
+                                  mealNum: numMeals,
+                                  deliveryNum: frequency.toString()
+                                }
+                              })}*/
+                              onClick={() => {
+                                props.chooseMealsDelivery(
+                                  numMeals,
+                                  frequency.toString(),
+                                  props.plans
+                                );
+                                props.choosePaymentOption(
+                                  frequency.toString(),
+                                  numMeals,
+                                  props.plans
+                                );
+                                props.history.push('/choose-plan');
+                              }}
                             >
                               <i className="fa fa-pencil"></i>
                             </button>
@@ -361,9 +394,27 @@ const MealPlan = props => {
                               <div className={'col ' + styles.cardInfo}>
                                 <div className="row">
                                   <p className="mt-0 mr-2">CARD</p>
-                                  <button
+                                  {/*<button
                                     className={styles.iconBtn}
                                     onClick={() => setUserInfoChange(index)}
+                                  >
+                                    <i className="fa fa-pencil align-top ml-3"></i>
+                                  </button>*/}
+                                  <button
+                                    className={styles.iconBtn}
+                                    onClick={() => {
+                                      props.chooseMealsDelivery(
+                                        numMeals,
+                                        frequency.toString(),
+                                        props.plans
+                                      );
+                                      props.choosePaymentOption(
+                                        frequency.toString(),
+                                        numMeals,
+                                        props.plans
+                                      );
+                                      props.history.push('/payment-details');
+                                    }}
                                   >
                                     <i className="fa fa-pencil align-top ml-3"></i>
                                   </button>
@@ -386,10 +437,28 @@ const MealPlan = props => {
                               </div>
                               <div className={'col ' + styles.cardInfo}>
                                 <div className="row">
-                                  <p>EVERY {frequency} DELIVERIE(S)</p>
-                                  <button
+                                  <p>EVERY {frequency} DELIVERIES</p>
+                                  {/*<button
                                     className={styles.iconBtn}
                                     onClick={() => setMealChange(index)}
+                                  >
+                                    <i className="fa fa-pencil align-top ml-4"></i>
+                                  </button>*/}
+                                  <button
+                                    className={styles.iconBtn}
+                                    onClick={() => {
+                                      props.chooseMealsDelivery(
+                                        numMeals,
+                                        frequency.toString(),
+                                        props.plans
+                                      );
+                                      props.choosePaymentOption(
+                                        frequency.toString(),
+                                        numMeals,
+                                        props.plans
+                                      );
+                                      props.history.push('/choose-plan');
+                                    }}
                                   >
                                     <i className="fa fa-pencil align-top ml-4"></i>
                                   </button>
@@ -408,13 +477,30 @@ const MealPlan = props => {
                                   ' ' +
                                   plan.delivery_last_name}
                               </p>
-                              <button
+                              {/*<button
                                 className={styles.iconBtn}
                                 onClick={() => setUserInfoChange(index)}
                               >
                                 <i className="fa fa-pencil ml-4"></i>
+                              </button>*/}
+                              <button
+                                className={styles.iconBtn}
+                                onClick={() => {
+                                  props.chooseMealsDelivery(
+                                    numMeals,
+                                    frequency.toString(),
+                                    props.plans
+                                  );
+                                  props.choosePaymentOption(
+                                    frequency.toString(),
+                                    numMeals,
+                                    props.plans
+                                  );
+                                  props.history.push('/payment-details');
+                                }}
+                              >
+                                <i className="fa fa-pencil ml-4"></i>
                               </button>
-                            
                             </div>
                             <p>{plan.delivery_address},</p>
                             <p>
@@ -464,6 +550,7 @@ const MealPlan = props => {
                         )}
                       </Fragment>
                     );
+                    }
                   })}
                   {cancelledPlans.length > 0 &&
                     <>

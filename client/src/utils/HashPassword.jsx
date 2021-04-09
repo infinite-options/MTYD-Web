@@ -2,12 +2,17 @@ import axios from 'axios';
 
 export default async function hashPassword(password, email, _callback) {
 
+  console.log("(hashPassword) email: " + email);
+  console.log("(hashPassword) password: " + password);
+
   axios
     .post(process.env.REACT_APP_SERVER_BASE_URI + 'accountsalt', {
       email
     })
     .then(res => {
       let saltObject = res;
+
+      console.log("saltObject: " + JSON.stringify(saltObject));
 
       if (saltObject.status === 200) {
         let hashAlg = saltObject.data.result[0].password_algorithm;
