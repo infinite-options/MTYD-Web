@@ -340,6 +340,7 @@ export default function(state = initialState, action) {
         errors: action.payload
       };
     case FETCH_SUBSCRIBED_INFO:
+      console.log("FETCH_SUBSCRIBED_INFO payload: " + JSON.stringify(action.payload));
       return {
         ...state,
         subscribedPlans: action.payload

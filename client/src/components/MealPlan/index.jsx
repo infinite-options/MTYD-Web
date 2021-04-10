@@ -56,14 +56,21 @@ const MealPlan = props => {
   //const cancelledPlans = props.subscribedPlans.filter((elt) => elt.purchase_status !== 'ACTIVE');
 
   useEffect(() => {
-    console.log("SUBSCRIBED PLANS: " + JSON.stringify(props.subscribedPlans));
-    console.log("NEW ACTIVE PLANS: " + JSON.stringify(activePlans));
+    //console.log("SUBSCRIBED PLANS: " + JSON.stringify(props.subscribedPlans));
+    //console.log("NEW ACTIVE PLANS: " + JSON.stringify(activePlans));
+    console.log("RERENDER ON SUBSCRIBED PLANS CHANGE");
+    console.log("updating active/cancelled plans...");
     updateActivePlans(props.subscribedPlans.filter((elt) => elt.purchase_status === 'ACTIVE'));
     updateCancelledPlans(props.subscribedPlans.filter((elt) => elt.purchase_status !== 'ACTIVE'));
   }, [props.subscribedPlans]);
 
   useEffect(() => {
     console.log("RERENDER ON ACTIVE PLANS CHANGE");
+    for (let activePlan of activePlans) {
+
+      console.log("(1) id: " + activePlan.purchase_id + "\nstatus: " + activePlan.purchase_status + "\nitems: " + activePlan.items);
+      //console.log("whole plan: " + JSON.stringify(activePlan));
+    }
   }, [activePlans]);
 
   useEffect(() => {
@@ -93,23 +100,34 @@ const MealPlan = props => {
     
     
   useEffect(() => {
+    console.log("\n");
     if (!customerId) {
       props.history.push('/');
     } else {
       try {
         props.fetchProfileInformation(customerId);
         props.fetchPlans();
+        console.log("useEffect customerId: " + customerId);
         props
           .fetchSubscribed(customerId)
-          .then(ids => props.fetchOrderHistory(ids));
-        updateActivePlans(props.subscribedPlans.filter((elt) => elt.purchase_status === 'ACTIVE'));
-        updateCancelledPlans(props.subscribedPlans.filter((elt) => elt.purchase_status !== 'ACTIVE'));
+          .then(ids => {
+            console.log("useEffect: " + ids);
+            props.fetchOrderHistory(ids)
+              .then(() => {
+                console.log("updating active/cancelled plans...");
+                //updateActivePlans(props.subscribedPlans.filter((elt) => elt.purchase_status === 'ACTIVE'));
+                //updateCancelledPlans(props.subscribedPlans.filter((elt) => elt.purchase_status !== 'ACTIVE'));
+              });
+          });
+        //updateActivePlans(props.subscribedPlans.filter((elt) => elt.purchase_status === 'ACTIVE'));
+        //updateCancelledPlans(props.subscribedPlans.filter((elt) => elt.purchase_status !== 'ACTIVE'));
       } catch (err) {
         console.log(err);
       }
     }
     //console.log("subbed plans: " + JSON.stringify(props.subscribedPlans));
     //eslint-disable-next-line
+    console.log("\n");
   }, []);
   const setMealChange = id => {
     //get current meal
@@ -470,7 +488,7 @@ const MealPlan = props => {
                     // Endpoints where data comes from: 
                     // pid_history/400-000021
                         
-                    console.log("plan " + index + ": " + JSON.stringify(plan.items));
+                    //console.log("plan " + index + ": " + JSON.stringify(plan.items));
                     let item = JSON.parse(plan.items)[0];
                     //console.log("ITEM " + index + ": " + JSON.stringify(item));
                     let cc_num = plan.cc_num;
@@ -667,7 +685,24 @@ const MealPlan = props => {
                                   props
                                     .fetchSubscribed(customerId)
                                     .then(ids => {
-                                      console.log("cancel_purchase ids: " + ids);
+                                      console.log("cancel_purchase ids (1): '" + ids + "'");
+                                      console.log("cancel_purchase ids (2): '" + JSON.stringify(ids) + "'");
+                                      if(typeof(ids) === undefined) {
+                                        console.log("ids undefined");
+                                      }
+                                      if(JSON.stringify(ids) === '[]') {
+                                        console.log("ids empty array");
+                                      }
+                                      if(ids === null) {
+                                        console.log("ids null");
+                                      }
+                                      /*if(JSON.stringify(ids) !== '[]') {
+                                        props.fetchOrderHistory(ids);
+                                      }*/
+                                      for (let activePlan of activePlans) {
+                                        console.log("(2) id: " + activePlan.purchase_id + "\nstatus: " + activePlan.purchase_status + "\nitems: " + activePlan.items);
+                                        //console.log("whole plan: " + JSON.stringify(activePlan));
+                                      }
                                       props.fetchOrderHistory(ids);
                                     });
                                   /*updateActivePlans(props.subscribedPlans.filter((elt) => elt.purchase_status === 'ACTIVE'));

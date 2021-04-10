@@ -96,7 +96,7 @@ const PayPal = (props, { deliveryInstructions }) => {
                   purchase_notes: 'purchase_notes',
                   amount_due: props.paymentSummary.total,
                   amount_discount: props.paymentSummary.discountAmount,
-                  amount_paid: props.paymentSummary.total,
+                  amount_paid: '0.00',
                   cc_num: 'NULL',
                   cc_exp_year: 'NULL',
                   cc_exp_month: 'NULL',
@@ -108,7 +108,8 @@ const PayPal = (props, { deliveryInstructions }) => {
                   delivery_fee: props.paymentSummary.deliveryFee,
                   tip: props.paymentSummary.tip,
                   tax: props.paymentSummary.taxAmount,
-                  subtotal: props.paymentSummary.mealSubPrice
+                  subtotal: props.paymentSummary.mealSubPrice,
+                  amb: props.paymentSummary.ambassadorDiscount
                 },
                 () => {
                   history.push("/congrats")
@@ -163,7 +164,7 @@ const PayPal = (props, { deliveryInstructions }) => {
                       purchase_notes: 'purchase_notes',
                       amount_due: props.paymentSummary.total,
                       amount_discount: props.paymentSummary.discountAmount,
-                      amount_paid: props.paymentSummary.total,
+                      amount_paid: '0.00',
                       cc_num: 'NULL',
                       cc_exp_year: 'NULL',
                       cc_exp_month: 'NULL',
@@ -175,7 +176,8 @@ const PayPal = (props, { deliveryInstructions }) => {
                       delivery_fee: props.paymentSummary.deliveryFee,
                       tip: props.paymentSummary.tip,
                       tax: props.paymentSummary.taxAmount,
-                      subtotal: props.paymentSummary.mealSubPrice
+                      subtotal: props.paymentSummary.mealSubPrice,
+                      amb: props.paymentSummary.ambassadorDiscount
                     },
                     () => {
                       history.push("/congrats")

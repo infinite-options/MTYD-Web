@@ -303,56 +303,56 @@ select {
   position: absolute;
   font-size: large;
   color: rgb(0, 0, 0);
-  opacity: 1;
+  opacity: 0.5;
 }
 
 .inputPassword::placeholder {
   position: absolute;
   font-size: large;
-  color: red;
-  opacity: 0.8;
+  color: rgb(0, 0, 0);
+  opacity: 0.5;
 }
 
 .inputContactLeft::placeholder {
   position: absolute;
   font-size: large;
-  color: red;
-  opacity: 0.8;
+  color: rgb(0, 0, 0);
+  opacity: 0.5;
 }
 
 .inputContactRight::placeholder {
   position: absolute;
   font-size: large;
-  color: red;
-  opacity: 0.8;
+  color: rgb(0, 0, 0);
+  opacity: 0.5;
 }
 
 .monthInput::placeholder {
   position: absolute;
   font-size: large;
-  color: red;
-  opacity: 0.8;
+  color: rgb(0, 0, 0);
+  opacity: 0.5;
 }
 
 .yearInput::placeholder {
   position: absolute;
   font-size: large;
-  color: red;
-  opacity: 0.8;
+  color: rgb(0, 0, 0);
+  opacity: 0.5;
 }
 
 .cvvInput::placeholder {
   position: absolute;
   font-size: large;
-  color: red;
-  opacity: 0.8;
+  color: rgb(0, 0, 0);
+  opacity: 0.5;
 }
 
 .zipInput::placeholder {
   position: absolute;
   font-size: large;
-  color: red;
-  opacity: 0.8;
+  color: rgb(0, 0, 0);
+  opacity: 0.5;
 }
 
 .dateSlash {
@@ -363,8 +363,8 @@ select {
 .inputAmbassador::placeholder {
   position: absolute;
   font-size: large;
-  color: red;
-  opacity: 0.8;
+  color: rgb(0, 0, 0);
+  opacity: 0.5;
 }
 
 .buttonContainer {

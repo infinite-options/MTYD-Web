@@ -771,7 +771,7 @@ export const submitSocialSignUp = (
 
 export const LoadUserInfo = customerId => dispatch => {
   axios.get(API_URL + "Profile/" + customerId).then(res => {
-    console.log(res)
+    console.log("user info: " + JSON.stringify(res));
     if (res.data.result) {
       dispatch({
         type: LOAD_USER_INFO,

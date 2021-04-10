@@ -566,7 +566,8 @@ export const submitPayment = (
   }
 };
 
-export const fetchSubscribed = customerId => async dispatch => {
+// OG
+/*export const fetchSubscribed = customerId => async dispatch => {
   //fetch  data from server
   let purchaseIds = [];
   try {
@@ -574,6 +575,7 @@ export const fetchSubscribed = customerId => async dispatch => {
     const res = await axios.get(`${API_URL}customer_lplp`, {
       params: {customer_uid: customerId},
     });
+    console.log("fetchSubscribed res: " + JSON.stringify(res));
     if (res.status !== 200) {
       dispatch({
         type: ADD_ERROR,
@@ -604,6 +606,76 @@ export const fetchSubscribed = customerId => async dispatch => {
       payload: message,
     });
   }
+  console.log("fetchSubscribed purchaseIds: " + JSON.stringify(purchaseIds));
+  return purchaseIds;
+};*/
+
+export const fetchSubscribed = customerId => async dispatch => {
+  //fetch  data from server
+  let purchaseIds = [];
+  try {
+    console.log("fetchSubscribed (1)");
+    const res = await axios.get(`${API_URL}customer_lplp`, {
+      params: {customer_uid: customerId},
+    });
+    console.log("fetchSubscribed res: " + JSON.stringify(res));
+    if (res.status === 204) {
+      console.log("(204) fetchSubscribed");
+      dispatch({
+        type: FETCH_SUBSCRIBED_INFO,
+        payload: [],
+      });
+    } else if (res.status !== 200) {
+      console.log("!(200) fetchSubscribed");
+      dispatch({
+        type: ADD_ERROR,
+        payload: 'Cannot Get Subscription Info',
+      });
+    } else {
+      console.log("(200) fetchSubscribed");
+      console.log("before filtered");
+      /*let filtered = res.data.result.filter(
+        item => JSON.parse(item?.items)[0]?.itm_business_uid === '200-000002'
+      );*/
+      let filtered = [];
+      try {
+        filtered = res.data.result.filter(
+          item => JSON.parse(item?.items)[0]?.itm_business_uid === '200-000002'
+        );
+      } catch(e) {
+        let errMessage = '';
+        if (e.response) {
+          errMessage = e.response;
+        } else {
+          errMessage = e.toString();
+        }
+      }
+      console.log("middle filtered");
+      console.log("fetchSubscribed filtered: " + JSON.stringify(filtered));
+      console.log("after filtered");
+      dispatch({
+        type: FETCH_SUBSCRIBED_INFO,
+        payload: filtered,
+      });
+      for (let items of res.data.result) {
+        console.log("fetchSubscribed items: " + items.purchase_id);
+        purchaseIds.push(items.purchase_id);
+      }
+    }
+    console.log("fetchSubscribed (2)");
+  } catch (err) {
+    let message = '';
+    if (err.response) {
+      message = err.response;
+    } else {
+      message = err.toString();
+    }
+    dispatch({
+      type: ADD_ERROR,
+      payload: message,
+    });
+  }
+  console.log("fetchSubscribed purchaseIds: " + JSON.stringify(purchaseIds));
   return purchaseIds;
 };
 
@@ -616,7 +688,7 @@ export const fetchSubscribed = customerId => async dispatch => {
       params: {customer_uid: customerId},
     })
     .then((res) => {
-      console.log("res: " + JSON.stringify(res));
+      //console.log("res: " + JSON.stringify(res));
       if (res.status !== 200) {
         dispatch({
           type: ADD_ERROR,
@@ -644,27 +716,8 @@ export const fetchSubscribed = customerId => async dispatch => {
       }
       // eslint-disable-next-line no-console
       console.log(err);
-    });*/
-    /*
-    if (res.status !== 200) {
-      dispatch({
-        type: ADD_ERROR,
-        payload: 'Cannot Get Subscription Info',
-      });
-    } else {
-      let filtered = res.data.result.filter(
-        item => JSON.parse(item?.items)[0]?.itm_business_uid === '200-000002'
-      );
-      dispatch({
-        type: FETCH_SUBSCRIBED_INFO,
-        payload: filtered,
-      });
-      for (let items of res.data.result) {
-        purchaseIds.push(items.purchase_id);
-      }
-    }
-    console.log("fetchSubscribed (2)");*/
-  /*} catch (err) {
+    });
+  } catch (err) {
     let message = '';
     if (err.response) {
       message = err.response;
