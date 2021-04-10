@@ -14,7 +14,7 @@ import {
 import checkoutItems from '../../utils/CheckoutItems';
 import createGuestAccount from '../../utils/CreateGuestAccount';
 
-const PayPal = (props, { deliveryInstructions }) => {
+const PayPal = (props) => {
 
   const history = useHistory();
 
@@ -49,7 +49,7 @@ const PayPal = (props, { deliveryInstructions }) => {
     ) {
       setCLIENT_ID(CLIENT.production);
     }
-  }, [deliveryInstructions]);
+  }, [props.deliveryInstructions]);
 
 
   //TODO: PayPal cart doesn't clear

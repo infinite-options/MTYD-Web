@@ -619,13 +619,7 @@ export const fetchSubscribed = customerId => async dispatch => {
       params: {customer_uid: customerId},
     });
     console.log("fetchSubscribed res: " + JSON.stringify(res));
-    if (res.status === 204) {
-      console.log("(204) fetchSubscribed");
-      dispatch({
-        type: FETCH_SUBSCRIBED_INFO,
-        payload: [],
-      });
-    } else if (res.status !== 200) {
+    if (res.status !== 200) {
       console.log("!(200) fetchSubscribed");
       dispatch({
         type: ADD_ERROR,
