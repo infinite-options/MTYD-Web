@@ -222,7 +222,8 @@ const StripeCheckout = (props) => {
             delivery_fee: props.paymentSummary.deliveryFee,
             tip: props.paymentSummary.tip,
             tax: props.paymentSummary.taxAmount,
-            subtotal: props.paymentSummary.mealSubPrice
+            subtotal: props.paymentSummary.mealSubPrice,
+            amb: props.paymentSummary.ambassadorDiscount
           },
           () => {
             history.push("/congrats")
@@ -290,7 +291,8 @@ const StripeCheckout = (props) => {
                 delivery_fee: props.paymentSummary.deliveryFee,
                 tip: props.paymentSummary.tip,
                 tax: props.paymentSummary.taxAmount,
-                subtotal: props.paymentSummary.mealSubPrice
+                subtotal: props.paymentSummary.mealSubPrice,
+                amb: props.paymentSummary.ambassadorDiscount
               },
               () => {
                 history.push("/congrats")

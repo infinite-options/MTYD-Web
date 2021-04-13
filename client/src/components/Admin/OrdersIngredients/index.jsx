@@ -12,10 +12,18 @@ import {withRouter} from "react-router";
 
 const initialState = {
   mounted: false,
+  defaultFlag: true,
   selectedDate: '',
+  closestDate: '',
   ordersData: [],
   sortedOrdersData: [],
   sortOrders: {
+    field: '',
+    direction: '',
+  },
+  customersData: [],
+  sortedCustomersData: [],
+  sortCustomers: {
     field: '',
     direction: '',
   },
@@ -24,7 +32,7 @@ const initialState = {
   sortIngredients: {
     field: '',
     direction: '',
-  }
+  },
 }
 
 function reducer(state, action) {
@@ -39,6 +47,11 @@ function reducer(state, action) {
         ...state,
         selectedDate: action.payload,
       }
+    case 'DISPLAY_DATE':
+      return {
+        ...state,
+        closestDate: action.payload,
+      } 
     case 'FETCH_ORDERS':
       return {
         ...state,
@@ -71,6 +84,24 @@ function reducer(state, action) {
       return {
         ...state,
         sortIngredients: {
+          field: action.payload.field,
+          direction: action.payload.direction,
+        }
+      }
+    case 'FETCH_CUSTOMERS':
+      return {
+        ...state,
+        customersData: action.payload,
+      }
+    case 'FILTER_CUSTOMERS':
+      return {
+        ...state,
+        sortedCustomersData: action.payload
+      }
+    case 'SORT_CUSTOMERS':
+      return {
+        ...state,
+        sortCustomers: {
           field: action.payload.field,
           direction: action.payload.direction,
         }
@@ -135,6 +166,98 @@ function OrdersIngredients({history, ...props}) {
     return orederDatesFormatted;
   },[state.ordersData])
 
+  // const nowTest1 = new Date('May 06, 2021');
+  // const nowTest = nowTest1.toString();
+  var now = Date().toLocaleString();
+  var monthDict = [];
+
+  monthDict.push({
+    key: 'Jan',
+    value: '01'
+  });
+  monthDict.push({
+    key: 'Feb',
+    value: '02'
+  });
+  monthDict.push({
+    key: 'Mar',
+    value: '03'
+  });
+  monthDict.push({
+    key: 'Apr',
+    value: '04'
+  });
+  monthDict.push({
+    key: 'May',
+    value: '05'
+  });
+  monthDict.push({
+    key: 'Jun',
+    value: '06'
+  });
+  monthDict.push({
+    key: 'Jul',
+    value: '07'
+  });
+  monthDict.push({
+    key: 'Aug',
+    value: '08'
+  });
+  monthDict.push({
+    key: 'Sep',
+    value: '09'
+  });
+  monthDict.push({
+    key: 'Oct',
+    value: '10'
+  });
+  monthDict.push({
+    key: 'Nov',
+    value: '11'
+  });
+  monthDict.push({
+    key: 'Dec',
+    value: '12'
+  });
+
+  var currMonth = now.substring(4,7);
+  var currMonthVal = 0;
+  var currDay = now.substring(8,10);
+  var currYear = now.substring(11,15);
+
+  for(let i = 0, l = monthDict.length; i < l; i++) {
+    if(currMonth === monthDict[i].key) {
+      currMonthVal = monthDict[i].value;
+    }
+  }
+
+  var futureDaysList = [];
+  var futureDaysListValues = [];
+
+  for(let i = 0, l = orderDates.length; i < l; i++) {
+    var date = orderDates[i].value;
+    var dateDisplay = orderDates[i].display;
+    var year = date.substring(0,4);
+    var month = date.substring(5,7);
+    var day = date.substring(8,10);
+
+    if(currYear <= year) {
+      if(currMonthVal < month) {
+          futureDaysListValues.push(orderDates[i].value);
+          futureDaysList.push(dateDisplay);
+      }
+      else if(currMonthVal == month) {
+        if(currDay <= day) {
+          futureDaysListValues.push(orderDates[i].value);
+          futureDaysList.push(dateDisplay);
+        }
+      } 
+    }
+  }
+
+  var closestToCurrDay = futureDaysList[0];
+  var closestToCurrDayVal = futureDaysListValues[0];
+
   const getOrderData = (date) => {
     const curOrders = state.ordersData.filter((order) => order.d_menu_date === date);
     return curOrders;
@@ -143,6 +266,11 @@ function OrdersIngredients({history, ...props}) {
   const getIngredientsData = (date) => {
     const curIngredients = state.ingredientsData.filter((ingredient) => ingredient.d_menu_date === date);
     return curIngredients;
+  }
+
+  const getCustomerData = (date) => {
+    const curCustomers = state.customersData.filter((customer) => customer.d_menu_date === date);
+    return curCustomers;
   }
 
   // Fetch orders
@@ -181,6 +309,23 @@ function OrdersIngredients({history, ...props}) {
       });
   },[])
 
+  // Fetch Customer Names
+  useEffect(() => {
+    axios.get(`${API_URL}orders_by_customers`)
+         .then((response) => {
+           const customersApi = response.data.result;
+           dispatch({ type: 'FETCH_CUSTOMERS', payload: customersApi})
+         })
+         .catch((err) => {
+          if (err.response) {
+            // eslint-disable-next-line no-console
+            console.log(err.response);
+          }
+          // eslint-disable-next-line no-console
+          console.log(err);
+        });
+  },[])
+
   const changeSortOrder = (field) => {
     const isAsc = (state.sortOrders.field === field && state.sortOrders.direction === 'asc');
     const direction = isAsc ? 'desc' : 'asc';
@@ -209,17 +354,47 @@ function OrdersIngredients({history, ...props}) {
     dispatch({ type: 'FILTER_INGREDIENTS', payload: sortedIngredients })
   }
 
+  const changeSortCustomer = (field) => {
+    const isAsc = (state.sortCustomers.field === field && state.sortCustomers.direction === 'asc');
+    const direction = isAsc ? 'desc' : 'asc';
+    dispatch({
+      type: 'SORT_CUSTOMERS',
+      payload: {
+        field: field,
+        direction: direction,
+      }
+    })
+    const sortedCustomers = sortedArray(state.sortedCustomersData, field, direction);
+    dispatch({ type: 'FILTER_CUSTOMERS', payload: sortedCustomers })
+  }
+
   // Change date 
   const changeDate = (newDate) => {
     dispatch({ type: 'CHANGE_DATE', payload: newDate });
+    state.defaultFlag = false;
     const newOrders = getOrderData(newDate);
     const sortedOrders = sortedArray(newOrders, state.sortOrders.field, state.sortOrders.direction);
     const newIngredients = getIngredientsData(newDate);
     const sortedIngredients = sortedArray(newIngredients, state.sortIngredients.field, state.sortIngredients.direction);
+    const newCustomers = getCustomerData(newDate)
+    const sortedCustomers = sortedArray(newCustomers, state.sortCustomers.field, state.sortCustomers.direction);
     dispatch({ type: 'FILTER_ORDERS', payload: sortedOrders});
     dispatch({ type: 'FILTER_INGREDIENTS', payload: sortedIngredients});
+    dispatch({ type: 'FILTER_CUSTOMERS', payload: sortedCustomers});
   }
+  // display the default order/ingredient/customer data to the closest date we have in dropdown list based on todays day
+  if(state.defaultFlag) {
+    const newOrders = getOrderData(closestToCurrDayVal);
+    const sortedOrders = sortedArray(newOrders, state.sortOrders.field, state.sortOrders.direction);
+    const newIngredients = getIngredientsData(closestToCurrDayVal);
+    const sortedIngredients = sortedArray(newIngredients, state.sortIngredients.field, state.sortIngredients.direction);
+    const newCustomers = getCustomerData(closestToCurrDayVal);
+    const sortedCustomers = sortedArray(newCustomers, state.sortCustomers.field, state.sortCustomers.direction);
 
+    state.sortedOrdersData = sortedOrders;
+    state.sortedIngredientsData = sortedIngredients;
+    state.sortedCustomersData = sortedCustomers;
+  }
   return (
     <div>
       <Breadcrumb>
@@ -237,14 +412,14 @@ function OrdersIngredients({history, ...props}) {
                 <Col sm="6">
                   <Form.Control
                     as="select"
-                    value={state.selectedDate}
+                    defaultValue={state.selectedDate}
                     onChange={
                       (event) => {
                         changeDate(event.target.value);
                       }
                     }
                   >
-                    <option value="" hidden>Choose date</option>
+                    <option value="" hidden>{closestToCurrDay}</option>
                     {
                       orderDates.map(
                         (date) => (
@@ -376,6 +551,90 @@ function OrdersIngredients({history, ...props}) {
                           <TableCell> {ingredient.units} </TableCell>
                         </TableRow>
                       )
+                    }
+                  )
+                }
+              </TableBody>
+            </Table>
+          </Col>
+        </Row>
+        <Row
+          style={{
+            marginTop: '4rem',
+            marginBottom: '1rem',
+          }}
+        ></Row>
+        <Row>
+          <Col>
+            <h5> Meals Ordered By Customer </h5>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>
+                    Menu Date
+                  </TableCell>
+                  <TableCell>
+                    <TableSortLabel
+                      active={state.sortCustomers.field === 'jt_name'}
+                      direction={state.sortCustomers.field === 'jt_name' ? state.sortCustomers.direction : 'asc'}
+                      onClick={() => changeSortCustomer('jt_name')}
+                    >
+                      Meal Name
+                    </TableSortLabel>
+                  </TableCell>
+                  <TableCell>
+                    <TableSortLabel
+                      active={state.sortCustomers.field === 'First_Name'}
+                      direction={state.sortCustomers.field === 'First_Name' ? state.sortCustomers.direction : 'asc'}
+                      onClick={() => changeSortCustomer('First_Name')}
+                    >
+                      Customer
+                    </TableSortLabel>
+                  </TableCell>
+                  <TableCell>
+                    <TableSortLabel
+                      
+                    >
+                      Customer UID
+                    </TableSortLabel>
+                  </TableCell>
+                  <TableCell>
+                    <TableSortLabel
+                      
+                    >
+                      Purchase UID
+                    </TableSortLabel>
+                  </TableCell>
+                  <TableCell>
+                    <TableSortLabel
+                      
+                    >
+                      Quantity
+                    </TableSortLabel>
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {
+                  state.sortedCustomersData.map(
+                    (customer, customerIndex) => {
+                      return (
+                        <TableRow
+                          key={customerIndex}
+                          hover
+                        >
+                          <TableCell> {customer.d_menu_date} </TableCell>
+                          <TableCell> {customer.jt_name} </TableCell>
+                          <TableCell> {customer.First_Name} {customer.Last_Name} </TableCell>
+                          <TableCell> {customer.customer_uid} </TableCell>
+                          <TableCell> {customer.lplpibr_purchase_id} </TableCell>
+                          <TableCell> {customer.Qty} </TableCell>
+                        </TableRow>
+                      );
                     }
                   )
                 }
