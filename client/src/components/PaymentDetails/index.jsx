@@ -22,8 +22,11 @@ import {
   changeCardYear,
   changeCardZip,
   changeCardCvv,
+  chooseMealsDelivery,
+  choosePaymentOption,
   submitPayment
 } from "../../reducers/actions/subscriptionActions";
+import PayPal from './Paypal';
 
 import {submitGuestSignUp} from "../../reducers/actions/loginActions";
 
@@ -45,19 +48,32 @@ import { ThemeProvider } from "react-bootstrap";
 import PopLogin from '../PopLogin';
 import Popsignup from '../PopSignup';
 
+import StripeElement from './StripeElement';
+
+import fetchAddressCoordinates from '../../utils/FetchAddressCoordinates';
+
+const google = window.google;
 
 class PaymentDetails extends React.Component {
   constructor() {
     super();
     this.state = {
       mounted: false,
-      addOns: 0,
-      tip: 2,
-      serviceFee: 0,
-      deliveryFee: 0,
-      taxRate: 9.25,
-      ambassadorDiscount: 0,
+      showPaymentInfo: false,
       ambassadorCode: "",
+      paymentSummary: {
+        mealSubPrice: "0.00",
+        discountAmount: "0.00",
+        addOns: "0.00",
+        tip: "2.00",
+        serviceFee: "0.00",
+        deliveryFee: "0.00",
+        taxRate: 0,
+        taxAmount: "0.00",
+        ambassadorDiscount: "0.00",
+        total: "0.00",
+        subtotal: "0.00"
+      },
       validCode: true,
       name: "",
       number: "",
@@ -75,17 +91,18 @@ class PaymentDetails extends React.Component {
       cardZip: "",
       addressZip: "",
       unit: "",
-      latitude: 37.2270928,
-      longitude: -121.8866517,
+      latitude: "",
+      longitude: "",
       customerUid: "",
       customerPassword: "",
       checkoutMessage: "",
       displayError: false,
-      login_seen:false,
-      signUpSeen:false, 
+      login_seen: false,
+      signUpSeen: false, 
       checkoutError: false,
       ambassadorMessage: "",
-      ambassadorError: false
+      ambassadorError: false,
+      paymentType: 'NULL'
     };
   }
   togglePopLogin = () => {
@@ -114,7 +131,136 @@ class PaymentDetails extends React.Component {
    };
 
   componentDidMount() {
-    console.log("payment details props: " + JSON.stringify(this.props));
+
+    axios.get(API_URL + "Profile/" + this.props.customerId)
+      .then(res=>{
+
+        this.setState({
+          latitude: res.data.result[0].customer_lat,
+          longitude: res.data.result[0].customer_long,
+        })
+        console.log(this.state.latitude);
+        console.log(this.state.longitude);
+      })
+    console.log(this.props)
+
+    let temp_lat;
+    let temp_lng;
+
+    if(this.state.latitude==''){
+      temp_lat = 37.3382;
+    }
+    else{
+      temp_lat = this.state.latitude;
+    }
+
+    if(this.state.longitude==''){
+      temp_lng = -121.893028
+    }
+    else{
+      temp_lng = this.state.longitude;
+    }
+
+    const map = new google.maps.Map(document.getElementById("map"), {
+      center: { lat: temp_lat, lng: temp_lng},
+      zoom: 12,
+    });
+    console.log(map)
+    const input = document.getElementById("pac-input");
+    const options = {
+      componentRestrictions: { country: "us" }
+    };
+    const autocomplete = new google.maps.places.Autocomplete(input, options);
+
+    autocomplete.bindTo("bounds", map);
+    const infowindow = new google.maps.InfoWindow();
+    const marker = new google.maps.Marker({
+      map,
+      anchorPoint: new google.maps.Point(0, -29),
+    });
+
+    autocomplete.addListener("place_changed", () => {
+      let address1 = "";
+      let postcode = "";
+      let city = '';
+      let state = '';
+      let address1Field = document.querySelector("#pac-input");
+      let postalField = document.querySelector("#postcode");
+      infowindow.close();
+      marker.setVisible(false);
+      const place = autocomplete.getPlace();
+      console.log(place)
+      if (!place.geometry || !place.geometry.location) {
+        // User entered the name of a Place that was not suggested and
+        // pressed the Enter key, or the Place Details request failed.
+        window.alert("No details available for input: '" + place.name + "'");
+        return;
+      }
+      
+      if (place.geometry.viewport) {
+        console.log('here')
+        map.fitBounds(place.geometry.viewport);
+      } else {
+        console.log('there')
+        map.setCenter(place.geometry.location);
+      }
+
+      map.setZoom(17);
+      marker.setPosition(place.geometry.location);
+      marker.setVisible(true);
+
+      for (const component of place.address_components) {
+        const componentType = component.types[0];
+        switch (componentType) {
+          case "street_number": {
+            address1 = `${component.long_name} ${address1}`;
+            break;
+          }
+    
+          case "route": {
+            address1 += component.short_name;
+            break;
+          }
+    
+          case "postal_code": {
+            postcode = `${component.long_name}${postcode}`;
+            break;
+          }
+  
+          case "locality":
+            document.querySelector("#locality").value = component.long_name;
+            city = component.long_name;
+            break;
+    
+          case "administrative_area_level_1": {
+            document.querySelector("#state").value = component.short_name;
+            state= component.short_name;
+            break;
+          }
+          
+        }
+      }
+      address1Field.value = address1;
+      postalField.value = postcode;
+
+      this.setState({
+        name: place.name,
+        street_address: address1,
+        city: city,
+        state: state,
+        zip_code: postcode,
+        lat:place.geometry.location.lat(),
+        lng:place.geometry.location.lng(),
+      })
+
+
+
+    });
+
+
+
+
+
     if (
       document.cookie
         .split(";")
@@ -125,23 +271,60 @@ class PaymentDetails extends React.Component {
         .find(item => item.startsWith("customer_uid="))
         .split("=")[1];
       console.log("customer uid: " + customerUid);
-      this.setState({
+      this.setState(prevState => ({
         mounted: true,
-        customerUid: customerUid
-      });
+        customerUid: customerUid,
+        paymentSummary: {
+          ...prevState.paymentSummary,
+          mealSubPrice: (
+            this.props.selectedPlan.item_price *
+            this.props.selectedPlan.num_deliveries
+          ).toFixed(2),
+          discountAmount: (
+            this.props.selectedPlan.item_price *
+            this.props.selectedPlan.num_deliveries *
+            this.props.selectedPlan.delivery_discount * 0.01
+          ).toFixed(2),
+          taxAmount: (
+            this.props.selectedPlan.item_price *
+            this.props.selectedPlan.num_deliveries *
+            (1-(this.props.selectedPlan.delivery_discount*0.01)) *
+            this.state.paymentSummary.taxRate * 0.01
+          ).toFixed(2)
+        }
+      }));
+      console.log("paymentSummary: " + JSON.stringify(this.state.paymentSummary));
+      console.log("taxAmount toFixed: " + this.state.taxAmount);
+      console.log("discountAmount toFixed: " + this.state.discountAmount);
       this.props.fetchProfileInformation(customerUid);
       //console.log("payment details props: " + JSON.stringify(this.props));
     } else {
       // Reroute to log in page
       console.log("Payment-details NOT LOGGED IN");
-      this.setState({
+      this.setState(prevState => ({
         mounted: true,
-        customerUid: "NULL"
-      });
+        customerUid: "GUEST",
+        paymentSummary: {
+          ...prevState.paymentSummary,
+          mealSubPrice: (
+            this.props.selectedPlan.item_price *
+            this.props.selectedPlan.num_deliveries
+          ).toFixed(2),
+          discountAmount: (
+            this.props.selectedPlan.item_price *
+            this.props.selectedPlan.num_deliveries *
+            this.props.selectedPlan.delivery_discount * 0.01
+          ).toFixed(2),
+          taxAmount: (
+            this.props.selectedPlan.item_price *
+            this.props.selectedPlan.num_deliveries *
+            (1-(this.props.selectedPlan.delivery_discount*0.01)) *
+            this.state.paymentSummary.taxRate * 0.01
+          ).toFixed(2)
+        }
+      }));
+      this.setTotal();
     }
-
-    console.log("(mount) LOGIN password: " + this.props.loginPassword);
-    console.log("(mount) LOGIN userinfo: " + JSON.stringify(this.props.userInfo));
       
     this.setState({
       street: this.props.address.street,
@@ -161,41 +344,21 @@ class PaymentDetails extends React.Component {
       year: this.props.creditCard.year,
       cardZip: this.props.creditCard.zip
     });
-    
-    /*https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/categoricalOptions/-121.8866517,37.2270928*/
-    // Get payment summary details
-    axios
-      .get(`${API_URL}categoricalOptions/${this.state.longitude},${this.state.latitude}`)
-      .then((response) => {
-        //console.log("categorical options data: " + JSON.stringify(response));
-        /*this.setState({
-          serviceFee: response.data.result[1].service_fee,
-          deliveryFee: response.data.result[1].delivery_fee,
-          taxRate: response.data.result[1].tax_rate
-        });*/
-        this.setState({
-          serviceFee: response.data.result[1].service_fee,
-          deliveryFee: response.data.result[1].delivery_fee
-        });
-      })
-      .catch((err) => {
-        if (err.response) {
-          console.log(err.response);
-        }
-        console.log(err);
-      });
   }
     
   changeTip(newTip) {
-    this.setState({
-      tip: newTip
-    });
+    this.setState(prevState => ({
+      paymentSummary: {
+        ...prevState.paymentSummary,
+        tip: newTip
+      }
+    }));
   }
     
   saveDeliveryDetails() {
     console.log("Saving delivery details...");
       
-    if(this.state.customerUid !== "NULL"){
+    if(this.state.customerUid !== "GUEST"){
       let object = {
         uid: this.state.customerUid,
         first_name: this.props.addressInfo.firstName,
@@ -234,13 +397,67 @@ class PaymentDetails extends React.Component {
       instructions: this.state.instructions
     });
 
+    fetchAddressCoordinates(
+      this.state.street,
+      this.state.city,
+      this.state.state,
+      this.state.addressZip,
+      (coords) => {
+        console.log("Fetched coordinates: " + JSON.stringify(coords));
+        this.setState({
+          latitude: coords.latitude,
+          longitude: coords.longitude
+        });
+        axios
+          .get(`${API_URL}categoricalOptions/${coords.longitude},${coords.latitude}`)
+          .then((response) => {
+            console.log("Categorical Options response: " + JSON.stringify(response));
+            if(response.data.result.length !== 0) {
+              this.setState(prevState => ({
+                paymentSummary: {
+                  ...prevState.paymentSummary,
+                  taxRate: response.data.result[1].tax_rate,
+                  serviceFee: response.data.result[1].service_fee.toFixed(2),
+                  deliveryFee: response.data.result[1].delivery_fee.toFixed(2),
+                  taxAmount: (
+                    this.props.selectedPlan.item_price *
+                    this.props.selectedPlan.num_deliveries *
+                    (1-(this.props.selectedPlan.delivery_discount*0.01)) *
+                    response.data.result[1].tax_rate * 0.01
+                  ).toFixed(2)
+                }
+              }));
+              console.log("catOptions taxAmount: " + this.state.paymentSummary.taxAmount);
+            } else {
+              this.setState(prevState => ({
+                paymentSummary: {
+                  ...prevState.paymentSummary,
+                  taxRate: 0,
+                  serviceFee: "0.00",
+                  deliveryFee: "0.00",
+                  taxAmount: "0.00"
+                }
+              }));
+            }
+          })
+          .catch((err) => {
+            if (err.response) {
+              console.log(err.response);
+            }
+            console.log(err);
+          });
+      }
+    );
+
+    //console.log("NEW COORDIANTES: " + JSON.stringify(coordinates));
+
     console.log("delivery props: " + JSON.stringify(this.props));
   }
     
   saveContactDetails() {
     console.log("Saving contact details...");
       
-    if(this.state.customerUid !== "NULL"){
+    if(this.state.customerUid !== "GUEST"){
       let object = {
         uid: this.state.customerUid,
         first_name: this.state.firstName,
@@ -278,7 +495,7 @@ class PaymentDetails extends React.Component {
     });
   }
     
-  /*savePaymentDetails() {
+  savePaymentDetails() {
     console.log("Saving payment details...");
     this.props.changePaymentDetails({
       name: this.state.name,
@@ -288,195 +505,13 @@ class PaymentDetails extends React.Component {
       year: this.state.year,
       zip: this.state.cardZip
     });
-  }*/
-    
-  handleGuestCheckout = (guestInfo) => {
-    //this.props.history.push("/login");
-    console.log("Guest sign up successful!");
-    console.log("New guest info: " + JSON.stringify(guestInfo));
-
-    axios
-    .get(API_URL + 'Profile/' + guestInfo.customer_uid)
-    .then(res => {
-        console.log("new profile fetch info: " + JSON.stringify(res));
-
-        let profileInfo = res.data.result[0];
-
-        console.log("Guest profileInfo: " + JSON.stringify(profileInfo));
-
-        let purchasedItem = [
-          {
-            qty: (this.props.selectedPlan.num_deliveries).toString(),
-            name: this.props.selectedPlan.item_name,
-            price: (this.props.selectedPlan.item_price*this.props.selectedPlan.num_deliveries*(1-(this.props.selectedPlan.delivery_discount*0.01))).toFixed(2),
-            item_uid: this.props.selectedPlan.item_uid,
-            itm_business_uid: '200-000002',
-          },
-        ];
-
-        console.log("(1)");
-
-        let checkoutInfo = {
-          customer_uid: profileInfo.customer_uid,
-          salt: profileInfo.password_hashed,
-          business_uid: '200-000002',
-          delivery_first_name: profileInfo.customer_first_name,
-          delivery_last_name: profileInfo.customer_last_name,
-          delivery_email: profileInfo.customer_email,
-          delivery_phone: profileInfo.customer_phone_num,
-          delivery_address: profileInfo.customer_address,
-          delivery_unit: profileInfo.customer_unit,
-          delivery_city: profileInfo.customer_city,
-          delivery_state: profileInfo.customer_state,
-          delivery_zip: profileInfo.customer_zip,
-          delivery_instructions: this.state.instructions,
-          delivery_longitude: profileInfo.customer_long,
-          delivery_latitude: profileInfo.customer_lat,
-          items: purchasedItem,
-          amount_due: (this.props.selectedPlan.item_price*this.props.selectedPlan.num_deliveries*(1-(this.props.selectedPlan.delivery_discount*0.01))).toFixed(2),
-          amount_discount: '0',
-          amount_paid: '0',
-          cc_num: this.state.number,
-          cc_exp_month: this.state.month,
-          cc_exp_year: this.state.year,
-          cc_cvv: this.state.cvv,
-          cc_zip: this.state.cardZip
-        };
-
-        console.log("(2)");
-
-        console.log("guest checkoutInfo: " + JSON.stringify(checkoutInfo));
-        axios
-          .post(API_URL + 'checkout', checkoutInfo)
-          .then(res2 => {
-            console.log(res2);
-            this.props.history.push("/congrats");
-          })
-          .catch(err2 => {
-            console.log(err2);
-            if (err2.response) {
-              console.log(err2.response);
-              this.setState({
-                checkoutMessage: err2.response.data.message,
-                checkoutCode: err2.response.status
-              });
-              if (err2.response.status >= 200 && err2.response.status <= 299) {
-                console.log("Payment submission success!");
-                this.props.history.push("/congrats");
-              } else if (err2.response.status >= 400 && err2.response.status <= 599) {
-                console.log("Payment submission failure!");
-                this.displayCheckoutError();
-              }
-            }
-          });
-
-    })
-    .catch(err => {
-      if (err.response) {
-        console.log(err.response);
-        this.setState({
-          checkoutMessage: err.response.data.message,
-          checkoutCode: err.response.status
-        });
-        if (err.response.status >= 200 && err.response.status <= 299) {
-          console.log("Payment submission success!");
-          this.props.history.push("/congrats");
-        } else if (err.response.status >= 400 && err.response.status <= 599) {
-          console.log("Payment submission failure!");
-          this.displayCheckoutError();
-        }
-      } else {
-        console.log(err.toString());
-      }
-    });
-  };
-
-  handleCheckout() {
-    console.log("Processing payment...");
-      
-    console.log("customerUid: " + this.state.customerUid);
-      
-    console.log("item(s) to be purchased: " + JSON.stringify(this.props.selectedPlan));
-      
-    /*
-    createAccount w/ info from guest
-    => response gives customerUid
-    => call profile endpoint w/ new customerUid
-    => response gives hashed_password
-    => use hashed_password as salt in checkout JSON object
-    */
-      
-    if(this.state.customerUid === "NULL") {
-
-      let streetNum = this.state.street.substring(0,this.state.street.indexOf(" "));
-
-      console.log("=== GUEST PASSWORD ===");
-      console.log("street: " + this.state.street);
-      console.log("name: " + this.state.firstName);
-      console.log("street #: " + streetNum);
-
-      let guestPassword = this.state.firstName + streetNum;
-
-      console.log("password: '" + guestPassword + "'");
-
-      this.props.submitGuestSignUp(
-        this.state.email,
-        guestPassword,
-        this.state.firstName,
-        this.state.lastName,
-        this.state.phone,
-        this.state.street,
-        this.state.unit,
-        this.state.city,
-        this.state.state,
-        this.state.addressZip,
-        this.handleGuestCheckout
-      );
-      
-    } else {
-      this.props.submitPayment(
-        this.props.email,
-        this.state.customerUid,
-        this.props.socialMedia,
-        this.state.customerPassword,
-        this.state.firstName,
-        this.state.lastName,
-        this.state.phone,
-        this.state.street,
-        this.state.unit,
-        this.state.city,
-        this.state.state,
-        this.state.addressZip,
-        this.state.instructions,
-        this.props.selectedPlan,
-        this.state.number,
-        this.state.month,
-        this.state.year,
-        this.state.cvv,
-        this.state.cardZip,
-        (response) => {
-          console.log("RESPONSE FROM CHECKOUT: " + JSON.stringify(response));
-          this.setState({
-            checkoutMessage: response.data.message,
-            checkoutCode: response.status
-          });
-          if (response.status >= 200 && response.status <= 299) {
-            console.log("Payment submission success!");
-            this.props.history.push("/congrats");
-          } else if (response.status >= 400 && response.status <= 599) {
-            console.log("Payment submission failure!");
-            this.displayCheckoutError();
-          }
-        }
-      );
-    }
   }
     
   applyAmbassadorCode() {
-    console.log("Applying ambassador code...");
+    /*console.log("Applying ambassador code...");
     console.log("this.state.ambassadorCode: " + this.state.ambassadorCode);
     console.log("this.props.email: " + this.props.email);
-    console.log("this.state.email: {" + this.state.email + "}");
+    console.log("this.state.email: {" + this.state.email + "}");*/
 
     if(this.state.email !== ""){
       console.log("(Ambassador code) Valid email");
@@ -506,13 +541,16 @@ class PaymentDetails extends React.Component {
           console.log("Valid code");
           items = items.result[0];
           console.log("result: " + JSON.stringify(items));
-          this.setState({
+          this.setState(prevState => ({
             validCode: true,
-            ambassadorDiscount: (
-              items.discount_amount +
-              items.discount_shipping
-            )
-          });
+            paymentSummary: {
+              ...prevState.paymentSummary,
+              ambassadorDiscount: (
+                items.discount_amount +
+                items.discount_shipping
+              ).toFixed(2)
+            }
+          }));
         }
       })
       .catch(err => {
@@ -522,37 +560,90 @@ class PaymentDetails extends React.Component {
 
   displayCheckoutError = () => {
     if(this.state.checkoutError === false) {
-    this.setState({
+      this.setState({
         checkoutErrorModal: styles.changeErrorModalPopUpShow,
         checkoutError: true,
-    })
+      });
     }else{
-    this.setState({
+      this.setState({
         checkoutErrorModal: styles.changeErrorModalPopUpHide,
         checkoutError: false
-    })
+      });
     }
     console.log("\ncheckout error toggled to " + this.state.checkoutError + "\n\n");
-}
-
-displayAmbassadorError = () => {
-  if(this.state.ambassadorError === false) {
-  this.setState({
-      ambassadorErrorModal: styles.changeErrorModalPopUpShow,
-      ambassadorError: true,
-  })
-  }else{
-  this.setState({
-      ambassadorErrorModal: styles.changeErrorModalPopUpHide,
-      ambassadorError: false
-  })
   }
-  console.log("\nambassador error toggled to " + this.state.ambassadorError + "\n\n");
-}
+
+  displayAmbassadorError = () => {
+    if(this.state.ambassadorError === false) {
+      this.setState({
+        ambassadorErrorModal: styles.changeErrorModalPopUpShow,
+        ambassadorError: true,
+      })
+    }else{
+      this.setState({
+        ambassadorErrorModal: styles.changeErrorModalPopUpHide,
+        ambassadorError: false
+      })
+    }
+    console.log("\nambassador error toggled to " + this.state.ambassadorError + "\n\n");
+  }
+
+  setPaymentType(type) {
+    this.setState({
+      paymentType: type
+    });
+  }
+
+  calculateSubtotal() {
+    let subtotal = (
+      parseFloat(this.state.paymentSummary.mealSubPrice) -
+      parseFloat(this.state.paymentSummary.discountAmount) + 
+      parseFloat(this.state.paymentSummary.deliveryFee) + 
+      parseFloat(this.state.paymentSummary.serviceFee) +
+      parseFloat(this.state.paymentSummary.taxAmount) + 
+      parseFloat(this.state.paymentSummary.tip)
+    );
+    /*this.setState(prevState => ({
+      ...prevState.paymentSummary,
+      subtotal: subtotal.toFixed(2)
+    }));*/
+    return subtotal.toFixed(2);
+  }
+
+  calculateTotal() {
+    let total = (
+      parseFloat(this.state.paymentSummary.mealSubPrice) -
+      parseFloat(this.state.paymentSummary.discountAmount) + 
+      parseFloat(this.state.paymentSummary.deliveryFee) + 
+      parseFloat(this.state.paymentSummary.serviceFee) +
+      parseFloat(this.state.paymentSummary.taxAmount) + 
+      parseFloat(this.state.paymentSummary.tip) -
+      parseFloat(this.state.paymentSummary.ambassadorDiscount)
+    );
+    /*this.setState(prevState => ({
+      ...prevState.paymentSummary,
+      total: total.toFixed(2)
+    }));*/
+    return total.toFixed(2);
+  }
+
+  setTotal() {
+    let total = this.calculateTotal();
+    let subtotal = this.calculateSubtotal();
+    /*console.log("setTotal total: " + total);
+    console.log("setTotal subtotal: " + subtotal);*/
+    this.setState(prevState => ({
+      paymentSummary: {
+        ...prevState.paymentSummary,
+        total,
+        subtotal
+      }
+    }));
+  }
 
   render() {
     let loggedInByPassword = false;
-    if (this.props.socialMedia === "NULL") {
+    if (this.state.customerUid !== "GUEST" && this.props.socialMedia === "NULL") {
       loggedInByPassword = true;
     }
     return (
@@ -565,7 +656,7 @@ displayAmbassadorError = () => {
         {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
 
         {(() => {
-          console.log("\ndisplay checkout error message? " + this.state.checkoutError + "\n\n");
+          // console.log("\ndisplay checkout error message? " + this.state.checkoutError + "\n\n");
           if (this.state.checkoutError === true) {
             return (
               <>
@@ -594,7 +685,7 @@ displayAmbassadorError = () => {
           }
         })()} 
         {(() => {
-          console.log("\ndisplay ambassador error message? " + this.state.ambassadorError + "\n\n");
+          // console.log("\ndisplay ambassador error message? " + this.state.ambassadorError + "\n\n");
           if (this.state.ambassadorError === true) {
             return (
               <>
@@ -640,18 +731,13 @@ displayAmbassadorError = () => {
             <div style = {{display: 'inline-block', width: '80%', height: '350px'}}>
               <input
                 type='text'
-                placeholder='Street'
+                placeholder={this.props.address.street==''?"street":this.props.address.street}
                 className={styles.input}
-                value={this.state.street}
-                onChange={e => {
-                  this.setState({
-                    street: e.target.value
-                  });
-                }}
+                id="pac-input"
               />
               <input
                 type='text'
-                placeholder='Address Line 2 (Apartment number, Suite, Building, Floor, etc.)'
+                placeholder={this.props.address.unit==''?'Address Line 2 (Apartment number, Suite, Building, Floor, etc.)':this.props.address.unit}
                 className={styles.input}
                 value={this.state.unit}
                 onChange={e => {
@@ -662,36 +748,24 @@ displayAmbassadorError = () => {
               />
               <input
                 type='text'
-                placeholder='City'
+                placeholder={this.props.address.city==''?"city":this.props.address.city}
+                id="locality" name="locality"
+
                 className={styles.input}
-                value={this.state.city}
-                onChange={e => {
-                  this.setState({
-                    city: e.target.value
-                  });
-                }}
               />
               <input
                 type='text'
-                placeholder='State'
+                placeholder={this.props.address.state==''?"State":this.props.address.state}
+                
                 className={styles.input}
-                value={this.state.state}
-                onChange={e => {
-                  this.setState({
-                    state: e.target.value
-                  });
-                }}
+                id="state" name="state"
               />
               <input
                 type='text'
-                placeholder='Zipcode'
+                placeholder={this.props.address.zip==''?"zip":this.props.address.zip}
                 className={styles.input}
-                value={this.state.addressZip}
-                onChange={e => {
-                  this.setState({
-                    addressZip: e.target.value
-                  });
-                }}
+                id="postcode" name="postcode"
+
               />
               <input
                 type='text'
@@ -714,19 +788,11 @@ displayAmbassadorError = () => {
                 SAVE
               </button>
             </div>
-              
           </div>
 
             
           <div style = {{display: 'inline-block', width: '80%', height: '300px'}}>
-            <div className = {styles.googleMap}>
-              <WrappedMap 
-                googleMapURL={`https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places`} 
-                loadingElement={<div style={{ height: "100%" }} />}
-                containerElement={<div style={{ height: "100%" }} />}
-                mapElement={<div style={{ height: "100%" }} />}
-              />
-            </div>
+            <div className = {styles.googleMap} id = "map"/>
           </div>
             
             
@@ -773,7 +839,7 @@ displayAmbassadorError = () => {
                 }}
               />
               {(() => {
-                  if (this.state.customerUid === "NULL") {
+                  if (this.state.customerUid === "GUEST") {
                     return (
                       <input
                         type='text'
@@ -812,8 +878,26 @@ displayAmbassadorError = () => {
                 </button>
             </div>
           </div>
-            
-          <div style = {{margin: '30px 0 10px 20px'}}>
+
+
+
+          {(() => {
+            if (this.state.showPaymentInfo === false) {
+              return (
+                <button className={styles.proceedButton} onClick={() => {
+                  this.setState({
+                    showPaymentInfo: true
+                  });
+                  this.saveDeliveryDetails();
+                  this.saveContactDetails();
+                }}>
+                  Proceed to Payment
+                </button>
+              );
+            } else {
+              return (
+                <>
+                          <div style = {{margin: '30px 0 10px 20px'}}>
               Terms and Conditions
           </div>
             
@@ -821,8 +905,7 @@ displayAmbassadorError = () => {
             <div className={styles.topHeading}>
               <h6 className={styles.subHeading}>PAYMENT SUMMARY</h6>
             </div>
-       
-            </div>
+          </div>
             
           <div style={{display: 'flex'}}>
               
@@ -834,9 +917,9 @@ displayAmbassadorError = () => {
                   this.props.selectedPlan.num_deliveries
                 } Deliveries):
               </div>
-              {/*<div className={styles.summaryLeft}>
-                Add-Ons:
-              </div>*/}
+              <div className={styles.summaryLeft}>
+                Discount ({this.props.selectedPlan.delivery_discount}%):
+              </div>
               <div className={styles.summaryLeft}>
                 Total Delivery Fee For All {
                   this.props.selectedPlan.num_deliveries
@@ -854,71 +937,66 @@ displayAmbassadorError = () => {
                   
               <div className={styles.summaryLeft}>
                 {(() => {
-                  if (this.state.tip === 0) {
+                  if (this.state.paymentSummary.tip === "0.00") {
                     return (
-                      <button className={styles.tipButtonSelected} onClick={() => this.changeTip(0)}>
+                      <button className={styles.tipButtonSelected} onClick={() => this.changeTip("0.00")}>
                         No Tip
                       </button>
                     );
                   } else {
                     return (
-                      <button className={styles.tipButton} onClick={() => this.changeTip(0)}>
+                      <button className={styles.tipButton} onClick={() => this.changeTip("0.00")}>
                         No Tip
                       </button>
                     );
                   }
-                })()} 
+                })()}
                 {(() => {
-                  if (this.state.tip === 2) {
+                  if (this.state.paymentSummary.tip === "2.00") {
                     return (
-                      <button className={styles.tipButtonSelected} onClick={() => this.changeTip(2)}>
+                      <button className={styles.tipButtonSelected} onClick={() => this.changeTip("2.00")}>
                         $2
                       </button>
                     );
                   } else {
                     return (
-                      <button className={styles.tipButton} onClick={() => this.changeTip(2)}>
+                      <button className={styles.tipButton} onClick={() => this.changeTip("2.00")}>
                         $2
                       </button>
                     );
                   }
                 })()} 
                 {(() => {
-                  if (this.state.tip === 3) {
+                  if (this.state.paymentSummary.tip === "3.00") {
                     return (
-                      <button className={styles.tipButtonSelected} onClick={() => this.changeTip(3)}>
+                      <button className={styles.tipButtonSelected} onClick={() => this.changeTip("3.00")}>
                         $3
                       </button>
                     );
                   } else {
                     return (
-                      <button className={styles.tipButton} onClick={() => this.changeTip(3)}>
+                      <button className={styles.tipButton} onClick={() => this.changeTip("3.00")}>
                         $3
                       </button>
                     );
                   }
                 })()} 
                 {(() => {
-                  if (this.state.tip === 5) {
+                  if (this.state.paymentSummary.tip === "5.00") {
                     return (
-                      <button className={styles.tipButtonSelected} onClick={() => this.changeTip(5)}>
+                      <button className={styles.tipButtonSelected} onClick={() => this.changeTip("5.00")}>
                         $5
                       </button>
                     );
                   } else {
                     return (
-                      <button className={styles.tipButton} onClick={() => this.changeTip(5)}>
+                      <button className={styles.tipButton} onClick={() => this.changeTip("5.00")}>
                         $5
                       </button>
                     );
                   }
                 })()}
               </div>
-
-              {/**{
-                "amb_email":"parva.shah808@gmail.com",
-                "cust_email": "pks0@utdallas.edu"
-              } */}
                 
               <input
                 type='text'
@@ -938,74 +1016,39 @@ displayAmbassadorError = () => {
                 APPLY CODE
               </button>
                 
-              {/*(() => {
-                if (this.state.validCode === false) {
-                  return (
-                    <text style={{marginLeft: '15px', color: 'red'}}>
-                      Invalid code
-                    </text>
-                  );
-                }
-              })()*/} 
             </div>
             
             <div style = {{display: 'inline-block', width: '20%', height: '480px'}}>
               <div className={styles.summaryRight}>
-                ${(
-                    this.props.selectedPlan.item_price *
-                    this.props.selectedPlan.num_deliveries *
-                    (1-(this.props.selectedPlan.delivery_discount*0.01))
-                  ).toFixed(2)}
-              </div>
-              {/*<div className={styles.summaryRight}>
-                ${this.state.addOns}
-              </div>*/}
-              <div className={styles.summaryRight}>
-                ${this.state.deliveryFee}
+                ${this.state.paymentSummary.mealSubPrice}
               </div>
               <div className={styles.summaryRight}>
-                ${this.state.serviceFee}
+                {console.log("----- discount: " + this.state.paymentSummary.discountAmount)}
+                -${this.state.paymentSummary.discountAmount}
               </div>
               <div className={styles.summaryRight}>
-                ${(
-                  this.props.selectedPlan.item_price *
-                  this.props.selectedPlan.num_deliveries *
-                  this.state.taxRate * 0.01
-                )}
+                ${(this.state.paymentSummary.deliveryFee)}
               </div>
               <div className={styles.summaryRight}>
-                ${this.state.tip}
+                ${(this.state.paymentSummary.serviceFee)}
+              </div>
+              <div className={styles.summaryRight}>
+                {console.log("----- tax: " + this.state.paymentSummary.taxAmount)}
+                ${(this.state.paymentSummary.taxAmount)}
+              </div>
+              <div className={styles.summaryRight}>
+                ${(this.state.paymentSummary.tip)}
               </div>
               <div className={styles.summaryRight2}>
-                ${(
-                  (this.props.selectedPlan.item_price *
-                  this.props.selectedPlan.num_deliveries) +
-                  this.state.addOns + 
-                  this.state.deliveryFee +
-                  this.state.serviceFee + 
-                  (this.props.selectedPlan.item_price *
-                  this.props.selectedPlan.num_deliveries *
-                  this.state.taxRate * 0.01) + 
-                  this.state.tip
-                )}
+                ${this.calculateSubtotal()}
               </div>
               <div className={styles.summaryRight2}>
-                ${(-1)*this.state.ambassadorDiscount}
+                {console.log("ambassador discount: " + this.state.ambassadorDiscount)}
+                -${this.state.paymentSummary.ambassadorDiscount}
               </div>
               <hr className={styles.sumLine}></hr>
               <div className={styles.summaryRight2}>
-                ${(
-                  (this.props.selectedPlan.item_price *
-                  this.props.selectedPlan.num_deliveries) +
-                  this.state.addOns + 
-                  this.state.deliveryFee +
-                  this.state.serviceFee + 
-                  (this.props.selectedPlan.item_price *
-                  this.props.selectedPlan.num_deliveries *
-                  this.state.taxRate * 0.01) + 
-                  this.state.tip +
-                  (-1)*this.state.ambassadorDiscount
-                )}
+                ${this.calculateTotal()}
               </div>
             </div>
           </div>
@@ -1015,125 +1058,285 @@ displayAmbassadorError = () => {
           </div>
             
           <div style={{display: 'flex'}}>
-            <div style = {{display: 'inline-block', width: '80%', height: '280px'}}>
+            <div style = {{display: 'inline-block', width: '80%', height: '500px'}}>
               <div className={styles.buttonContainer}>
-                <button className={styles.button}>
+                <button className={styles.button} onClick={() => {
+                  if(this.state.paymentType === 'STRIPE'){
+                    this.setPaymentType('NULL');
+                  } else {
+                    this.setPaymentType('STRIPE');
+                  }
+                  this.setTotal();
+                }}>
                   STRIPE
                 </button>
               </div>
+              <div className = {styles.buttonContainer}>
+                {/* {console.log("stripe payment summary: " + JSON.stringify(this.state.paymentSummary))} */}
+                {this.state.paymentType === 'STRIPE' && (
+                  <StripeElement
+                    customerPassword={this.state.customerPassword}
+                    deliveryInstructions={this.state.instructions}
+                    setPaymentType={this.setPaymentType}
+                    paymentSummary={this.state.paymentSummary}
+                    loggedInByPassword={loggedInByPassword}
+                    latitude={this.state.latitude.toString()}
+                    longitude={this.state.longitude.toString()}
+                    email={this.state.email}
+                    customerUid={this.state.customerUid}
+                  />
+                )}
+              </div>
               <div className={styles.buttonContainer}>
-                <button className={styles.button}>
+                <button className={styles.button} onClick={() => {
+                  if(this.state.paymentType === 'PAYPAL'){
+                    this.setPaymentType('NULL');
+                  } else {
+                    this.setPaymentType('PAYPAL');
+                  }
+                  this.setTotal();
+                }}>
                   PAYPAL
                 </button>
+                {console.log("paypal payment summary: " + JSON.stringify(this.state.paymentSummary))}
+                {this.state.paymentType === 'PAYPAL' && 
+                 parseFloat(this.state.paymentSummary.total) > 0  && (
+                  <PayPal
+                    deliveryInstructions={this.state.instructions}
+                    paymentSummary={this.state.paymentSummary}
+                    customerPassword={this.state.customerPassword}
+                    loggedInByPassword={loggedInByPassword}
+                    latitude={this.state.latitude.toString()}
+                    longitude={this.state.longitude.toString()}
+                    email={this.state.email}
+                    customerUid={this.state.customerUid}
+                  />
+                )}
               </div>
-              {/*<div className={styles.buttonContainer}>
-                <button className={styles.button}>
-                  VENMO
-                </button>
-                  </div>*/}
             </div>
-            <div style = {{width: '20%', textAlign: 'right', paddingRight: '10px', height: '270px'}}>
-                {/*<button 
-                  className={styles.saveButton}
-                  onClick={() => this.savePaymentDetails()}
-                >
-                  SAVE
-                </button>*/}
+          </div>
+                </>
+              );
+            }
+          })()} 
+            
+          {/*<div style = {{margin: '30px 0 10px 20px'}}>
+              Terms and Conditions
+          </div>
+            
+          <div className={styles.paymentContainer}>
+            <div className={styles.topHeading}>
+              <h6 className={styles.subHeading}>PAYMENT SUMMARY</h6>
             </div>
           </div>
             
           <div style={{display: 'flex'}}>
-            <div style = {{display: 'inline-block', width: '80%', height: '200px'}}>
+              
+            <div style = {{display: 'inline-block', width: '80%', height: '480px'}}>
+              <div className={styles.summaryLeft}>
+                Meal Subscription ({
+                  this.props.selectedPlan.num_items
+                } Meals for {
+                  this.props.selectedPlan.num_deliveries
+                } Deliveries):
+              </div>
+              <div className={styles.summaryLeft}>
+                Discount ({this.props.selectedPlan.delivery_discount}%):
+              </div>
+              <div className={styles.summaryLeft}>
+                Total Delivery Fee For All {
+                  this.props.selectedPlan.num_deliveries
+                } Deliveries:
+              </div>
+              <div className={styles.summaryLeft}>
+                Service Fee:
+              </div>
+              <div className={styles.summaryLeft}>
+                Taxes:
+              </div>
+              <div className={styles.summaryLeft}>
+                Chef and Driver Tip:
+              </div>
+                  
+              <div className={styles.summaryLeft}>
+                {(() => {
+                  if (this.state.paymentSummary.tip === "0.00") {
+                    return (
+                      <button className={styles.tipButtonSelected} onClick={() => this.changeTip("0.00")}>
+                        No Tip
+                      </button>
+                    );
+                  } else {
+                    return (
+                      <button className={styles.tipButton} onClick={() => this.changeTip("0.00")}>
+                        No Tip
+                      </button>
+                    );
+                  }
+                })()}
+                {(() => {
+                  if (this.state.paymentSummary.tip === "2.00") {
+                    return (
+                      <button className={styles.tipButtonSelected} onClick={() => this.changeTip("2.00")}>
+                        $2
+                      </button>
+                    );
+                  } else {
+                    return (
+                      <button className={styles.tipButton} onClick={() => this.changeTip("2.00")}>
+                        $2
+                      </button>
+                    );
+                  }
+                })()} 
+                {(() => {
+                  if (this.state.paymentSummary.tip === "3.00") {
+                    return (
+                      <button className={styles.tipButtonSelected} onClick={() => this.changeTip("3.00")}>
+                        $3
+                      </button>
+                    );
+                  } else {
+                    return (
+                      <button className={styles.tipButton} onClick={() => this.changeTip("3.00")}>
+                        $3
+                      </button>
+                    );
+                  }
+                })()} 
+                {(() => {
+                  if (this.state.paymentSummary.tip === "5.00") {
+                    return (
+                      <button className={styles.tipButtonSelected} onClick={() => this.changeTip("5.00")}>
+                        $5
+                      </button>
+                    );
+                  } else {
+                    return (
+                      <button className={styles.tipButton} onClick={() => this.changeTip("5.00")}>
+                        $5
+                      </button>
+                    );
+                  }
+                })()}
+              </div>
+                
               <input
                 type='text'
-                placeholder='Card Holder Name'
-                className={styles.input}
-                value={this.state.name}
+                placeholder='Enter Ambassador Code'
+                className={styles.inputAmbassador}
                 onChange={e => {
                   this.setState({
-                    name: e.target.value
+                    ambassadorCode: e.target.value
                   });
                 }}
               />
-              <input
-                type='text'
-                placeholder='Credit Card Number'
-                className={styles.input}
-                value={this.state.number}
-                onChange={e => {
-                  this.setState({
-                    number: e.target.value
-                  });
-                }}
-              />
-              <input
-                type='password'
-                placeholder='Enter Password'
-                className={styles.input}
-                value={this.state.customerPassword}
-                onChange={e => {
-                  this.setState({
-                    customerPassword: e.target.value
-                  });
-                }}
-              />
-            <div style = {{display: 'inline-flex', height: '100px', width: '125%'}}>
-              <input
-                type='text'
-                placeholder='MM'
-                className={styles.monthInput}
-                value={this.state.month}
-                onChange={e => {
-                  this.setState({
-                    month: e.target.value
-                  });
-                }}
-              />
-              <div className={styles.dateSlash}>/</div>
-              <input
-                type='text'
-                placeholder='YEAR'
-                className={styles.yearInput}
-                value={this.state.year}
-                onChange={e => {
-                  this.setState({
-                    year: e.target.value
-                  });
-                }}
-              />
-              <input
-                type='text'
-                placeholder='CVV'
-                className={styles.cvvInput}
-                value={this.state.cvv}
-                onChange={e => {
-                  this.setState({
-                    cvv: e.target.value
-                  });
-                }}
-              />
-              <input
-                type='text'
-                placeholder='ZIPCODE'
-                className={styles.zipInput}
-                value={this.state.cardZip}
-                onChange={e => {
-                  this.setState({
-                    cardZip: e.target.value
-                  });
-                }}
-              />
-            <button
-              className={styles.finishButton}
-              onClick={() => {
-                this.handleCheckout();
-              }}
-            >
-              FINISH
-            </button>
-                </div>
+                
+              <button 
+                className={styles.codeButton}
+                onClick={() => this.applyAmbassadorCode()}
+              >
+                APPLY CODE
+              </button>
+                
+            </div>
+            
+            <div style = {{display: 'inline-block', width: '20%', height: '480px'}}>
+              <div className={styles.summaryRight}>
+                ${this.state.paymentSummary.mealSubPrice}
+              </div>
+              <div className={styles.summaryRight}>
+                -${this.state.paymentSummary.discountAmount}
+              </div>
+              <div className={styles.summaryRight}>
+                ${(this.state.paymentSummary.deliveryFee)}
+              </div>
+              <div className={styles.summaryRight}>
+                ${(this.state.paymentSummary.serviceFee)}
+              </div>
+              <div className={styles.summaryRight}>
+                ${(this.state.paymentSummary.taxAmount)}
+              </div>
+              <div className={styles.summaryRight}>
+                ${(this.state.paymentSummary.tip)}
+              </div>
+              <div className={styles.summaryRight2}>
+                ${this.calculateSubtotal()}
+              </div>
+              <div className={styles.summaryRight2}>
+                {console.log("ambassador discount: " + this.state.ambassadorDiscount)}
+                -${this.state.paymentSummary.ambassadorDiscount}
+              </div>
+              <hr className={styles.sumLine}></hr>
+              <div className={styles.summaryRight2}>
+                ${this.calculateTotal()}
+              </div>
             </div>
           </div>
+            
+          <div className={styles.topHeading}>
+            <h6 className={styles.subHeading}>PAYMENT OPTIONS</h6>
+          </div>
+            
+          <div style={{display: 'flex'}}>
+            <div style = {{display: 'inline-block', width: '80%', height: '500px'}}>
+              <div className={styles.buttonContainer}>
+                <button className={styles.button} onClick={() => {
+                  if(this.state.paymentType === 'STRIPE'){
+                    this.setPaymentType('NULL');
+                  } else {
+                    this.setPaymentType('STRIPE');
+                  }
+                  this.setTotal();
+                }}>
+                  STRIPE
+                </button>
+              </div>
+              <div className = {styles.buttonContainer}>
+                {console.log("stripe payment summary: " + JSON.stringify(this.state.paymentSummary))}
+                {this.state.paymentType === 'STRIPE' && (
+                  <StripeElement
+                    customerPassword={this.state.customerPassword}
+                    deliveryInstructions={this.state.instructions}
+                    setPaymentType={this.setPaymentType}
+                    paymentSummary={this.state.paymentSummary}
+                    loggedInByPassword={loggedInByPassword}
+                    latitude={this.state.latitude.toString()}
+                    longitude={this.state.longitude.toString()}
+                    email={this.state.email}
+                    customerUid={this.state.customerUid}
+                  />
+                )}
+              </div>
+              <div className={styles.buttonContainer}>
+                <button className={styles.button} onClick={() => {
+                  if(this.state.paymentType === 'PAYPAL'){
+                    this.setPaymentType('NULL');
+                  } else {
+                    this.setPaymentType('PAYPAL');
+                  }
+                  this.setTotal();
+                }}>
+                  PAYPAL
+                </button>
+                {console.log("paypal payment summary: " + JSON.stringify(this.state.paymentSummary))}
+                {this.state.paymentType === 'PAYPAL' && 
+                 parseFloat(this.state.paymentSummary.total) > 0  && (
+                  <PayPal
+                    value={1000}
+                    deliveryInstructions={this.state.instructions}
+                    paymentSummary={this.state.paymentSummary}
+                    customerPassword={this.state.customerPassword}
+                    loggedInByPassword={loggedInByPassword}
+                    latitude={this.state.latitude.toString()}
+                    longitude={this.state.longitude.toString()}
+                    email={this.state.email}
+                    customerUid={this.state.customerUid}
+                  />
+                )}
+              </div>
+            </div>
+          </div>*/}
         </div>
       </div>
     );
@@ -1188,7 +1391,7 @@ const mapStateToProps = state => ({
   password: state.subscribe.paymentPassword,
   address: state.subscribe.address,
   addressInfo: state.subscribe.addressInfo,
-  creditCard: state.subscribe.creditCard
+  creditCard: state.subscribe.creditCard,
 });
 
 const functionList = {
@@ -1213,6 +1416,8 @@ const functionList = {
   changeCardZip,
   changeCardCvv,
   submitPayment,
+  chooseMealsDelivery,
+  choosePaymentOption,
   submitGuestSignUp
 };
 

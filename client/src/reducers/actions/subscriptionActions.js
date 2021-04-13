@@ -38,7 +38,7 @@ import {
 } from '../actions/subscriptionTypes';
 import {LOAD_USER_INFO} from '../actions/loginTypes';
 
-import {API_URL, BING_LCOATION_API_URL} from '../constants';
+import {API_URL, BING_LOCATION_API_URL} from '../constants';
 
 export const resetSubscription = () => dispatch => {
   dispatch({
@@ -118,6 +118,9 @@ export const choosePaymentOption = (
 };
 
 const calculateTotalPayment = (dispatch, plans, meal, options) => {
+  //console.log("+++++ plans: " + JSON.stringify(plans));
+  console.log("(calculateTotalPayment) meal: " + meal);
+  console.log("(calculateTotalPayment) options: " + options);
   if (meal !== '' && options !== '') {
     let mealNum = Number(meal);
     let optionsNum = Number(options);
@@ -126,6 +129,7 @@ const calculateTotalPayment = (dispatch, plans, meal, options) => {
     );
     if (selectedPlan.length !== 0) {
       let selectedItem = selectedPlan[0];
+      console.log("(calculateTotalPayment) selectedItem: " + JSON.stringify(selectedItem));
       dispatch({
         type: GET_TOTAL_PAYMENT,
         payload: selectedItem,
@@ -160,7 +164,7 @@ export const fetchProfileInformation = customerId => dispatch => {
           customerInfo.user_social_media !== null
             ? customerInfo.user_social_media
             : 'NULL';
-        console.log(res);
+        //console.log(res);
         dispatch({
           type: FETCH_PROFILE_INFO,
           payload: {
@@ -382,7 +386,7 @@ export const submitPayment = (
               .join('');
             console.log("hashed password: " + hashedPassword);
             axios
-              .get(BING_LCOATION_API_URL, {
+              .get(BING_LOCATION_API_URL, {
                 params: {
                   CountryRegion: 'US',
                   adminDistrict: deliveryState,
@@ -476,7 +480,7 @@ export const submitPayment = (
   } else {
     // Skip sign in part
     axios
-      .get(BING_LCOATION_API_URL, {
+      .get(BING_LOCATION_API_URL, {
         params: {
           CountryRegion: 'US',
           adminDistrict: deliveryState,
@@ -566,6 +570,7 @@ export const fetchSubscribed = customerId => async dispatch => {
   //fetch  data from server
   let purchaseIds = [];
   try {
+    console.log("fetchSubscribed (1)");
     const res = await axios.get(`${API_URL}customer_lplp`, {
       params: {customer_uid: customerId},
     });
@@ -586,6 +591,7 @@ export const fetchSubscribed = customerId => async dispatch => {
         purchaseIds.push(items.purchase_id);
       }
     }
+    console.log("fetchSubscribed (2)");
   } catch (err) {
     let message = '';
     if (err.response) {
@@ -600,6 +606,79 @@ export const fetchSubscribed = customerId => async dispatch => {
   }
   return purchaseIds;
 };
+
+/*export const fetchSubscribed = customerId => async dispatch => {
+  //fetch  data from server
+  let purchaseIds = [];
+  try {
+    console.log("fetchSubscribed (1)");
+    const response = await axios.get(`${API_URL}customer_lplp`, {
+      params: {customer_uid: customerId},
+    })
+    .then((res) => {
+      console.log("res: " + JSON.stringify(res));
+      if (res.status !== 200) {
+        dispatch({
+          type: ADD_ERROR,
+          payload: 'Cannot Get Subscription Info',
+        });
+      } else {
+        let filtered = res.data.result.filter(
+          item => JSON.parse(item?.items)[0]?.itm_business_uid === '200-000002'
+        );
+        dispatch({
+          type: FETCH_SUBSCRIBED_INFO,
+          payload: filtered,
+        });
+        for (let items of res.data.result) {
+          purchaseIds.push(items.purchase_id);
+        }
+      }
+      console.log("fetchSubscribed (2)");
+      return purchaseIds;
+    })
+    .catch((err) => {
+      if(err.response) {
+        // eslint-disable-next-line no-console
+        console.log(err.response);
+      }
+      // eslint-disable-next-line no-console
+      console.log(err);
+    });*/
+    /*
+    if (res.status !== 200) {
+      dispatch({
+        type: ADD_ERROR,
+        payload: 'Cannot Get Subscription Info',
+      });
+    } else {
+      let filtered = res.data.result.filter(
+        item => JSON.parse(item?.items)[0]?.itm_business_uid === '200-000002'
+      );
+      dispatch({
+        type: FETCH_SUBSCRIBED_INFO,
+        payload: filtered,
+      });
+      for (let items of res.data.result) {
+        purchaseIds.push(items.purchase_id);
+      }
+    }
+    console.log("fetchSubscribed (2)");*/
+  /*} catch (err) {
+    let message = '';
+    if (err.response) {
+      message = err.response;
+    } else {
+      message = err.toString();
+    }
+    dispatch({
+      type: ADD_ERROR,
+      payload: message,
+    });
+    return purchaseIds;
+  }
+  //return purchaseIds;
+};*/
 
 export const setCurrentMeal = meal => dispatch =>
   dispatch({

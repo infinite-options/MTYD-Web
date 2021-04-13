@@ -24,22 +24,45 @@ import {
   faSearch
 } from "@fortawesome/free-solid-svg-icons";
 
+import axios from 'axios';
+
 // import styles from "./socialSignup.module.css";
 
+const google = window.google;
+
 class SocialSignUp extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
+    this.handlePlaceSelect_signup = this.handlePlaceSelect_signup.bind(this)
+    this.autocomplete_social = null
     this.state = {
-      mounted: false
-    };
+      mounted: false,
+      name: '',
+      street_address: '',
+      city: '',
+      state: '',
+      zip_code: '',
+      lat:'',
+      lng:''
+    }
   }
+
+  // initialState() {
+  //   return {
+  //     mounted: false,
+  //     name: '',
+  //     street_address: '',
+  //     city: '',
+  //     state: '',
+  //     zip_code: '',
+  //     lat:'',
+  //     lng:''
+  //   }
+  // }
 
   componentDidMount() {
     let queryString = this.props.location.search;
     let urlParams = new URLSearchParams(queryString);
-    // Clear Query parameters
-    // window.history.pushState({}, document.title, window.location.pathname);
-    // Set state for id
     if (urlParams.has("id")) {
       this.props.initAppleSignUp(urlParams.get("id"), () => {
         this.setState({
@@ -51,6 +74,128 @@ class SocialSignUp extends React.Component {
         mounted: true
       });
     }
+
+
+    this.autocomplete_social = new google.maps.places.Autocomplete(document.getElementById('ship-address-social-login'),{
+      componentRestrictions: { country: ["us", "ca"] },
+    })
+    this.autocomplete_social.addListener("place_changed", this.handlePlaceSelect_signup)
+
+    console.log(this.autocomplete_social)
+  }
+
+  handlePlaceSelect_signup() {
+    console.log('here')
+    let address1Field = document.querySelector("#ship-address-social-login");
+    let postalField = document.querySelector("#postcode");
+
+    let addressObject = this.autocomplete_social.getPlace()
+    console.log(addressObject);
+
+    let address1 = "";
+    let postcode = "";
+    let city = '';
+    let state = '';
+
+    for (const component of addressObject.address_components) {
+      const componentType = component.types[0];
+      switch (componentType) {
+        case "street_number": {
+          address1 = `${component.long_name} ${address1}`;
+          break;
+        }
+  
+        case "route": {
+          address1 += component.short_name;
+          break;
+        }
+  
+        case "postal_code": {
+          postcode = `${component.long_name}${postcode}`;
+          break;
+        }
+
+        case "locality":
+          document.querySelector("#locality").value = component.long_name;
+          city = component.long_name;
+          break;
+  
+        case "administrative_area_level_1": {
+          document.querySelector("#state").value = component.short_name;
+          state= component.short_name;
+          break;
+        }
+        
+      }
+    }
+
+    address1Field.value = address1;
+    postalField.value = postcode;
+
+    console.log(address1);
+    console.log(postcode)
+
+    this.setState({
+      name: addressObject.name,
+      street_address: address1,
+      city: city,
+      state: state,
+      zip_code: postcode,
+      lat:addressObject.geometry.location.lat(),
+      lng:addressObject.geometry.location.lng(),
+    })
+
+    axios.get(`https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/categoricalOptions/${this.state.lng},${this.state.lat}`)
+      .then(res=>{
+        console.log(res)
+        if(res.data.result.length==0){
+          alert('cannot deliver to this address')
+          console.log('cannot deliver to this address')
+        }else{
+          console.log('we can deliver to this address')
+        }
+      })
+      .catch((err) => {
+        if (err.response) {
+          console.log(err.response);
+        }
+        console.log(err);
+      });
+
+
+
+    console.log(this.state)
+  }
+
+
+  signupCheck=()=>{
+
+    if(this.props.firstName==''||this.props.lastName==''){
+      alert('first name and last name is required')
+    }
+    else{
+        this.props.submitSocialSignUp(
+        this.props.AppleSignUp,
+        this.props.customerId,
+        this.props.email,
+        this.props.platform,
+        this.props.accessToken,
+        this.props.refreshToken,
+        this.props.firstName,
+        this.props.lastName,
+        this.props.phone,
+        this.state.street_address,
+        this.props.unit,
+        this.state.city,
+        this.state.state,
+        this.state.zip_code,
+        this.signUpSuccess
+      );
+    }
+
+
+
+
   }
 
   signUpSuccess = () => {
@@ -58,9 +203,9 @@ class SocialSignUp extends React.Component {
   };
 
   render() {
-    if (!this.state.mounted) {
-      return null;
-    }
+    // if (!this.state.mounted) {
+    //   return null;
+    // }
     if (this.props.email === "" || this.props.refreshToken === "") {
       this.props.history.push("sign-up");
     }
@@ -92,6 +237,7 @@ class SocialSignUp extends React.Component {
                     onChange={e => {
                       this.props.changeNewLastName(e.target.value);
                     }}
+                    required
                   />
                 </div>
                 <div className={styles.inputItem}>
@@ -107,20 +253,31 @@ class SocialSignUp extends React.Component {
                 </div>
               </div>
               <h6 className={styles.subHeading}> Address </h6>
+
+
+
+
+
+
+
+
+
+
+
               <div className={styles.inputContainer}>
                 <div className={styles.inputItemAddress}>
                   <input
-                    type='text'
-                    placeholder='Address'
-                    value={this.props.street}
-                    onChange={e => {
-                      this.props.changeNewAddress(e.target.value);
-                    }}
+                    
+
+                    id="ship-address-social-login"
+                    name="ship-address-social-login"
+
+                    placeholder='Street Address'
+
                   />
                 </div>
                 <div className={styles.inputItemAddress}>
                   <input
-                    type='text'
                     placeholder='Unit'
                     value={this.props.unit}
                     onChange={e => {
@@ -130,32 +287,28 @@ class SocialSignUp extends React.Component {
                 </div>
                 <div className={styles.inputItemAddress}>
                   <input
-                    type='text'
                     placeholder='City'
-                    value={this.props.city}
-                    onChange={e => {
-                      this.props.changeNewCity(e.target.value);
-                    }}
+                    placeholder='City'
+                    id="locality" name="locality"
+
+
                   />
                 </div>
                 <div className={styles.inputItemAddress}>
                   <input
-                    type='text'
+
                     placeholder='State'
-                    value={this.props.state}
-                    onChange={e => {
-                      this.props.changeNewState(e.target.value);
-                    }}
+                    id="state" name="state"
+
                   />
                 </div>
                 <div className={styles.inputItemAddress}>
                   <input
-                    type='text'
                     placeholder='Zip'
-                    value={this.props.zip}
-                    onChange={e => {
-                      this.props.changeNewZip(e.target.value);
-                    }}
+                    placeholder='Zip'
+                    id="postcode" name="postcode"
+
+
                   />
                 </div>
               </div>
@@ -163,25 +316,7 @@ class SocialSignUp extends React.Component {
                 <button className={styles.button + " mr-3"}>BACK</button>
                 <button
                   className={styles.button + " ml-3"}
-                  onClick={() => {
-                    this.props.submitSocialSignUp(
-                      this.props.AppleSignUp,
-                      this.props.customerId,
-                      this.props.email,
-                      this.props.platform,
-                      this.props.accessToken,
-                      this.props.refreshToken,
-                      this.props.firstName,
-                      this.props.lastName,
-                      this.props.phone,
-                      this.props.street,
-                      this.props.unit,
-                      this.props.city,
-                      this.props.state,
-                      this.props.zip,
-                      this.signUpSuccess
-                    );
-                  }}
+                  onClick={this.signupCheck}
                 >
                   SIGN UP
                 </button>
@@ -190,7 +325,7 @@ class SocialSignUp extends React.Component {
             <div className={"col-5 " + styles.explore}>
               <div className={"row " + styles.centerBtn}>
                 <p>EXPLORE WITHOUT LOGIN</p>
-                <button> START >></button>
+                <button> START </button>
               </div>
             </div>
           </div>

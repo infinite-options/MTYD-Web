@@ -5,13 +5,25 @@ import {Link} from "react-router-dom";
 
 class HomeLink extends Component {
     render() { 
-        let buttonStyle = this.props.style
         return (
             <Link className = {styles.orangeButton} to={this.props.link}>
               {this.props.text}
             </Link>
          );
     }
+}
+
+class AddressLink extends Component {
+  render() { 
+      return (
+        <button 
+          onClick={this.props.popSignup}
+          className={styles.orangeButton}
+        >
+          {this.props.text}
+        </button>
+       );
+  }
 }
 
 class FootLink extends Component {
@@ -34,4 +46,4 @@ class AmbassadorLink extends Component {
     }
 }
  
-export {HomeLink, FootLink, AmbassadorLink};
+export {HomeLink, FootLink, AmbassadorLink, AddressLink};

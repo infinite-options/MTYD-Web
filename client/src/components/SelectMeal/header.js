@@ -16,6 +16,7 @@ class Header extends Component {
   state = {     
     login_seen:false,
     signUpSeen:false, 
+    firstDate:null,
   }
 
   togglePopLogin = () => {
@@ -104,12 +105,6 @@ class Header extends Component {
     }
     return selections;
   };
-
-
-
-
-
-
 
 
   render() {
@@ -201,7 +196,7 @@ class Header extends Component {
         <div class={styles.divider}/>
         <div class={styles.divider}/>
 
-        {this.props.dates.map(date => (
+        {/* {this.props.dates.map(date => (
           <>
             <button key={date} value={date} onClick={this.props.filterDates} className={styles.datebutton}>
               {moment(date.split(" ")[0]).format("ddd")}
@@ -210,7 +205,9 @@ class Header extends Component {
               </button>
               <div class={styles.divider}/>
           </>
-          ))}
+          ))} */}
+
+        {this.props.dateButtonArray}
 
         {this.props.subscribedPlans.length ? (
           

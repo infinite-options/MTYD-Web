@@ -22,7 +22,7 @@ import {
   LOAD_USER_INFO
 } from "./loginTypes";
 
-import {API_URL, BING_LCOATION_API_URL} from "../constants";
+import {API_URL, BING_LOCATION_API_URL} from "../constants";
 import {setAlert} from "./alertActions";
 
 // Auxillary functions
@@ -453,7 +453,7 @@ export const submitPasswordSignUp = (
 ) => dispatch => {
   if (password === passwordConfirm) {
     axios
-      .get(BING_LCOATION_API_URL, {
+      .get(BING_LOCATION_API_URL, {
         params: {
           CountryRegion: "US",
           adminDistrict: state,
@@ -557,7 +557,7 @@ export const submitGuestSignUp = (
   callback
 ) => dispatch => {
     axios
-      .get(BING_LCOATION_API_URL, {
+      .get(BING_LOCATION_API_URL, {
         params: {
           CountryRegion: "US",
           adminDistrict: state,
@@ -663,7 +663,7 @@ export const submitSocialSignUp = (
   callback
 ) => dispatch => {
   axios
-    .get(BING_LCOATION_API_URL, {
+    .get(BING_LOCATION_API_URL, {
       params: {
         CountryRegion: "US",
         adminDistrict: state,

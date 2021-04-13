@@ -61,7 +61,8 @@ class ChoosePlan extends React.Component {
       loggedIn: false,
       deliveryDays: [],
       login_seen:false,
-      signUpSeen:false
+      signUpSeen:false,
+      total: '0.00'
     };
   }
 
@@ -95,8 +96,9 @@ class ChoosePlan extends React.Component {
   // https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/delivery_weekdays
 
   componentDidMount() {
-    console.log("choose-plan props: " + JSON.stringify(this.props));
-    console.log(this.props)
+    //console.log("choose-plan props: " + JSON.stringify(this.props));
+    //console.log(this.props)
+
     let queryString = this.props.location.search;
     let urlParams = new URLSearchParams(queryString);
     // Clear Query parameters
@@ -199,7 +201,7 @@ class ChoosePlan extends React.Component {
       .then(res => {
         // console.log(res.data.result[0])
         let resultDays = res.data.result;
-        console.log("delivery_weekdays response: " + JSON.stringify(resultDays));
+        //console.log("delivery_weekdays response: " + JSON.stringify(resultDays));
         this.setState({
           deliveryDays: resultDays
         });
@@ -221,12 +223,12 @@ class ChoosePlan extends React.Component {
     let messageDays = [];
 
     for (const [dateKey, dateData] of Object.entries(this.state.deliveryDays)) {
-      console.log("showDeliveryDates() key: " + dateKey + ", dateData: " + JSON.stringify(dateData));
+      //console.log("showDeliveryDates() key: " + dateKey + ", dateData: " + JSON.stringify(dateData));
       //console.log("weekday integer: " + dateData["weekday(menu_date)"]);
 
       let dayInt = dateData["weekday(menu_date)"];
 
-      console.log("weekday int: " + dayInt);
+      //console.log("weekday int: " + dayInt);
 
       let dayString = "";
 
@@ -272,7 +274,7 @@ class ChoosePlan extends React.Component {
       //deliveryDaysString = deliveryDaysString.concat(messageDays[i] + ", ");
     }
 
-    console.log("final deliveryDaysString: " + deliveryDaysString);
+    //console.log("final deliveryDaysString: " + deliveryDaysString);
 
     return deliveryDaysString;
   }
@@ -302,13 +304,16 @@ class ChoosePlan extends React.Component {
               ? selectedMealButton
               : deselectedMealButton
           }
-          onClick={() =>
+          onClick={() => {
             this.props.chooseMealsDelivery(
               mealIndex,
               this.props.paymentOption,
               this.props.plans
-            )
-          }
+            );
+            console.log("===== mealIndex: " + mealIndex);
+            console.log("===== paymentOption: " + this.props.paymentOption);
+            //console.log("===== plans: " + JSON.stringify(this.props.plans));
+          }}
         >
           {mealIndex} MEALS
         </button>
@@ -325,103 +330,140 @@ class ChoosePlan extends React.Component {
     let deselectedPaymentOption = styles.deliveryButton;
     let selectedPaymentOption = styles.deliveryButton + " " + styles.deliveryButtonSelected;
     let paymentOptionButtons = [];
-    console.log(this.props.plans);
-    console.log(this.state.unlogin_plans);
+    //console.log(this.props.plans);
+    //console.log(this.state.unlogin_plans);
       
     var discounts = this.props.plans[2];
     var discount = null;
 
-    console.log("discounts: " + discounts);
-    console.log("typeof(discounts) " + typeof(discounts));
+    //console.log("discounts: " + discounts);
+    //console.log("typeof(discounts) " + typeof(discounts));
+
+    console.log("(paymentFrequency2) === (1)");
+    console.log("(paymentFrequency2) === typeof(discounts): " + typeof(discounts));
 
     if(typeof(discounts) !== "undefined"){
-    for (const [deliveryIndex, deliveryData] of Object.entries(discounts)) {
-      let active = false;
-      if (this.props.meals === "") {
-        active = true;
-      } else {
-        active = false;
-      }
-        
-      try{
-        discount = discounts[deliveryIndex].delivery_discount;
-        // console.log("discount: " + discount);
-      } catch(e) {
-        // console.log("discount UNDEFINED");
-      }
-        
-      paymentOptionButtons.push(
-        <div className={styles.sameLine} key={deliveryIndex}>
-          {(() => {
-              let tempPlan = null;
-              if(this.state.unlogin_plans===null){
-                tempPlan=this.props.plans
-              }
-              else{
-                tempPlan = this.state.unlogin_plans
-              }
-              return (
-                <div style={{display: 'inline-block'}}>
-                  <button
-                  disabled={active}
-                  className={
-                    (this.props.paymentOption === deliveryIndex
-                      ? selectedPaymentOption
-                      : deselectedPaymentOption) +
-                    " " + (active && styles.disabledBtn)
-                  }
-                  onClick={() => {
-                    this.props.choosePaymentOption(
-                      deliveryIndex,
-                      this.props.meals,
-                      tempPlan
-                    )
-                  }}
-                >
-                  <span style={{fontSize: '35px'}}>
-                    {deliveryIndex}
-                  </span>
-                  <br></br>
-                  {(() => {
-                    if (typeof(discount) !== "undefined" && discount > 0) {
-                      return (
-                        <span>(Save {discount}%)</span>
-                      );
+      console.log("(paymentFrequency2) === (2)");
+      for (const [deliveryIndex, deliveryData] of Object.entries(discounts)) {
+        let active = false;
+        if (this.props.meals === "") {
+          active = true;
+        } else {
+          active = false;
+        }
+          
+        try{
+          discount = discounts[deliveryIndex].delivery_discount;
+          // console.log("discount: " + discount);
+        } catch(e) {
+          // console.log("discount UNDEFINED");
+        }
+          
+        paymentOptionButtons.push(
+          <div className={styles.sameLine} key={deliveryIndex}>
+            {(() => {
+                let tempPlan = null;
+                if(this.state.unlogin_plans===null){
+                  tempPlan=this.props.plans
+                }
+                else{
+                  tempPlan = this.state.unlogin_plans
+                }
+                return (
+                  <div style={{display: 'inline-block'}}>
+                    <button
+                    disabled={active}
+                    className={
+                      (this.props.paymentOption === deliveryIndex
+                        ? selectedPaymentOption
+                        : deselectedPaymentOption) +
+                      " " + (active && styles.disabledBtn)
                     }
-                  })()}  
-                  </button>
-                  {(()=>{
-                    if(deliveryIndex % 3 === 0){
-                      console.log("is 3");
-                      return(
-                        <div className={styles.deliverySubtext}>
-                          {(() => {
-                            if (deliveryIndex/3 === 1) {
-                              return (
-                                <>
-                                  {deliveryIndex/3} WEEK
-                                </>
-                              );
-                            } else {
-                              return (
-                                <>
-                                  {deliveryIndex/3} WEEKS
-                                </>
-                              );
-                            }
-                          })()}
-                        </div>
-                      );
+                    /*className={
+                      this.props.paymentOption === deliveryIndex
+                        ? selectedPaymentOption
+                        : deselectedPaymentOption
+                    }*/
+                    onClick={() => {
+                      this.props.choosePaymentOption(
+                        deliveryIndex,
+                        this.props.meals,
+                        tempPlan
+                      )
+                      console.log("##### deliveryIndex: " + deliveryIndex);
+                      console.log("##### meals: " + this.props.meals);
+                    }}
+                  >
+                    <span style={{fontSize: '35px'}}>
+                      {deliveryIndex}
+                    </span>
+                    <br></br>
+                    {(() => {
+                      if (typeof(discount) !== "undefined" && discount > 0) {
+                        return (
+                          <span>(Save {discount}%)</span>
+                        );
+                      }
+                    })()}  
+                    </button>
+                    {(()=>{
+                      if(deliveryIndex % 3 === 0){
+                        //console.log("is 3");
+                        return(
+                          <div className={styles.deliverySubtext}>
+                            {(() => {
+                              if (deliveryIndex/3 === 1) {
+                                return (
+                                  <>
+                                    {deliveryIndex/3} WEEK
+                                  </>
+                                );
+                              } else {
+                                return (
+                                  <>
+                                    {deliveryIndex/3} WEEKS
+                                  </>
+                                );
+                              }
+                            })()}
+                          </div>
+                        );
 
-                    }
-                  })()}
-                </div>
-              );
-          })()}     
-        </div>
-      );
-    }}
+                      }
+                    })()}
+                  </div>
+                );
+            })()}     
+          </div>
+        );
+      }
+    }
     return paymentOptionButtons;
+  };
+
+  calculateTotal = () => {
+    let calculatedTotal = (
+      this.props.selectedPlan.item_price *
+      this.props.selectedPlan.num_deliveries *
+      (1-(this.props.selectedPlan.delivery_discount*0.01))
+    ).toFixed(2);
+    return calculatedTotal;
+  };
+
+  calculateDeal = () => {
+    let total = parseFloat(this.calculateTotal());
+    //console.log("total: " + total);
+
+    let noDiscountPrice = parseFloat((
+      this.props.selectedPlan.item_price *
+      this.props.selectedPlan.num_deliveries
+    ).toFixed(2));
+    //console.log("noDiscountPrice: " + noDiscountPrice);
+
+    let deal = total/noDiscountPrice;
+    //console.log("deal: " + deal);
+
+    return Math.ceil(deal);
   };
 
   render() {
@@ -440,7 +482,7 @@ class ChoosePlan extends React.Component {
         </p>
       </div>
     );
-    console.log("===== SELECTED PLAN: " + JSON.stringify(this.props.selectedPlan));
+    console.log("***** SELECTED PLAN: " + JSON.stringify(this.props.selectedPlan));
     return (
       /*for mobile's screen*/
       <>
@@ -502,9 +544,9 @@ class ChoosePlan extends React.Component {
                 <div className={styles.mealNumber}>
                   {(()=>{
                     if(JSON.stringify(this.props.plans) === "{}"){
-                      console.log("(mobile) meals not yet fetched");
+                      //console.log("(mobile) meals not yet fetched");
                     } else {
-                      console.log("(mobile) meals fetched!");
+                      //console.log("(mobile) meals fetched!");
                       return(
                         <div className={styles.buttonWrapper}>
                           {this.mealsDelivery()}
@@ -527,9 +569,9 @@ class ChoosePlan extends React.Component {
                 </p>
                 {(()=>{
                   if(JSON.stringify(this.props.plans) === "{}"){
-                    console.log("(mobile) plans not yet fetched");
+                    //console.log("(mobile) plans not yet fetched");
                   } else {
-                    console.log("(mobile) plans fetched!");
+                    //console.log("(mobile) plans fetched!");
                     return(
                       <div className='row' style={{marginTop: '20px'}}>
                         {this.paymentFrequency2()}
@@ -585,12 +627,12 @@ class ChoosePlan extends React.Component {
             {/*<Menu show={this.state.loggedIn} message={message} />*/}
             {(()=>{
               if(this.state.loggedIn === true){
-                console.log("Show navbuttons -- logged in");
+                //console.log("Show navbuttons -- logged in");
                 return(
                   <Menu show={true} message={message} />
                 );
               } else {
-                console.log("Hide navbuttons -- not logged in");
+                //console.log("Hide navbuttons -- not logged in");
                 return(
                   <Menu show={true} message={message} />
                 );
@@ -631,9 +673,9 @@ class ChoosePlan extends React.Component {
                   </div>
                   {(()=>{
                     if(JSON.stringify(this.props.plans) === "{}"){
-                      console.log("(web) meals not yet fetched");
+                      //console.log("(web) meals not yet fetched");
                     } else {
-                      console.log("(web) meals fetched!");
+                      //console.log("(web) meals fetched!");
                       return(
                         <div className={styles.buttonWrapper}>
                           {this.mealsDelivery()}
@@ -651,9 +693,9 @@ class ChoosePlan extends React.Component {
                   </div>
                   {(()=>{
                     if(JSON.stringify(this.props.plans) === "{}"){
-                      console.log("(web) plans not yet fetched");
+                      //console.log("(web) plans not yet fetched");
                     } else {
-                      console.log("(web) plans fetched!");
+                      //console.log("(web) plans fetched!");
                       return(
                         <div className='row' style={{marginTop: '20px'}}>
                           {this.paymentFrequency2()}
@@ -669,7 +711,72 @@ class ChoosePlan extends React.Component {
                     {
                       return (
                         <>
-                        <div className={styles.priceCalculation}>
+                        <div style={{display: 'flex'}}>
+                          <div style={{display: 'inline-block'}}>
+                            <div className={styles.priceCalculation}>
+                              <div>
+                                <span className={styles.priceFormula}>
+                                  {this.props.selectedPlan.num_items} 
+                                </span>
+                                <br></br>
+                                <span className={styles.priceSubtext}>
+                                  Meals
+                                </span>
+                              </div>
+                              <div className={styles.priceSymbol}>
+                                x
+                              </div>
+                              <div>
+                                <span className={styles.priceFormula}>
+                                  {this.props.selectedPlan.num_deliveries} 
+                                </span>
+                                <br></br>
+                                <span className={styles.priceSubtext}>
+                                  Deliveries
+                                </span>
+                              </div>
+                              <div className={styles.priceSymbol}>
+                                -
+                              </div>
+                              <div>
+                                <span className={styles.priceFormula}>
+                                  {this.props.selectedPlan.delivery_discount}%
+                                </span>
+                                <br></br>
+                                <span className={styles.priceSubtext}>
+                                  Discount
+                                </span>
+                              </div>
+                              <div className={styles.priceSymbol}>
+                                =
+                              </div>
+                              <div>
+                                <span className={styles.priceFormula}>
+                                  ${this.calculateTotal()}
+                                </span>
+                                <br></br>
+                                <span className={styles.priceSubtext}>
+                                  Total
+                                </span>
+                              </div>
+                            </div>
+
+
+                            <div className={styles.perMealDeal}>
+                              That's Less Than ${this.calculateDeal()} Per Meal!
+                            </div>
+                            <div className={styles.proceedWrapper}>
+                              <Link className={styles.proceedBtn} to='/payment-details'>
+                                PROCEED
+                              </Link>
+                            </div>
+
+                          </div>
+                          </div>
+
+
+
+                        {/*<div className={styles.priceCalculation}>
                           <div>
                             <span className={styles.priceFormula}>
                               {this.props.selectedPlan.num_items} 
@@ -720,12 +827,14 @@ class ChoosePlan extends React.Component {
                             </span>
                           </div>
                         </div>
+
+                        <div>That's Less Than $x Per Meal!</div>
                           
                         <div className={styles.proceedWrapper}>
                           <Link className={styles.proceedBtn} to='/payment-details'>
                             PROCEED
                           </Link>
-                        </div> 
+                        </div> */}
                         </>
                       );
                     } else {
@@ -743,11 +852,6 @@ class ChoosePlan extends React.Component {
                   
                 </div>
                 
-                {/*<div className={styles.proceedWrapper}>
-                  <Link className={styles.proceedBtn} to='/payment-details'>
-                    PROCEED
-                  </Link>
-                </div> */}  
             </div>   
           </div>
         </div>

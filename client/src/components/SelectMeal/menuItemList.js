@@ -6,6 +6,7 @@ import Cookies from "js-cookie";
 import {API_URL} from "../../reducers/constants";
 import styles from "./selectmeal.module.css";
 import MenuBar from "../Menu";
+import moment from 'moment';
 
 import {connect} from "react-redux";
 import {
@@ -28,7 +29,10 @@ class MenuItemList extends Component {
       saveButton: false,
       popUp: styles.popUpHide,
       popUpDisplay: false,
-      popUpText: 'Hello'
+      popUpText: 'Hello',
+      dateButtonList:[],
+      surpriseSkipSave : [],
+      testnum:1,
     };
   }
 
@@ -110,8 +114,10 @@ class MenuItemList extends Component {
           },
           () => {
             this.selectedMeals();
+            
           }
         );
+        this.dateButtonArray();
       })
       .catch(error => {
         console.error(error);
@@ -130,6 +136,7 @@ class MenuItemList extends Component {
         this.setState({
           mealSelected
         });
+
         let cartItemsArr = [];
         let addOnArr = [];
         let delivery_Day = "";
@@ -241,6 +248,10 @@ class MenuItemList extends Component {
       .catch(error => {
         console.error(error);
       });
+
+      this.dateButtonArray();
+
+    
 
     let planName = e.target.value;
     this.state.meals.map(mealItem => {
@@ -358,7 +369,7 @@ class MenuItemList extends Component {
     }
 
     let cust_id = Cookies.get("customer_uid");
-    console.log(cust_id)
+    // console.log(cust_id)
     fetch(
       `${API_URL}meals_selected?customer_uid=${cust_id}`
     )
@@ -372,6 +383,8 @@ class MenuItemList extends Component {
       .catch(error => {
         console.error(error);
       });
+
+    console.log(this.state.mealSelected);
     let cartItemsArr = [];
     let addOnArr = [];
     let delivery_Day = "";
@@ -400,6 +413,7 @@ class MenuItemList extends Component {
           count: myItem.qty,
           ...spreadObj[0]
         };
+        console.log(myItem.name)
         if (myItem.name !== "SKIP" && myItem.name !== "SURPRISE") {
           cartItemsArr.push(pushingObj);
           myCounter = myCounter + myItem.qty;
@@ -545,7 +559,21 @@ class MenuItemList extends Component {
     this.setState({
       selectValue: e.target.value
     });
+
+    let buttonStyle = ''
+
     if (e.target.value === "SURPRISE") {
+      buttonStyle = styles.datebuttonSurprise;
+      let tempNewButton = (
+        <button key={this.state.myDate} value={this.state.myDate} onClick={this.filterDates} className={buttonStyle} autoFocus>
+        {moment(this.state.myDate.split(" ")[0]).format("ddd")}
+        <br/>{moment(this.state.myDate.split(" ")[0]).format("MMM")}
+        <br/>{moment(this.state.myDate.split(" ")[0]).format("D")} 
+      </button>
+      )
+  
+  
+      this.setState({dateButtonList:this.state.dateButtonList.map((info)=>info.key===this.state.myDate?tempNewButton:info)})
       if (this.state.myDate !== "") {
         const supriseData = [
           {
@@ -616,6 +644,18 @@ class MenuItemList extends Component {
         });
       }
     } else if (e.target.value === "SKIP") {
+      buttonStyle = styles.datebuttonSkip;
+
+      let tempNewButton = (
+        <button key={this.state.myDate} value={this.state.myDate} onClick={this.filterDates} className={buttonStyle} autoFocus>
+        {moment(this.state.myDate.split(" ")[0]).format("ddd")}
+        <br/>{moment(this.state.myDate.split(" ")[0]).format("MMM")}
+        <br/>{moment(this.state.myDate.split(" ")[0]).format("D")} 
+      </button>
+      )
+  
+  
+      this.setState({dateButtonList:this.state.dateButtonList.map((info)=>info.key===this.state.myDate?tempNewButton:info)})
       const skipData = [
         {
           qty: "",
@@ -675,6 +715,19 @@ class MenuItemList extends Component {
         addOnAmount: 0,
       });
     } else {
+      buttonStyle = styles.datebuttonSave;
+      let tempNewButton = (
+        <button key={this.state.myDate} value={this.state.myDate} onClick={this.filterDates} className={buttonStyle} autoFocus>
+        
+        <p>{moment(this.state.myDate.split(" ")[0]).format("ddd")} </p>
+        <br/>{moment(this.state.myDate.split(" ")[0]).format("MMM")}
+        <br/>{moment(this.state.myDate.split(" ")[0]).format("D")} 
+      </button>
+      )
+  
+  
+      this.setState({dateButtonList:this.state.dateButtonList.map((info)=>info.key===this.state.myDate?tempNewButton:info)})
+
       const myarr = [];
       this.state.cartItems.map(meal => {
         myarr.push({
@@ -739,6 +792,13 @@ class MenuItemList extends Component {
 
         this.toggleDisplay('SAVE')
     }
+    
+    console.log(buttonStyle)
+
+
+
+
+
   };
 
   addToCart = menuitem => {
@@ -858,10 +918,114 @@ class MenuItemList extends Component {
     // console.log(cartItems)
   };
 
+  prepareSurpriseArr=(uid)=>{
+    if(uid!=null){
+      fetch(
+        `${API_URL}meals_selected?customer_uid=${uid}`
+      )
+        .then(response => response.json())
+        .then(json => {
+          let mealSelected = [...json.result];
+          let tempArr = [];
+          for(const eachData of mealSelected){
+            let tempselection = JSON.parse(eachData.meal_selection);
+            tempArr.push({
+              id:eachData.sel_purchase_id,
+              date:eachData.sel_menu_date,
+              selection:tempselection[0].name,
+            })
+          }
+          this.setState({surpriseSkipSave:tempArr});
+
+          console.log(this.state.surpriseSkipSave)
+
+          let buttonList = [];
+          let first=null;
+
+          const dates = this.state.data.map(date => date.menu_date);
+          const uniqueDates = Array.from(new Set(dates));
+
+          console.log(this.state.surpriseSkipSave)
+
+          for(const date of uniqueDates){
+
+            let classStyle = styles.datebutton;
+
+            for(const surpriseInfo of this.state.surpriseSkipSave){
+              if(surpriseInfo.date == date&&surpriseInfo.id==this.state.purchaseID){
+                if(surpriseInfo.selection=='SKIP'){
+                  classStyle = styles.datebuttonSkip
+                }else if(surpriseInfo.selection=='SURPRISE'){
+                  classStyle = styles.datebuttonSurprise 
+                }
+                else{
+                  classStyle = styles.datebuttonSave
+                }
+              }
+            }
+            buttonList.push(
+              <button key={date} value={date} onClick={this.filterDates} id={date} className={classStyle} autoFocus={first==null}>
+                {moment(date.split(" ")[0]).format("ddd")}
+                <br/>{moment(date.split(" ")[0]).format("MMM")}
+                <br/>{moment(date.split(" ")[0]).format("D")} 
+              </button>
+            )
+            first=1;
+          }
+          console.log(buttonList)
+
+          this.setState({
+            dateButtonList:buttonList
+          })
+
+          return buttonList;
+
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    }
+  }
+
+  dateButtonArray=()=>{
+
+    const customer_uid = Cookies.get("customer_uid");
+
+    
+    const dates = this.state.data.map(date => date.menu_date);
+    const uniqueDates = Array.from(new Set(dates));
+
+    let buttonList = [];
+    let first=null;
+
+    if (customer_uid == null) {
+      //if user  not login, show them the basic date button
+      for(const date of uniqueDates){
+        buttonList.push(
+          <button key={date} value={date} onClick={this.filterDates} id={date} className={styles.datebutton} autoFocus={first==null}>
+            {moment(date.split(" ")[0]).format("ddd")}
+            <br/>{moment(date.split(" ")[0]).format("MMM")}
+            <br/>{moment(date.split(" ")[0]).format("D")} 
+          </button>
+        )
+        first=1;
+      }
+      this.setState({
+        dateButtonList:buttonList
+      })
+    }
+    else{
+      //if user login, fetch skip, surprise or something else on that day. 
+      buttonList = this.prepareSurpriseArr(customer_uid);
+    }
+    return buttonList;
+  }
+
   render() {
     const dates = this.state.data.map(date => date.menu_date);
     const uniqueDates = Array.from(new Set(dates));
 
+    // console.log(this.state.surpriseSkipSave)
     return (
       <div className={styles.mealMenuWrapper}>
         <Header
@@ -884,6 +1048,7 @@ class MenuItemList extends Component {
           saveButton={this.state.saveButton}
           purchaseID={this.state.purchaseID}
           mealSelected={this.state.mealSelected}
+          dateButtonArray = {this.state.dateButtonList}
         />
 
         <div style = {{overflow: 'auto', height: '100vh'}}>
