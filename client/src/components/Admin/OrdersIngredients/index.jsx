@@ -12,7 +12,9 @@ import {withRouter} from "react-router";
 
 const initialState = {
   mounted: false,
+  defaultFlag: true,
   selectedDate: '',
+  closestDate: '',
   ordersData: [],
   sortedOrdersData: [],
   sortOrders: {
@@ -45,6 +47,11 @@ function reducer(state, action) {
         ...state,
         selectedDate: action.payload,
       }
+    case 'DISPLAY_DATE':
+      return {
+        ...state,
+        closestDate: action.payload,
+      } 
     case 'FETCH_ORDERS':
       return {
         ...state,
@@ -159,6 +166,98 @@ function OrdersIngredients({history, ...props}) {
     return orederDatesFormatted;
   },[state.ordersData])
 
+  // const nowTest1 = new Date('May 06, 2021');
+  // const nowTest = nowTest1.toString();
+  var now = Date().toLocaleString();
+  var monthDict = [];
+
+  monthDict.push({
+    key: 'Jan',
+    value: '01'
+  });
+  monthDict.push({
+    key: 'Feb',
+    value: '02'
+  });
+  monthDict.push({
+    key: 'Mar',
+    value: '03'
+  });
+  monthDict.push({
+    key: 'Apr',
+    value: '04'
+  });
+  monthDict.push({
+    key: 'May',
+    value: '05'
+  });
+  monthDict.push({
+    key: 'Jun',
+    value: '06'
+  });
+  monthDict.push({
+    key: 'Jul',
+    value: '07'
+  });
+  monthDict.push({
+    key: 'Aug',
+    value: '08'
+  });
+  monthDict.push({
+    key: 'Sep',
+    value: '09'
+  });
+  monthDict.push({
+    key: 'Oct',
+    value: '10'
+  });
+  monthDict.push({
+    key: 'Nov',
+    value: '11'
+  });
+  monthDict.push({
+    key: 'Dec',
+    value: '12'
+  });
+
+  var currMonth = now.substring(4,7);
+  var currMonthVal = 0;
+  var currDay = now.substring(8,10);
+  var currYear = now.substring(11,15);
+
+  for(let i = 0, l = monthDict.length; i < l; i++) {
+    if(currMonth === monthDict[i].key) {
+      currMonthVal = monthDict[i].value;
+    }
+  }
+
+  var futureDaysList = [];
+  var futureDaysListValues = [];
+
+  for(let i = 0, l = orderDates.length; i < l; i++) {
+    var date = orderDates[i].value;
+    var dateDisplay = orderDates[i].display;
+    var year = date.substring(0,4);
+    var month = date.substring(5,7);
+    var day = date.substring(8,10);
+
+    if(currYear <= year) {
+      if(currMonthVal < month) {
+          futureDaysListValues.push(orderDates[i].value);
+          futureDaysList.push(dateDisplay);
+      }
+      else if(currMonthVal == month) {
+        if(currDay <= day) {
+          futureDaysListValues.push(orderDates[i].value);
+          futureDaysList.push(dateDisplay);
+        }
+      } 
+    }
+  }
+
+  var closestToCurrDay = futureDaysList[0];
+  var closestToCurrDayVal = futureDaysListValues[0];
+
   const getOrderData = (date) => {
     const curOrders = state.ordersData.filter((order) => order.d_menu_date === date);
     return curOrders;
@@ -272,6 +371,7 @@ function OrdersIngredients({history, ...props}) {
   // Change date 
   const changeDate = (newDate) => {
     dispatch({ type: 'CHANGE_DATE', payload: newDate });
+    state.defaultFlag = false;
     const newOrders = getOrderData(newDate);
     const sortedOrders = sortedArray(newOrders, state.sortOrders.field, state.sortOrders.direction);
     const newIngredients = getIngredientsData(newDate);
@@ -280,9 +380,21 @@ function OrdersIngredients({history, ...props}) {
     const sortedCustomers = sortedArray(newCustomers, state.sortCustomers.field, state.sortCustomers.direction);
     dispatch({ type: 'FILTER_ORDERS', payload: sortedOrders});
     dispatch({ type: 'FILTER_INGREDIENTS', payload: sortedIngredients});
-    dispatch({ type: 'FILTER_CUSTOMERS', payload: sortedCustomers})
+    dispatch({ type: 'FILTER_CUSTOMERS', payload: sortedCustomers});
   }
+  // display the default order/ingredient/customer data to the closest date we have in dropdown list based on todays day
+  if(state.defaultFlag) {
+    const newOrders = getOrderData(closestToCurrDayVal);
+    const sortedOrders = sortedArray(newOrders, state.sortOrders.field, state.sortOrders.direction);
+    const newIngredients = getIngredientsData(closestToCurrDayVal);
+    const sortedIngredients = sortedArray(newIngredients, state.sortIngredients.field, state.sortIngredients.direction);
+    const newCustomers = getCustomerData(closestToCurrDayVal);
+    const sortedCustomers = sortedArray(newCustomers, state.sortCustomers.field, state.sortCustomers.direction);
 
+    state.sortedOrdersData = sortedOrders;
+    state.sortedIngredientsData = sortedIngredients;
+    state.sortedCustomersData = sortedCustomers;
+  }
   return (
     <div>
       <Breadcrumb>
@@ -300,14 +412,14 @@ function OrdersIngredients({history, ...props}) {
                 <Col sm="6">
                   <Form.Control
                     as="select"
-                    value={state.selectedDate}
+                    defaultValue={state.selectedDate}
                     onChange={
                       (event) => {
                         changeDate(event.target.value);
                       }
                     }
                   >
-                    <option value="" hidden>Choose date</option>
+                    <option value="" hidden>{closestToCurrDay}</option>
                     {
                       orderDates.map(
                         (date) => (
