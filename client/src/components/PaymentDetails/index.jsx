@@ -132,18 +132,6 @@ class PaymentDetails extends React.Component {
 
   componentDidMount() {
 
-    axios.get(API_URL + "Profile/" + this.props.customerId)
-      .then(res=>{
-
-        this.setState({
-          latitude: res.data.result[0].customer_lat,
-          longitude: res.data.result[0].customer_long,
-        })
-        console.log(this.state.latitude);
-        console.log(this.state.longitude);
-      })
-    console.log(this.props)
-
     let temp_lat;
     let temp_lng;
 
@@ -165,7 +153,36 @@ class PaymentDetails extends React.Component {
       center: { lat: temp_lat, lng: temp_lng},
       zoom: 12,
     });
-    console.log(map)
+
+    if(this.props.customerId!=''){
+      axios.get(API_URL + "Profile/" + this.props.customerId)
+      .then(res=>{
+
+        this.setState({
+          latitude: res.data.result[0].customer_lat,
+          longitude: res.data.result[0].customer_long,
+        })
+        console.log(this.state.latitude);
+        console.log(this.state.longitude);
+
+        console.log(parseFloat(this.state.latitude))
+
+        const temp_position = {lat:parseFloat(this.state.latitude), lng:parseFloat(this.state.longitude)}
+
+        console.log(temp_position)
+
+        map.setCenter(temp_position)
+
+        if(this.state.latitude!=''){
+          map.setZoom(17);
+          new google.maps.Marker({
+            position: temp_position,
+            map,
+          });
+        }
+      })
+    }
+
     const input = document.getElementById("pac-input");
     const options = {
       componentRestrictions: { country: "us" }
@@ -173,10 +190,8 @@ class PaymentDetails extends React.Component {
     const autocomplete = new google.maps.places.Autocomplete(input, options);
 
     autocomplete.bindTo("bounds", map);
-    const infowindow = new google.maps.InfoWindow();
     const marker = new google.maps.Marker({
       map,
-      anchorPoint: new google.maps.Point(0, -29),
     });
 
     autocomplete.addListener("place_changed", () => {
@@ -186,7 +201,7 @@ class PaymentDetails extends React.Component {
       let state = '';
       let address1Field = document.querySelector("#pac-input");
       let postalField = document.querySelector("#postcode");
-      infowindow.close();
+
       marker.setVisible(false);
       const place = autocomplete.getPlace();
       console.log(place)

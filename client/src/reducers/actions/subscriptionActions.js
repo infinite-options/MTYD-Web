@@ -575,7 +575,7 @@ export const fetchSubscribed = customerId => async dispatch => {
       params: {customer_uid: customerId},
     })
     .then((res) => {
-      console.log("res: " + JSON.stringify(res));
+      // console.log("res: " + JSON.stringify(res));
       if (res.status !== 200) {
         dispatch({
           type: ADD_ERROR,
@@ -593,7 +593,7 @@ export const fetchSubscribed = customerId => async dispatch => {
           purchaseIds.push(items.purchase_id);
         }
       }
-      console.log("fetchSubscribed (2)");
+      // console.log("fetchSubscribed (2)");
       return purchaseIds;
     })
     .catch((err) => {
