@@ -5,7 +5,8 @@
 .pop_content {
   position: absolute;
   top: 10%;
-  left: 67%;
+  /* left: 50%; */
+  right:1%;
   width: 627px;
   height: 403px;
   background: #E0E6E6F2 0% 0% no-repeat padding-box;

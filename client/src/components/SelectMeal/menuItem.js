@@ -7,42 +7,88 @@ import info from  './images/info.svg'
 import {API_URL} from "../../reducers/constants";
 import axios from "axios";
 
-
-
-
-
-
-
 class MenuItem extends React.Component {
 
   constructor(props){
     super();
-    this.props={
+    this.state={
       favList:[],
     }
+    this.changeHeart = this.changeHeart.bind(this)
   }
 
   changeHeart(e){
-    e.target.setAttribute('src',fullHeart)
+    let customerID = this.props.customer_uid;
+
+    console.log(e.target.getAttribute('id'))
+    var tempimg = e.target.getAttribute('src');
+
+
+    var nextimg;
+
+    if(tempimg.includes('emptyHeart')){
+      nextimg = fullHeart;
+      this.addToFav(e.target.getAttribute('id'), customerID);
+    }
+    else{
+      this.removeFromFav(e.target.getAttribute('id'), customerID)
+      nextimg = emptyHeart;
+    }
+
+    
+
+    e.target.setAttribute('src',nextimg)
     e.target.setAttribute('width',40)
     e.target.setAttribute('height',40)
-  
   }
 
-
-  favoritePost(customer_uid,meal_uid){
-    const data = {
-      customer_uid: customer_uid,
-      favorite:meal_uid,
+  addToFav(id, customer_uid){
+    // console.log(this)
+    if(customer_uid!=null){
+      const data = {
+        customer_uid: customer_uid,
+        favorite:id,
+      }
+      axios
+      .post(
+        `${API_URL}favourite_food/post`,
+        data
+      ).then(response => {
+        this.setState({favList:[...this.state.favList, id]})
+        console.log(this.state.favList)
+      })
     }
-    axios
-    .post(
-      `${API_URL}favourite_food/post`,
-      data
-    ).then(response => {
-      console.log(response);
-    })
-  
+    return id;
+  }
+
+  removeFromFav(id, customer_uid){
+
+    let tempArr = this.state.favList;
+
+    if(customer_uid!=null){
+
+      for(var i=0;i<tempArr.length;i++){
+        if(tempArr[i]==id){
+          tempArr.splice(i,1);
+        }
+      }
+
+      // console.log(tempArr.join())
+
+      const data = {
+        customer_uid: customer_uid,
+        favorite:tempArr.join(),
+      }
+      axios
+      .post(
+        `${API_URL}favourite_food/update`,
+        data
+      ).then(response => {
+        this.setState({favList:tempArr})
+        console.log(this.state.favList)
+      })
+    }
+    return id;
   }
 
   favoriteGet(customer_uid){
@@ -54,21 +100,26 @@ class MenuItem extends React.Component {
       `${API_URL}favourite_food/get`,
       data
     ).then(response => {
-      // console.log(response.data.result);
+      var temparr = response.data.result[0].favorites.split(",");
+      this.setState({favList:temparr})
+      console.log(this.state.favList);
     })
   }
 
-  menuItemFilter = () => {
 
+
+  componentDidMount(){
     if(this.props.customer_uid==null){
       // console.log("user not login")
     }
     else{
-      // console.log(this.props.customer_uid)
+      console.log(this.props.customer_uid)
       this.favoriteGet(this.props.customer_uid);
     }
+  }
 
-    
+  menuItemFilter = () => {
+
     const {cartItems, show} = this.props;
     let x = this.props.data.filter(
       date => date.menu_date === this.props.myDate
@@ -84,6 +135,7 @@ class MenuItem extends React.Component {
     // console.log(x)
 
     menuHTML = x.map((menuitem, index) => (
+
       
       <div
         key={index}
@@ -118,12 +170,14 @@ class MenuItem extends React.Component {
           <button 
           onClick={this.changeHeart}
           className={styles.heartButton}
+          
           >
-            <img src={emptyHeart}
+            <img src={this.state.favList.includes(menuitem.meal_uid)?fullHeart:emptyHeart}
                   style={{
                     height:40,
                     width:40,
                   }}
+                  id = {menuitem.meal_uid}
             ></img>
           </button>
 
