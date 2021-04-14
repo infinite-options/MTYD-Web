@@ -2,6 +2,8 @@ import React, { useMemo, useContext, useState, useEffect, createContext } from '
 import { useElements, useStripe, CardElement } from '@stripe/react-stripe-js';
 import axios from 'axios';
 import Stripe from 'stripe';
+//Stripe = require("https://js.stripe.com/v3/");
+import { loadStripe } from "@stripe/stripe-js";
 import { useHistory } from "react-router";
 
 import Box from '@material-ui/core/Box';
@@ -98,6 +100,348 @@ const useOptions = () => {
 };
 
 const StripeCheckout = (props) => {
+  const elements = useElements();
+  const stripe = useStripe();
+  const options = useOptions();
+  //const card = await elements.getElement(CardElement);
+  //const cardElement = await elements.getElement(CardElement);
+
+  console.log("In StripeCheckout.js");
+
+  var orderData = {
+    items: [{ id: "photo-subscription" }],
+    currency: "usd"
+  };
+
+  console.log("orderData: " + JSON.stringify(orderData));
+
+  /*fetch("/stripe-key")*/
+  //axios.get(API_URL + "Profile/" + this.props.customerId)
+  //fetch("https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/stripe-key")
+  //https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/
+  axios.get("https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/stripe-key")
+    .then(function(result) {
+      console.log("Stripe-key then result (1): ", result);
+      console.log("Stripe-key then result (json): ", result.json());
+      return result.json();
+    }).catch(err => {
+      console.log(err);
+      if (err.response) {
+        console.log("error: " + JSON.stringify(err.response));
+      }
+    });
+    // .then(function(data) {
+    //   console.log("Stripe-key then data (2): ", data);
+    //   return setupElements(data);
+    // });
+    // .then(function({ stripe, card, clientSecret }) {
+    //   console.log("Stripe-key then (3)");
+    //   document.querySelector("#submit").addEventListener("click", function(evt) {
+    //     evt.preventDefault();
+    //     pay(stripe, card, clientSecret);
+    //   });
+    //});
+
+    // var setupElements = function(data) {
+    //   console.log("=== setupElements()");
+    //   stripe = Stripe(data.publicKey);
+    //   console.log("stripe (1): ", stripe);
+
+    // var setupElements = function(data) {
+    //   console.log("=== setupElements()");
+    //   const stripe = useStripe(data);
+    //   console.log("stripe (1): ", stripe);
+
+    
+    //   /* ------- Set up Stripe Elements to use in checkout form ------- */
+    //   var elements = stripe.elements();
+    //   var style = {
+    //     base: {
+    //       color: "#32325d",
+    //       fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+    //       fontSmoothing: "antialiased",
+    //       fontSize: "16px",
+    //       "::placeholder": {
+    //         color: "#aab7c4"
+    //       }
+    //     },
+    //     invalid: {
+    //       color: "#fa755a",
+    //       iconColor: "#fa755a"
+    //     }
+    //   };
+  
+    //   //var card = elements.create("card", { style: style });
+    //   //card.mount("#card-element");
+    //   const card = elements.getElement(CardElement);
+
+    //   //console.log("data: ", data);
+    //   console.log("stripe: " + JSON.stringify(stripe));
+    //   console.log("card: " + JSON.stringify(card));
+    //   console.log("clientSecret: " + data.clientSecret);
+
+    //   return {
+    //     stripe,
+    //     card,
+    //     clientSecret: data.clientSecret
+    //   };
+    // };
+
+    /*var setupElements = function(data) {
+      console.log("=== setupElements()");
+      //stripe = Stripe(data.publicKey);
+      //console.log("stripe (1): ", stripe);*/
+    
+      /* ------- Set up Stripe Elements to use in checkout form ------- */
+      //var elements = stripe.elements();
+      /*var style = {
+        base: {
+          color: "#32325d",
+          fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+          fontSmoothing: "antialiased",
+          fontSize: "16px",
+          "::placeholder": {
+            color: "#aab7c4"
+          }
+        },
+        invalid: {
+          color: "#fa755a",
+          iconColor: "#fa755a"
+        }
+      };
+    
+      var card = elements.create("card", { style: style });
+      card.mount("#card-element");
+    
+      console.log("data: ", data);
+      //console.log("stripe: " + JSON.stringify(stripe));
+      //console.log("card: " + JSON.stringify(card));
+      console.log("clientSecret: " + data.clientSecret);
+    
+      return {
+        card,
+        clientSecret: data.clientSecret
+      };
+    };*/
+
+  /*var handleAction = function(clientSecret) {
+    console.log("=== handleAction");
+    // Show the authentication modal if the PaymentIntent has a status of "requires_action"
+    stripe.handleCardAction(clientSecret).then(function(data) {
+      if (data.error) {
+        //showError("Your card was not authenticated, please try again");
+      } else if (data.paymentIntent.status === "requires_confirmation") {
+        // Card was properly authenticated, we can attempt to confirm the payment again with the same PaymentIntent
+        fetch("/pay", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            paymentIntentId: data.paymentIntent.id
+          })
+        })
+          .then(function(result) {
+            return result.json();
+          })
+          .then(function(json) {
+            if (json.error) {
+              //showError(json.error);
+            } else {
+              orderComplete(clientSecret);
+            }
+          });
+      }
+    });
+  };*/
+
+  // var pay = function() {
+  //   console.log("=== pay()");
+  //   //var cardholderName = document.querySelector("#name").value;
+  //   var cardholderName = "Brandon M. Huss";
+  //   var data = {
+  //     billing_details: {}
+  //   };
+
+  var pay = async function(stripe) {
+    console.log("=== pay()");
+    //var cardholderName = document.querySelector("#name").value;
+    var cardholderName = "Brandon Huss";
+    var data = {
+      billing_details: {}
+    };
+  
+    if (cardholderName) {
+      data["billing_details"]["name"] = cardholderName;
+    }
+  
+    const cardElement = await elements.getElement(CardElement);
+  
+
+    /*const cardElement = await elements.getElement(CardElement);
+
+    const paymentMethod = await stripe.createPaymentMethod({
+      type: 'card',
+      card: cardElement,
+      billing_details: billingDetails,
+    });*/
+
+    // const cardElement = elements.getElement(CardElement);
+    console.log("stripe: ", stripe);
+    console.log("cardElement: ", cardElement);
+    console.log("data: ", data);
+  
+    //changeLoadingState(true);
+
+    console.log("calling createPaymentMethod...");
+    // Collect card details
+    stripe
+      .createPaymentMethod("card", cardElement, data)
+      .then(function(result) {
+        console.log("result: ", result);
+        if (result.error) {
+          console.log("(1) createPaymentMethod error");
+          //showError(result.error.message);
+        } else {
+          console.log("(2) createPaymentMethod success");
+          orderData.paymentMethodId = result.paymentMethod.id;
+          //orderData.isSavingCard = document.querySelector("#save-card").checked;
+          orderData.isSavingCard = true;
+  
+          console.log("data to be sent to pay: " + JSON.stringify(orderData));
+          console.log("calling /pay...");
+          //return fetch("http://localhost:4242/pay", {
+          /*fetch("/stripe-key")*/
+          //fetch("https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/stripe-key")
+          let data = {
+            body: JSON.stringify(orderData)
+          };
+          return axios.post("https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/pay", data)
+          .catch(err => {
+            console.log(err);
+            if (err.response) {
+              console.log("error: " + JSON.stringify(err.response));
+            }
+          });
+          //https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/
+          // return axios.post("https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/pay", {
+          //   mode: "no-cors",
+          //   method: "POST",
+          //   headers: {
+          //     "Content-Type": "application/json"
+          //   },
+          //   body: JSON.stringify(orderData)
+          // });
+        }
+      })
+      .then(function(result) {
+        console.log("createPaymentMethod result: ", result);
+        return result.json();
+      }).catch(err => {
+        console.log(err);
+        if (err.response) {
+          console.log("error: " + JSON.stringify(err.response));
+        }
+      });
+      // .then(function(paymentData) {
+      //   console.log("second then of createPaymentMethod");
+      //   /*if (paymentData.requiresAction) {
+      //     // Request authentication
+      //     handleAction(paymentData.clientSecret);
+      //   } else if (paymentData.error) {
+      //     showError(paymentData.error);
+      //   } else {
+      //     orderComplete(paymentData.clientSecret);
+      //   }*/
+      // });
+  };
+
+  /* ------- Post-payment helpers ------- */
+
+  /* Shows a success / error message when the payment is complete */
+  /*var orderComplete = function(clientSecret) {
+    console.log("=== orderComplete()");
+    console.log("clientSecret: " + clientSecret);
+    stripe.retrievePaymentIntent(clientSecret).then(function(result) {
+      var paymentIntent = result.paymentIntent;
+      var paymentIntentJson = JSON.stringify(paymentIntent, null, 2);
+      document.querySelectorAll(".payment-view").forEach(function(view) {
+        view.classList.add("hidden");
+      });
+      document.querySelectorAll(".completed-view").forEach(function(view) {
+        view.classList.remove("hidden");
+      });
+      document.querySelector(".status").textContent =
+        paymentIntent.status === "succeeded" ? "succeeded" : "failed";
+      document.querySelector("pre").textContent = paymentIntentJson;
+    });
+  };*/
+
+  /*var showError = function(errorMsgText) {
+    console.log("=== showError()");
+    changeLoadingState(false);
+    var errorMsg = document.querySelector(".sr-field-error");
+    errorMsg.textContent = errorMsgText;
+    setTimeout(function() {
+      errorMsg.textContent = "";
+    }, 4000);
+  };*/
+
+  // Show a spinner on payment submission
+  /*var changeLoadingState = function(isLoading) {
+    console.log("=== changeLoadingState()");
+    if (isLoading) {
+      document.querySelector("button").disabled = true;
+      document.querySelector("#spinner").classList.remove("hidden");
+      document.querySelector("#button-text").classList.add("hidden");
+    } else {
+      document.querySelector("button").disabled = false;
+      document.querySelector("#spinner").classList.add("hidden");
+      document.querySelector("#button-text").classList.remove("hidden");
+    }
+  };*/
+
+  return (
+    <>
+    {/*<script type="text/javascript" src="https://js.stripe.com/v2/"></script>*/}
+      <label className={props.classes.label}>
+        Enter Cardholder Name Below:
+      </label>
+      <Box mt={1}>
+        <CssTextField variant="outlined" size="small" fullWidth />
+      </Box>
+      <Box mt={1}>
+        <label className={props.classes.label}>
+          Enter Card Details Below:
+          <CardElement
+            elementRef={(c) => (this._element = c)}
+            className={props.classes.element}
+            options={options}
+          />
+        </label>
+      </Box>
+
+      <Button
+        className={props.classes.button}
+        variant="outlined"
+        size="small"
+        color="paragraphText"
+        //onClick={() => pay(stripe, card, clientSecret)}
+        onClick={() => {
+          console.log("PAY BUTTON CLICKED");
+          pay(stripe);
+        }}
+        // onClick={pay(stripe, card, clientSecret)}
+        /*onClick={() => this.saveDeliveryDetails()}*/
+        /*disabled={processing}*/
+      >
+        Pay With Stripe
+      </Button>
+    </>
+  );
+}
+
+/*const StripeCheckout = (props) => {
 
   const elements = useElements();
   const stripe = useStripe();
@@ -342,7 +686,7 @@ const StripeCheckout = (props) => {
       </Button>
     </>
   );
-};
+};*/
 
 StripeCheckout.propTypes = {
   submitPayment: PropTypes.func.isRequired

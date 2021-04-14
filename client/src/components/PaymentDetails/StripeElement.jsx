@@ -4,6 +4,7 @@ import { Elements, CardElement, useStripe } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import StripeCheckout from './StripeCheckout';
 import { makeStyles } from '@material-ui/core/styles';
+import axios from 'axios';
 
 const appColors = {
   primary: '#e88330',
@@ -77,6 +78,11 @@ export default function StripeElement(props) {
 
 //console.log("Stripe Element setpaymentType: " + props.setPaymentType);
 
+  // Wpn't work because not wrapped in elements provider
+  /*const stripeExample = useStripe();
+  console.log("stripeExample: ", stripeExample);*/
+
+  // Get stripe-key from env file
   const classes = useStyles();
   const stripePromise = loadStripe(
     process.env.NODE_ENV === 'production' &&
@@ -84,6 +90,25 @@ export default function StripeElement(props) {
       ? process.env.REACT_APP_STRIPE_PUBLIC_KEY_LIVE
       : process.env.REACT_APP_STRIPE_PUBLIC_KEY
   );
+
+  // ALTERNATIVE: Get stripe-key from remote server
+  /*let stripePromise;
+  axios.get("https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/stripe-key")
+    .then(function(result) {
+      console.log("Stripe-key then result (1): ", result);
+      //console.log("Stripe-key then result (json): ", result.json());
+      return result.json();
+    })
+    .then(function(data) {
+      console.log("Stripe-key then data (2): ", data);
+      stripePromise = loadStripe(data.publicKey);
+    })
+    .catch(err => {
+      console.log(err);
+      if (err.response) {
+        console.log("error: " + JSON.stringify(err.response));
+      }
+    });*/
 
   console.log("stripePromise: " + JSON.stringify(stripePromise));
 
@@ -100,6 +125,7 @@ export default function StripeElement(props) {
         email={props.email}
         customerUid={props.customerUid}
         classes={classes}
+        cardInfo={props.cardInfo}
       />
     </Elements>
   );
