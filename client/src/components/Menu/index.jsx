@@ -32,13 +32,13 @@ const Menu = props => {
           <div>
             {props.show && props.message}
             
-            <button class={styles.subscribe}>
+            {/* <button class={styles.subscribe}>
               <a href="/choose-plan" style={{
                 color:"black",
               }}>
               Click to subscribe
               </a>
-            </button>
+            </button> */}
           </div>
           :(
           <div className={styles.selectBtn + " " + (!props.show && styles.w5)}>

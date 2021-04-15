@@ -142,38 +142,6 @@ class PaymentDetails extends React.Component {
 
   componentDidMount() {
 
-    axios.get(API_URL + "Profile/" + this.props.customerId)
-      .then(res=>{
-        this.setState({
-          latitude: res.data.result[0].customer_lat,
-          longitude: res.data.result[0].customer_long,
-        })
-        console.log(this.state.latitude);
-        console.log(this.state.longitude);
-      });
-
-    /*axios.get("https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/stripe-key")
-      .then(result=>{
-        console.log("(PaymentDetails) Stripe-key then result (1): " + JSON.stringify(result));
-        //console.log("Stripe-key then result (json): ", result.json());
-        //return result.json();
-        let stripePromise = loadStripe(result.data.publicKey);
-        console.log("(PaymentDetails) setting state with stripePromise");
-        this.setState({
-          stripePromise: stripePromise
-        });
-        //setStripePromise(loadStripe(result.data.publicKey));
-        console.log("(PaymentDetails) stripePromise set!");
-      })
-      .catch(err => {
-        console.log(err);
-        if (err.response) {
-          console.log("(PaymentDetails) error: " + JSON.stringify(err.response));
-        }
-      });*/
-
-    console.log(this.props)
-
     let temp_lat;
     let temp_lng;
 
@@ -195,7 +163,36 @@ class PaymentDetails extends React.Component {
       center: { lat: temp_lat, lng: temp_lng},
       zoom: 12,
     });
-    console.log(map)
+
+    if(this.props.customerId!=''){
+      axios.get(API_URL + "Profile/" + this.props.customerId)
+      .then(res=>{
+
+        this.setState({
+          latitude: res.data.result[0].customer_lat,
+          longitude: res.data.result[0].customer_long,
+        })
+        console.log(this.state.latitude);
+        console.log(this.state.longitude);
+
+        console.log(parseFloat(this.state.latitude))
+
+        const temp_position = {lat:parseFloat(this.state.latitude), lng:parseFloat(this.state.longitude)}
+
+        console.log(temp_position)
+
+        map.setCenter(temp_position)
+
+        if(this.state.latitude!=''){
+          map.setZoom(17);
+          new google.maps.Marker({
+            position: temp_position,
+            map,
+          });
+        }
+      })
+    }
+
     const input = document.getElementById("pac-input");
     const options = {
       componentRestrictions: { country: "us" }
@@ -203,10 +200,8 @@ class PaymentDetails extends React.Component {
     const autocomplete = new google.maps.places.Autocomplete(input, options);
 
     autocomplete.bindTo("bounds", map);
-    const infowindow = new google.maps.InfoWindow();
     const marker = new google.maps.Marker({
       map,
-      anchorPoint: new google.maps.Point(0, -29),
     });
 
     autocomplete.addListener("place_changed", () => {
@@ -216,7 +211,7 @@ class PaymentDetails extends React.Component {
       let state = '';
       let address1Field = document.querySelector("#pac-input");
       let postalField = document.querySelector("#postcode");
-      infowindow.close();
+
       marker.setVisible(false);
       const place = autocomplete.getPlace();
       console.log(place)

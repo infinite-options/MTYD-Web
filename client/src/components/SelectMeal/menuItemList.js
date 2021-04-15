@@ -384,7 +384,7 @@ class MenuItemList extends Component {
         console.error(error);
       });
 
-    console.log(this.state.mealSelected);
+    // console.log(this.state.mealSelected);
     let cartItemsArr = [];
     let addOnArr = [];
     let delivery_Day = "";
@@ -396,7 +396,7 @@ class MenuItemList extends Component {
         item.sel_menu_date === event.target.value
     );
     
-    console.log(pulledSelection)
+    // console.log(pulledSelection)
     if (pulledSelection.length > 0) {
       let selection = JSON.parse(pulledSelection[0].meal_selection);
       let addOnSelection = JSON.parse(pulledSelection[0].addon_selection);
@@ -413,7 +413,7 @@ class MenuItemList extends Component {
           count: myItem.qty,
           ...spreadObj[0]
         };
-        console.log(myItem.name)
+        // console.log(myItem.name)
         if (myItem.name !== "SKIP" && myItem.name !== "SURPRISE") {
           cartItemsArr.push(pushingObj);
           myCounter = myCounter + myItem.qty;
@@ -719,7 +719,7 @@ class MenuItemList extends Component {
       let tempNewButton = (
         <button key={this.state.myDate} value={this.state.myDate} onClick={this.filterDates} className={buttonStyle} autoFocus>
         
-        <p>{moment(this.state.myDate.split(" ")[0]).format("ddd")} </p>
+        {moment(this.state.myDate.split(" ")[0]).format("ddd")}
         <br/>{moment(this.state.myDate.split(" ")[0]).format("MMM")}
         <br/>{moment(this.state.myDate.split(" ")[0]).format("D")} 
       </button>
@@ -937,7 +937,7 @@ class MenuItemList extends Component {
           }
           this.setState({surpriseSkipSave:tempArr});
 
-          console.log(this.state.surpriseSkipSave)
+          // console.log(this.state.surpriseSkipSave)
 
           let buttonList = [];
           let first=null;
@@ -945,7 +945,7 @@ class MenuItemList extends Component {
           const dates = this.state.data.map(date => date.menu_date);
           const uniqueDates = Array.from(new Set(dates));
 
-          console.log(this.state.surpriseSkipSave)
+          // console.log(this.state.surpriseSkipSave)
 
           for(const date of uniqueDates){
 
@@ -966,13 +966,12 @@ class MenuItemList extends Component {
             buttonList.push(
               <button key={date} value={date} onClick={this.filterDates} id={date} className={classStyle} autoFocus={first==null}>
                 {moment(date.split(" ")[0]).format("ddd")}
-                <br/>{moment(date.split(" ")[0]).format("MMM")}
-                <br/>{moment(date.split(" ")[0]).format("D")} 
+                <br/>{moment(date.split(" ")[0]).format("MMM") +" "+ moment(date.split(" ")[0]).format("D")}
               </button>
             )
             first=1;
           }
-          console.log(buttonList)
+          // console.log(buttonList)
 
           this.setState({
             dateButtonList:buttonList
@@ -1004,8 +1003,7 @@ class MenuItemList extends Component {
         buttonList.push(
           <button key={date} value={date} onClick={this.filterDates} id={date} className={styles.datebutton} autoFocus={first==null}>
             {moment(date.split(" ")[0]).format("ddd")}
-            <br/>{moment(date.split(" ")[0]).format("MMM")}
-            <br/>{moment(date.split(" ")[0]).format("D")} 
+            <br/>{moment(date.split(" ")[0]).format("MMM") +" "+ moment(date.split(" ")[0]).format("D")}
           </button>
         )
         first=1;

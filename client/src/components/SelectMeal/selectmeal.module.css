@@ -430,15 +430,14 @@
 }
 
 .datebutton {
-  background-image: url("../../images/buttonNormal.png");
+  /* background-image: url("../../images/buttonNormal.png"); */
   background-Position: 'center';
   background-repeat: no-repeat;
   background-size: 80px 80px;
-  width: 80px;
-  height:80px;
-  border-radius: 10px;
+  width: 134px;
+  height:134px;
   border: 1px solid #000000; 
-  margin:5px;
+
 }
 
 .datebutton:focus {
@@ -539,8 +538,8 @@
 }
 
 .divider{
-  width:10px;
-  height:auto;
+  width:100px;
+  height: 100px;
   display:inline-block;
 }
 
