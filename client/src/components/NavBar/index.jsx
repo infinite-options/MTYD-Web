@@ -14,6 +14,7 @@ import styles from "./navBar.module.css";
 import Cookies from "js-cookie";
 import User from "./User.svg";
 import Logo from "../../images/LOGO_White_BG_MealsForMe.png";
+import whiteLogo from "../../images/White_logo_for_web.png";
 import axios from 'axios';
 import { API_URL } from '../../reducers/constants';
 import PopLogin from "../PopLogin";
@@ -158,7 +159,7 @@ class NavBar extends React.Component {
       <div className={styles.navbar}>
         <div>
         <Link to='/home'>
-          <img style={{width: "60%", height:"60%"}} src={Logo} alt="logo"/>
+          <img style={{width: "60%", height:"60%"}} src={whiteLogo} alt="logo"/>
         </Link>
           
 
@@ -223,11 +224,35 @@ class NavBar extends React.Component {
     } else {
     return (
       <div className={styles.navbar}>
+
+
+        <div
+        style={{
+          position:"absolute",
+          width:"60px",
+          height:"40px",
+          backgroundColor:"white",
+          left:"60px"
+        }}
+        >
+
+        </div>
+
         <div>
         <a href='/home' style={{
           margin:0
         }}>
-          <img style={{width: "60%", height:"60%", margin:0}} src={Logo} alt="logo"/>
+          <img 
+            style=
+            {{
+              position:"absolute",
+              width: "160px", 
+              height:"80px",
+              left:"45%",
+              top:"5px",
+            }} 
+
+            src={whiteLogo} alt="logo"/>
         </a>
         </div>
         <ul>

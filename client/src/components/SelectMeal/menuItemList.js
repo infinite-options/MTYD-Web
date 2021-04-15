@@ -966,8 +966,7 @@ class MenuItemList extends Component {
             buttonList.push(
               <button key={date} value={date} onClick={this.filterDates} id={date} className={classStyle} autoFocus={first==null}>
                 {moment(date.split(" ")[0]).format("ddd")}
-                <br/>{moment(date.split(" ")[0]).format("MMM")}
-                <br/>{moment(date.split(" ")[0]).format("D")} 
+                <br/>{moment(date.split(" ")[0]).format("MMM") +" "+ moment(date.split(" ")[0]).format("D")}
               </button>
             )
             first=1;
@@ -1004,8 +1003,7 @@ class MenuItemList extends Component {
         buttonList.push(
           <button key={date} value={date} onClick={this.filterDates} id={date} className={styles.datebutton} autoFocus={first==null}>
             {moment(date.split(" ")[0]).format("ddd")}
-            <br/>{moment(date.split(" ")[0]).format("MMM")}
-            <br/>{moment(date.split(" ")[0]).format("D")} 
+            <br/>{moment(date.split(" ")[0]).format("MMM") +" "+ moment(date.split(" ")[0]).format("D")}
           </button>
         )
         first=1;
