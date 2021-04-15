@@ -119,7 +119,7 @@ const StripeCheckout = (props) => {
   //axios.get(API_URL + "Profile/" + this.props.customerId)
   //fetch("https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/stripe-key")
   //https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/
-  axios.get("https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/stripe-key")
+  /*axios.get("https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/stripe-key")
     .then(function(result) {
       console.log("Stripe-key then result (1): ", result);
       console.log("Stripe-key then result (json): ", result.json());
@@ -129,7 +129,7 @@ const StripeCheckout = (props) => {
       if (err.response) {
         console.log("error: " + JSON.stringify(err.response));
       }
-    });
+    });*/
     // .then(function(data) {
     //   console.log("Stripe-key then data (2): ", data);
     //   return setupElements(data);
@@ -316,7 +316,9 @@ const StripeCheckout = (props) => {
           let data = {
             body: JSON.stringify(orderData)
           };
-          return axios.post("https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/pay", data)
+          console.log("data before pay: " + JSON.stringify(data));
+          console.log("orderData before pay: " + JSON.stringify(orderData));
+          return axios.post("https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/pay", orderData)
           .catch(err => {
             console.log(err);
             if (err.response) {

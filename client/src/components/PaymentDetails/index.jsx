@@ -27,7 +27,7 @@ import {
   submitPayment
 } from "../../reducers/actions/subscriptionActions";
 import PayPal from './Paypal';
-
+import { loadStripe } from '@stripe/stripe-js';
 import {submitGuestSignUp} from "../../reducers/actions/loginActions";
 
 import {withRouter} from "react-router";
@@ -111,7 +111,8 @@ class PaymentDetails extends React.Component {
       ambassadorMessage: "",
       ambassadorError: false,
       paymentType: 'NULL',
-      fetchingFees: false
+      fetchingFees: false,
+      stripePromise: null
     };
   }
   togglePopLogin = () => {
@@ -143,14 +144,34 @@ class PaymentDetails extends React.Component {
 
     axios.get(API_URL + "Profile/" + this.props.customerId)
       .then(res=>{
-
         this.setState({
           latitude: res.data.result[0].customer_lat,
           longitude: res.data.result[0].customer_long,
         })
         console.log(this.state.latitude);
         console.log(this.state.longitude);
+      });
+
+    axios.get("https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/stripe-key")
+      .then(result=>{
+        console.log("(PaymentDetails) Stripe-key then result (1): " + JSON.stringify(result));
+        //console.log("Stripe-key then result (json): ", result.json());
+        //return result.json();
+        let stripePromise = loadStripe(result.data.publicKey);
+        console.log("(PaymentDetails) setting state with stripePromise");
+        this.setState({
+          stripePromise: stripePromise
+        });
+        //setStripePromise(loadStripe(result.data.publicKey));
+        console.log("(PaymentDetails) stripePromise set!");
       })
+      .catch(err => {
+        console.log(err);
+        if (err.response) {
+          console.log("(PaymentDetails) error: " + JSON.stringify(err.response));
+        }
+      });
+
     console.log(this.props)
 
     let temp_lat;
@@ -1089,6 +1110,7 @@ class PaymentDetails extends React.Component {
                 {/* {console.log("stripe payment summary: " + JSON.stringify(this.state.paymentSummary))} */}
                 {this.state.paymentType === 'STRIPE' && (
                   <StripeElement
+                    stripePromise={this.state.stripePromise}
                     customerPassword={this.state.customerPassword}
                     deliveryInstructions={this.state.instructions}
                     setPaymentType={this.setPaymentType}

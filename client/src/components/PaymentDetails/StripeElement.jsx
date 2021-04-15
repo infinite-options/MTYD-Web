@@ -76,6 +76,14 @@ const useStyles = makeStyles({
 
 export default function StripeElement(props) {
 
+  //const [stripePromise, setStripePromise] = useState(null);
+
+  /*useEffect(() => {
+    //console.log("SUBSCRIBED PLANS: " + JSON.stringify(props.subscribedPlans));
+    //console.log("NEW ACTIVE PLANS: " + JSON.stringify(activePlans));
+    console.log("New stripePromise: " + stripePromise);
+  }, [stripePromise]);*/
+
 //console.log("Stripe Element setpaymentType: " + props.setPaymentType);
 
   // Wpn't work because not wrapped in elements provider
@@ -84,36 +92,40 @@ export default function StripeElement(props) {
 
   // Get stripe-key from env file
   const classes = useStyles();
-  const stripePromise = loadStripe(
+  /*const stripePromise = loadStripe(
     process.env.NODE_ENV === 'production' &&
       props.deliveryInstructions !== 'M4METEST'
       ? process.env.REACT_APP_STRIPE_PUBLIC_KEY_LIVE
       : process.env.REACT_APP_STRIPE_PUBLIC_KEY
-  );
+  );*/
+  /*const stripePromise = loadStripe(
+    process.env.NODE_ENV === 'production' &&
+      props.deliveryInstructions !== 'M4METEST'
+      ? process.env.REACT_APP_STRIPE_PRIVATE_KEY_LIVE
+      : process.env.REACT_APP_STRIPE_PRIVATE_KEY
+  );*/
 
   // ALTERNATIVE: Get stripe-key from remote server
-  /*let stripePromise;
-  axios.get("https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/stripe-key")
+  //let stripePromise;
+  /*axios.get("https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/stripe-key")
     .then(function(result) {
-      console.log("Stripe-key then result (1): ", result);
+      console.log("(StripeElement) Stripe-key then result (1): " + JSON.stringify(result));
       //console.log("Stripe-key then result (json): ", result.json());
-      return result.json();
-    })
-    .then(function(data) {
-      console.log("Stripe-key then data (2): ", data);
-      stripePromise = loadStripe(data.publicKey);
+      //return result.json();
+      setStripePromise(loadStripe(result.data.publicKey));
+      console.log("stripePromise set!");
     })
     .catch(err => {
       console.log(err);
       if (err.response) {
-        console.log("error: " + JSON.stringify(err.response));
+        console.log("(StripeElement) error: " + JSON.stringify(err.response));
       }
     });*/
 
-  console.log("stripePromise: " + JSON.stringify(stripePromise));
+  console.log("stripePromise: " + JSON.stringify(props.stripePromise));
 
   return (
-    <Elements stripe={stripePromise}>
+    <Elements stripe={props.stripePromise}>
       <StripeCheckout
         customerPassword={props.customerPassword}
         deliveryInstructions={props.deliveryInstructions}
