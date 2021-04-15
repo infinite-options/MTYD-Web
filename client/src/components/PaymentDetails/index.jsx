@@ -152,7 +152,7 @@ class PaymentDetails extends React.Component {
         console.log(this.state.longitude);
       });
 
-    axios.get("https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/stripe-key")
+    /*axios.get("https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/stripe-key")
       .then(result=>{
         console.log("(PaymentDetails) Stripe-key then result (1): " + JSON.stringify(result));
         //console.log("Stripe-key then result (json): ", result.json());
@@ -170,7 +170,7 @@ class PaymentDetails extends React.Component {
         if (err.response) {
           console.log("(PaymentDetails) error: " + JSON.stringify(err.response));
         }
-      });
+      });*/
 
     console.log(this.props)
 
@@ -676,6 +676,79 @@ class PaymentDetails extends React.Component {
     }));
   }
 
+  proceedToPayment() {
+    this.setState({
+      showPaymentInfo: true
+    });
+    this.saveDeliveryDetails();
+    this.saveContactDetails();
+    
+    console.log("payment deliveryInstructions 3: " + this.state.instructions);
+    //console.log("payment deliveryInstructions 3: " + "M4METEST");
+    // if(3>2){
+    //   console.log("hello");
+    // }
+    if(this.state.instructions === 'M4METEST'){
+      // Fetch public key
+      console.log("fetching public key");
+      axios.get("https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/stripe_key/M4METEST")
+        .then(result=>{
+          console.log("(1 PaymentDetails) Stripe-key then result (1): " + JSON.stringify(result));
+          let stripePromise = loadStripe(result.data.publicKey);
+          console.log("(1 PaymentDetails) setting state with stripePromise");
+          this.setState({
+            stripePromise: stripePromise
+          });
+          console.log("(1 PaymentDetails) stripePromise set!");
+        })
+        .catch(err => {
+          console.log(err);
+          if (err.response) {
+            console.log("(1 PaymentDetails) error: " + JSON.stringify(err.response));
+          }
+        });
+    } else {
+      // Fetch public key live
+      console.log("fetching public key live");
+      axios.get("https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/stripe_key/LIVE")
+        .then(result=>{
+          console.log("(2 PaymentDetails) Stripe-key then result (1): " + JSON.stringify(result));
+          let stripePromise = loadStripe(result.data.publicKey);
+          console.log("(2 PaymentDetails) setting state with stripePromise");
+          this.setState({
+            stripePromise: stripePromise
+          });
+          console.log("(2 PaymentDetails) stripePromise set!");
+        })
+        .catch(err => {
+          console.log(err);
+          if (err.response) {
+            console.log("(2 PaymentDetails) error: " + JSON.stringify(err.response));
+          }
+        });
+    }
+    console.log("after key payment");
+    /*axios.get("https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/stripe-key")
+      .then(result=>{
+        console.log("(PaymentDetails) Stripe-key then result (1): " + JSON.stringify(result));
+        //console.log("Stripe-key then result (json): ", result.json());
+        //return result.json();
+        let stripePromise = loadStripe(result.data.publicKey);
+        console.log("(PaymentDetails) setting state with stripePromise");
+        this.setState({
+          stripePromise: stripePromise
+        });
+        //setStripePromise(loadStripe(result.data.publicKey));
+        console.log("(PaymentDetails) stripePromise set!");
+      })
+      .catch(err => {
+        console.log(err);
+        if (err.response) {
+          console.log("(PaymentDetails) error: " + JSON.stringify(err.response));
+        }
+      });*/
+  }
+
   render() {
     let loggedInByPassword = false;
     if (this.state.customerUid !== "GUEST" && this.props.socialMedia === "NULL") {
@@ -919,13 +992,7 @@ class PaymentDetails extends React.Component {
           {(() => {
             if (this.state.showPaymentInfo === false) {
               return (
-                <button className={styles.proceedButton} onClick={() => {
-                  this.setState({
-                    showPaymentInfo: true
-                  });
-                  this.saveDeliveryDetails();
-                  this.saveContactDetails();
-                }}>
+                <button className={styles.proceedButton} onClick={() => this.proceedToPayment()}>
                   Proceed to Payment
                 </button>
               );
@@ -1120,6 +1187,7 @@ class PaymentDetails extends React.Component {
                     longitude={this.state.longitude.toString()}
                     email={this.state.email}
                     customerUid={this.state.customerUid}
+                    phone={this.state.phone}
                     cardInfo={this.state.cardInfo}
                   />
                 )}

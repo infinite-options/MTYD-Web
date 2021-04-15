@@ -106,123 +106,17 @@ const StripeCheckout = (props) => {
   //const card = await elements.getElement(CardElement);
   //const cardElement = await elements.getElement(CardElement);
 
+  const [cardholderName, setCardholderName] = useState(null);
+
   console.log("In StripeCheckout.js");
 
+  console.log("StripeCheckout props: " + JSON.stringify(props));
+
   var orderData = {
-    items: [{ id: "photo-subscription" }],
     currency: "usd"
   };
 
   console.log("orderData: " + JSON.stringify(orderData));
-
-  /*fetch("/stripe-key")*/
-  //axios.get(API_URL + "Profile/" + this.props.customerId)
-  //fetch("https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/stripe-key")
-  //https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/
-  /*axios.get("https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/stripe-key")
-    .then(function(result) {
-      console.log("Stripe-key then result (1): ", result);
-      console.log("Stripe-key then result (json): ", result.json());
-      return result.json();
-    }).catch(err => {
-      console.log(err);
-      if (err.response) {
-        console.log("error: " + JSON.stringify(err.response));
-      }
-    });*/
-    // .then(function(data) {
-    //   console.log("Stripe-key then data (2): ", data);
-    //   return setupElements(data);
-    // });
-    // .then(function({ stripe, card, clientSecret }) {
-    //   console.log("Stripe-key then (3)");
-    //   document.querySelector("#submit").addEventListener("click", function(evt) {
-    //     evt.preventDefault();
-    //     pay(stripe, card, clientSecret);
-    //   });
-    //});
-
-    // var setupElements = function(data) {
-    //   console.log("=== setupElements()");
-    //   stripe = Stripe(data.publicKey);
-    //   console.log("stripe (1): ", stripe);
-
-    // var setupElements = function(data) {
-    //   console.log("=== setupElements()");
-    //   const stripe = useStripe(data);
-    //   console.log("stripe (1): ", stripe);
-
-    
-    //   /* ------- Set up Stripe Elements to use in checkout form ------- */
-    //   var elements = stripe.elements();
-    //   var style = {
-    //     base: {
-    //       color: "#32325d",
-    //       fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
-    //       fontSmoothing: "antialiased",
-    //       fontSize: "16px",
-    //       "::placeholder": {
-    //         color: "#aab7c4"
-    //       }
-    //     },
-    //     invalid: {
-    //       color: "#fa755a",
-    //       iconColor: "#fa755a"
-    //     }
-    //   };
-  
-    //   //var card = elements.create("card", { style: style });
-    //   //card.mount("#card-element");
-    //   const card = elements.getElement(CardElement);
-
-    //   //console.log("data: ", data);
-    //   console.log("stripe: " + JSON.stringify(stripe));
-    //   console.log("card: " + JSON.stringify(card));
-    //   console.log("clientSecret: " + data.clientSecret);
-
-    //   return {
-    //     stripe,
-    //     card,
-    //     clientSecret: data.clientSecret
-    //   };
-    // };
-
-    /*var setupElements = function(data) {
-      console.log("=== setupElements()");
-      //stripe = Stripe(data.publicKey);
-      //console.log("stripe (1): ", stripe);*/
-    
-      /* ------- Set up Stripe Elements to use in checkout form ------- */
-      //var elements = stripe.elements();
-      /*var style = {
-        base: {
-          color: "#32325d",
-          fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
-          fontSmoothing: "antialiased",
-          fontSize: "16px",
-          "::placeholder": {
-            color: "#aab7c4"
-          }
-        },
-        invalid: {
-          color: "#fa755a",
-          iconColor: "#fa755a"
-        }
-      };
-    
-      var card = elements.create("card", { style: style });
-      card.mount("#card-element");
-    
-      console.log("data: ", data);
-      //console.log("stripe: " + JSON.stringify(stripe));
-      //console.log("card: " + JSON.stringify(card));
-      console.log("clientSecret: " + data.clientSecret);
-    
-      return {
-        card,
-        clientSecret: data.clientSecret
-      };
-    };*/
 
   /*var handleAction = function(clientSecret) {
     console.log("=== handleAction");
@@ -263,16 +157,30 @@ const StripeCheckout = (props) => {
   //     billing_details: {}
   //   };
 
+  const changeCardholderName = (name) => {
+    console.log("Name changes: " + name);
+    setCardholderName(name);
+  }
+
   var pay = async function(stripe) {
     console.log("=== pay()");
     //var cardholderName = document.querySelector("#name").value;
-    var cardholderName = "Brandon Huss";
+    console.log("cardholderName from state: " + cardholderName);
+    //var cardholderName = "Brandon Huss";
     var data = {
       billing_details: {}
     };
   
-    if (cardholderName) {
+    if (cardholderName !== null) {
+      console.log("cardholderName is not null");
       data["billing_details"]["name"] = cardholderName;
+      /*data["billing_details"]["email"] = props.email;
+      data["billing_details"]["address"] = props.email;
+      data["billing_details"]["phone"] = props.email;*/
+      //data["billing_details"]["creditCard"] = props.cardInfo;
+      //data["billing_details"]["selectedPlan"] = props.selectedPlan;
+    } else {
+      console.log("cardholderName is null");
     }
   
     const cardElement = await elements.getElement(CardElement);
@@ -307,18 +215,24 @@ const StripeCheckout = (props) => {
           orderData.paymentMethodId = result.paymentMethod.id;
           //orderData.isSavingCard = document.querySelector("#save-card").checked;
           orderData.isSavingCard = true;
+          
+          // New stuff added by Brandon
+          orderData.customerUid = props.customerUid;
+          orderData.email = props.email;
+          orderData.paymentSummary = props.paymentSummary;
+          orderData.selectedPlan = props.selectedPlan;
   
           console.log("data to be sent to pay: " + JSON.stringify(orderData));
           console.log("calling /pay...");
           //return fetch("http://localhost:4242/pay", {
           /*fetch("/stripe-key")*/
-          //fetch("https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/stripe-key")
+          //fetch("https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2stripe-key")
           let data = {
             body: JSON.stringify(orderData)
           };
           console.log("data before pay: " + JSON.stringify(data));
           console.log("orderData before pay: " + JSON.stringify(orderData));
-          return axios.post("https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/pay", orderData)
+          return axios.post("https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/pay", orderData)
           .catch(err => {
             console.log(err);
             if (err.response) {
@@ -405,12 +319,18 @@ const StripeCheckout = (props) => {
 
   return (
     <>
-    {/*<script type="text/javascript" src="https://js.stripe.com/v2/"></script>*/}
       <label className={props.classes.label}>
         Enter Cardholder Name Below:
       </label>
       <Box mt={1}>
-        <CssTextField variant="outlined" size="small" fullWidth />
+        <CssTextField 
+          variant="outlined" 
+          size="small" 
+          fullWidth 
+          onChange={e => {
+            changeCardholderName(e.target.value);
+          }}
+        />
       </Box>
       <Box mt={1}>
         <label className={props.classes.label}>
