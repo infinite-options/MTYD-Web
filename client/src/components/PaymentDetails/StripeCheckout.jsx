@@ -103,10 +103,10 @@ const StripeCheckout = (props) => {
   const elements = useElements();
   const stripe = useStripe();
   const options = useOptions();
-  //const card = await elements.getElement(CardElement);
-  //const cardElement = await elements.getElement(CardElement);
+  const history = useHistory();
 
   const [cardholderName, setCardholderName] = useState(null);
+  const [loadingState, changeLoadingState] = useState(false);
 
   console.log("In StripeCheckout.js");
 
@@ -162,11 +162,10 @@ const StripeCheckout = (props) => {
     setCardholderName(name);
   }
 
-  var pay = async function(stripe) {
+  var pay = async function() {
+
     console.log("=== pay()");
-    //var cardholderName = document.querySelector("#name").value;
     console.log("cardholderName from state: " + cardholderName);
-    //var cardholderName = "Brandon Huss";
     var data = {
       billing_details: {}
     };
@@ -174,32 +173,206 @@ const StripeCheckout = (props) => {
     if (cardholderName !== null) {
       console.log("cardholderName is not null");
       data["billing_details"]["name"] = cardholderName;
-      /*data["billing_details"]["email"] = props.email;
-      data["billing_details"]["address"] = props.email;
-      data["billing_details"]["phone"] = props.email;*/
-      //data["billing_details"]["creditCard"] = props.cardInfo;
-      //data["billing_details"]["selectedPlan"] = props.selectedPlan;
     } else {
       console.log("cardholderName is null");
     }
+
+    changeLoadingState(true);
   
     const cardElement = await elements.getElement(CardElement);
   
-
-    /*const cardElement = await elements.getElement(CardElement);
-
-    const paymentMethod = await stripe.createPaymentMethod({
-      type: 'card',
-      card: cardElement,
-      billing_details: billingDetails,
-    });*/
-
-    // const cardElement = elements.getElement(CardElement);
     console.log("stripe: ", stripe);
     console.log("cardElement: ", cardElement);
     console.log("data: ", data);
   
     //changeLoadingState(true);
+
+    orderData.customer_uid = props.customerUid;
+    orderData.business_code = props.deliveryInstructions;
+    orderData.currency = "usd";
+    orderData.item_uid = props.selectedPlan.item_uid;
+    orderData.num_items = props.selectedPlan.num_items;
+    orderData.num_deliveries = props.selectedPlan.num_deliveries;
+    orderData.delivery_discount = props.selectedPlan.delivery_discount;
+    orderData.payment_summary = props.paymentSummary;
+
+    console.log("orderData before createPaymentIntent: " + JSON.stringify(orderData));
+
+    var clientSecret;
+
+    await axios.post("https://huo8rhh76i.execute-api.us-west-1.amazonaws.com/dev/api/v2/createPaymentIntent", orderData)
+    .then(function(result) {
+      console.log("createPaymentIntent result: " + JSON.stringify(result));
+      console.log("clientSecret from createPaymentIntent: " + result.data);
+      clientSecret = result.data;
+
+      console.log("calling createPaymentMethod...");
+
+      const paymentMethod = stripe.createPaymentMethod({
+        type: 'card',
+        card: cardElement,
+        billing_details: data.billingDetails
+      })
+      .then(function(res) {
+
+        console.log("createPaymentMethod res: " + JSON.stringify(res));
+
+        console.log("calling confirmedCardPayment...");
+
+        const confirmedCardPayment = stripe.confirmCardPayment(clientSecret, {
+          payment_method: res.paymentMethod.id, setup_future_usage: 'off_session'
+        })
+        .then(function(result) {
+          console.log("confirmedCardPayment result: " + JSON.stringify(result));
+
+          const items = [{
+            qty: props.selectedPlan.num_deliveries.toString(),
+            name: props.selectedPlan.item_name,
+            price: props.selectedPlan.item_price.toString(),
+            item_uid: props.selectedPlan.item_uid,
+            itm_business_uid: props.selectedPlan.itm_business_uid
+          }];
+
+          if(props.customerUid !== 'GUEST') {
+            console.log("STRIPE CHECKOUT (1) -- not a guest");
+            console.log("STRIPE CHECKOUT (1) -- amount_due: " + props.paymentSummary.total);
+    
+            checkoutItems(
+              {
+                customer_uid: props.customerUid,
+                business_uid: 'WEB',
+                items,
+                salt: "",
+                order_instructions: 'fast',
+                delivery_instructions: props.deliveryInstructions,
+                delivery_first_name: props.firstName,
+                delivery_last_name: props.lastName,
+                delivery_phone: props.phone,
+                delivery_email: props.email,
+                delivery_address: props.address.street,
+                delivery_unit: props.unit,
+                delivery_city: props.city,
+                delivery_state: props.state,
+                delivery_zip: props.zip,
+                delivery_latitude: props.latitude,
+                delivery_longitude: props.longitude,
+                purchase_notes: 'purchase_notes',
+                amount_due: props.paymentSummary.total,
+                amount_discount: props.paymentSummary.discountAmount,
+                amount_paid: '0.00',
+                cc_num: 'NULL',
+                cc_exp_year: 'NULL',
+                cc_exp_month: 'NULL',
+                cc_cvv: 'NULL',
+                cc_zip: 'NULL',
+                charge_id: clientSecret,
+                payment_type: 'STRIPE',
+                service_fee: props.paymentSummary.serviceFee,
+                delivery_fee: props.paymentSummary.deliveryFee,
+                tip: props.paymentSummary.tip,
+                tax: props.paymentSummary.taxAmount,
+                subtotal: props.paymentSummary.subtotal,
+                amb: props.paymentSummary.ambassadorDiscount
+              },
+              () => {
+                history.push("/congrats")
+              }
+            );
+    
+          } else if (props.customerUid === 'GUEST') {
+            console.log("STRIPE CHECKOUT (2) -- guest");
+            console.log("STRIPE CHECKOUT (2) -- amount_due: " + props.paymentSummary.total);
+    
+            createGuestAccount(
+              {
+                email: props.email,
+                first_name: props.firstName,
+                last_name: props.lastName,
+                phone_number: props.phone,
+                address: props.street,
+                unit: props.unit,
+                city: props.city,
+                state: props.state,
+                zip_code: props.zip,
+                latitude: props.latitude,
+                longitude: props.longitude,
+                referral_source: "WEB",
+                role: "CUSTOMER",
+                social: "FALSE",
+                social_id: "NULL",
+                user_access_token: "FALSE",
+                user_refresh_token: "FALSE",
+                mobile_access_token: "FALSE",
+                mobile_refresh_token: "FALSE"
+              },
+              () => {
+                checkoutItems(
+                  {
+                    customer_uid: props.customerUid,
+                    business_uid: 'WEB',
+                    items,
+                    salt: "",
+                    order_instructions: 'fast',
+                    delivery_instructions: props.deliveryInstructions,
+                    delivery_first_name: props.firstName,
+                    delivery_last_name: props.lastName,
+                    delivery_phone: props.phone,
+                    delivery_email: props.email,
+                    delivery_address: props.address.street,
+                    delivery_unit: props.unit,
+                    delivery_city: props.city,
+                    delivery_state: props.state,
+                    delivery_zip: props.zip,
+                    delivery_latitude: props.latitude,
+                    delivery_longitude: props.longitude,
+                    purchase_notes: 'purchase_notes',
+                    amount_due: props.paymentSummary.total,
+                    amount_discount: props.paymentSummary.discountAmount,
+                    amount_paid: '0.00',
+                    cc_num: 'NULL',
+                    cc_exp_year: 'NULL',
+                    cc_exp_month: 'NULL',
+                    cc_cvv: 'NULL',
+                    cc_zip: 'NULL',
+                    charge_id: clientSecret,
+                    payment_type: 'STRIPE',
+                    service_fee: props.paymentSummary.serviceFee,
+                    delivery_fee: props.paymentSummary.deliveryFee,
+                    tip: props.paymentSummary.tip,
+                    tax: props.paymentSummary.taxAmount,
+                    subtotal: props.paymentSummary.subtotal,
+                    amb: props.paymentSummary.ambassadorDiscount
+                  },
+                  () => {
+                    history.push("/congrats")
+                  }
+                );
+              }
+            );
+    
+          } else {
+            console.log("STRIPE CHECKOUT (3) -- error; wrong data");
+          }
+
+        })
+        .catch(err => {
+          console.log(err);
+          if (err.response) {
+            console.log("error: " + JSON.stringify(err.response));
+          }
+        });
+
+      })
+
+    })
+    .catch(err => {
+      console.log(err);
+      if (err.response) {
+        console.log("error: " + JSON.stringify(err.response));
+      }
+    });
+
+    /*var charge_id;
 
     console.log("calling createPaymentMethod...");
     // Collect card details
@@ -212,20 +385,22 @@ const StripeCheckout = (props) => {
           //showError(result.error.message);
         } else {
           console.log("(2) createPaymentMethod success");
-          orderData.paymentMethodId = result.paymentMethod.id;
+          //orderData.paymentMethodId = result.paymentMethod.id;
+          //charge_id = result.paymentMethod.id;
           //orderData.isSavingCard = document.querySelector("#save-card").checked;
-          orderData.isSavingCard = true;
+          //orderData.isSavingCard = true;
           
           // New stuff added by Brandon
-          orderData.customerUid = props.customerUid;
-          orderData.email = props.email;
-          orderData.paymentSummary = props.paymentSummary;
-          orderData.selectedPlan = props.selectedPlan;
+          // orderData.customerUid = props.customerUid;
+          // orderData.email = props.email;
+          // orderData.paymentSummary = props.paymentSummary;
+          // orderData.selectedPlan = props.selectedPlan;
+          // orderData.businessCode = props.deliveryInstructions;
   
           console.log("data to be sent to pay: " + JSON.stringify(orderData));
           console.log("calling /pay...");
           //return fetch("http://localhost:4242/pay", {
-          /*fetch("/stripe-key")*/
+          //fetch("/stripe-key")
           //fetch("https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2stripe-key")
           let data = {
             body: JSON.stringify(orderData)
@@ -251,14 +426,148 @@ const StripeCheckout = (props) => {
         }
       })
       .then(function(result) {
-        console.log("createPaymentMethod result: ", result);
-        return result.json();
+        console.log("createPaymentMethod result: ", JSON.stringify(result));
+        if(result.status === 200){
+
+          const items = [{
+            qty: props.selectedPlan.num_deliveries.toString(),
+            name: props.selectedPlan.item_name,
+            price: props.selectedPlan.item_price.toString(),
+            item_uid: props.selectedPlan.item_uid,
+            itm_business_uid: props.selectedPlan.itm_business_uid
+          }];
+
+          if(props.customerUid !== 'GUEST') {
+            console.log("STRIPE CHECKOUT (1) -- not a guest");
+            console.log("STRIPE CHECKOUT (1) -- amount_due: " + props.paymentSummary.total);
+    
+            checkoutItems(
+              {
+                customer_uid: props.customerUid,
+                business_uid: 'WEB',
+                items,
+                salt: "",
+                order_instructions: 'fast',
+                delivery_instructions: props.deliveryInstructions,
+                delivery_first_name: props.firstName,
+                delivery_last_name: props.lastName,
+                delivery_phone: props.phone,
+                delivery_email: props.email,
+                delivery_address: props.address.street,
+                delivery_unit: props.unit,
+                delivery_city: props.city,
+                delivery_state: props.state,
+                delivery_zip: props.zip,
+                delivery_latitude: props.latitude,
+                delivery_longitude: props.longitude,
+                purchase_notes: 'purchase_notes',
+                amount_due: props.paymentSummary.total,
+                amount_discount: props.paymentSummary.discountAmount,
+                amount_paid: '0.00',
+                cc_num: 'NULL',
+                cc_exp_year: 'NULL',
+                cc_exp_month: 'NULL',
+                cc_cvv: 'NULL',
+                cc_zip: 'NULL',
+                charge_id: charge_id,
+                payment_type: 'STRIPE',
+                service_fee: props.paymentSummary.serviceFee,
+                delivery_fee: props.paymentSummary.deliveryFee,
+                tip: props.paymentSummary.tip,
+                tax: props.paymentSummary.taxAmount,
+                subtotal: props.paymentSummary.mealSubPrice,
+                amb: props.paymentSummary.ambassadorDiscount
+              },
+              () => {
+                history.push("/congrats")
+              }
+            );
+    
+          } else if (props.customerUid === 'GUEST') {
+            console.log("STRIPE CHECKOUT (2) -- guest");
+            console.log("STRIPE CHECKOUT (2) -- amount_due: " + props.paymentSummary.total);
+    
+            createGuestAccount(
+              {
+                email: props.email,
+                first_name: props.firstName,
+                last_name: props.lastName,
+                phone_number: props.phone,
+                address: props.street,
+                unit: props.unit,
+                city: props.city,
+                state: props.state,
+                zip_code: props.zip,
+                latitude: props.latitude,
+                longitude: props.longitude,
+                referral_source: "WEB",
+                role: "CUSTOMER",
+                social: "FALSE",
+                social_id: "NULL",
+                user_access_token: "FALSE",
+                user_refresh_token: "FALSE",
+                mobile_access_token: "FALSE",
+                mobile_refresh_token: "FALSE"
+              },
+              () => {
+                checkoutItems(
+                  {
+                    customer_uid: props.customerUid,
+                    business_uid: 'WEB',
+                    items,
+                    salt: "",
+                    order_instructions: 'fast',
+                    delivery_instructions: props.deliveryInstructions,
+                    delivery_first_name: props.firstName,
+                    delivery_last_name: props.lastName,
+                    delivery_phone: props.phone,
+                    delivery_email: props.email,
+                    delivery_address: props.address.street,
+                    delivery_unit: props.unit,
+                    delivery_city: props.city,
+                    delivery_state: props.state,
+                    delivery_zip: props.zip,
+                    delivery_latitude: props.latitude,
+                    delivery_longitude: props.longitude,
+                    purchase_notes: 'purchase_notes',
+                    amount_due: props.paymentSummary.total,
+                    amount_discount: props.paymentSummary.discountAmount,
+                    amount_paid: '0.00',
+                    cc_num: 'NULL',
+                    cc_exp_year: 'NULL',
+                    cc_exp_month: 'NULL',
+                    cc_cvv: 'NULL',
+                    cc_zip: 'NULL',
+                    charge_id: charge_id,
+                    payment_type: 'STRIPE',
+                    service_fee: props.paymentSummary.serviceFee,
+                    delivery_fee: props.paymentSummary.deliveryFee,
+                    tip: props.paymentSummary.tip,
+                    tax: props.paymentSummary.taxAmount,
+                    subtotal: props.paymentSummary.mealSubPrice,
+                    amb: props.paymentSummary.ambassadorDiscount
+                  },
+                  () => {
+                    history.push("/congrats")
+                  }
+                );
+              }
+            );
+    
+          } else {
+            console.log("STRIPE CHECKOUT (3) -- error; wrong data");
+          }
+
+        }
       }).catch(err => {
         console.log(err);
         if (err.response) {
           console.log("error: " + JSON.stringify(err.response));
         }
-      });
+      });*/
+
+
+
       // .then(function(paymentData) {
       //   console.log("second then of createPaymentMethod");
       //   /*if (paymentData.requiresAction) {
@@ -348,20 +657,47 @@ const StripeCheckout = (props) => {
         variant="outlined"
         size="small"
         color="paragraphText"
-        //onClick={() => pay(stripe, card, clientSecret)}
         onClick={() => {
           console.log("PAY BUTTON CLICKED");
-          pay(stripe);
+          pay();
         }}
-        // onClick={pay(stripe, card, clientSecret)}
-        /*onClick={() => this.saveDeliveryDetails()}*/
-        /*disabled={processing}*/
+        disabled={loadingState}
       >
         Pay With Stripe
       </Button>
     </>
   );
 }
+
+// {(() => {
+//   if (this.state.customerUid === "GUEST") {
+//     return (
+//       <input
+//         type='text'
+//         placeholder='Email'
+//         className={styles.inputContactRight}
+//         value={this.state.email}
+//         onChange={e => {
+//           this.setState({
+//             email: e.target.value
+//           })
+//         }}
+//       />
+//     );
+//   } else {
+//     return (
+//       <input
+//         type='text'
+//         placeholder='Email'
+//         className={styles.inputContactRight}
+//         value={this.props.email}
+//         onChange={e => {
+    
+//         }}
+//       />
+//     );
+//   }
+// })()} 
 
 /*const StripeCheckout = (props) => {
 

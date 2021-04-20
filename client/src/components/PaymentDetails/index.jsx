@@ -141,6 +141,16 @@ class PaymentDetails extends React.Component {
    };
 
   componentDidMount() {
+    axios.get(API_URL + "Profile/" + this.props.customerId)
+    .then(res=>{
+
+      this.setState({
+        latitude: res.data.result[0].customer_lat,
+        longitude: res.data.result[0].customer_long,
+      })
+      console.log(this.state.latitude);
+      console.log(this.state.longitude);
+    });
 
     let temp_lat;
     let temp_lng;
