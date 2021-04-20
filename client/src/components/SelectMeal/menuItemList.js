@@ -567,8 +567,7 @@ class MenuItemList extends Component {
       let tempNewButton = (
         <button key={this.state.myDate} value={this.state.myDate} onClick={this.filterDates} className={buttonStyle} autoFocus>
         {moment(this.state.myDate.split(" ")[0]).format("ddd")}
-        <br/>{moment(this.state.myDate.split(" ")[0]).format("MMM")}
-        <br/>{moment(this.state.myDate.split(" ")[0]).format("D")} 
+        <br/>{moment(this.state.myDate.split(" ")[0]).format("MMM") +" "+ moment(this.state.myDate.split(" ")[0]).format("D")}
       </button>
       )
   
@@ -649,8 +648,7 @@ class MenuItemList extends Component {
       let tempNewButton = (
         <button key={this.state.myDate} value={this.state.myDate} onClick={this.filterDates} className={buttonStyle} autoFocus>
         {moment(this.state.myDate.split(" ")[0]).format("ddd")}
-        <br/>{moment(this.state.myDate.split(" ")[0]).format("MMM")}
-        <br/>{moment(this.state.myDate.split(" ")[0]).format("D")} 
+        <br/>{moment(this.state.myDate.split(" ")[0]).format("MMM") +" "+ moment(this.state.myDate.split(" ")[0]).format("D")}
       </button>
       )
   
@@ -718,10 +716,8 @@ class MenuItemList extends Component {
       buttonStyle = styles.datebuttonSave;
       let tempNewButton = (
         <button key={this.state.myDate} value={this.state.myDate} onClick={this.filterDates} className={buttonStyle} autoFocus>
-        
         {moment(this.state.myDate.split(" ")[0]).format("ddd")}
-        <br/>{moment(this.state.myDate.split(" ")[0]).format("MMM")}
-        <br/>{moment(this.state.myDate.split(" ")[0]).format("D")} 
+        <br/>{moment(this.state.myDate.split(" ")[0]).format("MMM") +" "+ moment(this.state.myDate.split(" ")[0]).format("D")}
       </button>
       )
   
@@ -1047,6 +1043,7 @@ class MenuItemList extends Component {
           purchaseID={this.state.purchaseID}
           mealSelected={this.state.mealSelected}
           dateButtonArray = {this.state.dateButtonList}
+          customer_uid = {Cookies.get("customer_uid")}
         />
 
         <div style = {{overflow: 'auto', height: '100vh'}}>

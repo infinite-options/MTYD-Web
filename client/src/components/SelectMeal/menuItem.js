@@ -134,12 +134,14 @@ class MenuItem extends React.Component {
 
     // console.log(x)
 
+
+
     menuHTML = x.map((menuitem, index) => (
 
       
       <div
         key={index}
-        className={styles.menuitemIndividual + " px-5"}
+        className={styles.menuitemIndividual}
       >
         {/* {
           console.log(menuitem)
@@ -149,6 +151,7 @@ class MenuItem extends React.Component {
             backgroundImage: `url(${menuitem.meal_photo_URL})`,
             backgroundSize: "cover",
             backgroundPosition:'center'
+            // backgroundColor:"black"
             
           }}
           className={styles.menuItem}
@@ -186,12 +189,9 @@ class MenuItem extends React.Component {
               <button
                 onClick={() => this.props.removeFromCart(menuitem)}
                 style={{
-                  border: 'none',
-                  borderRadius: 5,
-                  backgroundColor: 'white',
                   width: '50px',
                   height: '50px',
-                  top:'50'
+                  top:'222px'
                 }}
                 className={styles.minusElements}
                 id={styles.mealCounter}
@@ -224,12 +224,9 @@ class MenuItem extends React.Component {
               <button
                 onClick={() => this.props.addToCart(menuitem)}
                 style={{
-                  border: 'none',
-                  borderRadius: 5,
-                  backgroundColor: 'white',
                   width: '50px',
                   height: '50px',
-                  top:'50'
+                  top:'222px'
                 }}
                 className={styles.plusElements}
                 id={styles.mealCounter}
@@ -261,6 +258,12 @@ class MenuItem extends React.Component {
 
     return (
       <Fragment>
+        <div
+          style={{
+            width:"100%",
+            height:'7px',
+          }}
+        />
         {this.menuItemFilter()}
       </Fragment>
     );

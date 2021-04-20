@@ -82,10 +82,23 @@ class Header extends Component {
   };
 
   showSelectionOptions = () => {
-    let options = ["SURPRISE", "SKIP", "SAVE"];
+    let options = ["SAVE","SURPRISE", "SKIP"];
     let selections = [];
     for (const day of options) {
       let selectionOptions = day;
+
+      let displayMessage = '';
+
+      if(selectionOptions=="SAVE"){
+        displayMessage = "Save Meals"
+      }
+      else if(selectionOptions == 'SURPRISE'){
+        displayMessage = 'Surprise Me';
+      }
+      else{
+        displayMessage = 'Skip this day';
+      }
+
       selections.push(
         <button
           id={selectionOptions}
@@ -99,7 +112,8 @@ class Header extends Component {
           }
           onClick={e => this.props.makeSelection(e)}
         >
-          {selectionOptions}
+
+          {displayMessage}
         </button>
       );
     }
@@ -144,23 +158,15 @@ class Header extends Component {
       }
     }
 
-    let login = this.props.subscribedPlans.length?(1):(3);
+    let login = this.props.customer_uid?(true):(false);
 
-    let message = this.props.subscribedPlans.length ? (
-      <p className={menuStyles.navMessage}>
-        Please Complete Your Meal Selection For Your Meal Subscriptions
-      </p>
-    ) : (
+    let message = 
       <p className={menuStyles.navMessage + " text-left"}>
-        Below are this weeks Meals.{" "}
-        {/* <span style={{display: "block"}}>
-          Please buy a Subscription before selecting meals
-        </span> */}
-        
+        Upcoming Menus
       </p>
-    );
     return (
       <>
+      {console.log(this.props)}
         <WebNavBar 
           poplogin = {this.togglePopLogin}
           popSignup = {this.togglePopSignup}
@@ -168,55 +174,50 @@ class Header extends Component {
         {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
         {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
         
-        <MenuBar show={true} message={message} login = {login}/>
+        <MenuBar show={true} 
+        message={message} 
+        login = {login} 
+        subscribedPlans = {this.props.subscribedPlans} 
+        mealsOnChange={this.props.mealsOnChange}
+        meals={meals}
+        />
 
-        <div class={styles.divider}
-          
-        ></div>
+        <div class={styles.divider}/>
+
         {this.props.dateButtonArray}
-        
-
-        
-        <div>
-        {this.props.subscribedPlans.length ? (
-          <select
-              onChange={this.props.mealsOnChange}
-              className={styles.pickers}
-              id={styles.mealPlanPicker}
-            >
-              {meals.map(mealItem => {
-                let meal = JSON.parse(mealItem.items)[0];
-                let mealName = meal.name;
-                return (
-                  <option
-                    value={mealItem.purchase_id}
-                    key={mealItem.purchase_uid}
-                  >
-                    {mealName.toUpperCase()}
-                  </option>
-                );
-              })}
-        </select>
-        ) : (""
-        )}
-          
-        </div>
-
-
 
         {this.props.subscribedPlans.length ? (
           
-          <div className={styles.stickyHeader + " px-5 "}>
-            <h4 style = {{padding: '10px 90px', fontSize: '30px', display:'inline-block',overflow:'hidden',whiteSpace:'nowrap'}}>Featured Meals</h4>
+          <div>
+            
+            <div>
+              <div className={styles.supriseSkipSave}>
+                <div class={styles.divider}/>
+                {this.showSelectionOptions()}
+                <div class={styles.divider}/>
+              </div>
+            </div>
 
-            <MealIndicator
-              totalCount={this.props.totalCount}
-              totalMeals={this.props.totalMeals}
-            />
-            <div className={styles.supriseSkipSave}>
-              {this.showSelectionOptions()}
+            <div className={styles.stickyHeader + " px-5 "}>
+              {/* <h4 style = 
+                {{padding: '10px 90px', 
+                  fontSize: '24px', 
+                  display:'inline-block',
+                  overflow:'hidden',
+                  whiteSpace:'nowrap'
+                }}>
+                Select x meals
+              </h4> */}
+
+              <MealIndicator
+                totalCount={this.props.totalCount}
+                totalMeals={this.props.totalMeals}
+              />
+
             </div>
           </div>
+
+
         ) : (""
         )}
       </>

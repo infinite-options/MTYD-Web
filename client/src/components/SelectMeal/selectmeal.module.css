@@ -165,28 +165,30 @@
 .selectionStyles {
   color: black;
   font-weight: 500;
-  height: 2rem;
-  width: 6.5rem;
+  height: 60px;
+  width: 500px;
   flex: 1;
   text-align: center;
   border: 1px solid #ff9e19;
   background-color: #ffffff;
-  border-radius: 25px;
+  border-radius: 0px;
   align-content: center;
-  margin: 0.3rem;
+  margin-top: 19px;
+  margin-right: 3px;
   font-size: large;
 }
 
 .selectedDays {
   font-weight: 500;
-  height: 2rem;
-  width: 6.5rem;
+  height: 60px;
+  width: 500px;
   flex: 1;
   text-align: center;
   border: 1px solid#e0d19e;
-  border-radius: 25px;
+  border-radius: 0px;
   align-content: center;
-  margin: 0.3rem;
+  margin-top: 19px;
+  margin-right: 3px;
   color: white;
   color: "#d3872f";
   background-color: #f08e1f;
@@ -200,7 +202,8 @@
   text-align: center;
   flex-direction: row;
   /* height: 3rem; */
-  width: 70%;
+  width: 100%;
+  margin-left: 130px;
 }
 .dishicon {
   position: relative;
@@ -230,7 +233,7 @@
   display: flex;
   justify-content: left;
   flex-wrap: wrap;
-  padding: 1rem 2rem 1rem 2rem;
+  padding: 1rem 200px 1rem 200px;
   /* background-image: linear-gradient(#000000, #ff9300); */
   /* overflow: scroll; */
   /* height: 650px; */
@@ -242,10 +245,8 @@
 .menuItem {
   position: relative;
   border: none;
-  border-radius: 5%;
-  width: 200px;
-  height: 320px;
-  margin: 0.2rem 0.2rem 0.2rem 0.2rem;
+  width: 195px;
+  height: 170px;
   box-shadow: 1px 1px #888888;
   /* z-index: -1; */
   /* padding-top: 50px;
@@ -254,9 +255,12 @@
   padding-left: 80px; */
 }
 .menuitemIndividual {
-  height: 380px;
-  width: 200px;
-  margin: 0.5rem 0.5rem;
+  height: 265px;
+  width: 195px;
+  margin-left: 0px;
+  margin-right: 24px;
+  background-color: red;
+  margin-top: 23px;
 }
 .menuitemIndividual p {
   text-align: left;
@@ -328,17 +332,14 @@
   font-weight: 600;
   text-align: center !important;
   position: absolute;
-  margin: 0.5rem;
-  background-color: white;
-  border-radius: 50%;
-  border: none;
+  background-color:#f08e1f;
+  border: 1px;
   white-space: nowrap;
   vertical-align: baseline;
   height: 3rem;
   width: 3rem;
-  padding: 0rem;
-  margin-right: 5%;
-  margin-top: 263px;
+  right:0px;
+  top:222px;
 }
 
 .minusElements {
@@ -347,17 +348,14 @@
   font-weight: 600;
   text-align: center !important;
   position: absolute;
-  margin: 0.5rem;
-  background-color: white;
-  border-radius: 50%;
-  border: none;
+  background-color:#f08e1f;
+  border: 1px;
   white-space: nowrap;
   vertical-align: baseline;
   height: 3rem;
   width: 3rem;
-  padding: 0rem;
-  margin-right: 70%;
-  margin-top: 263px;
+  left:0px;
+  top:150px;
 }
 
 .heartButton {
@@ -430,115 +428,72 @@
 }
 
 .datebutton {
-  /* background-image: url("../../images/buttonNormal.png"); */
-  background-Position: 'center';
-  background-repeat: no-repeat;
-  background-size: 80px 80px;
   width: 134px;
   height:134px;
-  border: 1px solid #000000; 
+  border:none;
+  margin-right: 24px;
+  background-color: white;
+  box-shadow: 0 0 7px #838383;
 
 }
 
 .datebutton:focus {
-  background-image: url("../../images/buttonNormal.png");
-  background-Position: 'center';
-  background-repeat: no-repeat;
-  background-size: 80px 80px;
-  width: 80px;
-  height:80px;
-  border-radius: 10px;
-  border: 4px solid #ff0606; 
+  width: 134px;
+  height:134px;
+  border: 2px solid #f08e1f; 
   outline:none;
 }
 
 .datebuttonSkip {
-  background-image: url("../../images/buttonSkip.png");
-  background-Position: 'center';
+  width: 134px;
+  height:134px;
+  border: none; 
+  margin-right: 24px;
   background-color: rgb(173, 154, 154);
-  background-repeat: no-repeat;
-  background-size: 80px 80px;
-  width: 80px;
-  height:80px;
-  border-radius: 10px;
-  border: 1px solid #000000; 
-  margin:5px;
+  box-shadow: 0 0 7px #838383;
+
 }
 
 .datebuttonSkip:focus {
-  background-image: url("../../images/buttonSkip.png");
-  background-Position: 'center';
-  background-repeat: no-repeat;
-  background-size: 80px 80px;
-  width: 80px;
-  height:80px;
-  border-radius: 10px;
-  border: 4px solid #ff0606; 
+  width: 134px;
+  height:134px;
+  border: 2px solid #f08e1f; 
   outline:none;
 }
 
 .datebuttonSurprise {
-  background-image: url("../../images/buttonSurprise.png");
-  background-Position: 'center';
-  background-color:#f01f1f;
-  background-repeat: no-repeat;
-  background-size: 80px 80px;
-  width: 80px;
-  height:80px;
-  border-radius: 10px;
-  border: 1px solid #000000; 
-  margin:5px;
+  width: 134px;
+  height:134px;
+  border:none;
+  margin-right: 24px;
+  background-color: white;
+  box-shadow: 0 0 7px #838383;
 }
+
 .datebuttonSurprise:focus {
-  background-image: url("../../images/buttonSurprise.png");
-  background-Position: 'center';
-  background-repeat: no-repeat;
-  background-size: 80px 80px;
-  width: 80px;
-  height:80px;
-  border-radius: 10px;
-  border: 4px solid #ff0606; 
+  width: 134px;
+  height:134px;
+  border: 2px solid #f08e1f; 
   outline:none;
 }
 
 .datebuttonSave {
-  background-image: url("../../images/buttonSave.png");
-  background-Position: 'center';
-  background-color:#f08e1f;
-  background-repeat: no-repeat;
-  background-size: 80px 80px;
-  width: 80px;
-  height:80px;
-  border-radius: 10px;
-  border: 1px solid #000000; 
-  margin:5px;
+  width: 134px;
+  height:134px;
+  border:none;
+  margin-right: 24px;
+  background-color: #f08e1f;
+  box-shadow: 0 0 7px #838383;
 }
 .datebuttonSave:focus {
-  background-image: url("../../images/buttonSave.png");
-  background-Position: 'center';
-  background-repeat: no-repeat;
-  background-size: 80px 80px;
-  width: 80px;
-  height:80px;
-  border-radius: 10px;
-  border: 4px solid #ff0606; 
-  outline:none;
-}
-
-.datebutton:focus {
-  background-image: url("../../images/buttonNormal.png");
-  background-Position: 'center';
-  background-repeat: no-repeat;
-  background-size: 80px 80px;
-  width: 80px;
-  height:80px;
-  border-radius: 10px;
-  border: 4px solid #ff0606; 
+  width: 134px;
+  height:134px;
+  border: 2px solid #f08e1f; 
   outline:none;
 }
 
 .divider{
-  width:100px;
+  width:200px;
   height: 100px;
   display:inline-block;
 }
@@ -630,6 +585,8 @@
   display: flex;
   align-items: center;
   width: 100%;
+  height: 60px;
+  background-color: #f8bb17;
 }
 
 .supriseSkipSave {
