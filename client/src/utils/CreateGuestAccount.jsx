@@ -11,6 +11,8 @@ export default async function createGuestAccount(data, _callback) {
     console.log("CreateGuestAccount data: " + JSON.stringify(data));
 
     let streetNum = data.address.substring(0,data.address.indexOf(" "));
+    console.log("Street num: " + streetNum);
+
     let guestPassword = data.first_name + streetNum;
 
     console.log("password: '" + guestPassword + "'");
@@ -43,15 +45,15 @@ export default async function createGuestAccount(data, _callback) {
             
             axios
               .post(process.env.REACT_APP_SERVER_BASE_URI + "createAccount", data)
-              .then(res => {
-                console.log("guest create account response: " + JSON.stringify(res));
-                if(res.data.code >= 400 && res.data.code <= 599){
+              .then(res1 => {
+                console.log("guest create account response: " + JSON.stringify(res1));
+                if(res1.data.code >= 400 && res1.data.code <= 599){
                   //_callback(res);
                   console.log("Error trying to create guest account");
                 } else {
                   axios.post(process.env.REACT_APP_SERVER_BASE_URI+'email_verification', {email: data.email})
-                    .then(res => {
-                      console.log(res)
+                    .then(res2 => {
+                      console.log(res2)
                     })
                     .catch(err => {
                       console.log(err)
@@ -59,7 +61,7 @@ export default async function createGuestAccount(data, _callback) {
                   console.log("guest account created successfully");
                   if (typeof(_callback) !== "undefined") {
                     console.log("guest account created, hashing password...");
-                    _callback(guestPassword);
+                    _callback(res1);
                   }
                 }
               })

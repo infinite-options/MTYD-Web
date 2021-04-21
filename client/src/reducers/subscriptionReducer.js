@@ -144,6 +144,7 @@ export default function(state = initialState, action) {
         }
       };
     case CHANGE_CONTACT_DETAILS:
+      console.log("new email: " + action.payload.email);
       return {
         ...state,
         addressInfo: {

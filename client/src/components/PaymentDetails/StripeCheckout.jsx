@@ -271,7 +271,8 @@ const StripeCheckout = (props) => {
                 delivery_fee: props.paymentSummary.deliveryFee,
                 tip: props.paymentSummary.tip,
                 tax: props.paymentSummary.taxAmount,
-                subtotal: props.paymentSummary.subtotal,
+                //subtotal: props.paymentSummary.subtotal,
+                subtotal: props.paymentSummary.mealSubPrice,
                 amb: props.paymentSummary.ambassadorDiscount
               },
               () => {
@@ -279,7 +280,7 @@ const StripeCheckout = (props) => {
               }
             );
     
-          } else if (props.customerUid === 'GUEST') {
+          /*} else if (props.customerUid === 'GUEST') {
             console.log("STRIPE CHECKOUT (2) -- guest");
             console.log("STRIPE CHECKOUT (2) -- amount_due: " + props.paymentSummary.total);
     
@@ -305,10 +306,11 @@ const StripeCheckout = (props) => {
                 mobile_access_token: "FALSE",
                 mobile_refresh_token: "FALSE"
               },
-              () => {
+              (response) => {
+                console.log("createGuestAccount response: " + JSON.stringify(response));
                 checkoutItems(
                   {
-                    customer_uid: props.customerUid,
+                    customer_uid: response.data.result.customer_uid,
                     business_uid: 'WEB',
                     items,
                     salt: "",
@@ -348,7 +350,7 @@ const StripeCheckout = (props) => {
                   }
                 );
               }
-            );
+            );*/
     
           } else {
             console.log("STRIPE CHECKOUT (3) -- error; wrong data");

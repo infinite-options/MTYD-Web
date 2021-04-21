@@ -50,6 +50,7 @@ import Popsignup from '../PopSignup';
 
 import StripeElement from './StripeElement';
 
+import createGuestAccount from '../../utils/CreateGuestAccount';
 import fetchAddressCoordinates from '../../utils/FetchAddressCoordinates';
 
 const google = window.google;
@@ -125,10 +126,9 @@ class PaymentDetails extends React.Component {
         signUpSeen:false
       })
     }
+  };
 
-   };
-
-   togglePopSignup = () => {
+  togglePopSignup = () => {
     this.setState({
      signUpSeen: !this.state.signUpSeen
     });
@@ -138,7 +138,7 @@ class PaymentDetails extends React.Component {
         login_seen:false
       })
     }
-   };
+  };
 
   componentDidMount() {
     axios.get(API_URL + "Profile/" + this.props.customerId)
@@ -280,7 +280,8 @@ class PaymentDetails extends React.Component {
 
       this.setState({
         name: place.name,
-        street_address: address1,
+        //street_address: address1,
+        street: address1,
         city: city,
         state: state,
         zip_code: postcode,
@@ -682,17 +683,50 @@ class PaymentDetails extends React.Component {
   }
 
   proceedToPayment() {
-    this.setState({
-      showPaymentInfo: true
-    });
     this.saveDeliveryDetails();
     this.saveContactDetails();
+    if(this.state.customerUid === "GUEST"){
+      console.log("Before createGuestAccount");
+      createGuestAccount(
+        {
+          email: this.state.email,
+          first_name: this.state.firstName,
+          last_name: this.state.lastName,
+          phone_number: this.state.phone,
+          address: this.state.street,
+          unit: this.state.unit,
+          city: this.state.city,
+          state: this.state.state,
+          zip_code: this.state.addressZip,
+          latitude: this.state.latitude,
+          longitude: this.state.longitude,
+          referral_source: "WEB",
+          role: "GUEST",
+          social: "FALSE",
+          social_id: "NULL",
+          user_access_token: "FALSE",
+          user_refresh_token: "FALSE",
+          mobile_access_token: "FALSE",
+          mobile_refresh_token: "FALSE"
+        },
+        (response) => {
+          this.props.fetchProfileInformation(response.data.result.customer_uid);
+          this.setState({
+            customerUid: response.data.result.customer_uid,
+            showPaymentInfo: true
+          });
+        }
+      );
+      console.log("After createGuestAccount");
+    } else {
+      console.log("Proceed without creating guest account");
+      this.setState({
+        showPaymentInfo: true
+      });
+    }
     
     console.log("payment deliveryInstructions 3: " + this.state.instructions);
-    //console.log("payment deliveryInstructions 3: " + "M4METEST");
-    // if(3>2){
-    //   console.log("hello");
-    // }
+
     if(this.state.instructions === 'M4METEST'){
       // Fetch public key
       console.log("fetching public key");
@@ -952,34 +986,35 @@ class PaymentDetails extends React.Component {
                 }}
               />
               {(() => {
-                  if (this.state.customerUid === "GUEST") {
-                    return (
-                      <input
-                        type='text'
-                        placeholder='Email'
-                        className={styles.inputContactRight}
-                        value={this.state.email}
-                        onChange={e => {
-                          this.setState({
-                            email: e.target.value
-                          })
-                        }}
-                      />
-                    );
-                  } else {
-                    return (
-                      <input
-                        type='text'
-                        placeholder='Email'
-                        className={styles.inputContactRight}
-                        value={this.props.email}
-                        onChange={e => {
-                    
-                        }}
-                      />
-                    );
-                  }
-                })()} 
+                if (this.state.customerUid === "GUEST") {
+                  return (
+                    <input
+                      type='text'
+                      placeholder='Email'
+                      className={styles.inputContactRight}
+                      value={this.state.email}
+                      onChange={e => {
+                        this.setState({
+                          email: e.target.value
+                        })
+                      }}
+                    />
+                  );
+                } else {
+                  console.log("props email: " + this.props.email);
+                  return (
+                    <input
+                      type='text'
+                      placeholder='Email'
+                      className={styles.inputContactRight}
+                      value={this.props.email}
+                      onChange={e => {
+                  
+                      }}
+                    />
+                  );
+                }
+              })()} 
             </div>
               
             <div style = {{width: '20%', textAlign: 'right', paddingRight: '10px', height: '150px'}}>
@@ -1130,7 +1165,6 @@ class PaymentDetails extends React.Component {
                 ${this.state.paymentSummary.mealSubPrice}
               </div>
               <div className={styles.summaryRight}>
-                {console.log("----- discount: " + this.state.paymentSummary.discountAmount)}
                 -${this.state.paymentSummary.discountAmount}
               </div>
               <div className={styles.summaryRight}>
@@ -1140,7 +1174,6 @@ class PaymentDetails extends React.Component {
                 ${(this.state.paymentSummary.serviceFee)}
               </div>
               <div className={styles.summaryRight}>
-                {console.log("----- tax: " + this.state.paymentSummary.taxAmount)}
                 ${(this.state.paymentSummary.taxAmount)}
               </div>
               <div className={styles.summaryRight}>
