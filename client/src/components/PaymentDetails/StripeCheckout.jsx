@@ -164,6 +164,8 @@ const StripeCheckout = (props) => {
 
   var pay = async function() {
 
+    changeLoadingState(true);
+
     console.log("=== pay()");
     console.log("cardholderName from state: " + cardholderName);
     var data = {
@@ -176,8 +178,6 @@ const StripeCheckout = (props) => {
     } else {
       console.log("cardholderName is null");
     }
-
-    changeLoadingState(true);
   
     const cardElement = await elements.getElement(CardElement);
   
@@ -265,7 +265,7 @@ const StripeCheckout = (props) => {
                 cc_exp_month: 'NULL',
                 cc_cvv: 'NULL',
                 cc_zip: 'NULL',
-                charge_id: clientSecret,
+                charge_id: result.paymentIntent.id,
                 payment_type: 'STRIPE',
                 service_fee: props.paymentSummary.serviceFee,
                 delivery_fee: props.paymentSummary.deliveryFee,
@@ -663,7 +663,7 @@ const StripeCheckout = (props) => {
           console.log("PAY BUTTON CLICKED");
           pay();
         }}
-        disabled={loadingState}
+        disabled={(props.fetchingFees || loadingState)}
       >
         Pay With Stripe
       </Button>

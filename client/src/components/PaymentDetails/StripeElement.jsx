@@ -138,6 +138,7 @@ export default function StripeElement(props) {
         customerUid={props.customerUid}
         classes={classes}
         cardInfo={props.cardInfo}
+        fetchingFees={props.fetchingFees}
       />
     </Elements>
   );

@@ -112,7 +112,7 @@ class PaymentDetails extends React.Component {
       ambassadorMessage: "",
       ambassadorError: false,
       paymentType: 'NULL',
-      fetchingFees: false,
+      fetchingFees: true,
       stripePromise: null
     };
   }
@@ -141,7 +141,7 @@ class PaymentDetails extends React.Component {
   };
 
   componentDidMount() {
-    axios.get(API_URL + "Profile/" + this.props.customerId)
+    /*axios.get(API_URL + "Profile/" + this.props.customerId)
     .then(res=>{
 
       this.setState({
@@ -150,7 +150,7 @@ class PaymentDetails extends React.Component {
       })
       console.log(this.state.latitude);
       console.log(this.state.longitude);
-    });
+    });*/
 
     let temp_lat;
     let temp_lng;
@@ -284,9 +284,12 @@ class PaymentDetails extends React.Component {
         street: address1,
         city: city,
         state: state,
-        zip_code: postcode,
-        lat:place.geometry.location.lat(),
-        lng:place.geometry.location.lng(),
+        //zip_code: postcode,
+        addressZip: postcode,
+        //lat:place.geometry.location.lat(),
+        //lng:place.geometry.location.lng(),
+        latitude: place.geometry.location.lat(),
+        longitude: place.geometry.location.lng(),
       })
 
 
@@ -333,6 +336,7 @@ class PaymentDetails extends React.Component {
       console.log("taxAmount toFixed: " + this.state.taxAmount);
       console.log("discountAmount toFixed: " + this.state.discountAmount);
       this.props.fetchProfileInformation(customerUid);
+      this.setTotal();
       //console.log("payment details props: " + JSON.stringify(this.props));
     } else {
       // Reroute to log in page
@@ -468,7 +472,9 @@ class PaymentDetails extends React.Component {
                 },
                 fetchingFees: false
               }));
+              this.setTotal();
               console.log("catOptions taxAmount: " + this.state.paymentSummary.taxAmount);
+              console.log("catOptions new payment summary: ", this.state.paymentSummary);
             } else {
               this.setState(prevState => ({
                 paymentSummary: {
@@ -479,6 +485,7 @@ class PaymentDetails extends React.Component {
                   taxAmount: "0.00"
                 }
               }));
+              this.setTotal();
             }
           })
           .catch((err) => {
@@ -1194,12 +1201,12 @@ class PaymentDetails extends React.Component {
           </div>
             
           <div className={styles.topHeading}>
-            <h6 className={styles.subHeading}>PAYMENT OPTIONS</h6>
+            <h6 className={styles.subHeading}>PAYMENT</h6>
           </div>
             
           <div style={{display: 'flex'}}>
             <div style = {{display: 'inline-block', width: '80%', height: '500px'}}>
-              <div className={styles.buttonContainer}>
+              {/*<div className={styles.buttonContainer}>
                 <button className={styles.button} onClick={() => {
                   if(this.state.paymentType === 'STRIPE'){
                     this.setPaymentType('NULL');
@@ -1210,9 +1217,25 @@ class PaymentDetails extends React.Component {
                 }}>
                   STRIPE
                 </button>
-              </div>
+              </div>*/}
               <div className = {styles.buttonContainer}>
-                {/* {console.log("stripe payment summary: " + JSON.stringify(this.state.paymentSummary))} */}
+                <StripeElement
+                  stripePromise={this.state.stripePromise}
+                  customerPassword={this.state.customerPassword}
+                  deliveryInstructions={this.state.instructions}
+                  setPaymentType={this.setPaymentType}
+                  paymentSummary={this.state.paymentSummary}
+                  loggedInByPassword={loggedInByPassword}
+                  latitude={this.state.latitude.toString()}
+                  longitude={this.state.longitude.toString()}
+                  email={this.state.email}
+                  customerUid={this.state.customerUid}
+                  phone={this.state.phone}
+                  cardInfo={this.state.cardInfo}
+                  fetchingFees={this.state.fetchingFees}
+                />
+              </div>
+              {/*<div className = {styles.buttonContainer}>
                 {this.state.paymentType === 'STRIPE' && (
                   <StripeElement
                     stripePromise={this.state.stripePromise}
@@ -1229,8 +1252,8 @@ class PaymentDetails extends React.Component {
                     cardInfo={this.state.cardInfo}
                   />
                 )}
-              </div>
-              <div className={styles.buttonContainer}>
+              </div>*/}
+              {/*<div className={styles.buttonContainer}>
                 <button className={styles.button} onClick={() => {
                   if(this.state.paymentType === 'PAYPAL'){
                     this.setPaymentType('NULL');
@@ -1255,7 +1278,7 @@ class PaymentDetails extends React.Component {
                     customerUid={this.state.customerUid}
                   />
                 )}
-              </div>
+              </div>*/}
             </div>
           </div>
                 </>
@@ -1264,7 +1287,7 @@ class PaymentDetails extends React.Component {
           })()} 
             
 
-          <div style={{display: 'flex'}}>
+          {/*<div style={{display: 'flex'}}>
             <div style = {{display: 'inline-block', width: '80%', height: '200px'}}>
               <input
                 type='text'
@@ -1354,17 +1377,9 @@ class PaymentDetails extends React.Component {
                   }));
                 }}
               />
-            {/*<button
-              className={styles.finishButton}
-              onClick={() => {
-                this.handleCheckout();
-              }}
-            >
-              FINISH
-            </button>*/}
                 </div>
             </div>
-          </div>
+          </div>*/}
 
         </div>
       </div>

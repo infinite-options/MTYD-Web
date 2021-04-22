@@ -470,23 +470,23 @@ class ChoosePlan extends React.Component {
     if (!this.state.mounted) {
       return null;
     }
-    let message = (
+    /*let message = (
       <div className={menuStyles.logo}>
         <img src={takeaway} alt='Logo' />
         <p style={{color: "black"}}>
           {" "}
-          MEALS DELIVERIES ARE
-          {/*<span style={{color: "#FF9E19"}}> MONDAY,WEDNESDAY,FRIDAY</span>*/}
+          MEAL DELIVERIES ARE
+          <span style={{color: "#FF9E19"}}> MONDAY,WEDNESDAY,FRIDAY</span>
           <br></br>
           {<span style={{color: "#FF9E19"}}>{this.showDeliveryDates()}</span>}
         </p>
       </div>
-    );
-    console.log("***** SELECTED PLAN: " + JSON.stringify(this.props.selectedPlan));
+    );*/
+    //console.log("***** SELECTED PLAN: " + JSON.stringify(this.props.selectedPlan));
     return (
       /*for mobile's screen*/
       <>
-        <div className={styles.mobile}>
+        {/*<div className={styles.mobile}>
           <div className={styles.root}>
             <div className={styles.mealHeader}>
               <p
@@ -502,7 +502,6 @@ class ChoosePlan extends React.Component {
                 CHOOSE MEAL PLAN
               </p>
 
-              {/* <p id={styles.local}>LOCAL. ORGANIC. RESPONSIBLE.</p> */}
               <div className={styles.avatar}></div>
             </div>
             <div
@@ -614,13 +613,13 @@ class ChoosePlan extends React.Component {
             </div>
             <BottomNavBar />
           </div>
-        </div>
+        </div>*/}
         {/* For Full Screen */}
-        <div className={styles.full_screen}>
           <WebNavBar 
             poplogin = {this.togglePopLogin}
             popSignup = {this.togglePopSignup}
           />
+
           {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
           {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
           <div className={styles.container}>
@@ -629,19 +628,27 @@ class ChoosePlan extends React.Component {
               if(this.state.loggedIn === true){
                 //console.log("Show navbuttons -- logged in");
                 return(
-                  <Menu show={true} message={message} />
+                  <Menu show={true} message={""} />
                 );
               } else {
                 //console.log("Hide navbuttons -- not logged in");
                 return(
-                  <Menu show={true} message={message} />
+                  <Menu show={true} message={""} />
                 );
               }
             })()}
+          </div>
+
+          <div className={styles.sectionHeaderUL}>
+            Pick a Plan
+          </div>
+
+          
+          <div className={styles.container}>
             <div className={styles.box}>
               <div className={styles.box1}>
 
-                <div className='row'>
+                {/*<div className='row'>
                   <div className='col'>
                     <div className='row'>
                       <div className='col'>
@@ -663,6 +670,16 @@ class ChoosePlan extends React.Component {
                   <div className='col pl-5'>
                     <img src={delivery} alt='delivery' />
                   </div>
+                </div>*/}
+
+                <div className={styles.logo}>
+                  <p style={{color: "black"}}>
+                    {" "}
+                    MEAL DELIVERIES ARE ON
+                    {/*<span style={{color: "#FF9E19"}}> MONDAY,WEDNESDAY,FRIDAY</span>*/}
+                    <br></br>
+                    {<span style={{fontWeight: '900'}}>{this.showDeliveryDates()}</span>}
+                  </p>
                 </div>
                   
                 <div className={styles.menuSection}>
@@ -704,6 +721,17 @@ class ChoosePlan extends React.Component {
                     }
                   })()}
                 </div>
+              </div>
+            </div>
+          </div>
+
+          <div className={styles.sectionHeader}>
+            Subtotal
+          </div>
+
+          <div className={styles.container}>
+            <div className={styles.box}>
+              <div className={styles.box1}>
                   
                 <div className={styles.menuSection}>     
                   {(() => {
@@ -744,26 +772,47 @@ class ChoosePlan extends React.Component {
                                 </span>
                                 <br></br>
                                 <span className={styles.priceSubtext}>
-                                  Discount
+                                  Discount applied
                                 </span>
                               </div>
-                              <div className={styles.priceSymbol}>
-                                =
-                              </div>
-                              <div>
+
+                              {/*<div className={styles.priceSymbol}>
+                                = 
+                              </div>*/}
+
+                              <div className={styles.priceTotal}>
+                                <div style={{display: 'inline-flex'}}>
+                                  <div className={styles.priceFormula}>
+                                    9
+                                  </div>
+
+                                  <div className={styles.priceFormula2}>
+                                    meals{" "}for
+                                  </div>
+                                  
+                                  <div className={styles.priceFormula}>
+                                    ${this.calculateTotal()}
+                                  </div>
+                                </div>
+                                {/*<span className={styles.priceFormula}>
+                                  9
+                                </span>
+                                <span className={styles.priceFormula2}>
+                                  meals{" "}for
+                                </span>
                                 <span className={styles.priceFormula}>
                                   ${this.calculateTotal()}
-                                </span>
+                                </span>*/}
                                 <br></br>
-                                <span className={styles.priceSubtext}>
+                                {/*<span className={styles.priceSubtext}>
                                   Total
-                                </span>
+                                </span>*/}
                               </div>
                             </div>
 
 
                             <div className={styles.perMealDeal}>
-                              That's Less Than ${this.calculateDeal()} Per Meal!
+                              That's only ${this.calculateDeal()} per freshly cooked meal
                             </div>
                             <div className={styles.proceedWrapper}>
                               <Link className={styles.proceedBtn} to='/payment-details'>
@@ -774,67 +823,6 @@ class ChoosePlan extends React.Component {
                           </div>
                           </div>
 
-
-
-                        {/*<div className={styles.priceCalculation}>
-                          <div>
-                            <span className={styles.priceFormula}>
-                              {this.props.selectedPlan.num_items} 
-                            </span>
-                            <br></br>
-                            <span className={styles.priceSubtext}>
-                              Meals
-                            </span>
-                          </div>
-                          <div className={styles.priceSymbol}>
-                            x
-                          </div>
-                          <div>
-                            <span className={styles.priceFormula}>
-                              {this.props.selectedPlan.num_deliveries} 
-                            </span>
-                            <br></br>
-                            <span className={styles.priceSubtext}>
-                              Deliveries
-                            </span>
-                          </div>
-                          <div className={styles.priceSymbol}>
-                            -
-                          </div>
-                          <div>
-                            <span className={styles.priceFormula}>
-                              {this.props.selectedPlan.delivery_discount}%
-                            </span>
-                            <br></br>
-                            <span className={styles.priceSubtext}>
-                              Discount
-                            </span>
-                          </div>
-                          <div className={styles.priceSymbol}>
-                            =
-                          </div>
-                          <div>
-                            <span className={styles.priceFormula}>
-                              ${(
-                              this.props.selectedPlan.item_price *
-                              this.props.selectedPlan.num_deliveries *
-                              (1-(this.props.selectedPlan.delivery_discount*0.01))
-                              ).toFixed(2)}
-                            </span>
-                            <br></br>
-                            <span className={styles.priceSubtext}>
-                              Total
-                            </span>
-                          </div>
-                        </div>
-
-                        <div>That's Less Than $x Per Meal!</div>
-                          
-                        <div className={styles.proceedWrapper}>
-                          <Link className={styles.proceedBtn} to='/payment-details'>
-                            PROCEED
-                          </Link>
-                        </div> */}
                         </>
                       );
                     } else {
@@ -854,7 +842,6 @@ class ChoosePlan extends React.Component {
                 
             </div>   
           </div>
-        </div>
       </>
     );
   }
