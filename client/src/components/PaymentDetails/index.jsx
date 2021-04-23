@@ -741,6 +741,11 @@ class PaymentDetails extends React.Component {
           <div className={styles.topHeading}>
             <h6 className={styles.subHeading}> Delivery Details </h6>
           </div>
+
+          <div className={styles.topHeadingRight}>
+            <h6 className={styles.subHeadingRight}> Payment Summary</h6>
+          </div>
+
         </div>
 
 
@@ -887,271 +892,286 @@ class PaymentDetails extends React.Component {
                   });
                 }}
               />
-            </div>
-              
-            <div style = 
-            {{width: '100%', 
-            textAlign: 'right', 
-            paddingRight: '10px', 
-            height: '350px',
-            backgroundColor:'green',
-            }}>
-              placeholder
-              
+
+              <div className = {styles.googleMap} id = "map"/>     
+              <button 
+                style={{
+                  width:'345px',
+                  height:'54px',
+                  marginLeft:'267px',
+                  marginTop:'36px',
+                  backgroundColor:'#f26522',
+                  borderRadius:'15px',
+                  border:'none',
+                  color:'white',
+                  fontSize:'20px'
+                }}
+                onClick={()=>this.saveAndProceedButton()}
+              >
+                    Save and Proceed
+              </button>
             </div>
 
 
+          <div>        
+            <div
+              style={{
+                display:!this.state.showPaymentInfo?'block':'none'
+              }}
+            >
+              please fill out the delivery details,
+              save and proceed to view payment summary
+            </div>
+
+
+            <div
+              style={{
+                visibility:this.state.showPaymentInfo?'visible':'hidden'
+              }}
+            > 
+            <div 
+            style=
+            {{
+              display: 'flex',
+              borderBottom:'solid 2px black'
+            }}
+            >
+              <div className={styles.summaryLeft}>your box</div>
+              <div className={styles.summaryRight}>
+                {
+                  this.props.selectedPlan.num_items
+                } Meals for {
+                  this.props.selectedPlan.num_deliveries
+                } Deliveries</div>
+
+            </div>
+
+              <div style={{display: 'flex'}}>
+
+                  
+                <div style = {{display: 'inline-block', width: '80%', height: '480px'}}>
+
+                  <div className={styles.summaryLeft}>
+                    Meal Subscription ({
+                      this.props.selectedPlan.num_items
+                    } Meals for {
+                      this.props.selectedPlan.num_deliveries
+                    } Deliveries):
+                  </div>
+
+
+
+                  <div className={styles.summaryLeft}>
+                    Discount ({this.props.selectedPlan.delivery_discount}%):
+                  </div>
+                  <div className={styles.summaryLeft}>
+                    Total Delivery Fee For All {
+                      this.props.selectedPlan.num_deliveries
+                    } Deliveries:
+                  </div>
+                  <div className={styles.summaryLeft}>
+                    Service Fee:
+                  </div>
+                  <div className={styles.summaryLeft}>
+                    Taxes:
+                  </div>
+                  <div className={styles.summaryLeft}>
+                    Chef and Driver Tip:
+                  </div>
+                      
+                  <div className={styles.summaryLeft}>
+                    {(() => {
+                      if (this.state.paymentSummary.tip === "0.00") {
+                        return (
+                          <button className={styles.tipButtonSelected} onClick={() => this.changeTip("0.00")}>
+                            No Tip
+                          </button>
+                        );
+                      } else {
+                        return (
+                          <button className={styles.tipButton} onClick={() => this.changeTip("0.00")}>
+                            No Tip
+                          </button>
+                        );
+                      }
+                    })()}
+                    {(() => {
+                      if (this.state.paymentSummary.tip === "2.00") {
+                        return (
+                          <button className={styles.tipButtonSelected} onClick={() => this.changeTip("2.00")}>
+                            $2
+                          </button>
+                        );
+                      } else {
+                        return (
+                          <button className={styles.tipButton} onClick={() => this.changeTip("2.00")}>
+                            $2
+                          </button>
+                        );
+                      }
+                    })()} 
+                    {(() => {
+                      if (this.state.paymentSummary.tip === "3.00") {
+                        return (
+                          <button className={styles.tipButtonSelected} onClick={() => this.changeTip("3.00")}>
+                            $3
+                          </button>
+                        );
+                      } else {
+                        return (
+                          <button className={styles.tipButton} onClick={() => this.changeTip("3.00")}>
+                            $3
+                          </button>
+                        );
+                      }
+                    })()} 
+                    {(() => {
+                      if (this.state.paymentSummary.tip === "5.00") {
+                        return (
+                          <button className={styles.tipButtonSelected} onClick={() => this.changeTip("5.00")}>
+                            $5
+                          </button>
+                        );
+                      } else {
+                        return (
+                          <button className={styles.tipButton} onClick={() => this.changeTip("5.00")}>
+                            $5
+                          </button>
+                        );
+                      }
+                    })()}
+                  </div>
+                    
+                  <input
+                    type='text'
+                    placeholder='Enter Ambassador Code'
+                    className={styles.inputAmbassador}
+                    onChange={e => {
+                      this.setState({
+                        ambassadorCode: e.target.value
+                      });
+                    }}
+                  />
+                    
+                  <button 
+                    className={styles.codeButton}
+                    onClick={() => this.applyAmbassadorCode()}
+                  >
+                    APPLY CODE
+                  </button>
+                    
+                </div>
+                
+                <div style = {{display: 'inline-block', width: '20%', height: '480px'}}>
+                  <div className={styles.summaryRight}>
+                    ${this.state.paymentSummary.mealSubPrice}
+                  </div>
+                  <div className={styles.summaryRight}>
+                    {console.log("----- discount: " + this.state.paymentSummary.discountAmount)}
+                    -${this.state.paymentSummary.discountAmount}
+                  </div>
+                  <div className={styles.summaryRight}>
+                    ${(this.state.paymentSummary.deliveryFee)}
+                  </div>
+                  <div className={styles.summaryRight}>
+                    ${(this.state.paymentSummary.serviceFee)}
+                  </div>
+                  <div className={styles.summaryRight}>
+                    {console.log("----- tax: " + this.state.paymentSummary.taxAmount)}
+                    ${(this.state.paymentSummary.taxAmount)}
+                  </div>
+                  <div className={styles.summaryRight}>
+                    ${(this.state.paymentSummary.tip)}
+                  </div>
+                  <div className={styles.summaryRight2}>
+                    ${this.calculateSubtotal()}
+                  </div>
+                  <div className={styles.summaryRight2}>
+                    {console.log("ambassador discount: " + this.state.ambassadorDiscount)}
+                    -${this.state.paymentSummary.ambassadorDiscount}
+                  </div>
+                  <hr className={styles.sumLine}></hr>
+                  <div className={styles.summaryRight2}>
+                    ${this.calculateTotal()}
+                  </div>
+                </div>
+              </div>
+                
+              <div className={styles.topHeading}>
+                <h6 className={styles.subHeading}>PAYMENT OPTIONS</h6>
+              </div>
+                
+              <div style={{display: 'flex'}}>
+                <div style = {{display: 'inline-block', width: '80%', height: '500px'}}>
+                  <div className={styles.buttonContainer}>
+                    <button className={styles.button} onClick={() => {
+                      if(this.state.paymentType === 'STRIPE'){
+                        this.setPaymentType('NULL');
+                      } else {
+                        this.setPaymentType('STRIPE');
+                      }
+                      this.setTotal();
+                    }}>
+                      STRIPE
+                    </button>
+                  </div>
+                  <div className = {styles.buttonContainer}>
+                    {/* {console.log("stripe payment summary: " + JSON.stringify(this.state.paymentSummary))} */}
+                    {this.state.paymentType === 'STRIPE' && (
+                      <StripeElement
+                        customerPassword={this.state.customerPassword}
+                        deliveryInstructions={this.state.instructions}
+                        setPaymentType={this.setPaymentType}
+                        paymentSummary={this.state.paymentSummary}
+                        loggedInByPassword={loggedInByPassword}
+                        latitude={this.state.latitude.toString()}
+                        longitude={this.state.longitude.toString()}
+                        email={this.state.email}
+                        customerUid={this.state.customerUid}
+                      />
+                    )}
+                  </div>
+                  <div className={styles.buttonContainer}>
+                    <button className={styles.button} onClick={() => {
+                      if(this.state.paymentType === 'PAYPAL'){
+                        this.setPaymentType('NULL');
+                      } else {
+                        this.setPaymentType('PAYPAL');
+                      }
+                      this.setTotal();
+                    }}>
+                      PAYPAL
+                    </button>
+                    {console.log("paypal payment summary: " + JSON.stringify(this.state.paymentSummary))}
+                    {this.state.paymentType === 'PAYPAL' && 
+                    parseFloat(this.state.paymentSummary.total) > 0  && (
+                      <PayPal
+                        deliveryInstructions={this.state.instructions}
+                        paymentSummary={this.state.paymentSummary}
+                        customerPassword={this.state.customerPassword}
+                        loggedInByPassword={loggedInByPassword}
+                        latitude={this.state.latitude.toString()}
+                        longitude={this.state.longitude.toString()}
+                        email={this.state.email}
+                        customerUid={this.state.customerUid}
+                      />
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            </div>
           </div>
 
 
-          <div className = {styles.googleMap} id = "map"/>
 
-            
-          <button 
-            style={{
-              width:'345px',
-              height:'54px',
-              marginLeft:'267px',
-              marginTop:'36px',
-              backgroundColor:'#f26522',
-              borderRadius:'15px',
-              border:'none',
-              color:'white',
-              fontSize:'20px'
-            }}
-            onClick={()=>this.saveAndProceedButton()}
-          >
-                Save and Proceed
-          </button>
           
 
 
 
 
-          <div
-          style={{
-            visibility:this.state.showPaymentInfo?'visible':'hidden'
-          }}
-          >
-            <div style = {{margin: '30px 0 10px 20px'}}>
-              Terms and Conditions
-            </div>
-      
-            <div className={styles.paymentContainer}>
-              <div className={styles.topHeading}>
-                <h6 className={styles.subHeading}>PAYMENT SUMMARY</h6>
-              </div>
-            </div>
-              
-            <div style={{display: 'flex'}}>
-                
-              <div style = {{display: 'inline-block', width: '80%', height: '480px'}}>
-                <div className={styles.summaryLeft}>
-                  Meal Subscription ({
-                    this.props.selectedPlan.num_items
-                  } Meals for {
-                    this.props.selectedPlan.num_deliveries
-                  } Deliveries):
-                </div>
-                <div className={styles.summaryLeft}>
-                  Discount ({this.props.selectedPlan.delivery_discount}%):
-                </div>
-                <div className={styles.summaryLeft}>
-                  Total Delivery Fee For All {
-                    this.props.selectedPlan.num_deliveries
-                  } Deliveries:
-                </div>
-                <div className={styles.summaryLeft}>
-                  Service Fee:
-                </div>
-                <div className={styles.summaryLeft}>
-                  Taxes:
-                </div>
-                <div className={styles.summaryLeft}>
-                  Chef and Driver Tip:
-                </div>
-                    
-                <div className={styles.summaryLeft}>
-                  {(() => {
-                    if (this.state.paymentSummary.tip === "0.00") {
-                      return (
-                        <button className={styles.tipButtonSelected} onClick={() => this.changeTip("0.00")}>
-                          No Tip
-                        </button>
-                      );
-                    } else {
-                      return (
-                        <button className={styles.tipButton} onClick={() => this.changeTip("0.00")}>
-                          No Tip
-                        </button>
-                      );
-                    }
-                  })()}
-                  {(() => {
-                    if (this.state.paymentSummary.tip === "2.00") {
-                      return (
-                        <button className={styles.tipButtonSelected} onClick={() => this.changeTip("2.00")}>
-                          $2
-                        </button>
-                      );
-                    } else {
-                      return (
-                        <button className={styles.tipButton} onClick={() => this.changeTip("2.00")}>
-                          $2
-                        </button>
-                      );
-                    }
-                  })()} 
-                  {(() => {
-                    if (this.state.paymentSummary.tip === "3.00") {
-                      return (
-                        <button className={styles.tipButtonSelected} onClick={() => this.changeTip("3.00")}>
-                          $3
-                        </button>
-                      );
-                    } else {
-                      return (
-                        <button className={styles.tipButton} onClick={() => this.changeTip("3.00")}>
-                          $3
-                        </button>
-                      );
-                    }
-                  })()} 
-                  {(() => {
-                    if (this.state.paymentSummary.tip === "5.00") {
-                      return (
-                        <button className={styles.tipButtonSelected} onClick={() => this.changeTip("5.00")}>
-                          $5
-                        </button>
-                      );
-                    } else {
-                      return (
-                        <button className={styles.tipButton} onClick={() => this.changeTip("5.00")}>
-                          $5
-                        </button>
-                      );
-                    }
-                  })()}
-                </div>
-                  
-                <input
-                  type='text'
-                  placeholder='Enter Ambassador Code'
-                  className={styles.inputAmbassador}
-                  onChange={e => {
-                    this.setState({
-                      ambassadorCode: e.target.value
-                    });
-                  }}
-                />
-                  
-                <button 
-                  className={styles.codeButton}
-                  onClick={() => this.applyAmbassadorCode()}
-                >
-                  APPLY CODE
-                </button>
-                  
-              </div>
-              
-              <div style = {{display: 'inline-block', width: '20%', height: '480px'}}>
-                <div className={styles.summaryRight}>
-                  ${this.state.paymentSummary.mealSubPrice}
-                </div>
-                <div className={styles.summaryRight}>
-                  {console.log("----- discount: " + this.state.paymentSummary.discountAmount)}
-                  -${this.state.paymentSummary.discountAmount}
-                </div>
-                <div className={styles.summaryRight}>
-                  ${(this.state.paymentSummary.deliveryFee)}
-                </div>
-                <div className={styles.summaryRight}>
-                  ${(this.state.paymentSummary.serviceFee)}
-                </div>
-                <div className={styles.summaryRight}>
-                  {console.log("----- tax: " + this.state.paymentSummary.taxAmount)}
-                  ${(this.state.paymentSummary.taxAmount)}
-                </div>
-                <div className={styles.summaryRight}>
-                  ${(this.state.paymentSummary.tip)}
-                </div>
-                <div className={styles.summaryRight2}>
-                  ${this.calculateSubtotal()}
-                </div>
-                <div className={styles.summaryRight2}>
-                  {console.log("ambassador discount: " + this.state.ambassadorDiscount)}
-                  -${this.state.paymentSummary.ambassadorDiscount}
-                </div>
-                <hr className={styles.sumLine}></hr>
-                <div className={styles.summaryRight2}>
-                  ${this.calculateTotal()}
-                </div>
-              </div>
-            </div>
-              
-            <div className={styles.topHeading}>
-              <h6 className={styles.subHeading}>PAYMENT OPTIONS</h6>
-            </div>
-              
-            <div style={{display: 'flex'}}>
-              <div style = {{display: 'inline-block', width: '80%', height: '500px'}}>
-                <div className={styles.buttonContainer}>
-                  <button className={styles.button} onClick={() => {
-                    if(this.state.paymentType === 'STRIPE'){
-                      this.setPaymentType('NULL');
-                    } else {
-                      this.setPaymentType('STRIPE');
-                    }
-                    this.setTotal();
-                  }}>
-                    STRIPE
-                  </button>
-                </div>
-                <div className = {styles.buttonContainer}>
-                  {/* {console.log("stripe payment summary: " + JSON.stringify(this.state.paymentSummary))} */}
-                  {this.state.paymentType === 'STRIPE' && (
-                    <StripeElement
-                      customerPassword={this.state.customerPassword}
-                      deliveryInstructions={this.state.instructions}
-                      setPaymentType={this.setPaymentType}
-                      paymentSummary={this.state.paymentSummary}
-                      loggedInByPassword={loggedInByPassword}
-                      latitude={this.state.latitude.toString()}
-                      longitude={this.state.longitude.toString()}
-                      email={this.state.email}
-                      customerUid={this.state.customerUid}
-                    />
-                  )}
-                </div>
-                <div className={styles.buttonContainer}>
-                  <button className={styles.button} onClick={() => {
-                    if(this.state.paymentType === 'PAYPAL'){
-                      this.setPaymentType('NULL');
-                    } else {
-                      this.setPaymentType('PAYPAL');
-                    }
-                    this.setTotal();
-                  }}>
-                    PAYPAL
-                  </button>
-                  {console.log("paypal payment summary: " + JSON.stringify(this.state.paymentSummary))}
-                  {this.state.paymentType === 'PAYPAL' && 
-                  parseFloat(this.state.paymentSummary.total) > 0  && (
-                    <PayPal
-                      deliveryInstructions={this.state.instructions}
-                      paymentSummary={this.state.paymentSummary}
-                      customerPassword={this.state.customerPassword}
-                      loggedInByPassword={loggedInByPassword}
-                      latitude={this.state.latitude.toString()}
-                      longitude={this.state.longitude.toString()}
-                      email={this.state.email}
-                      customerUid={this.state.customerUid}
-                    />
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
+
             
         </div>
       </div>
