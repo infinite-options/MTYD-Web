@@ -1072,7 +1072,7 @@ class PaymentDetails extends React.Component {
                   color:'white',
                   fontSize:'20px'
                 }}
-                onClick={()=>this.saveAndProceedButton()}
+                onClick={()=>this.proceedToPayment()}
               >
                     Save and Proceed
               </button>
@@ -1269,7 +1269,7 @@ class PaymentDetails extends React.Component {
                 
               <div style={{display: 'flex'}}>
                 <div style = {{display: 'inline-block', width: '80%', height: '500px'}}>
-                  <div className={styles.buttonContainer}>
+                  {/*<div className={styles.buttonContainer}>
                     <button className={styles.button} onClick={() => {
                       if(this.state.paymentType === 'STRIPE'){
                         this.setPaymentType('NULL');
@@ -1280,10 +1280,10 @@ class PaymentDetails extends React.Component {
                     }}>
                       STRIPE
                     </button>
-                  </div>
+                  </div>*/}
                   <div className = {styles.buttonContainer}>
                     {/* {console.log("stripe payment summary: " + JSON.stringify(this.state.paymentSummary))} */}
-                    {this.state.paymentType === 'STRIPE' && (
+                    {/*this.state.paymentType === 'STRIPE' && (
                       <StripeElement
                         customerPassword={this.state.customerPassword}
                         deliveryInstructions={this.state.instructions}
@@ -1295,9 +1295,23 @@ class PaymentDetails extends React.Component {
                         email={this.state.email}
                         customerUid={this.state.customerUid}
                       />
-                    )}
+                    )*/}
+                      <StripeElement
+                        stripePromise={this.state.stripePromise}
+                        customerPassword={this.state.customerPassword}
+                        deliveryInstructions={this.state.instructions}
+                        setPaymentType={this.setPaymentType}
+                        paymentSummary={this.state.paymentSummary}
+                        loggedInByPassword={loggedInByPassword}
+                        latitude={this.state.latitude.toString()}
+                        longitude={this.state.longitude.toString()}
+                        email={this.state.email}
+                        customerUid={this.state.customerUid}
+                        phone={this.state.phone}
+                        cardInfo={this.state.cardInfo}
+                      />
                   </div>
-                  <div className={styles.buttonContainer}>
+                  {/*<div className={styles.buttonContainer}>
                     <button className={styles.button} onClick={() => {
                       if(this.state.paymentType === 'PAYPAL'){
                         this.setPaymentType('NULL');
@@ -1322,7 +1336,7 @@ class PaymentDetails extends React.Component {
                         customerUid={this.state.customerUid}
                       />
                     )}
-                  </div>
+                  </div>*/}
                 </div>
               </div>
             </div>
