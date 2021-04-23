@@ -57,12 +57,21 @@ class MenuCarousel extends Component {
           menuItems: filteredData
         })
       }
+      triggerAutoPlay() {
+      /*const { autoplay, autoplayInterval, children } = this.props;
+      const count = ReactChildren.count(children as React.ReactChildren);*/
 
+      /*if (!this._autoplayTimer && autoplay && count > 1) {*/
+        setTimeout(this.handleNav, 3000);
+      /*}*/
+    }
     handleNav = (direction) => {
         if(direction === 'left') {
-            this.navRef.current.scrollLeft -= 292
+            this.navRef.current.scrollLeft -= 592
+			this.triggerAutoPlay();
         } else {
-            this.navRef.current.scrollLeft += 292
+            this.navRef.current.scrollLeft += 592
+			this.triggerAutoPlay();
         }
     }
 
@@ -73,12 +82,10 @@ class MenuCarousel extends Component {
     
         if (this.state.menuItems.length) {
           menuHTML = this.state.menuItems.map((item, index) =>
-          <div key = {index} className = {styles.menuContainer}>
-              <h6 className = {styles.itemName}>{item.meal_name}</h6>
-            <div  className = {styles.imageContainer} style = {{backgroundImage: `url(${item.meal_photo_URL})`}}>
-                <img className = {styles.menuEye} src = {eye}></img>
+          <div key = {index} className = {styles.menuContainer}>              
+            <div  className = {styles.imageContainer} style = {{backgroundImage: `url(${item.meal_photo_URL})`}}>   
             </div>  
-            
+             <h6 className = {styles.itemName}>{item.meal_name}</h6>            
           </div>
             
 
@@ -92,17 +99,14 @@ class MenuCarousel extends Component {
 
     render() { 
         return ( 
-            <div style = {{display: 'flex', flexDirection: 'row', width: '100%', marginTop: '50px'}}>
-                <div style = {{display: 'grid', justifyContent: 'center', alignItems: 'center'}}>
-                    <button onClick = {() => this.handleNav('left')} className = {styles.carouselButtons}> Prev</button>
-                </div>
-                <div style = {{overflow: 'auto', overflow: 'hidden', whiteSpace: 'nowrap'}} ref = {this.navRef}>
+		    <div>
+            <div style = {{display: 'flex', flexDirection: 'row', width: '100%'}}>
+             <button onClick = {() => this.handleNav('left')} className = {styles.carouselButtons}></button> 
+                <div style = {{overflow: 'hidden', whiteSpace: 'nowrap'}} ref = {this.navRef}>
                     {this.menuLoop()}
                 </div>
-
-                <div style = {{display: 'grid', justifyContent: 'center', alignItems: 'center'}}>
-                    <button onClick = {() => this.handleNav('right')} className = {styles.carouselButtons}> Next</button>
-                </div>
+             <button onClick = {() => this.handleNav('right')} className = {styles.carouselButtons}></button>
+            </div>
             </div>
             
          );
