@@ -37,6 +37,14 @@ class FootLink extends Component {
 }
 
 class AmbassadorLink extends Component {
+    state = {
+       seen: false
+       };
+    togglePop = () => {
+       this.setState({
+       seen: !this.state.seen
+       });
+     };	
     render() { 
         return (
             <Link className = {styles.ambassadorButton} to={this.props.link}>
@@ -45,5 +53,39 @@ class AmbassadorLink extends Component {
          );
     }
 }
- 
-export {HomeLink, FootLink, AmbassadorLink, AddressLink};
+class AppForAmbassador extends Component {
+    state = {
+       seen: false
+    };
+    togglePop = () => {
+       this.setState({
+       seen: !this.state.seen
+    });
+    };
+    render() {
+         return (
+             <div>
+               <div className="btn" onClick={this.togglePop}>
+               <button>New User?</button>
+               </div>
+              {this.state.seen ? <PopUp toggle={this.togglePop} /> : null}
+             </div>
+            );
+        }
+}
+class PopUp extends Component {
+    handleClick = () => {
+        this.props.toggle();
+    };
+    render() {
+        return (
+          <div className="modal">
+          <div className="modal_content">
+          <span className="close" onClick={this.handleClick}>&times;    </span>
+     <p>I'm A Pop Up!!!</p>
+    </div>
+   </div>
+  );
+ }
+}
+export {PopUp, HomeLink, FootLink, AmbassadorLink, AddressLink, AppForAmbassador};

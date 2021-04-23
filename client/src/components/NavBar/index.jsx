@@ -227,6 +227,7 @@ class NavBar extends React.Component {
 
 
         <div
+		
         style={{
           position:"absolute",
           width:"60px",
@@ -235,7 +236,6 @@ class NavBar extends React.Component {
           left:"60px"
         }}
         >
-
         </div>
 
         <div>
