@@ -53,16 +53,34 @@
 }
 
 .topHeading {
-  padding: 10px 20px 0 0;
+  background-color: #f8bb17;
+  width:62.5%;
+  height:60px;
+  margin-top: 36px;
 }
-
 .subHeading {
   font-weight: bold;
   color: black;
-  font-size: 1.4rem;
-  margin: 1rem 0rem;
-  padding-left: 20px;
+  font-size: 24px;
+  margin-left: 200px;
+  padding-top: 16px;
 }
+
+.topHeadingRight {
+  background-color: #f8bb17;
+  width:35%;
+  height:60px;
+  margin-top: 36px;
+  margin-left: 60px;
+}
+.subHeadingRight {
+  font-weight: bold;
+  color: black;
+  font-size: 24px;
+  margin-left: 20px;
+  padding-top: 16px;
+}
+
 textarea::placeholder {
   font-size: larger;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
@@ -92,7 +110,7 @@ textarea::placeholder {
 .summaryLeft {
   width: 100%;
   text-align: left;
-  margin: 0px 30px 20px;
+  margin: 0px 0px 20px;
 }
 
 .summaryRight {
@@ -176,13 +194,13 @@ select {
   text-overflow: "";
 }
 .input {
-  width: 90%;
+  width: 903px;
   height: 2.2rem;
   border-radius: 10px;
   border: solid;
   border-width: 1px;
   background-color: #F0F0F0;
-  margin: 0px 0px 15px 20px;
+  margin: 0px 0px 15px 0px;
   padding: 6px 0px 6px 10px;
 }
 
@@ -198,24 +216,24 @@ select {
 }
 
 .inputContactLeft {
-  width: 91%;
-  height: 2.2rem;
+  width: 440px;
+  height: 40px;
   border-radius: 10px;
   border: solid;
   border-width: 1px;
   background-color: #F0F0F0;
-  margin: 0px 0px 15px 20px;
+  margin: 0px 24px 15px 0px;
   padding: 6px 0px 6px 10px;
 }
 
 .inputContactRight {
-  width: 81%;
-  height: 2.2rem;
+  width: 440px;
+  height: 40px;
   border-radius: 10px;
   border: solid;
   border-width: 1px;
   background-color: #F0F0F0;
-  margin: 0px 0px 15px 20px;
+  margin: 0px 0px 15px 0px;
   padding: 6px 0px 6px 10px;
 }
 
@@ -278,13 +296,13 @@ select {
 }
 
 .googleMap {
-  width: 90%;
-  height: 100%;
+  width: 903px;
+  height: 255px;
   border-radius: 3px;
   border: solid;
   border-width: 1px;
   background-color: #F0F0F0;
-  margin: 0px 0px 15px 20px;
+  /* margin: 0px 0px 15px 20px; */
   vertical-align: middle;
 }
 

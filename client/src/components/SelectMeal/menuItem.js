@@ -132,14 +132,14 @@ class MenuItem extends React.Component {
       x = x.filter(item => item.meal_cat === 'Add-On')
     }
 
-    // console.log(x)
+
 
     menuHTML = x.map((menuitem, index) => (
 
       
       <div
         key={index}
-        className={styles.menuitemIndividual + " px-5"}
+        className={styles.menuitemIndividual}
       >
         {/* {
           console.log(menuitem)
@@ -149,6 +149,7 @@ class MenuItem extends React.Component {
             backgroundImage: `url(${menuitem.meal_photo_URL})`,
             backgroundSize: "cover",
             backgroundPosition:'center'
+            // backgroundColor:"black"
             
           }}
           className={styles.menuItem}
@@ -160,8 +161,11 @@ class MenuItem extends React.Component {
             <button className={styles.infoButton}>
               <img src={info}
                     style={{
-                      height:40,
-                      width:40,
+                      height:30,
+                      width:30,
+                      borderRadius: '0 0 0 100px',
+                      marginRight:'7px',
+                      marginBottom:'2px',
                     }}
               ></img>
             </button>
@@ -170,12 +174,14 @@ class MenuItem extends React.Component {
           <button 
           onClick={this.changeHeart}
           className={styles.heartButton}
-          
           >
             <img src={this.state.favList.includes(menuitem.meal_uid)?fullHeart:emptyHeart}
                   style={{
-                    height:40,
-                    width:40,
+                    height:30,
+                    width:30,
+                    borderRadius: '0 0 100px 0',
+                    marginRight:'7px',
+                    marginBottom:'2px',
                   }}
                   id = {menuitem.meal_uid}
             ></img>
@@ -186,12 +192,9 @@ class MenuItem extends React.Component {
               <button
                 onClick={() => this.props.removeFromCart(menuitem)}
                 style={{
-                  border: 'none',
-                  borderRadius: 5,
-                  backgroundColor: 'white',
-                  width: '50px',
-                  height: '50px',
-                  top:'50'
+                  width: '60px',
+                  height: '42px',
+                  top:'223px'
                 }}
                 className={styles.minusElements}
                 id={styles.mealCounter}
@@ -199,37 +202,45 @@ class MenuItem extends React.Component {
                 -
               </button>
 
-              {cartItems.length > 0 &&
-                cartItems.map((item, index) => {
+              {cartItems.length==0 ?(
+                <div key = {index}
+                  style={{
+                    width: '64px',
+                    height: '42px',
+                    top:'223px',
+                    right:'59.5px',
+                  }}
+                  className={styles.numElements}
+                  id={styles.mealCounter}
+                >
+                  {0}
+                </div>
+              ):(cartItems.map((item, index) => {
                 return (
-                  item.menu_meal_id === menuitem.menu_meal_id && (
-                    <div key = {index}
-                      style={{
-                        border: 'none',
-                        borderRadius: 5,
-                        backgroundColor: 'white',
-                        width: '50px',
-                        height: '50px',
-                        top:'50'
-                      }}
-                      className={styles.numElements}
-                      id={styles.mealCounter}
-                    >
-                      {item.count}
-                    </div>
-                  )
+                  <div key = {index}
+                    style={{
+                      width: '64px',
+                      height: '42px',
+                      top:'223px',
+                      right:'59.5px',
+                    }}
+                    className={styles.numElements}
+                    id={styles.mealCounter}
+                  >
+                    {item.menu_meal_id === menuitem.menu_meal_id?(item.count):(0) }
+                  </div>
                 );
-              })}
+              }))
+              
+            }
             
               <button
                 onClick={() => this.props.addToCart(menuitem)}
                 style={{
-                  border: 'none',
-                  borderRadius: 5,
-                  backgroundColor: 'white',
-                  width: '50px',
-                  height: '50px',
-                  top:'50'
+                  width: '60px',
+                  height: '42px',
+                  top:'223px',
+                  left:'124px'
                 }}
                 className={styles.plusElements}
                 id={styles.mealCounter}
@@ -261,6 +272,12 @@ class MenuItem extends React.Component {
 
     return (
       <Fragment>
+        <div
+          style={{
+            width:"100%",
+            height:'7px',
+          }}
+        />
         {this.menuItemFilter()}
       </Fragment>
     );

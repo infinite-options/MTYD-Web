@@ -1,9 +1,9 @@
 .menu {
   width: 90%;
   display: flex;
-  justify-content: space-between;
-  margin-bottom: 20px;
-  margin-left:20px;
+  position:relative;
+  height:100px;
+
 }
 
 .menu1 {
@@ -92,13 +92,15 @@ a img {
 .navMessage {
   width: 400px;
   color: black !important;
-  font-size: 25px !important;
+  font-size: 24px !important;
   font-weight: 600 !important;
   margin-bottom: 0px;
-  margin-top: 1rem;
-  padding: 20px !important;
+
+
+  padding-left: 0px;
   text-align: center;
-  margin-left: 60px;
+  margin-left: 120px;
+  margin-top: 79px;
   
 }
 
@@ -111,3 +113,73 @@ a img {
   position:relative;
   text-align: center;
 } 
+
+select.pickers {
+
+
+  background-image:
+    linear-gradient(45deg, transparent 50%, white 50%),
+    linear-gradient(135deg, white 50%, transparent 50%);
+  background-position:
+    calc(100% - 30px) calc(15px),
+    calc(100% - 15px) calc(15px),
+    100% 0;
+  background-size:
+    15px 15px,
+    15px 15px;
+    /* 2.6em 2.6em */
+  background-repeat: no-repeat;
+
+
+
+
+
+
+
+
+
+
+
+}
+
+
+
+
+select {
+  display: inline-block;
+  font: inherit;
+  line-height: 1.5em;
+  padding: 0.5em 3.5em 0.5em 1em;
+
+
+  margin: 0;      
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+
+  -moz-appearance: none;
+
+  text-align-last: left !important;
+  -webkit-appearance: menulist;
+  height: 40px;
+  width: 350px;
+  position: relative;
+
+  border-radius: 20px;
+  color: white;
+  font-weight: 500;
+  border: 1px solid #ffba00;
+
+  font-size: 18px;
+
+  background-color: #f26522;
+
+
+
+
+}
+
+
+.pickers:focus {
+  outline: none;
+}

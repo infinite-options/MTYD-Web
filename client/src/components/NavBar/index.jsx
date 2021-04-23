@@ -18,6 +18,7 @@ import whiteLogo from "../../images/White_logo_for_web.png";
 import axios from 'axios';
 import { API_URL } from '../../reducers/constants';
 import PopLogin from "../PopLogin";
+import NavMenu from "../NavBarHamburger";
 
 class SideNavBar extends React.Component {
   render() {
@@ -225,18 +226,7 @@ class NavBar extends React.Component {
     return (
       <div className={styles.navbar}>
 
-
-        <div
-        style={{
-          position:"absolute",
-          width:"60px",
-          height:"40px",
-          backgroundColor:"white",
-          left:"60px"
-        }}
-        >
-
-        </div>
+        <NavMenu/>
 
         <div>
         <a href='/home' style={{
