@@ -124,7 +124,8 @@ class Home extends Component {
             <div className = {styles.centerSubtitleText}>
 			<img className = {styles.centerImage} src = {Logo} alt="logo" /></div>
 			 <input style = {{width: '320px', height: '57px', marginLeft: '40px', marginTop: '-30px', marginBottom:'15px', borderRadius:'10px', borderColor: 'F8BB17', fontFamily: '-apple-system, BlinkMacSystemFont', font: 'normal normal bold 24px/29px SF Pro Display'}} placeholder = "Enter zip code"/>
-			 <img className = {styles.buttonsBelowTheLogo} src = {viewMealsImg}/> 
+             <HomeLink text = {viewMealsImg} link = "/select-meal"/>
+				 {/*<img className = {styles.buttonsBelowTheLogo} src = {viewMealsImg}/>*/}
             <div style = {{display: 'inline-flex', justifyContent: 'space-between'}}>
 
             </div>   

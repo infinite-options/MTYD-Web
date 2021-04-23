@@ -6,8 +6,8 @@ import {Link} from "react-router-dom";
 class HomeLink extends Component {
     render() { 
         return (
-            <Link className = {styles.orangeButton} to={this.props.link}>
-              {this.props.text}
+            <Link to={this.props.link}>
+              <img className = {styles.buttonsBelowTheLogo} src = {this.props.text}/>
             </Link>
          );
     }
@@ -82,7 +82,7 @@ class PopUp extends Component {
           <div className="modal">
           <div className="modal_content">
           <span className="close" onClick={this.handleClick}>&times;    </span>
-     <p>I'm A Pop Up!!!</p>
+     <p>Placeholder for ambassadorButton</p>
     </div>
    </div>
   );
