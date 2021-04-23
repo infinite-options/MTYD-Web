@@ -25,17 +25,18 @@
   display: flex;
   width: 50%;
   flex-direction: row;
-  margin-top: 1rem;
+  margin-top: 50px;
   /*padding: 0px;*/
   text-align: left;
+  font-size: 20px;
   /*border: dotted;*/
 }
 .logo > p {
   display: block;
   padding: 0px;
   margin-bottom: 0px;
-  font-weight: bold;
-  font-size: 14px;
+  font-weight: 500;
+  font-size: 20px;
 }
 
 .menuSection {
@@ -49,10 +50,12 @@
   left: 50%;
   transform: translate(-50%, -50%);
   text-align: center;
-  margin-top: 60px;
+  margin-top: 150px;
+  padding-bottom: 50px;
+  /*border: solid;*/
 }
 
-.perMealDeal {
+/*.perMealDeal {
   text-align: center;
   font-size: 45px;
   margin-top: 200px;
@@ -61,6 +64,11 @@
   transform: translate(-50%, -50%);
   width: 100%;
   font-weight: bold;
+}*/
+.perMealDeal {
+  text-align: center;
+  font-size: 25px;
+  margin-top: 15px;
 }
 
 .priceFormula {
@@ -68,12 +76,12 @@
   font-size: 70px;
   text-align: center;
   margin: 0px 30px 0px 30px;
-  /*border: solid;*/
+  /*border: dotted;*/
 }
 
 .priceFormula2 {
   /*font-weight: bold;*/
-  font-size: 30px;
+  font-size: 25px;
   text-align: center;
   /*border: dashed;*/
   white-space: nowrap;
@@ -86,24 +94,44 @@
   border: solid;
   border-radius: 25px;
   border-color: #ff6505;
+  height: 120px;
 }
 
-.priceWaitMessage {
+/*.priceWaitMessage {
   font-weight: bold;
   font-size: 50px;
   text-align: center;
   margin: 50px 0px 0px 0px;
+}*/
+.priceWaitMessage {
+  font-weight: bold;
+  font-size: 50px;
+  float: left;
+  /*margin: 0px 100px 0px 0px;*/
+  padding-bottom: 50px;
 }
 
 .priceSymbol {
   font-weight: bold;
   font-size: 70px;
   text-align: center;
+  /*border: double;*/
+}
+
+/*.priceSpaceBig {
+  width: 60px;
+  border: double;
+}*/
+
+.priceSpaceSmall {
+  width: 40px;
+  /*border: double;*/
 }
 
 .priceSubtext {
-  font-size: 30px;
+  font-size: 25px;
   text-align: center;
+  /*border: solid;*/
 }
 
 .box {
@@ -138,6 +166,12 @@
   font-weight: bold;
   color: black;
 }
+.subHeader {
+  padding: 10px 10px 10px 0px;
+  font-size: 20px;
+  font-weight: 500;
+  color: black;
+}
 .center {
   display: block;
   margin: auto;
@@ -146,10 +180,12 @@
 .mealButtonWrapper {
   display: inline-block;
   margin-right: 35px;
-  width: 150px;
+  margin-bottom: 50px;
+  width: 120px;
+  height: 120px;
 }
 
-.mealButton {
+/*.mealButton {
   color: #000000;
   border: 1px solid #e4e4e4;
   box-shadow: 2px 2px #d3d3d3;
@@ -164,10 +200,30 @@
   font-weight: 600;
   outline: 0;
   width: 100%;
+}*/
+
+.mealButton {
+  /*color: #000000;*/
+  color: #ffffff;
+  border: 1px solid #e4e4e4;
+  background-color: #ffffff;
+  border-radius: 50%;
+  padding: 0.75rem 0.75rem;
+  margin-top: 15px;
+  align-content: center;
+  flex: 1;
+  min-width: 20%;
+  font-size: 30px;
+  font-weight: 600;
+  outline: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('./static/yellow_plate.png');
+  background-size: 100%;
 }
 
 .mealButtonSelected {
-  /* border: 2px solid #ee9043; */
+  background-image: url('./static/orange_plate.png');
   background-color: #FFBA00;
   outline: 0;
 }
@@ -263,7 +319,13 @@
   padding: 5px;
 }
 
-.proceedBtn {
+/*.perMealDeal {
+  text-align: center;
+  font-size: 25px;
+  margin-top: 15px;
+}*/
+
+/*.proceedBtn {
   text-align: center;
   justify-content: center;
   padding: 5px !important;
@@ -273,17 +335,38 @@
   border-radius: 10px;
   min-width: 100px !important;
   font-weight: bold;
-  background-color: #ffba00;
+  background-color: #ff6505;
   width: 300px;
+}*/
+.proceedBtn {
+  text-align: center;
+  justify-content: center;
+  padding: 5px !important;
+  /*color: black !important;*/
+  color: #ffffff;
+  font-size: 16px !important;
+  /*border: 1px solid rgb(187, 174, 174);*/
+  border-radius: 10px;
+  min-width: 100px !important;
+  font-weight: bold;
+  background-color: #ff6505;
+  margin-top: 20px;
+  width: 60%;
 }
-
 .proceedWrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  font-size: 25px;
+  margin-top: 15px;
+}
+/*.proceedWrapper {
   position: absolute;
   left: 50%;
   transform: translate(-50%, -50%);
   margin-top: 350px;
   padding-bottom: 100px;
-}
+}*/
 
 .totalBtn,
 .finishBtn {
@@ -350,20 +433,22 @@
   .sectionHeader {
     background-color: #ffba00;
     width: 100%;
-    height: 50px;
+    height: 60px;
     font-weight: bold;
     padding-left: 100px;
     padding-top: 12px;
+    font-size: 25px;
   }
 
   .sectionHeaderUL {
     background-color: #ffba00;
     width: 100%;
-    height: 50px;
+    height: 60px;
     font-weight: bold;
     padding-left: 100px;
     padding-top: 12px;
     text-decoration: underline;
+    font-size: 25px;
   }
 
   .avatar {

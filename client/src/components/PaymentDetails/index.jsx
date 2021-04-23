@@ -113,6 +113,7 @@ class PaymentDetails extends React.Component {
       ambassadorError: false,
       paymentType: 'NULL',
       fetchingFees: true,
+      recalculatingPrice: false,
       stripePromise: null
     };
   }
@@ -313,6 +314,7 @@ class PaymentDetails extends React.Component {
       this.setState(prevState => ({
         mounted: true,
         customerUid: customerUid,
+        recalculatingPrice: true,
         paymentSummary: {
           ...prevState.paymentSummary,
           mealSubPrice: (
@@ -331,12 +333,13 @@ class PaymentDetails extends React.Component {
             this.state.paymentSummary.taxRate * 0.01
           ).toFixed(2)
         }
-      }));
+      }), () => {
+        this.setTotal();
+      });
       console.log("paymentSummary: " + JSON.stringify(this.state.paymentSummary));
       console.log("taxAmount toFixed: " + this.state.taxAmount);
       console.log("discountAmount toFixed: " + this.state.discountAmount);
       this.props.fetchProfileInformation(customerUid);
-      this.setTotal();
       //console.log("payment details props: " + JSON.stringify(this.props));
     } else {
       // Reroute to log in page
@@ -344,6 +347,7 @@ class PaymentDetails extends React.Component {
       this.setState(prevState => ({
         mounted: true,
         customerUid: "GUEST",
+        recalculatingPrice: true,
         paymentSummary: {
           ...prevState.paymentSummary,
           mealSubPrice: (
@@ -362,8 +366,10 @@ class PaymentDetails extends React.Component {
             this.state.paymentSummary.taxRate * 0.01
           ).toFixed(2)
         }
-      }));
-      this.setTotal();
+      }), () => {
+        this.setTotal();
+      });
+      //this.setTotal();
     }
       
     this.setState({
@@ -388,11 +394,17 @@ class PaymentDetails extends React.Component {
     
   changeTip(newTip) {
     this.setState(prevState => ({
+      recalculatingPrice: true,
       paymentSummary: {
         ...prevState.paymentSummary,
         tip: newTip
       }
-    }));
+    }), () => {
+      this.setTotal();
+      console.log("changeTip new paymentSummary: ", this.state.paymentSummary);
+    });
+    //this.setTotal();
+    //console.log("changeTip new paymentSummary: ", this.state.paymentSummary);
   }
     
   saveDeliveryDetails() {
@@ -458,6 +470,7 @@ class PaymentDetails extends React.Component {
             console.log("Categorical Options response: " + JSON.stringify(response));
             if(response.data.result.length !== 0) {
               this.setState(prevState => ({
+                recalculatingPrice: true,
                 paymentSummary: {
                   ...prevState.paymentSummary,
                   taxRate: response.data.result[1].tax_rate,
@@ -471,12 +484,17 @@ class PaymentDetails extends React.Component {
                   ).toFixed(2)
                 },
                 fetchingFees: false
-              }));
-              this.setTotal();
-              console.log("catOptions taxAmount: " + this.state.paymentSummary.taxAmount);
-              console.log("catOptions new payment summary: ", this.state.paymentSummary);
+              }), () => {
+                this.setTotal();
+                console.log("catOptions taxAmount: " + this.state.paymentSummary.taxAmount);
+                console.log("catOptions new payment summary: ", this.state.paymentSummary);
+              });
+              //this.setTotal();
+              //console.log("catOptions taxAmount: " + this.state.paymentSummary.taxAmount);
+              //console.log("catOptions new payment summary: ", this.state.paymentSummary);
             } else {
               this.setState(prevState => ({
+                recalculatingPrice: true,
                 paymentSummary: {
                   ...prevState.paymentSummary,
                   taxRate: 0,
@@ -484,8 +502,10 @@ class PaymentDetails extends React.Component {
                   deliveryFee: "0.00",
                   taxAmount: "0.00"
                 }
-              }));
-              this.setTotal();
+              }), () => {
+                this.setTotal();
+              });
+              //this.setTotal();
             }
           })
           .catch((err) => {
@@ -591,6 +611,7 @@ class PaymentDetails extends React.Component {
           console.log("result: " + JSON.stringify(items));
           this.setState(prevState => ({
             validCode: true,
+            recalculatingPrice: true,
             paymentSummary: {
               ...prevState.paymentSummary,
               ambassadorDiscount: (
@@ -598,7 +619,10 @@ class PaymentDetails extends React.Component {
                 items.discount_shipping
               ).toFixed(2)
             }
-          }));
+          }), () => {
+            this.setTotal();
+          });
+          //this.setTotal();
         }
       })
       .catch(err => {
@@ -681,12 +705,15 @@ class PaymentDetails extends React.Component {
     /*console.log("setTotal total: " + total);
     console.log("setTotal subtotal: " + subtotal);*/
     this.setState(prevState => ({
+      recalculatingPrice: false,
       paymentSummary: {
         ...prevState.paymentSummary,
         total,
         subtotal
       }
-    }));
+    }), ()=>{
+      console.log("setTotal new paymentSummary: ", this.state.paymentSummary);
+    });
   }
 
   proceedToPayment() {
@@ -1233,6 +1260,7 @@ class PaymentDetails extends React.Component {
                   phone={this.state.phone}
                   cardInfo={this.state.cardInfo}
                   fetchingFees={this.state.fetchingFees}
+                  recalculatingPrice={this.state.recalculatingPrice}
                 />
               </div>
               {/*<div className = {styles.buttonContainer}>

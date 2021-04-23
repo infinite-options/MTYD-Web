@@ -108,9 +108,9 @@ const StripeCheckout = (props) => {
   const [cardholderName, setCardholderName] = useState(null);
   const [loadingState, changeLoadingState] = useState(false);
 
-  console.log("In StripeCheckout.js");
+  //console.log("In StripeCheckout.js");
 
-  console.log("StripeCheckout props: " + JSON.stringify(props));
+  //console.log("StripeCheckout props: " + JSON.stringify(props));
 
   var orderData = {
     currency: "usd"
@@ -663,7 +663,7 @@ const StripeCheckout = (props) => {
           console.log("PAY BUTTON CLICKED");
           pay();
         }}
-        disabled={(props.fetchingFees || loadingState)}
+        disabled={(props.fetchingFees || loadingState || props.recalculatingPrice)}
       >
         Pay With Stripe
       </Button>

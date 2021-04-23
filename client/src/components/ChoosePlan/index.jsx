@@ -40,6 +40,8 @@ import delivery from "./static/delivery.png";
 import one from "./static/one.svg";
 import two from "./static/two.svg";
 import three from "./static/three.svg";
+import orangePlate from "./static/orange_plate.png";
+import yellowPlate from "./static/yellow_plate.png";
 
 import paymentOption1 from "./Group 2029.svg";
 import paymentOption2 from "./Group 2016.svg";
@@ -62,7 +64,8 @@ class ChoosePlan extends React.Component {
       deliveryDays: [],
       login_seen:false,
       signUpSeen:false,
-      total: '0.00'
+      total: '0.00',
+      numDeliveryDays: 0
     };
   }
 
@@ -201,9 +204,11 @@ class ChoosePlan extends React.Component {
       .then(res => {
         // console.log(res.data.result[0])
         let resultDays = res.data.result;
-        //console.log("delivery_weekdays response: " + JSON.stringify(resultDays));
+        console.log("delivery_weekdays response: " + JSON.stringify(resultDays));
         this.setState({
           deliveryDays: resultDays
+        }, () => {
+          this.countDeliveryWeekdays();
         });
       })
       .catch(err => {
@@ -260,6 +265,9 @@ class ChoosePlan extends React.Component {
 
       if(messageDays.includes(dayString) === false) {
         messageDays.push(dayString);
+        /*this.setState(prevState => {
+          return {numDeliveryDays: prevState.numDeliveryDays+1}
+        });*/
       }
     }
 
@@ -277,6 +285,71 @@ class ChoosePlan extends React.Component {
     //console.log("final deliveryDaysString: " + deliveryDaysString);
 
     return deliveryDaysString;
+  }
+
+  countDeliveryWeekdays = () => {
+    let messageDays = [];
+
+    for (const [dateKey, dateData] of Object.entries(this.state.deliveryDays)) {
+      //console.log("showDeliveryDates() key: " + dateKey + ", dateData: " + JSON.stringify(dateData));
+      //console.log("weekday integer: " + dateData["weekday(menu_date)"]);
+
+      let dayInt = dateData["weekday(menu_date)"];
+
+      //console.log("weekday int: " + dayInt);
+
+      let dayString = "";
+
+      switch (dayInt) {
+        case 0:
+          dayString = "MONDAY";
+          break;
+        case 1:
+          dayString = "TUESDAY";
+          break;
+        case 2:
+          dayString = "WEDNESDAY";
+          break;
+        case 3:
+          dayString = "THURSDAY";
+          break;
+        case 4:
+          dayString = "FRIDAY";
+          break;
+        case 5:
+          dayString = "SATURDAY";
+          break;
+        case 6:
+          dayString = "SUNDAY";
+          break;
+        default:
+          dayString = "";
+      }
+
+      if(messageDays.includes(dayString) === false) {
+        messageDays.push(dayString);
+        this.setState(prevState => {
+          return {numDeliveryDays: prevState.numDeliveryDays+1}
+        }, () => {
+          console.log("new num weekdays delivered: " + this.state.numDeliveryDays);
+        });
+      }
+    }
+
+    /*let deliveryDaysString = " ";
+
+    for(var i = 0; i < messageDays.length; i++) {
+      if(i === messageDays.length-1){
+        deliveryDaysString = deliveryDaysString.concat(messageDays[i]);
+      } else {
+        deliveryDaysString = deliveryDaysString.concat(messageDays[i] + ", ");
+      }
+      //deliveryDaysString = deliveryDaysString.concat(messageDays[i] + ", ");
+    }
+
+    //console.log("final deliveryDaysString: " + deliveryDaysString);
+
+    return deliveryDaysString;*/
   }
 
   mealsDelivery = () => {
@@ -315,7 +388,7 @@ class ChoosePlan extends React.Component {
             //console.log("===== plans: " + JSON.stringify(this.props.plans));
           }}
         >
-          {mealIndex} MEALS
+          {mealIndex}
         </button>
         <div style={{textAlign: 'center', marginTop: '10px'}}>
           ${singleMealData.item_price}
@@ -407,28 +480,27 @@ class ChoosePlan extends React.Component {
                     })()}  
                     </button>
                     {(()=>{
-                      if(deliveryIndex % 3 === 0){
+                      if(deliveryIndex % this.state.numDeliveryDays === 0){
                         //console.log("is 3");
                         return(
                           <div className={styles.deliverySubtext}>
                             {(() => {
-                              if (deliveryIndex/3 === 1) {
+                              if (deliveryIndex/this.state.numDeliveryDays === 1) {
                                 return (
                                   <>
-                                    {deliveryIndex/3} WEEK
+                                    {deliveryIndex/this.state.numDeliveryDays} WEEK
                                   </>
                                 );
                               } else {
                                 return (
                                   <>
-                                    {deliveryIndex/3} WEEKS
+                                    {deliveryIndex/this.state.numDeliveryDays} WEEKS
                                   </>
                                 );
                               }
                             })()}
                           </div>
                         );
-
                       }
                     })()}
                   </div>
@@ -684,8 +756,8 @@ class ChoosePlan extends React.Component {
                   
                 <div className={styles.menuSection}>
                   <div className={styles.center}>
-                    <span className={styles.bold}>
-                      MEALS PER DELIVERY
+                    <span className={styles.subHeader}>
+                      NUMBER OF MEALS PER DELIVERY
                     </span>
                   </div>
                   {(()=>{
@@ -704,8 +776,8 @@ class ChoosePlan extends React.Component {
                   
                 <div className={styles.menuSection}>
                   <div className={styles.center}>
-                    <span className={styles.bold}>
-                      NUMBER OF DELIVERIES
+                    <span className={styles.subHeader}>
+                      TOTAL NUMBER OF DELIVERIES
                     </span>
                   </div>
                   {(()=>{
@@ -751,9 +823,10 @@ class ChoosePlan extends React.Component {
                                   Meals
                                 </span>
                               </div>
-                              <div className={styles.priceSymbol}>
+                              {/*<div className={styles.priceSymbol}>
                                 x
-                              </div>
+                              </div>*/}
+                              <div className={styles.priceSpaceSmall} />
                               <div>
                                 <span className={styles.priceFormula}>
                                   {this.props.selectedPlan.num_deliveries} 
@@ -763,24 +836,25 @@ class ChoosePlan extends React.Component {
                                   Deliveries
                                 </span>
                               </div>
-                              <div className={styles.priceSymbol}>
-                                -
-                              </div>
+                              <div className={styles.priceSpaceSmall} />
                               <div>
                                 <span className={styles.priceFormula}>
-                                  {this.props.selectedPlan.delivery_discount}%
+                                  -{this.props.selectedPlan.delivery_discount}%
                                 </span>
                                 <br></br>
                                 <span className={styles.priceSubtext}>
                                   Discount applied
                                 </span>
                               </div>
+                              <div className={styles.priceSpaceSmall} />
 
                               {/*<div className={styles.priceSymbol}>
                                 = 
                               </div>*/}
 
+                            <div style={{display: 'inline-block'}}>
                               <div className={styles.priceTotal}>
+
                                 <div style={{display: 'inline-flex'}}>
                                   <div className={styles.priceFormula}>
                                     9
@@ -807,18 +881,28 @@ class ChoosePlan extends React.Component {
                                 {/*<span className={styles.priceSubtext}>
                                   Total
                                 </span>*/}
+                                
                               </div>
+                              <div className={styles.perMealDeal}>
+                                That's only ${this.calculateDeal()} per freshly cooked meal
+                              </div>
+                              <div className={styles.proceedWrapper}>
+                                <Link className={styles.proceedBtn} to='/payment-details'>
+                                  PROCEED
+                                </Link>
+                              </div>
+                            </div>
                             </div>
 
 
-                            <div className={styles.perMealDeal}>
+                            {/*<div className={styles.perMealDeal}>
                               That's only ${this.calculateDeal()} per freshly cooked meal
                             </div>
                             <div className={styles.proceedWrapper}>
                               <Link className={styles.proceedBtn} to='/payment-details'>
                                 PROCEED
                               </Link>
-                            </div>
+                            </div>*/}
 
                           </div>
                           </div>
@@ -826,11 +910,14 @@ class ChoosePlan extends React.Component {
                         </>
                       );
                     } else {
+                      /*<div className={styles.priceCalculation}>
+                        <div className={styles.priceWaitMessage}>
+                          Select a meal plan and deliveries to see your discount.
+                        </div>
+                      </div>*/
                       return (
-                        <div className={styles.priceCalculation}>
-                          <div className={styles.priceWaitMessage}>
-                            Select a meal plan and deliveries to see your discount.
-                          </div>
+                        <div className={styles.priceWaitMessage}>
+                          Select a meal plan and deliveries to see your discount.
                         </div>
                       );
                     }
