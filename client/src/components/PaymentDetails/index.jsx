@@ -1282,20 +1282,6 @@ class PaymentDetails extends React.Component {
                     </button>
                   </div>*/}
                   <div className = {styles.buttonContainer}>
-                    {/* {console.log("stripe payment summary: " + JSON.stringify(this.state.paymentSummary))} */}
-                    {/*this.state.paymentType === 'STRIPE' && (
-                      <StripeElement
-                        customerPassword={this.state.customerPassword}
-                        deliveryInstructions={this.state.instructions}
-                        setPaymentType={this.setPaymentType}
-                        paymentSummary={this.state.paymentSummary}
-                        loggedInByPassword={loggedInByPassword}
-                        latitude={this.state.latitude.toString()}
-                        longitude={this.state.longitude.toString()}
-                        email={this.state.email}
-                        customerUid={this.state.customerUid}
-                      />
-                    )*/}
                       <StripeElement
                         stripePromise={this.state.stripePromise}
                         customerPassword={this.state.customerPassword}
