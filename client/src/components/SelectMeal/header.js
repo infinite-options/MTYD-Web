@@ -166,7 +166,7 @@ class Header extends Component {
       </p>
     return (
       <>
-      {console.log(this.props)}
+      {/* {console.log(this.props)} */}
         <WebNavBar 
           poplogin = {this.togglePopLogin}
           popSignup = {this.togglePopSignup}
@@ -199,15 +199,6 @@ class Header extends Component {
             </div>
 
             <div className={styles.stickyHeader + " px-5 "}>
-              {/* <h4 style = 
-                {{padding: '10px 90px', 
-                  fontSize: '24px', 
-                  display:'inline-block',
-                  overflow:'hidden',
-                  whiteSpace:'nowrap'
-                }}>
-                Select x meals
-              </h4> */}
 
               <MealIndicator
                 totalCount={this.props.totalCount}

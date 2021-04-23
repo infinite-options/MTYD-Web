@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import Menu from './menu'
+import hamburger from './hamburger.png'
 
 export class NavMenu extends Component {
 
@@ -27,9 +28,10 @@ export class NavMenu extends Component {
             position:"absolute",
             width:"60px",
             height:"40px",
-            backgroundColor:"white",
             left:"60px",
             top:"20px",
+            backgroundImage:`url(${hamburger})`,
+            backgroundSize:'cover',
           }}
           onClick={this.togglePopMenu}
           >

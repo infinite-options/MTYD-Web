@@ -16,20 +16,7 @@ class MealIndicator extends Component {
 
 
     const myarr = [];
-    for (let i = 0; i < totalMeals-totalCount; i++) {
-      myarr.push(
-        <div
-        style={{
-          width:"30px",
-          height:"30px",
-          margin:'10px',
-          backgroundImage:`url(${unselect})`,
-          backgroundSize:'cover',
-          backgroundPosition:'center'
-        }}
-        />
-      );
-    }
+
     for (let i = 0; i < totalCount; i++) {
       myarr.push(
         <div
@@ -46,6 +33,20 @@ class MealIndicator extends Component {
       );
     }
 
+    for (let i = 0; i < totalMeals-totalCount; i++) {
+      myarr.push(
+        <div
+        style={{
+          width:"30px",
+          height:"30px",
+          margin:'10px',
+          backgroundImage:`url(${unselect})`,
+          backgroundSize:'cover',
+          backgroundPosition:'center'
+        }}
+        />
+      );
+    }
 
 
 
@@ -79,26 +80,6 @@ class MealIndicator extends Component {
           {myarr}
         </div>
           
-
-
-        {/* <div
-          style={{
-            border: "1px solid #ebebeb",
-            borderColor: "#dbcd65",
-            borderRadius: "50px 0px 50px 0px",
-            padding: "0px 0px 0px 16px",
-            height: "2rem",
-            width: "100%",
-            backgroundImage: `linear-gradient(to right, ${
-              selectCount === 0
-                ? (indicatorColor = "#ff9900")
-                : (indicatorColor = "#ff9900")
-            } ${percentage}%, #e0d19e 0%)`
-          }}
-        /> */}
-
-
-
       </div>
     );
   }

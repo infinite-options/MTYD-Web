@@ -226,19 +226,6 @@ class NavBar extends React.Component {
     return (
       <div className={styles.navbar}>
 
-
-        {/* <div
-        style={{
-          position:"absolute",
-          width:"60px",
-          height:"40px",
-          backgroundColor:"white",
-          left:"60px",
-        }}
-        onClick={()=>{alert("menu button clicked")}}
-        >
-        </div> */}
-
         <NavMenu/>
 
         <div>

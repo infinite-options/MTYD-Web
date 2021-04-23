@@ -361,6 +361,7 @@ class MenuItemList extends Component {
   };
 
   filterDates = event => {
+    event.stopPropagation();
 
     if(Cookies.get("customer_uid")==null){
       return this.setState({
@@ -465,10 +466,12 @@ class MenuItemList extends Component {
       });
     }
 
+    console.log(event.target.getAttribute('value'));
+
     return this.setState({
       deliveryDay: delivery_Day !== "" && delivery_Day !== "SKIP" ? delivery_Day : "Sunday",
       // deliveryDay: delivery_Day !== "" ? delivery_Day : "Sunday",
-      myDate: event.target.value,
+      myDate: event.target.getAttribute('value'),
       cartItems: [...cartItemsArr],
       addOnItems: [...addOnArr],
       totalCount: myCounter,
@@ -561,14 +564,40 @@ class MenuItemList extends Component {
     });
 
     let buttonStyle = ''
+    let extraInfo = ''
+
+    console.log(this.state.myDate);
 
     if (e.target.value === "SURPRISE") {
       buttonStyle = styles.datebuttonSurprise;
+      extraInfo = 'Surprise / No selection'
       let tempNewButton = (
-        <button key={this.state.myDate} value={this.state.myDate} onClick={this.filterDates} className={buttonStyle} autoFocus>
-        {moment(this.state.myDate.split(" ")[0]).format("ddd")}
-        <br/>{moment(this.state.myDate.split(" ")[0]).format("MMM") +" "+ moment(this.state.myDate.split(" ")[0]).format("D")}
-      </button>
+        <button key={this.state.myDate} value={this.state.myDate} 
+              onClick={this.filterDates}
+              className={buttonStyle} 
+              autoFocus>
+                <div
+                style={{
+                  fontSize:'25px',
+                  fontWeight:'bold',
+                  lineHeight:'25px',
+                }}>
+                  {moment(this.state.myDate.split(" ")[0]).format("ddd")}
+                  <br/>{moment(this.state.myDate.split(" ")[0]).format("MMM") +" "+ moment(this.state.myDate.split(" ")[0]).format("D")}
+                </div>
+
+                <div
+                style={{
+                  width:"122px",
+                  height:"48px",
+                  marginTop:"15px",
+                  fontSize:"15px"
+                }}
+                >
+                  {extraInfo}
+                </div>
+                
+        </button>
       )
   
   
@@ -644,12 +673,41 @@ class MenuItemList extends Component {
       }
     } else if (e.target.value === "SKIP") {
       buttonStyle = styles.datebuttonSkip;
+      extraInfo = 'Skipped'
 
       let tempNewButton = (
-        <button key={this.state.myDate} value={this.state.myDate} onClick={this.filterDates} className={buttonStyle} autoFocus>
-        {moment(this.state.myDate.split(" ")[0]).format("ddd")}
-        <br/>{moment(this.state.myDate.split(" ")[0]).format("MMM") +" "+ moment(this.state.myDate.split(" ")[0]).format("D")}
-      </button>
+        <button key={this.state.myDate} 
+              value={this.state.myDate} 
+              onClick={this.filterDates}
+              className={buttonStyle} 
+              autoFocus>
+                <div
+                  style={{
+                    fontSize:'25px',
+                    fontWeight:'bold',
+                    lineHeight:'25px',
+                  }}
+                  value={this.state.myDate} 
+                  onClick={this.filterDates}
+                  >
+                  {moment(this.state.myDate.split(" ")[0]).format("ddd")}
+                  <br/>{moment(this.state.myDate.split(" ")[0]).format("MMM") +" "+ moment(this.state.myDate.split(" ")[0]).format("D")}
+                </div>
+
+                <div
+                style={{
+                  width:"122px",
+                  height:"48px",
+                  marginTop:"15px",
+                  fontSize:"15px"
+                }}
+                value={this.state.myDate} 
+                onClick={this.filterDates}
+                >
+                  {extraInfo}
+                </div>
+                
+              </button>
       )
   
   
@@ -714,11 +772,43 @@ class MenuItemList extends Component {
       });
     } else {
       buttonStyle = styles.datebuttonSave;
+      extraInfo = 'Saved'
       let tempNewButton = (
-        <button key={this.state.myDate} value={this.state.myDate} onClick={this.filterDates} className={buttonStyle} autoFocus>
-        {moment(this.state.myDate.split(" ")[0]).format("ddd")}
-        <br/>{moment(this.state.myDate.split(" ")[0]).format("MMM") +" "+ moment(this.state.myDate.split(" ")[0]).format("D")}
-      </button>
+
+        <button key={this.state.myDate} 
+              value={this.state.myDate} 
+              onClick={this.filterDates}
+              className={buttonStyle} 
+              autoFocus>
+                <div
+                style={{
+                  fontSize:'25px',
+                  fontWeight:'bold',
+                  lineHeight:'25px',
+                }}
+                
+                value={this.state.myDate} 
+                onClick={this.filterDates}
+                >
+                  {moment(this.state.myDate.split(" ")[0]).format("ddd")}
+                  <br/>{moment(this.state.myDate.split(" ")[0]).format("MMM") +" "+ moment(this.state.myDate.split(" ")[0]).format("D")}
+                </div>
+
+                <div
+                style={{
+                  width:"122px",
+                  height:"48px",
+                  marginTop:"15px",
+                  fontSize:"15px"
+                }}
+                value={this.state.myDate} 
+                onClick={this.filterDates}
+                >
+                  {extraInfo}
+                </div>
+                
+              </button>
+      // </button>
       )
   
   
@@ -946,28 +1036,61 @@ class MenuItemList extends Component {
           for(const date of uniqueDates){
 
             let classStyle = styles.datebutton;
+            let extraInfo = ''
 
             for(const surpriseInfo of this.state.surpriseSkipSave){
               if(surpriseInfo.date == date&&surpriseInfo.id==this.state.purchaseID){
                 if(surpriseInfo.selection=='SKIP'){
                   classStyle = styles.datebuttonSkip
+                  extraInfo='Skipped'
                 }else if(surpriseInfo.selection=='SURPRISE'){
                   classStyle = styles.datebuttonSurprise 
+                  extraInfo = 'Surprise / No selection'
                 }
                 else{
                   classStyle = styles.datebuttonSave
+                  extraInfo = 'Saved'
                 }
               }
             }
             buttonList.push(
-              <button key={date} value={date} onClick={this.filterDates} id={date} className={classStyle} autoFocus={first==null}>
-                {moment(date.split(" ")[0]).format("ddd")}
-                <br/>{moment(date.split(" ")[0]).format("MMM") +" "+ moment(date.split(" ")[0]).format("D")}
+              <button key={date} value={date} 
+              onClick={this.filterDates} 
+              id={date} 
+              className={classStyle} 
+              autoFocus={first==null}>
+                <div
+                style={{
+                  fontSize:'25px',
+                  fontWeight:'bold',
+                  lineHeight:'25px',
+                }}
+                value={date} 
+                onClick={this.filterDates}
+
+                >
+                  {moment(date.split(" ")[0]).format("ddd")}
+                  <br/>{moment(date.split(" ")[0]).format("MMM") +" "+ moment(date.split(" ")[0]).format("D")}
+                </div>
+
+                <div
+                style={{
+                  width:"122px",
+                  height:"48px",
+                  marginTop:"15px",
+                  fontSize:"15px"
+                }}
+                value={date} 
+                onClick={this.filterDates}
+                >
+                  {extraInfo}
+                </div>
+                
               </button>
             )
             first=1;
           }
-          // console.log(buttonList)
+          console.log(buttonList)
 
           this.setState({
             dateButtonList:buttonList
@@ -1046,7 +1169,7 @@ class MenuItemList extends Component {
           customer_uid = {Cookies.get("customer_uid")}
         />
 
-        <div style = {{overflow: 'auto', height: '100vh'}}>
+        <div style = {{overflow: 'visible', height: '100vh'}}>
             <div className={styles.menuItemsWrapper}>
               <MenuItem
                 addToCart={this.addToCart}
