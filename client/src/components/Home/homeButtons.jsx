@@ -7,7 +7,7 @@ class HomeLink extends Component {
     render() { 
         return (
             <Link to={this.props.link}>
-              <img className = {styles.buttonsBelowTheLogo} src = {this.props.text}/>
+              <img className = {styles.buttonsBelowTheLogo} src = {this.props.text} style = {this.props.style}/>
             </Link>
          );
     }
