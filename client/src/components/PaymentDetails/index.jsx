@@ -1079,10 +1079,15 @@ class PaymentDetails extends React.Component {
             </div>
 
 
-          <div>        
+          <div
+          style={{
+            marginLeft:'0px',
+            width:'450px',
+          }}>        
             <div
               style={{
-                display:!this.state.showPaymentInfo?'block':'none'
+                display:!this.state.showPaymentInfo?'block':'none',
+                // marginLeft:'100px'
               }}
             >
               please fill out the delivery details,
@@ -1092,61 +1097,108 @@ class PaymentDetails extends React.Component {
 
             <div
               style={{
-                visibility:this.state.showPaymentInfo?'visible':'hidden'
+                visibility:this.state.showPaymentInfo?'visible':'hidden',
+                // marginLeft:'100px',
+                width:'450px'
               }}
             > 
-            <div 
-            style=
-            {{
-              display: 'flex',
-              borderBottom:'solid 2px black'
-            }}
-            >
-              <div className={styles.summaryLeft}>your box</div>
-              <div className={styles.summaryRight}>
-                {
-                  this.props.selectedPlan.num_items
-                } Meals for {
-                  this.props.selectedPlan.num_deliveries
-                } Deliveries</div>
+              <div 
+              style=
+              {{
+                display: 'flex',
+                borderBottom:'solid 2px black'
+              }}
+              >
+                <div 
+                  className={styles.summaryLeft}
+                  style={{
+                    fontWeight:'bold'
+                  }}
 
-            </div>
+                >Your box</div>
+                <div className={styles.summaryRight}>
+                  {
+                    this.props.selectedPlan.num_items
+                  } Meals for {
+                    this.props.selectedPlan.num_deliveries
+                  } Deliveries</div>
 
-              <div style={{display: 'flex'}}>
-
-                  
-                <div style = {{display: 'inline-block', width: '80%', height: '480px'}}>
-
+              </div>
+              <div 
+                style={{display: 'flex',borderBottom:'1px solid'}}>
                   <div className={styles.summaryLeft}>
-                    Meal Subscription ({
+                    Meal Subscription 
+                    <br/>({
                       this.props.selectedPlan.num_items
                     } Meals for {
                       this.props.selectedPlan.num_deliveries
                     } Deliveries):
                   </div>
 
-
-
-                  <div className={styles.summaryLeft}>
-                    Discount ({this.props.selectedPlan.delivery_discount}%):
+                  <div className={styles.summaryRight}>
+                    ${this.state.paymentSummary.mealSubPrice}
                   </div>
+              </div>
+
+              <div 
+                style={{display: 'flex',borderBottom:'1px solid'}}>
+                  <div className={styles.summaryLeft}>
+                  Discount ({this.props.selectedPlan.delivery_discount}%):
+                  </div>
+
+                  <div className={styles.summaryRight}>
+                    -${this.state.paymentSummary.discountAmount}
+                  </div>
+              </div>
+
+              <div 
+                style={{display: 'flex',borderBottom:'1px solid'}}>
                   <div className={styles.summaryLeft}>
                     Total Delivery Fee For All {
-                      this.props.selectedPlan.num_deliveries
-                    } Deliveries:
+                        this.props.selectedPlan.num_deliveries
+                      } Deliveries:
                   </div>
+
+                  <div className={styles.summaryRight}>
+                    ${(this.state.paymentSummary.deliveryFee)}
+                  </div>
+              </div>
+
+              <div 
+                style={{display: 'flex',borderBottom:'1px solid'}}>
                   <div className={styles.summaryLeft}>
                     Service Fee:
                   </div>
+
+                  <div className={styles.summaryRight}>
+                    ${(this.state.paymentSummary.serviceFee)}
+                  </div>
+              </div>
+
+              <div 
+                style={{display: 'flex',borderBottom:'1px solid'}}>
                   <div className={styles.summaryLeft}>
                     Taxes:
                   </div>
+
+                  <div className={styles.summaryRight}>
+                    ${(this.state.paymentSummary.taxAmount)}
+                  </div>
+              </div>
+
+              <div 
+                style={{display: 'flex'}}>
                   <div className={styles.summaryLeft}>
                     Chef and Driver Tip:
                   </div>
-                      
-                  <div className={styles.summaryLeft}>
-                    {(() => {
+
+                  <div className={styles.summaryRight}>
+                    ${(this.state.paymentSummary.tip)}
+                  </div>
+              </div>
+              <div 
+                style={{display: 'flex'}}>
+                  {(() => {
                       if (this.state.paymentSummary.tip === "0.00") {
                         return (
                           <button className={styles.tipButtonSelected} onClick={() => this.changeTip("0.00")}>
@@ -1206,9 +1258,10 @@ class PaymentDetails extends React.Component {
                         );
                       }
                     })()}
-                  </div>
-                    
-                  <input
+              </div>
+
+              <div style={{display: 'flex',borderBottom:'1px solid'}}>
+                <input
                     type='text'
                     placeholder='Enter Ambassador Code'
                     className={styles.inputAmbassador}
@@ -1218,69 +1271,52 @@ class PaymentDetails extends React.Component {
                       });
                     }}
                   />
-                    
                   <button 
                     className={styles.codeButton}
                     onClick={() => this.applyAmbassadorCode()}
                   >
                     APPLY CODE
                   </button>
-                    
-                </div>
-                
-                <div style = {{display: 'inline-block', width: '20%', height: '480px'}}>
+              </div>
+
+              <div 
+                style={{display: 'flex' ,marginBottom:'73px'}}>
+                  <div className={styles.summaryLeft}>
+                    Total:
+                  </div>
+
                   <div className={styles.summaryRight}>
-                    ${this.state.paymentSummary.mealSubPrice}
-                  </div>
-                  <div className={styles.summaryRight}>
-                    {console.log("----- discount: " + this.state.paymentSummary.discountAmount)}
-                    -${this.state.paymentSummary.discountAmount}
-                  </div>
-                  <div className={styles.summaryRight}>
-                    ${(this.state.paymentSummary.deliveryFee)}
-                  </div>
-                  <div className={styles.summaryRight}>
-                    ${(this.state.paymentSummary.serviceFee)}
-                  </div>
-                  <div className={styles.summaryRight}>
-                    {console.log("----- tax: " + this.state.paymentSummary.taxAmount)}
-                    ${(this.state.paymentSummary.taxAmount)}
-                  </div>
-                  <div className={styles.summaryRight}>
-                    ${(this.state.paymentSummary.tip)}
-                  </div>
-                  <div className={styles.summaryRight2}>
-                    ${this.calculateSubtotal()}
-                  </div>
-                  <div className={styles.summaryRight2}>
-                    {console.log("ambassador discount: " + this.state.ambassadorDiscount)}
-                    -${this.state.paymentSummary.ambassadorDiscount}
-                  </div>
-                  <hr className={styles.sumLine}></hr>
-                  <div className={styles.summaryRight2}>
                     ${this.calculateTotal()}
                   </div>
-                </div>
               </div>
+
+
+              {/* <div style={{display: 'flex'}}> */}
+              {/* <div className={styles.summaryRight2}>
+                    ${this.calculateSubtotal()}
+                  </div> */}
+                  {/* <div className={styles.summaryRight2}>
+                    {console.log("ambassador discount: " + this.state.ambassadorDiscount)}
+                    -${this.state.paymentSummary.ambassadorDiscount}
+                  </div> */}
+                {/* </div> */}
+
                 
-              <div className={styles.topHeading}>
-                <h6 className={styles.subHeading}>PAYMENT OPTIONS</h6>
-              </div>
+          <div 
+          style={{
+            backgroundColor: '#f8bb17',
+            width:'130%',
+            height:'60px',
+            // marginTop: '36px',
+            // marginLeft: '60px',
+          }}
+          >
+            <h6 className={styles.subHeadingRight}> Complete Payment</h6>
+          </div>
                 
               <div style={{display: 'flex'}}>
-                <div style = {{display: 'inline-block', width: '80%', height: '500px'}}>
-                  {/*<div className={styles.buttonContainer}>
-                    <button className={styles.button} onClick={() => {
-                      if(this.state.paymentType === 'STRIPE'){
-                        this.setPaymentType('NULL');
-                      } else {
-                        this.setPaymentType('STRIPE');
-                      }
-                      this.setTotal();
-                    }}>
-                      STRIPE
-                    </button>
-                  </div>*/}
+                <div style = {{display: 'inline-block', width: '80%', height: '0px'}}>
+
                   <div className = {styles.buttonContainer}>
                       <StripeElement
                         stripePromise={this.state.stripePromise}
@@ -1297,37 +1333,24 @@ class PaymentDetails extends React.Component {
                         cardInfo={this.state.cardInfo}
                       />
                   </div>
-                  {/*<div className={styles.buttonContainer}>
-                    <button className={styles.button} onClick={() => {
-                      if(this.state.paymentType === 'PAYPAL'){
-                        this.setPaymentType('NULL');
-                      } else {
-                        this.setPaymentType('PAYPAL');
-                      }
-                      this.setTotal();
-                    }}>
-                      PAYPAL
-                    </button>
-                    {console.log("paypal payment summary: " + JSON.stringify(this.state.paymentSummary))}
-                    {this.state.paymentType === 'PAYPAL' && 
-                    parseFloat(this.state.paymentSummary.total) > 0  && (
-                      <PayPal
-                        deliveryInstructions={this.state.instructions}
-                        paymentSummary={this.state.paymentSummary}
-                        customerPassword={this.state.customerPassword}
-                        loggedInByPassword={loggedInByPassword}
-                        latitude={this.state.latitude.toString()}
-                        longitude={this.state.longitude.toString()}
-                        email={this.state.email}
-                        customerUid={this.state.customerUid}
-                      />
-                    )}
-                  </div>*/}
+
                 </div>
               </div>
             </div>
 
             </div>
+
+            {/* <div
+            style={{
+              width:'200px',
+              height:'500px'
+            }}
+            >
+              placeholder
+              </div> */}
+
+
+
           </div>
 
 

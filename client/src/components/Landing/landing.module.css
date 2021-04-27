@@ -56,56 +56,43 @@ p:nth-of-type(2) {
   padding: 55px 0px 0px 0px;
 }
 .socialLogin {
-  display: flex;
-  width: 50%;
+  /* display:inline-block; */
+  width: 100%;
   margin: auto;
   text-align: center;
   justify-content: space-evenly;
   padding: 0px;
+  background-color: white;
 }
-.socialLogin > button,
-.socialLogin > span > button,
-.socialLogin > div > button {
-  margin-left: 20px;
-  margin-right: 20px;
-}
+
 .googleBtn {
   background-color: none;
   border: none;
   cursor: pointer;
-  border-radius: 50%;
+  width: 412px;
+  height:77px;
   padding: 0px;
-  height: 32.9px;
-  width: 32.9px;
-}
+  opacity: 0;
 
-.googleBtn::before {
-  content: url(./google-plus.svg);
 }
 
 .appleLogin {
-  background-color: black;
   border: none;
   cursor: pointer;
-  border-radius: 50%;
   padding: 0px;
-  height: 32.9px;
-  width: 32.9px;
+  width: 412px;
+  height:77px;
+  opacity: 0;
 }
 
 .fbLogin {
   background-color: none;
   border: none;
   cursor: pointer;
-  border-radius: 50%;
   padding: 0px;
-  height: 32.9px;
-  width: 32.9px;
-  color: transparent;
-}
-
-.fbLogin::before {
-  content: url(./facebook.svg);
+  width: 412px;
+  height:77px;
+  opacity: 0;
 }
 
 .loginSectionItem {

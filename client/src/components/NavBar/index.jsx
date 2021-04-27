@@ -19,6 +19,7 @@ import axios from 'axios';
 import { API_URL } from '../../reducers/constants';
 import PopLogin from "../PopLogin";
 import NavMenu from "../NavBarHamburger";
+import Popsignup from '../PopSignup';
 
 class SideNavBar extends React.Component {
   render() {
@@ -92,8 +93,35 @@ class NavBar extends React.Component {
       lastName: "",
       customerId: "",
       profileRole: "",
+      login_seen:false,
+      signUpSeen:false,
     };
   }
+
+  togglePopLogin = () => {
+    this.setState({
+     login_seen: !this.state.login_seen,
+    });
+
+    if(!this.state.login_seen){
+      this.setState({
+        signUpSeen:false
+      })
+    }
+
+   };
+
+   togglePopSignup = () => {
+    this.setState({
+     signUpSeen: !this.state.signUpSeen
+    });
+
+    if(!this.state.signUpSeen){
+      this.setState({
+        login_seen:false
+      })
+    }
+   };
 
   logOut = () => {
     this.props.resetProfile();
@@ -284,18 +312,38 @@ class NavBar extends React.Component {
             </>
           ) : (
             <>
-              <button 
-                onClick={this.props.popSignup}
-                className={styles.signUpBtn}
+              <div
+              style={{
+                height:'100%',
+                
+              }}
               >
-                Sign Up
-              </button>
-              <button 
-                onClick={this.props.poplogin}
-                className={styles.signInBtn}
+                <button 
+                  onClick={this.togglePopSignup}
+                  className={styles.signUpBtn}
+                >
+                  Sign Up
+                </button>
+
+                
+              {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
+              </div>
+
+              <div
+                style={{
+                  height:'100%',
+                }}
               >
-                Login
-              </button>
+                <button 
+                  onClick={this.togglePopLogin}
+                  className={styles.signInBtn}
+                >
+                  Login
+                </button>
+
+                {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
+              </div>
+
             </>
           )}
         </ul>

@@ -101,11 +101,11 @@ class Home extends Component {
       <>
       <div>
         <WebNavBar 
-        poplogin = {this.togglePopLogin}
-        popSignup = {this.togglePopSignup}
+        // poplogin = {this.togglePopLogin}
+        // popSignup = {this.togglePopSignup}
         />
-        {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
-        {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
+        {/* {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
+        {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null} */}
       </div>
 
         

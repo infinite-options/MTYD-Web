@@ -13,6 +13,9 @@ import {withRouter} from "react-router";
 import GoogleLogin from "react-google-login";
 import FacebookLogin from "react-facebook-login";
 import styles from "./landing.module.css";
+import socialG from "../../images/socialGoogle.png"
+import socialF from "../../images/socialFb.png"
+import socialA from "../../images/socialApple.png"
 
 
 class SocialLogin extends Component {
@@ -98,7 +101,20 @@ class SocialLogin extends Component {
 
     render() { 
         return ( 
-            <div className={styles.socialLogin}>
+            // <div className={styles.socialLogin}
+            <div>
+
+              <div
+                style={{
+                  width:'412px',
+                  height:'77px',
+                  marginBottom:'11px',
+                  marginLeft:'68px',
+                  backgroundImage:`url(${socialG})`,
+                  backgroundSize:'cover',
+                  backgroundPosition:'center',
+                }}
+              >
                 <GoogleLogin
                   clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
                   render={renderProps => (
@@ -114,6 +130,20 @@ class SocialLogin extends Component {
                   disabled={false}
                   cookiePolicy={"single_host_origin"}
                 />
+              </div>
+
+              <div
+              style={{
+                width:'412px',
+                height:'77px',
+                marginLeft:'2px',
+                marginBottom:'11px',
+                marginLeft:'68px',
+                backgroundImage:`url(${socialF})`,
+                backgroundSize:'cover',
+                backgroundPosition:'center',
+              }}
+              >
                 <FacebookLogin
                   appId={process.env.REACT_APP_FACEBOOK_APP_ID}
                   autoLoad={false}
@@ -122,20 +152,33 @@ class SocialLogin extends Component {
                   cssClass={styles.fbLogin}
                   textButton=''
                 />
-                <div>
-                  <button
-                    onClick={() => {
-                      window.AppleID.auth.signIn();
-                    }}
-                    className={styles.appleLogin}
-                  >
-                    <i
-                      className='fa fa-apple'
-                      style={{fontSize: "28px", color: "white"}}
-                    ></i>
-                  </button>
-                </div>
               </div>
+
+              <div
+                style={{
+                  width:'412px',
+                  height:'77px',
+                  marginLeft:'68px',
+                  marginBottom:'11px',
+                  backgroundImage:`url(${socialA})`,
+                  backgroundSize:'cover',
+                  backgroundPosition:'center',
+                  
+                }}
+              >
+                <button
+                  onClick={() => {
+                    window.AppleID.auth.signIn();
+                  }}
+                  className={styles.appleLogin}
+                >
+                  {/* <i
+                    className='fa fa-apple'
+                    style={{fontSize: "28px", color: "white"}}
+                  ></i> */}
+                </button>
+              </div>
+          </div>
          );
     }
 }

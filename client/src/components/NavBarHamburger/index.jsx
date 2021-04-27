@@ -17,9 +17,6 @@ export class NavMenu extends Component {
 
   render() {
 
-
-
-
     return (
       <div>
         <div>
@@ -37,17 +34,8 @@ export class NavMenu extends Component {
           >
           </div>
           {this.state.popSeen?<Menu/>:null}
-
-          
-
-
-
-
-
-
         </div>
 
-        
       </div>
     )
   }

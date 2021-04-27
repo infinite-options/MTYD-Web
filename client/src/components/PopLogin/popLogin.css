@@ -1,5 +1,14 @@
 .close {
   color: Black;
+  width:36px;
+  height:36px;
+  opacity: 1;
+  margin:15px;
+  text-align: center;
+  border-radius: 50%;
+  background-image: url('../../images/closeIcon.png');
+  background-size: cover;
+  background-position: center;
 }
 
 .pop_content {
@@ -7,42 +16,38 @@
   top: 10%;
   /* left: 50%; */
   right:1%;
-  width: 627px;
-  height: 403px;
-  background: #E0E6E6F2 0% 0% no-repeat padding-box;
-  border-radius: 20px;
+  width: 549px;
+  height: 732px;
+  background: white;
+  border:3px solid #FF8500;
   opacity: 1;
+  margin-top: 80px;
 }
 
 .loginSectionItem {
-  margin: 7px 35px;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: #ffffffd0;
-  border-color:#E0E6E6F2  ;
-  margin-bottom: 10px;
-  top: 63px;
-  width: 558px;
-  height: 53px;
+  margin-left: 60px;
+  width: 428px;
+  height: 50px;
+  border-radius: 10px;
+  border: 2px solid #FF8500;
+  margin-bottom: 14px;
+  outline: none;
 }
 
 .signInBtn {
   border-radius: 8px;
   background-color: #FF8500;
   border:1px solid black;
-  top: 192px;
-  left: 138px;
-  width: 362px;
-  height: 61px;
-  margin-left:138px;
+  margin-left:49px;
   margin-top:10px;
+  width: 452px;
+  height: 71px;
   border-color: #FF8500;
 } 
 
 .inputContainer i {
   position: absolute;
+
 }
 .inputContainer {
   width: 100%;

@@ -1,23 +1,37 @@
 .model_content {
   position: absolute;
   top: 10%;
-  /* left: 67%; */
   right:1%;
-  width: 627px;
-  height: 828px;
-  background: #E0E6E6F2 0% 0% no-repeat padding-box;
-  border-radius: 20px;
+  width: 549px;
+  height: 1047px;
+  background: white;
+  border:3px solid #FF8500;
   opacity: 1;
+  margin-top: 80px;
 }
 
 .inputBox{
   top: 333px;
   left: 86px;
-  width: 456px;
+  width: 428px;
   height: 49px;
-  background: #FFFFFF 0% 0% no-repeat padding-box;
-  border: 1px solid #00000028;
-  border-radius: 6px 5px 5px 5px;
+  background: #FFFFFF;
+  border:2px solid #FF8500;
+  border-radius: 10px;
   opacity: 1;
-  margin-bottom: 13px;
+  margin-bottom: 6px;
+  outline: none;
+}
+
+.close {
+  color: Black;
+  width:36px;
+  height:36px;
+  opacity: 1;
+  margin:15px;
+  text-align: center;
+  border-radius: 50%;
+  background-image: url('../../images/closeIcon.png');
+  background-size: cover;
+  background-position: center;
 }
