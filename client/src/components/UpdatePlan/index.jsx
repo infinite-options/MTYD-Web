@@ -504,18 +504,20 @@ class UpdatePlan extends React.Component {
       cc_zip: this.state.updatedMealPlan.cc_cvv,
       customer_email: this.props.email,
       items: [{
-        qty: this.props.selectedPlan.num_deliveries, 
+        qty: this.props.selectedPlan.num_deliveries.toString(), 
         name: this.props.selectedPlan.item_name, 
-        price: this.props.selectedPlan.item_price, 
+        price: this.props.selectedPlan.item_price.toString(), 
         item_uid: this.props.selectedPlan.item_uid, 
-        itm_business_uid: this.props.selectedPlan.item_business_uid
+        itm_business_uid: this.props.selectedPlan.itm_business_uid
       }],
       new_item_id: this.props.selectedPlan.item_uid,
       purchase_id: this.state.updatedMealPlan.purchase_uid,
       start_delivery_date: this.state.updatedMealPlan.start_delivery_date
     }
+    console.log("change_purchase object: " + JSON.stringify(object));
+    console.log("change_purchase URL: " + API_URL + 'change_purchase/' + this.state.updatedMealPlan.purchase_uid);
     axios
-      .post(API_URL + 'change_purchase', object)
+      .post(API_URL + 'change_purchase/' + this.state.updatedMealPlan.purchase_uid, object)
       .then(res => {
         console.log("change_purchase response: ", res);
       })
@@ -566,17 +568,30 @@ class UpdatePlan extends React.Component {
                               
                               onClick = {this.displayCheckoutError}>+</a>
 
-                      <div style = {{display: 'block', width: '300px', margin: '40px auto 0px'}}>
+                      <div style = {{display: 'block', width: '300px', margin: '40px auto 0px', textAlign: 'center'}}>
                         {/*<h6 style = {{margin: '5px', color: 'orange', fontWeight: 'bold', fontSize: '25px'}}>
                           PAYMENT ERROR
                         </h6>*/}
-                        <h6 style = {{margin: '5px', color: 'orange', fontWeight: 'bold', fontSize: '25px'}}>
+                        {/*<h6 style = {{margin: '5px', color: 'orange', fontWeight: 'bold', fontSize: '25px'}}>
                           Additional Charges
                         </h6>
-                        <text>${this.state.additionalCharges}</text>
+                        <text>${this.state.additionalCharges}</text>*/}
+                        {/*<text>Additional Charges ${this.state.additionalCharges}</text>*/}
+
+                        <div className={styles.chargeTotal}>
+                          <div style={{display: 'inline-flex'}}>
+                            <div className={styles.chargeFormula2}>
+                              Additional{" "}Charges{" "}
+                            </div>
+                            <div className={styles.chargeFormula}>
+                              ${this.state.additionalCharges}
+                            </div>
+                          </div>
+                        </div>
+
                         <br />
                         <button 
-                          className={styles.proceedBtn}
+                          className={styles.orangeBtn}
                           onClick = {() => {
                             console.log("save changes clicked...");
                             this.saveChanges();
@@ -585,7 +600,7 @@ class UpdatePlan extends React.Component {
                           Save Changes
                         </button>
                         <button 
-                          className={styles.proceedBtn}
+                          className={styles.orangeBtn}
                           onClick = {() => {
                             console.log("keep existing meal plan clicked...");
                             this.displayCheckoutError();
@@ -727,7 +742,7 @@ class UpdatePlan extends React.Component {
                                   PROCEED
                                 </Link>*/}
                                 <button 
-                                  className={styles.proceedBtn}
+                                  className={styles.orangeBtn}
                                   onClick = {this.displayCheckoutError}
                                 >
                                   PROCEED

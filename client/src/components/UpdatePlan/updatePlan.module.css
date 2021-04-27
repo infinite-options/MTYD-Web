@@ -110,6 +110,13 @@
   border-color: #ff6505;
   height: 120px;
 }
+.chargeTotal {
+  display: flex;
+  border: solid;
+  border-radius: 25px;
+  border-color: #ff6505;
+  height: 80px;
+}
 
 /*.priceWaitMessage {
   font-weight: bold;
@@ -444,6 +451,23 @@
   background-color: #ff6505;
   width: 300px;
 }*/
+.orangeBtn {
+  text-align: center;
+  justify-content: center;
+  padding: 5px !important;
+  /*color: black !important;*/
+  color: #ffffff;
+  font-size: 16px !important;
+  /*border: 1px solid rgb(187, 174, 174);*/
+  border-radius: 10px;
+  border-width: 0;
+  min-width: 100px !important;
+  font-weight: bold;
+  background-color: #ff6505;
+  margin-top: 20px;
+  width: 60%;
+}
+
 .proceedBtn {
   text-align: center;
   justify-content: center;
@@ -798,7 +822,7 @@
   border:#FF9400 solid thick;
   background-color: white;
   border-radius: 20px;
-  height: 35vh;
+  height: 40vh;
   width: 400px;
   z-index: 2;
 }
