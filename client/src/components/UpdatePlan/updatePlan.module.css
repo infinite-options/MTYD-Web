@@ -99,7 +99,8 @@
   /*border: dashed;*/
   white-space: nowrap;
   /*padding-bottom: 50px;*/
-  margin-top: 35px;
+  /*margin-top: 35px;*/
+  margin: 35px 0px 0px 30px;
 }
 
 .priceTotal {
@@ -189,8 +190,6 @@
 }
 .boxRight {
   /* padding: 20px; */
-  border: solid;
-  border-color: red;
   width: 42%;
   /*margin-right: 100px;*/
   /*padding-left: 100px*/
@@ -354,6 +353,25 @@
   outline: 0;
   height: 100px;
   width: 100px;
+}
+
+.deliveryButtonCurrent {
+  color: #000000;
+  background-color: #ffffff;
+  margin: 5px;
+  align-content: center;
+  flex: 1;
+  min-width: 20%;
+  font-size: 10px;
+  font-weight: 600;
+  outline: 0;
+  height: 100px;
+  width: 100px;
+  border: solid;
+  border-color: #ff6505;
+  box-shadow: none !important;
+  outline: 0;
+  cursor: none;
 }
 
 /*.deliveryButtonSelected {
@@ -731,12 +749,24 @@
   background-image: url('./static/orange_plate.png');
   background-size: 100%;
   outline: 0;
+  height: 110px;
+  width: 110px;
+  color: white;
+  padding-top: 1.8rem;
+  font-size: 30px;
+}
+/*.iconMeals {
+  background-image: url('./static/orange_plate.png');
+  background-size: 100%;
+  outline: 0;
   height: 80px;
   width: 80px;
   color: white;
   padding-top: 1.5rem;
   font-size: 20px;
-}
+  cursor: pointer;
+}*/
+
 .iconDeliveries {
   height: 78px;
   width: 78px;

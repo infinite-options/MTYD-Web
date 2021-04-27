@@ -270,7 +270,7 @@ class EditPlan extends React.Component {
                 selectedDeliveries,
                 this.props.plans
               );
-              
+
               console.log("calling PAD for " + mealData.purchase_uid);
               axios.get(API_URL + 'predict_autopay_day/' + mealData.purchase_uid)
                 .then(res => {
@@ -306,7 +306,16 @@ class EditPlan extends React.Component {
   }
 
   updatePlan = () => {
-    this.props.history.push("/update-plan");
+    // this.props.history.push({
+    //   "/update-plan"
+    // });
+    this.props.history.push({
+      pathname: '/update-plan',
+      customerUid: this.state.customerUid,
+      currentMeals: this.state.selectedMeals,
+      currentDeliveries: this.state.selectedDeliveries,
+      currentMealPlan: this.state.selectedMealPlan
+    });
   }
 
   render() {
@@ -353,7 +362,8 @@ class EditPlan extends React.Component {
               <div 
                 className={styles.iconMeals}
                 onClick={() => {
-                  this.props.history.push("/update-plan");
+                  //this.props.history.push("/update-plan");
+                  this.updatePlan();
                 }}
               >
                 {this.state.selectedMeals}
@@ -367,7 +377,8 @@ class EditPlan extends React.Component {
               <button 
                 className={styles.deliveryButton}
                 onClick={() => {
-                  this.props.history.push("/update-plan");
+                  //this.props.history.push("/update-plan");
+                  this.updatePlan();
                 }}
               >
                 <span style={{fontSize: '35px'}}>

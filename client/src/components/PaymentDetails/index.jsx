@@ -339,19 +339,7 @@ class PaymentDetails extends React.Component {
       console.log("paymentSummary: " + JSON.stringify(this.state.paymentSummary));
       console.log("taxAmount toFixed: " + this.state.taxAmount);
       console.log("discountAmount toFixed: " + this.state.discountAmount);
-      //this.props.fetchProfileInformation(customerUid);
-      axios
-        .get(API_URL + 'Profile/' + customerUid)
-        .then(res => {
-          console.log("(mount) fetch profile info: ", res);
-        })
-        .catch(err => {
-          if (err.response) {
-            console.log(err.response);
-          } else {
-            console.log(err.toString());
-          }
-        });
+      this.props.fetchProfileInformation(customerUid);
       //console.log("payment details props: " + JSON.stringify(this.props));
     } else {
       // Reroute to log in page
