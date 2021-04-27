@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { ThemeConsumer } from 'react-bootstrap/esm/ThemeProvider';
 import styles from './home.module.css'
 import {Link} from "react-router-dom";
+import becomeAnAmbassadorImg from "../../images/Group 180.png"
+import facebookAndInstagramImg from "../../images/Group 68.svg"
 
 class HomeLink extends Component {
     render() { 
@@ -29,9 +31,16 @@ class AddressLink extends Component {
 class FootLink extends Component {
     render() { 
         return (
-            <Link className = {styles.footerButton} to={this.props.link}>
-              {this.props.text}
-            </Link>
+            <div className = {styles.footerBackground}>	
+			{/*<AmbassadorLink text = "Click here" link='/select-meal'>
+			</AmbassadorLink>*/}	
+            <p className = {styles.findUs}>Find us 			
+            <img className = {styles.footerLogo} src = {facebookAndInstagramImg} alt="facebookAndInstagramImg" />
+            </p>
+            <div className = {styles.footerRight}>
+            <img style = {{width: '320px', height:'67px'}} src = {becomeAnAmbassadorImg} style = {{marginTop: '25px'}}/>			
+            </div>
+            </div>
          );
     }
 }
