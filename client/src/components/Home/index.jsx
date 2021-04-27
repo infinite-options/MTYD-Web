@@ -122,7 +122,7 @@ class Home extends Component {
           <div className = {styles.gridDisplayCenter}>
             <div className = {styles.centerSubtitleText}>
 			<img className = {styles.centerImage} src = {Logo} alt="logo" /></div>
-			 <input type = "zipCode" style = {{border:'4px solid #F26522', borderRadius:'20px', textAlign:'center', width: '320px', height: '57px', marginLeft: '40px', marginTop: '-30px', marginBottom:'15px', borderColor: 'F8BB17', fontFamily: '-apple-system, BlinkMacSystemFont', font: 'normal normal bold 24px/29px SF Pro Display'}} placeholder = "Enter zip code"/>
+			 <input type = "zipCode" style = {{border:'4px solid #F26522', borderRadius:'20px', textAlign:'center', width: '320px', height: '57px', marginLeft: '40px', marginTop: '-30px', marginBottom:'15px', borderColor: 'F8BB17', fontFamily: '-apple-system, BlinkMacSystemFont', font: 'normal normal bold 24px/29px SF Pro Display'}} placeholder = "Enter Address"/>
              <HomeLink text = {viewMealsImg} link = "/select-meal"/>
 				 {/*<img className = {styles.buttonsBelowTheLogo} src = {viewMealsImg}/>*/}
             <div style = {{display: 'inline-flex', justifyContent: 'space-between'}}>
