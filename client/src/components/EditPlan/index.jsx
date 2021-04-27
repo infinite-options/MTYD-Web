@@ -65,7 +65,8 @@ class EditPlan extends React.Component {
       selectedDeliveries: "",
       selectedDiscount: "",
       selectedId: "",
-      selectedMealPlan: {}
+      selectedMealPlan: {},
+      mealPlanDefaulted: false
     };
   }
 
@@ -138,11 +139,41 @@ class EditPlan extends React.Component {
     // Clear Query parameters
     window.history.pushState({}, document.title, window.location.pathname);
 
-    if (this.props.location.customerUid !== undefined) {
-      console.log("edit-plan LOGGED IN");
-      console.log("edit plan props.location (logged in): ", this.props.location);
+    /*else if (
+      document.cookie
+        .split(";")
+        .some(item => item.trim().startsWith("customer_uid="))
+    ) {
+      let customer_uid = document.cookie
+        .split("; ")
+        .find(item => item.startsWith("customer_uid="))
+        .split("=")[1];*/
 
-      let customerUid = this.props.location.customerUid;
+    //if (this.props.location.customerUid !== undefined) {
+    // if (true === true) {
+    //   console.log("edit-plan customerId: ", this.props.customerId);
+
+    //   console.log("edit-plan LOGGED IN");
+    //   //console.log("edit plan props.location (logged in): ", this.props.location);
+
+    //   let customerUid = this.props.customerId;
+
+    if (      
+      document.cookie
+        .split(";")
+        .some(item => item.trim().startsWith("customer_uid="))
+    ) {
+      let customer_uid = document.cookie
+        .split("; ")
+        .find(item => item.startsWith("customer_uid="))
+        .split("=")[1];
+
+      console.log("edit-plan customerId: ", customer_uid);
+
+      console.log("edit-plan LOGasedfseGED IN");
+      //console.log("edit plan props.location (logged in): ", this.props.location);
+
+      let customerUid = customer_uid;
 
       axios
         .get(API_URL + 'Profile/' + customerUid)
@@ -221,6 +252,25 @@ class EditPlan extends React.Component {
 
       let selectedMeals = planItems[0].name.substring(0,planItems[0].name.indexOf(" "));
       let selectedDeliveries = planItems[0].qty;
+
+      // console.log("mealIndex: ", mealIndex);
+      // console.log("typeof mealIndex: ", typeof(mealIndex));
+      // console.log("mealData for mealIndex: ", mealData);
+
+      if(this.state.mealPlanDefaulted === false && mealIndex === "0"){
+        console.log("defaulting to ", mealData.purchase_uid);
+        this.setState({
+          mealPlanDefaulted: true,
+          selectedMeals,
+          selectedDeliveries,
+          selectedDiscount: mealData.amount_discount.toFixed(2),
+          selectedId: mealData.purchase_uid,
+          nextBillingAmount: mealData.amount_due.toFixed(2),
+          selectedMealPlan: mealData,
+          latitude: mealData.delivery_latitude,
+          longitude: mealData.delivery_longitude,
+        });
+      }
 
       mealButtons.push(
         <div>
@@ -521,13 +571,26 @@ class EditPlan extends React.Component {
             />
 
 
-            <input
+            {/*<input
               type='text'
               placeholder={"Address 1"}
               className={styles.input}
               id="pac-input"
+            />*/}
+            <input
+              type='text'
+              placeholder={"Address 1"}
+              className={styles.input}
+              value={this.state.selectedMealPlan.delivery_address}
+              onChange={e => {
+                this.setState(prevState => ({
+                  selectedMealPlan: {
+                    ...prevState.selectedMealPlan,
+                    delivery_address: e.target.value
+                  }
+                }));
+              }}
             />
-
 
             <div style={{display: 'flex'}}>
               <input
@@ -544,17 +607,31 @@ class EditPlan extends React.Component {
                   }));
                 }}
               />
-              <input
+              {/*<input
                 type='text'
                 placeholder={"City"}
                 id="locality" name="locality"
 
                 className={styles.inputContactRight}
+              />*/}
+              <input
+                type='text'
+                placeholder={"City"}
+                className={styles.inputContactRight}
+                value={this.state.selectedMealPlan.delivery_city}
+                onChange={e => {
+                  this.setState(prevState => ({
+                    selectedMealPlan: {
+                      ...prevState.selectedMealPlan,
+                      delivery_city: e.target.value
+                    }
+                  }));
+                }}
               />
             </div>
 
             <div style={{display: 'flex'}}>
-              <input
+              {/*<input
                 type='text'
                 placeholder={"State"}
                 
@@ -566,6 +643,34 @@ class EditPlan extends React.Component {
                 placeholder={"Zip Code"}
                 className={styles.inputContactRight}
                 id="postcode" name="postcode"
+              />*/}
+              <input
+                type='text'
+                placeholder={"State"}
+                className={styles.inputContactLeft}
+                value={this.state.selectedMealPlan.delivery_state}
+                onChange={e => {
+                  this.setState(prevState => ({
+                    selectedMealPlan: {
+                      ...prevState.selectedMealPlan,
+                      delivery_state: e.target.value
+                    }
+                  }));
+                }}
+              />
+              <input
+                type='text'
+                placeholder={"Zip Code"}
+                className={styles.inputContactRight}
+                value={this.state.selectedMealPlan.delivery_zip}
+                onChange={e => {
+                  this.setState(prevState => ({
+                    selectedMealPlan: {
+                      ...prevState.selectedMealPlan,
+                      delivery_zip: e.target.value
+                    }
+                  }));
+                }}
               />
             </div>
 
@@ -640,7 +745,7 @@ const mapStateToProps = state => ({
   meals: state.subscribe.meals,
   paymentOption: state.subscribe.paymentOption,
   selectedPlan: state.subscribe.selectedPlan,
-  // customerId: state.subscribe.profile.customerId,
+  customerId: state.subscribe.profile.customerId,
   // socialMedia: state.subscribe.profile.socialMedia,
   email: state.subscribe.profile.email,
   // firstName: state.subscribe.addressInfo.firstName,

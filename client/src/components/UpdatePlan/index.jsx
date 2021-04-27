@@ -35,7 +35,6 @@ import PopLogin from '../PopLogin';
 import Popsignup from '../PopSignup';
 
 
-
 class UpdatePlan extends React.Component {
   constructor() {
     super();
@@ -52,7 +51,13 @@ class UpdatePlan extends React.Component {
       numDeliveryDays: 0,
       currentDiscount: 0,
       currentMeals: "",
-      currentDeliveries: ""
+      currentDeliveries: "",
+      updatedMeals: "",
+      updatedDeliveries: "",
+      mealPlanDefaulted: false,
+      additionalCharges: "0.00",
+      checkoutError: false,
+      updatedMealPlan: {}
     };
   }
 
@@ -101,11 +106,15 @@ class UpdatePlan extends React.Component {
       let customerUid = this.props.location.customerUid;
       let currentMeals = this.props.location.currentMeals;
       let currentDeliveries = this.props.location.currentDeliveries;
+      let currentMealPlan = this.props.location.currentMealPlan;
 
       this.setState({
         customerUid,
         currentMeals,
         currentDeliveries,
+        updatedMeals: currentMeals,
+        updatedDeliveries: currentDeliveries,
+        updatedMealPlan: currentMealPlan,
         mounted: true
       });
 
@@ -272,19 +281,27 @@ class UpdatePlan extends React.Component {
         <div className={styles.mealButtonWrapper}>
         <button
           key={mealIndex}
-          className={
+          /*className={
             this.state.currentMeals === mealIndex
+              ? selectedMealButton
+              : deselectedMealButton
+          }*/
+          className={
+            this.state.updatedMeals === mealIndex
               ? selectedMealButton
               : deselectedMealButton
           }
           onClick={() => {
             this.props.chooseMealsDelivery(
               mealIndex,
-              this.props.paymentOption,
+              this.state.updatedDeliveries,
               this.props.plans
             );
             console.log("===== mealIndex: " + mealIndex);
             console.log("===== paymentOption: " + this.props.paymentOption);
+            this.setState({
+              updatedMeals: mealIndex
+            });
             //console.log("===== plans: " + JSON.stringify(this.props.plans));
           }}
         >
@@ -308,7 +325,7 @@ class UpdatePlan extends React.Component {
     var discount = null;
 
     console.log("(paymentFrequency2) === (1)");
-    console.log("(paymentFrequency2) === typeof(discounts): " + typeof(discounts));
+    console.log("(paymentFrequency2) === typeof(discounts): ", typeof(discounts));
 
     if(typeof(discounts) !== "undefined"){
       console.log("(paymentFrequency2) === (2)");
@@ -340,7 +357,7 @@ class UpdatePlan extends React.Component {
                 return (
                   <div style={{display: 'inline-block'}}>
                     <button
-                    disabled={active}
+                    /*disabled={active}*/
                     /*className={
                       (this.props.paymentOption === deliveryIndex
                         ? selectedPaymentOption
@@ -353,16 +370,19 @@ class UpdatePlan extends React.Component {
                         : deselectedPaymentOption
                     }*/
                     className={
-                      this.state.currentDeliveries === deliveryIndex
+                      this.state.updatedDeliveries === deliveryIndex
                         ? selectedPaymentOption
                         : deselectedPaymentOption
                     }
                     onClick={() => {
                       this.props.choosePaymentOption(
                         deliveryIndex,
-                        this.props.meals,
-                        tempPlan
+                        this.state.updatedMeals,
+                        this.props.plans
                       )
+                      this.setState({
+                        updatedDeliveries: deliveryIndex
+                      });
                       console.log("##### deliveryIndex: " + deliveryIndex);
                       console.log("##### meals: " + this.props.meals);
                     }}
@@ -450,6 +470,63 @@ class UpdatePlan extends React.Component {
     return deal;
   };
 
+  displayCheckoutError = () => {
+    if(this.state.checkoutError === false) {
+      this.setState({
+        checkoutErrorModal: styles.changeErrorModalPopUpShow,
+        checkoutError: true,
+      });
+    }else{
+      this.setState({
+        checkoutErrorModal: styles.changeErrorModalPopUpHide,
+        checkoutError: false
+      });
+    }
+    console.log("\ncheckout error toggled to " + this.state.checkoutError + "\n\n");
+  }
+
+  saveChanges = () => {
+    // axios
+    //   .post(API_URL + 'UpdateProfile', object)
+    //   .then(res => {
+    //     console.log(res);
+    //   })
+    //   .catch(err => {
+    //     console.log(err);
+    //     if (err.response) {
+    //       console.log("error: " + JSON.stringify(err.response));
+    //     }
+    //   });
+    let object = {
+      cc_cvv: this.state.updatedMealPlan.cc_cvv,
+      cc_exp_date: this.state.updatedMealPlan.cc_cvv,
+      cc_num: this.state.updatedMealPlan.cc_cvv,
+      cc_zip: this.state.updatedMealPlan.cc_cvv,
+      customer_email: this.props.email,
+      items: [{
+        qty: this.props.selectedPlan.num_deliveries, 
+        name: this.props.selectedPlan.item_name, 
+        price: this.props.selectedPlan.item_price, 
+        item_uid: this.props.selectedPlan.item_uid, 
+        itm_business_uid: this.props.selectedPlan.item_business_uid
+      }],
+      new_item_id: this.props.selectedPlan.item_uid,
+      purchase_id: this.state.updatedMealPlan.purchase_uid,
+      start_delivery_date: this.state.updatedMealPlan.start_delivery_date
+    }
+    axios
+      .post(API_URL + 'change_purchase', object)
+      .then(res => {
+        console.log("change_purchase response: ", res);
+      })
+      .catch(err => {
+        console.log(err);
+        if (err.response) {
+          console.log("error: " + JSON.stringify(err.response));
+        }
+      });
+  }
+
   render() {
     if (!this.state.mounted) {
       return null;
@@ -465,6 +542,64 @@ class UpdatePlan extends React.Component {
 
           {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
           {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
+
+          {(() => {
+            // console.log("\ndisplay checkout error message? " + this.state.checkoutError + "\n\n");
+            if (this.state.checkoutError === true) {
+              {console.log("changes updatedMealPlan: ", this.state.updatedMealPlan);}
+              {console.log("changes updatedMeals: ", this.state.updatedMeals);}
+              {console.log("changes updatedMealDeliveris: ", this.state.updatedDeliveries);}
+              {console.log("selectedPlan: ", this.props.selectedPlan);}
+              return (
+                <>
+                <div className = {this.state.checkoutErrorModal}>
+                  <div className  = {styles.changeErrorModalContainer}>
+                      <a  style = {{
+                              color: 'black',
+                              textAlign: 'center', 
+                              fontSize: '45px', 
+                              zIndex: '2', 
+                              float: 'right', 
+                              position: 'absolute', top: '0px', left: '350px', 
+                              transform: 'rotate(45deg)', 
+                              cursor: 'pointer'}} 
+                              
+                              onClick = {this.displayCheckoutError}>+</a>
+
+                      <div style = {{display: 'block', width: '300px', margin: '40px auto 0px'}}>
+                        {/*<h6 style = {{margin: '5px', color: 'orange', fontWeight: 'bold', fontSize: '25px'}}>
+                          PAYMENT ERROR
+                        </h6>*/}
+                        <h6 style = {{margin: '5px', color: 'orange', fontWeight: 'bold', fontSize: '25px'}}>
+                          Additional Charges
+                        </h6>
+                        <text>${this.state.additionalCharges}</text>
+                        <br />
+                        <button 
+                          className={styles.proceedBtn}
+                          onClick = {() => {
+                            console.log("save changes clicked...");
+                            this.saveChanges();
+                          }}
+                        >
+                          Save Changes
+                        </button>
+                        <button 
+                          className={styles.proceedBtn}
+                          onClick = {() => {
+                            console.log("keep existing meal plan clicked...");
+                            this.displayCheckoutError();
+                          }}
+                        >
+                          Keep Existing Meal Plan
+                        </button>
+                      </div> 
+                    </div>
+                  </div>
+                </>
+              );
+            }
+          })()} 
 
           <div className={styles.sectionHeaderUL}>
             Edit Plan
@@ -588,9 +723,15 @@ class UpdatePlan extends React.Component {
                                 That's only ${this.calculateDeal()} per freshly cooked meal
                               </div>
                               <div className={styles.proceedWrapper}>
-                                <Link className={styles.proceedBtn} to='/payment-details'>
+                                {/*<Link className={styles.proceedBtn} to='/payment-details'>
                                   PROCEED
-                                </Link>
+                                </Link>*/}
+                                <button 
+                                  className={styles.proceedBtn}
+                                  onClick = {this.displayCheckoutError}
+                                >
+                                  PROCEED
+                                </button>
                               </div>
                             </div>
                             </div>

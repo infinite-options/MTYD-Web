@@ -353,6 +353,7 @@
   outline: 0;
   height: 100px;
   width: 100px;
+  cursor: pointer;
 }
 
 .deliveryButtonCurrent {
@@ -371,7 +372,6 @@
   border-color: #ff6505;
   box-shadow: none !important;
   outline: 0;
-  cursor: none;
 }
 
 /*.deliveryButtonSelected {
@@ -771,4 +771,51 @@
   height: 78px;
   width: 78px;
   border: solid;
+}
+
+.changeErrorModalPopUpHide {
+  z-index: 1;
+  display: none;
+}
+
+.changeErrorModalPopUpShow {
+  height: 100%;
+  width: 100%;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  overflow: auto;
+  position: fixed;
+  display: grid;
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+.changeErrorModalContainer {
+  position: relative;
+  justify-self: center;
+  align-self: center;
+  display: block;
+  border:#FF9400 solid thick;
+  background-color: white;
+  border-radius: 20px;
+  height: 35vh;
+  width: 400px;
+  z-index: 2;
+}
+
+.changeErrorModalButtonMenu {
+  text-decoration: none;
+  color: black;
+  font-weight: 450;
+  height: fit-content;
+  text-align: center;
+  margin-left: 50px;
+  margin-top: 54px;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.changeErrorModalButtonMenu:hover{
+  text-decoration: none;
+  color: #FF9400;
 }
