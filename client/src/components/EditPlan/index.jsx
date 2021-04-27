@@ -30,23 +30,7 @@ import {API_URL} from "../../reducers/constants";
 import {Link} from "react-router-dom";
 import {withRouter} from "react-router";
 import styles from "./editPlan.module.css";
-import menuStyles from "../Menu/menu.module.css";
 import {WebNavBar, BottomNavBar} from "../NavBar";
-import PaymentDetails from "../PaymentDetails";
-import Menu from "../Menu";
-/*import takeaway from "./static/take-away.svg";
-import chooseMeals from "./static/choose_meals.svg";
-import prepay from "./static/prepay.png";
-import delivery from "./static/delivery.png";
-import one from "./static/one.svg";
-import two from "./static/two.svg";
-import three from "./static/three.svg";*/
-/*import orangePlate from "./static/orange_plate.png";
-import yellowPlate from "./static/yellow_plate.png";*/
-
-/*import paymentOption1 from "./Group 2029.svg";
-import paymentOption2 from "./Group 2016.svg";
-import paymentOption3 from "./Group 2030.svg";*/
 
 import PopLogin from '../PopLogin';
 import Popsignup from '../PopSignup';
@@ -142,7 +126,7 @@ class EditPlan extends React.Component {
 
     console.log("before const map");
 
-    const map = new google.maps.Map(document.getElementById("map"), {
+    window.map = new google.maps.Map(document.getElementById("map"), {
       center: { lat: temp_lat, lng: temp_lng},
       zoom: 12,
     });
@@ -174,6 +158,31 @@ class EditPlan extends React.Component {
             this.props.fetchSubscribed(customerUid);
           });
 
+          /*
+            this.setState({
+              latitude: res.data.result[0].customer_lat,
+              longitude: res.data.result[0].customer_long,
+            })
+            console.log(this.state.latitude);
+            console.log(this.state.longitude);
+
+            console.log(parseFloat(this.state.latitude))
+
+            const temp_position = {lat:parseFloat(this.state.latitude), lng:parseFloat(this.state.longitude)}
+
+            console.log(temp_position)
+
+            map.setCenter(temp_position)
+
+            if(this.state.latitude!=''){
+              map.setZoom(17);
+              new google.maps.Marker({
+                position: temp_position,
+                map,
+              });
+            }
+          */
+
         })
         .catch(err => {
           if (err.response) {
@@ -181,71 +190,15 @@ class EditPlan extends React.Component {
           } else {
             console.log(err.toString());
           }
+          this.props.history.push("/meal-plan");
         });
-
-    }
-
-    // Logged in from Apple
-    /*if (urlParams.has("customer_uid")) {
-      let customer_uid = urlParams.get("customer_uid");
-      document.cookie = "customer_uid=" + customer_uid;
-
-      axios
-        .get(API_URL + "customer_lplp", {
-          params: {
-            customer_uid: customer_uid
-          }
-        })
-        .then(res => {
-          //console.log(res);
-          console.log("lplp res (apple): ", res);
-          if (res.data.result !== undefined) {
-            // this.props.history.push("/select-meal");
-            this.props.fetchProfileInformation(customer_uid);
-            this.props.fetchSubscribed(customer_uid);
-          }
-          this.props.fetchPlans();
-          this.setState({
-            mounted: true,
-            customerUid: customer_uid,
-            loggedIn: true
-          });
-        })
-        .catch(err => {
-          console.log(err);
-          if (err.response) {
-            console.log(err.response);
-          }
-        });
-
-    // Logged in
-    } else if (
-      document.cookie
-        .split(";")
-        .some(item => item.trim().startsWith("customer_uid="))
-    ) {
-      let customer_uid = document.cookie
-        .split("; ")
-        .find(item => item.startsWith("customer_uid="))
-        .split("=")[1];
-      console.log("logged in!");
-      this.props.fetchProfileInformation(customer_uid);
-      this.props.fetchPlans();
-      this.props.fetchSubscribed(customer_uid);
-
-      this.setState({
-        mounted: true,
-        customerUid: customer_uid,
-        loggedIn: true
-      });*/
 
     // Not logged in
-    else {
+    } else {
       // Reroute to log in page
       console.log("edit-plan NOT LOGGED IN");
       console.log("edit plan props.location (not logged in): ", this.props.location);
-      this.props.history.push("/");
-
+      this.props.history.push("/meal-plan");
     }
   }
 
@@ -255,20 +208,12 @@ class EditPlan extends React.Component {
     let selectedMealButton =
     styles.mealButton + " " + styles.mealButtonSelected;
     let mealButtons = [];
-    //let singleMealData;
-
-    //let mealPlans = this.props.plans;
     let subbedPlans = this.props.subscribedPlans;
+
     for (const [mealIndex, mealData] of Object.entries(subbedPlans)) {
 
-      //singleMealData = mealData["1"];
       console.log("mealData: ", mealData);
       let planItems = JSON.parse(mealData.items);
-      // console.log("planItems: " + JSON.stringify(planItems));
-      // console.log("planItems.name: ", planItems[0].name);
-      //console.log(planItems.name.substring(0,planItems.name.indexOf(" ")));
-      //let planMealNum = JSON.parse(planItems[0].name.substring(0,planItems[0].name.indexOf(" ")));
-      //let planDeliveryNum = planItems[0].qty;
       let planId = mealData.purchase_uid.substring(
         mealData.purchase_uid.indexOf("-")+1,
         mealData.purchase_uid.length
@@ -277,112 +222,86 @@ class EditPlan extends React.Component {
       let selectedMeals = planItems[0].name.substring(0,planItems[0].name.indexOf(" "));
       let selectedDeliveries = planItems[0].qty;
 
-      // console.log("meals: ", this.props.meals);
-      // console.log("mealIndex: ", mealIndex);
-      //console.log("selectedPlan: ", this.props.selectedPlan);
-      //console.log("===> selectedPlan ID: ", this.props.selectedPlan.purchase_uid);
-      // console.log("===> this ID: ", mealData.purchase_uid);
-
       mealButtons.push(
         <div>
-        <button
-          key={mealData.purchase_uid}
-          /*className={
-            this.props.meals === mealIndex
-              ? selectedMealButton
-              : deselectedMealButton
-          }*/
-          className={
-            this.state.selectedId === mealData.purchase_uid 
-              ? selectedMealButton
-              : deselectedMealButton
-          }
-          onClick={() => {
-            console.log("clicked subbed meal button");
-            console.log("meal data: ", mealData);
+          <button
+            key={mealData.purchase_uid}
+            className={
+              this.state.selectedId === mealData.purchase_uid 
+                ? selectedMealButton
+                : deselectedMealButton
+            }
+            onClick={() => {
+              console.log("clicked subbed meal button");
+              console.log("meal data: ", mealData);
 
-            //let selectedMeals = planItems[0].name.substring(0,planItems[0].name.indexOf(" "));
-            //let selectedDeliveries = planDeliveryNum;
+              this.setState({
+                selectedMeals,
+                selectedDeliveries,
+                selectedDiscount: mealData.amount_discount.toFixed(2),
+                selectedId: mealData.purchase_uid,
+                nextBillingAmount: mealData.amount_due.toFixed(2),
+                selectedMealPlan: mealData,
+                latitude: mealData.delivery_latitude,
+                longitude: mealData.delivery_longitude,
+              });
 
-            /*this.setState({
-              selectedMeals,
-              selectedDeliveries,
-              selectedDiscount: mealData.amount_discount.toFixed(2),
-              selectedId: mealData.purchase_uid,
-              nextBillingAmount: mealData.amount_due.toFixed(2)
-            });*/
-            this.setState({
-              selectedMeals,
-              selectedDeliveries,
-              selectedDiscount: mealData.amount_discount.toFixed(2),
-              selectedId: mealData.purchase_uid,
-              nextBillingAmount: mealData.amount_due.toFixed(2),
-              selectedMealPlan: mealData
-            });
-  
-            this.props.chooseMealsDelivery(
-              selectedMeals,
-              selectedDeliveries,
-              this.props.plans
-            );
-            console.log("calling PAD for " + mealData.purchase_uid);
-            axios.get(API_URL + 'predict_autopay_day/' + mealData.purchase_uid)
-              .then(res => {
-                console.log("PAD date: " + JSON.stringify(res));
-                if(res.data.menu_date !== undefined) {
-                  this.setState({
-                    nextBillingDate: res.data.menu_date.substring(
-                      0, res.data.menu_date.indexOf(" ")
-                    )
-                  });
-                } else {
-                  this.setState({
-                    nextBillingDate: "TBD"
-                  });
-                }
-              })
-              .catch(err => {
-                console.log(err)
-              })
-            //https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/predict_autopay_day/400-000086
-            // console.log("===== mealIndex: " + mealIndex);
-            // console.log("===== paymentOption: " + this.props.paymentOption);
-          }}
-        >
-          {selectedMeals} Meals, {selectedDeliveries} Deliveries: {planId}
-        </button>
+              console.log("lat: ", this.state.latitude);
+              console.log("lon: ", this.state.longitude);
+
+              console.log(parseFloat(this.state.latitude))
+
+              const temp_position = {lat:parseFloat(this.state.latitude), lng:parseFloat(this.state.longitude)}
+
+              console.log(temp_position)
+
+              window.map.setCenter(temp_position)
+
+              if(this.state.latitude!=''){
+                window.map.setZoom(17);
+                new google.maps.Marker({
+                  position: temp_position,
+                  map: window.map
+                });
+              }
+    
+              this.props.chooseMealsDelivery(
+                selectedMeals,
+                selectedDeliveries,
+                this.props.plans
+              );
+              
+              console.log("calling PAD for " + mealData.purchase_uid);
+              axios.get(API_URL + 'predict_autopay_day/' + mealData.purchase_uid)
+                .then(res => {
+                  console.log("PAD date: " + JSON.stringify(res));
+                  if(res.data.menu_date !== undefined) {
+                    this.setState({
+                      nextBillingDate: res.data.menu_date.substring(
+                        0, res.data.menu_date.indexOf(" ")
+                      )
+                    });
+                  } else {
+                    this.setState({
+                      nextBillingDate: "TBD"
+                    });
+                  }
+                })
+                .catch(err => {
+                  console.log(err)
+                })
+            }}
+          >
+            {selectedMeals} Meals, {selectedDeliveries} Deliveries: {planId}
+          </button>
         </div>
       );
     }
     return mealButtons;
   };
 
-  calculateTotal = () => {
-    let calculatedTotal = (
-      this.props.selectedPlan.item_price *
-      this.props.selectedPlan.num_deliveries *
-      (1-(this.props.selectedPlan.delivery_discount*0.01))
-    ).toFixed(2);
-    return calculatedTotal;
-  };
-
-  calculateDeal = () => {
-    let total = parseFloat(this.calculateTotal());
-    //console.log("total: " + total);
-
-    let noDiscountPrice = parseFloat((
-      this.props.selectedPlan.item_price *
-      this.props.selectedPlan.num_deliveries
-    ).toFixed(2));
-    //console.log("noDiscountPrice: " + noDiscountPrice);
-
-    let deal = total/noDiscountPrice;
-    //console.log("deal: " + deal);
-
-    return Math.ceil(deal);
-  };
-
   saveEdits = () => {
+    console.log("saving edits...");
     /*this.props.history.push("/update-plan");*/
   }
 
@@ -396,7 +315,6 @@ class EditPlan extends React.Component {
     }*/
     console.log("(rerender) edit plan props: ", this.props);
     return (
-      /*for mobile's screen*/
       <>
         <WebNavBar 
           poplogin = {this.togglePopLogin}
@@ -536,19 +454,20 @@ class EditPlan extends React.Component {
         </div>
 
         <div style={{display: 'flex', marginLeft: '8%', width: '42%'}}>
-
           <div style = {{display: 'inline-block', width: '100%'}}>
-
             <div style={{display: 'flex'}}>
               <input
                 type='text'
                 placeholder='First Name'
                 className={styles.inputContactLeft}
-                value={this.state.selectedMealPlan.customer_first_name}
+                value={this.state.selectedMealPlan.delivery_first_name}
                 onChange={e => {
-                  this.setState({
-                    firstName: e.target.value
-                  });
+                  this.setState(prevState => ({
+                    selectedMealPlan: {
+                      ...prevState.selectedMealPlan,
+                      delivery_first_name: e.target.value
+                    }
+                  }));
                 }}
               />
 
@@ -556,11 +475,14 @@ class EditPlan extends React.Component {
                 type='text'
                 placeholder='Last Name'
                 className={styles.inputContactRight}
-                value={this.state.selectedMealPlan.customer_last_name}
+                value={this.state.selectedMealPlan.delivery_last_name}
                 onChange={e => {
-                  this.setState({
-                    lastName: e.target.value
-                  });
+                  this.setState(prevState => ({
+                    selectedMealPlan: {
+                      ...prevState.selectedMealPlan,
+                      delivery_last_name: e.target.value
+                    }
+                  }));
                 }}
               />
             </div>
@@ -570,20 +492,20 @@ class EditPlan extends React.Component {
               placeholder='Email'
               className={styles.input}
               value={this.props.email}
-              onChange={e => {
-
-              }}
             />
 
             <input
               type='text'
               placeholder='Phone Number'
               className={styles.input}
-              value={this.state.selectedMealPlan.customer_phone_num}
+              value={this.state.selectedMealPlan.delivery_phone_num}
               onChange={e => {
-                this.setState({
-                  phone: e.target.value
-                });
+                this.setState(prevState => ({
+                  selectedMealPlan: {
+                    ...prevState.selectedMealPlan,
+                    delivery_phone_num: e.target.value
+                  }
+                }));
               }}
             />
 
@@ -601,11 +523,14 @@ class EditPlan extends React.Component {
                 type='text'
                 placeholder={"Unit"}
                 className={styles.inputContactLeft}
-                value={this.state.selectedMealPlan.customer_unit}
+                value={this.state.selectedMealPlan.delivery_unit}
                 onChange={e => {
-                  this.setState({
-                    unit: e.target.value
-                  });
+                  this.setState(prevState => ({
+                    selectedMealPlan: {
+                      ...prevState.selectedMealPlan,
+                      delivery_unit: e.target.value
+                    }
+                  }));
                 }}
               />
               <input
@@ -639,9 +564,20 @@ class EditPlan extends React.Component {
               className={styles.input}
               value={this.state.selectedMealPlan.delivery_instructions}
               onChange={e => {
-                this.setState({
-                  instructions: e.target.value
-                });
+                this.setState(prevState => ({
+                  selectedMealPlan: {
+                    ...prevState.selectedMealPlan,
+                    delivery_instructions: e.target.value
+                  }
+                }));
+                /*this.setState(prevState => ({
+                  recalculatingPrice: false,
+                  paymentSummary: {
+                    ...prevState.paymentSummary,
+                    total,
+                    subtotal
+                  }
+                });*/
               }}
             />
 

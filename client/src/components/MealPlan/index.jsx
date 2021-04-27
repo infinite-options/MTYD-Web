@@ -77,6 +77,10 @@ const MealPlan = props => {
     console.log("RERENDER ON CANCELLED PLANS CHANGE");
   }, [cancelledPlans]);
 
+  useEffect(() => {
+    console.log("RERENDER WHEN PLANS FETCHED");
+  }, [props.plans]);
+
   const modalShow = [
     <ChangeMealPlan isShow={true} changeOpen={() => setModal(null)} />,
     <ChangeUserInfo isShow={true} changeOpen={() => setModal(null)} />,
@@ -235,18 +239,23 @@ const MealPlan = props => {
         // Endpoints where data comes from: 
         // plans?business_uid=200-000001
         // pid_history/400-000021
-
-        //console.log("ITEMS: " + JSON.stringify(items));
           
+        console.log("items: ", items);
+
         let status = items[key][0].purchase_status;
         let name = JSON.parse(items[key][0].items)[0].name;
         let qty = JSON.parse(items[key][0].items)[0].qty;
+
+        console.log("props.plans: ", props.plans);
+
         let remaining = props.plans[name.split(' ')[0]][qty].num_deliveries;
         let purchases = items[key];
         let active_frequency = '';
+
         if (Object.keys(props.plans).length > 0) {
           active_frequency = qty;
         }
+
         if(status === 'ACTIVE'){
         itemShow.push(
           <div key={key} className={'row pl-2 mb-5 ' + styles.historyItemName}>
@@ -450,7 +459,7 @@ const MealPlan = props => {
       <div className={styles.container}>
         <Menu show={true} message={changePassword}/>
         {modal !== null && modalShow[modal]}
-        {props.subscribedPlans.length ? (
+        {(props.subscribedPlans.length && JSON.stringify(props.plans) !== '{}') ? (
           <div className={styles.box1}>
             <div className={'row ' + styles.fixedHeight}>
               <div className={'col-9 ' + styles.flexHeight}>
