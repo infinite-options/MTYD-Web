@@ -536,7 +536,11 @@ const MealPlan = props => {
                                   numMeals,
                                   props.plans
                                 );
-                                props.history.push('/choose-plan');
+                                //props.history.push('/choose-plan');
+                                props.history.push({
+                                  pathname: '/edit-plan',
+                                  customerUid: customerId
+                                });
                               }}
                             >
                               <i className="fa fa-pencil"></i>
@@ -566,7 +570,11 @@ const MealPlan = props => {
                                         numMeals,
                                         props.plans
                                       );
-                                      props.history.push('/payment-details');
+                                      //props.history.push('/payment-details');
+                                      props.history.push({
+                                        pathname: '/edit-plan',
+                                        customerUid: customerId
+                                      });
                                     }}
                                   >
                                     <i className="fa fa-pencil align-top ml-3"></i>
@@ -610,7 +618,11 @@ const MealPlan = props => {
                                         numMeals,
                                         props.plans
                                       );
-                                      props.history.push('/choose-plan');
+                                      //props.history.push('/choose-plan');
+                                      props.history.push({
+                                        pathname: '/edit-plan',
+                                        customerUid: customerId
+                                      });
                                     }}
                                   >
                                     <i className="fa fa-pencil align-top ml-4"></i>
@@ -649,7 +661,11 @@ const MealPlan = props => {
                                     numMeals,
                                     props.plans
                                   );
-                                  props.history.push('/payment-details');
+                                  //props.history.push('/payment-details');
+                                  props.history.push({
+                                    pathname: '/edit-plan',
+                                    customerUid: customerId
+                                  });
                                 }}
                               >
                                 <i className="fa fa-pencil ml-4"></i>

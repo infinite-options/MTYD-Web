@@ -62,7 +62,6 @@ class EditPlan extends React.Component {
       unlogin_plans:null,
       plansFetched: false,
       customerUid: "",
-      loggedIn: false,
       deliveryDays: [],
       login_seen:false,
       signUpSeen:false,
@@ -81,7 +80,8 @@ class EditPlan extends React.Component {
       selectedMeals: "",
       selectedDeliveries: "",
       selectedDiscount: "",
-      selectedId: ""
+      selectedId: "",
+      selectedMealPlan: {}
     };
   }
 
@@ -109,10 +109,6 @@ class EditPlan extends React.Component {
       })
     }
    };
-  
-
-  // http://localhost:2000/api/v2/delivery_weekdays
-  // https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/delivery_weekdays
 
   componentDidMount() {
 
@@ -158,10 +154,42 @@ class EditPlan extends React.Component {
     // Clear Query parameters
     window.history.pushState({}, document.title, window.location.pathname);
 
+    if (this.props.location.customerUid !== undefined) {
+      console.log("edit-plan LOGGED IN");
+      console.log("edit plan props.location (logged in): ", this.props.location);
+
+      let customerUid = this.props.location.customerUid;
+
+      axios
+        .get(API_URL + 'Profile/' + customerUid)
+        .then(res => {
+          console.log("fetch profile response: ", res);
+
+          this.setState(prevState => ({
+            customerUid,
+            mounted: true
+          }), () => {
+            this.props.fetchProfileInformation(customerUid);
+            this.props.fetchPlans();
+            this.props.fetchSubscribed(customerUid);
+          });
+
+        })
+        .catch(err => {
+          if (err.response) {
+            console.log(err.response);
+          } else {
+            console.log(err.toString());
+          }
+        });
+
+    }
+
     // Logged in from Apple
-    if (urlParams.has("customer_uid")) {
+    /*if (urlParams.has("customer_uid")) {
       let customer_uid = urlParams.get("customer_uid");
       document.cookie = "customer_uid=" + customer_uid;
+
       axios
         .get(API_URL + "customer_lplp", {
           params: {
@@ -189,137 +217,7 @@ class EditPlan extends React.Component {
             console.log(err.response);
           }
         });
-        axios.get(API_URL + 'Profile/' + customer_uid)
-        .then(res => {
-          let data = res.data.result[0]
-          this.props.changeAddressFirstName(data.customer_first_name)
-          this.props.changeAddressLastName(data.customer_last_name)
-          this.props.changeAddressStreet(data.customer_address)
-          this.props.changeAddressUnit(data.customer_unit)
-          this.props.changeAddressCity(data.customer_city)
-          this.props.changeAddressState(data.customer_state)
-          this.props.changeAddressZip(data.customer_zip)
-          this.props.changeAddressPhone(data.customer_phone_num)
 
-          /*this.setState({
-            latitude: res.data.result[0].customer_lat,
-            longitude: res.data.result[0].customer_long,
-          })
-          console.log(this.state.latitude);
-          console.log(this.state.longitude);
-  
-          console.log(parseFloat(this.state.latitude))
-  
-          const temp_position = {lat:parseFloat(this.state.latitude), lng:parseFloat(this.state.longitude)}
-  
-          console.log(temp_position)
-  
-          map.setCenter(temp_position)
-  
-          if(this.state.latitude!=''){
-            map.setZoom(17);
-            new google.maps.Marker({
-              position: temp_position,
-              map,
-            });
-          }*/
-
-          console.log("(2) edit-plan address props: " + JSON.stringify(this.props.address));
-        })
-        .catch(err => {
-          console.log(err)
-        })
-
-        /*const input = document.getElementById("pac-input");
-        const options = {
-          componentRestrictions: { country: "us" }
-        };
-        const autocomplete = new google.maps.places.Autocomplete(input, options);
-    
-        autocomplete.bindTo("bounds", map);
-        const marker = new google.maps.Marker({
-          map,
-        });
-    
-        autocomplete.addListener("place_changed", () => {
-          let address1 = "";
-          let postcode = "";
-          let city = '';
-          let state = '';
-          let address1Field = document.querySelector("#pac-input");
-          let postalField = document.querySelector("#postcode");
-    
-          marker.setVisible(false);
-          const place = autocomplete.getPlace();
-          console.log(place)
-          if (!place.geometry || !place.geometry.location) {
-            // User entered the name of a Place that was not suggested and
-            // pressed the Enter key, or the Place Details request failed.
-            window.alert("No details available for input: '" + place.name + "'");
-            return;
-          }
-          
-          if (place.geometry.viewport) {
-            console.log('here')
-            map.fitBounds(place.geometry.viewport);
-          } else {
-            console.log('there')
-            map.setCenter(place.geometry.location);
-          }
-    
-          map.setZoom(17);
-          marker.setPosition(place.geometry.location);
-          marker.setVisible(true);
-    
-          for (const component of place.address_components) {
-            const componentType = component.types[0];
-            switch (componentType) {
-              case "street_number": {
-                address1 = `${component.long_name} ${address1}`;
-                break;
-              }
-        
-              case "route": {
-                address1 += component.short_name;
-                break;
-              }
-        
-              case "postal_code": {
-                postcode = `${component.long_name}${postcode}`;
-                break;
-              }
-      
-              case "locality":
-                document.querySelector("#locality").value = component.long_name;
-                city = component.long_name;
-                break;
-        
-              case "administrative_area_level_1": {
-                document.querySelector("#state").value = component.short_name;
-                state= component.short_name;
-                break;
-              }
-              
-            }
-          }
-          address1Field.value = address1;
-          postalField.value = postcode;
-    
-          this.setState({
-            name: place.name,
-            //street_address: address1,
-            street: address1,
-            city: city,
-            state: state,
-            //zip_code: postcode,
-            addressZip: postcode,
-            //lat:place.geometry.location.lat(),
-            //lng:place.geometry.location.lng(),
-            latitude: place.geometry.location.lat(),
-            longitude: place.geometry.location.lng(),
-          })
-        })*/
-        
     // Logged in
     } else if (
       document.cookie
@@ -334,82 +232,22 @@ class EditPlan extends React.Component {
       this.props.fetchProfileInformation(customer_uid);
       this.props.fetchPlans();
       this.props.fetchSubscribed(customer_uid);
-      // axios.get(API_URL + 'Profile/' + customer_uid)
-      //   .then(res => {
-      //     let data = res.data.result[0]
-      //     this.props.changeAddressFirstName(data.customer_first_name)
-      //     this.props.changeAddressLastName(data.customer_last_name)
-      //     this.props.changeAddressStreet(data.customer_address)
-      //     this.props.changeAddressUnit(data.customer_unit)
-      //     this.props.changeAddressCity(data.customer_city)
-      //     this.props.changeAddressState(data.customer_state)
-      //     this.props.changeAddressZip(data.customer_zip)
-      //     this.props.changeAddressPhone(data.customer_phone_num)
-      //     console.log("(3) edit-plan address props: " + JSON.stringify(this.props.address));
-      //   })
-      //   .catch(err => {
-      //     console.log(err)
-      //   })
+
       this.setState({
         mounted: true,
         customerUid: customer_uid,
         loggedIn: true
-      });
-    } else {
+      });*/
+
+    // Not logged in
+    else {
       // Reroute to log in page
       console.log("edit-plan NOT LOGGED IN");
+      console.log("edit plan props.location (not logged in): ", this.props.location);
       this.props.history.push("/");
-      /*this.props.fetchPlans();
-      this.setState({
-        mounted: true,
-        customerUid: "NULL",
-        loggedIn: false
-      });*/
+
     }
   }
-
-  mealsDelivery = () => {
-
-    let deselectedMealButton = styles.mealButton;
-    let selectedMealButton =
-    styles.mealButton + " " + styles.mealButtonSelected;
-    let mealButtons = [];
-    let singleMealData;
-
-    let mealPlans = this.props.plans;
-    for (const [mealIndex, mealData] of Object.entries(mealPlans)) {
-
-      singleMealData = mealData["1"];
-
-      mealButtons.push(
-        <div className={styles.mealButtonWrapper}>
-        <button
-          key={mealIndex}
-          className={
-            this.props.meals === mealIndex
-              ? selectedMealButton
-              : deselectedMealButton
-          }
-          onClick={() => {
-            this.props.chooseMealsDelivery(
-              mealIndex,
-              this.props.paymentOption,
-              this.props.plans
-            );
-            console.log("===== mealIndex: " + mealIndex);
-            console.log("===== paymentOption: " + this.props.paymentOption);
-          }}
-        >
-          {mealIndex}
-        </button>
-        <div style={{textAlign: 'center', marginTop: '10px'}}>
-          ${singleMealData.item_price}
-        </div>
-        </div>
-      );
-    }
-    return mealButtons;
-  };
 
   showSubscribedMeals = () => {
 
@@ -430,34 +268,61 @@ class EditPlan extends React.Component {
       // console.log("planItems.name: ", planItems[0].name);
       //console.log(planItems.name.substring(0,planItems.name.indexOf(" ")));
       //let planMealNum = JSON.parse(planItems[0].name.substring(0,planItems[0].name.indexOf(" ")));
-      let planDeliveryNum = planItems[0].qty;
+      //let planDeliveryNum = planItems[0].qty;
       let planId = mealData.purchase_uid.substring(
         mealData.purchase_uid.indexOf("-")+1,
         mealData.purchase_uid.length
       );
 
+      let selectedMeals = planItems[0].name.substring(0,planItems[0].name.indexOf(" "));
+      let selectedDeliveries = planItems[0].qty;
+
+      // console.log("meals: ", this.props.meals);
+      // console.log("mealIndex: ", mealIndex);
+      //console.log("selectedPlan: ", this.props.selectedPlan);
+      //console.log("===> selectedPlan ID: ", this.props.selectedPlan.purchase_uid);
+      // console.log("===> this ID: ", mealData.purchase_uid);
+
       mealButtons.push(
         <div>
         <button
-          key={mealIndex}
-          className={
+          key={mealData.purchase_uid}
+          /*className={
             this.props.meals === mealIndex
+              ? selectedMealButton
+              : deselectedMealButton
+          }*/
+          className={
+            this.state.selectedId === mealData.purchase_uid 
               ? selectedMealButton
               : deselectedMealButton
           }
           onClick={() => {
             console.log("clicked subbed meal button");
             console.log("meal data: ", mealData);
-            this.setState({
-              selectedMeals: planItems[0].name.substring(0,planItems[0].name.indexOf(" ")),
-              selectedDeliveries: planDeliveryNum,
+
+            //let selectedMeals = planItems[0].name.substring(0,planItems[0].name.indexOf(" "));
+            //let selectedDeliveries = planDeliveryNum;
+
+            /*this.setState({
+              selectedMeals,
+              selectedDeliveries,
               selectedDiscount: mealData.amount_discount.toFixed(2),
               selectedId: mealData.purchase_uid,
               nextBillingAmount: mealData.amount_due.toFixed(2)
+            });*/
+            this.setState({
+              selectedMeals,
+              selectedDeliveries,
+              selectedDiscount: mealData.amount_discount.toFixed(2),
+              selectedId: mealData.purchase_uid,
+              nextBillingAmount: mealData.amount_due.toFixed(2),
+              selectedMealPlan: mealData
             });
+  
             this.props.chooseMealsDelivery(
-              mealIndex,
-              this.props.paymentOption,
+              selectedMeals,
+              selectedDeliveries,
               this.props.plans
             );
             console.log("calling PAD for " + mealData.purchase_uid);
@@ -484,7 +349,7 @@ class EditPlan extends React.Component {
             // console.log("===== paymentOption: " + this.props.paymentOption);
           }}
         >
-          {planItems[0].name}, {planDeliveryNum} Deliveries: {planId}
+          {selectedMeals} Meals, {selectedDeliveries} Deliveries: {planId}
         </button>
         </div>
       );
@@ -533,301 +398,276 @@ class EditPlan extends React.Component {
     return (
       /*for mobile's screen*/
       <>
-          <WebNavBar 
-            poplogin = {this.togglePopLogin}
-            popSignup = {this.togglePopSignup}
-          />
+        <WebNavBar 
+          poplogin = {this.togglePopLogin}
+          popSignup = {this.togglePopSignup}
+        />
 
-          {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
-          {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
+        {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
+        {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
 
-          <div className={styles.sectionHeaderScroll}>
-            Select Meal Plan
+        <div className={styles.sectionHeaderScroll}>
+          Select Meal Plan
+        </div>
+
+        <div className={styles.containerSplit}>
+          <div className={styles.boxScroll}>
+            {this.showSubscribedMeals()}
           </div>
+          <div className={styles.boxRight}>
 
-          <div className={styles.containerSplit}>
-            <div className={styles.boxScroll}>
-              {this.showSubscribedMeals()}
-            </div>
-            <div className={styles.boxRight}>
-
-              <div style={{textAlign: 'center'}}>
-                <div>
-                  Card
-                </div>
-                <div className={styles.iconCard}>
-                  
-                </div>
-                <div>
-                  **********90
-                </div>
+            <div style={{textAlign: 'center'}}>
+              <div>
+                Card
               </div>
-
-              <div style={{textAlign: 'center', paddingLeft: '8%'}}>
-                <div>
-                  Meals
-                </div>
-                <div 
-                  className={styles.iconMeals}
-                  onClick={() => {
-                    this.props.history.push("/update-plan");
-                  }}
-                >
-                  {this.state.selectedMeals}
-                </div>
+              <div className={styles.iconCard}>
+                
               </div>
-
-              <div style={{textAlign: 'center', paddingLeft: '8%'}}>
-                <div>
-                  Deliveries
-                </div>
-                <button 
-                  className={styles.deliveryButton}
-                  onClick={() => {
-                    this.props.history.push("/update-plan");
-                  }}
-                >
-                  <span style={{fontSize: '35px'}}>
-                    {this.state.selectedDeliveries}
-                  </span>
-                  <br></br>
-                  <span style={{whiteSpace: "nowrap"}}>
-                    {"(Save "+this.state.selectedDiscount+"%)"}
-                  </span>
-                </button>
-              </div>
-
-              <div style={{textAlign: 'center', paddingLeft: '8%'}}>
-                <div>
-                  Cancel
-                </div>
-                <div 
-                  className={styles.iconTrash}
-                  onClick={() => {
-                    axios
-                      .put(`${API_URL}cancel_purchase`,{
-                        purchase_uid: this.state.selectedId,
-                      })
-                      .then((response) => {
-                        console.log("cancel_purchase response: " + JSON.stringify(response));
-                        console.log("cancel_purchase customerId: " + this.state.customerUid);
-                        this.props.fetchSubscribed(this.state.customerUid);
-                      })
-                      .catch((err) => {
-                        if(err.response) {
-                          console.log(err.response);
-                        }
-                        console.log(err);
-                      })
-                  }}
-                >
-                  
-                </div>
-              </div>
-
-            </div>
-          </div>
-
-          <div className={styles.sectionHeader}>
-            Plan Details
-          </div>
-
-          <div className={styles.containerSplit}>
-            <div className={styles.boxPDleft}>
-              <div style={{height: '30px', marginBottom: '10px', fontSize: '20px'}}>
-                Next Billing Date
-              </div>
-              <div style={{height: '30px', marginBottom: '10px', fontSize: '20px'}}>
-                Next Billing Amount
-              </div>
-              <div style={{height: '30px', marginBottom: '30px', fontSize: '20px'}}>
-                Ambassador Code
+              <div>
+                **********90
               </div>
             </div>
-            <div className={styles.boxPDright}>
-              <div style={{height: '30px', marginBottom: '10px', fontSize: '20px'}}>
-                {this.state.nextBillingDate}
+
+            <div style={{textAlign: 'center', paddingLeft: '8%'}}>
+              <div>
+                Meals
               </div>
-              <div style={{height: '30px', marginBottom: '10px', fontSize: '20px'}}>
-                ${this.state.nextBillingAmount}
+              <div 
+                className={styles.iconMeals}
+                onClick={() => {
+                  this.props.history.push("/update-plan");
+                }}
+              >
+                {this.state.selectedMeals}
               </div>
-              <div style={{height: '30px', marginBottom: '30px', fontSize: '20px'}}>
+            </div>
+
+            <div style={{textAlign: 'center', paddingLeft: '8%'}}>
+              <div>
+                Deliveries
+              </div>
+              <button 
+                className={styles.deliveryButton}
+                onClick={() => {
+                  this.props.history.push("/update-plan");
+                }}
+              >
+                <span style={{fontSize: '35px'}}>
+                  {this.state.selectedDeliveries}
+                </span>
+                <br></br>
+                <span style={{whiteSpace: "nowrap"}}>
+                  {"(Save "+this.state.selectedDiscount+"%)"}
+                </span>
+              </button>
+            </div>
+
+            <div style={{textAlign: 'center', paddingLeft: '8%'}}>
+              <div>
+                Cancel
+              </div>
+              <div 
+                className={styles.iconTrash}
+                onClick={() => {
+                  axios
+                    .put(`${API_URL}cancel_purchase`,{
+                      purchase_uid: this.state.selectedId,
+                    })
+                    .then((response) => {
+                      console.log("cancel_purchase response: " + JSON.stringify(response));
+                      console.log("cancel_purchase customerUid: " + this.state.customerUid);
+                      this.props.fetchSubscribed(this.state.customerUid);
+                    })
+                    .catch((err) => {
+                      if(err.response) {
+                        console.log(err.response);
+                      }
+                      console.log(err);
+                    })
+                }}
+              >
+                
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div className={styles.sectionHeader}>
+          Plan Details
+        </div>
+
+        <div className={styles.containerSplit}>
+          <div className={styles.boxPDleft}>
+            <div style={{height: '30px', marginBottom: '10px', fontSize: '20px'}}>
+              Next Billing Date
+            </div>
+            <div style={{height: '30px', marginBottom: '10px', fontSize: '20px'}}>
+              Next Billing Amount
+            </div>
+            <div style={{height: '30px', marginBottom: '30px', fontSize: '20px'}}>
+              Ambassador Code
+            </div>
+          </div>
+          <div className={styles.boxPDright}>
+            <div style={{height: '30px', marginBottom: '10px', fontSize: '20px'}}>
+              {this.state.nextBillingDate}
+            </div>
+            <div style={{height: '30px', marginBottom: '10px', fontSize: '20px'}}>
+              ${this.state.nextBillingAmount}
+            </div>
+            <div style={{height: '30px', marginBottom: '30px', fontSize: '20px'}}>
+            <input
+                  type='text'
+                  placeholder='Enter Code Here'
+                  className={styles.inputAmbassador}
+                  onChange={e => {
+                    this.setState({
+                      ambassadorCode: e.target.value
+                    });
+                  }}
+                />
+            </div>
+          </div>
+        </div>
+
+        <div className={styles.sectionHeader}>
+          Edit Delivery Details
+        </div>
+
+        <div style={{display: 'flex', marginLeft: '8%', width: '42%'}}>
+
+          <div style = {{display: 'inline-block', width: '100%'}}>
+
+            <div style={{display: 'flex'}}>
               <input
-                    type='text'
-                    placeholder='Enter Code Here'
-                    className={styles.inputAmbassador}
-                    onChange={e => {
-                      this.setState({
-                        ambassadorCode: e.target.value
-                      });
-                    }}
-                  />
-              </div>
+                type='text'
+                placeholder='First Name'
+                className={styles.inputContactLeft}
+                value={this.state.selectedMealPlan.customer_first_name}
+                onChange={e => {
+                  this.setState({
+                    firstName: e.target.value
+                  });
+                }}
+              />
+
+              <input
+                type='text'
+                placeholder='Last Name'
+                className={styles.inputContactRight}
+                value={this.state.selectedMealPlan.customer_last_name}
+                onChange={e => {
+                  this.setState({
+                    lastName: e.target.value
+                  });
+                }}
+              />
             </div>
+
+            <input
+              type='text'
+              placeholder='Email'
+              className={styles.input}
+              value={this.props.email}
+              onChange={e => {
+
+              }}
+            />
+
+            <input
+              type='text'
+              placeholder='Phone Number'
+              className={styles.input}
+              value={this.state.selectedMealPlan.customer_phone_num}
+              onChange={e => {
+                this.setState({
+                  phone: e.target.value
+                });
+              }}
+            />
+
+
+            <input
+              type='text'
+              placeholder={"Address 1"}
+              className={styles.input}
+              id="pac-input"
+            />
+
+
+            <div style={{display: 'flex'}}>
+              <input
+                type='text'
+                placeholder={"Unit"}
+                className={styles.inputContactLeft}
+                value={this.state.selectedMealPlan.customer_unit}
+                onChange={e => {
+                  this.setState({
+                    unit: e.target.value
+                  });
+                }}
+              />
+              <input
+                type='text'
+                placeholder={"City"}
+                id="locality" name="locality"
+
+                className={styles.inputContactRight}
+              />
+            </div>
+
+            <div style={{display: 'flex'}}>
+              <input
+                type='text'
+                placeholder={"State"}
+                
+                className={styles.inputContactLeft}
+                id="state" name="state"
+              />
+              <input
+                type='text'
+                placeholder={"Zip Code"}
+                className={styles.inputContactRight}
+                id="postcode" name="postcode"
+              />
+            </div>
+
+            <input
+              type={'text'}
+              placeholder={'Delivery Instructions'}
+              className={styles.input}
+              value={this.state.selectedMealPlan.delivery_instructions}
+              onChange={e => {
+                this.setState({
+                  instructions: e.target.value
+                });
+              }}
+            />
+
+            <div className = {styles.googleMap} id = "map"/>     
+
+            <div style={{textAlign: 'center'}}>
+              <button 
+                style={{
+                  marginTop:'36px',
+                  marginBottom: '50px',
+                  backgroundColor:'#f26522',
+                  color:'white',
+                  fontSize:'20px',
+                  borderRadius:'15px',
+                  border:'none',
+                  height:'54px',
+                  width: '70%'
+                }}
+                onClick={()=>this.saveEdits()}
+              >
+                    Save
+              </button>
+            </div>
+
           </div>
-
-          <div className={styles.sectionHeader}>
-            Edit Delivery Details
-          </div>
-
-          <div style={{display: 'flex', marginLeft: '8%', width: '42%'}}>
-
-<div style = {{display: 'inline-block', width: '100%'}}>
-
-  <div style={{display: 'flex'}}>
-    <input
-      type='text'
-      placeholder='First Name'
-      className={styles.inputContactLeft}
-      value={this.state.firstName}
-      onChange={e => {
-        this.setState({
-          firstName: e.target.value
-        });
-      }}
-    />
-
-    <input
-      type='text'
-      placeholder='Last Name'
-      className={styles.inputContactRight}
-      value={this.state.lastName}
-      onChange={e => {
-        this.setState({
-          lastName: e.target.value
-        });
-      }}
-    />
-  </div>
-
-
-
-  {(() => {
-      if (this.state.customerUid === "GUEST") {
-        return (
-          <input
-            type='text'
-            placeholder='Email'
-            className={styles.input}
-            value={this.state.email}
-            onChange={e => {
-              this.setState({
-                email: e.target.value
-              })
-            }}
-          />
-        );
-      } else {
-        return (
-          <input
-            type='text'
-            placeholder='Email'
-            className={styles.input}
-            value={this.props.email}
-            onChange={e => {
-        
-            }}
-          />
-        );
-      }
-    })()} 
-
-  <input
-    type='text'
-    placeholder='Phone Number'
-    className={styles.input}
-    value={this.state.phone}
-    onChange={e => {
-      this.setState({
-        phone: e.target.value
-      });
-    }}
-  />
-
-
-  <input
-    type='text'
-    placeholder={this.props.address.street==''?"Address 1":this.props.address.street}
-    className={styles.input}
-    id="pac-input"
-  />
-
-
-  <div style={{display: 'flex'}}>
-    <input
-      type='text'
-      placeholder={this.props.address.unit==''?'Unit':this.props.address.unit}
-      className={styles.inputContactLeft}
-      value={this.state.unit}
-      onChange={e => {
-        this.setState({
-          unit: e.target.value
-        });
-      }}
-    />
-    <input
-      type='text'
-      placeholder={this.props.address.city==''?"City":this.props.address.city}
-      id="locality" name="locality"
-
-      className={styles.inputContactRight}
-    />
-  </div>
-
-
-  <div style={{display: 'flex'}}>
-    <input
-      type='text'
-      placeholder={this.props.address.state==''?"State":this.props.address.state}
-      
-      className={styles.inputContactLeft}
-      id="state" name="state"
-    />
-    <input
-      type='text'
-      placeholder={this.props.address.zip==''?"Zip Code":this.props.address.zip}
-      className={styles.inputContactRight}
-      id="postcode" name="postcode"
-    />
-
-  </div>
-
-  <input
-    type='text'
-    placeholder='Delivery Instructions'
-    className={styles.input}
-    value={this.state.instructions}
-    onChange={e => {
-      this.setState({
-        instructions: e.target.value
-      });
-    }}
-  />
-
-  <div className = {styles.googleMap} id = "map"/>     
-
-  <div style={{textAlign: 'center'}}>
-  <button 
-    style={{
-      marginTop:'36px',
-      marginBottom: '50px',
-      backgroundColor:'#f26522',
-      color:'white',
-      fontSize:'20px',
-      borderRadius:'15px',
-      border:'none',
-      height:'54px',
-      width: '70%'
-    }}
-    onClick={()=>this.saveEdits()}
-  >
-        Save
-  </button>
-  </div>
-
-</div>
-</div>
-
+        </div>
       </>
     );
   }
@@ -848,30 +688,30 @@ EditPlan.propTypes = {
 const mapStateToProps = state => ({
   plans: state.subscribe.plans,
   subscribedPlans: state.subscribe.subscribedPlans,
-  numItems: state.subscribe.numItems,
-  paymentFrequency: state.subscribe.paymentFrequency,
+  // numItems: state.subscribe.numItems,
+  // paymentFrequency: state.subscribe.paymentFrequency,
   meals: state.subscribe.meals,
   paymentOption: state.subscribe.paymentOption,
   selectedPlan: state.subscribe.selectedPlan,
-  customerId: state.subscribe.profile.customerId,
-  socialMedia: state.subscribe.profile.socialMedia,
+  // customerId: state.subscribe.profile.customerId,
+  // socialMedia: state.subscribe.profile.socialMedia,
   email: state.subscribe.profile.email,
-  firstName: state.subscribe.addressInfo.firstName,
-  lastName: state.subscribe.addressInfo.lastName,
-  street: state.subscribe.address.street,
-  unit: state.subscribe.address.unit,
-  city: state.subscribe.address.city,
-  state: state.subscribe.address.state,
-  zip: state.subscribe.address.zip,
-  cc_num: state.subscribe.creditCard.number,
-  cc_cvv: state.subscribe.creditCard.cvv,
-  cc_zip: state.subscribe.creditCard.zip,
-  cc_month: state.subscribe.creditCard.month,
-  cc_year: state.subscribe.creditCard.year,
-  phone: state.subscribe.addressInfo.phoneNumber,
-  instructions: state.subscribe.deliveryInstructions,
-  password: state.subscribe.paymentPassword,
-  address: state.subscribe.address
+  // firstName: state.subscribe.addressInfo.firstName,
+  // lastName: state.subscribe.addressInfo.lastName,
+  // street: state.subscribe.address.street,
+  // unit: state.subscribe.address.unit,
+  // city: state.subscribe.address.city,
+  // state: state.subscribe.address.state,
+  // zip: state.subscribe.address.zip,
+  // cc_num: state.subscribe.creditCard.number,
+  // cc_cvv: state.subscribe.creditCard.cvv,
+  // cc_zip: state.subscribe.creditCard.zip,
+  // cc_month: state.subscribe.creditCard.month,
+  // cc_year: state.subscribe.creditCard.year,
+  // phone: state.subscribe.addressInfo.phoneNumber,
+  // instructions: state.subscribe.deliveryInstructions,
+  // password: state.subscribe.paymentPassword,
+  // address: state.subscribe.address
 });
 
 export default connect(mapStateToProps, {
