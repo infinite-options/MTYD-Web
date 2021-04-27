@@ -15,6 +15,7 @@ import createAnAccountImage from  '../../images/Group 234.png';
 import pathFromCAAToSYM from '../../images/Path 49.png';
 import pathFromRYMToHAE from '../../images/Path 29.png';
 import selectYourMealImage from '../../images/Group 114_SYM.png';
+import {HomeLink, FootLink} from "../Home/homeButtons"
 
 export class Congrats extends Component {
 
@@ -73,6 +74,9 @@ export class Congrats extends Component {
     }else{
       this.setState({user_id:'not login'})
       this.setState({user_address: 'not login yet'});
+	/*Use the following for setting the user */ 
+	/*this.setState({user_id:'anup'});*/
+	/*this.setState({user_address: '214 Main Ave, San Jose, CA 91101'});*/
     }
     
   }
@@ -90,21 +94,64 @@ export class Congrats extends Component {
         <div class = {styles.howDoesText}>
         <p style = {{marginLeft: '-90px', display:'inline', color: 'black'}}>Congratulations</p>
 		</div> </div>
-        <p style = {{font: 'normal normal medium 24px/15px SF Pro'}}>Your first delivery will arrive on<br/></p>
-		<p style = {{font: 'normal normal bold 24px/15px SF Pro'}}>:March 8 between 4-6pm</p>
-        <p style = {{font: 'normal normal medium 24px/15px SF Pro'}}>To your address:<br/></p>
-		<p style = {{font: 'normal normal bold 24px/15px SF Pro'}}>{this.state.user_address}</p>
-
-        <h3 style = {{font: 'normal normal bold 25px/16px SF Pro'}}> What's next?</h3>
-         <img src = {path28_top}/>
-         <img src = {createAnAccountImage}/>
-		 <img src = {pathFromCAAToSYM}/>
-		 <img src = {selectYourMealImage}/>
-		 <img src = {path28_bottom}/>
-		 <p style = {{font: 'normal normal medium 24px/15px SF Pro', border: '2px solid #F26522', borderRadius:'25px', padding: '20px'}}>Receive your <br/>meals</p>
-		 <img src = {pathFromRYMToHAE}/>
-		 <p style = {{font: 'normal normal medium 24px/15px SF Pro', border: '2px solid #F26522', borderRadius:'25px', padding: '20px'}}>Heat and <br/>enjoy!</p>
-         </div>
+		{/*Change the following to medium later on, using bold for testing*/}
+        <p style = {{marginLeft: '120px', marginTop:'80px', font: 'normal normal medium 24px/15px SF Pro', color:'black', textAlign:'left'}}>Your first delivery will arrive on:<br/></p>
+		<p style = {{marginLeft: '159px', font: 'normal normal bold 24px/15px SF Pro', color:'black', textAlign:'left'}}>March 8 between 4-6pm</p>
+        {/*Change the following to medium later on, using bold for testing*/}
+		<br/>
+        <p style = {{marginLeft: '198px', font: 'normal normal medium 24px/15px SF Pro'}}>To your address:<br/></p>
+		<p style = {{font: 'normal normal bold 24px/15px SF Pro', color:'black', marginLeft:'198px'}}>{this.state.user_address}</p>
+        {(() => {
+			if(this.state.user_id != "not login"){
+		          return (	
+				  <div style = {{marginLeft: '75%', marginBottom:'50px', marginTop:'-160px'}}>
+					<div style = {{display:'inline-flex'}}> 
+					<h3 style = {{font: 'normal normal bold 25px/16px SF Pro' , marginTop: '-30px', marginRight:'-380px', color:'black'}}> What's next?</h3>
+					 <div style = {{textAlign:'center'}}>
+					 <br/>
+					 <HomeLink text = {selectYourMealImage} link = "/select-meal"/>
+					 <img src = {path28_bottom} style = {{marginTop: '-10px'}}/>
+					 <br/>
+                     {/*Change the following to medium later on, using bold for testing*/}
+				     <div style = {{width:'207px', height:'116px'}}>
+					 <p style = {{font: 'normal normal medium 24px/15px SF Pro', border: '2px solid #F26522', borderRadius:'25px', padding: '20px', color:'black'}}>Receive your <br/>meals</p>                     
+                     </div>
+				     <div style = {{marginTop:'-120px', marginLeft: '300px',  width:'207px', height:'116px'}}>
+					 <p style = {{font: 'normal normal medium 24px/15px SF Pro', border: '2px solid #F26522', borderRadius:'25px', padding: '20px', color:'black'}}>Heat and <br/>enjoy!</p>		
+                     </div>
+                 	 <img style = {{marginTop: '-76px'}} src = {pathFromRYMToHAE}/>				
+					 </div>
+					</div>
+					</div>
+				)} else {
+					return (
+					<div style = {{marginLeft: '75%', marginBottom:'50px', marginTop:'-160px'}}>
+					<div style = {{display:'inline-flex'}}> 
+					<h3 style = {{font: 'normal normal bold 25px/16px SF Pro' , marginTop: '-30px', marginRight:'-380px', color:'black'}}> What's next?</h3>
+					 <div style = {{textAlign:'center'}}>
+					 <img style = {{marginLeft: '-20%'}} src = {path28_bottom}/>
+					 <br/>
+					 <HomeLink text = {createAnAccountImage} link = "/home" style = {{marginLeft: '70px', marginBottom:'-10px'}}/>
+					 <img style = {{marginLeft:'-50px', width:'280px', height:'120px'}} src = {pathFromCAAToSYM}/>
+					 <br/>
+					 <HomeLink text = {selectYourMealImage} link = "/select-meal" style = {{marginLeft: '80px', marginBottom:'-10px'}}/>
+					 <img style = {{marginLeft:'-50px', width:'280px', height:'120px'}} src = {path28_top}/>
+					 <br/>
+                     {/*Change the following to medium later on, using bold for testing*/}
+				     <div style = {{width:'250px', height:'115px'}}>
+					 <p style = {{font: 'normal normal medium 24px/15px SF Pro', border: '2px solid #F26522', borderRadius:'25px', padding: '20px', color:'black'}}>Receive your <br/>meals</p>                     
+                     </div>
+				     <div style = {{marginTop:'-120px', marginLeft: '300px',  width:'250px', height:'115px'}}>
+					 <p style = {{font: 'normal normal medium 24px/15px SF Pro', border: '2px solid #F26522', borderRadius:'25px', padding: '20px', color:'black'}}>Heat and <br/>enjoy!</p>		
+                     </div>
+                 	 <img style = {{marginTop: '-76px'}} src = {pathFromRYMToHAE}/>				
+					 </div>
+					</div>
+					</div>
+				)}
+		}) ()}
+		<FootLink/>
+		</div>
     )
   }
 }
