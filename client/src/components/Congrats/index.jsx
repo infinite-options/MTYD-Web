@@ -6,9 +6,15 @@ import axios from 'axios';
 import { API_URL } from '../../reducers/constants';
 import {Link} from "react-router-dom";
 import SocialLogin from "../Landing/socialLogin"
-
+import styles from "../Home/home.module.css"
 import PopLogin from '../PopLogin';
 import Popsignup from '../PopSignup';
+import path28_top from '../../images/Path 28_top.png';
+import path28_bottom from '../../images/Path 28.png';
+import createAnAccountImage from  '../../images/Group 234.png';
+import pathFromCAAToSYM from '../../images/Path 49.png';
+import pathFromRYMToHAE from '../../images/Path 29.png';
+import selectYourMealImage from '../../images/Group 114_SYM.png';
 
 export class Congrats extends Component {
 
@@ -80,51 +86,25 @@ export class Congrats extends Component {
         />
         {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
         {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
-        <h1>CONGRATULATIONS</h1>
-        <h2>YOUR FIRST DELIVERY WILL ARRIVE ON:March 8 between 4-6pm</h2>
-        <h2>TO YOUR ADDRESS:{this.state.user_address}</h2>
-        <br/>
-        <br/>
-        <br/>
-        <h3> what to expect</h3>
-        <div>
-          <Link to='/home'>
-            <button>place holder</button>
-          </Link>
-          <Link to='/home'>
-            <button>place holder</button>
-          </Link>
-          <Link to='/home'>
-            <button>place holder</button>
-          </Link>
-        </div>
-        <br/>
-        <br/>
-        <br/>
-        <h3> create an account</h3>
-        <h3>You are one step away from creating an account and saving time and money!</h3>
-        <h3>USE SOCIAL MEDIA (RECOMMENDED)</h3>
-        <SocialLogin/>
-        <br/>
-        <br/>
-        <br/>
-        <h3>OR CREATE PASSWORD</h3>
+		<div class = {styles.howDoesContainer}>
+        <div class = {styles.howDoesText}>
+        <p style = {{marginLeft: '-90px', display:'inline', color: 'black'}}>Congratulations</p>
+		</div> </div>
+        <p style = {{font: 'normal normal medium 24px/15px SF Pro'}}>Your first delivery will arrive on<br/></p>
+		<p style = {{font: 'normal normal bold 24px/15px SF Pro'}}>:March 8 between 4-6pm</p>
+        <p style = {{font: 'normal normal medium 24px/15px SF Pro'}}>To your address:<br/></p>
+		<p style = {{font: 'normal normal bold 24px/15px SF Pro'}}>{this.state.user_address}</p>
 
-        <form>
-          <label>
-            <input type="text" placeholder="password" />
-          </label>
-          <label>
-            <input type="text" placeholder="confirm password" />
-          </label>
-          <br/>
-        </form>
-          <input type="submit" value="Finish" />
-
-
-
-
-      </div>
+        <h3 style = {{font: 'normal normal bold 25px/16px SF Pro'}}> What's next?</h3>
+         <img src = {path28_top}/>
+         <img src = {createAnAccountImage}/>
+		 <img src = {pathFromCAAToSYM}/>
+		 <img src = {selectYourMealImage}/>
+		 <img src = {path28_bottom}/>
+		 <p style = {{font: 'normal normal medium 24px/15px SF Pro', border: '2px solid #F26522', borderRadius:'25px', padding: '20px'}}>Receive your <br/>meals</p>
+		 <img src = {pathFromRYMToHAE}/>
+		 <p style = {{font: 'normal normal medium 24px/15px SF Pro', border: '2px solid #F26522', borderRadius:'25px', padding: '20px'}}>Heat and <br/>enjoy!</p>
+         </div>
     )
   }
 }
