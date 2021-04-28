@@ -2,9 +2,8 @@
 *
 * Comments: find #uncomment
 * menu should be a carousel. Carousel code is in SF.
-* 2 things for the How Does it work - one is the image and other is the resizable thing.
-* make 
-* placeholder should be aligned in the center.
+* footer is not at the bottom on the congratulation page.
+* startServingNowImg goes to choose_plan page
 */
 import React, { Component } from 'react';
 import {Link} from "react-router-dom";
@@ -40,6 +39,7 @@ import pathFromSelectMealsToEnjoy from "../../images/Path 51.svg"
 import startServingNowImg from "../../images/Group 182.png"
 import pathFromPurchaseToChoose from "../../images/Path 50.svg"
 import howDoesImage from "../../images/howDoesImage.png"
+import ProductDisplay from './ProductDisplay';
 
 class Home extends Component {   
   state = { 
@@ -105,9 +105,7 @@ class Home extends Component {
         />
         {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
         {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
-      </div>
-
-        
+      </div> 
       {(() => {
         if (this.state.windowWidth >= 800) {
           return (
@@ -176,8 +174,9 @@ class Home extends Component {
         })()}
 		
         <div style = {{width: '100%', marginTop: '25px'}}>
-          <MenuCarousel/>
+			<ProductDisplay />         
         </div>
+
 		<div class = {styles.howDoesContainer}>
             <div class = {styles.howDoesText}>
 			    <p style = {{marginLeft: '-90px', display:'inline', color: 'black'}}>How does<p style = {{marginLeft: '-78px', display:'inline', color: 'white'}}> MealFor.Me
@@ -330,6 +329,7 @@ class Home extends Component {
           <h3 style = {{textAlign: 'left', marginTop: '50px', fontWeight: 'bold', marginLeft: '5%'}}>UPCOMING MENU</h3>
         </div>*/}
         <div style = {{textAlign: 'center', marginTop: '50px', fontWeight: 'bold'}}>
+
         <HomeLink text = {getStartedImg} link = "/select-meal" style = {{height: '50px', width:'320px', marginBottom: '-30px', marginTop: '-10px'}}/>
 		<img />
         </div>
