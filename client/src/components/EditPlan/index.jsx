@@ -53,6 +53,8 @@ class EditPlan extends React.Component {
       numDeliveryDays: 0,
       nextBillingDate: "TBD",
       nextBillingAmount: "0.00",
+      fetchingNBD: true,
+      fetchingNBA: true,
       firstName: "",
       lastName: "",
       email: "",
@@ -66,7 +68,7 @@ class EditPlan extends React.Component {
       selectedDiscount: "",
       selectedId: "",
       selectedMealPlan: {},
-      mealPlanDefaulted: false
+      mealPlanDefaulted: false,
     };
   }
 
@@ -233,6 +235,75 @@ class EditPlan extends React.Component {
     }
   }
 
+  hideSubscribedMeals = () => {
+    console.log("discounts: NOTHING!!?");
+    return (
+      <div 
+        style={{
+          textAlign: 'center', 
+          paddingTop: '80px', 
+          fontSize: '20px', 
+          fontWeight: 'bold'
+        }}
+      >
+        Loading...
+      </div>
+    );
+  }
+
+  getNextBillingInfo = (mealData) => {
+    console.log("calling PAD for " + mealData.purchase_uid);
+    axios.get(API_URL + 'predict_autopay_day/' + mealData.purchase_uid)
+      .then(res => {
+        console.log("PAD date: " + JSON.stringify(res));
+        if(res.data.menu_date !== undefined) {
+          this.setState({
+            nextBillingDate: res.data.menu_date.substring(
+              0, res.data.menu_date.indexOf(" ")
+            ),
+            fetchingNBD: false
+          });
+        } else {
+          this.setState({
+            nextBillingDate: "TBD",
+            fetchingNBD: false
+          });
+        }
+      })
+      .catch(err => {
+        console.log(err);
+        this.setState({
+          fetchingNBD: false
+        });
+      });
+
+    console.log("mealData for PID_HISTORY: ", mealData);
+    console.log("purchase UID: " + mealData.purchase_uid);
+    console.log("purchase ID:  " + mealData.purchase_id);
+
+    axios.get(API_URL + 'pid_history/' + mealData.purchase_id)
+      .then(res => {
+        let pastPurchases = res.data.result;
+        console.log("pid_history response: ", pastPurchases);
+        var sumAmountDue = 0;
+        pastPurchases.forEach((pur) => {
+          console.log(pur.purchase_uid + " amount due: " + pur.amount_due);
+          sumAmountDue += pur.amount_due;
+        });
+        console.log("final amount due: " + sumAmountDue);
+        this.setState({
+          nextBillingAmount: sumAmountDue.toFixed(2),
+          fetchingNBA: false
+        });
+      })
+      .catch(err => {
+        console.log(err);
+        this.setState({
+          fetchingNBA: false
+        });
+      });
+  }
+
   showSubscribedMeals = () => {
 
     let deselectedMealButton = styles.mealButton;
@@ -243,7 +314,7 @@ class EditPlan extends React.Component {
 
     for (const [mealIndex, mealData] of Object.entries(subbedPlans)) {
 
-      console.log("mealData: ", mealData);
+      //console.log("mealData: ", mealData);
       let planItems = JSON.parse(mealData.items);
       let planId = mealData.purchase_uid.substring(
         mealData.purchase_uid.indexOf("-")+1,
@@ -253,17 +324,33 @@ class EditPlan extends React.Component {
       let selectedMeals = planItems[0].name.substring(0,planItems[0].name.indexOf(" "));
       let selectedDeliveries = planItems[0].qty;
 
-      // console.log("mealIndex: ", mealIndex);
+      //console.log("mealIndex: ", mealIndex);
       // console.log("typeof mealIndex: ", typeof(mealIndex));
-      // console.log("mealData for mealIndex: ", mealData);
+
+      let mealPlan2 = this.props.plans[2];
+      let discount = null;
+
+      // console.log("defaulting to ", mealData.purchase_uid);
+
+      // console.log("plans: ", this.props.plans);
+
+      // console.log("mealPlan2: ", mealPlan2);
+      // console.log("selectedMeals: ", selectedMeals);
+
+      try{
+        discount = mealPlan2[selectedDeliveries].delivery_discount;
+        console.log("discount: ", discount);
+      } catch(e) {
+        console.log("discount UNDEFINED");
+      }
 
       if(this.state.mealPlanDefaulted === false && mealIndex === "0"){
-        console.log("defaulting to ", mealData.purchase_uid);
+        this.getNextBillingInfo(mealData);
         this.setState({
           mealPlanDefaulted: true,
           selectedMeals,
           selectedDeliveries,
-          selectedDiscount: mealData.amount_discount.toFixed(2),
+          selectedDiscount: discount,
           selectedId: mealData.purchase_uid,
           nextBillingAmount: mealData.amount_due.toFixed(2),
           selectedMealPlan: mealData,
@@ -288,12 +375,13 @@ class EditPlan extends React.Component {
               this.setState({
                 selectedMeals,
                 selectedDeliveries,
-                selectedDiscount: mealData.amount_discount.toFixed(2),
+                selectedDiscount: discount,
                 selectedId: mealData.purchase_uid,
-                nextBillingAmount: mealData.amount_due.toFixed(2),
                 selectedMealPlan: mealData,
                 latitude: mealData.delivery_latitude,
                 longitude: mealData.delivery_longitude,
+                fetchingNBD: true,
+                fetchingNBA: true
               });
 
               console.log("lat: ", this.state.latitude);
@@ -321,25 +409,36 @@ class EditPlan extends React.Component {
                 this.props.plans
               );
 
-              console.log("calling PAD for " + mealData.purchase_uid);
-              axios.get(API_URL + 'predict_autopay_day/' + mealData.purchase_uid)
+              this.getNextBillingInfo(mealData);
+              // console.log("calling PAD for " + mealData.purchase_uid);
+              // axios.get(API_URL + 'predict_autopay_day/' + mealData.purchase_uid)
+              //   .then(res => {
+              //     console.log("PAD date: " + JSON.stringify(res));
+              //     if(res.data.menu_date !== undefined) {
+              //       this.setState({
+              //         nextBillingDate: res.data.menu_date.substring(
+              //           0, res.data.menu_date.indexOf(" ")
+              //         )
+              //       });
+              //     } else {
+              //       this.setState({
+              //         nextBillingDate: "TBD"
+              //       });
+              //     }
+              //   })
+              //   .catch(err => {
+              //     console.log(err);
+              //   });
+
+              // console.log("Before pid_history: ", mealData);
+              //console.log("calling PAD for " + mealData.purchase_uid);
+              /*axios.get(API_URL + 'predict_autopay_day/' + mealData.purchase_uid)
                 .then(res => {
-                  console.log("PAD date: " + JSON.stringify(res));
-                  if(res.data.menu_date !== undefined) {
-                    this.setState({
-                      nextBillingDate: res.data.menu_date.substring(
-                        0, res.data.menu_date.indexOf(" ")
-                      )
-                    });
-                  } else {
-                    this.setState({
-                      nextBillingDate: "TBD"
-                    });
-                  }
+
                 })
                 .catch(err => {
-                  console.log(err)
-                })
+                  console.log(err);
+                });*/
             }}
           >
             {selectedMeals} Meals, {selectedDeliveries} Deliveries: {planId}
@@ -364,7 +463,9 @@ class EditPlan extends React.Component {
       customerUid: this.state.customerUid,
       currentMeals: this.state.selectedMeals,
       currentDeliveries: this.state.selectedDeliveries,
-      currentMealPlan: this.state.selectedMealPlan
+      currentDiscount: this.state.selectedDiscount,
+      currentMealPlan: this.state.selectedMealPlan,
+      currentBillingAmount: this.state.nextBillingAmount
     });
   }
 
@@ -389,10 +490,116 @@ class EditPlan extends React.Component {
 
         <div className={styles.containerSplit}>
           <div className={styles.boxScroll}>
-            {this.showSubscribedMeals()}
+            {JSON.stringify(this.props.plans) !== '{}' 
+              ? this.showSubscribedMeals() 
+              : this.hideSubscribedMeals()}
           </div>
-          <div className={styles.boxRight}>
-
+          {(() => {
+            if (this.state.fetchingNBD || this.state.fetchingNBA) {
+              return  (
+                <div className={styles.boxScroll}>
+                  <div 
+                    style={{
+                      textAlign: 'center', 
+                      paddingTop: '80px', 
+                      fontSize: '20px', 
+                      fontWeight: 'bold'
+                    }}
+                  >
+                    Loading...
+                  </div>
+                </div>);
+            } else {
+              return (
+                <div className={styles.boxRight}>
+                <div style={{textAlign: 'center'}}>
+                  <div>
+                    Card
+                  </div>
+                  <div className={styles.iconCard}>
+                    
+                  </div>
+                  <div>
+                    ************
+                  </div>
+                </div>
+    
+                <div style={{textAlign: 'center', paddingLeft: '8%'}}>
+                  <div>
+                    Meals
+                  </div>
+                  <div 
+                    className={(
+                      this.state.fetchingNBD || this.state.fetchingNBA
+                        ? styles.iconMealsDisabled
+                        : styles.iconMeals
+                    )}
+                    onClick={() => {
+                      //this.props.history.push("/update-plan");
+                      this.updatePlan();
+                    }}
+                  >
+                    {this.state.selectedMeals}
+                  </div>
+                </div>
+    
+                <div style={{textAlign: 'center', paddingLeft: '8%'}}>
+                  <div>
+                    Deliveries
+                  </div>
+                  <button 
+                    className={styles.deliveryButton}
+                    disabled={(
+                      this.state.fetchingNBD ||
+                      this.state.fetchingNBA
+                    )}
+                    onClick={() => {
+                      //this.props.history.push("/update-plan");
+                      this.updatePlan();
+                    }}
+                  >
+                    <span style={{fontSize: '35px'}}>
+                      {this.state.selectedDeliveries}
+                    </span>
+                    <br></br>
+                    <span style={{whiteSpace: "nowrap"}}>
+                      {"(Save "+this.state.selectedDiscount+"%)"}
+                    </span>
+                  </button>
+                </div>
+    
+                <div style={{textAlign: 'center', paddingLeft: '8%', paddingRight: '60px'}}>
+                  <div>
+                    Cancel
+                  </div>
+                  <div 
+                    className={styles.iconTrash}
+                    onClick={() => {
+                      axios
+                        .put(`${API_URL}cancel_purchase`,{
+                          purchase_uid: this.state.selectedId,
+                        })
+                        .then((response) => {
+                          console.log("cancel_purchase response: " + JSON.stringify(response));
+                          console.log("cancel_purchase customerUid: " + this.state.customerUid);
+                          this.props.fetchSubscribed(this.state.customerUid);
+                        })
+                        .catch((err) => {
+                          if(err.response) {
+                            console.log(err.response);
+                          }
+                          console.log(err);
+                        })
+                    }}
+                  >
+                    
+                  </div>
+                </div>
+              </div>
+              );
+            }
+          })()}  
+          {/*<div className={styles.boxRight}>
             <div style={{textAlign: 'center'}}>
               <div>
                 Card
@@ -401,7 +608,7 @@ class EditPlan extends React.Component {
                 
               </div>
               <div>
-                **********90
+                ************
               </div>
             </div>
 
@@ -410,7 +617,11 @@ class EditPlan extends React.Component {
                 Meals
               </div>
               <div 
-                className={styles.iconMeals}
+                className={(
+                  this.state.fetchingNBD || this.state.fetchingNBA
+                    ? styles.iconMealsDisabled
+                    : styles.iconMeals
+                )}
                 onClick={() => {
                   //this.props.history.push("/update-plan");
                   this.updatePlan();
@@ -426,6 +637,10 @@ class EditPlan extends React.Component {
               </div>
               <button 
                 className={styles.deliveryButton}
+                disabled={(
+                  this.state.fetchingNBD ||
+                  this.state.fetchingNBA
+                )}
                 onClick={() => {
                   //this.props.history.push("/update-plan");
                   this.updatePlan();
@@ -441,7 +656,7 @@ class EditPlan extends React.Component {
               </button>
             </div>
 
-            <div style={{textAlign: 'center', paddingLeft: '8%'}}>
+            <div style={{textAlign: 'center', paddingLeft: '8%', paddingRight: '60px'}}>
               <div>
                 Cancel
               </div>
@@ -468,8 +683,7 @@ class EditPlan extends React.Component {
                 
               </div>
             </div>
-
-          </div>
+          </div>*/}
         </div>
 
         <div className={styles.sectionHeader}>
@@ -686,14 +900,6 @@ class EditPlan extends React.Component {
                     delivery_instructions: e.target.value
                   }
                 }));
-                /*this.setState(prevState => ({
-                  recalculatingPrice: false,
-                  paymentSummary: {
-                    ...prevState.paymentSummary,
-                    total,
-                    subtotal
-                  }
-                });*/
               }}
             />
 
@@ -701,17 +907,11 @@ class EditPlan extends React.Component {
 
             <div style={{textAlign: 'center'}}>
               <button 
-                style={{
-                  marginTop:'36px',
-                  marginBottom: '50px',
-                  backgroundColor:'#f26522',
-                  color:'white',
-                  fontSize:'20px',
-                  borderRadius:'15px',
-                  border:'none',
-                  height:'54px',
-                  width: '70%'
-                }}
+                className={styles.saveBtn}
+                disabled={(
+                  this.state.fetchingNBD ||
+                  this.state.fetchingNBA
+                )}
                 onClick={()=>this.saveEdits()}
               >
                     Save

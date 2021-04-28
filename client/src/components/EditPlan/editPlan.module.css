@@ -103,15 +103,14 @@
   /* padding: 20px; */
   /*border: solid;
   border-color: red;*/
-  width: 42%;
+  width: 50%;
   /*margin-right: 100px;*/
   /*padding-left: 100px*/
-  /*margin-right: 8%;
-  padding-left: 8%;*/
+  /*margin-right: 8%;*/
+  padding-left: 8%;
   display: flex;
-  margin-left: 8%;
   margin-top: 30px;
-
+  overflow: auto;
 }
 
 .boxScroll {
@@ -239,6 +238,38 @@
   box-shadow: none !important;
   outline: 0;
 }
+/*.deliveryButton:disabled {
+  color: #000000;
+  background-color: #ccc9c9;
+  margin: 5px;
+  align-content: center;
+  flex: 1;
+  min-width: 20%;
+  font-size: 10px;
+  font-weight: 600;
+  outline: 0;
+  height: 78px;
+  width: 78px;
+  border: solid;
+  box-shadow: none !important;
+  outline: 0;
+}*/
+.deliveryButton:disabled {
+  color: #000000;
+  border: 1px solid #e4e4e4;
+  box-shadow: 2px 2px #d3d3d3;
+  background-color: #ccc9c9;
+  /*border-radius: 25px;*/
+  margin: 5px;
+  align-content: center;
+  flex: 1;
+  min-width: 20%;
+  font-size: 10px;
+  font-weight: 600;
+  outline: 0;
+  height: 78px;
+  width: 78px;
+}
 
 .deliveryButtonSelected {
   /*background-color: #FFBA00;*/
@@ -288,12 +319,50 @@
   padding: 5px;
 }
 
+.saveBtn {
+  margin-top: 36px;
+  margin-bottom: 50px;
+  background-color: #f26522;
+  color: white;
+  font-size: 20px;
+  border-radius: 15px;
+  border: none;
+  height: 54px;
+  width: 70%;
+}
+.saveBtn:disabled {
+  margin-top: 36px;
+  margin-bottom: 50px;
+  background-color: #ccc9c9;
+  color: white;
+  font-size: 20px;
+  border-radius: 15px;
+  border: none;
+  height: 54px;
+  width: 70%;
+}
+
 .proceedBtn {
   text-align: center;
   justify-content: center;
   padding: 5px !important;
   /*color: black !important;*/
   color: #ffffff;
+  font-size: 16px !important;
+  /*border: 1px solid rgb(187, 174, 174);*/
+  border-radius: 10px;
+  min-width: 100px !important;
+  font-weight: bold;
+  background-color: #ff6505;
+  margin-top: 20px;
+  width: 60%;
+}
+.proceedBtn:disabled {
+  text-align: center;
+  justify-content: center;
+  padding: 5px !important;
+  /*color: black !important;*/
+  color: #696969;
   font-size: 16px !important;
   /*border: 1px solid rgb(187, 174, 174);*/
   border-radius: 10px;
@@ -553,6 +622,22 @@
   padding-top: 1.5rem;
   font-size: 20px;
   cursor: pointer;
+}
+.iconMealsDisabled {
+  background-image: url('./static/yellow_plate.png');
+  background-size: 100%;
+  outline: 0;
+  height: 80px;
+  width: 80px;
+  color: white;
+  padding-top: 1.5rem;
+  font-size: 20px;
+  cursor: pointer;
+}
+.iconDeliveries {
+  height: 78px;
+  width: 78px;
+  border: solid;
 }
 .iconDeliveries {
   height: 78px;
