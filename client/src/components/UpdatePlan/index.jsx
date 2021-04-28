@@ -585,6 +585,7 @@ class UpdatePlan extends React.Component {
       .post(API_URL + 'change_purchase/' + this.state.updatedMealPlan.purchase_uid, object)
       .then(res => {
         console.log("change_purchase response: ", res);
+        this.props.history.push("/meal-plan");
       })
       .catch(err => {
         console.log(err);
