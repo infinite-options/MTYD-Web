@@ -196,6 +196,8 @@ const StripeCheckout = (props) => {
               itm_business_uid: props.selectedPlan.itm_business_uid
             }];
 
+            console.log("customerUid before checkout: ", props.customerUid);
+
             if(props.customerUid !== 'GUEST') {
               console.log("STRIPE CHECKOUT (1) -- not a guest");
               console.log("STRIPE CHECKOUT (1) -- amount_due: " + props.paymentSummary.total);
@@ -242,12 +244,11 @@ const StripeCheckout = (props) => {
                   history.push("/congrats")
                 }
               );
-      
+
             } else {
               console.log("STRIPE CHECKOUT (3) -- error; wrong data");
+              changeLoadingState(false);
             }
-
-            changeLoadingState(false);
 
           })
           .catch(err => {
