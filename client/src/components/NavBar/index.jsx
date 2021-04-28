@@ -207,9 +207,9 @@ class NavBar extends React.Component {
               );
             }
           })()}
-          <Link to='/home' className={styles.narrowBtn}>
+          {/* <Link to='/home' className={styles.narrowBtn}>
             HOME
-          </Link>
+          </Link> */}
           <Link to='/about' className={styles.narrowBtn}>
             ABOUT
           </Link>
@@ -255,24 +255,22 @@ class NavBar extends React.Component {
       <div className={styles.navbar}>
 
         <NavMenu/>
+        
+        <a href='/home' 
+        style={{
+          margin:0,
+          position:"absolute",
+          width: "160px", 
+          height:"80px",
+          top:"5px",
+          backgroundImage:`url(${whiteLogo})`,
+          backgroundSize:'cover',
+          backgroundPosition:'center',
+          left:'48%'
+          }}>
 
-        <div>
-        <a href='/home' style={{
-          margin:0
-        }}>
-          <img 
-            style=
-            {{
-              position:"absolute",
-              width: "160px", 
-              height:"80px",
-              left:"45%",
-              top:"5px",
-            }} 
-
-            src={whiteLogo} alt="logo"/>
         </a>
-        </div>
+
         <ul>
           {this.state.login ? (
             <>
@@ -288,15 +286,12 @@ class NavBar extends React.Component {
 
           <div class={styles.divider}/>
 
-          <Link to='/home' className={styles.whiteBackBtn}>
-            HOME
-          </Link>
-
           <div class={styles.divider}/>
 
           <Link to='/meal-plan' className={styles.showNameBtn} 
             style={nameFormat}
           >
+            {console.log(this.state)}
               {this.state.firstName} {this.state.lastName}
           </Link>
 
@@ -310,7 +305,11 @@ class NavBar extends React.Component {
               LOGOUT&nbsp;
             </a>
             </>
-          ) : (
+          ) 
+          
+          : 
+          
+          (
             <>
               <div
               style={{
