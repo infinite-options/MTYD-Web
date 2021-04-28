@@ -1,9 +1,5 @@
 /*
 *
-* Comments: find #uncomment
-* menu should be a carousel. Carousel code is in SF.
-* footer is not at the bottom on the congratulation page.
-* startServingNowImg goes to choose_plan page
 */
 import React, { Component } from 'react';
 import {Link} from "react-router-dom";
@@ -424,7 +420,7 @@ class Home extends Component {
         })()}
         
 		<div style = {{textAlign: 'center', marginTop: '30px', marginBottom: '50px',fontWeight: 'bold'}}>
-             <HomeLink text = {startServingNowImg} link = "/select-meal" style = {{height:'68px', width:'432px', marginTop:'77.66px', marginLeft:'auto'}}/>			
+             <HomeLink text = {startServingNowImg} link = "/choose-plan" style = {{height:'68px', width:'432px', marginTop:'77.66px', marginLeft:'auto'}}/>			
         </div>
         
       {/*<span>
