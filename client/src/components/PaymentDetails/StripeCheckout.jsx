@@ -118,45 +118,6 @@ const StripeCheckout = (props) => {
 
   console.log("orderData: " + JSON.stringify(orderData));
 
-  /*var handleAction = function(clientSecret) {
-    console.log("=== handleAction");
-    // Show the authentication modal if the PaymentIntent has a status of "requires_action"
-    stripe.handleCardAction(clientSecret).then(function(data) {
-      if (data.error) {
-        //showError("Your card was not authenticated, please try again");
-      } else if (data.paymentIntent.status === "requires_confirmation") {
-        // Card was properly authenticated, we can attempt to confirm the payment again with the same PaymentIntent
-        fetch("/pay", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            paymentIntentId: data.paymentIntent.id
-          })
-        })
-          .then(function(result) {
-            return result.json();
-          })
-          .then(function(json) {
-            if (json.error) {
-              //showError(json.error);
-            } else {
-              orderComplete(clientSecret);
-            }
-          });
-      }
-    });
-  };*/
-
-  // var pay = function() {
-  //   console.log("=== pay()");
-  //   //var cardholderName = document.querySelector("#name").value;
-  //   var cardholderName = "Brandon M. Huss";
-  //   var data = {
-  //     billing_details: {}
-  //   };
-
   const changeCardholderName = (name) => {
     console.log("Name changes: " + name);
     setCardholderName(name);
@@ -219,414 +180,101 @@ const StripeCheckout = (props) => {
 
         console.log("calling confirmedCardPayment...");
 
-        const confirmedCardPayment = stripe.confirmCardPayment(clientSecret, {
-          payment_method: res.paymentMethod.id, setup_future_usage: 'off_session'
-        })
-        .then(function(result) {
-          console.log("confirmedCardPayment result: " + JSON.stringify(result));
+        try{
+          
+          const confirmedCardPayment = stripe.confirmCardPayment(clientSecret, {
+            payment_method: res.paymentMethod.id, setup_future_usage: 'off_session'
+          })
+          .then(function(result) {
+            console.log("confirmedCardPayment result: " + JSON.stringify(result));
 
-          const items = [{
-            qty: props.selectedPlan.num_deliveries.toString(),
-            name: props.selectedPlan.item_name,
-            price: props.selectedPlan.item_price.toString(),
-            item_uid: props.selectedPlan.item_uid,
-            itm_business_uid: props.selectedPlan.itm_business_uid
-          }];
+            const items = [{
+              qty: props.selectedPlan.num_deliveries.toString(),
+              name: props.selectedPlan.item_name,
+              price: props.selectedPlan.item_price.toString(),
+              item_uid: props.selectedPlan.item_uid,
+              itm_business_uid: props.selectedPlan.itm_business_uid
+            }];
 
-          if(props.customerUid !== 'GUEST') {
-            console.log("STRIPE CHECKOUT (1) -- not a guest");
-            console.log("STRIPE CHECKOUT (1) -- amount_due: " + props.paymentSummary.total);
-    
-            checkoutItems(
-              {
-                customer_uid: props.customerUid,
-                business_uid: 'WEB',
-                items,
-                salt: "",
-                order_instructions: 'fast',
-                delivery_instructions: props.deliveryInstructions,
-                delivery_first_name: props.firstName,
-                delivery_last_name: props.lastName,
-                delivery_phone: props.phone,
-                delivery_email: props.email,
-                delivery_address: props.address.street,
-                delivery_unit: props.unit,
-                delivery_city: props.city,
-                delivery_state: props.state,
-                delivery_zip: props.zip,
-                delivery_latitude: props.latitude,
-                delivery_longitude: props.longitude,
-                purchase_notes: 'purchase_notes',
-                amount_due: props.paymentSummary.total,
-                amount_discount: props.paymentSummary.discountAmount,
-                amount_paid: '0.00',
-                cc_num: 'NULL',
-                cc_exp_year: 'NULL',
-                cc_exp_month: 'NULL',
-                cc_cvv: 'NULL',
-                cc_zip: 'NULL',
-                charge_id: result.paymentIntent.id,
-                payment_type: 'STRIPE',
-                service_fee: props.paymentSummary.serviceFee,
-                delivery_fee: props.paymentSummary.deliveryFee,
-                tip: props.paymentSummary.tip,
-                tax: props.paymentSummary.taxAmount,
-                //subtotal: props.paymentSummary.subtotal,
-                subtotal: props.paymentSummary.mealSubPrice,
-                amb: props.paymentSummary.ambassadorDiscount
-              },
-              () => {
-                history.push("/congrats")
-              }
-            );
-    
-          /*} else if (props.customerUid === 'GUEST') {
-            console.log("STRIPE CHECKOUT (2) -- guest");
-            console.log("STRIPE CHECKOUT (2) -- amount_due: " + props.paymentSummary.total);
-    
-            createGuestAccount(
-              {
-                email: props.email,
-                first_name: props.firstName,
-                last_name: props.lastName,
-                phone_number: props.phone,
-                address: props.street,
-                unit: props.unit,
-                city: props.city,
-                state: props.state,
-                zip_code: props.zip,
-                latitude: props.latitude,
-                longitude: props.longitude,
-                referral_source: "WEB",
-                role: "CUSTOMER",
-                social: "FALSE",
-                social_id: "NULL",
-                user_access_token: "FALSE",
-                user_refresh_token: "FALSE",
-                mobile_access_token: "FALSE",
-                mobile_refresh_token: "FALSE"
-              },
-              (response) => {
-                console.log("createGuestAccount response: " + JSON.stringify(response));
-                checkoutItems(
-                  {
-                    customer_uid: response.data.result.customer_uid,
-                    business_uid: 'WEB',
-                    items,
-                    salt: "",
-                    order_instructions: 'fast',
-                    delivery_instructions: props.deliveryInstructions,
-                    delivery_first_name: props.firstName,
-                    delivery_last_name: props.lastName,
-                    delivery_phone: props.phone,
-                    delivery_email: props.email,
-                    delivery_address: props.address.street,
-                    delivery_unit: props.unit,
-                    delivery_city: props.city,
-                    delivery_state: props.state,
-                    delivery_zip: props.zip,
-                    delivery_latitude: props.latitude,
-                    delivery_longitude: props.longitude,
-                    purchase_notes: 'purchase_notes',
-                    amount_due: props.paymentSummary.total,
-                    amount_discount: props.paymentSummary.discountAmount,
-                    amount_paid: '0.00',
-                    cc_num: 'NULL',
-                    cc_exp_year: 'NULL',
-                    cc_exp_month: 'NULL',
-                    cc_cvv: 'NULL',
-                    cc_zip: 'NULL',
-                    charge_id: clientSecret,
-                    payment_type: 'STRIPE',
-                    service_fee: props.paymentSummary.serviceFee,
-                    delivery_fee: props.paymentSummary.deliveryFee,
-                    tip: props.paymentSummary.tip,
-                    tax: props.paymentSummary.taxAmount,
-                    subtotal: props.paymentSummary.subtotal,
-                    amb: props.paymentSummary.ambassadorDiscount
-                  },
-                  () => {
-                    history.push("/congrats")
-                  }
-                );
-              }
-            );*/
-    
-          } else {
-            console.log("STRIPE CHECKOUT (3) -- error; wrong data");
-          }
+            if(props.customerUid !== 'GUEST') {
+              console.log("STRIPE CHECKOUT (1) -- not a guest");
+              console.log("STRIPE CHECKOUT (1) -- amount_due: " + props.paymentSummary.total);
+      
+              checkoutItems(
+                {
+                  customer_uid: props.customerUid,
+                  business_uid: 'WEB',
+                  items,
+                  salt: "",
+                  order_instructions: 'fast',
+                  delivery_instructions: props.deliveryInstructions,
+                  delivery_first_name: props.firstName,
+                  delivery_last_name: props.lastName,
+                  delivery_phone: props.phone,
+                  delivery_email: props.email,
+                  delivery_address: props.address.street,
+                  delivery_unit: props.unit,
+                  delivery_city: props.city,
+                  delivery_state: props.state,
+                  delivery_zip: props.zip,
+                  delivery_latitude: props.latitude,
+                  delivery_longitude: props.longitude,
+                  purchase_notes: 'purchase_notes',
+                  amount_due: props.paymentSummary.total,
+                  amount_discount: props.paymentSummary.discountAmount,
+                  amount_paid: '0.00',
+                  cc_num: 'NULL',
+                  cc_exp_year: 'NULL',
+                  cc_exp_month: 'NULL',
+                  cc_cvv: 'NULL',
+                  cc_zip: 'NULL',
+                  charge_id: result.paymentIntent.id,
+                  payment_type: 'STRIPE',
+                  service_fee: props.paymentSummary.serviceFee,
+                  delivery_fee: props.paymentSummary.deliveryFee,
+                  tip: props.paymentSummary.tip,
+                  tax: props.paymentSummary.taxAmount,
+                  //subtotal: props.paymentSummary.subtotal,
+                  subtotal: props.paymentSummary.mealSubPrice,
+                  amb: props.paymentSummary.ambassadorDiscount
+                },
+                () => {
+                  history.push("/congrats")
+                }
+              );
+      
+            } else {
+              console.log("STRIPE CHECKOUT (3) -- error; wrong data");
+            }
 
-        })
-        .catch(err => {
-          console.log(err);
-          if (err.response) {
-            console.log("error: " + JSON.stringify(err.response));
-          }
-        });
+            changeLoadingState(false);
 
-      })
+          })
+          .catch(err => {
+            console.log(err);
+            if (err.response) {
+              console.log("error: " + JSON.stringify(err.response));
+            }
+            changeLoadingState(false);
+          });
+
+        } catch (e) {
+          console.log("error trying to pay: ", e);
+          changeLoadingState(false);
+        }
+
+      });
 
     })
     .catch(err => {
       console.log(err);
       if (err.response) {
         console.log("error: " + JSON.stringify(err.response));
+        changeLoadingState(false);
       }
     });
 
-    /*var charge_id;
-
-    console.log("calling createPaymentMethod...");
-    // Collect card details
-    stripe
-      .createPaymentMethod("card", cardElement, data)
-      .then(function(result) {
-        console.log("result: ", result);
-        if (result.error) {
-          console.log("(1) createPaymentMethod error");
-          //showError(result.error.message);
-        } else {
-          console.log("(2) createPaymentMethod success");
-          //orderData.paymentMethodId = result.paymentMethod.id;
-          //charge_id = result.paymentMethod.id;
-          //orderData.isSavingCard = document.querySelector("#save-card").checked;
-          //orderData.isSavingCard = true;
-          
-          // New stuff added by Brandon
-          // orderData.customerUid = props.customerUid;
-          // orderData.email = props.email;
-          // orderData.paymentSummary = props.paymentSummary;
-          // orderData.selectedPlan = props.selectedPlan;
-          // orderData.businessCode = props.deliveryInstructions;
-  
-          console.log("data to be sent to pay: " + JSON.stringify(orderData));
-          console.log("calling /pay...");
-          //return fetch("http://localhost:4242/pay", {
-          //fetch("/stripe-key")
-          //fetch("https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2stripe-key")
-          let data = {
-            body: JSON.stringify(orderData)
-          };
-          console.log("data before pay: " + JSON.stringify(data));
-          console.log("orderData before pay: " + JSON.stringify(orderData));
-          return axios.post("https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/pay", orderData)
-          .catch(err => {
-            console.log(err);
-            if (err.response) {
-              console.log("error: " + JSON.stringify(err.response));
-            }
-          });
-          //https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/
-          // return axios.post("https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/pay", {
-          //   mode: "no-cors",
-          //   method: "POST",
-          //   headers: {
-          //     "Content-Type": "application/json"
-          //   },
-          //   body: JSON.stringify(orderData)
-          // });
-        }
-      })
-      .then(function(result) {
-        console.log("createPaymentMethod result: ", JSON.stringify(result));
-        if(result.status === 200){
-
-          const items = [{
-            qty: props.selectedPlan.num_deliveries.toString(),
-            name: props.selectedPlan.item_name,
-            price: props.selectedPlan.item_price.toString(),
-            item_uid: props.selectedPlan.item_uid,
-            itm_business_uid: props.selectedPlan.itm_business_uid
-          }];
-
-          if(props.customerUid !== 'GUEST') {
-            console.log("STRIPE CHECKOUT (1) -- not a guest");
-            console.log("STRIPE CHECKOUT (1) -- amount_due: " + props.paymentSummary.total);
-    
-            checkoutItems(
-              {
-                customer_uid: props.customerUid,
-                business_uid: 'WEB',
-                items,
-                salt: "",
-                order_instructions: 'fast',
-                delivery_instructions: props.deliveryInstructions,
-                delivery_first_name: props.firstName,
-                delivery_last_name: props.lastName,
-                delivery_phone: props.phone,
-                delivery_email: props.email,
-                delivery_address: props.address.street,
-                delivery_unit: props.unit,
-                delivery_city: props.city,
-                delivery_state: props.state,
-                delivery_zip: props.zip,
-                delivery_latitude: props.latitude,
-                delivery_longitude: props.longitude,
-                purchase_notes: 'purchase_notes',
-                amount_due: props.paymentSummary.total,
-                amount_discount: props.paymentSummary.discountAmount,
-                amount_paid: '0.00',
-                cc_num: 'NULL',
-                cc_exp_year: 'NULL',
-                cc_exp_month: 'NULL',
-                cc_cvv: 'NULL',
-                cc_zip: 'NULL',
-                charge_id: charge_id,
-                payment_type: 'STRIPE',
-                service_fee: props.paymentSummary.serviceFee,
-                delivery_fee: props.paymentSummary.deliveryFee,
-                tip: props.paymentSummary.tip,
-                tax: props.paymentSummary.taxAmount,
-                subtotal: props.paymentSummary.mealSubPrice,
-                amb: props.paymentSummary.ambassadorDiscount
-              },
-              () => {
-                history.push("/congrats")
-              }
-            );
-    
-          } else if (props.customerUid === 'GUEST') {
-            console.log("STRIPE CHECKOUT (2) -- guest");
-            console.log("STRIPE CHECKOUT (2) -- amount_due: " + props.paymentSummary.total);
-    
-            createGuestAccount(
-              {
-                email: props.email,
-                first_name: props.firstName,
-                last_name: props.lastName,
-                phone_number: props.phone,
-                address: props.street,
-                unit: props.unit,
-                city: props.city,
-                state: props.state,
-                zip_code: props.zip,
-                latitude: props.latitude,
-                longitude: props.longitude,
-                referral_source: "WEB",
-                role: "CUSTOMER",
-                social: "FALSE",
-                social_id: "NULL",
-                user_access_token: "FALSE",
-                user_refresh_token: "FALSE",
-                mobile_access_token: "FALSE",
-                mobile_refresh_token: "FALSE"
-              },
-              () => {
-                checkoutItems(
-                  {
-                    customer_uid: props.customerUid,
-                    business_uid: 'WEB',
-                    items,
-                    salt: "",
-                    order_instructions: 'fast',
-                    delivery_instructions: props.deliveryInstructions,
-                    delivery_first_name: props.firstName,
-                    delivery_last_name: props.lastName,
-                    delivery_phone: props.phone,
-                    delivery_email: props.email,
-                    delivery_address: props.address.street,
-                    delivery_unit: props.unit,
-                    delivery_city: props.city,
-                    delivery_state: props.state,
-                    delivery_zip: props.zip,
-                    delivery_latitude: props.latitude,
-                    delivery_longitude: props.longitude,
-                    purchase_notes: 'purchase_notes',
-                    amount_due: props.paymentSummary.total,
-                    amount_discount: props.paymentSummary.discountAmount,
-                    amount_paid: '0.00',
-                    cc_num: 'NULL',
-                    cc_exp_year: 'NULL',
-                    cc_exp_month: 'NULL',
-                    cc_cvv: 'NULL',
-                    cc_zip: 'NULL',
-                    charge_id: charge_id,
-                    payment_type: 'STRIPE',
-                    service_fee: props.paymentSummary.serviceFee,
-                    delivery_fee: props.paymentSummary.deliveryFee,
-                    tip: props.paymentSummary.tip,
-                    tax: props.paymentSummary.taxAmount,
-                    subtotal: props.paymentSummary.mealSubPrice,
-                    amb: props.paymentSummary.ambassadorDiscount
-                  },
-                  () => {
-                    history.push("/congrats")
-                  }
-                );
-              }
-            );
-    
-          } else {
-            console.log("STRIPE CHECKOUT (3) -- error; wrong data");
-          }
-
-        }
-      }).catch(err => {
-        console.log(err);
-        if (err.response) {
-          console.log("error: " + JSON.stringify(err.response));
-        }
-      });*/
-
-
-
-      // .then(function(paymentData) {
-      //   console.log("second then of createPaymentMethod");
-      //   /*if (paymentData.requiresAction) {
-      //     // Request authentication
-      //     handleAction(paymentData.clientSecret);
-      //   } else if (paymentData.error) {
-      //     showError(paymentData.error);
-      //   } else {
-      //     orderComplete(paymentData.clientSecret);
-      //   }*/
-      // });
   };
-
-  /* ------- Post-payment helpers ------- */
-
-  /* Shows a success / error message when the payment is complete */
-  /*var orderComplete = function(clientSecret) {
-    console.log("=== orderComplete()");
-    console.log("clientSecret: " + clientSecret);
-    stripe.retrievePaymentIntent(clientSecret).then(function(result) {
-      var paymentIntent = result.paymentIntent;
-      var paymentIntentJson = JSON.stringify(paymentIntent, null, 2);
-      document.querySelectorAll(".payment-view").forEach(function(view) {
-        view.classList.add("hidden");
-      });
-      document.querySelectorAll(".completed-view").forEach(function(view) {
-        view.classList.remove("hidden");
-      });
-      document.querySelector(".status").textContent =
-        paymentIntent.status === "succeeded" ? "succeeded" : "failed";
-      document.querySelector("pre").textContent = paymentIntentJson;
-    });
-  };*/
-
-  /*var showError = function(errorMsgText) {
-    console.log("=== showError()");
-    changeLoadingState(false);
-    var errorMsg = document.querySelector(".sr-field-error");
-    errorMsg.textContent = errorMsgText;
-    setTimeout(function() {
-      errorMsg.textContent = "";
-    }, 4000);
-  };*/
-
-  // Show a spinner on payment submission
-  /*var changeLoadingState = function(isLoading) {
-    console.log("=== changeLoadingState()");
-    if (isLoading) {
-      document.querySelector("button").disabled = true;
-      document.querySelector("#spinner").classList.remove("hidden");
-      document.querySelector("#button-text").classList.add("hidden");
-    } else {
-      document.querySelector("button").disabled = false;
-      document.querySelector("#spinner").classList.add("hidden");
-      document.querySelector("#button-text").classList.remove("hidden");
-    }
-  };*/
 
   return (
     <>
