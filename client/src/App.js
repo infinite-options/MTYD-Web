@@ -21,6 +21,8 @@ import Congratulations from "./components/Congratulations";
 import About from "./components/About";
 import NotFound from "./components/NotFound";
 import Home from "./components/Home";
+import EditPlan from "./components/EditPlan";
+import UpdatePlan from "./components/UpdatePlan";
 import ForgotPassword from "./components/RecoverPassword"
 import "./App.css";
 import AuthApi from "./components/AuthApi";
@@ -78,7 +80,8 @@ function App() {
               component={SocialSignUp}
             />
             <AppliedRoute exact path='/choose-plan' component={ChoosePlan} />
-            <AppliedRoute exact path='/meal-plan' component={MealPlan} />
+            {/*<AppliedRoute exact path='/meal-plan' component={MealPlan} />*/}
+            <AppliedRoute exact path='/meal-plan' component={EditPlan} />
             <AppliedRoute
               exact
               path='/payment-details'
@@ -90,6 +93,8 @@ function App() {
             <AppliedRoute exact path='/login' component={Login} />
             <AppliedRoute exact path='/forgot-password' component={ForgotPassword} />
             <AppliedRoute exact path='/congrats' component={Congrats} />
+            {/*<AppliedRoute exact path='/edit-plan' component={EditPlan} />*/}
+            <AppliedRoute exact path='/update-plan' component={UpdatePlan} />
 
             {/* <AppliedRoute exact path='/test' component={MapTest} /> */}
 

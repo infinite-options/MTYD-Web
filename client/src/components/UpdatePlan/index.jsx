@@ -28,31 +28,14 @@ import axios from "axios";
 import {API_URL} from "../../reducers/constants";
 import {Link} from "react-router-dom";
 import {withRouter} from "react-router";
-import styles from "./choosePlan.module.css";
-import menuStyles from "../Menu/menu.module.css";
+import styles from "./updatePlan.module.css";
 import {WebNavBar, BottomNavBar} from "../NavBar";
-import PaymentDetails from "../PaymentDetails";
-import Menu from "../Menu";
-import takeaway from "./static/take-away.svg";
-import chooseMeals from "./static/choose_meals.svg";
-import prepay from "./static/prepay.png";
-import delivery from "./static/delivery.png";
-import one from "./static/one.svg";
-import two from "./static/two.svg";
-import three from "./static/three.svg";
-import orangePlate from "./static/orange_plate.png";
-import yellowPlate from "./static/yellow_plate.png";
-
-import paymentOption1 from "./Group 2029.svg";
-import paymentOption2 from "./Group 2016.svg";
-import paymentOption3 from "./Group 2030.svg";
 
 import PopLogin from '../PopLogin';
 import Popsignup from '../PopSignup';
 
 
-
-class ChoosePlan extends React.Component {
+class UpdatePlan extends React.Component {
   constructor() {
     super();
     this.state = {
@@ -65,7 +48,16 @@ class ChoosePlan extends React.Component {
       login_seen:false,
       signUpSeen:false,
       total: '0.00',
-      numDeliveryDays: 0
+      numDeliveryDays: 0,
+      currentDiscount: 0,
+      currentMeals: "",
+      currentDeliveries: "",
+      updatedMeals: "",
+      updatedDeliveries: "",
+      mealPlanDefaulted: false,
+      additionalCharges: "0.00",
+      checkoutError: false,
+      updatedMealPlan: {}
     };
   }
 
@@ -93,10 +85,6 @@ class ChoosePlan extends React.Component {
       })
     }
    };
-  
-
-  // http://localhost:2000/api/v2/delivery_weekdays
-  // https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/delivery_weekdays
 
   componentDidMount() {
     //console.log("choose-plan props: " + JSON.stringify(this.props));
@@ -107,113 +95,34 @@ class ChoosePlan extends React.Component {
     // Clear Query parameters
     window.history.pushState({}, document.title, window.location.pathname);
 
-    // Logged in from Apple
-    if (urlParams.has("customer_uid")) {
-      let customer_uid = urlParams.get("customer_uid");
-      document.cookie = "customer_uid=" + customer_uid;
-      axios
-        .get(API_URL + "customer_lplp", {
-          params: {
-            customer_uid: customer_uid
-          }
-        })
-        .then(res => {
-          console.log(res);
-          if (res.data.result !== undefined) {
-            // this.props.history.push("/select-meal");
-            this.props.fetchProfileInformation(customer_uid);
-          }
-          this.props.fetchPlans();
-          this.setState({
-            mounted: true,
-            customerUid: customer_uid,
-            loggedIn: true
-          });
-        })
-        .catch(err => {
-          console.log(err);
-          if (err.response) {
-            console.log(err.response);
-          }
-        });
-        axios.get(API_URL + 'Profile/' + customer_uid)
-        .then(res => {
-          // console.log(res.data.result[0])
-          let data = res.data.result[0]
-          this.props.changeAddressFirstName(data.customer_first_name)
-          this.props.changeAddressLastName(data.customer_last_name)
-          this.props.changeAddressStreet(data.customer_address)
-          this.props.changeAddressUnit(data.customer_unit)
-          this.props.changeAddressCity(data.customer_city)
-          this.props.changeAddressState(data.customer_state)
-          this.props.changeAddressZip(data.customer_zip)
-          this.props.changeAddressPhone(data.customer_phone_num)
-          console.log("(2) choose-plan address props: " + JSON.stringify(this.props.address));
-        })
-        .catch(err => {
-          console.log(err)
-        })
-    }
-    // Check for logged in
-    else if (
-      document.cookie
-        .split(";")
-        .some(item => item.trim().startsWith("customer_uid="))
-    ) {
-      let customer_uid = document.cookie
-        .split("; ")
-        .find(item => item.startsWith("customer_uid="))
-        .split("=")[1];
-      this.props.fetchProfileInformation(customer_uid);
-      this.props.fetchPlans();
-      axios.get(API_URL + 'Profile/' + customer_uid)
-        .then(res => {
-          let data = res.data.result[0]
-          this.props.changeAddressFirstName(data.customer_first_name)
-          this.props.changeAddressLastName(data.customer_last_name)
-          this.props.changeAddressStreet(data.customer_address)
-          this.props.changeAddressUnit(data.customer_unit)
-          this.props.changeAddressCity(data.customer_city)
-          this.props.changeAddressState(data.customer_state)
-          this.props.changeAddressZip(data.customer_zip)
-          this.props.changeAddressPhone(data.customer_phone_num)
-          console.log("(3) choose-plan address props: " + JSON.stringify(this.props.address));
-        })
-        .catch(err => {
-          console.log(err)
-        })
+    if (this.props.location.customerUid !== '' &&
+        this.props.location.customerUid !== undefined &&
+        JSON.stringify(this.props.location.currentMealPlan) !== '{}' &&
+        JSON.stringify(this.props.location.currentMealPlan) !== undefined) {
+
+      console.log("update-plan LOGGED IN");
+      console.log("update plan props.location (logged in): ", this.props.location);
+
+      let customerUid = this.props.location.customerUid;
+      let currentMeals = this.props.location.currentMeals;
+      let currentDeliveries = this.props.location.currentDeliveries;
+      let currentMealPlan = this.props.location.currentMealPlan;
+
       this.setState({
-        mounted: true,
-        customerUid: customer_uid,
-        loggedIn: true
+        customerUid,
+        currentMeals,
+        currentDeliveries,
+        updatedMeals: currentMeals,
+        updatedDeliveries: currentDeliveries,
+        updatedMealPlan: currentMealPlan,
+        mounted: true
       });
+
     } else {
       // Reroute to log in page
-      console.log("Choose-plan NOT LOGGED IN");
-      this.props.fetchPlans();
-      this.setState({
-        mounted: true,
-        customerUid: "NULL",
-        loggedIn: false
-      });
-      //this.props.history.push("/");
+      console.log("Update-plan NOT LOGGED IN");
+      this.props.history.push("/meal-plan");
     }
-
-    // Fetch delivery days
-    axios.get(API_URL + 'delivery_weekdays')
-      .then(res => {
-        // console.log(res.data.result[0])
-        let resultDays = res.data.result;
-        console.log("delivery_weekdays response: " + JSON.stringify(resultDays));
-        this.setState({
-          deliveryDays: resultDays
-        }, () => {
-          this.countDeliveryWeekdays();
-        });
-      })
-      .catch(err => {
-        console.log(err)
-      })
   }
 
   /*componentDidUpdate(plans) {
@@ -372,19 +281,27 @@ class ChoosePlan extends React.Component {
         <div className={styles.mealButtonWrapper}>
         <button
           key={mealIndex}
+          /*className={
+            this.state.currentMeals === mealIndex
+              ? selectedMealButton
+              : deselectedMealButton
+          }*/
           className={
-            this.props.meals === mealIndex
+            this.state.updatedMeals === mealIndex
               ? selectedMealButton
               : deselectedMealButton
           }
           onClick={() => {
             this.props.chooseMealsDelivery(
               mealIndex,
-              this.props.paymentOption,
+              this.state.updatedDeliveries,
               this.props.plans
             );
             console.log("===== mealIndex: " + mealIndex);
             console.log("===== paymentOption: " + this.props.paymentOption);
+            this.setState({
+              updatedMeals: mealIndex
+            });
             //console.log("===== plans: " + JSON.stringify(this.props.plans));
           }}
         >
@@ -403,17 +320,12 @@ class ChoosePlan extends React.Component {
     let deselectedPaymentOption = styles.deliveryButton;
     let selectedPaymentOption = styles.deliveryButton + " " + styles.deliveryButtonSelected;
     let paymentOptionButtons = [];
-    //console.log(this.props.plans);
-    //console.log(this.state.unlogin_plans);
       
     var discounts = this.props.plans[2];
     var discount = null;
 
-    //console.log("discounts: " + discounts);
-    //console.log("typeof(discounts) " + typeof(discounts));
-
     console.log("(paymentFrequency2) === (1)");
-    console.log("(paymentFrequency2) === typeof(discounts): " + typeof(discounts));
+    console.log("(paymentFrequency2) === typeof(discounts): ", typeof(discounts));
 
     if(typeof(discounts) !== "undefined"){
       console.log("(paymentFrequency2) === (2)");
@@ -445,24 +357,32 @@ class ChoosePlan extends React.Component {
                 return (
                   <div style={{display: 'inline-block'}}>
                     <button
-                    disabled={active}
-                    className={
+                    /*disabled={active}*/
+                    /*className={
                       (this.props.paymentOption === deliveryIndex
                         ? selectedPaymentOption
                         : deselectedPaymentOption) +
                       " " + (active && styles.disabledBtn)
-                    }
+                    }*/
                     /*className={
                       this.props.paymentOption === deliveryIndex
                         ? selectedPaymentOption
                         : deselectedPaymentOption
                     }*/
+                    className={
+                      this.state.updatedDeliveries === deliveryIndex
+                        ? selectedPaymentOption
+                        : deselectedPaymentOption
+                    }
                     onClick={() => {
                       this.props.choosePaymentOption(
                         deliveryIndex,
-                        this.props.meals,
-                        tempPlan
+                        this.state.updatedMeals,
+                        this.props.plans
                       )
+                      this.setState({
+                        updatedDeliveries: deliveryIndex
+                      });
                       console.log("##### deliveryIndex: " + deliveryIndex);
                       console.log("##### meals: " + this.props.meals);
                     }}
@@ -550,154 +470,72 @@ class ChoosePlan extends React.Component {
     return deal;
   };
 
+  displayCheckoutError = () => {
+    if(this.state.checkoutError === false) {
+      this.setState({
+        checkoutErrorModal: styles.changeErrorModalPopUpShow,
+        checkoutError: true,
+      });
+    }else{
+      this.setState({
+        checkoutErrorModal: styles.changeErrorModalPopUpHide,
+        checkoutError: false
+      });
+    }
+    console.log("\ncheckout error toggled to " + this.state.checkoutError + "\n\n");
+  }
+
+  saveChanges = () => {
+    // axios
+    //   .post(API_URL + 'UpdateProfile', object)
+    //   .then(res => {
+    //     console.log(res);
+    //   })
+    //   .catch(err => {
+    //     console.log(err);
+    //     if (err.response) {
+    //       console.log("error: " + JSON.stringify(err.response));
+    //     }
+    //   });
+    let object = {
+      cc_cvv: this.state.updatedMealPlan.cc_cvv,
+      cc_exp_date: this.state.updatedMealPlan.cc_cvv,
+      cc_num: this.state.updatedMealPlan.cc_cvv,
+      cc_zip: this.state.updatedMealPlan.cc_cvv,
+      customer_email: this.props.email,
+      items: [{
+        qty: this.props.selectedPlan.num_deliveries.toString(), 
+        name: this.props.selectedPlan.item_name, 
+        price: this.props.selectedPlan.item_price.toString(), 
+        item_uid: this.props.selectedPlan.item_uid, 
+        itm_business_uid: this.props.selectedPlan.itm_business_uid
+      }],
+      new_item_id: this.props.selectedPlan.item_uid,
+      purchase_id: this.state.updatedMealPlan.purchase_uid,
+      start_delivery_date: this.state.updatedMealPlan.start_delivery_date
+    }
+    console.log("change_purchase object: " + JSON.stringify(object));
+    console.log("change_purchase URL: " + API_URL + 'change_purchase/' + this.state.updatedMealPlan.purchase_uid);
+    axios
+      .post(API_URL + 'change_purchase/' + this.state.updatedMealPlan.purchase_uid, object)
+      .then(res => {
+        console.log("change_purchase response: ", res);
+      })
+      .catch(err => {
+        console.log(err);
+        if (err.response) {
+          console.log("error: " + JSON.stringify(err.response));
+        }
+      });
+  }
+
   render() {
     if (!this.state.mounted) {
       return null;
     }
-    /*let message = (
-      <div className={menuStyles.logo}>
-        <img src={takeaway} alt='Logo' />
-        <p style={{color: "black"}}>
-          {" "}
-          MEAL DELIVERIES ARE
-          <span style={{color: "#FF9E19"}}> MONDAY,WEDNESDAY,FRIDAY</span>
-          <br></br>
-          {<span style={{color: "#FF9E19"}}>{this.showDeliveryDates()}</span>}
-        </p>
-      </div>
-    );*/
-    //console.log("***** SELECTED PLAN: " + JSON.stringify(this.props.selectedPlan));
     return (
       /*for mobile's screen*/
       <>
-        {/*<div className={styles.mobile}>
-          <div className={styles.root}>
-            <div className={styles.mealHeader}>
-              <p
-                style={{
-                  flex: "6",
-                  textAlign: "center",
-                  fontSize: "22px",
-                  color: "black",
-                  fontWeight: "bold",
-                  paddingLeft: "50px"
-                }}
-              >
-                CHOOSE MEAL PLAN
-              </p>
-
-              <div className={styles.avatar}></div>
-            </div>
-            <div
-              style={{
-                alignSelf: "center",
-                marginTop: "1rem",
-                paddingBottom: "6rem",
-                margin: "2rem",
-                borderRadius: "15px",
-                boxShadow: "1px 1px 1px 2px #d3d3d3 "
-              }}
-            >
-              <div className={styles.mealSelectMenu}>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    marginTop: "1rem",
-                    padding: "10px"
-                  }}
-                >
-                  <img
-                    style={{height: "50px", width: "50px"}}
-                    src={takeaway}
-                    alt='React Logo'
-                  />
-                  <div style={{display: "flex", flexDirection: "column"}}>
-                    <h6 style={{margin: "0px 2px"}}>MEALS DELIVERIES ARE</h6>
-                    <h6 style={{margin: "0px 2px", color: "#FF9E19"}}>
-                      MONDAY,WEDNESDAY,FRIDAY
-                    </h6>
-                  </div>
-                </div>
-                <div style={{textAlign: "center"}}>
-                  <h6 className={styles.subTitle}>
-                    NUMBER OF MEALS PER DELIVERY
-                  </h6>
-                </div>
-                <div className={styles.mealNumber}>
-                  {(()=>{
-                    if(JSON.stringify(this.props.plans) === "{}"){
-                      //console.log("(mobile) meals not yet fetched");
-                    } else {
-                      //console.log("(mobile) meals fetched!");
-                      return(
-                        <div className={styles.buttonWrapper}>
-                          {this.mealsDelivery()}
-                        </div>
-                      );
-                    }
-                  })()}
-                </div>
-                <hr style={{color: "#FFBA00"}} />
-                <p
-                  style={{
-                    color: "black",
-                    fontSize: "1.3rem",
-                    fontWeight: "600",
-                    margin: "0rem",
-                    paddingLeft: "0.7rem"
-                  }}
-                >
-                  PRE PAY OPTIONS
-                </p>
-                {(()=>{
-                  if(JSON.stringify(this.props.plans) === "{}"){
-                    //console.log("(mobile) plans not yet fetched");
-                  } else {
-                    //console.log("(mobile) plans fetched!");
-                    return(
-                      <div className='row' style={{marginTop: '20px'}}>
-                        {this.paymentFrequency2()}
-                      </div>
-                    );
-                  }
-                })()}
-                <div className={styles.amount}>
-                  <p
-                    style={{
-                      padding: "11px 0px 0px 0px",
-                      height: "40px",
-                      textAlign: "center",
-                      backgroundColor: "#FFF0C6",
-                      fontSize: "large",
-                      fontWeight: "600",
-                      color: "black"
-                    }}
-                    className={styles.amountItem}
-                  >
-                    {" "}
-                    $$ TOTAL {this.props.selectedPlan.item_price}{" "}
-                  </p>
-                  <Link to='/payment-details'>
-                    <button
-                      style={{
-                        textAlign: "center",
-                        backgroundColor: "#FF9E19",
-                        fontSize: "large",
-                        fontWeight: "400",
-                        color: "white"
-                      }}
-                      className={styles.amountItem}
-                    >
-                      PROCEED
-                    </button>
-                  </Link>
-                </div>
-              </div>
-            </div>
-            <BottomNavBar />
-          </div>
-        </div>*/}
         {/* For Full Screen */}
           <WebNavBar 
             poplogin = {this.togglePopLogin}
@@ -707,8 +545,79 @@ class ChoosePlan extends React.Component {
           {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
           {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
 
+          {(() => {
+            // console.log("\ndisplay checkout error message? " + this.state.checkoutError + "\n\n");
+            if (this.state.checkoutError === true) {
+              {console.log("changes updatedMealPlan: ", this.state.updatedMealPlan);}
+              {console.log("changes updatedMeals: ", this.state.updatedMeals);}
+              {console.log("changes updatedMealDeliveris: ", this.state.updatedDeliveries);}
+              {console.log("selectedPlan: ", this.props.selectedPlan);}
+              return (
+                <>
+                <div className = {this.state.checkoutErrorModal}>
+                  <div className  = {styles.changeErrorModalContainer}>
+                      <a  style = {{
+                              color: 'black',
+                              textAlign: 'center', 
+                              fontSize: '45px', 
+                              zIndex: '2', 
+                              float: 'right', 
+                              position: 'absolute', top: '0px', left: '350px', 
+                              transform: 'rotate(45deg)', 
+                              cursor: 'pointer'}} 
+                              
+                              onClick = {this.displayCheckoutError}>+</a>
+
+                      <div style = {{display: 'block', width: '300px', margin: '40px auto 0px', textAlign: 'center'}}>
+                        {/*<h6 style = {{margin: '5px', color: 'orange', fontWeight: 'bold', fontSize: '25px'}}>
+                          PAYMENT ERROR
+                        </h6>*/}
+                        {/*<h6 style = {{margin: '5px', color: 'orange', fontWeight: 'bold', fontSize: '25px'}}>
+                          Additional Charges
+                        </h6>
+                        <text>${this.state.additionalCharges}</text>*/}
+                        {/*<text>Additional Charges ${this.state.additionalCharges}</text>*/}
+
+                        <div className={styles.chargeTotal}>
+                          <div style={{display: 'inline-flex'}}>
+                            <div className={styles.chargeFormula2}>
+                              Additional{" "}Charges{" "}
+                            </div>
+                            <div className={styles.chargeFormula}>
+                              ${this.state.additionalCharges}
+                            </div>
+                          </div>
+                        </div>
+
+                        <br />
+                        <button 
+                          className={styles.orangeBtn}
+                          onClick = {() => {
+                            console.log("save changes clicked...");
+                            this.saveChanges();
+                          }}
+                        >
+                          Save Changes
+                        </button>
+                        <button 
+                          className={styles.orangeBtn}
+                          onClick = {() => {
+                            console.log("keep existing meal plan clicked...");
+                            this.displayCheckoutError();
+                          }}
+                        >
+                          Keep Existing Meal Plan
+                        </button>
+                      </div> 
+                    </div>
+                  </div>
+                </>
+              );
+            }
+          })()} 
+
           <div className={styles.sectionHeaderUL}>
-            Pick a Plan
+            Edit Plan
           </div>
 
           
@@ -716,38 +625,42 @@ class ChoosePlan extends React.Component {
             <div className={styles.box}>
               <div className={styles.box1}>
 
-                {/*<div className='row'>
-                  <div className='col'>
-                    <div className='row'>
-                      <div className='col'>
-                        <img
-                          src={chooseMeals}
-                          alt='Choose Meals'
-                          className={styles.center}
-                        />
+                <div className={styles.planHeader}>
+                  Current Plan
+                </div>
+
+                <div className={styles.containerSplit}>
+                  <div className={styles.boxRight}>
+
+                    <div style={{textAlign: 'center'}}>
+                      <div className={styles.iconMeals}>
+                        {this.state.currentMeals}
                       </div>
-                      <div className='col'>
-                        <img
-                          src={prepay}
-                          alt='Prepay'
-                          className={styles.center}
-                        />
+                      <div>
+                        MEALS
                       </div>
                     </div>
-                  </div>
-                  <div className='col pl-5'>
-                    <img src={delivery} alt='delivery' />
-                  </div>
-                </div>*/}
 
-                <div className={styles.logo}>
-                  <p style={{color: "black"}}>
-                    {" "}
-                    MEAL DELIVERIES ARE ON
-                    {/*<span style={{color: "#FF9E19"}}> MONDAY,WEDNESDAY,FRIDAY</span>*/}
-                    <br></br>
-                    {<span style={{fontWeight: '900'}}>{this.showDeliveryDates()}</span>}
-                  </p>
+                    <div style={{textAlign: 'center', paddingLeft: '50px'}}>
+                      <button className={styles.deliveryButtonCurrent}>
+                        <span style={{fontSize: '35px'}}>
+                          {this.state.currentDeliveries}
+                        </span>
+                        <br></br>
+                        <span style={{whiteSpace: "nowrap"}}>
+                          {"(Save "+this.state.currentDiscount+"%)"}
+                        </span>
+                      </button>
+                      <div>
+                        DELIVERIES
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+
+                <div className={styles.planHeader}>
+                  Updated Plan
                 </div>
                   
                 <div className={styles.menuSection}>
@@ -793,131 +706,53 @@ class ChoosePlan extends React.Component {
             </div>
           </div>
 
-          <div className={styles.sectionHeader}>
-            Subtotal
-          </div>
-
           <div className={styles.container}>
             <div className={styles.box}>
               <div className={styles.box1}>
                   
                 <div className={styles.menuSection}>     
-                  {(() => {
-                    if (JSON.stringify(this.props.selectedPlan) !== '{}') 
-                    {
-                      return (
-                        <>
+
                         <div style={{display: 'flex'}}>
                           <div style={{display: 'inline-block'}}>
                             <div className={styles.priceCalculation}>
-                              <div>
-                                <span className={styles.priceFormula}>
-                                  {this.props.selectedPlan.num_items} 
-                                </span>
-                                <br></br>
-                                <span className={styles.priceSubtext}>
-                                  Meals
-                                </span>
-                              </div>
-                              {/*<div className={styles.priceSymbol}>
-                                x
-                              </div>*/}
-                              <div className={styles.priceSpaceSmall} />
-                              <div>
-                                <span className={styles.priceFormula}>
-                                  {this.props.selectedPlan.num_deliveries} 
-                                </span>
-                                <br></br>
-                                <span className={styles.priceSubtext}>
-                                  Deliveries
-                                </span>
-                              </div>
-                              <div className={styles.priceSpaceSmall} />
-                              <div>
-                                <span className={styles.priceFormula}>
-                                  -{this.props.selectedPlan.delivery_discount}%
-                                </span>
-                                <br></br>
-                                <span className={styles.priceSubtext}>
-                                  Discount applied
-                                </span>
-                              </div>
-                              <div className={styles.priceSpaceSmall} />
 
-                              {/*<div className={styles.priceSymbol}>
-                                = 
-                              </div>*/}
+
 
                             <div style={{display: 'inline-block'}}>
                               <div className={styles.priceTotal}>
 
                                 <div style={{display: 'inline-flex'}}>
-                                  <div className={styles.priceFormula}>
-                                    {this.props.selectedPlan.num_items}
-                                  </div>
 
                                   <div className={styles.priceFormula2}>
-                                    meals{" "}for
+                                    Additional{" "}Discount
                                   </div>
                                   
                                   <div className={styles.priceFormula}>
-                                    ${this.calculateTotal()}
+                                    {this.calculateTotal()}%
                                   </div>
                                 </div>
-                                {/*<span className={styles.priceFormula}>
-                                  9
-                                </span>
-                                <span className={styles.priceFormula2}>
-                                  meals{" "}for
-                                </span>
-                                <span className={styles.priceFormula}>
-                                  ${this.calculateTotal()}
-                                </span>*/}
-                                <br></br>
-                                {/*<span className={styles.priceSubtext}>
-                                  Total
-                                </span>*/}
+
                                 
                               </div>
                               <div className={styles.perMealDeal}>
                                 That's only ${this.calculateDeal()} per freshly cooked meal
                               </div>
                               <div className={styles.proceedWrapper}>
-                                <Link className={styles.proceedBtn} to='/payment-details'>
+                                {/*<Link className={styles.proceedBtn} to='/payment-details'>
                                   PROCEED
-                                </Link>
+                                </Link>*/}
+                                <button 
+                                  className={styles.orangeBtn}
+                                  onClick = {this.displayCheckoutError}
+                                >
+                                  PROCEED
+                                </button>
                               </div>
                             </div>
                             </div>
 
-
-                            {/*<div className={styles.perMealDeal}>
-                              That's only ${this.calculateDeal()} per freshly cooked meal
-                            </div>
-                            <div className={styles.proceedWrapper}>
-                              <Link className={styles.proceedBtn} to='/payment-details'>
-                                PROCEED
-                              </Link>
-                            </div>*/}
-
                           </div>
                           </div>
-
-                        </>
-                      );
-                    } else {
-                      /*<div className={styles.priceCalculation}>
-                        <div className={styles.priceWaitMessage}>
-                          Select a meal plan and deliveries to see your discount.
-                        </div>
-                      </div>*/
-                      return (
-                        <div className={styles.priceWaitMessage}>
-                          Select a meal plan and deliveries to see your discount.
-                        </div>
-                      );
-                    }
-                    })()}
                             
                 </div>
                   
@@ -930,7 +765,7 @@ class ChoosePlan extends React.Component {
   }
 }
 
-ChoosePlan.propTypes = {
+UpdatePlan.propTypes = {
   fetchPlans: PropTypes.func.isRequired,
   chooseMealsDelivery: PropTypes.func.isRequired,
   choosePaymentOption: PropTypes.func.isRequired,
@@ -990,4 +825,4 @@ export default connect(mapStateToProps, {
   changeCardYear,
   changeCardZip,
   submitPayment
-})(withRouter(ChoosePlan));
+})(withRouter(UpdatePlan));

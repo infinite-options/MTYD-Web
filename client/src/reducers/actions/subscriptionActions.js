@@ -98,11 +98,16 @@ export const chooseMealsDelivery = (
   paymentOption,
   plans
 ) => dispatch => {
+  console.log("====== chooseMealsDelivery before ======");
+  console.log("newMeal: ", newMeal);
+  console.log("paymentOption: ", paymentOption);
+  console.log("plans: ", plans);
   calculateTotalPayment(dispatch, plans, newMeal, paymentOption);
   dispatch({
     type: CHOOSE_MEALS_EACH_DELIVERY,
     payload: newMeal,
   });
+  console.log("====== chooseMealsDelivery after  ======");
 };
 
 export const choosePaymentOption = (
