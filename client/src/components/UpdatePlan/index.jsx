@@ -52,12 +52,15 @@ class UpdatePlan extends React.Component {
       currentDiscount: 0,
       currentMeals: "",
       currentDeliveries: "",
+      currentBillingAmount: "0.00",
       updatedMeals: "",
       updatedDeliveries: "",
       mealPlanDefaulted: false,
       additionalCharges: "0.00",
       checkoutError: false,
-      updatedMealPlan: {}
+      updatedMealPlan: {},
+      selectedDiscount: 0,
+      additionalDiscount: 0
     };
   }
 
@@ -106,12 +109,29 @@ class UpdatePlan extends React.Component {
       let customerUid = this.props.location.customerUid;
       let currentMeals = this.props.location.currentMeals;
       let currentDeliveries = this.props.location.currentDeliveries;
+      let currentBillingAmount = this.props.location.currentBillingAmount;
+      let currentDiscount = this.props.location.currentDiscount;
       let currentMealPlan = this.props.location.currentMealPlan;
+
+      this.props.chooseMealsDelivery(
+        currentMeals,
+        currentDeliveries,
+        this.props.plans
+      );
+
+      this.props.choosePaymentOption(
+        currentDeliveries,
+        currentMeals,
+        this.props.plans
+      )
 
       this.setState({
         customerUid,
         currentMeals,
         currentDeliveries,
+        currentDiscount,
+        currentBillingAmount,
+        selectedDiscount: currentDiscount,
         updatedMeals: currentMeals,
         updatedDeliveries: currentDeliveries,
         updatedMealPlan: currentMealPlan,
@@ -339,9 +359,9 @@ class UpdatePlan extends React.Component {
           
         try{
           discount = discounts[deliveryIndex].delivery_discount;
-          // console.log("discount: " + discount);
+          console.log("delivery discount: " + discount);
         } catch(e) {
-          // console.log("discount UNDEFINED");
+          console.log("delivery discount UNDEFINED");
         }
           
         paymentOptionButtons.push(
@@ -380,10 +400,18 @@ class UpdatePlan extends React.Component {
                         this.state.updatedMeals,
                         this.props.plans
                       )
+                      try{
+                        discount = discounts[deliveryIndex].delivery_discount;
+                        console.log("delivery discount: " + discount);
+                      } catch(e) {
+                        console.log("delivery discount UNDEFINED");
+                      }
                       this.setState({
-                        updatedDeliveries: deliveryIndex
+                        updatedDeliveries: deliveryIndex,
+                        selectedDiscount: discount
                       });
                       console.log("##### deliveryIndex: " + deliveryIndex);
+                      console.log("##### index discount: " + discount);
                       console.log("##### meals: " + this.props.meals);
                     }}
                   >
@@ -442,6 +470,35 @@ class UpdatePlan extends React.Component {
     return calculatedTotal;
   };
 
+  calculateDiscount = () => {
+    let addDiscount = this.state.currentDiscount - this.state.selectedDiscount;
+    console.log("current discount: ", this.state.currentDiscount);
+    console.log("selected discount: ", this.state.selectedDiscount);
+    console.log("additional discount: ", addDiscount);
+    return -addDiscount;
+  };
+
+  calculateAdditionalCharges = () => {
+    let originalCharge = this.state.currentBillingAmount;
+    let diffCharge = this.calculateTotal();
+
+    console.log("OG: ", originalCharge);
+    console.log("diff: ", diffCharge);
+
+    let addCharges = -(
+      parseFloat(this.state.currentBillingAmount) - 
+      parseFloat(this.calculateTotal())
+    );
+
+    console.log("add charges (float): ", addCharges);
+    console.log("add charges (string): ", addCharges.toFixed(2));
+
+    // console.log("current discount: ", this.state.currentDiscount);
+    // console.log("selected discount: ", this.state.selectedDiscount);
+    // console.log("additional discount: ", addDiscount);
+    return addCharges.toFixed(2);
+  };
+
   /*calculateDeal = () => {
     let total = parseFloat(this.calculateTotal());
     //console.log("total: " + total);
@@ -466,6 +523,14 @@ class UpdatePlan extends React.Component {
     ).toFixed(2));*/
 
     let deal = (total/this.props.selectedPlan.num_items).toFixed(2);
+
+    console.log("NANi? ", Number.isNaN(deal));
+    console.log("typeof(deal) ", typeof(deal));
+
+    if (deal === 'NaN') {
+      console.log("Not a number");
+      return 0;
+    }
 
     return deal;
   };
@@ -520,6 +585,7 @@ class UpdatePlan extends React.Component {
       .post(API_URL + 'change_purchase/' + this.state.updatedMealPlan.purchase_uid, object)
       .then(res => {
         console.log("change_purchase response: ", res);
+        this.props.history.push("/meal-plan");
       })
       .catch(err => {
         console.log(err);
@@ -584,7 +650,7 @@ class UpdatePlan extends React.Component {
                               Additional{" "}Charges{" "}
                             </div>
                             <div className={styles.chargeFormula}>
-                              ${this.state.additionalCharges}
+                              ${this.calculateAdditionalCharges()}
                             </div>
                           </div>
                         </div>
@@ -728,7 +794,7 @@ class UpdatePlan extends React.Component {
                                   </div>
                                   
                                   <div className={styles.priceFormula}>
-                                    {this.calculateTotal()}%
+                                    {this.calculateDiscount()}%
                                   </div>
                                 </div>
 

@@ -176,134 +176,102 @@ const StripeCheckout = (props) => {
 
         console.log("calling confirmedCardPayment...");
 
-        const confirmedCardPayment = stripe.confirmCardPayment(clientSecret, {
-          payment_method: res.paymentMethod.id, setup_future_usage: 'off_session'
-        })
-        .then(function(result) {
-          console.log("confirmedCardPayment result: " + JSON.stringify(result));
+        try{
+          
+          const confirmedCardPayment = stripe.confirmCardPayment(clientSecret, {
+            payment_method: res.paymentMethod.id, setup_future_usage: 'off_session'
+          })
+          .then(function(result) {
+            console.log("confirmedCardPayment result: " + JSON.stringify(result));
 
-          const items = [{
-            qty: props.selectedPlan.num_deliveries.toString(),
-            name: props.selectedPlan.item_name,
-            price: props.selectedPlan.item_price.toString(),
-            item_uid: props.selectedPlan.item_uid,
-            itm_business_uid: props.selectedPlan.itm_business_uid
-          }];
+            const items = [{
+              qty: props.selectedPlan.num_deliveries.toString(),
+              name: props.selectedPlan.item_name,
+              price: props.selectedPlan.item_price.toString(),
+              item_uid: props.selectedPlan.item_uid,
+              itm_business_uid: props.selectedPlan.itm_business_uid
+            }];
 
-          if(props.customerUid !== 'GUEST') {
-            console.log("STRIPE CHECKOUT (1) -- not a guest");
-            console.log("STRIPE CHECKOUT (1) -- amount_due: " + props.paymentSummary.total);
-    
-            checkoutItems(
-              {
-                customer_uid: props.customerUid,
-                business_uid: 'WEB',
-                items,
-                salt: "",
-                order_instructions: 'fast',
-                delivery_instructions: props.deliveryInstructions,
-                delivery_first_name: props.firstName,
-                delivery_last_name: props.lastName,
-                delivery_phone: props.phone,
-                delivery_email: props.email,
-                delivery_address: props.address.street,
-                delivery_unit: props.unit,
-                delivery_city: props.city,
-                delivery_state: props.state,
-                delivery_zip: props.zip,
-                delivery_latitude: props.latitude,
-                delivery_longitude: props.longitude,
-                purchase_notes: 'purchase_notes',
-                amount_due: props.paymentSummary.total,
-                amount_discount: props.paymentSummary.discountAmount,
-                amount_paid: '0.00',
-                cc_num: 'NULL',
-                cc_exp_year: 'NULL',
-                cc_exp_month: 'NULL',
-                cc_cvv: 'NULL',
-                cc_zip: 'NULL',
-                charge_id: result.paymentIntent.id,
-                payment_type: 'STRIPE',
-                service_fee: props.paymentSummary.serviceFee,
-                delivery_fee: props.paymentSummary.deliveryFee,
-                tip: props.paymentSummary.tip,
-                tax: props.paymentSummary.taxAmount,
-                //subtotal: props.paymentSummary.subtotal,
-                subtotal: props.paymentSummary.mealSubPrice,
-                amb: props.paymentSummary.ambassadorDiscount
-              },
-              () => {
-                history.push("/congrats")
-              }
-            );
-    
-          } else {
-            console.log("STRIPE CHECKOUT (3) -- error; wrong data");
-          }
+            console.log("customerUid before checkout: ", props.customerUid);
 
-        })
-        .catch(err => {
-          console.log(err);
-          if (err.response) {
-            console.log("error: " + JSON.stringify(err.response));
-          }
-        });
+            if(props.customerUid !== 'GUEST') {
+              console.log("STRIPE CHECKOUT (1) -- not a guest");
+              console.log("STRIPE CHECKOUT (1) -- amount_due: " + props.paymentSummary.total);
+      
+              checkoutItems(
+                {
+                  customer_uid: props.customerUid,
+                  business_uid: 'WEB',
+                  items,
+                  salt: "",
+                  order_instructions: 'fast',
+                  delivery_instructions: props.deliveryInstructions,
+                  delivery_first_name: props.firstName,
+                  delivery_last_name: props.lastName,
+                  delivery_phone: props.phone,
+                  delivery_email: props.email,
+                  delivery_address: props.address.street,
+                  delivery_unit: props.unit,
+                  delivery_city: props.city,
+                  delivery_state: props.state,
+                  delivery_zip: props.zip,
+                  delivery_latitude: props.latitude,
+                  delivery_longitude: props.longitude,
+                  purchase_notes: 'purchase_notes',
+                  amount_due: props.paymentSummary.total,
+                  amount_discount: props.paymentSummary.discountAmount,
+                  amount_paid: '0.00',
+                  cc_num: 'NULL',
+                  cc_exp_year: 'NULL',
+                  cc_exp_month: 'NULL',
+                  cc_cvv: 'NULL',
+                  cc_zip: 'NULL',
+                  charge_id: result.paymentIntent.id,
+                  payment_type: 'STRIPE',
+                  service_fee: props.paymentSummary.serviceFee,
+                  delivery_fee: props.paymentSummary.deliveryFee,
+                  tip: props.paymentSummary.tip,
+                  tax: props.paymentSummary.taxAmount,
+                  //subtotal: props.paymentSummary.subtotal,
+                  subtotal: props.paymentSummary.mealSubPrice,
+                  amb: props.paymentSummary.ambassadorDiscount
+                },
+                () => {
+                  history.push("/congrats")
+                }
+              );
 
-      })
+            } else {
+              console.log("STRIPE CHECKOUT (3) -- error; wrong data");
+              changeLoadingState(false);
+            }
+
+          })
+          .catch(err => {
+            console.log(err);
+            if (err.response) {
+              console.log("error: " + JSON.stringify(err.response));
+            }
+            changeLoadingState(false);
+          });
+
+        } catch (e) {
+          console.log("error trying to pay: ", e);
+          changeLoadingState(false);
+        }
+
+      });
 
     })
     .catch(err => {
       console.log(err);
       if (err.response) {
         console.log("error: " + JSON.stringify(err.response));
+        changeLoadingState(false);
       }
     });
+
   };
-
-  /* ------- Post-payment helpers ------- */
-
-  /* Shows a success / error message when the payment is complete */
-  /*var orderComplete = function(clientSecret) {
-    console.log("=== orderComplete()");
-    console.log("clientSecret: " + clientSecret);
-    stripe.retrievePaymentIntent(clientSecret).then(function(result) {
-      var paymentIntent = result.paymentIntent;
-      var paymentIntentJson = JSON.stringify(paymentIntent, null, 2);
-      document.querySelectorAll(".payment-view").forEach(function(view) {
-        view.classList.add("hidden");
-      });
-      document.querySelectorAll(".completed-view").forEach(function(view) {
-        view.classList.remove("hidden");
-      });
-      document.querySelector(".status").textContent =
-        paymentIntent.status === "succeeded" ? "succeeded" : "failed";
-      document.querySelector("pre").textContent = paymentIntentJson;
-    });
-  };*/
-
-  /*var showError = function(errorMsgText) {
-    console.log("=== showError()");
-    changeLoadingState(false);
-    var errorMsg = document.querySelector(".sr-field-error");
-    errorMsg.textContent = errorMsgText;
-    setTimeout(function() {
-      errorMsg.textContent = "";
-    }, 4000);
-  };*/
-
-  // Show a spinner on payment submission
-  /*var changeLoadingState = function(isLoading) {
-    console.log("=== changeLoadingState()");
-    if (isLoading) {
-      document.querySelector("button").disabled = true;
-      document.querySelector("#spinner").classList.remove("hidden");
-      document.querySelector("#button-text").classList.add("hidden");
-    } else {
-      document.querySelector("button").disabled = false;
-      document.querySelector("#spinner").classList.add("hidden");
-      document.querySelector("#button-text").classList.remove("hidden");
-    }
-  };*/
 
   return (
     <>
