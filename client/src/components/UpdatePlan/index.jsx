@@ -60,7 +60,8 @@ class UpdatePlan extends React.Component {
       checkoutError: false,
       updatedMealPlan: {},
       selectedDiscount: 0,
-      additionalDiscount: 0
+      additionalDiscount: 0,
+      sumFees: 0
     };
   }
 
@@ -112,6 +113,7 @@ class UpdatePlan extends React.Component {
       let currentBillingAmount = this.props.location.currentBillingAmount;
       let currentDiscount = this.props.location.currentDiscount;
       let currentMealPlan = this.props.location.currentMealPlan;
+      let sumFees = this.props.location.sumFees;
 
       this.props.chooseMealsDelivery(
         currentMeals,
@@ -131,6 +133,7 @@ class UpdatePlan extends React.Component {
         currentDeliveries,
         currentDiscount,
         currentBillingAmount,
+        sumFees,
         selectedDiscount: currentDiscount,
         updatedMeals: currentMeals,
         updatedDeliveries: currentDeliveries,
@@ -479,15 +482,18 @@ class UpdatePlan extends React.Component {
   };
 
   calculateAdditionalCharges = () => {
-    let originalCharge = this.state.currentBillingAmount;
+    let currCharge = this.state.currentBillingAmount;
     let diffCharge = this.calculateTotal();
+    let feesCharge = this.state.sumFees
 
-    console.log("OG: ", originalCharge);
-    console.log("diff: ", diffCharge);
+    console.log("curr charge: ", currCharge);
+    console.log("diff charge: ", diffCharge);
+    console.log("fees charge: ", feesCharge);
 
     let addCharges = -(
-      parseFloat(this.state.currentBillingAmount) - 
-      parseFloat(this.calculateTotal())
+      parseFloat(currCharge) -  
+      parseFloat(diffCharge) -
+      feesCharge
     );
 
     console.log("add charges (float): ", addCharges);
@@ -622,42 +628,54 @@ class UpdatePlan extends React.Component {
                 <>
                 <div className = {this.state.checkoutErrorModal}>
                   <div className  = {styles.changeErrorModalContainer}>
-                      <a  style = {{
-                              color: 'black',
-                              textAlign: 'center', 
-                              fontSize: '45px', 
-                              zIndex: '2', 
-                              float: 'right', 
-                              position: 'absolute', top: '0px', left: '350px', 
-                              transform: 'rotate(45deg)', 
-                              cursor: 'pointer'}} 
-                              
-                              onClick = {this.displayCheckoutError}>+</a>
+                      {/*<a className={styles.changeErrorCancelButton} 
+                      onClick = {this.displayCheckoutError}>+</a>*/}
+                      <div
+                        className={styles.changeErrorCancelButton}
+                        onClick = {this.displayCheckoutError} />
 
-                      <div style = {{display: 'block', width: '300px', margin: '40px auto 0px', textAlign: 'center'}}>
-                        {/*<h6 style = {{margin: '5px', color: 'orange', fontWeight: 'bold', fontSize: '25px'}}>
-                          PAYMENT ERROR
-                        </h6>*/}
-                        {/*<h6 style = {{margin: '5px', color: 'orange', fontWeight: 'bold', fontSize: '25px'}}>
-                          Additional Charges
-                        </h6>
-                        <text>${this.state.additionalCharges}</text>*/}
-                        {/*<text>Additional Charges ${this.state.additionalCharges}</text>*/}
+                      <div className={styles.chargeContainer}>
 
                         <div className={styles.chargeTotal}>
                           <div style={{display: 'inline-flex'}}>
-                            <div className={styles.chargeFormula2}>
-                              Additional{" "}Charges{" "}
+                            {(() => {
+                              let chargeOrRefund = this.calculateAdditionalCharges();
+                              if (parseFloat(chargeOrRefund) >= 0) {
+                                return (
+                                  <>
+                                    <div className={styles.chargeText}>
+                                      {"Additional Charges "}
+                                    </div>
+                                    <div className={styles.chargeAmount}>
+                                      ${this.calculateAdditionalCharges()}
+                                    </div>
+                                  </>
+                                );
+                              } else {
+                                return (
+                                  <>
+                                    <div className={styles.chargeText}>
+                                      {"You will be refunded "}
+                                    </div>
+                                    <div className={styles.chargeAmount}>
+                                      ${-this.calculateAdditionalCharges()}
+                                    </div>
+                                  </>
+                                );
+                              }
+                            })()}
+                            {/*<div className={styles.chargeText}>
+                              {"Additional Charges "}
                             </div>
-                            <div className={styles.chargeFormula}>
+                            <div className={styles.chargeAmount}>
                               ${this.calculateAdditionalCharges()}
-                            </div>
+                            </div>*/}
                           </div>
                         </div>
 
                         <br />
                         <button 
-                          className={styles.orangeBtn}
+                          className={styles.chargeBtn}
                           onClick = {() => {
                             console.log("save changes clicked...");
                             this.saveChanges();
@@ -666,7 +684,7 @@ class UpdatePlan extends React.Component {
                           Save Changes
                         </button>
                         <button 
-                          className={styles.orangeBtn}
+                          className={styles.chargeBtn}
                           onClick = {() => {
                             console.log("keep existing meal plan clicked...");
                             this.displayCheckoutError();

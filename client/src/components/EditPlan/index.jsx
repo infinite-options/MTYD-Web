@@ -69,6 +69,7 @@ class EditPlan extends React.Component {
       selectedId: "",
       selectedMealPlan: {},
       mealPlanDefaulted: false,
+      sumFees: 0
     };
   }
 
@@ -284,15 +285,27 @@ class EditPlan extends React.Component {
     axios.get(API_URL + 'pid_history/' + mealData.purchase_id)
       .then(res => {
         let pastPurchases = res.data.result;
+        let initialPurchase = pastPurchases[0];
+
         console.log("pid_history response: ", pastPurchases);
+
         var sumAmountDue = 0;
         pastPurchases.forEach((pur) => {
           console.log(pur.purchase_uid + " amount due: " + pur.amount_due);
           sumAmountDue += pur.amount_due;
         });
+
+        let sumFees = (
+          initialPurchase.driver_tip + 
+          initialPurchase.delivery_fee +
+          initialPurchase.service_fee +
+          initialPurchase.taxes
+        )
+
         console.log("final amount due: " + sumAmountDue);
         this.setState({
           nextBillingAmount: sumAmountDue.toFixed(2),
+          sumFees,
           fetchingNBA: false
         });
       })
@@ -465,7 +478,8 @@ class EditPlan extends React.Component {
       currentDeliveries: this.state.selectedDeliveries,
       currentDiscount: this.state.selectedDiscount,
       currentMealPlan: this.state.selectedMealPlan,
-      currentBillingAmount: this.state.nextBillingAmount
+      currentBillingAmount: this.state.nextBillingAmount,
+      sumFees: this.state.sumFees
     });
   }
 

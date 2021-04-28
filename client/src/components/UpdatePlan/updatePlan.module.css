@@ -116,6 +116,17 @@
   border-radius: 25px;
   border-color: #ff6505;
   height: 80px;
+  justify-content: center;
+}
+.chargeText {
+  font-size: 20px;
+  padding-top: 20px;
+}
+.chargeAmount {
+  font-size: 40px;
+  font-weight: bold;
+  padding-top: 5px;
+  padding-left: 20px;
 }
 
 /*.priceWaitMessage {
@@ -465,7 +476,23 @@
   font-weight: bold;
   background-color: #ff6505;
   margin-top: 20px;
-  width: 60%;
+  width: 250px;
+}
+.chargeBtn {
+  text-align: center;
+  justify-content: center;
+  padding: 5px !important;
+  /*color: black !important;*/
+  color: #ffffff;
+  font-size: 16px !important;
+  /*border: 1px solid rgb(187, 174, 174);*/
+  border-radius: 10px;
+  border-width: 0;
+  min-width: 100px !important;
+  background-color: #ff6505;
+  margin-top: 10px;
+  width: 90%;
+  height: 50px;
 }
 
 .proceedBtn {
@@ -819,11 +846,10 @@
   justify-self: center;
   align-self: center;
   display: block;
-  border:#FF9400 solid thick;
+  border:#ff6505 solid;
   background-color: white;
-  border-radius: 20px;
-  height: 40vh;
-  width: 400px;
+  height: 350px;
+  width: 450px;
   z-index: 2;
 }
 
@@ -843,3 +869,45 @@
   text-decoration: none;
   color: #FF9400;
 }
+
+.chargeContainer {
+  display: block;
+  width: 370px;
+  margin: 80px auto 0px;
+  text-align: center;
+}
+
+.changeErrorCancelButton{
+  background-image: url('./static/x_button.png');
+  z-index: 2; 
+  float: right;
+  position: absolute; 
+  top: 0px;
+  left: 370px;
+  background-size: 100%;
+  width: 40px;
+  height: 40px;
+  margin-top: 20px;
+  cursor: pointer;
+}
+/*.changeErrorCancelButton{
+  color: #ffffff;
+  text-align: center;
+  font-size: 45px;
+  z-index: 2; 
+  float: right;
+  position: absolute; 
+  top: 0px;
+  left: 350px;
+  transform: rotate(45deg); 
+  width: 50px;
+  height: 50px;
+
+  border-radius: 50%;
+  cursor: pointer;
+  background-color: #ff6505;
+}
+.changeErrorCancelButton:hover{
+  text-decoration: none;
+  color: #FF9400;
+}*/
