@@ -30,6 +30,7 @@ import {Link} from "react-router-dom";
 import {withRouter} from "react-router";
 import styles from "./updatePlan.module.css";
 import {WebNavBar, BottomNavBar} from "../NavBar";
+import {HomeLink, FootLink, AmbassadorLink, AddressLink} from "../Home/homeButtons";
 
 import PopLogin from '../PopLogin';
 import Popsignup from '../PopSignup';
@@ -537,7 +538,10 @@ class UpdatePlan extends React.Component {
                   <div className  = {styles.chargeModalContainer}>
                       <div
                         className={styles.chargeCancelButton}
-                        onClick = {this.displayChargeModal} />
+                        onClick = {() => {
+                          this.displayChargeModal();
+                        }} 
+                      />
 
                       <div className={styles.chargeContainer}>
 
@@ -716,7 +720,9 @@ class UpdatePlan extends React.Component {
                           <div className={styles.proceedWrapper}>
                             <button 
                               className={styles.orangeBtn}
-                              onClick = {this.displayChargeModal()}
+                              onClick = {() => {
+                                this.displayChargeModal();
+                              }}
                             >
                               PROCEED
                             </button>
@@ -728,7 +734,10 @@ class UpdatePlan extends React.Component {
                   </div> 
                 </div>
               </div>
-            </div>   
+            </div> 
+          </div>
+          <div style={{marginTop: '300px'}}>
+          <FootLink/>  
           </div>
       </>
     );

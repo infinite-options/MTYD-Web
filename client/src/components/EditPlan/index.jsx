@@ -31,6 +31,7 @@ import {Link} from "react-router-dom";
 import {withRouter} from "react-router";
 import styles from "./editPlan.module.css";
 import {WebNavBar, BottomNavBar} from "../NavBar";
+import {HomeLink, FootLink, AmbassadorLink, AddressLink} from "../Home/homeButtons";
 
 import PopLogin from '../PopLogin';
 import Popsignup from '../PopSignup';
@@ -940,6 +941,8 @@ class EditPlan extends React.Component {
 
           </div>
         </div>
+
+        <FootLink/>
       </>
     );
   }

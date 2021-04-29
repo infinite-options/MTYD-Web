@@ -886,7 +886,10 @@ class PaymentDetails extends React.Component {
                   <div className  = {styles.chargeModalContainer}>
                     <div
                       className={styles.chargeCancelButton}
-                      onClick = {this.displayCheckoutError} />
+                      onClick = {() => {
+                        this.displayCheckoutError();
+                      }} 
+                    />
 
                     <div className={styles.chargeContainer}>    
 
