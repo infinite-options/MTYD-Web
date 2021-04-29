@@ -449,7 +449,7 @@ class UpdatePlan extends React.Component {
     let total = parseFloat(this.calculateTotal());
     let deal = (total/this.props.selectedPlan.num_items).toFixed(2);
 
-    console.log("NANi? ", Number.isNaN(deal));
+    console.log("NAN? ", Number.isNaN(deal));
     console.log("typeof(deal) ", typeof(deal));
 
     if (deal === 'NaN') {

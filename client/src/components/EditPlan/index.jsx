@@ -161,20 +161,12 @@ class EditPlan extends React.Component {
 
     //   let customerUid = this.props.customerId;
 
-    if (      
-      document.cookie
-        .split(";")
-        .some(item => item.trim().startsWith("customer_uid="))
-    ) {
-      let customer_uid = document.cookie
-        .split("; ")
-        .find(item => item.startsWith("customer_uid="))
-        .split("=")[1];
+    if (urlParams.has("customer_uid")) {
+      let customer_uid = urlParams.get("customer_uid");
+      document.cookie = "customer_uid=" + customer_uid;
 
-      console.log("edit-plan customerId: ", customer_uid);
-
-      console.log("edit-plan LOGasedfseGED IN");
-      //console.log("edit plan props.location (logged in): ", this.props.location);
+      console.log("1 edit-plan customerId: ", customer_uid);
+      console.log("1 edit-plan LOGGED IN");
 
       let customerUid = customer_uid;
 
@@ -192,30 +184,44 @@ class EditPlan extends React.Component {
             this.props.fetchSubscribed(customerUid);
           });
 
-          /*
-            this.setState({
-              latitude: res.data.result[0].customer_lat,
-              longitude: res.data.result[0].customer_long,
-            })
-            console.log(this.state.latitude);
-            console.log(this.state.longitude);
+        })
+        .catch(err => {
+          if (err.response) {
+            console.log(err.response);
+          } else {
+            console.log(err.toString());
+          }
+          this.props.history.push("/meal-plan");
+        });
 
-            console.log(parseFloat(this.state.latitude))
+    } else if (      
+      document.cookie
+        .split(";")
+        .some(item => item.trim().startsWith("customer_uid="))
+    ) {
+      let customer_uid = document.cookie
+        .split("; ")
+        .find(item => item.startsWith("customer_uid="))
+        .split("=")[1];
 
-            const temp_position = {lat:parseFloat(this.state.latitude), lng:parseFloat(this.state.longitude)}
+      console.log("2 edit-plan customerId: ", customer_uid);
+      console.log("2 edit-plan LOGGED IN");
 
-            console.log(temp_position)
+      let customerUid = customer_uid;
 
-            map.setCenter(temp_position)
+      axios
+        .get(API_URL + 'Profile/' + customerUid)
+        .then(res => {
+          console.log("fetch profile response: ", res);
 
-            if(this.state.latitude!=''){
-              map.setZoom(17);
-              new google.maps.Marker({
-                position: temp_position,
-                map,
-              });
-            }
-          */
+          this.setState(prevState => ({
+            customerUid,
+            mounted: true
+          }), () => {
+            this.props.fetchProfileInformation(customerUid);
+            this.props.fetchPlans();
+            this.props.fetchSubscribed(customerUid);
+          });
 
         })
         .catch(err => {
@@ -232,12 +238,12 @@ class EditPlan extends React.Component {
       // Reroute to log in page
       console.log("edit-plan NOT LOGGED IN");
       console.log("edit plan props.location (not logged in): ", this.props.location);
-      this.props.history.push("/meal-plan");
+      this.props.history.push("/choose-plan");
     }
   }
 
   hideSubscribedMeals = () => {
-    console.log("discounts: NOTHING!!?");
+    console.log("discounts: NOTHING");
     return (
       <div 
         style={{
