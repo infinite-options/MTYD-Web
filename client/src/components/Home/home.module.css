@@ -527,7 +527,56 @@ input[type="zipCode"]::placeholder {
   height: 100%;
   width: 60%;
 }
+.modal {
+  position: fixed;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  top: auto;
+  bottom: 10px;
+  background-color: rgba(0, 0, 0, 0.25);
+}
+.close {
+  color: Black;
+  float: right;
+}
+.close:hover {
+  color: cyan;
+  cursor: pointer;
+}
 
+button {
+  border-radius: 10px;
+  background-color: grey;
+  outline: none;
+}
+
+button:hover {
+  background-color: white;
+}
+.btn {
+  text-align: center;
+  position: absolute;
+  top: 30%;
+  left: 42%;
+  zoom: 1.5;
+}
+.ambassdorText {
+  color: black;
+}
+.ambassdorText em {
+  color: #F26522;
+}
+.modal_content {	
+  background-color: white;
+  position: relative;
+  top: 20%;
+  left: 30%;
+  width: 40%;
+  padding: 20px;
+  border-radius: 5px;
+  border: 2px solid #F26522;
+}
 .imageContainer {
   display: inline-block;
   text-align: center;
