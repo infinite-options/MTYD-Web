@@ -123,7 +123,7 @@ class AmbassadorLink extends Component {
       this.setState({user_id:'not login'})
       this.setState({user_address: 'not login yet'});
 	/*Use the following for setting the user */ 
-	this.setState({user_id:'anup'});
+	// this.setState({user_id:'anup'});
 	/*this.setState({user_address: '214 Main Ave, San Jose, CA 91101'});*/
     }
     
