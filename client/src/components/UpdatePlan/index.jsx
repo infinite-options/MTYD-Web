@@ -694,15 +694,12 @@ class UpdatePlan extends React.Component {
           </div>
 
           <div className={styles.container}>
-            <div className={styles.box}>
-              <div className={styles.box1}>
-                <div className={styles.menuSection}>     
                   <div style={{display: 'flex'}}>
                     <div style={{display: 'inline-block'}}>
                       <div className={styles.priceCalculation}>
                         <div style={{display: 'inline-block'}}>
 
-                          <div className={styles.priceTotal}>
+                          {/*<div className={styles.priceTotal}>
                             <div style={{display: 'inline-flex'}}>
                               <div className={styles.priceFormula2}>
                                 Additional{" "}Discount
@@ -715,9 +712,9 @@ class UpdatePlan extends React.Component {
 
                           <div className={styles.perMealDeal}>
                             That's only ${this.calculateDeal()} per freshly cooked meal
-                          </div>
+                          </div>*/}
 
-                          <div className={styles.proceedWrapper}>
+                          {/*<div className={styles.proceedWrapper}>
                             <button 
                               className={styles.orangeBtn}
                               onClick = {() => {
@@ -726,17 +723,70 @@ class UpdatePlan extends React.Component {
                             >
                               PROCEED
                             </button>
+                          </div>*/}
+
+                          <div className={styles.chargeContainer}>
+
+                          <div className={styles.chargeTotal}>
+                            <div style={{display: 'inline-flex'}}>
+                              {(() => {
+                                let chargeOrRefund = this.calculateAdditionalCharges();
+                                if (parseFloat(chargeOrRefund) >= 0) {
+                                  return (
+                                    <>
+                                      <div className={styles.chargeText}>
+                                        {"Additional Charges "}
+                                      </div>
+                                      <div className={styles.chargeAmount}>
+                                        ${this.calculateAdditionalCharges()}
+                                      </div>
+                                    </>
+                                  );
+                                } else {
+                                  return (
+                                    <>
+                                      <div className={styles.chargeText}>
+                                        {"You will be refunded "}
+                                      </div>
+                                      <div className={styles.chargeAmount}>
+                                        ${-this.calculateAdditionalCharges()}
+                                      </div>
+                                    </>
+                                  );
+                                }
+                              })()}
+                            </div>
                           </div>
+
+                          <br />
+                          <button 
+                            className={styles.chargeBtn}
+                            onClick = {() => {
+                              console.log("save changes clicked...");
+                              this.saveChanges();
+                            }}
+                          >
+                            Save Changes
+                          </button>
+                          {/*<button 
+                            className={styles.chargeBtn}
+                            onClick = {() => {
+                              console.log("keep existing meal plan clicked...");
+                              this.displayChargeModal();
+                            }}
+                          >
+                            Keep Existing Meal Plan
+                          </button>*/}
+
+                          </div> 
 
                         </div>
                       </div>
                     </div>
                   </div> 
-                </div>
-              </div>
-            </div> 
+
           </div>
-          <div style={{marginTop: '300px'}}>
+          <div style={{marginTop: '200px'}}>
           <FootLink/>  
           </div>
       </>
