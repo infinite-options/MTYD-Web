@@ -1120,9 +1120,44 @@ class MenuItemList extends Component {
       //if user  not login, show them the basic date button
       for(const date of uniqueDates){
         buttonList.push(
-          <button key={date} value={date} onClick={this.filterDates} id={date} className={styles.datebutton} autoFocus={first==null}>
-            {moment(date.split(" ")[0]).format("ddd")}
-            <br/>{moment(date.split(" ")[0]).format("MMM") +" "+ moment(date.split(" ")[0]).format("D")}
+          // <button key={date} value={date} onClick={this.filterDates} id={date} className={styles.datebutton} autoFocus={first==null}>
+          //   {moment(date.split(" ")[0]).format("ddd")}
+          //   <br/>{moment(date.split(" ")[0]).format("MMM") +" "+ moment(date.split(" ")[0]).format("D")}
+          // </button>
+
+          <button 
+          key={date} 
+          value={date} 
+          onClick={this.filterDates} 
+          id={date} className={styles.datebutton} 
+          autoFocus={first==null}
+          >
+            <div
+              style={{
+                fontSize:'25px',
+                fontWeight:'bold',
+                lineHeight:'25px',
+              }}
+              value={date} 
+              onClick={this.filterDates}
+              >
+              {moment(date.split(" ")[0]).format("ddd")}
+              <br/>{moment(date.split(" ")[0]).format("MMM") +" "+ moment(date.split(" ")[0]).format("D")}
+            </div>
+
+            <div
+            style={{
+              width:"122px",
+              height:"48px",
+              marginTop:"15px",
+              fontSize:"15px"
+            }}
+            value={date} 
+            onClick={this.filterDates}
+            >
+              Surprise / No selection
+            </div>
+            
           </button>
         )
         first=1;

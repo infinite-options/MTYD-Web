@@ -75,10 +75,11 @@
   margin:0.25rem;
   color:white;
   border-color: white;
-  border-width: 2px;
+  border: 2px solid;
   outline: none;
   box-shadow: none;
   padding: 0;
+  margin-top: 20px;
 } 
 
 .signUpBtn {
@@ -92,12 +93,13 @@
   font-size: 20px;
   color:white;
   border-color: white;
-  border-width: 2px;
+  border: 2px solid;
   outline: none;
   box-shadow: none;
   padding: 0;
+  margin-top: 20px;
 } 
-.signUpBtn:focus{
+/* .signUpBtn:focus{
   height: 50% !important;
   width: 110px;
   border-radius: 30px;
@@ -109,8 +111,8 @@
   outline: none;
   box-shadow: none;
   padding: 0;
-} 
-.signUpBtn:active{
+}  */
+/* .signUpBtn:active{
   height: 50% !important;
   width: 110px;
   border-radius: 30px;
@@ -121,16 +123,17 @@
   font-size: 20px;  
   outline: none;
   box-shadow: none;
-} 
+}  */
 
 
 .whiteBackBtn {
   height: 50% !important;
   width: 110px;
   border-radius: 30px;
-  background-color: rgb(255, 255, 255);
+  background-color: none;
   justify-content: center;
-  border:1px solid black;
+  border:2px solid white;
+  color: white;
 } 
 
 .showNameBtn {

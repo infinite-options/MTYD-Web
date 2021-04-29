@@ -206,104 +206,77 @@ export class PopSignup extends Component {
       <div
         className="model_content"
       >
-        {/* <div
-        style={{
-          top: '51px',
-          left: '190px',
-          width: '247px',
-          height: '58px',
-          background: '#466DED 0% 0% no-repeat padding-box',
-          borderRadius: '20px',
-          opacity: 1,
-          marginLeft:'190px',
-          marginTop:'51px',
-        }}>
-        </div>
+        <div className="close" onClick={this.handleClick}/>
 
         <div
         style={{
-          top: '51px',
-          left: '190px',
-          width: '247px',
-          height: '58px',
-          background: '#485A95 0% 0% no-repeat padding-box',
-          borderRadius: '20px',
-          opacity: 1,
-          marginLeft:'190px',
-          marginTop:'9px',
-        }}>
-        </div>
-
-        <div
-        style={{
-          top: '51px',
-          left: '190px',
-          width: '247px',
-          height: '58px',
-          background: '#466DED 0% 0% no-repeat padding-box',
-          borderRadius: '20px',
-          opacity: 1,
-          marginLeft:'190px',
-          marginTop:'9px',
-        }}>
-        </div> */}
-
-        <div
-          style={{
-            marginTop:'50px'
-          }}
+          marginTop:'59px',
+          marginBottom:'33px',
+          fontSize: '26px',
+          fontWeight:'bold',
+          marginLeft:'230px'
+        }}
         >
+          Sign up
+        </div>
+
+        <div>
           <SocialLogin />
         </div>
 
-        <hr
+        <div  
         style={{
-          border: '1px solid #136D74',
-          borderRadius: '5px',
-          width:'455px',
-          marginTop:'23',
-        }}
-        />
-
-        <div
-        style={{
-          left: '209px',
-          width: '210px',
-          height: '24px',
-          textAlign: 'center',
-          letterSpacing: '-0.48px',
-          color: '#000000',
+          textAlign:'center',
+          height: '28px',
+          letterSpacing: '0.38px',
+          color: 'black',
+          fontSize:'26px',
           opacity: 1,
-          marginLeft:'209px',
-          fontSize:20,
-          fontWeight:500,
-          marginBottom:24,
+          marginTop:'28px',
+          marginBottom:'25px',
+          fontWeight:'bold'
         }}>
-          Or continue with email
+          OR
         </div>
 
         <div style={{
-          marginLeft:'86px',
+          marginLeft:'61px',
         }}>
-          <input 
-            className='inputBox'
-            placeholder='First name (so we can address you)'
-            value={this.props.firstName}
-            onChange={e => {
-              this.props.changeNewFirstName(e.target.value);
-            }}
-          >
-          </input>
 
-          <input 
-            className='inputBox'
-            placeholder='Last name (in case you want to be formal)'
-            value={this.props.lastName}
-            onChange={e => {
-              this.props.changeNewLastName(e.target.value);
-            }}
-          >
-          </input>
+          <div
+          style={{
+            display:'flex'
+          }}>
+            <input
+              style={{
+                width:'208px',
+                marginRight:'12px'
+              }} 
+              className='inputBox'
+              placeholder='First name'
+              value={this.props.firstName}
+              onChange={e => {
+                this.props.changeNewFirstName(e.target.value);
+              }}
+            >
+            </input>
+
+            <input 
+              style={{
+                width:'208px'
+              }} 
+            
+              className='inputBox'
+              placeholder='Last name'
+              value={this.props.lastName}
+              onChange={e => {
+                this.props.changeNewLastName(e.target.value);
+              }}
+            >
+            </input>
+          </div>
+
+
 
           <input 
             className='inputBox'
@@ -318,6 +291,7 @@ export class PopSignup extends Component {
           <input 
             className='inputBox'
             placeholder='Create Password'
+            type='password'
             value={this.props.password}
             onChange={e => {
               this.props.changeNewPassword(e.target.value);
@@ -328,41 +302,15 @@ export class PopSignup extends Component {
           <input 
             className='inputBox'
             placeholder='Confirm Password'
+            type='password'
             value={this.props.passwordConfirm}
             onChange={e => {
               this.props.changeNewPasswordConfirm(e.target.value);
             }}>
           </input>
-        </div>
-        <div style={{
-          marginLeft:'86px',
-          marginBottom:'13px',
-          fontSize:20,
-          fontWeight:500,
-        }}>
-          Address
-        </div>
 
-
-        <div
-        style={{
-          marginLeft:'86px',
-        }}>
           <input 
-            style={{
-              top: '333px',
-              left: '86px',
-              width: '334px',
-              height: '49px',
-              background: '#FFFFFF 0% 0% no-repeat padding-box',
-              border: '1px solid #00000028',
-              borderRadius: '6px 5px 5px 5px',
-              opacity: 1,
-              marginBottom: '13px',
-            }} 
-            // name={'street_address'}
-
-            // onChange={this.handleChange}
+            className='inputBox'
 
             id="ship-address"
             name="ship-address"
@@ -372,79 +320,46 @@ export class PopSignup extends Component {
 
           <input 
             style={{
-              top: '333px',
-              left: '86px',
-              width: '120px',
-              height: '49px',
-              background: '#FFFFFF 0% 0% no-repeat padding-box',
-              border: '1px solid #00000028',
-              borderRadius: '6px 5px 5px 5px',
-              opacity: 1,
-              marginBottom: '13px',
+              width:'208px',
+              marginRight:'12px'
             }} 
+            className='inputBox'
             placeholder='Unit'
             value={this.props.unit}
             onChange={e => {
               this.props.changeNewUnit(e.target.value);
             }}
           />
-        </div>
 
-        <div
-        style={{
-          marginLeft:'86px',
-        }}>
           <input             
             style={{
-              top: '333px',
-              left: '86px',
-              width: '200px',
-              height: '49px',
-              background: '#FFFFFF 0% 0% no-repeat padding-box',
-              border: '1px solid #00000028',
-              borderRadius: '6px 5px 5px 5px',
-              opacity: 1,
-              marginBottom: '13px',
-              }} 
+              width:'208px',
+              marginRight:'12px'
+            }} 
+            className='inputBox'
             placeholder='City'
             id="locality" name="locality"
-            // value = {this.state.city}
-            // onChange={this.handleChange}
             />
 
 
 
           <input             
             style={{
-              top: '333px',
-              left: '86px',
-              width: '70px',
-              height: '49px',
-              background: '#FFFFFF 0% 0% no-repeat padding-box',
-              border: '1px solid #00000028',
-              borderRadius: '6px 5px 5px 5px',
-              opacity: 1,
-              marginBottom: '13px',
-              }} 
+              width:'208px',
+              marginRight:'12px'
+            }} 
+            className='inputBox'
             placeholder='State'
             id="state" name="state"
-            // value = {this.state.state}
-            // onChange={this.handleChange}
             />
 
 
           <input             
-            style={{
-              top: '333px',
-              left: '86px',
-              width: '182px',
-              height: '49px',
-              background: '#FFFFFF 0% 0% no-repeat padding-box',
-              border: '1px solid #00000028',
-              borderRadius: '6px 5px 5px 5px',
-              opacity: 1,
-              marginBottom: '13px',
-            }} 
+              style={{
+                width:'208px',
+                marginRight:'12px'
+              }} 
+              className='inputBox'
               placeholder='Zip'
               id="postcode" name="postcode"
 
@@ -456,14 +371,14 @@ export class PopSignup extends Component {
 
         <button
           style={{
-            top: '722px',
-            left: '86px',
-            width: '455px',
-            height: '56px',
+            width: '452px',
+            height: '71px',
             background:' #FF8500 0% 0% no-repeat padding-box',
             borderRadius: '14px',
             opacity: 1,
-            marginLeft:'86px',
+            marginLeft:'49px',
+            marginTop:'26px',
+            border:'none'
           }}
           onClick={this.wrapperFunction}
         >

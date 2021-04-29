@@ -19,6 +19,7 @@ import axios from 'axios';
 import { API_URL } from '../../reducers/constants';
 import PopLogin from "../PopLogin";
 import NavMenu from "../NavBarHamburger";
+import Popsignup from '../PopSignup';
 
 class SideNavBar extends React.Component {
   render() {
@@ -92,8 +93,35 @@ class NavBar extends React.Component {
       lastName: "",
       customerId: "",
       profileRole: "",
+      login_seen:false,
+      signUpSeen:false,
     };
   }
+
+  togglePopLogin = () => {
+    this.setState({
+     login_seen: !this.state.login_seen,
+    });
+
+    if(!this.state.login_seen){
+      this.setState({
+        signUpSeen:false
+      })
+    }
+
+   };
+
+   togglePopSignup = () => {
+    this.setState({
+     signUpSeen: !this.state.signUpSeen
+    });
+
+    if(!this.state.signUpSeen){
+      this.setState({
+        login_seen:false
+      })
+    }
+   };
 
   logOut = () => {
     this.props.resetProfile();
@@ -179,9 +207,9 @@ class NavBar extends React.Component {
               );
             }
           })()}
-          <Link to='/home' className={styles.narrowBtn}>
+          {/* <Link to='/home' className={styles.narrowBtn}>
             HOME
-          </Link>
+          </Link> */}
           <Link to='/about' className={styles.narrowBtn}>
             ABOUT
           </Link>
@@ -227,75 +255,103 @@ class NavBar extends React.Component {
       <div className={styles.navbar}>
 
         <NavMenu/>
-
-        <div>
-        <a href='/home' style={{
-          margin:0
-        }}>
-          <img 
-            style=
-            {{
-              position:"absolute",
-              width: "160px", 
-              height:"80px",
-              left:"45%",
-              top:"5px",
-            }} 
-
-            src={whiteLogo} alt="logo"/>
+        
+        <a href='/home' 
+        style={{
+          margin:0,
+          position:"absolute",
+          width: "160px", 
+          height:"80px",
+          top:"5px",
+          backgroundImage:`url(${whiteLogo})`,
+          backgroundSize:'cover',
+          backgroundPosition:'center',
+          left:'48%'
+          }}>
         </a>
-        </div>
+
+        {this.state.login ? (
+          <>
+            {(() => {
+              if (this.state.profileRole === 'admin') {
+                return (
+                  <a href='/admin'
+                    style ={{
+                      color:'white',
+                      position:"absolute",
+                      left:'150px'
+                    }}
+                    className={styles.whiteBackBtn}
+                    >
+                    Admin
+                  </a>
+                );
+              }
+            })()}
+          </>
+
+        ):null}
+
+
         <ul>
           {this.state.login ? (
-            <>
-          {(() => {
-            if (this.state.profileRole === 'admin') {
-              return (
-                  <Link to='/admin' className={styles.whiteBackBtn}>
-                    ADMIN
-                  </Link>
-              );
-            }
-          })()}
-
-          <div class={styles.divider}/>
-
-          <Link to='/home' className={styles.whiteBackBtn}>
-            HOME
-          </Link>
-
-          <div class={styles.divider}/>
+          <>
 
           <Link to='/meal-plan' className={styles.showNameBtn} 
             style={nameFormat}
           >
+            {console.log(this.state)}
               {this.state.firstName} {this.state.lastName}
           </Link>
 
           <div class={styles.divider}/>
             <a
-              className={styles.signInBtn}
+              className={styles.whiteBackBtn}
               onClick={this.logOut}
-              style={{display: "flex", alignItem: "center"}}
+              style={{display: "flex", alignItem: "center", color:'white'}}
             >
-              {"  "}
+              {" "}
               LOGOUT&nbsp;
             </a>
             </>
-          ) : (
+          ) 
+          
+          : 
+          
+          (
             <>
-              <button 
-                onClick={this.props.popSignup}
-                className={styles.signUpBtn}
+              <div
+              style={{
+                height:'100%',
+                
+              }}
               >
-                Sign Up
-              </button>
-              <button 
-                onClick={this.props.poplogin}
-                className={styles.signInBtn}
+                <button 
+                  onClick={this.togglePopSignup}
+                  className={styles.signUpBtn}
+                >
+                  Sign Up
+                </button>
+
+                
+              {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
+              </div>
+
+              <div
+                style={{
+                  height:'100%',
+                }}
               >
-                Login
-              </button>
+                <button 
+                  onClick={this.togglePopLogin}
+                  className={styles.signInBtn}
+                >
+                  Login
+                </button>
+
+                {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
+              </div>
+
             </>
           )}
         </ul>

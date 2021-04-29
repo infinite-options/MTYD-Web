@@ -17,9 +17,6 @@ export class NavMenu extends Component {
 
   render() {
 
-
-
-
     return (
       <div>
         <div>
@@ -36,18 +33,10 @@ export class NavMenu extends Component {
           onClick={this.togglePopMenu}
           >
           </div>
-          {this.state.popSeen?<Menu/>:null}
-
-          
-
-
-
-
-
-
+          {this.state.popSeen?
+          <Menu close = {this.togglePopMenu}/>:null}
         </div>
 
-        
       </div>
     )
   }

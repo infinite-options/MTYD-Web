@@ -104,6 +104,14 @@ class MenuItem extends React.Component {
       this.setState({favList:temparr})
       console.log(this.state.favList);
     })
+    .catch((err) => {
+      if (err.response) {
+        // eslint-disable-next-line no-console
+        console.log(err.response);
+      }
+      // eslint-disable-next-line no-console
+      console.log(err);
+    });
   }
 
 
@@ -187,7 +195,7 @@ class MenuItem extends React.Component {
             ></img>
           </button>
 
-          {show ? (
+          {/* {show ? ( */}
             <Fragment>
               <button
                 onClick={() => this.props.removeFromCart(menuitem)}
@@ -248,9 +256,10 @@ class MenuItem extends React.Component {
                 +
               </button> 
             </Fragment>
-          ) : (
+          ) 
+          {/* : (
             ""
-          )}
+          )} */}
         </div>
         <p id={styles.menuItemTitle}
         style = {{

@@ -40,14 +40,26 @@ import pathFromSelectMealsToEnjoy from "../../images/Path 51.svg"
 import startServingNowImg from "../../images/Group 182.png"
 import pathFromPurchaseToChoose from "../../images/Path 50.svg"
 import howDoesImage from "../../images/howDoesImage.png"
+import axios from 'axios';
+
+import HomeMap from "../HomeAddressSearch"
+const google = window.google;
 
 class Home extends Component {   
-  state = { 
-    signUpDisplay: styles.signUpLink,
-    windowHeight: undefined,
-    windowWidth: undefined,
-    login_seen:false,
-    signUpSeen:false,
+
+  constructor(props){
+    super(props);
+    this.state = { 
+      signUpDisplay: styles.signUpLink,
+      windowHeight: undefined,
+      windowWidth: undefined,
+      login_seen:false,
+      signUpSeen:false,
+    }
+
+    this.autocomplete = null
+    // this.handlePlaceSelect = this.handlePlaceSelect.bind(this)
+
   }
 
   togglePopLogin = () => {
@@ -81,79 +93,194 @@ class Home extends Component {
   });
 
   componentDidMount() {
-    console.log("Home page props: " + JSON.stringify(this.props));
+    // console.log("Home page props: " + JSON.stringify(this.props));
+    const autocomplete = new google.maps.places.Autocomplete(document.getElementById('ship-address'),{
+      componentRestrictions: { country: ["us", "ca"] },
+    })
+
+    autocomplete.addListener("place_changed", ()=>{
+      const place = autocomplete.getPlace();
+      console.log(place)
+    })
+
+    console.log(autocomplete)
+
+
+
+
     this.handleResize();
     window.addEventListener('resize', this.handleResize);
   }
 
-  componentWillUnmount() {
-    window.removeEventListener('resize', this.handleResize);
-  }
+  // componentWillUnmount() {
+  //   window.removeEventListener('resize', this.handleResize);
+  // }
 
   goToLink(navlink){
     console.log("LINK CLICKED");
     this.props.history.push(navlink);
   }
 
+  handlePlaceSelect() {
+
+    console.log('here')
+
+    let address1Field = document.querySelector("#ship-address");
+
+    let addressObject = this.autocomplete.getPlace()
+    console.log(addressObject.address_components);
+
+    let address1 = "";
+    let postcode = "";
+    let city = '';
+    let state = '';
+
+
+
+    for (const component of addressObject.address_components) {
+      const componentType = component.types[0];
+      switch (componentType) {
+        case "street_number": {
+          address1 = `${component.long_name} ${address1}`;
+          break;
+        }
+  
+        case "route": {
+          address1 += component.short_name;
+          break;
+        }
+  
+        case "postal_code": {
+          postcode = `${component.long_name}${postcode}`;
+          break;
+        }
+
+        case "locality":
+          document.querySelector("#locality").value = component.long_name;
+          city = component.long_name;
+          break;
+  
+        case "administrative_area_level_1": {
+          document.querySelector("#state").value = component.short_name;
+          state= component.short_name;
+          break;
+        }
+        
+      }
+    }
+
+    address1Field.value = address1;
+
+    console.log(address1);
+    console.log(postcode)
+
+    this.setState({
+      name: addressObject.name,
+      street_address: address1,
+      city: city,
+      state: state,
+      zip_code: postcode,
+      lat:addressObject.geometry.location.lat(),
+      lng:addressObject.geometry.location.lng(),
+    })
+
+    axios.get(`https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/categoricalOptions/${addressObject.geometry.location.lat()},${addressObject.geometry.location.lng()}`)
+      .then(res=>{
+        console.log(res)
+        if(res.data.result.length==0){
+          alert('cannot deliver to this address')
+          console.log('cannot deliver to this address')
+        }else{
+          console.log('we can deliver to this address')
+        }
+      })
+      .catch((err) => {
+        if (err.response) {
+          console.log(err.response);
+        }
+        console.log(err);
+      });
+    console.log(this.state)
+  }
+
+
+
+
   render() { 
     return (
       <>
       <div>
-        <WebNavBar 
-        poplogin = {this.togglePopLogin}
-        popSignup = {this.togglePopSignup}
-        />
-        {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
-        {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
+        <WebNavBar/>
       </div>
+
+      {/* <input 
+        style = 
+        {{width: '320px', 
+        height: '57px', 
+        borderRadius:'10px', 
+        fontSize: '25px',
+        border:'1px solid',
+        textAlign:'center',
+        color:'black',
+        position:'absolute',
+        left:'41.5%',
+        top:'520px'
+        }} 
+        placeholder = "Search your address"
+        type='text'
+
+        id="ship-address"
+        /> */}
 
         
       {(() => {
         if (this.state.windowWidth >= 800) {
           return (
           <div className = {styles.topBackground}>
-          <div className = {styles.gridDisplayRight}>
-			 <img className = {styles.gridRightIcons} src = {appleImg}/> 
-			 <img className = {styles.gridRightIcons} src = {facebookImgSmall}/> 
-			 <img className = {styles.gridRightIcons} src = {googleImgSmall}/> 
-			 <img className = {styles.gridRightIcons} src = {goToImg}/> 
-          </div>	
-          <div className =  {styles.whiteStripe}>		  
-          <div className = {styles.gridDisplayCenter}>
-            <div className = {styles.centerSubtitleText}>
-			<img className = {styles.centerImage} src = {Logo} alt="logo" /></div>
-			 <input type = "zipCode" style = {{border:'4px solid #F26522', borderRadius:'20px', textAlign:'center', width: '320px', height: '57px', marginLeft: '40px', marginTop: '-30px', marginBottom:'15px', borderColor: 'F8BB17', fontFamily: '-apple-system, BlinkMacSystemFont', font: 'normal normal bold 24px/29px SF Pro Display'}} placeholder = "Enter Address"/>
-             <HomeLink text = {viewMealsImg} link = "/select-meal"/>
-				 {/*<img className = {styles.buttonsBelowTheLogo} src = {viewMealsImg}/>*/}
-            <div style = {{display: 'inline-flex', justifyContent: 'space-between'}}>
+            <div className = {styles.gridDisplayRight}>
+              <img className = {styles.gridRightIcons} src = {appleImg}/> 
+              <img className = {styles.gridRightIcons} src = {facebookImgSmall}/> 
+              <img className = {styles.gridRightIcons} src = {googleImgSmall}/> 
+              <img className = {styles.gridRightIcons} src = {goToImg}/> 
+            </div>	
+            <div className =  {styles.whiteStripe}>		  
+              <div className = {styles.gridDisplayCenter}>
+                <div className = {styles.centerSubtitleText}>
+            <img className = {styles.centerImage} src = {Logo} alt="logo" /></div>
 
-            </div>   
-              
-          </div>
-          </div>		  
+
+
+                <HomeMap/>
+
+                <HomeLink text = {viewMealsImg} link = "/select-meal"/>
+
+
+                <div style = {{display: 'inline-flex', justifyContent: 'space-between'}}/> 
+                  
+              </div>
+            </div>		  
           </div>
           );
         } else {
           return (
           <div className = {styles.topBackground}>
-          <div className = {styles.gridDisplayRight}>
-			 <img className = {styles.gridRightIcons} src = {appleImg}/> 
-			 <img className = {styles.gridRightIcons} src = {facebookImgSmall}/> 
-			 <img className = {styles.gridRightIcons} src = {googleImgSmall}/> 
-			 <img className = {styles.gridRightIcons} src = {goToImg}/> 
-          </div>
-          <div className =  {styles.whiteStripe}>		  
-          <div className = {styles.gridDisplayCenter}>
-            <div className = {styles.centerSubtitleText}>
-			<img className = {styles.centerImage} src = {Logo} alt="logo" /></div>
-             <img className = {styles.buttonsBelowTheLogo} src = {EnterZipCodeImg}/>
-			 <img className = {styles.buttonsBelowTheLogo} src = {viewMealsImg}/> 
-            <div style = {{display: 'inline-flex', justifyContent: 'space-between'}}>
-
-            </div>   
-              
-          </div>
-          </div>		  
+              <div className = {styles.gridDisplayRight}>
+                <img className = {styles.gridRightIcons} src = {appleImg}/> 
+                <img className = {styles.gridRightIcons} src = {facebookImgSmall}/> 
+                <img className = {styles.gridRightIcons} src = {googleImgSmall}/> 
+                <img className = {styles.gridRightIcons} src = {goToImg}/> 
+              </div>
+            <div className =  {styles.whiteStripe}>		  
+              <div className = {styles.gridDisplayCenter}>
+                <div className = {styles.centerSubtitleText}>
+                  <img className = {styles.centerImage} src = {Logo} alt="logo" />
+                </div>
+              {/* <img className = {styles.buttonsBelowTheLogo} src = {EnterZipCodeImg}/> */}
+              <img className = {styles.buttonsBelowTheLogo} src = {viewMealsImg}/> 
+              <div style = {{display: 'inline-flex', justifyContent: 'space-between'}}/>
+                
+              </div>
+            </div>		  
           </div>		  
           );
         }

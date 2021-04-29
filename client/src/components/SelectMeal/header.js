@@ -10,6 +10,7 @@ import moment from 'moment';
 
 import PopLogin from '../PopLogin';
 import Popsignup from '../PopSignup';
+import { blue } from "@material-ui/core/colors";
 
 class Header extends Component {
 
@@ -167,12 +168,8 @@ class Header extends Component {
     return (
       <>
       {/* {console.log(this.props)} */}
-        <WebNavBar 
-          poplogin = {this.togglePopLogin}
-          popSignup = {this.togglePopSignup}
-        />
-        {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
-        {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
+        <WebNavBar/>
+
         
         <MenuBar show={true} 
         message={message} 
@@ -184,7 +181,21 @@ class Header extends Component {
 
         <div class={styles.divider}/>
 
-        {this.props.dateButtonArray}
+        <div
+        style={{
+          overflowX:'auto',
+          display:'flex',
+          height:'170px',
+          marginLeft:'198px',
+          marginRight:'200px'
+        }}
+        >
+          {this.props.dateButtonArray}
+        </div>
+
+        {/* {this.props.dateButtonArray} */}
+
+        
 
         {this.props.subscribedPlans.length ? (
           
