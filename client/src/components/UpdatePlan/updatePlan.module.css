@@ -11,11 +11,24 @@
     min-width: 40%;
   }
 } */
+.planHeader{
+  font-size: 25px; 
+  font-weight: bold;
+  margin-top: 30px;
+}
+
 .mobile {
   display: none !important;
 }
 .container {
   text-align: center;
+  /*margin-left: 20px;
+  margin-right: 20px;
+  border: solid;*/
+}
+.containerSplit {
+  text-align: center;
+  display: flex;
   /*margin-left: 20px;
   margin-right: 20px;
   border: solid;*/
@@ -86,7 +99,8 @@
   /*border: dashed;*/
   white-space: nowrap;
   /*padding-bottom: 50px;*/
-  margin-top: 35px;
+  /*margin-top: 35px;*/
+  margin: 35px 0px 0px 30px;
 }
 
 .priceTotal {
@@ -95,6 +109,13 @@
   border-radius: 25px;
   border-color: #ff6505;
   height: 120px;
+}
+.chargeTotal {
+  display: flex;
+  border: solid;
+  border-radius: 25px;
+  border-color: #ff6505;
+  height: 80px;
 }
 
 /*.priceWaitMessage {
@@ -134,12 +155,71 @@
   /*border: solid;*/
 }
 
+.input {
+  width: 903px;
+  height: 2.2rem;
+  border-radius: 10px;
+  border: solid;
+  border-width: 2px;
+  border-color: #ff6505;
+  margin: 0px 0px 15px 0px;
+  padding: 6px 0px 6px 10px;
+}
+
+.inputContactLeft {
+  width: 440px;
+  height: 40px;
+  border-radius: 10px;
+  border: solid;
+  border-width: 2px;
+  border-color: #ff6505;
+  margin: 0px 24px 15px 0px;
+  padding: 6px 0px 6px 10px;
+}
+
+.inputContactRight {
+  width: 440px;
+  height: 40px;
+  border-radius: 10px;
+  border: solid;
+  border-width: 2px;
+  border-color: #ff6505;
+  margin: 0px 0px 15px 0px;
+  padding: 6px 0px 6px 10px;
+}
+
 .box {
   /* padding: 20px; */
-  margin: 0px 100px;
+  margin-left: 100px;
   text-align: left;
   /*border: solid;
   border-color: red;*/
+}
+.boxRight {
+  /* padding: 20px; */
+  width: 42%;
+  /*margin-right: 100px;*/
+  /*padding-left: 100px*/
+  /*margin-right: 8%;
+  padding-left: 8%;*/
+  display: flex;
+  margin-top: 30px;
+}
+
+.boxPDleft {
+  /* padding: 20px; */
+  text-align: left;
+  border: solid;
+  border-color: red;
+  width: 20%;
+  margin-left: 100px;
+}
+.boxPDright {
+  /* padding: 20px; */
+  text-align: right;
+  border: solid;
+  border-color: red;
+  width: 20%;
 }
 /*.box1 {
   padding: 10px;
@@ -155,6 +235,20 @@
   border-radius: 30px;
   text-align: left;
 }
+
+.boxScroll {
+  /* padding: 20px; */
+  margin-left: 100px;
+  text-align: left;
+  height: 200px;
+  overflow-y: auto;
+  width: 40%;
+  border: solid;
+  border-color: red;
+  flex: inline-block;
+  padding-bottom: 20px;
+}
+
 .forty {
   width: 40px;
   height: 40px;
@@ -266,6 +360,25 @@
   outline: 0;
   height: 100px;
   width: 100px;
+  cursor: pointer;
+}
+
+.deliveryButtonCurrent {
+  color: #000000;
+  background-color: #ffffff;
+  margin: 5px;
+  align-content: center;
+  flex: 1;
+  min-width: 20%;
+  font-size: 10px;
+  font-weight: 600;
+  outline: 0;
+  height: 100px;
+  width: 100px;
+  border: solid;
+  border-color: #ff6505;
+  box-shadow: none !important;
+  outline: 0;
 }
 
 /*.deliveryButtonSelected {
@@ -338,6 +451,23 @@
   background-color: #ff6505;
   width: 300px;
 }*/
+.orangeBtn {
+  text-align: center;
+  justify-content: center;
+  padding: 5px !important;
+  /*color: black !important;*/
+  color: #ffffff;
+  font-size: 16px !important;
+  /*border: 1px solid rgb(187, 174, 174);*/
+  border-radius: 10px;
+  border-width: 0;
+  min-width: 100px !important;
+  font-weight: bold;
+  background-color: #ff6505;
+  margin-top: 20px;
+  width: 60%;
+}
+
 .proceedBtn {
   text-align: center;
   justify-content: center;
@@ -431,6 +561,17 @@
   }
 
   .sectionHeader {
+    background-color: #ffba00;
+    width: 100%;
+    height: 60px;
+    font-weight: bold;
+    padding-left: 100px;
+    padding-top: 12px;
+    font-size: 25px;
+    margin-bottom: 30px;
+  }
+
+  .sectionHeaderScroll {
     background-color: #ffba00;
     width: 100%;
     height: 60px;
@@ -532,9 +673,9 @@
     font-weight: 600;
   }*/
 
-  .mealButtonSelected {
+  /*.mealButtonSelected {
     background-color: #ffba00;
-  }
+  }*/
   button:focus {
     outline: 0 !important;
   }
@@ -594,3 +735,111 @@
     padding: 10px 10px;
   }
 /*}*/
+
+.googleMap {
+  width: 903px;
+  height: 255px;
+  border-radius: 3px;
+  border: solid;
+  border-width: 1px;
+  background-color: #F0F0F0;
+  /* margin: 0px 0px 15px 20px; */
+  vertical-align: middle;
+}
+
+/*.inputAmbassador {
+  width: 300px;
+  height: 2.2rem;
+  border-radius: 10px;
+  border: solid;
+  border-width: 1px;
+  border-color: #ff6505;
+  margin-left: 30px;
+  padding: 6px 0px 6px 10px;
+}*/
+.inputAmbassador {
+  width: 100%;
+  height: 2.2rem;
+  border-radius: 10px;
+  border: solid;
+  border-width: 2px;
+  border-color: #ff6505;
+  padding: 6px 0px 6px 10px;
+}
+.inputAmbassador::placeholder {
+  color: #ff6505;
+}
+.iconMeals {
+  background-image: url('./static/orange_plate.png');
+  background-size: 100%;
+  outline: 0;
+  height: 110px;
+  width: 110px;
+  color: white;
+  padding-top: 1.8rem;
+  font-size: 30px;
+}
+/*.iconMeals {
+  background-image: url('./static/orange_plate.png');
+  background-size: 100%;
+  outline: 0;
+  height: 80px;
+  width: 80px;
+  color: white;
+  padding-top: 1.5rem;
+  font-size: 20px;
+  cursor: pointer;
+}*/
+
+.iconDeliveries {
+  height: 78px;
+  width: 78px;
+  border: solid;
+}
+
+.changeErrorModalPopUpHide {
+  z-index: 1;
+  display: none;
+}
+
+.changeErrorModalPopUpShow {
+  height: 100%;
+  width: 100%;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  overflow: auto;
+  position: fixed;
+  display: grid;
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+.changeErrorModalContainer {
+  position: relative;
+  justify-self: center;
+  align-self: center;
+  display: block;
+  border:#FF9400 solid thick;
+  background-color: white;
+  border-radius: 20px;
+  height: 40vh;
+  width: 400px;
+  z-index: 2;
+}
+
+.changeErrorModalButtonMenu {
+  text-decoration: none;
+  color: black;
+  font-weight: 450;
+  height: fit-content;
+  text-align: center;
+  margin-left: 50px;
+  margin-top: 54px;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.changeErrorModalButtonMenu:hover{
+  text-decoration: none;
+  color: #FF9400;
+}

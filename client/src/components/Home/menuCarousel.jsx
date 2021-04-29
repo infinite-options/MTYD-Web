@@ -67,10 +67,10 @@ class MenuCarousel extends Component {
     }
     handleNav = (direction) => {
         if(direction === 'left') {
-            this.navRef.current.scrollLeft -= 592
+            //this.navRef.current.scrollLeft -= 592
 			this.triggerAutoPlay();
         } else {
-            this.navRef.current.scrollLeft += 592
+            //this.navRef.current.scrollLeft += 592
 			this.triggerAutoPlay();
         }
     }

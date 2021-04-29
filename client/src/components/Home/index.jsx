@@ -4,6 +4,7 @@
 * menu should be a carousel. Carousel code is in SF.
 * 2 things for the How Does it work - one is the image and other is the resizable thing.
 * make 
+* placeholder should be aligned in the center.
 */
 import React, { Component } from 'react';
 import {Link} from "react-router-dom";
@@ -37,8 +38,6 @@ import goToImg from "../../images/Group 369.svg"
 import pathFromExploreToPickAPlan from "../../images/Path 17.svg"
 import pathFromSelectMealsToEnjoy from "../../images/Path 51.svg"
 import startServingNowImg from "../../images/Group 182.png"
-import becomeAnAmbassadorImg from "../../images/Group 180.png"
-import facebookAndInstagramImg from "../../images/Group 68.svg"
 import pathFromPurchaseToChoose from "../../images/Path 50.svg"
 import howDoesImage from "../../images/howDoesImage.png"
 import axios from 'axios';
@@ -458,7 +457,8 @@ class Home extends Component {
           <h3 style = {{textAlign: 'left', marginTop: '50px', fontWeight: 'bold', marginLeft: '5%'}}>UPCOMING MENU</h3>
         </div>*/}
         <div style = {{textAlign: 'center', marginTop: '50px', fontWeight: 'bold'}}>
-		<img style = {{height: '50px', width:'320px'}} src = {getStartedImg} alt = "Get Started"/>
+        <HomeLink text = {getStartedImg} link = "/select-meal" style = {{height: '50px', width:'320px', marginBottom: '-30px', marginTop: '-10px'}}/>
+		<img />
         </div>
         {(() => {
           if (this.state.windowWidth >= 800) {
@@ -470,12 +470,12 @@ class Home extends Component {
 			        </div>
 		           </div>
                 <div style = {{display: 'inline-flex'}}>
-                  <div style = {{display: 'flex',flexWrap: 'wrap', width: '70%', marginTop: '50px', marginLeft: '200px'}}>
+                  <div style = {{display: 'flex',flexWrap: 'wrap', width: '120%', marginTop: '50px', marginLeft: '200px'}}>
                     <div className = {styles.partnerContainer}>
                       <img className = {styles.partnerImage} src = {ponoHawaiian}></img>
                     </div>
                   </div>
-                  <div style = {{display: 'flex',flexWrap: 'wrap', width: '70%', marginTop: '50px'}}>
+                  <div style = {{display: 'flex',flexWrap: 'wrap', width: '120%', marginTop: '50px'}}>
                     <div className = {styles.partnerContainer}>
                       <img className = {styles.partnerImage} src = {nityaAyurveda}></img>
                     </div>
@@ -493,10 +493,10 @@ class Home extends Component {
 		        </div>
 
                 <div style = {{display: 'inline-block'}}>
-                  <div style = {{display: 'flex', width: '70%', marginTop: '20px', justifyContent: 'center'}}>
+                  <div style = {{display: 'flex', width: '100%', marginTop: '20px', justifyContent: 'center'}}>
                     <img className = {styles.partnerImageNarrow} src = {ponoHawaiian}></img>
                   </div>
-                  <div style = {{display: 'flex', width: '70%', marginTop: '20px', justifyContent: 'center'}}>
+                  <div style = {{display: 'flex', width: '100%', marginTop: '20px', justifyContent: 'center'}}>
                     <img className = {styles.partnerImageNarrow} src = {nityaAyurveda}></img>
                   </div>
                 </div> 
@@ -551,7 +551,7 @@ class Home extends Component {
         })()}
         
 		<div style = {{textAlign: 'center', marginTop: '30px', marginBottom: '50px',fontWeight: 'bold'}}>
-		      <img style = {{height:'68px', width:'432px'}} className = {styles.startServingNow} src = {startServingNowImg} alt = "Get Started"/>
+             <HomeLink text = {startServingNowImg} link = "/select-meal" style = {{height:'68px', width:'432px', marginTop:'77.66px', marginLeft:'auto'}}/>			
         </div>
         
       {/*<span>
@@ -561,52 +561,11 @@ class Home extends Component {
         {(() => {
           if (this.state.windowWidth >= 800) {
             return (
-            <div className = {styles.footerBackground}>	
-			{/*<AmbassadorLink text = "Click here" link='/select-meal'>
-			</AmbassadorLink>*/}	
-            <p className = {styles.findUs}>Find us 			
-            <img className = {styles.footerLogo} src = {facebookAndInstagramImg} alt="facebookAndInstagramImg" />
-            </p>
-			{/*<div className = {styles.footerLinks}>
-            <div>
-              <FootLink text = "Buy a Gift Card" link = '/home'/>
-            </div>
-            <div>
-              <FootLink text = "Join our Crew" link = '/home'/>
-            </div>
-            <div>
-              <FootLink text = "Contact Us" link = '/home'/>
-            </div>
-            </div>*/}
-            <div className = {styles.footerRight}>
-            {/*<AmbassadorLink text = "Become an Ambassador"  link = '/home'/>*/}
-			{/*<AmbassadorLink link = '/select-meal'/> */}
-            <img style = {{width: '320px', height:'67px'}} src = {becomeAnAmbassadorImg} style = {{marginTop: '25px'}}/>			
-			{/*</AmbassadorLink>*/}
-            </div>
-            </div>
+			<FootLink/>			
             );
           } else {
             return (
-            <div className = {styles.footerBackgroundNarrow}>
-            <p className = {styles.findUs}>Find us 			
-            <img className = {styles.footerLogo} src = {facebookAndInstagramImg} alt="facebookAndInstagramImg" />
-            </p>            {/*<div className = {styles.footerLinksNarrow}>
-            <div>
-              <FootLink text = "Buy a Gift Card" link = '/home'/>
-            </div>
-            <div>
-              <FootLink text = "Join our Crew" link = '/home'/>
-            </div>
-            <div>
-              <FootLink text = "Contact Us" link = '/home'/>
-            </div>
-            </div>*/}
-            <div className = {styles.footerRightNarrow}>
-            {/*<AmbassadorLink text = "Become an Ambassador"  link = '/home'/>*/}
-            <img src = {becomeAnAmbassadorImg} style = {{marginTop: '25px', height: '75px', width: '75px'}}/>			
-            </div>
-            </div>
+			<FootLink/>			
             );
           }
         })()}
