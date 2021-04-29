@@ -419,9 +419,11 @@
   width: 134px;
   height:134px;
   border:none;
-  margin-right: 24px;
+  margin-right: 22px;
+  margin-left: 3px;
   background-color: white;
   box-shadow: 0 0 7px #838383;
+  margin-top: 10px;
 
 }
 

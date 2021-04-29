@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import {Link} from "react-router-dom";
+import forkClose from '../../images/forkClose.png'
 
 export class MenuList extends Component {
   render() {
@@ -19,10 +20,12 @@ export class MenuList extends Component {
           style={{
             width:'44px',
             height:'44px',
-            backgroundColor:'red',
             position:'absolute',
             right:'100px',
-            top:'25px'
+            top:'25px',
+            backgroundImage:`url(${forkClose})`,
+            backgroundSize:'cover',
+            backgroundPosition:'center',
           }}
           onClick={this.props.close}
           />
@@ -32,30 +35,52 @@ export class MenuList extends Component {
           style={{
             marginTop:'150px',
           }}>
-            <a href='/choose-plan'
+
+            <a href='/home'
               style ={{
-                fontSize:"15px",
+                fontSize:"26px",
                 height:"20px",
                 color:'white'
               }}>
-              SUBSCRIPTION
+              Home
             </a >
-            <a href='/meal-plan'
-              style ={{
-                fontSize:"15px",
-                height:"20px",
-                color:'white'
-              }}>
-              MEAL PLAN
-            </a>
+
             <a href='/select-meal'
               style ={{
-                fontSize:"15px",
+                fontSize:"26px",
                 height:"20px",
                 color:'white'
               }}>
-              SELECT MEAL
+              Select Meals
             </a>
+
+            <a href='/choose-plan'
+              style ={{
+                fontSize:"26px",
+                height:"20px",
+                color:'white'
+              }}>
+              Add Subscription
+            </a >
+
+            <a href='/meal-plan'
+              style ={{
+                fontSize:"26px",
+                height:"20px",
+                color:'white'
+              }}>
+              Meal Plan
+            </a>
+
+            <a href='/meal-plan'
+              style ={{
+                fontSize:"26px",
+                height:"20px",
+                color:'white'
+              }}>
+              Log out
+            </a>
+
           </div>
 
 

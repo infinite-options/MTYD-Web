@@ -268,25 +268,34 @@ class NavBar extends React.Component {
           backgroundPosition:'center',
           left:'48%'
           }}>
-
         </a>
+
+        {this.state.login ? (
+          <>
+            {(() => {
+              if (this.state.profileRole === 'admin') {
+                return (
+                  <a href='/admin'
+                    style ={{
+                      color:'white',
+                      position:"absolute",
+                      left:'150px'
+                    }}
+                    className={styles.whiteBackBtn}
+                    >
+                    Admin
+                  </a>
+                );
+              }
+            })()}
+          </>
+
+        ):null}
+
 
         <ul>
           {this.state.login ? (
-            <>
-          {(() => {
-            if (this.state.profileRole === 'admin') {
-              return (
-                  <Link to='/admin' className={styles.whiteBackBtn}>
-                    ADMIN
-                  </Link>
-              );
-            }
-          })()}
-
-          <div class={styles.divider}/>
-
-          <div class={styles.divider}/>
+          <>
 
           <Link to='/meal-plan' className={styles.showNameBtn} 
             style={nameFormat}
@@ -297,11 +306,11 @@ class NavBar extends React.Component {
 
           <div class={styles.divider}/>
             <a
-              className={styles.signInBtn}
+              className={styles.whiteBackBtn}
               onClick={this.logOut}
-              style={{display: "flex", alignItem: "center"}}
+              style={{display: "flex", alignItem: "center", color:'white'}}
             >
-              {"  "}
+              {" "}
               LOGOUT&nbsp;
             </a>
             </>

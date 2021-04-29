@@ -130,9 +130,10 @@
   height: 50% !important;
   width: 110px;
   border-radius: 30px;
-  background-color: rgb(255, 255, 255);
+  background-color: none;
   justify-content: center;
-  border:1px solid black;
+  border:2px solid white;
+  color: white;
 } 
 
 .showNameBtn {
