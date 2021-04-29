@@ -57,7 +57,8 @@ class UpdatePlan extends React.Component {
       updatedDeliveries: "",
       mealPlanDefaulted: false,
       additionalCharges: "0.00",
-      checkoutError: false,
+      showChargeModal: false,
+      chargeModal: null,
       updatedMealPlan: {},
       selectedDiscount: 0,
       additionalDiscount: 0,
@@ -148,24 +149,12 @@ class UpdatePlan extends React.Component {
     }
   }
 
-  /*componentDidUpdate(plans) {
-    console.log("new plans: " + JSON.stringify(plans));
-    console.log("new plans[2]: " + JSON.stringify(plans[2]));
-    this.setState({
-      plansFetched: true
-    });
-  }*/
-
   showDeliveryDates = () => {
     let messageDays = [];
 
     for (const [dateKey, dateData] of Object.entries(this.state.deliveryDays)) {
-      //console.log("showDeliveryDates() key: " + dateKey + ", dateData: " + JSON.stringify(dateData));
-      //console.log("weekday integer: " + dateData["weekday(menu_date)"]);
 
       let dayInt = dateData["weekday(menu_date)"];
-
-      //console.log("weekday int: " + dayInt);
 
       let dayString = "";
 
@@ -197,9 +186,6 @@ class UpdatePlan extends React.Component {
 
       if(messageDays.includes(dayString) === false) {
         messageDays.push(dayString);
-        /*this.setState(prevState => {
-          return {numDeliveryDays: prevState.numDeliveryDays+1}
-        });*/
       }
     }
 
@@ -211,10 +197,7 @@ class UpdatePlan extends React.Component {
       } else {
         deliveryDaysString = deliveryDaysString.concat(messageDays[i] + ", ");
       }
-      //deliveryDaysString = deliveryDaysString.concat(messageDays[i] + ", ");
     }
-
-    //console.log("final deliveryDaysString: " + deliveryDaysString);
 
     return deliveryDaysString;
   }
@@ -223,12 +206,8 @@ class UpdatePlan extends React.Component {
     let messageDays = [];
 
     for (const [dateKey, dateData] of Object.entries(this.state.deliveryDays)) {
-      //console.log("showDeliveryDates() key: " + dateKey + ", dateData: " + JSON.stringify(dateData));
-      //console.log("weekday integer: " + dateData["weekday(menu_date)"]);
 
       let dayInt = dateData["weekday(menu_date)"];
-
-      //console.log("weekday int: " + dayInt);
 
       let dayString = "";
 
@@ -267,25 +246,9 @@ class UpdatePlan extends React.Component {
         });
       }
     }
-
-    /*let deliveryDaysString = " ";
-
-    for(var i = 0; i < messageDays.length; i++) {
-      if(i === messageDays.length-1){
-        deliveryDaysString = deliveryDaysString.concat(messageDays[i]);
-      } else {
-        deliveryDaysString = deliveryDaysString.concat(messageDays[i] + ", ");
-      }
-      //deliveryDaysString = deliveryDaysString.concat(messageDays[i] + ", ");
-    }
-
-    //console.log("final deliveryDaysString: " + deliveryDaysString);
-
-    return deliveryDaysString;*/
   }
 
   mealsDelivery = () => {
-    //console.log("(meals delivery) CHOOSE PLANS: " + JSON.stringify(this.props.plans));
 
     let deselectedMealButton = styles.mealButton;
     let selectedMealButton =
@@ -293,22 +256,15 @@ class UpdatePlan extends React.Component {
     let mealButtons = [];
     let singleMealData;
 
-    // this.props.plans
     let mealPlans = this.props.plans;
     for (const [mealIndex, mealData] of Object.entries(mealPlans)) {
 
       singleMealData = mealData["1"];
-      //console.log("data for single delivery of " + mealIndex + " meal plan: " + JSON.stringify(singleMealData));
 
       mealButtons.push(
         <div className={styles.mealButtonWrapper}>
         <button
           key={mealIndex}
-          /*className={
-            this.state.currentMeals === mealIndex
-              ? selectedMealButton
-              : deselectedMealButton
-          }*/
           className={
             this.state.updatedMeals === mealIndex
               ? selectedMealButton
@@ -325,7 +281,6 @@ class UpdatePlan extends React.Component {
             this.setState({
               updatedMeals: mealIndex
             });
-            //console.log("===== plans: " + JSON.stringify(this.props.plans));
           }}
         >
           {mealIndex}
@@ -380,44 +335,32 @@ class UpdatePlan extends React.Component {
                 return (
                   <div style={{display: 'inline-block'}}>
                     <button
-                    /*disabled={active}*/
-                    /*className={
-                      (this.props.paymentOption === deliveryIndex
-                        ? selectedPaymentOption
-                        : deselectedPaymentOption) +
-                      " " + (active && styles.disabledBtn)
-                    }*/
-                    /*className={
-                      this.props.paymentOption === deliveryIndex
-                        ? selectedPaymentOption
-                        : deselectedPaymentOption
-                    }*/
-                    className={
-                      this.state.updatedDeliveries === deliveryIndex
-                        ? selectedPaymentOption
-                        : deselectedPaymentOption
-                    }
-                    onClick={() => {
-                      this.props.choosePaymentOption(
-                        deliveryIndex,
-                        this.state.updatedMeals,
-                        this.props.plans
-                      )
-                      try{
-                        discount = discounts[deliveryIndex].delivery_discount;
-                        console.log("delivery discount: " + discount);
-                      } catch(e) {
-                        console.log("delivery discount UNDEFINED");
+                      className={
+                        this.state.updatedDeliveries === deliveryIndex
+                          ? selectedPaymentOption
+                          : deselectedPaymentOption
                       }
-                      this.setState({
-                        updatedDeliveries: deliveryIndex,
-                        selectedDiscount: discount
-                      });
-                      console.log("##### deliveryIndex: " + deliveryIndex);
-                      console.log("##### index discount: " + discount);
-                      console.log("##### meals: " + this.props.meals);
-                    }}
-                  >
+                      onClick={() => {
+                        this.props.choosePaymentOption(
+                          deliveryIndex,
+                          this.state.updatedMeals,
+                          this.props.plans
+                        )
+                        try{
+                          discount = discounts[deliveryIndex].delivery_discount;
+                          console.log("delivery discount: " + discount);
+                        } catch(e) {
+                          console.log("delivery discount UNDEFINED");
+                        }
+                        this.setState({
+                          updatedDeliveries: deliveryIndex,
+                          selectedDiscount: discount
+                        });
+                        console.log("##### deliveryIndex: " + deliveryIndex);
+                        console.log("##### index discount: " + discount);
+                        console.log("##### meals: " + this.props.meals);
+                      }}
+                    >
                     <span style={{fontSize: '35px'}}>
                       {deliveryIndex}
                     </span>
@@ -499,35 +442,11 @@ class UpdatePlan extends React.Component {
     console.log("add charges (float): ", addCharges);
     console.log("add charges (string): ", addCharges.toFixed(2));
 
-    // console.log("current discount: ", this.state.currentDiscount);
-    // console.log("selected discount: ", this.state.selectedDiscount);
-    // console.log("additional discount: ", addDiscount);
     return addCharges.toFixed(2);
   };
 
-  /*calculateDeal = () => {
-    let total = parseFloat(this.calculateTotal());
-    //console.log("total: " + total);
-
-    let noDiscountPrice = parseFloat((
-      this.props.selectedPlan.item_price *
-      this.props.selectedPlan.num_deliveries
-    ).toFixed(2));
-    //console.log("noDiscountPrice: " + noDiscountPrice);
-
-    let deal = total/noDiscountPrice;
-    //console.log("deal: " + deal);
-
-    return Math.ceil(deal);
-  };*/
   calculateDeal = () => {
     let total = parseFloat(this.calculateTotal());
-
-    /*let noDiscountPrice = parseFloat((
-      this.props.selectedPlan.item_price *
-      this.props.selectedPlan.num_deliveries
-    ).toFixed(2));*/
-
     let deal = (total/this.props.selectedPlan.num_items).toFixed(2);
 
     console.log("NANi? ", Number.isNaN(deal));
@@ -541,33 +460,22 @@ class UpdatePlan extends React.Component {
     return deal;
   };
 
-  displayCheckoutError = () => {
-    if(this.state.checkoutError === false) {
+  displayChargeModal= () => {
+    if(this.state.showChargeModal === false) {
       this.setState({
-        checkoutErrorModal: styles.changeErrorModalPopUpShow,
-        checkoutError: true,
+        chargeModal: styles.chargeModalPopUpShow,
+        showChargeModal: true,
       });
     }else{
       this.setState({
-        checkoutErrorModal: styles.changeErrorModalPopUpHide,
-        checkoutError: false
+        chargeModal: styles.chargeModalPopUpHide,
+        showChargeModal: false
       });
     }
-    console.log("\ncheckout error toggled to " + this.state.checkoutError + "\n\n");
+    console.log("\ncheckout error toggled to " + this.state.showChargeModal + "\n\n");
   }
 
   saveChanges = () => {
-    // axios
-    //   .post(API_URL + 'UpdateProfile', object)
-    //   .then(res => {
-    //     console.log(res);
-    //   })
-    //   .catch(err => {
-    //     console.log(err);
-    //     if (err.response) {
-    //       console.log("error: " + JSON.stringify(err.response));
-    //     }
-    //   });
     let object = {
       cc_cvv: this.state.updatedMealPlan.cc_cvv,
       cc_exp_date: this.state.updatedMealPlan.cc_cvv,
@@ -618,21 +526,18 @@ class UpdatePlan extends React.Component {
           {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
 
           {(() => {
-            // console.log("\ndisplay checkout error message? " + this.state.checkoutError + "\n\n");
-            if (this.state.checkoutError === true) {
+            if (this.state.showChargeModal === true) {
               {console.log("changes updatedMealPlan: ", this.state.updatedMealPlan);}
               {console.log("changes updatedMeals: ", this.state.updatedMeals);}
               {console.log("changes updatedMealDeliveris: ", this.state.updatedDeliveries);}
               {console.log("selectedPlan: ", this.props.selectedPlan);}
               return (
                 <>
-                <div className = {this.state.checkoutErrorModal}>
-                  <div className  = {styles.changeErrorModalContainer}>
-                      {/*<a className={styles.changeErrorCancelButton} 
-                      onClick = {this.displayCheckoutError}>+</a>*/}
+                <div className = {this.state.chargeModal}>
+                  <div className  = {styles.chargeModalContainer}>
                       <div
-                        className={styles.changeErrorCancelButton}
-                        onClick = {this.displayCheckoutError} />
+                        className={styles.chargeCancelButton}
+                        onClick = {this.displayChargeModal} />
 
                       <div className={styles.chargeContainer}>
 
@@ -664,12 +569,6 @@ class UpdatePlan extends React.Component {
                                 );
                               }
                             })()}
-                            {/*<div className={styles.chargeText}>
-                              {"Additional Charges "}
-                            </div>
-                            <div className={styles.chargeAmount}>
-                              ${this.calculateAdditionalCharges()}
-                            </div>*/}
                           </div>
                         </div>
 
@@ -687,7 +586,7 @@ class UpdatePlan extends React.Component {
                           className={styles.chargeBtn}
                           onClick = {() => {
                             console.log("keep existing meal plan clicked...");
-                            this.displayCheckoutError();
+                            this.displayChargeModal();
                           }}
                         >
                           Keep Existing Meal Plan
@@ -793,55 +692,42 @@ class UpdatePlan extends React.Component {
           <div className={styles.container}>
             <div className={styles.box}>
               <div className={styles.box1}>
-                  
                 <div className={styles.menuSection}>     
+                  <div style={{display: 'flex'}}>
+                    <div style={{display: 'inline-block'}}>
+                      <div className={styles.priceCalculation}>
+                        <div style={{display: 'inline-block'}}>
 
-                        <div style={{display: 'flex'}}>
-                          <div style={{display: 'inline-block'}}>
-                            <div className={styles.priceCalculation}>
-
-
-
-                            <div style={{display: 'inline-block'}}>
-                              <div className={styles.priceTotal}>
-
-                                <div style={{display: 'inline-flex'}}>
-
-                                  <div className={styles.priceFormula2}>
-                                    Additional{" "}Discount
-                                  </div>
-                                  
-                                  <div className={styles.priceFormula}>
-                                    {this.calculateDiscount()}%
-                                  </div>
-                                </div>
-
-                                
+                          <div className={styles.priceTotal}>
+                            <div style={{display: 'inline-flex'}}>
+                              <div className={styles.priceFormula2}>
+                                Additional{" "}Discount
                               </div>
-                              <div className={styles.perMealDeal}>
-                                That's only ${this.calculateDeal()} per freshly cooked meal
-                              </div>
-                              <div className={styles.proceedWrapper}>
-                                {/*<Link className={styles.proceedBtn} to='/payment-details'>
-                                  PROCEED
-                                </Link>*/}
-                                <button 
-                                  className={styles.orangeBtn}
-                                  onClick = {this.displayCheckoutError}
-                                >
-                                  PROCEED
-                                </button>
+                              <div className={styles.priceFormula}>
+                                {this.calculateDiscount()}%
                               </div>
                             </div>
-                            </div>
+                          </div>
 
+                          <div className={styles.perMealDeal}>
+                            That's only ${this.calculateDeal()} per freshly cooked meal
                           </div>
+
+                          <div className={styles.proceedWrapper}>
+                            <button 
+                              className={styles.orangeBtn}
+                              onClick = {this.displayChargeModal()}
+                            >
+                              PROCEED
+                            </button>
                           </div>
-                            
+
+                        </div>
+                      </div>
+                    </div>
+                  </div> 
                 </div>
-                  
-                </div>
-                
+              </div>
             </div>   
           </div>
       </>

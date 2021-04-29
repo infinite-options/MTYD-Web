@@ -105,7 +105,6 @@ class PaymentDetails extends React.Component {
       customerUid: "",
       customerPassword: "",
       checkoutMessage: "",
-      displayError: false,
       login_seen: false,
       signUpSeen: false, 
       checkoutError: false,
@@ -114,7 +113,8 @@ class PaymentDetails extends React.Component {
       paymentType: 'NULL',
       fetchingFees: true,
       recalculatingPrice: false,
-      stripePromise: null
+      stripePromise: null,
+      createGuestErrorCode: -1
     };
   }
   togglePopLogin = () => {
@@ -576,10 +576,6 @@ class PaymentDetails extends React.Component {
   }
     
   applyAmbassadorCode() {
-    /*console.log("Applying ambassador code...");
-    console.log("this.state.ambassadorCode: " + this.state.ambassadorCode);
-    console.log("this.props.email: " + this.props.email);
-    console.log("this.state.email: {" + this.state.email + "}");*/
 
     if(this.state.email !== ""){
       console.log("(Ambassador code) Valid email");
@@ -633,12 +629,12 @@ class PaymentDetails extends React.Component {
   displayCheckoutError = () => {
     if(this.state.checkoutError === false) {
       this.setState({
-        checkoutErrorModal: styles.changeErrorModalPopUpShow,
+        checkoutErrorModal: styles.chargeModalPopUpShow,
         checkoutError: true,
       });
     }else{
       this.setState({
-        checkoutErrorModal: styles.changeErrorModalPopUpHide,
+        checkoutErrorModal: styles.chargeModalPopUpHide,
         checkoutError: false
       });
     }
@@ -744,11 +740,28 @@ class PaymentDetails extends React.Component {
           mobile_refresh_token: "FALSE"
         },
         (response) => {
-          this.props.fetchProfileInformation(response.data.result.customer_uid);
-          this.setState({
-            customerUid: response.data.result.customer_uid,
-            showPaymentInfo: true
-          });
+          console.log("createGuestAccount callback res: ", response);
+          console.log("CGA code: ", response.code);
+          console.log("CGA message: ", response.message);
+          if (response.code >= 200 && response.code <= 299) {
+            this.props.fetchProfileInformation(response.data.result.customer_uid);
+            this.setState({
+              customerUid: response.data.result.customer_uid,
+              showPaymentInfo: true
+            });
+          } else if (response.code === 409) {
+            this.setState(prevState => ({
+              checkoutMessage: "Looks like the email address is already in use by another account. Please login to continue with that user account."
+            }), () => {
+              this.displayCheckoutError()
+            });
+          } else {
+            this.setState(prevState => ({
+              checkoutMessage: response.message,
+            }), () => {
+              this.displayCheckoutError()
+            });
+          }
         }
       );
       console.log("After createGuestAccount");
@@ -849,8 +862,8 @@ class PaymentDetails extends React.Component {
           if (this.state.checkoutError === true) {
             return (
               <>
-              <div className = {this.state.checkoutErrorModal}>
-                <div className  = {styles.changeErrorModalContainer}>
+                {/*<div className = {this.state.checkoutErrorModal}>
+                  <div className  = {styles.changeErrorModalContainer}>
                     <a  style = {{
                             color: 'black',
                             textAlign: 'center', 
@@ -864,11 +877,50 @@ class PaymentDetails extends React.Component {
                             onClick = {this.displayCheckoutError}>+</a>
 
                     <div style = {{display: 'block', width: '300px', margin: '40px auto 0px'}}>
-                      <h6 style = {{margin: '5px', color: 'orange', fontWeight: 'bold', fontSize: '25px'}}>PAYMENT ERROR</h6>
-                      <text>{this.state.checkoutMessage}</text>
+                      <h6 style = {{margin: '5px', color: 'orange', fontWeight: 'bold', fontSize: '25px'}}>Hmm..</h6>
+                      {this.state.checkoutMessage}
                     </div> 
                   </div>
+                </div>*/}
+                <div className = {this.state.checkoutErrorModal}>
+                  <div className  = {styles.chargeModalContainer}>
+                    <div
+                      className={styles.chargeCancelButton}
+                      onClick = {this.displayCheckoutError} />
+
+                    <div className={styles.chargeContainer}>    
+
+                      <h6 style = {{margin: '5px', fontWeight: 'bold', fontSize: '25px'}}>Hmm..</h6>
+
+                      <div style = {{display: 'block', width: '300px', margin: '20px auto 0px'}}>
+                        {this.state.checkoutMessage}
+                      </div> 
+
+                      <br />
+                      <button 
+                        className={styles.chargeBtn}
+                        onClick = {() => {
+                          console.log("go back clicked...");
+                          this.displayCheckoutError();
+                        }}
+                      >
+                        Go Back
+                      </button>
+                      <button 
+                        className={styles.chargeBtn}
+                        onClick = {() => {
+                          console.log("login clicked...");
+                          this.displayCheckoutError();
+                          this.togglePopLogin();
+                        }}
+                      >
+                        Login
+                      </button>
+
+                    </div>
+                  </div>
                 </div>
+
               </>
             );
           }
@@ -896,6 +948,7 @@ class PaymentDetails extends React.Component {
                       <h6 style = {{margin: '5px', color: 'orange', fontWeight: 'bold', fontSize: '25px'}}>AMBASSADOR CODE ERROR</h6>
                       <text>{this.state.ambassadorMessage}</text>
                     </div> 
+
                   </div>
                 </div>
               </>

@@ -50,13 +50,14 @@ export default async function createGuestAccount(data, _callback) {
                 if(res1.data.code >= 400 && res1.data.code <= 599){
                   //_callback(res);
                   console.log("Error trying to create guest account");
+                  _callback(res1.data);
                 } else {
                   axios.post(process.env.REACT_APP_SERVER_BASE_URI+'email_verification', {email: data.email})
                     .then(res2 => {
-                      console.log(res2)
+                      console.log("verification response: ", res2)
                     })
                     .catch(err => {
-                      console.log(err)
+                      console.log("verification error: ", err)
                     });
                   console.log("guest account created successfully");
                   if (typeof(_callback) !== "undefined") {
