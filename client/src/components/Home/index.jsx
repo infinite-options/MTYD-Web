@@ -1,10 +1,5 @@
 /*
 *
-* Comments: find #uncomment
-* menu should be a carousel. Carousel code is in SF.
-* 2 things for the How Does it work - one is the image and other is the resizable thing.
-* make 
-* placeholder should be aligned in the center.
 */
 import React, { Component } from 'react';
 import {Link} from "react-router-dom";
@@ -41,9 +36,10 @@ import startServingNowImg from "../../images/Group 182.png"
 import pathFromPurchaseToChoose from "../../images/Path 50.svg"
 import howDoesImage from "../../images/howDoesImage.png"
 import axios from 'axios';
-
+import ProductDisplay from './ProductDisplay';
 import HomeMap from "../HomeAddressSearch"
 const google = window.google;
+
 
 class Home extends Component {   
 
@@ -213,26 +209,7 @@ class Home extends Component {
         <WebNavBar/>
       </div>
 
-      {/* <input 
-        style = 
-        {{width: '320px', 
-        height: '57px', 
-        borderRadius:'10px', 
-        fontSize: '25px',
-        border:'1px solid',
-        textAlign:'center',
-        color:'black',
-        position:'absolute',
-        left:'41.5%',
-        top:'520px'
-        }} 
-        placeholder = "Search your address"
-        type='text'
-
-        id="ship-address"
-        /> */}
-
-        
+      
       {(() => {
         if (this.state.windowWidth >= 800) {
           return (
@@ -303,8 +280,9 @@ class Home extends Component {
         })()}
 		
         <div style = {{width: '100%', marginTop: '25px'}}>
-          <MenuCarousel/>
+			<ProductDisplay />         
         </div>
+
 		<div class = {styles.howDoesContainer}>
             <div class = {styles.howDoesText}>
 			    <p style = {{marginLeft: '-90px', display:'inline', color: 'black'}}>How does<p style = {{marginLeft: '-78px', display:'inline', color: 'white'}}> MealFor.Me
@@ -457,6 +435,7 @@ class Home extends Component {
           <h3 style = {{textAlign: 'left', marginTop: '50px', fontWeight: 'bold', marginLeft: '5%'}}>UPCOMING MENU</h3>
         </div>*/}
         <div style = {{textAlign: 'center', marginTop: '50px', fontWeight: 'bold'}}>
+
         <HomeLink text = {getStartedImg} link = "/select-meal" style = {{height: '50px', width:'320px', marginBottom: '-30px', marginTop: '-10px'}}/>
 		<img />
         </div>
@@ -551,7 +530,7 @@ class Home extends Component {
         })()}
         
 		<div style = {{textAlign: 'center', marginTop: '30px', marginBottom: '50px',fontWeight: 'bold'}}>
-             <HomeLink text = {startServingNowImg} link = "/select-meal" style = {{height:'68px', width:'432px', marginTop:'77.66px', marginLeft:'auto'}}/>			
+             <HomeLink text = {startServingNowImg} link = "/choose-plan" style = {{height:'68px', width:'432px', marginTop:'77.66px', marginLeft:'auto'}}/>			
         </div>
         
       {/*<span>
