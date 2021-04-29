@@ -33,7 +33,7 @@ const Product = (props) => {
 			height: '45px'
           }}
         >
-            <Box style = {{textAlign:'center', font:'normal normal bold 14px/22px SF Pro', paddingTop:'10px'}}>{props.name}</Box>
+            <Box style = {{textAlign:'center', font:'SF Pro', fontWeight:'bold',fontSize:'14px/22px', paddingTop:'10px'}}>{props.name}</Box>
         </Box>
       </Grid>
     </Box>
