@@ -101,9 +101,6 @@ class Home extends Component {
 
     console.log(autocomplete)
 
-
-
-
     this.handleResize();
     window.addEventListener('resize', this.handleResize);
   }
