@@ -486,9 +486,10 @@ input[type="zipCode"]::placeholder {
 
 .stepsText2 {
   /*color: #979797;*/
-  font-size: 24px;
+  font-size: 24px/29px;
   padding: 0 100px;
-  font: normal normal normal 24px/29px;
+  font-weight:normal;
+  font: SF Pro;
   /*font-family: -apple-system, BlinkMacSystemFont;*/
 }
 
