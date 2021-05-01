@@ -89,7 +89,6 @@ export const fetchPlans = () => dispatch => {
       console.log(err);
     });
     
-  console.log(plans)
   return plans;
 };
 
@@ -98,16 +97,11 @@ export const chooseMealsDelivery = (
   paymentOption,
   plans
 ) => dispatch => {
-  console.log("====== chooseMealsDelivery before ======");
-  console.log("newMeal: ", newMeal);
-  console.log("paymentOption: ", paymentOption);
-  console.log("plans: ", plans);
   calculateTotalPayment(dispatch, plans, newMeal, paymentOption);
   dispatch({
     type: CHOOSE_MEALS_EACH_DELIVERY,
     payload: newMeal,
   });
-  console.log("====== chooseMealsDelivery after  ======");
 };
 
 export const choosePaymentOption = (
@@ -123,9 +117,6 @@ export const choosePaymentOption = (
 };
 
 const calculateTotalPayment = (dispatch, plans, meal, options) => {
-  //console.log("+++++ plans: " + JSON.stringify(plans));
-  console.log("(calculateTotalPayment) meal: " + meal);
-  console.log("(calculateTotalPayment) options: " + options);
   if (meal !== '' && options !== '') {
     let mealNum = Number(meal);
     let optionsNum = Number(options);
@@ -134,7 +125,6 @@ const calculateTotalPayment = (dispatch, plans, meal, options) => {
     );
     if (selectedPlan.length !== 0) {
       let selectedItem = selectedPlan[0];
-      console.log("(calculateTotalPayment) selectedItem: " + JSON.stringify(selectedItem));
       dispatch({
         type: GET_TOTAL_PAYMENT,
         payload: selectedItem,
@@ -169,7 +159,6 @@ export const fetchProfileInformation = customerId => dispatch => {
           customerInfo.user_social_media !== null
             ? customerInfo.user_social_media
             : 'NULL';
-        //console.log(res);
         dispatch({
           type: FETCH_PROFILE_INFO,
           payload: {
@@ -197,8 +186,6 @@ export const changeAddressEmail = newEmail => dispatch => {
 };
 
 export const changeDeliveryDetails = newDeliveryDetails => dispatch => {
-  console.log("CHANGE_DELIVERY_DETAILS");
-  console.log("New delivery details: " + JSON.stringify(newDeliveryDetails));
   dispatch({
     type: CHANGE_DELIVERY_DETAILS,
     payload: newDeliveryDetails,
@@ -206,8 +193,6 @@ export const changeDeliveryDetails = newDeliveryDetails => dispatch => {
 };
 
 export const changePaymentDetails = newPaymentDetails => dispatch => {
-  console.log("CHANGE_PAYMENT_DETAILS");
-  console.log("New payment details: " + JSON.stringify(newPaymentDetails));
   dispatch({
     type: CHANGE_PAYMENT_DETAILS,
     payload: newPaymentDetails,
@@ -215,8 +200,6 @@ export const changePaymentDetails = newPaymentDetails => dispatch => {
 };
 
 export const changeContactDetails = newContactDetails => dispatch => {
-  console.log("CHANGE_CONTACT_DETAILS");
-  console.log("New contact details: " + JSON.stringify(newContactDetails));
   dispatch({
     type: CHANGE_CONTACT_DETAILS,
     payload: newContactDetails,
@@ -375,9 +358,6 @@ export const submitPayment = (
               break;
           }
           let saltedPassword = customerPassword + salt;
-          console.log("saltedPW: " + saltedPassword);
-          console.log("customerPW: " + customerPassword);
-          console.log("salt: " + salt);
           // Encode salted password to prepare for hashing
           const encoder = new TextEncoder();
           const data = encoder.encode(saltedPassword);
@@ -389,7 +369,6 @@ export const submitPayment = (
             let hashedPassword = hashArray
               .map(byte => byte.toString(16).padStart(2, '0'))
               .join('');
-            console.log("hashed password: " + hashedPassword);
             axios
               .get(BING_LOCATION_API_URL, {
                 params: {
@@ -571,71 +550,19 @@ export const submitPayment = (
   }
 };
 
-// OG
-/*export const fetchSubscribed = customerId => async dispatch => {
-  //fetch  data from server
-  let purchaseIds = [];
-  try {
-    console.log("fetchSubscribed (1)");
-    const res = await axios.get(`${API_URL}customer_lplp`, {
-      params: {customer_uid: customerId},
-    });
-    console.log("fetchSubscribed res: " + JSON.stringify(res));
-    if (res.status !== 200) {
-      dispatch({
-        type: ADD_ERROR,
-        payload: 'Cannot Get Subscription Info',
-      });
-    } else {
-      let filtered = res.data.result.filter(
-        item => JSON.parse(item?.items)[0]?.itm_business_uid === '200-000002'
-      );
-      dispatch({
-        type: FETCH_SUBSCRIBED_INFO,
-        payload: filtered,
-      });
-      for (let items of res.data.result) {
-        purchaseIds.push(items.purchase_id);
-      }
-    }
-    console.log("fetchSubscribed (2)");
-  } catch (err) {
-    let message = '';
-    if (err.response) {
-      message = err.response;
-    } else {
-      message = err.toString();
-    }
-    dispatch({
-      type: ADD_ERROR,
-      payload: message,
-    });
-  }
-  console.log("fetchSubscribed purchaseIds: " + JSON.stringify(purchaseIds));
-  return purchaseIds;
-};*/
-
 export const fetchSubscribed = customerId => async dispatch => {
   //fetch  data from server
   let purchaseIds = [];
   try {
-    console.log("fetchSubscribed (1)");
     const res = await axios.get(`${API_URL}customer_lplp`, {
       params: {customer_uid: customerId},
     });
-    console.log("fetchSubscribed res: " + JSON.stringify(res));
     if (res.status !== 200) {
-      console.log("!(200) fetchSubscribed");
       dispatch({
         type: ADD_ERROR,
         payload: 'Cannot Get Subscription Info',
       });
     } else {
-      console.log("(200) fetchSubscribed");
-      console.log("before filtered");
-      /*let filtered = res.data.result.filter(
-        item => JSON.parse(item?.items)[0]?.itm_business_uid === '200-000002'
-      );*/
       let filtered = [];
       try {
         filtered = res.data.result.filter(
@@ -649,19 +576,14 @@ export const fetchSubscribed = customerId => async dispatch => {
           errMessage = e.toString();
         }
       }
-      console.log("middle filtered");
-      console.log("fetchSubscribed filtered: " + JSON.stringify(filtered));
-      console.log("after filtered");
       dispatch({
         type: FETCH_SUBSCRIBED_INFO,
         payload: filtered,
       });
       for (let items of res.data.result) {
-        console.log("fetchSubscribed items: " + items.purchase_id);
         purchaseIds.push(items.purchase_id);
       }
     }
-    console.log("fetchSubscribed (2)");
   } catch (err) {
     let message = '';
     if (err.response) {
@@ -674,63 +596,9 @@ export const fetchSubscribed = customerId => async dispatch => {
       payload: message,
     });
   }
-  console.log("fetchSubscribed purchaseIds: " + JSON.stringify(purchaseIds));
   return purchaseIds;
 };
 
-/*export const fetchSubscribed = customerId => async dispatch => {
-  //fetch  data from server
-  let purchaseIds = [];
-  try {
-    console.log("fetchSubscribed (1)");
-    const response = await axios.get(`${API_URL}customer_lplp`, {
-      params: {customer_uid: customerId},
-    })
-    .then((res) => {
-      // console.log("res: " + JSON.stringify(res));
-      if (res.status !== 200) {
-        dispatch({
-          type: ADD_ERROR,
-          payload: 'Cannot Get Subscription Info',
-        });
-      } else {
-        let filtered = res.data.result.filter(
-          item => JSON.parse(item?.items)[0]?.itm_business_uid === '200-000002'
-        );
-        dispatch({
-          type: FETCH_SUBSCRIBED_INFO,
-          payload: filtered,
-        });
-        for (let items of res.data.result) {
-          purchaseIds.push(items.purchase_id);
-        }
-      }
-      // console.log("fetchSubscribed (2)");
-      return purchaseIds;
-    })
-    .catch((err) => {
-      if(err.response) {
-        // eslint-disable-next-line no-console
-        console.log(err.response);
-      }
-      // eslint-disable-next-line no-console
-      console.log(err);
-    });
-  } catch (err) {
-    let message = '';
-    if (err.response) {
-      message = err.response;
-    } else {
-      message = err.toString();
-    }
-    dispatch({
-      type: ADD_ERROR,
-      payload: message,
-    });
-    return purchaseIds;
-  }
-  //return purchaseIds;
-};*/
 
 export const setCurrentMeal = meal => dispatch =>
   dispatch({

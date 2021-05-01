@@ -4,25 +4,18 @@
 }
 .container {
   text-align: center;
-  /*margin-left: 20px;
-  margin-right: 20px;
-  border: solid;*/
 }
 .containerSplit {
   text-align: center;
   display: flex;
-  /*margin-left: 20px;
-  margin-right: 20px;
-  border: solid;*/
 }
 
 .menuSection {
-  margin: 50px 0px 50px 0px;
-  /*border: dashed;*/
+  margin: 50px 0px 0px 0px;
+  border: groove;
 }
 
 .input {
-  /*width: 903px;*/
   width: 100%;
   height: 2.2rem;
   border-radius: 10px;
@@ -34,7 +27,6 @@
 }
 
 .inputContactLeft {
-  /*width: 440px;*/
   width: 48%;
   height: 40px;
   border-radius: 10px;
@@ -47,7 +39,6 @@
 }
 
 .inputContactRight {
-  /*width: 440px;*/
   width: 48%;
   height: 40px;
   border-radius: 10px;
@@ -59,37 +50,24 @@
 }
 
 .box {
-  /* padding: 20px; */
-  /*margin-left: 100px;*/
   margin-left: 8%;
-  text-align: left;
-  /*border: solid;
-  border-color: red;*/
 }
 
 
 .boxPDleft {
-  /* padding: 20px; */
-  text-align: left;
   border: solid;
   border-color: red;
   width: 22%;
-  /*margin-left: 100px;*/
   margin-left: 8%;
+  justify-content: center;
 }
 .boxPDright {
-  /* padding: 20px; */
   text-align: left;
   border: solid;
   border-color: red;
   margin-right: 8%;
   width: 62%;
 }
-/*.box1 {
-  padding: 10px;
-  border: solid;
-  border-color: blue;
-}*/
 .box2 {
   display: flex;
   padding: 0px;
@@ -97,17 +75,10 @@
   width: 100%;
   border: 1px solid #d3d3d3;
   border-radius: 30px;
-  text-align: left;
 }
 
 .boxRight {
-  /* padding: 20px; */
-  /*border: solid;
-  border-color: red;*/
   width: 50%;
-  /*margin-right: 100px;*/
-  /*padding-left: 100px*/
-  /*margin-right: 8%;*/
   padding-left: 8%;
   display: flex;
   margin-top: 30px;
@@ -115,17 +86,12 @@
 }
 
 .boxScroll {
-  /* padding: 20px; */
-  /*margin-left: 100px;*/
   margin-left: 4%;
   text-align: center;
-  height: 200px;
   overflow-y: auto;
   width: 92%;
-  border: solid;
-  border-color: red;
   flex: inline-block;
-  padding-bottom: 20px;
+  height: 300px;
 }
 
 .forty {
@@ -159,7 +125,6 @@
 }
 
 .plateButton {
-  /*color: #000000;*/
   color: #ffffff;
   border: 1px solid #e4e4e4;
   background-color: #ffffff;
@@ -191,7 +156,6 @@
 }
 
 .mealButtonWrapper {
-  display: inline-block;
   margin-right: 35px;
   margin-bottom: 50px;
   width: 120px;
@@ -199,12 +163,11 @@
 }
 
 .mealButtonHeader {
-  border: solid;
   height: 50px;
+  border-bottom: 2px solid #ffba00;
 }
 
 .mealButton {
-  /*border: 2px solid #ff6505;*/
   border-bottom: 2px solid #ffba00;
   background-color: #ffffff;
   border-radius: 0px;
@@ -218,12 +181,10 @@
 }
 
 .mealButtonSelected {
-  /*background-image: url('./static/orange_plate.png');*/
   background-color: #ffba00;
   outline: 0;
 }
 .mealButtonSelected:hover {
-  /*background-image: url('./static/orange_plate.png');*/
   background-color: #ffba00;
   outline: 0;
 }
@@ -235,12 +196,36 @@
   outline: 0 !important;
 }
 
-.mealButtonSection {
-  width: 15%;
-  display: inline-block;
+.mealButtonEdit {
+  width: 4%;
+  height: 100%;
   float: left;
   padding-top: 8px;
-  border: dashed;
+  text-overflow: ellipsis;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.mealButtonPlan {
+  width: 16%;
+  height: 100%;
+  float: left;
+  padding-top: 8px;
+  text-overflow: ellipsis;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.mealButtonSection {
+  width: 16%;
+  height: 100%;
+  float: left;
+  padding-top: 8px;
+  text-overflow: ellipsis;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  font-weight: bold;
 }
 
 .deliverySubtext {
@@ -277,9 +262,9 @@
   outline: 0;
   border-radius: 0;
 }
-/*.deliveryButton:disabled {
+.deliveryButtonCurrent {
   color: #000000;
-  background-color: #ccc9c9;
+  background-color: #ffffff;
   margin: 5px;
   align-content: center;
   flex: 1;
@@ -287,12 +272,14 @@
   font-size: 10px;
   font-weight: 600;
   outline: 0;
-  height: 78px;
-  width: 78px;
+  height: 130px;
+  width: 130px;
   border: solid;
+  border-color: #ff6505;
   box-shadow: none !important;
   outline: 0;
-}*/
+  border-radius: 0;
+}
 .deliveryButton:disabled {
   color: #000000;
   border: 1px solid #e4e4e4;
@@ -684,12 +671,15 @@
   background-image: url('./static/orange_plate.png');
   background-size: 100%;
   outline: 0;
-  height: 80px;
-  width: 80px;
+  height: 130px;
+  width: 130px;
   color: white;
-  padding-top: 1.5rem;
-  font-size: 20px;
+  padding-top: 2.4rem;
+  font-size: 35px;
+  font-weight: 600;
   cursor: pointer;
+  position: relative;
+  margin: auto;
 }
 .iconMealsDisabled {
   background-image: url('./static/yellow_plate.png');
@@ -716,7 +706,7 @@
   background-image: url('./static/trash_icon.png');
   background-size: 100%;
   outline: 0;
-  margin-top: 10px;
+  margin: auto;
   height: 65px;
   width: 50px;
   cursor: pointer;
@@ -789,7 +779,6 @@
 }
 
 .chargeTotal {
-  display: flex;
   border: solid;
   border-radius: 25px;
   border-color: #ff6505;
@@ -822,6 +811,22 @@
   width: 90%;
   height: 50px;
 }
+.chargeBtn:hover {
+  text-align: center;
+  justify-content: center;
+  padding: 5px !important;
+  /*color: black !important;*/
+  color: #ffffff;
+  font-size: 16px !important;
+  /*border: 1px solid rgb(187, 174, 174);*/
+  border-radius: 10px;
+  border-width: 0;
+  min-width: 100px !important;
+  background-color: #ff6505;
+  margin-top: 10px;
+  width: 90%;
+  height: 50px;
+}
 .chargeModalContainer {
   position: relative;
   justify-self: center;
@@ -837,8 +842,10 @@
   display: block;
   width: 370px;
   /*margin: 80px auto 0px;*/
-  margin: 0px auto 0px;
+  margin: 0px auto 50px;
   text-align: center;
+  border: inset;
+  float: left;
 }
 
 .chargeCancelButton{
