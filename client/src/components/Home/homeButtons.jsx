@@ -21,6 +21,7 @@ import heartImage from '../../images/Icon ionic-ios-heart.png'
 import continueWithApple from '../../images/Group 539.png'
 import continueWithFacebook from '../../images/Group 537.png'
 import continueWithGoogle from '../../images/Group 538.png'
+import eyeIcon from '../../images/Icon ionic-ios-eye.png'
 
 class HomeLink extends Component {
     render() { 
@@ -67,7 +68,7 @@ class FootLink extends Component {
             <div className = {styles.footerRight}>
             <img onClick={() => this.togglePop()} style = {{width: '320px', height:'67px'}} src = {becomeAnAmbassadorImg} style = {{marginTop: '25px'}}/>			
             </div>
-			{this.state.seen ? <CreateAccPWSU1/> : null}
+			{this.state.seen ? <AmbassadorLink toggle={this.togglePop} /> : null}	
             </div>
          );
     }
@@ -663,8 +664,8 @@ class CreateAccPWSU1 extends Component {
             <img style= {{display: 'block', marginLeft: 'auto', marginRight: 'auto'}} src = {continueWithGoogle}/>
 			<p style = {{font: 'SF Pro', fontWeight:'bold', fontSize:'26px',textAlign: 'center', color:'black'}}>OR</p>
             <div style= {{textAlign:'center'}}>
-            <input style = {{border:'2px solid #F26522',marginBottom:'10px', width:' 428px', marginLeft: 'auto', marginRight: 'auto', borderRadius:'15px', padding:'10px'}} placeholder = "Create Password"/><br/>
-            <input style = {{border:'2px solid #F26522', marginLeft: 'auto', width:' 428px',marginRight: 'auto', borderRadius:'15px', padding:'10px'}} placeholder = "Confirm Password"/>
+            <input type = 'credentials' style = {{border:'2px solid #F26522',marginBottom:'10px', width:' 428px', marginLeft: 'auto', marginRight: 'auto', borderRadius:'15px', padding:'10px'}} placeholder = "Create Password"/><br/>
+            <input type = 'credentials' style = {{border:'2px solid #F26522', marginLeft: 'auto', width:' 428px',marginRight: 'auto', borderRadius:'15px', padding:'10px'}} placeholder = "Confirm Password"/>
 			<br/><br/><br/>
 			<img style= {{display: 'block', marginLeft: 'auto',marginRight: 'auto'}} src = {signupButton}/>
             </div>
@@ -674,4 +675,64 @@ class CreateAccPWSU1 extends Component {
     )
   }	
 }
-export {HomeLink, FootLink, AmbassadorLink, AddressLink, AddMeals, SaveMeals, SurpriseMeals, SkipMeals, FavoriteMeal, CreateAccPWSU1};
+class LoginModal extends Component {
+  render() {
+    return (
+      <div>
+	    <div className={styles.modal}>
+		    <div className={styles.modal_content}>
+			<span className={styles.close} onClick={this.handleClick}>
+						<img src={closeIconImg}/>
+			</span>
+			<p className= {styles.ambassdorText} style = {{font:'SF Pro', fontSize: '26px', fontWeight:'bold', textAlign: 'center', color:'black'}}>Login</p>	
+			<br/>
+			<img style= {{display: 'block', marginLeft: 'auto', marginRight: 'auto', marginBottom:'10px'}} src = {continueWithApple}/>
+            <img style= {{display: 'block', marginLeft: 'auto', marginRight: 'auto', marginBottom:'10px'}} src = {continueWithFacebook}/>
+            <img style= {{display: 'block', marginLeft: 'auto', marginRight: 'auto'}} src = {continueWithGoogle}/>
+			<p style = {{font: 'SF Pro', fontWeight:'bold', fontSize:'26px',textAlign: 'center', color:'black'}}>OR</p>
+            <div style= {{textAlign:'center'}}>
+            <input type = 'credentials' style = {{border:'2px solid #F26522',marginBottom:'10px', width:' 428px', marginLeft: 'auto', marginRight: 'auto', borderRadius:'15px', padding:'10px'}} placeholder = "Username"/><br/>
+            <input type = 'credentials' style = {{border:'2px solid #F26522', marginLeft: 'auto', width:' 428px',marginRight: 'auto', borderRadius:'15px', padding:'10px'}} placeholder = "Password"/>
+            <p style = {{font:'SF Pro', fontWeight:'medium', fontSize:'13px', color:'black'}}><u>Forgot password?</u></p>
+			<br/>
+			<img style= {{display: 'block', marginLeft: 'auto',marginRight: 'auto'}} src = {loginButton}/>
+            </div>
+			</div>
+		</div>
+		</div>
+    )
+  }	
+}
+class SignUpModal extends Component {
+  render() {
+    return (
+      <div>
+	    <div className={styles.modal}>
+		    <div className={styles.modal_content}>
+			<span className={styles.close} onClick={this.handleClick}>
+						<img src={closeIconImg}/>
+			</span>
+			<p className= {styles.ambassdorText} style = {{font:'SF Pro', fontSize: '26px', fontWeight:'bold', textAlign: 'center', color:'black'}}>Sign up</p>	
+			<br/>
+			<img style= {{display: 'block', marginLeft: 'auto', marginRight: 'auto', marginBottom:'10px'}} src = {continueWithApple}/>
+            <img style= {{display: 'block', marginLeft: 'auto', marginRight: 'auto', marginBottom:'10px'}} src = {continueWithFacebook}/>
+            <img style= {{display: 'block', marginLeft: 'auto', marginRight: 'auto'}} src = {continueWithGoogle}/>
+			<p style = {{font: 'SF Pro', fontWeight:'bold', fontSize:'26px',textAlign: 'center', color:'black'}}>OR</p>
+            <div style= {{textAlign:'center'}}>
+            <input type = 'credentials' style = {{border:'2px solid #F26522',marginBottom:'10px', width:' 214px', marginLeft: 'auto', marginRight: 'auto', borderRadius:'15px', padding:'10px'}} placeholder = "First Name"/><br/>
+		    <input type = 'credentials' style = {{border:'2px solid #F26522',marginBottom:'10px', width:' 214px', marginLeft: 'auto', marginRight: 'auto', borderRadius:'15px', padding:'10px'}} placeholder = "Last Name"/><br/>
+            <input type = 'credentials' style = {{border:'2px solid #F26522',marginBottom:'10px', width:' 428px', marginLeft: 'auto', marginRight: 'auto', borderRadius:'15px', padding:'10px'}} placeholder = "Email address"/><br/>
+            <input type = 'credentials' style = {{border:'2px solid #F26522', marginLeft: 'auto', width:' 428px',marginRight: 'auto', borderRadius:'15px', padding:'10px'}} placeholder = "Confirm Email address"/><br/>
+            <input type = 'credentials' style = {{border:'2px solid #F26522',marginBottom:'10px', width:' 428px', marginLeft: 'auto', marginRight: 'auto', borderRadius:'15px', padding:'10px'}} placeholder = "Create Password <img src = {eyeIcon}/>"/><br/>
+            <input type = 'credentials' style = {{border:'2px solid #F26522', marginLeft: 'auto', width:' 428px',marginRight: 'auto', borderRadius:'15px', padding:'10px'}} placeholder = "Confirm Password"/>
+            <p style = {{font:'SF Pro', fontWeight:'medium', fontSize:'13px', color:'black'}}><u>Forgot password?</u></p>
+			<br/>
+			<img style= {{display: 'block', marginLeft: 'auto',marginRight: 'auto'}} src = {signupButton}/>
+            </div>
+			</div>
+		</div>
+		</div>
+    )
+  }	
+}
+export {HomeLink, FootLink, AmbassadorLink, AddressLink, AddMeals, SaveMeals, SurpriseMeals, SkipMeals, FavoriteMeal, CreateAccPWSU1, LoginModal, SignUpModal};

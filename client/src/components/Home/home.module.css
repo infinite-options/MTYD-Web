@@ -319,6 +319,12 @@ input[type="zipCode"]::placeholder {
   color:black;
   font-size:18px;
 }
+input[type='credentials']::placeholder {
+	font:SF Pro;
+	font-weight:medium;
+	font-size:24px;
+	color:black;
+}
 /*.stepsNumber {
   float: left;
   background-color: #ffba00;
