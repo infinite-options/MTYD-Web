@@ -18,6 +18,9 @@ import negativeSign from '../../images/Group 504.png';
 import positiveSign from '../../images/Group 505.png';
 import continueExploring from '../../images/Group 575.png'
 import heartImage from '../../images/Icon ionic-ios-heart.png'
+import continueWithApple from '../../images/Group 539.png'
+import continueWithFacebook from '../../images/Group 537.png'
+import continueWithGoogle from '../../images/Group 538.png'
 
 class HomeLink extends Component {
     render() { 
@@ -64,7 +67,7 @@ class FootLink extends Component {
             <div className = {styles.footerRight}>
             <img onClick={() => this.togglePop()} style = {{width: '320px', height:'67px'}} src = {becomeAnAmbassadorImg} style = {{marginTop: '25px'}}/>			
             </div>
-			{this.state.seen ? <AmbassadorLink toggle={this.togglePop} /> : null}
+			{this.state.seen ? <CreateAccPWSU1/> : null}
             </div>
          );
     }
@@ -647,4 +650,28 @@ class FavoriteMeal extends Component {
     )
   }
 }
-export {HomeLink, FootLink, AmbassadorLink, AddressLink, AddMeals, SaveMeals, SurpriseMeals, SkipMeals, FavoriteMeal};
+class CreateAccPWSU1 extends Component {
+  render() {
+    return (
+      <div>
+	    <div className={styles.modal}>
+		    <div className={styles.modal_content}>
+			<p className= {styles.ambassdorText} style = {{font:'SF Pro', fontSize: '26px', fontWeight:'bold', textAlign: 'center', color:'black'}}>Create an account</p>	
+			<br/>
+			<img style= {{display: 'block', marginLeft: 'auto', marginRight: 'auto', marginBottom:'10px'}} src = {continueWithApple}/>
+            <img style= {{display: 'block', marginLeft: 'auto', marginRight: 'auto', marginBottom:'10px'}} src = {continueWithFacebook}/>
+            <img style= {{display: 'block', marginLeft: 'auto', marginRight: 'auto'}} src = {continueWithGoogle}/>
+			<p style = {{font: 'SF Pro', fontWeight:'bold', fontSize:'26px',textAlign: 'center', color:'black'}}>OR</p>
+            <div style= {{textAlign:'center'}}>
+            <input style = {{border:'2px solid #F26522',marginBottom:'10px', width:' 428px', marginLeft: 'auto', marginRight: 'auto', borderRadius:'15px', padding:'10px'}} placeholder = "Create Password"/><br/>
+            <input style = {{border:'2px solid #F26522', marginLeft: 'auto', width:' 428px',marginRight: 'auto', borderRadius:'15px', padding:'10px'}} placeholder = "Confirm Password"/>
+			<br/><br/><br/>
+			<img style= {{display: 'block', marginLeft: 'auto',marginRight: 'auto'}} src = {signupButton}/>
+            </div>
+			</div>
+		</div>
+		</div>
+    )
+  }	
+}
+export {HomeLink, FootLink, AmbassadorLink, AddressLink, AddMeals, SaveMeals, SurpriseMeals, SkipMeals, FavoriteMeal, CreateAccPWSU1};
