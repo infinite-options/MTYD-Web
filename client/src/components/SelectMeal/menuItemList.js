@@ -1030,13 +1030,18 @@ class MenuItemList extends Component {
 
           const dates = this.state.data.map(date => date.menu_date);
           const uniqueDates = Array.from(new Set(dates));
+          let lessThanTen = 0;
 
           // console.log(this.state.surpriseSkipSave)
 
           for(const date of uniqueDates){
 
-            let classStyle = styles.datebutton;
-            let extraInfo = ''
+            if(lessThanTen>=10){
+              break;
+            }
+
+            let classStyle = styles.datebuttonSurprise ;
+            let extraInfo = 'Surprise / No selection'
 
             for(const surpriseInfo of this.state.surpriseSkipSave){
               if(surpriseInfo.date == date&&surpriseInfo.id==this.state.purchaseID){
@@ -1089,6 +1094,7 @@ class MenuItemList extends Component {
               </button>
             )
             first=1;
+            lessThanTen++;
           }
           console.log(buttonList)
 
@@ -1116,9 +1122,14 @@ class MenuItemList extends Component {
     let buttonList = [];
     let first=null;
 
+    let lessThanTen = 0;
+
     if (customer_uid == null) {
       //if user  not login, show them the basic date button
       for(const date of uniqueDates){
+        if(lessThanTen>=10){
+          break;
+        }
         buttonList.push(
           // <button key={date} value={date} onClick={this.filterDates} id={date} className={styles.datebutton} autoFocus={first==null}>
           //   {moment(date.split(" ")[0]).format("ddd")}
@@ -1129,7 +1140,7 @@ class MenuItemList extends Component {
           key={date} 
           value={date} 
           onClick={this.filterDates} 
-          id={date} className={styles.datebutton} 
+          id={date} className={styles.datebuttonSurprise} 
           autoFocus={first==null}
           >
             <div
@@ -1161,6 +1172,7 @@ class MenuItemList extends Component {
           </button>
         )
         first=1;
+        lessThanTen++;
       }
       this.setState({
         dateButtonList:buttonList

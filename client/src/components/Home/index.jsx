@@ -226,9 +226,6 @@ class Home extends Component {
 
                 <HomeMap/>
 
-                <HomeLink text = {viewMealsImg} link = "/select-meal"/>
-
-
                 <div style = {{display: 'inline-flex', justifyContent: 'space-between'}}/> 
                   
               </div>

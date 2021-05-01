@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import {Link} from "react-router-dom";
 
 
 const google = window.google;
@@ -41,14 +42,19 @@ export class HomeMap extends Component {
   
     });
 
-
-
   }
+
 
 
   render() {
     return (
-      <div>
+      <div
+        style={{
+          display:'block',
+          width:'300px',
+          height:'200px'
+        }}
+      >
         <div id="pac-container">
           <input 
           id="pac-input" 
@@ -66,11 +72,36 @@ export class HomeMap extends Component {
           marginTop: '-30px', 
           marginBottom:'15px', 
           borderRadius:'10px'
+          }}/>
 
-          }}
+          <button
+            style = 
+            {{width: '320px', 
+            height: '57px', 
+            borderRadius:'10px', 
+            fontSize: '25px',
+            border:'none',
+            textAlign:'center',
+            color:'white',
+            marginLeft: '40px', 
+            marginBottom:'15px', 
+            borderRadius:'10px',
+            backgroundColor:'#ff6505'
+            }}
+
+          >
+            <a href='/select-meal'
+            style={{
+              color:'white',
+              marginLeft:'95px',
+              textAlign: 'center',
+            }}
+
+            >View Meals</a>
+          </button>
 
 
-          />
+
         </div>
       </div>
       
