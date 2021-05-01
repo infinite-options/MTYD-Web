@@ -1,3 +1,10 @@
+/*The format on the grid is wrong.  font: normal normal bold 24px/29px SF Pro;
+is not accepted by the CSS here. It didnt work as of now.
+Do not enable this
+        font-family: -apple-system, BlinkMacSystemFont;
+It is breaking everything.
+
+*/
 .topBackground {
   background: url("./images/madmax-chef-cToNEm70cvE-unsplash@2x.png");
   background-size: cover;
@@ -47,8 +54,10 @@
   width: auto; 
   max-width: 300px; 
   max-height: 300px;
-  font-family: -apple-system, BlinkMacSystemFont;
-  font: normal normal medium 24px/15px SF Pro;
+  /*font-family: -apple-system, BlinkMacSystemFont;*/
+  font: SF Pro;
+  font-size: 24px/15px;
+  font-weight: medium;
   /*margin-left: 370px;	*/
 }
 .footerLogoNarrow {
@@ -66,8 +75,10 @@
     width: auto; 
     max-width: 300px; 
     max-height: 300px;
-    font-family: -apple-system, BlinkMacSystemFont;
-    font: normal normal medium 24px/15px SF Pro;  
+    /*font-family: -apple-system, BlinkMacSystemFont;*/
+    font: SF Pro;
+	font-size: 24px/15px;
+    font-weight:medium;	
 }
 
 .footerLinks {
@@ -297,14 +308,22 @@ input[type="zipCode"]:focus {
   height: 40px;*/
   /*border-radius: 20px;*/
   /*background-color: #ffba00;*/
-  letter-spacing: var(--unnamed-character-spacing-0);
-  font-family: -apple-system, BlinkMacSystemFont;
-  font: normal normal bold 19px/23px SF Pro;
+  /*font-family: -apple-system, BlinkMacSystemFont;*/
+  /*font: normal normal bold 19px/23px SF Pro;*/
+  font-size: 19px/23px;
+  font: SF pro;
+  font-weight: bold;
 }
 input[type="zipCode"]::placeholder { 
   text-align: center;
   color:black;
   font-size:18px;
+}
+input[type='credentials']::placeholder {
+	font:SF Pro;
+	font-weight:medium;
+	font-size:24px;
+	color:black;
 }
 /*.stepsNumber {
   float: left;
@@ -394,6 +413,7 @@ input[type="zipCode"]::placeholder {
   margin-top: 9px;
   margin-left: 15px;
   font-weight: bold;
+  font: SF Pro;
 }
 
 .stepsTitleNarrow {
@@ -409,44 +429,49 @@ input[type="zipCode"]::placeholder {
 
 .stepsTitle2 {
   font-weight: bold;
-  font: normal normal bold 24px/29px;
+  /*font: normal normal bold 24px/29px;*/
+  font-size: 24px/29px;
+  font: SF Pro;
   /*font-family: -apple-system, BlinkMacSystemFont;*/
 }
 
 .stepsText {
   /*color: #979797;*/
   text-indent: 0em;
-  font-size: 19px;
+  font-size: 19px/23px;
   padding: 10px 15px;
   height: 138px;
   width:251px;
-  font-family: -apple-system, BlinkMacSystemFont;
-  font:normal normal normal 19px/23px SF Pro;
+  /*font-family: -apple-system, BlinkMacSystemFont;*/
+  font-weight: normal;
+  font: SF Pro;
 }
 .stepsTextForExplore {
   /*color: #979797;*/
   text-indent: 0em;
-  font-size: 19px;
   /*padding: 10px 15px;*/
   height: 138px;
   width:251px;
   margin-left: 160px;
   margin-top: -160px;
-  font-family: -apple-system, BlinkMacSystemFont;
-  font: normal normal normal 19px/23px SF Pro;
+  /*font-family: -apple-system, BlinkMacSystemFont;*/
+  /*font: normal normal normal 19px/23px SF Pro;*/
+  font:SF Pro;
+  font-weight:normal;
 }
 
 .stepsTextForPurchase {
   /*color: #979797;*/
   text-indent: 0em;
-  font-size: 19px;
+  font-size: 19px/23px;
   /*padding: 10px 15px;*/
   height: 138px;
   width:251px;
   margin-left: -160px;
   margin-top: 160px;
-  font: normal normal normal 19px/23px SF Pro ;
-  font-family: -apple-system, BlinkMacSystemFont;  
+  font: SF Pro;
+  font-weight: normal;
+  /*font-family: -apple-system, BlinkMacSystemFont;*/  
 }
 .stepsTextMid {
   color: #979797;
@@ -462,14 +487,15 @@ input[type="zipCode"]::placeholder {
   padding: 0 50px;
   height: 80px;
   font: normal normal normal 24px/29px SF Pro ;
-  font-family: -apple-system, BlinkMacSystemFont;  
+  /*font-family: -apple-system, BlinkMacSystemFont;*/  
 }
 
 .stepsText2 {
   /*color: #979797;*/
-  font-size: 24px;
+  font-size: 24px/29px;
   padding: 0 100px;
-  font: normal normal normal 24px/29px;
+  font-weight:normal;
+  font: SF Pro;
   /*font-family: -apple-system, BlinkMacSystemFont;*/
 }
 
@@ -608,12 +634,15 @@ button:hover {
 .howDoesText {
   position: relative;
   /*left: 16px;*/
-  top: 25%;
+  top: 10%;
   margin-top: -56px;
   margin-left: 200px;
   height: 29px;
-  font-family: -apple-system, BlinkMacSystemFont;
+  /*font-family: -apple-system, BlinkMacSystemFont;*
   font: normal normal bold 24px/29px SF Pro;/* */
+  font-size: 24px/29px;
+  font-weight: bold;
+  font:SF Pro;
   letter-spacing: 0px;
 }
 .menuContainer {
@@ -674,8 +703,10 @@ button:hover {
   width: 100%;
   height: 50px;
   padding: 10px;
-  font-family: -apple-system, BlinkMacSystemFont;
-  font: normal normal bold 14px/22px SF Pro;
+  /*font-family: -apple-system, BlinkMacSystemFont;*/
+  font: SF Pro;
+  font-size:14px/22px;
+  font-weight: bold;
 }
 
 .carouselButtons {	
