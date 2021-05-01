@@ -123,8 +123,8 @@ class AmbassadorLink extends Component {
       this.setState({user_id:'not login'})
       this.setState({user_address: 'not login yet'});
 	/*Use the following for setting the user */ 
-	// this.setState({user_id:'anup'});
-	/*this.setState({user_address: '214 Main Ave, San Jose, CA 91101'});*/
+	 /*this.setState({user_id:'anup'});
+	this.setState({user_address: '214 Main Ave, San Jose, CA 91101'});*/
     }
     
   }
@@ -143,14 +143,14 @@ class AmbassadorLink extends Component {
 					  <span className={styles.close} onClick={this.handleClick}>
 						<img src={closeIconImg}/>
 					  </span>
-						<p style = {{font:'normal normal bold 32px/38px SF Pro', textAlign: 'center', color:'black'}}>Love MealsFor.Me?</p>
-						<p style = {{font:'normal normal bold 18px/21px SF Pro', textAlign: 'center', color:'black'}}> Become an Ambassador</p>
-						
-						<p className = {styles.ambassdorText} style= {{marginLeft: 'auto',marginRight:'auto', width:'437px', height:'117px', font: 'normal normal medium 22px/30px SF Pro', textAlign: 'center'}}>Your friend(s) saves <em>20%</em> on their first order and you save <em>20%</em> on your next renewal <br/>+ <br/>Each time your friend renews, you get an additional <em>5%</em> renewal bonus. Sign up 20 friends and eat for free!</p>
-						<p style = {{display: 'inline', font: 'normal normal medium 18px/21px SF Pro', textAlign: 'center', color: '#F26522', witdth:'50%'}}>Ambassador Name:</p>
-						<p style = {{display: 'inline-block', verticalAlign: 'top', font: 'normal normal medium 18px/21px SF Pro', textAlign: 'right', color: '#F26522', color:'black', marginLeft:'350px'}}>John Doe</p>
+						<p style = {{font:'SF Pro', fontWeight:'bold', fontSize: '32px', textAlign: 'center', color:'black'}}>Love MealsFor.Me?</p>
+						<p style = {{font:'SF Pro', fontSize: '18px', fontWeight:'bold', textAlign: 'center', color:'black'}}> Become an Ambassador</p>						
+						<p className = {styles.ambassdorText} style= {{marginLeft: 'auto',marginRight:'auto', width:'437px', height:'117px', font: 'SF Pro', fontSize:'22px', fontWeight:'medium', textAlign: 'center'}}>Your friend(s) saves <em>20%</em> on their first order and you save <em>20%</em> on your next renewal <br/>+ <br/>Each time your friend renews, you get an additional <em>5%</em> renewal bonus. Sign up 20 friends and eat for free!</p>
+                        <br/><br/><br/><br/>			
+              			<p style = {{display: 'inline', font: 'SF Pro', fontSize:'18px',fontWeight:'medium', textAlign: 'center', color: '#F26522', witdth:'50%'}}>Ambassador Name:</p>
+						<p style = {{display: 'inline-block', verticalAlign: 'top', font: 'SF Pro',fontSize:'18px',fontWeight:'medium', textAlign: 'right', color: '#F26522', color:'black', marginLeft:'350px'}}>John Doe</p>
 						<input style = {{border:'2px solid #F26522', borderRadius: '15px', width: '100%', padding: '5px'}} placeholder = "johndoe@gmail.com"/>
-						<p style = {{font: 'normal normal medium 18px/21px SF Pro', textAlign: 'center', color: '#F26522'}}>Your friends can use this email address as the Ambassador code when they sign up</p>
+						<p style = {{font: 'SF Pro', fontSize:'18px', fontWeight:'medium', textAlign: 'center', color: '#F26522'}}>Your friends can use this email address as the Ambassador code when they sign up</p>
 					</div>
 				  </div>
 				)} else {
@@ -160,11 +160,12 @@ class AmbassadorLink extends Component {
 						  <span className={styles.close} onClick={this.handleClick}>
 							<img src={closeIconImg}/>
 						  </span>
-							<p style = {{font:'normal normal bold 32px/38px SF Pro', textAlign: 'center', color:'black'}}>Love MealsFor.Me?</p>
-							<p style = {{font:'normal normal bold 18px/21px SF Pro', textAlign: 'center', color:'black'}}> Become an Ambassador</p>
-							<p style= {{marginLeft:'auto', marginRight:'auto', width:'437px', height:'117px', font: 'normal normal medium 22px/30px SF Pro', textAlign: 'center'}}>Save money by helping others eat better. Become an ambassador by sharing MealsFor.Me with your friends. The more you share, the more you save.</p>
+							<p style = {{font:'SF Pro', fontSize: '32px', fontWeight:'bold', textAlign: 'center', color:'black'}}>Love MealsFor.Me?</p>
+							<p style = {{font:'SF Pro', fontSize:'18px', fontWeight:'bold', textAlign: 'center', color:'black'}}> Become an Ambassador</p>
+							<p style= {{marginLeft:'auto', marginRight:'auto', width:'437px', height:'117px', font: 'SF Pro', fontWeight:'medium', fontSize:'22px',textAlign: 'center'}}>Save money by helping others eat better. Become an ambassador by sharing MealsFor.Me with your friends. The more you share, the more you save.</p>
+							<br/><br/>
 							<img style= {{display: 'block', marginLeft: 'auto', marginRight: 'auto'}} src = {LTBAA}/>
-							<p style = {{font: 'normal normal bold 26px/31px SF Pro', textAlign: 'center', paddingTop:'15px'}}>OR</p>
+							<p style = {{font: 'SF Pro', fontWeight:'bold', fontSize:'26px',textAlign: 'center', paddingTop:'15px'}}>OR</p>
 							<img style= {{display: 'block', marginLeft: 'auto', marginRight: 'auto'}} src = {SUTBAA}/>
 						</div>
 					  </div>
