@@ -151,7 +151,7 @@ class AmbassadorLink extends Component {
 					  </span>
 						<p style = {{font:'SF Pro', fontWeight:'bold', fontSize: '32px', textAlign: 'center', color:'black'}}>Love MealsFor.Me?</p>
 						<p style = {{font:'SF Pro', fontSize: '18px', fontWeight:'bold', textAlign: 'center', color:'black'}}> Become an Ambassador</p>						
-						<p className = {styles.ambassdorText} style= {{marginLeft: 'auto',marginRight:'auto', width:'437px', height:'117px', font: 'SF Pro', fontSize:'22px', fontWeight:'medium', textAlign: 'center'}}>Your friend(s) saves <em>20%</em> on their first order and you save <em>20%</em> on your next renewal <br/>+ <br/>Each time your friend renews, you get an additional <em>5%</em> renewal bonus. Sign up 20 friends and eat for free!</p>
+						<p className = {styles.ambassdorText} style= {{marginLeft: 'auto',marginRight:'auto', width:'437px', height:'117px', font: 'SF Pro', fontSize:'22px', fontWeight:'medium', textAlign: 'center'}}>Your friend(s) saves <span style={{color:'#F26522'}}>20%</span> on their first order and you save <span style={{color:'#F26522'}}>20%</span> on your next renewal <br/>+ <br/>Each time your friend renews, you get an additional <span style={{color:'#F26522'}}>5%</span> renewal bonus. Sign up 20 friends and eat for free!</p>
                         <br/><br/><br/><br/>			
               			<p style = {{display: 'inline', font: 'SF Pro', fontSize:'18px',fontWeight:'medium', textAlign: 'center', color: '#F26522', witdth:'50%'}}>Ambassador Name:</p>
 						<p style = {{display: 'inline-block', verticalAlign: 'top', font: 'SF Pro',fontSize:'18px',fontWeight:'medium', textAlign: 'right', color: '#F26522', color:'black', marginLeft:'350px'}}>John Doe</p>
@@ -352,7 +352,7 @@ class SaveMeals extends Component {
 					return (
 					  <div className={styles.modal}>
 						<div className={styles.modal_content}>
-			                <p className= {styles.ambassdorText} style = {{font:'SF Pro', fontSize: '24px', fontWeight:'medium', textAlign: 'left', color:'black'}}><em>Save</em> allows you to select your meals up<br/> to 3 weeks in advance.</p>	
+			                <p className= {styles.ambassdorText} style = {{font:'SF Pro', fontSize: '24px', fontWeight:'medium', textAlign: 'left', color:'black'}}><span style={{color:'#F26522'}}>Save</span> allows you to select your meals up<br/> to 3 weeks in advance.</p>	
 							<br/><br/>
 							<img style= {{display: 'block', marginLeft: '80px', marginRight: 'auto'}} src = {continueExploring}/>
 							<p style = {{marginLeft:'50px',font: 'SF Pro', fontWeight:'bold', fontSize:'18px',textAlign: 'left', paddingTop:'15px', color:'black'}}>Already a Customer?</p>
@@ -445,7 +445,7 @@ class SurpriseMeals extends Component {
 					return (
 					  <div className={styles.modal}>
 						<div className={styles.modal_content}>
-			                <p className= {styles.ambassdorText} style = {{font:'SF Pro', fontSize: '24px', fontWeight:'medium', textAlign: 'left', color:'black'}}><em>Surprise</em> means we’ll give you an <br/>assortment of meals on the specific <br/>delivery day.</p>	
+			                <p className= {styles.ambassdorText} style = {{font:'SF Pro', fontSize: '24px', fontWeight:'medium', textAlign: 'left', color:'black'}}><span style={{color:'#F26522'}}>Surprise</span> means we’ll give you an <br/>assortment of meals on the specific <br/>delivery day.</p>	
 							<br/><br/>
 							<img style= {{display: 'block', marginLeft: '80px', marginRight: 'auto'}} src = {continueExploring}/>
 							<p style = {{marginLeft:'50px',font: 'SF Pro', fontWeight:'bold', fontSize:'18px',textAlign: 'left', paddingTop:'15px', color:'black'}}>Already a Customer?</p>
@@ -460,4 +460,97 @@ class SurpriseMeals extends Component {
     )
   }
 }
-export {HomeLink, FootLink, AmbassadorLink, AddressLink, AddMeals, SaveMeals, SurpriseMeals};
+class SkipMeals extends Component {
+
+  constructor(props){
+    super();
+    this.state = {
+      user_id:'',
+      user_address:'',
+      login_seen:false,
+      signUpSeen:false, 
+    };
+  }
+  handleClick = () => {
+    this.props.toggle();
+  };
+  togglePopLogin = () => {
+    this.setState({
+     login_seen: !this.state.login_seen,
+    });
+
+    if(!this.state.login_seen){
+      this.setState({
+        signUpSeen:false
+      })
+    }
+
+   };
+
+   togglePopSignup = () => {
+    this.setState({
+     signUpSeen: !this.state.signUpSeen
+    });
+
+    if(!this.state.signUpSeen){
+      this.setState({
+        login_seen:false
+      })
+    }
+   };
+
+  componentDidMount(){
+    const customer_uid = Cookies.get("customer_uid");
+    console.log(Cookies.get("customer_uid"))
+    if(customer_uid){
+      this.setState({user_id:customer_uid})
+      axios
+      .get(`${API_URL}Profile/${customer_uid}`)
+      .then((response) => {
+        const addr = response.data.result[0].customer_address.toLowerCase();
+        this.setState({user_address: addr});
+      })
+      .catch((err) => {
+        if (err.response) {
+          console.log(err.response);
+        }
+        console.log(err);
+      });
+      
+    }else{
+      this.setState({user_id:'not login'})
+      this.setState({user_address: 'not login yet'});
+	/*Use the following for setting the user */ 
+	 /*this.setState({user_id:'anup'});
+	this.setState({user_address: '214 Main Ave, San Jose, CA 91101'});*/
+    }
+    
+  }
+
+  render() {
+    return (
+      <div>
+        {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
+        {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
+
+        {(() => {
+			if(this.state.user_id == "not login") {
+					return (
+					  <div className={styles.modal}>
+						<div className={styles.modal_content}>
+			                <p className= {styles.ambassdorText} style = {{font:'SF Pro', fontSize: '24px', fontWeight:'medium', textAlign: 'left', color:'black'}}>Not at home or have other plans?<br/> Its easy to <span style={{color:'#F26522'}}>Skip</span> a delivery and we’ll<br/> automatically extend your subscription.</p>	
+							<br/><br/>
+							<img style= {{display: 'block', marginLeft: '80px', marginRight: 'auto'}} src = {continueExploring}/>
+							<p style = {{marginLeft:'50px',font: 'SF Pro', fontWeight:'bold', fontSize:'18px',textAlign: 'left', paddingTop:'15px', color:'black'}}>Already a Customer?</p>
+							<img style= {{display: 'block', marginLeft: '80px',marginTop:'-20px', marginRight: 'auto'}} src = {loginButton}/>
+							<p style = {{marginLeft:'80px',font: 'SF Pro', fontWeight:'bold', fontSize:'18px',textAlign: 'left', paddingTop:'15px', color:'black'}}>Ready to start eating better?</p>
+							<img style= {{display: 'block', marginLeft: '80px', marginTop:'-15px',marginRight: 'auto'}} src = {signupButton}/>
+						</div>
+					  </div>
+				)}
+		}) ()}
+		</div>
+    )
+  }
+}
+export {HomeLink, FootLink, AmbassadorLink, AddressLink, AddMeals, SaveMeals, SurpriseMeals, SkipMeals};
