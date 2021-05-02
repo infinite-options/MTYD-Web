@@ -244,10 +244,12 @@ class EditPlan extends React.Component {
     return addCharges.toFixed(2);
   };
 
-  loadSubscriptions = (subscriptions, discounts) => {
+  loadSubscriptions = (subscriptions, discounts, deliveryDate, selections) => {
     console.log("loading subscription info...");
     console.log("(loadSubscriptions) subscriptions: ", subscriptions);
     console.log("(loadSubscriptions) discounts: ", discounts);
+    console.log("(loadSubscriptions) delivery date: ", deliveryDate);
+    console.log("(loadSubscriptions) selections: ", selections);
 
     // this.setState({
     //   subscriptionsLoaded: true
@@ -279,6 +281,7 @@ class EditPlan extends React.Component {
       // sub.active_subscription["deliveries"] = activeSubDeliveries;
       sub["meals"] = activeSubMeals;
       sub["deliveries"] = activeSubDeliveries;
+      sub["amount_due"] = 0;
 
       let activeSubDiscount = discounts.filter( function(e) {
         //return e.deliveries === sub.active_subscription.deliveries;
@@ -463,6 +466,8 @@ class EditPlan extends React.Component {
             let fetchedSubscriptions = [];
             let fetchedDiscounts = null;
             let billingDatesFetched = 0;
+            let fetchedMealSelections = null;
+            let nextDeliveryDate = null;
 
             fetchDiscounts((discounts) => {
               console.log("fetchDiscounts callback: ", discounts);
@@ -472,12 +477,51 @@ class EditPlan extends React.Component {
               // Once all discounts have been fetched, 
               // if subscriptions have also been fetched,
               // then load subscriptions into program
-              if(subscriptionsFetched === true){
-                console.log("subscriptions fetched first, loading after discount fetch...");
-                this.loadSubscriptions(fetchedSubscriptions, fetchedDiscounts);
+              if(subscriptionsFetched === true && 
+                nextDeliveryDate !== null && 
+                fetchedMealSelections !== null){
+                console.log("(1) load subscriptions");
+                this.loadSubscriptions(fetchedSubscriptions, fetchedDiscounts, nextDeliveryDate, fetchedMealSelections);
               }
 
             });
+
+            // fetch delivery dates
+            axios.get(API_URL + 'upcoming_menu_dates')
+              .then(res => {
+                console.log("upcoming menu dates res: ", res);
+                console.log("first date: ", res.data.result[0].menu_date);
+                nextDeliveryDate = res.data.result[0].menu_date;
+
+                if(subscriptionsFetched === true && 
+                  fetchedDiscounts !== null && 
+                  fetchedMealSelections !== null){
+                  console.log("(2) load subscriptions");
+                  this.loadSubscriptions(fetchedSubscriptions, fetchedDiscounts, nextDeliveryDate, fetchedMealSelections);
+                }
+              })
+              .catch(err => {
+                console.log(err);
+              });
+
+            // fetch meals selections
+            axios.get(API_URL + 'meals_selected', {
+              params: {customer_uid: this.state.customerUid}
+            })
+              .then(res => {
+                console.log("meals_selected res: ", res);
+                fetchedMealSelections = res.data.result;
+
+                if(subscriptionsFetched === true && 
+                  fetchedDiscounts !== null &&
+                  nextDeliveryDate !== null){
+                  console.log("(3) load subscriptions");
+                  this.loadSubscriptions(fetchedSubscriptions, fetchedDiscounts, nextDeliveryDate, fetchedMealSelections);
+                }
+              })
+              .catch(err => {
+                console.log(err);
+              });
 
             // Fetch all subscriptions
             this.props.fetchSubscribed(customerUid)              
@@ -515,15 +559,18 @@ class EditPlan extends React.Component {
                         fetchedSubscriptions.push(currSubscription);
                       }
 
-                      if(fetchedSubscriptions.length === ids.length && billingDatesFetched === ids.length) {
+                      if(fetchedSubscriptions.length === ids.length && 
+                        billingDatesFetched === ids.length) {
                         subscriptionsFetched = true;
 
                         // Once all subscriptions have been fetched, 
                         // if discounts have also been fetched,
                         // then load subscriptions into program
-                        if(fetchedDiscounts !== null){
-                          console.log("discounts fetched first, loading after subscriptions fetch...");
-                          this.loadSubscriptions(fetchedSubscriptions, fetchedDiscounts);
+                        if(fetchedDiscounts !== null && 
+                          nextDeliveryDate !== null  && 
+                          fetchedMealSelections !== null){
+                          console.log("(4.1) load subscriptions");
+                          this.loadSubscriptions(fetchedSubscriptions, fetchedDiscounts, nextDeliveryDate, fetchedMealSelections);
                         }
 
                       }
@@ -539,19 +586,24 @@ class EditPlan extends React.Component {
                       billingDatesFetched++;
                       currSubscription.next_billing_date = res.data.menu_date;
 
+                      console.log("billing dates fetched: ", billingDatesFetched);
+
                       if(currSubscription.order_history !== null){
                         fetchedSubscriptions.push(currSubscription);
                       }
 
-                      if(fetchedSubscriptions.length === ids.length && billingDatesFetched === ids.length) {
+                      if(fetchedSubscriptions.length === ids.length && 
+                        billingDatesFetched === ids.length) {
                         subscriptionsFetched = true;
 
                         // Once all subscriptions have been fetched, 
                         // if discounts have also been fetched,
                         // then load subscriptions into program
-                        if(fetchedDiscounts !== null){
-                          console.log("discounts fetched first, loading after subscriptions fetch...");
-                          this.loadSubscriptions(fetchedSubscriptions, fetchedDiscounts);
+                        if(fetchedDiscounts !== null && 
+                          nextDeliveryDate !== null && 
+                          fetchedMealSelections !== null){
+                          console.log("(4.2) load subscriptions");
+                          this.loadSubscriptions(fetchedSubscriptions, fetchedDiscounts, nextDeliveryDate, fetchedMealSelections);
                         }
 
                       }
@@ -560,6 +612,19 @@ class EditPlan extends React.Component {
                     .catch(err => {
                       console.log(err);
                     });
+
+                  // fetch delivery dates, then meal selection info
+                  // axios.get(API_URL + 'upcoming_menu_dates')
+                  //   .then(res => {
+                  //     console.log("upcoming menu dates res: ", res);
+                  //     console.log("first date: ", res.data.result[0].menu_date);
+                  //   })
+                  //   .catch(err => {
+                  //     console.log(err);
+                  //   });
+
+                  // fetch meal selection info
+
                 });
 
                 // axios.get(API_URL + 'pid_history/' + mealData.purchase_id)
@@ -781,18 +846,28 @@ class EditPlan extends React.Component {
 
     var sumAmountDue = 0;
 
-    console.log("all subs: ", this.state.subscriptionList);
+    console.log("subs before sorting: ", this.state.subscriptionList);
 
-    this.state.subscriptionList.slice().reverse().forEach((subInfo) => {
-      console.log("SSM subInfo: ", subInfo);
-      let sub = subInfo.active_subscription;
+    //let sortedSubscriptions = [...this.state.subscriptionList];
+
+
+    this.state.subscriptionList.sort(function(a,b) {
+      return b.load_order - a.load_order
+    });
+
+    console.log("subs after sorting: ", this.state.subscriptionList);
+
+    this.state.subscriptionList.slice().reverse().forEach((sub) => {
+      // console.log("SSM subInfo: ", subInfo);
+      // let sub = subInfo.active_subscription;
       // console.log(pur.purchase_uid + " amount due: " + pur.amount_due);
-      console.log("sub: ", sub);
+      console.log("sub id: ", sub.id);
+      console.log("curr id: ", this.state.currentPlan.id);
       mealButtons.push(
         <div
-          key={sub.purchase_uid}
+          key={sub.id}
           className={
-            this.state.currentPlan.purchase_uid === sub.purchase_uid 
+            this.state.currentPlan.id === sub.id
               ? selectedMealButton
               : deselectedMealButton
           }
@@ -842,16 +917,16 @@ class EditPlan extends React.Component {
             {sub.meals} Meals, {sub.deliveries} Deliveries
           </div>
           <div className={styles.mealButtonPlan}>
-            {sub.purchase_uid}
+            {sub.id.substring(sub.id.indexOf("-")+1,sub.id.length)}
           </div>
           <div className={styles.mealButtonSection}>
-            {subInfo.next_billing_date}
+            {sub.next_billing_date}
           </div>
           <div className={styles.mealButtonSection}>
             {sub.purchase_status}
           </div>
           <div className={styles.mealButtonSection}>
-            {subInfo.next_billing_date}
+            {sub.next_billing_date.substring(0,sub.next_billing_date.indexOf(" "))}
           </div>
           <div className={styles.mealButtonSection}>
             ${sub.amount_due.toFixed(2)}
@@ -1534,7 +1609,7 @@ class EditPlan extends React.Component {
 
         {/*<div style={{display: 'flex', marginLeft: '8%', width: '42%'}}>*/}
         <div className={styles.containerSplit}>
-          <div style = {{display: 'inline-block', marginLeft: '8%', width: '42%', marginRight: '12%'}}>
+          <div style = {{display: 'inline-block', marginLeft: '8%', width: '40%', marginRight: '2%', border: 'solid'}}>
             <div style={{display: 'flex'}}>
               <input
                 type='text'
@@ -1715,20 +1790,33 @@ class EditPlan extends React.Component {
               style={{
                 visibility: 'visible',
                 // marginLeft:'100px',
-                width:'30%',
-                marginRight: '8%'
+                width:'40%',
+                marginRight: '8%',
+                border: 'solid',
+                marginLeft: '2%'
               }}
             > 
               <div style={{display: 'flex', borderBottom:'solid 2px black'}}>
+
                 <div className={styles.summaryLeft} style={{fontWeight:'bold'}}></div>
+
                 <div className={styles.summaryRight}>
                   {this.state.updatedPlan.meals} Meals,{" "}
                   {this.state.updatedPlan.deliveries} Deliveries
                 </div>
 
+                <div className={styles.summaryRight}>
+                  Current
+                </div>
+
+                <div className={styles.summaryRight}>
+                  Difference
+                </div>
+
               </div>
               <div 
                 style={{display: 'flex',borderBottom:'1px solid'}}>
+
                   <div className={styles.summaryLeft}>
                     Meal Subscription 
                   </div>
@@ -1736,10 +1824,20 @@ class EditPlan extends React.Component {
                   <div className={styles.summaryRight}>
                     ${this.state.paymentSummary.mealSubPrice}
                   </div>
+
+                  <div className={styles.summaryRight}>
+                    ${this.state.paymentSummary.mealSubPrice}
+                  </div>
+
+                  <div className={styles.summaryRight}>
+                    ${this.state.paymentSummary.mealSubPrice}
+                  </div>
+
               </div>
 
               <div 
                 style={{display: 'flex',borderBottom:'1px solid'}}>
+
                   <div className={styles.summaryLeft}>
                   Discount ({this.props.selectedPlan.delivery_discount}%):
                   </div>
@@ -1747,10 +1845,20 @@ class EditPlan extends React.Component {
                   <div className={styles.summaryRight}>
                     -${this.state.paymentSummary.discountAmount}
                   </div>
+
+                  <div className={styles.summaryRight}>
+                    -${this.state.paymentSummary.discountAmount}
+                  </div>
+
+                  <div className={styles.summaryRight}>
+                    -${this.state.paymentSummary.discountAmount}
+                  </div>
+
               </div>
 
               <div 
                 style={{display: 'flex',borderBottom:'1px solid'}}>
+
                   <div className={styles.summaryLeft}>
                     Total Delivery Fee For All {
                         this.props.selectedPlan.num_deliveries
@@ -1760,10 +1868,20 @@ class EditPlan extends React.Component {
                   <div className={styles.summaryRight}>
                     ${(this.state.paymentSummary.deliveryFee)}
                   </div>
+
+                  <div className={styles.summaryRight}>
+                    ${(this.state.paymentSummary.deliveryFee)}
+                  </div>
+
+                  <div className={styles.summaryRight}>
+                    ${(this.state.paymentSummary.deliveryFee)}
+                  </div>
+
               </div>
 
               <div 
                 style={{display: 'flex',borderBottom:'1px solid'}}>
+
                   <div className={styles.summaryLeft}>
                     Service Fee:
                   </div>
@@ -1771,10 +1889,20 @@ class EditPlan extends React.Component {
                   <div className={styles.summaryRight}>
                     ${(this.state.paymentSummary.serviceFee)}
                   </div>
+
+                  <div className={styles.summaryRight}>
+                    ${(this.state.paymentSummary.serviceFee)}
+                  </div>
+
+                  <div className={styles.summaryRight}>
+                    ${(this.state.paymentSummary.serviceFee)}
+                  </div>
+
               </div>
 
               <div 
                 style={{display: 'flex',borderBottom:'1px solid'}}>
+
                   <div className={styles.summaryLeft}>
                     Taxes:
                   </div>
@@ -1782,10 +1910,20 @@ class EditPlan extends React.Component {
                   <div className={styles.summaryRight}>
                     ${(this.state.paymentSummary.taxAmount)}
                   </div>
+
+                  <div className={styles.summaryRight}>
+                    ${(this.state.paymentSummary.taxAmount)}
+                  </div>
+
+                  <div className={styles.summaryRight}>
+                    ${(this.state.paymentSummary.taxAmount)}
+                  </div>
+
               </div>
 
               <div 
                 style={{display: 'flex'}}>
+
                   <div className={styles.summaryLeft}>
                     Chef and Driver Tip:
                   </div>
@@ -1793,6 +1931,15 @@ class EditPlan extends React.Component {
                   <div className={styles.summaryRight}>
                     ${(this.state.paymentSummary.tip)}
                   </div>
+
+                  <div className={styles.summaryRight}>
+                    ${(this.state.paymentSummary.tip)}
+                  </div>
+
+                  <div className={styles.summaryRight}>
+                    ${(this.state.paymentSummary.tip)}
+                  </div>
+
               </div>
               <div 
                 style={{display: 'flex'}}>

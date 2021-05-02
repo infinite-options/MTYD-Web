@@ -516,7 +516,7 @@
   }
   .sectionHeaderLeft {
     background-color: #ffba00;
-    width: 58%;
+    width: 48%;
     height: 60px;
     font-weight: bold;
     /*padding-left: 100px;*/
@@ -528,7 +528,7 @@
   }
   .sectionHeaderRight {
     background-color: #ffba00;
-    width: 40%;
+    width: 48%;
     height: 60px;
     font-weight: bold;
     /*padding-left: 100px;*/
@@ -536,6 +536,7 @@
     padding-top: 12px;
     font-size: 25px;
     margin-bottom: 30px;
+    margin-left: 2%;
   }
 
   .sectionHeaderScroll {
@@ -742,18 +743,61 @@
 }
 
 .summaryLeft {
-  width: 100%;
+  width: 34%;
   text-align: left;
   margin: 10px 0px 10px 0px;
+  border: solid;
+  border-color: red;
 }
 
-.summaryRight {
-  width: 100%;
+/*.summaryRight {
+  width: 22%;
   text-align: right;
   margin-top:10px;
   margin-bottom: 10px;
   padding-right: 30px;
   font-weight: bold;
+  border: solid;
+  border-color: green;
+}*/
+.summaryRight {
+  width: 22%;
+  text-align: right;
+  margin-top:10px;
+  margin-bottom: 10px;
+  font-weight: bold;
+  border: solid;
+  border-color: green;
+}
+.summaryUpdated {
+  width: 19%;
+  text-align: right;
+  margin-top:10px;
+  margin-bottom: 10px;
+  padding-right: 30px;
+  font-weight: bold;
+  border: solid;
+  border-color: green;
+}
+.summaryCurrent {
+  width: 19%;
+  text-align: right;
+  margin-top:10px;
+  margin-bottom: 10px;
+  padding-right: 30px;
+  font-weight: bold;
+  border: solid;
+  border-color: orange;
+}
+.summaryDifference {
+  width: 19%;
+  text-align: right;
+  margin-top:10px;
+  margin-bottom: 10px;
+  padding-right: 30px;
+  font-weight: bold;
+  border: solid;
+  border-color: blue;
 }
 
 .tipButton {
