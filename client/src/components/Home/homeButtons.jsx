@@ -1,5 +1,5 @@
 /*Remove loginPopup and Signup popUp
-  Become an ambassador for logged in user needs to be linked.
+  Become an ambassador for logged in user needs to be linked to the form.
 */
 import React, { Component } from 'react';
 import { ThemeConsumer } from 'react-bootstrap/esm/ThemeProvider';
@@ -25,6 +25,9 @@ import continueWithApple from '../../images/Group 539.png'
 import continueWithFacebook from '../../images/Group 537.png'
 import continueWithGoogle from '../../images/Group 538.png'
 import eyeIcon from '../../images/Icon ionic-ios-eye.png'
+import SocialLogin from "../Landing"
+import GoogleLogin from "react-google-login";
+import FacebookLogin from "react-facebook-login";
 
 class HomeLink extends Component {
     render() { 
@@ -78,7 +81,7 @@ class FootLink extends Component {
             <div className = {styles.footerRight}>
             <img onClick={() => this.togglePop()} style = {{width: '320px', height:'67px'}} src = {becomeAnAmbassadorImg} style = {{marginTop: '25px'}}/>			
             </div>
-			{this.state.seen ? <AmbassadorLink toggle={this.togglePop} /> : null}	
+			{this.state.seen ? <AddMeals toggle={this.togglePop} /> : null}	
             </div>
          );
     }
@@ -162,7 +165,7 @@ class AmbassadorLink extends Component {
       this.setState({user_id:'not login'})
       this.setState({user_address: 'not login yet'});
 	/*Use the following for setting the user */ 
-	 /*this.setState({user_id:'anup'});
+	/* this.setState({user_id:'anup'});
 	this.setState({user_address: '214 Main Ave, San Jose, CA 91101'});*/
     }
     
@@ -188,7 +191,9 @@ class AmbassadorLink extends Component {
                         <br/><br/><br/><br/>			
               			<p style = {{display: 'inline', font: 'SF Pro', fontSize:'18px',fontWeight:'medium', textAlign: 'center', color: '#F26522', witdth:'50%'}}>Ambassador Name:</p>
 						<p style = {{display: 'inline-block', verticalAlign: 'top', font: 'SF Pro',fontSize:'18px',fontWeight:'medium', textAlign: 'right', color: '#F26522', color:'black', marginLeft:'350px'}}>John Doe</p>
+                        <form>
 						<input style = {{border:'2px solid #F26522', borderRadius: '15px', width: '100%', padding: '5px'}} placeholder = "johndoe@gmail.com"/>
+                        </form>
 						<p style = {{font: 'SF Pro', fontSize:'18px', fontWeight:'medium', textAlign: 'center', color: '#F26522'}}>Your friends can use this email address as the Ambassador code when they sign up</p>
 					</div>
 				  </div>
@@ -203,10 +208,10 @@ class AmbassadorLink extends Component {
 							<p style = {{font:'SF Pro', fontSize:'18px', fontWeight:'bold', textAlign: 'center', color:'black'}}> Become an Ambassador</p>
 							<p style= {{marginLeft:'auto', marginRight:'auto', width:'437px', height:'117px', font: 'SF Pro', fontWeight:'medium', fontSize:'22px',textAlign: 'center'}}>Save money by helping others eat better. Become an ambassador by sharing MealsFor.Me with your friends. The more you share, the more you save.</p>
 							<br/><br/>
-							<img style= {{display: 'block', marginLeft: 'auto', marginRight: 'auto'}} src = {LTBAA}  onClick={() => this.togglePopWTL()}/>
+							<img style= {{display: 'block', marginLeft: 'auto', marginRight: 'auto'}} src = {LTBAA}  onClick={this.togglePopLogin}/>
                             {this.state.wantToLogin ? <LoginModal toggle={this.togglePopWTL} /> : null}
 							<p style = {{font: 'SF Pro', fontWeight:'bold', fontSize:'26px',textAlign: 'center', paddingTop:'15px'}}>OR</p>
-							<img style= {{display: 'block', marginLeft: 'auto', marginRight: 'auto'}} src = {SUTBAA} onClick={() => this.togglePopWTS()}/>
+							<img style= {{display: 'block', marginLeft: 'auto', marginRight: 'auto'}} src = {SUTBAA} onClick={() => this.togglePopSignup()}/>
                             {this.state.wantToSignUp ? <SignUpModal toggle={this.togglePopWTS} /> : null}
 						</div>
 					  </div>
@@ -304,6 +309,8 @@ class AddMeals extends Component {
   render() {
     return (
       <div>
+        {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
+        {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
 
         {(() => {
 			if(this.state.user_id == "not login") {
@@ -316,10 +323,10 @@ class AddMeals extends Component {
 						       <img style = {{marginLeft:'80px'}} src={continueExploring}/>
 			                </span>
 							<p style = {{marginLeft:'50px',font: 'SF Pro', fontWeight:'bold', fontSize:'18px',textAlign: 'left', paddingTop:'15px', color:'black'}}>Already a Customer?</p>
-							<img src ={loginButton} style= {{display: 'block', marginLeft: '80px',marginTop:'-20px', marginRight: 'auto'}} onClick={() => this.togglePopWTL()}/>
+							<img src ={loginButton} style= {{display: 'block', marginLeft: '80px',marginTop:'-20px', marginRight: 'auto'}} onClick={() => this.togglePopLogin()}/>
                             {this.state.wantToLogin ? <LoginModal toggle={this.togglePopWTL} /> : null}
 							<p style = {{marginLeft:'80px',font: 'SF Pro', fontWeight:'bold', fontSize:'18px',textAlign: 'left', paddingTop:'15px', color:'black'}}>Ready to start eating better?</p>
-							<img style= {{display: 'block', marginLeft: '80px', marginTop:'-15px',marginRight: 'auto'}} src = {signupButton} onClick={() => this.togglePopWTS()}/>
+							<img style= {{display: 'block', marginLeft: '80px', marginTop:'-15px',marginRight: 'auto'}} src = {signupButton} onClick={() => this.togglePopSignup()}/>
                             {this.state.wantToSignUp ? <SignUpModal toggle={this.togglePopWTS} /> : null}                    
 
 						</div>
@@ -418,7 +425,8 @@ class SaveMeals extends Component {
   render() {
     return (
       <div>
-
+        {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
+        {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
         {(() => {
 			if(this.state.user_id == "not login") {
 					return (
@@ -430,10 +438,10 @@ class SaveMeals extends Component {
 						       <img style = {{marginLeft:'80px'}} src={continueExploring}/>
 			                </span>							
 							<p style = {{marginLeft:'50px',font: 'SF Pro', fontWeight:'bold', fontSize:'18px',textAlign: 'left', paddingTop:'15px', color:'black'}}>Already a Customer?</p>
-							<img style= {{display: 'block', marginLeft: '80px',marginTop:'-20px', marginRight: 'auto'}} src = {loginButton} onClick={() => this.togglePopWTL()}/>
+							<img style= {{display: 'block', marginLeft: '80px',marginTop:'-20px', marginRight: 'auto'}} src = {loginButton} onClick={() => this.togglePopLogin()}/>
                             {this.state.wantToLogin ? <LoginModal toggle={this.togglePopWTL} /> : null}
 							<p style = {{marginLeft:'80px',font: 'SF Pro', fontWeight:'bold', fontSize:'18px',textAlign: 'left', paddingTop:'15px', color:'black'}}>Ready to start eating better?</p>
-							<img style= {{display: 'block', marginLeft: '80px', marginTop:'-15px',marginRight: 'auto'}} src = {signupButton} onClick={() => this.togglePopWTS()}/>
+							<img style= {{display: 'block', marginLeft: '80px', marginTop:'-15px',marginRight: 'auto'}} src = {signupButton} onClick={() => this.togglePopSignup()}/>
                             {this.state.wantToSignUp ? <SignUpModal toggle={this.togglePopWTS} /> : null}                    
 
 						</div>
@@ -532,6 +540,8 @@ class SurpriseMeals extends Component {
   render() {
     return (
       <div>
+        {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
+        {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
 
         {(() => {
 			if(this.state.user_id == "not login") {
@@ -544,10 +554,10 @@ class SurpriseMeals extends Component {
 						       <img style = {{marginLeft:'80px'}} src={continueExploring}/>
 			                </span>	
 							<p style = {{marginLeft:'50px',font: 'SF Pro', fontWeight:'bold', fontSize:'18px',textAlign: 'left', paddingTop:'15px', color:'black'}}>Already a Customer?</p>
-							<img style= {{display: 'block', marginLeft: '80px',marginTop:'-20px', marginRight: 'auto'}} src = {loginButton} onClick={() => this.togglePopWTL()}/>
+							<img style= {{display: 'block', marginLeft: '80px',marginTop:'-20px', marginRight: 'auto'}} src = {loginButton} onClick={() => this.togglePopLogin()}/>
                             {this.state.wantToLogin ? <LoginModal toggle={this.togglePopWTL} /> : null}
 							<p style = {{marginLeft:'80px',font: 'SF Pro', fontWeight:'bold', fontSize:'18px',textAlign: 'left', paddingTop:'15px', color:'black'}}>Ready to start eating better?</p>
-							<img style= {{display: 'block', marginLeft: '80px', marginTop:'-15px',marginRight: 'auto'}} src = {signupButton} onClick={() => this.togglePopWTS()}/>
+							<img style= {{display: 'block', marginLeft: '80px', marginTop:'-15px',marginRight: 'auto'}} src = {signupButton} onClick={() => this.togglePopSignup()}/>
                             {this.state.wantToSignUp ? <SignUpModal toggle={this.togglePopWTS} /> : null}                    
 
 						</div>
@@ -646,6 +656,8 @@ class SkipMeals extends Component {
   render() {
     return (
       <div>
+        {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
+        {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
 
         {(() => {
 			if(this.state.user_id == "not login") {
@@ -658,10 +670,10 @@ class SkipMeals extends Component {
 						       <img style = {{marginLeft:'80px'}} src={continueExploring}/>
 			                </span>	
 							<p style = {{marginLeft:'50px',font: 'SF Pro', fontWeight:'bold', fontSize:'18px',textAlign: 'left', paddingTop:'15px', color:'black'}}>Already a Customer?</p>
-							<img style= {{display: 'block', marginLeft: '80px',marginTop:'-20px', marginRight: 'auto'}} src = {loginButton} onClick={() => this.togglePopWTL()}/>
+							<img style= {{display: 'block', marginLeft: '80px',marginTop:'-20px', marginRight: 'auto'}} src = {loginButton} onClick={() => this.togglePopLogin()}/>
                             {this.state.wantToLogin ? <LoginModal toggle={this.togglePopWTL} /> : null}
 							<p style = {{marginLeft:'80px',font: 'SF Pro', fontWeight:'bold', fontSize:'18px',textAlign: 'left', paddingTop:'15px', color:'black'}}>Ready to start eating better?</p>
-							<img style= {{display: 'block', marginLeft: '80px', marginTop:'-15px',marginRight: 'auto'}} src = {signupButton} onClick={() => this.togglePopWTS()}/>
+							<img style= {{display: 'block', marginLeft: '80px', marginTop:'-15px',marginRight: 'auto'}} src = {signupButton} onClick={() => this.togglePopSignup()}/>
                             {this.state.wantToSignUp ? <SignUpModal toggle={this.togglePopWTS} /> : null}                    
 						</div>
 					  </div>
@@ -759,6 +771,8 @@ class FavoriteMeal extends Component {
   render() {
     return (
       <div>
+        {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
+        {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
 
         {(() => {
 			if(this.state.user_id == "not login") {
@@ -771,10 +785,10 @@ class FavoriteMeal extends Component {
 						       <img style = {{marginLeft:'80px'}} src={continueExploring}/>
 			                </span>	
 							<p style = {{marginLeft:'50px',font: 'SF Pro', fontWeight:'bold', fontSize:'18px',textAlign: 'left', paddingTop:'15px', color:'black'}}>Already a Customer?</p>
-							<img style= {{display: 'block', marginLeft: '80px',marginTop:'-20px', marginRight: 'auto'}} src = {loginButton} onClick={() => this.togglePopWTL()}/>
+							<img style= {{display: 'block', marginLeft: '80px',marginTop:'-20px', marginRight: 'auto'}} src = {loginButton} onClick={() => this.togglePopLogin()}/>
                             {this.state.wantToLogin ? <LoginModal toggle={this.togglePopWTL} /> : null}
 							<p style = {{marginLeft:'80px',font: 'SF Pro', fontWeight:'bold', fontSize:'18px',textAlign: 'left', paddingTop:'15px', color:'black'}}>Ready to start eating better?</p>
-							<img style= {{display: 'block', marginLeft: '80px', marginTop:'-15px',marginRight: 'auto'}} src = {signupButton} onClick={() => this.togglePopWTS()}/>
+							<img style= {{display: 'block', marginLeft: '80px', marginTop:'-15px',marginRight: 'auto'}} src = {signupButton} onClick={() => this.togglePopSignup()}/>
                             {this.state.wantToSignUp ? <SignUpModal toggle={this.togglePopWTS} /> : null}                    
 
 						</div>
@@ -792,6 +806,14 @@ class CreateAccPWSU1 extends Component {
   handleClick = () => {
     this.props.toggle();
   };
+    viewPassword() {
+    var x = document.getElementById("password");
+    if (x.type === "password") {
+      x.type = "text";
+    } else {
+      x.type = "password";
+    }
+  }
   render() {
     return (
       <div>
@@ -805,7 +827,7 @@ class CreateAccPWSU1 extends Component {
 			<p style = {{font: 'SF Pro', fontWeight:'bold', fontSize:'26px',textAlign: 'center', color:'black'}}>OR</p>
             <div style= {{textAlign:'center'}}>
             <input type = 'credentials' style = {{border:'2px solid #F26522',marginBottom:'10px', width:' 428px', marginLeft: 'auto', marginRight: 'auto', borderRadius:'15px', padding:'10px'}} placeholder = "Create Password"/><br/>
-            <input type = 'credentials' style = {{border:'2px solid #F26522', marginLeft: 'auto', width:' 428px',marginRight: 'auto', borderRadius:'15px', padding:'10px'}} placeholder = "Confirm Password"/>
+            <input type = 'password' style = {{border:'2px solid #F26522', marginLeft: 'auto', width:' 428px',marginRight: 'auto', borderRadius:'15px', padding:'10px'}} placeholder = "Confirm Password"/>
 			<br/><br/><br/>
 			<img style= {{display: 'block', marginLeft: 'auto',marginRight: 'auto'}} src = {signupButton}/>
             </div>
@@ -838,7 +860,10 @@ class LoginModal extends Component {
 			<p style = {{font: 'SF Pro', fontWeight:'bold', fontSize:'26px',textAlign: 'center', color:'black'}}>OR</p>
             <div style= {{textAlign:'center'}}>
             <input type = 'credentials' style = {{border:'2px solid #F26522',marginBottom:'10px', width:' 428px', marginLeft: 'auto', marginRight: 'auto', borderRadius:'15px', padding:'10px'}} placeholder = "Username"/><br/>
-            <input type = 'credentials' style = {{border:'2px solid #F26522', marginLeft: 'auto', width:' 428px',marginRight: 'auto', borderRadius:'15px', padding:'10px'}} placeholder = "Password"/>
+            <div><span>
+            <input type = 'password' style = {{border:'2px solid #F26522', marginLeft: 'auto', width:' 428px',marginRight: 'auto', borderRadius:'15px', padding:'10px'}} placeholder = "Password"/>
+            <a><i className='far fa-eye' id='togglePassword' style = {{color:'#F26522'}} onClick={this.viewPassword}></i></a>
+            </span></div>
             <p style = {{font:'SF Pro', fontWeight:'medium', fontSize:'13px', color:'black'}}><u>Forgot password?</u></p>
 			<br/>
 			<img style= {{display: 'block', marginLeft: 'auto',marginRight: 'auto'}} src = {loginButton}/>
@@ -877,8 +902,10 @@ class SignUpModal extends Component {
             </div><br/>
             <input type = 'credentials' style = {{border:'2px solid #F26522',marginBottom:'10px', width:' 428px', marginLeft: 'auto', marginRight: 'auto', borderRadius:'15px', padding:'10px'}} placeholder = "Email address"/><br/>
             <input type = 'credentials' style = {{border:'2px solid #F26522', marginLeft: 'auto', width:' 428px',marginRight: 'auto', borderRadius:'15px', padding:'10px'}} placeholder = "Confirm Email address"/><br/>
-            <input type = 'credentials' style = {{border:'2px solid #F26522',marginBottom:'10px', width:' 428px', marginLeft: 'auto', marginRight: 'auto', borderRadius:'15px', padding:'10px'}} placeholder = "Create Password <img src = {eyeIcon}/>"/><br/>
+            <input type = 'credentials' style = {{border:'2px solid #F26522',marginBottom:'10px', width:' 428px', marginLeft: 'auto', marginRight: 'auto', borderRadius:'15px', padding:'10px'}} placeholder = "Create Password "/>
+			<a><i className='far fa-eye' id='togglePassword' style = {{color:'#F26522'}} onClick={this.viewPassword}></i></a><br/>
             <input type = 'credentials' style = {{border:'2px solid #F26522', marginLeft: 'auto', width:' 428px',marginRight: 'auto', borderRadius:'15px', padding:'10px'}} placeholder = "Confirm Password"/>
+            <a><i className='far fa-eye' id='togglePassword' style = {{color:'#F26522'}} onClick={this.viewPassword}></i></a>
             <p style = {{font:'SF Pro', fontWeight:'medium', fontSize:'13px', color:'black'}}><u>Forgot password?</u></p>
 			<br/>
 			<img style= {{display: 'block', marginLeft: 'auto',marginRight: 'auto'}} src = {signupButton}/>
