@@ -1,3 +1,6 @@
+/*Remove loginPopup and Signup popUp
+  Become an ambassador for logged in user needs to be linked.
+*/
 import React, { Component } from 'react';
 import { ThemeConsumer } from 'react-bootstrap/esm/ThemeProvider';
 import styles from './home.module.css'
@@ -32,7 +35,15 @@ class HomeLink extends Component {
          );
     }
 }
-
+class LoginModalLink extends Component {
+    render() { 
+        return (
+            <Link component={LoginModal}>
+              <img className = {styles.buttonsBelowTheLogo} src = {this.props.text} style = {this.props.style}/>
+            </Link>
+         );
+    }
+}
 class AddressLink extends Component {
   render() { 
       return (
@@ -50,11 +61,11 @@ class FootLink extends Component {
     state = {
        seen: false
     };
-      togglePop = () => {
+    togglePop = () => {
        this.setState({
        seen: !this.state.seen
       });
-     };
+    };
     render() { 
 	    
         return (
@@ -82,11 +93,29 @@ class AmbassadorLink extends Component {
       user_address:'',
       login_seen:false,
       signUpSeen:false, 
+	  wantToLogin:false,
+	  wantToSignUp:false,
+	  seenForAmb: false,
     };
   }
   handleClick = () => {
     this.props.toggle();
   };
+  togglePopWTL = () => {
+       this.setState({
+       wantToLogin: !this.state.wantToLogin
+      });
+  };
+  togglePopWTS = () => {
+       this.setState({
+       wantToSignUp: !this.state.wantToSignUp
+      });
+  };  
+  togglePopForAmb = () => {
+       this.setState({
+       seenForAmb: !this.state.seenForAmb
+      });
+    };  
   togglePopLogin = () => {
     this.setState({
      login_seen: !this.state.login_seen,
@@ -175,9 +204,11 @@ class AmbassadorLink extends Component {
 							<p style = {{font:'SF Pro', fontSize:'18px', fontWeight:'bold', textAlign: 'center', color:'black'}}> Become an Ambassador</p>
 							<p style= {{marginLeft:'auto', marginRight:'auto', width:'437px', height:'117px', font: 'SF Pro', fontWeight:'medium', fontSize:'22px',textAlign: 'center'}}>Save money by helping others eat better. Become an ambassador by sharing MealsFor.Me with your friends. The more you share, the more you save.</p>
 							<br/><br/>
-							<img style= {{display: 'block', marginLeft: 'auto', marginRight: 'auto'}} src = {LTBAA}/>
+							<img style= {{display: 'block', marginLeft: 'auto', marginRight: 'auto'}} src = {LTBAA}  onClick={() => this.togglePopWTL()}/>
+                            {this.state.wantToLogin ? <LoginModal toggle={this.togglePopWTL} /> : null}
 							<p style = {{font: 'SF Pro', fontWeight:'bold', fontSize:'26px',textAlign: 'center', paddingTop:'15px'}}>OR</p>
-							<img style= {{display: 'block', marginLeft: 'auto', marginRight: 'auto'}} src = {SUTBAA}/>
+							<img style= {{display: 'block', marginLeft: 'auto', marginRight: 'auto'}} src = {SUTBAA} onClick={() => this.togglePopWTS()}/>
+                            {this.state.wantToSignUp ? <SignUpModal toggle={this.togglePopWTS} /> : null}
 						</div>
 					  </div>
 				)}
@@ -194,12 +225,30 @@ class AddMeals extends Component {
       user_id:'',
       user_address:'',
       login_seen:false,
-      signUpSeen:false, 
+      signUpSeen:false,
+      wantToLogin:false,
+      wantToSignUp:false,
+	  seenForAM: false,	  
     };
   }
   handleClick = () => {
     this.props.toggle();
   };
+  togglePopWTL = () => {
+       this.setState({
+       wantToLogin: !this.state.wantToLogin
+      });
+  };
+  togglePopWTS = () => {
+       this.setState({
+       wantToSignUp: !this.state.wantToSignUp
+      });
+  };  
+  togglePopForAdd = () => {
+       this.setState({
+       seenForAM: !this.state.seenForAM
+      });
+    };  
   togglePopLogin = () => {
     this.setState({
      login_seen: !this.state.login_seen,
@@ -256,8 +305,6 @@ class AddMeals extends Component {
   render() {
     return (
       <div>
-        {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
-        {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
 
         {(() => {
 			if(this.state.user_id == "not login") {
@@ -266,11 +313,16 @@ class AddMeals extends Component {
 						<div className={styles.modal_content}>
 			                <p style = {{font:'SF Pro', fontSize: '24px', fontWeight:'medium', textAlign: 'left', color:'black'}}>Looks like you’re enjoying MealsFor.Me!<br/> The <img src = {negativeSign}/> <img src ={positiveSign}/> buttons help you add / <br/>remove meals from your meal plan.</p>	
 							<br/><br/>
-							<img style= {{display: 'block', marginLeft: '80px', marginRight: 'auto'}} src = {continueExploring}/>
+						    <span onClick={this.handleClick}>
+						       <img style = {{marginLeft:'80px'}} src={continueExploring}/>
+			                </span>
 							<p style = {{marginLeft:'50px',font: 'SF Pro', fontWeight:'bold', fontSize:'18px',textAlign: 'left', paddingTop:'15px', color:'black'}}>Already a Customer?</p>
-							<img style= {{display: 'block', marginLeft: '80px',marginTop:'-20px', marginRight: 'auto'}} src = {loginButton}/>
+							<img src ={loginButton} style= {{display: 'block', marginLeft: '80px',marginTop:'-20px', marginRight: 'auto'}} onClick={() => this.togglePopWTL()}/>
+                            {this.state.wantToLogin ? <LoginModal toggle={this.togglePopWTL} /> : null}
 							<p style = {{marginLeft:'80px',font: 'SF Pro', fontWeight:'bold', fontSize:'18px',textAlign: 'left', paddingTop:'15px', color:'black'}}>Ready to start eating better?</p>
-							<img style= {{display: 'block', marginLeft: '80px', marginTop:'-15px',marginRight: 'auto'}} src = {signupButton}/>
+							<img style= {{display: 'block', marginLeft: '80px', marginTop:'-15px',marginRight: 'auto'}} src = {signupButton} onClick={() => this.togglePopWTS()}/>
+                            {this.state.wantToSignUp ? <SignUpModal toggle={this.togglePopWTS} /> : null}                    
+
 						</div>
 					  </div>
 				)}
@@ -287,12 +339,30 @@ class SaveMeals extends Component {
       user_id:'',
       user_address:'',
       login_seen:false,
-      signUpSeen:false, 
+      signUpSeen:false,
+      wantToLogin:false,
+      wantToSignUp:false,
+	  seenForAM: false,	  
     };
   }
   handleClick = () => {
     this.props.toggle();
   };
+  togglePopWTL = () => {
+       this.setState({
+       wantToLogin: !this.state.wantToLogin
+      });
+  };
+  togglePopWTS = () => {
+       this.setState({
+       wantToSignUp: !this.state.wantToSignUp
+      });
+  };  
+  togglePopForAdd = () => {
+       this.setState({
+       seenForAM: !this.state.seenForAM
+      });
+    };  
   togglePopLogin = () => {
     this.setState({
      login_seen: !this.state.login_seen,
@@ -349,8 +419,6 @@ class SaveMeals extends Component {
   render() {
     return (
       <div>
-        {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
-        {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
 
         {(() => {
 			if(this.state.user_id == "not login") {
@@ -359,11 +427,16 @@ class SaveMeals extends Component {
 						<div className={styles.modal_content}>
 			                <p className= {styles.ambassdorText} style = {{font:'SF Pro', fontSize: '24px', fontWeight:'medium', textAlign: 'left', color:'black'}}><span style={{color:'#F26522'}}>Save</span> allows you to select your meals up<br/> to 3 weeks in advance.</p>	
 							<br/><br/>
-							<img style= {{display: 'block', marginLeft: '80px', marginRight: 'auto'}} src = {continueExploring}/>
+						    <span onClick={this.handleClick}>
+						       <img style = {{marginLeft:'80px'}} src={continueExploring}/>
+			                </span>							
 							<p style = {{marginLeft:'50px',font: 'SF Pro', fontWeight:'bold', fontSize:'18px',textAlign: 'left', paddingTop:'15px', color:'black'}}>Already a Customer?</p>
-							<img style= {{display: 'block', marginLeft: '80px',marginTop:'-20px', marginRight: 'auto'}} src = {loginButton}/>
+							<img style= {{display: 'block', marginLeft: '80px',marginTop:'-20px', marginRight: 'auto'}} src = {loginButton} onClick={() => this.togglePopWTL()}/>
+                            {this.state.wantToLogin ? <LoginModal toggle={this.togglePopWTL} /> : null}
 							<p style = {{marginLeft:'80px',font: 'SF Pro', fontWeight:'bold', fontSize:'18px',textAlign: 'left', paddingTop:'15px', color:'black'}}>Ready to start eating better?</p>
-							<img style= {{display: 'block', marginLeft: '80px', marginTop:'-15px',marginRight: 'auto'}} src = {signupButton}/>
+							<img style= {{display: 'block', marginLeft: '80px', marginTop:'-15px',marginRight: 'auto'}} src = {signupButton} onClick={() => this.togglePopWTS()}/>
+                            {this.state.wantToSignUp ? <SignUpModal toggle={this.togglePopWTS} /> : null}                    
+
 						</div>
 					  </div>
 				)}
@@ -381,11 +454,29 @@ class SurpriseMeals extends Component {
       user_address:'',
       login_seen:false,
       signUpSeen:false, 
+      wantToLogin:false,
+      wantToSignUp:false,
+	  seenForAM: false,	  
     };
   }
   handleClick = () => {
     this.props.toggle();
   };
+  togglePopWTL = () => {
+       this.setState({
+       wantToLogin: !this.state.wantToLogin
+      });
+  };
+  togglePopWTS = () => {
+       this.setState({
+       wantToSignUp: !this.state.wantToSignUp
+      });
+  };  
+  togglePopForAdd = () => {
+       this.setState({
+       seenForAM: !this.state.seenForAM
+      });
+    };  
   togglePopLogin = () => {
     this.setState({
      login_seen: !this.state.login_seen,
@@ -442,8 +533,6 @@ class SurpriseMeals extends Component {
   render() {
     return (
       <div>
-        {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
-        {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
 
         {(() => {
 			if(this.state.user_id == "not login") {
@@ -452,11 +541,16 @@ class SurpriseMeals extends Component {
 						<div className={styles.modal_content}>
 			                <p className= {styles.ambassdorText} style = {{font:'SF Pro', fontSize: '24px', fontWeight:'medium', textAlign: 'left', color:'black'}}><span style={{color:'#F26522'}}>Surprise</span> means we’ll give you an <br/>assortment of meals on the specific <br/>delivery day.</p>	
 							<br/><br/>
-							<img style= {{display: 'block', marginLeft: '80px', marginRight: 'auto'}} src = {continueExploring}/>
+						    <span onClick={this.handleClick}>
+						       <img style = {{marginLeft:'80px'}} src={continueExploring}/>
+			                </span>	
 							<p style = {{marginLeft:'50px',font: 'SF Pro', fontWeight:'bold', fontSize:'18px',textAlign: 'left', paddingTop:'15px', color:'black'}}>Already a Customer?</p>
-							<img style= {{display: 'block', marginLeft: '80px',marginTop:'-20px', marginRight: 'auto'}} src = {loginButton}/>
+							<img style= {{display: 'block', marginLeft: '80px',marginTop:'-20px', marginRight: 'auto'}} src = {loginButton} onClick={() => this.togglePopWTL()}/>
+                            {this.state.wantToLogin ? <LoginModal toggle={this.togglePopWTL} /> : null}
 							<p style = {{marginLeft:'80px',font: 'SF Pro', fontWeight:'bold', fontSize:'18px',textAlign: 'left', paddingTop:'15px', color:'black'}}>Ready to start eating better?</p>
-							<img style= {{display: 'block', marginLeft: '80px', marginTop:'-15px',marginRight: 'auto'}} src = {signupButton}/>
+							<img style= {{display: 'block', marginLeft: '80px', marginTop:'-15px',marginRight: 'auto'}} src = {signupButton} onClick={() => this.togglePopWTS()}/>
+                            {this.state.wantToSignUp ? <SignUpModal toggle={this.togglePopWTS} /> : null}                    
+
 						</div>
 					  </div>
 				)}
@@ -473,12 +567,30 @@ class SkipMeals extends Component {
       user_id:'',
       user_address:'',
       login_seen:false,
-      signUpSeen:false, 
+      signUpSeen:false,
+      wantToLogin:false,
+      wantToSignUp:false,
+	  seenForAM: false,	  
     };
   }
   handleClick = () => {
     this.props.toggle();
   };
+  togglePopWTL = () => {
+       this.setState({
+       wantToLogin: !this.state.wantToLogin
+      });
+  };
+  togglePopWTS = () => {
+       this.setState({
+       wantToSignUp: !this.state.wantToSignUp
+      });
+  };  
+  togglePopForAdd = () => {
+       this.setState({
+       seenForAM: !this.state.seenForAM
+      });
+    };  
   togglePopLogin = () => {
     this.setState({
      login_seen: !this.state.login_seen,
@@ -535,8 +647,6 @@ class SkipMeals extends Component {
   render() {
     return (
       <div>
-        {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
-        {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
 
         {(() => {
 			if(this.state.user_id == "not login") {
@@ -545,11 +655,15 @@ class SkipMeals extends Component {
 						<div className={styles.modal_content}>
 			                <p className= {styles.ambassdorText} style = {{font:'SF Pro', fontSize: '24px', fontWeight:'medium', textAlign: 'left', color:'black'}}>Not at home or have other plans?<br/> Its easy to <span style={{color:'#F26522'}}>Skip</span> a delivery and we’ll<br/> automatically extend your subscription.</p>	
 							<br/><br/>
-							<img style= {{display: 'block', marginLeft: '80px', marginRight: 'auto'}} src = {continueExploring}/>
+						    <span onClick={this.handleClick}>
+						       <img style = {{marginLeft:'80px'}} src={continueExploring}/>
+			                </span>	
 							<p style = {{marginLeft:'50px',font: 'SF Pro', fontWeight:'bold', fontSize:'18px',textAlign: 'left', paddingTop:'15px', color:'black'}}>Already a Customer?</p>
-							<img style= {{display: 'block', marginLeft: '80px',marginTop:'-20px', marginRight: 'auto'}} src = {loginButton}/>
+							<img style= {{display: 'block', marginLeft: '80px',marginTop:'-20px', marginRight: 'auto'}} src = {loginButton} onClick={() => this.togglePopWTL()}/>
+                            {this.state.wantToLogin ? <LoginModal toggle={this.togglePopWTL} /> : null}
 							<p style = {{marginLeft:'80px',font: 'SF Pro', fontWeight:'bold', fontSize:'18px',textAlign: 'left', paddingTop:'15px', color:'black'}}>Ready to start eating better?</p>
-							<img style= {{display: 'block', marginLeft: '80px', marginTop:'-15px',marginRight: 'auto'}} src = {signupButton}/>
+							<img style= {{display: 'block', marginLeft: '80px', marginTop:'-15px',marginRight: 'auto'}} src = {signupButton} onClick={() => this.togglePopWTS()}/>
+                            {this.state.wantToSignUp ? <SignUpModal toggle={this.togglePopWTS} /> : null}                    
 						</div>
 					  </div>
 				)}
@@ -567,11 +681,29 @@ class FavoriteMeal extends Component {
       user_address:'',
       login_seen:false,
       signUpSeen:false, 
+      wantToLogin:false,
+      wantToSignUp:false,
+	  seenForAM: false,
     };
   }
   handleClick = () => {
     this.props.toggle();
   };
+  togglePopWTL = () => {
+       this.setState({
+       wantToLogin: !this.state.wantToLogin
+      });
+  };
+  togglePopWTS = () => {
+       this.setState({
+       wantToSignUp: !this.state.wantToSignUp
+      });
+  };  
+  togglePopForAdd = () => {
+       this.setState({
+       seenForAM: !this.state.seenForAM
+      });
+    };   
   togglePopLogin = () => {
     this.setState({
      login_seen: !this.state.login_seen,
@@ -628,8 +760,6 @@ class FavoriteMeal extends Component {
   render() {
     return (
       <div>
-        {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
-        {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
 
         {(() => {
 			if(this.state.user_id == "not login") {
@@ -638,11 +768,16 @@ class FavoriteMeal extends Component {
 						<div className={styles.modal_content}>
 			                <p className= {styles.ambassdorText} style = {{font:'SF Pro', fontSize: '24px', fontWeight:'medium', textAlign: 'left', color:'black'}}>Don’t forget your <span style={{color:'#F26522'}}>favorite</span> meals!<br/> Click the <img src ={heartImage}/> to easily find your favorite<br/> meals and get reminders.</p>	
 							<br/><br/>
-							<img style= {{display: 'block', marginLeft: '80px', marginRight: 'auto'}} src = {continueExploring}/>
+						    <span onClick={this.handleClick}>
+						       <img style = {{marginLeft:'80px'}} src={continueExploring}/>
+			                </span>	
 							<p style = {{marginLeft:'50px',font: 'SF Pro', fontWeight:'bold', fontSize:'18px',textAlign: 'left', paddingTop:'15px', color:'black'}}>Already a Customer?</p>
-							<img style= {{display: 'block', marginLeft: '80px',marginTop:'-20px', marginRight: 'auto'}} src = {loginButton}/>
+							<img style= {{display: 'block', marginLeft: '80px',marginTop:'-20px', marginRight: 'auto'}} src = {loginButton} onClick={() => this.togglePopWTL()}/>
+                            {this.state.wantToLogin ? <LoginModal toggle={this.togglePopWTL} /> : null}
 							<p style = {{marginLeft:'80px',font: 'SF Pro', fontWeight:'bold', fontSize:'18px',textAlign: 'left', paddingTop:'15px', color:'black'}}>Ready to start eating better?</p>
-							<img style= {{display: 'block', marginLeft: '80px', marginTop:'-15px',marginRight: 'auto'}} src = {signupButton}/>
+							<img style= {{display: 'block', marginLeft: '80px', marginTop:'-15px',marginRight: 'auto'}} src = {signupButton} onClick={() => this.togglePopWTS()}/>
+                            {this.state.wantToSignUp ? <SignUpModal toggle={this.togglePopWTS} /> : null}                    
+
 						</div>
 					  </div>
 				)}
@@ -652,6 +787,12 @@ class FavoriteMeal extends Component {
   }
 }
 class CreateAccPWSU1 extends Component {
+  constructor(props){
+    super();
+  }	
+  handleClick = () => {
+    this.props.toggle();
+  };
   render() {
     return (
       <div>
@@ -676,13 +817,19 @@ class CreateAccPWSU1 extends Component {
   }	
 }
 class LoginModal extends Component {
+  constructor(props){
+    super();
+  }	
+  handleClick = () => {
+    this.props.toggle();
+  };	
   render() {
     return (
       <div>
-	    <div className={styles.modal}>
+	    <div className={styles.modal2}>
 		    <div className={styles.modal_content}>
 			<span className={styles.close} onClick={this.handleClick}>
-						<img src={closeIconImg}/>
+			    <img src={closeIconImg}/>
 			</span>
 			<p className= {styles.ambassdorText} style = {{font:'SF Pro', fontSize: '26px', fontWeight:'bold', textAlign: 'center', color:'black'}}>Login</p>	
 			<br/>
@@ -704,13 +851,19 @@ class LoginModal extends Component {
   }	
 }
 class SignUpModal extends Component {
+  constructor(props){
+    super();
+  }	
+  handleClick = () => {
+    this.props.toggle();
+  };
   render() {
     return (
       <div>
-	    <div className={styles.modal}>
+	    <div className={styles.modal2}>
 		    <div className={styles.modal_content}>
 			<span className={styles.close} onClick={this.handleClick}>
-						<img src={closeIconImg}/>
+				<img src={closeIconImg}/>
 			</span>
 			<p className= {styles.ambassdorText} style = {{font:'SF Pro', fontSize: '26px', fontWeight:'bold', textAlign: 'center', color:'black'}}>Sign up</p>	
 			<br/>
@@ -719,8 +872,10 @@ class SignUpModal extends Component {
             <img style= {{display: 'block', marginLeft: 'auto', marginRight: 'auto'}} src = {continueWithGoogle}/>
 			<p style = {{font: 'SF Pro', fontWeight:'bold', fontSize:'26px',textAlign: 'center', color:'black'}}>OR</p>
             <div style= {{textAlign:'center'}}>
-            <input type = 'credentials' style = {{border:'2px solid #F26522',marginBottom:'10px', width:' 214px', marginLeft: 'auto', marginRight: 'auto', borderRadius:'15px', padding:'10px'}} placeholder = "First Name"/><br/>
-		    <input type = 'credentials' style = {{border:'2px solid #F26522',marginBottom:'10px', width:' 214px', marginLeft: 'auto', marginRight: 'auto', borderRadius:'15px', padding:'10px'}} placeholder = "Last Name"/><br/>
+			<div style={{overflow: 'hidden', display:'inline-flex'}}>
+            <input type = 'credentials' style = {{float:'left', border:'2px solid #F26522',marginBottom:'10px', width:' 214px', borderRadius:'15px', padding:'10px', marginRight:'10px'}} placeholder = "First Name"/><br/>
+		    <input type = 'credentials' style = {{float:'right',border:'2px solid #F26522',marginBottom:'10px', width:' 214px', borderRadius:'15px', padding:'10px'}} placeholder = "Last Name"/><br/>
+            </div><br/>
             <input type = 'credentials' style = {{border:'2px solid #F26522',marginBottom:'10px', width:' 428px', marginLeft: 'auto', marginRight: 'auto', borderRadius:'15px', padding:'10px'}} placeholder = "Email address"/><br/>
             <input type = 'credentials' style = {{border:'2px solid #F26522', marginLeft: 'auto', width:' 428px',marginRight: 'auto', borderRadius:'15px', padding:'10px'}} placeholder = "Confirm Email address"/><br/>
             <input type = 'credentials' style = {{border:'2px solid #F26522',marginBottom:'10px', width:' 428px', marginLeft: 'auto', marginRight: 'auto', borderRadius:'15px', padding:'10px'}} placeholder = "Create Password <img src = {eyeIcon}/>"/><br/>
