@@ -68,8 +68,7 @@ class FootLink extends Component {
     };
     render() { 
 	    
-        return (
-		
+        return (		
             <div className = {styles.footerBackground}>	
 			{/*<AmbassadorLink text = "Click here" link='/select-meal'>
 			</AmbassadorLink>*/}	
@@ -796,7 +795,7 @@ class CreateAccPWSU1 extends Component {
   render() {
     return (
       <div>
-	    <div className={styles.modal}>
+	    <div className={styles.modal3}>
 		    <div className={styles.modal_content}>
 			<p className= {styles.ambassdorText} style = {{font:'SF Pro', fontSize: '26px', fontWeight:'bold', textAlign: 'center', color:'black'}}>Create an account</p>	
 			<br/>

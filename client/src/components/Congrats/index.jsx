@@ -15,7 +15,7 @@ import createAnAccountImage from  '../../images/Group 234.png';
 import pathFromCAAToSYM from '../../images/Path 49.png';
 import pathFromRYMToHAE from '../../images/Path 29.png';
 import selectYourMealImage from '../../images/Group 114_SYM.png';
-import {HomeLink, FootLink} from "../Home/homeButtons"
+import {HomeLink, FootLink, CreateAccPWSU1} from "../Home/homeButtons"
 
 export class Congrats extends Component {
 
@@ -25,9 +25,15 @@ export class Congrats extends Component {
       user_id:'',
       user_address:'',
       login_seen:false,
-      signUpSeen:false, 
+      signUpSeen:false,
+      seen: false,	  
     };
   }
+    togglePop = () => {
+       this.setState({
+       seen: !this.state.seen
+      });
+    };  
   togglePopLogin = () => {
     this.setState({
      login_seen: !this.state.login_seen,
@@ -133,9 +139,11 @@ export class Congrats extends Component {
 					 <div style = {{textAlign:'center'}}>
 					 <img style = {{marginLeft: '-20%'}} src = {path28_bottom}/>
 					 <br/>
-					 <HomeLink text = {createAnAccountImage} link = "/home" style = {{marginLeft: '50px', marginBottom:'-10px'}}/>
-					 <img style = {{marginLeft:'-50px', width:'280px', height:'120px'}} src = {pathFromCAAToSYM}/>
-					 <br/>
+                     <img src = {createAnAccountImage} style = {{marginTop:'-20px',marginLeft: '-70px', marginBottom:'-10px', width:'320px', height:'50px'}} onClick={() => this.togglePop()}/>
+                     {this.state.seen ? <CreateAccPWSU1 toggle={this.togglePop} /> : null}
+					 <div style = {{marginTop: '10px', marginLeft:'-90px'}}>
+					 <img style = {{ width:'280px', height:'120px'}} src = {pathFromCAAToSYM}/>
+					 </div>
 					 <HomeLink text = {selectYourMealImage} link = "/select-meal" style = {{marginLeft: '80px', marginBottom:'-10px'}}/>
 					 <img style = {{marginLeft:'-50px', width:'280px', height:'120px'}} src = {path28_top}/>
 					 <br/>
