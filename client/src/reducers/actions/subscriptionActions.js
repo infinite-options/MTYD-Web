@@ -599,7 +599,6 @@ export const fetchSubscribed = customerId => async dispatch => {
   return purchaseIds;
 };
 
-
 export const setCurrentMeal = meal => dispatch =>
   dispatch({
     type: SET_CURRENT_MEAL,

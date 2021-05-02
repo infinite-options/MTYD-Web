@@ -12,7 +12,7 @@
 
 .menuSection {
   margin: 50px 0px 0px 0px;
-  border: groove;
+  /*border: groove;*/
 }
 
 .input {
@@ -55,16 +55,16 @@
 
 
 .boxPDleft {
-  border: solid;
-  border-color: red;
+  /*border: solid;
+  border-color: red;*/
   width: 22%;
   margin-left: 8%;
   justify-content: center;
 }
 .boxPDright {
   text-align: left;
-  border: solid;
-  border-color: red;
+  /*border: solid;
+  border-color: red;*/
   margin-right: 8%;
   width: 62%;
 }
@@ -244,7 +244,7 @@
   outline: 0;
 }
 
-.deliveryButton {
+/*.deliveryButton {
   color: #000000;
   background-color: #ffffff;
   margin: 5px;
@@ -261,7 +261,36 @@
   box-shadow: none !important;
   outline: 0;
   border-radius: 0;
+}*/
+.deliveryButton {
+  color: #000000;
+  border: 1px solid #e4e4e4;
+  box-shadow: 2px 2px #d3d3d3;
+  background-color: #ffffff;
+  /*border-radius: 25px;*/
+  padding: 0.5rem 0.5rem;
+  margin: 5px;
+  align-content: center;
+  flex: 1;
+  min-width: 20%;
+  font-size: 13px;
+  font-weight: 600;
+  outline: 0;
+  height: 100px;
+  width: 100px;
+  border-radius: 0;
 }
+
+/*.deliveryButtonSelected {
+  background-color: #FFBA00;
+  outline: 0;
+}*/
+/*.deliveryButtonSelected {
+  border: solid;
+  border-color: #ff6505;
+  box-shadow: none !important;
+  outline: 0;
+}*/
 .deliveryButtonCurrent {
   color: #000000;
   background-color: #ffffff;
@@ -844,7 +873,7 @@
   /*margin: 80px auto 0px;*/
   margin: 0px auto 50px;
   text-align: center;
-  border: inset;
+  /*border: inset;*/
   float: left;
 }
 
