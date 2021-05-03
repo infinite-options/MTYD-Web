@@ -156,7 +156,8 @@ class EditPlan extends React.Component {
           delivery_fee: "0.00",
           service_fee: "0.00",
           driver_tip: "2.00",
-          discount: "0.00",
+          discount_amount: "0.00",
+          discount_rate: 0,
           ambassador_discount: "0.00",
           subtotal: "0.00",
           total: "0.00"
@@ -177,7 +178,8 @@ class EditPlan extends React.Component {
           delivery_fee: "0.00",
           service_fee: "0.00",
           driver_tip: "2.00",
-          discount: "0.00",
+          discount_amount: "0.00",
+          discount_rate: 0,
           ambassador_discount: "0.00",
           subtotal: "0.00",
           total: "0.00"
@@ -309,14 +311,24 @@ class EditPlan extends React.Component {
     //   newUpdatedPlan.payment_summary.driver_tip +
     //   newUpdatedPlan.payment_summary.ambassador_discount
     // ) - (parseFloat(newUpdatedPlan.payment_summary.base_amount)*mealPlan.delivery_discount*0.01);
+    // newUpdatedPlan.payment_summary.discount_amount = newBaseAmount.toFixed(2);
+    
+    newUpdatedPlan.payment_summary.discount_rate = mealPlan.delivery_discount;
     newUpdatedPlan.payment_summary.total = (
-      parseFloat(newUpdatedPlan.payment_summary.base_amount) +
-      parseFloat(newUpdatedPlan.payment_summary.taxes) + 
-      parseFloat(newUpdatedPlan.payment_summary.service_fee) +
-      parseFloat(newUpdatedPlan.payment_summary.delivery_fee) +
-      parseFloat(newUpdatedPlan.payment_summary.driver_tip) +
-      parseFloat(newUpdatedPlan.payment_summary.ambassador_discount)
-    ) - (parseFloat(newUpdatedPlan.payment_summary.base_amount)*mealPlan.delivery_discount*0.01);
+      (
+        parseFloat(newUpdatedPlan.payment_summary.base_amount) +
+        parseFloat(newUpdatedPlan.payment_summary.taxes) + 
+        parseFloat(newUpdatedPlan.payment_summary.service_fee) +
+        parseFloat(newUpdatedPlan.payment_summary.delivery_fee) +
+        parseFloat(newUpdatedPlan.payment_summary.driver_tip) +
+        parseFloat(newUpdatedPlan.payment_summary.ambassador_discount)
+      ) - (
+        parseFloat(newUpdatedPlan.payment_summary.base_amount)*mealPlan.delivery_discount*0.01
+      )
+    ).toFixed(2);
+    newUpdatedPlan.payment_summary.discount_amount = (
+      parseFloat(newUpdatedPlan.payment_summary.base_amount)*mealPlan.delivery_discount*0.01
+    ).toFixed(2);
 
     console.log("new payment summary: ", newUpdatedPlan.payment_summary);
 
@@ -419,7 +431,12 @@ class EditPlan extends React.Component {
         delivery_fee: sub.delivery_fee.toFixed(2),
         service_fee: sub.service_fee.toFixed(2),
         driver_tip: sub.driver_tip.toFixed(2),
-        discount: parsedDiscount.toFixed(2),
+        discount_amount: (
+          parseFloat(nextBillingAmount) *
+          parsedDiscount *
+          0.01
+        ).toFixed(2),
+        discount_rate: parsedDiscount,
         ambassador_discount: "0.00",
         subtotal: "0.00",
         total: nextBillingAmount.toFixed(2)
@@ -1028,8 +1045,8 @@ class EditPlan extends React.Component {
             console.log("new current plan: ", sub);
 
             this.setState({
-              currentPlan: sub,
-              updatedPlan: sub
+              currentPlan: {...sub},
+              updatedPlan: {...sub}
             });
 
           }}
@@ -1272,6 +1289,19 @@ class EditPlan extends React.Component {
 
   changeTip(newTip) {
     console.log("attempted to change tip");
+
+    this.setState(prevState => ({
+      updatedPlan: {
+        ...prevState.updatedPlan,
+        payment_summary: {
+          ...prevState.updatedPlan.payment_summary,
+          driver_tip: newTip
+        }
+      }
+    }),() => {
+      this.changePlans(this.state.updatedPlan.meals,this.state.updatedPlan.deliveries);
+    });
+
     // this.setState(prevState => ({
     //   recalculatingPrice: true,
     //   paymentSummary: {
@@ -1712,11 +1742,17 @@ class EditPlan extends React.Component {
                   </div>
 
                   <div className={styles.summaryRight}>
-                    -${this.state.updatedPlan.payment_summary.discount}
+                    {
+                      "-$" + this.state.updatedPlan.payment_summary.discount_amount + 
+                      " (" + this.state.updatedPlan.payment_summary.discount_rate + "%)"
+                    }
                   </div>
 
                   <div className={styles.summaryRight}>
-                    -${this.state.currentPlan.payment_summary.discount}
+                    {
+                      "-$" + this.state.currentPlan.payment_summary.discount_amount + 
+                      " (" + this.state.currentPlan.payment_summary.discount_rate + "%)"
+                    }
                   </div>
 
                   <div className={styles.summaryRight}>
