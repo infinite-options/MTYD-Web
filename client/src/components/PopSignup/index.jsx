@@ -328,7 +328,7 @@ export class PopSignup extends Component {
           style={{
             width: '452px',
             height: '71px',
-            background:' #FF8500 0% 0% no-repeat padding-box',
+            background:' #F26522 0% 0% no-repeat padding-box',
             borderRadius: '14px',
             opacity: 1,
             marginLeft:'49px',
@@ -338,10 +338,11 @@ export class PopSignup extends Component {
           onClick={this.wrapperFunction}
         >
           <p style={{
-            fontSize:'20px',
+            fontSize:'24px',
             textAlign:'center',
             marginTop:8,
             fontWeight:500,
+			font:'SF Pro'
           }}>
             Sign up
           </p>
