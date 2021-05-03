@@ -35,8 +35,8 @@ It is breaking everything.
     margin: 0;
     background: #F8BB17; 
     position: absolute;
-    top: 50%;
-    left: 100%;
+    top: 45%;
+    left: 80%;
     margin-right: -50%;
     transform: translate(-50%, -50%);
     height: auto; 
@@ -320,6 +320,12 @@ input[type="zipCode"]::placeholder {
   font-size:18px;
 }
 input[type='credentials']::placeholder {
+	font:SF Pro;
+	font-weight:medium;
+	font-size:24px;
+	color:black;
+}
+input[type='password']::placeholder {
 	font:SF Pro;
 	font-weight:medium;
 	font-size:24px;
