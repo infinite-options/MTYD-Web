@@ -1,0 +1,49 @@
+.model_content {
+  position: absolute;
+  top: 10%;
+  right:1%;
+  width: 549px;
+  height: 1047px;
+  background: white;
+  border:3px solid #F26522;
+  opacity: 1;
+  margin-top: 80px;
+}
+
+.inputBox{
+  top: 333px;
+  left: 86px;
+  width: 428px;
+  height: 49px;
+  background: #FFFFFF;
+  border:2px solid #F26522;
+  border-radius: 10px;
+  opacity: 1;
+  margin-bottom: 6px;
+  outline: none;
+}
+
+.close {
+  color: Black;
+  width:36px;
+  height:36px;
+  opacity: 1;
+  margin:15px;
+  text-align: center;
+  border-radius: 50%;
+  background-image: url('../../images/closeIcon.png');
+  background-size: cover;
+  background-position: center;
+}
+input[type="text"]::placeholder { 
+  text-align: center;
+  color:grey;
+  font-size:25px;
+}
+input[type="SFProText"]::placeholder {
+  text-align: left;
+  color:black;
+  font-size:24px;
+  font:SF Pro;
+  font-weight:medium;  
+}

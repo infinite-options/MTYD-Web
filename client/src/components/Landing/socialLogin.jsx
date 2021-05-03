@@ -103,7 +103,51 @@ class SocialLogin extends Component {
         return ( 
             // <div className={styles.socialLogin}
             <div>
-
+              <div
+                style={{
+                  width:'412px',
+                  height:'77px',
+                  marginLeft:'68px',
+                  marginBottom:'11px',
+                  backgroundImage:`url(${socialA})`,
+                  backgroundSize:'cover',
+                  backgroundPosition:'center',
+                  
+                }}
+              >
+                <button
+                  onClick={() => {
+                    window.AppleID.auth.signIn();
+                  }}
+                  className={styles.appleLogin}
+                >
+                  {/* <i
+                    className='fa fa-apple'
+                    style={{fontSize: "28px", color: "white"}}
+                  ></i> */}
+                </button>
+              </div>
+              <div
+              style={{
+                width:'412px',
+                height:'77px',
+                marginLeft:'2px',
+                marginBottom:'11px',
+                marginLeft:'68px',
+                backgroundImage:`url(${socialF})`,
+                backgroundSize:'cover',
+                backgroundPosition:'center',
+              }}
+              >
+                <FacebookLogin
+                  appId={process.env.REACT_APP_FACEBOOK_APP_ID}
+                  autoLoad={false}
+                  fields={"name,email,picture"}
+                  callback={this.responseFacebook}
+                  cssClass={styles.fbLogin}
+                  textButton=''
+                />
+              </div>			  
               <div
                 style={{
                   width:'412px',
@@ -132,52 +176,6 @@ class SocialLogin extends Component {
                 />
               </div>
 
-              <div
-              style={{
-                width:'412px',
-                height:'77px',
-                marginLeft:'2px',
-                marginBottom:'11px',
-                marginLeft:'68px',
-                backgroundImage:`url(${socialF})`,
-                backgroundSize:'cover',
-                backgroundPosition:'center',
-              }}
-              >
-                <FacebookLogin
-                  appId={process.env.REACT_APP_FACEBOOK_APP_ID}
-                  autoLoad={false}
-                  fields={"name,email,picture"}
-                  callback={this.responseFacebook}
-                  cssClass={styles.fbLogin}
-                  textButton=''
-                />
-              </div>
-
-              <div
-                style={{
-                  width:'412px',
-                  height:'77px',
-                  marginLeft:'68px',
-                  marginBottom:'11px',
-                  backgroundImage:`url(${socialA})`,
-                  backgroundSize:'cover',
-                  backgroundPosition:'center',
-                  
-                }}
-              >
-                <button
-                  onClick={() => {
-                    window.AppleID.auth.signIn();
-                  }}
-                  className={styles.appleLogin}
-                >
-                  {/* <i
-                    className='fa fa-apple'
-                    style={{fontSize: "28px", color: "white"}}
-                  ></i> */}
-                </button>
-              </div>
           </div>
          );
     }

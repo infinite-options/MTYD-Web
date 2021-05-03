@@ -38,6 +38,8 @@ import howDoesImage from "../../images/howDoesImage.png"
 import axios from 'axios';
 import ProductDisplay from './ProductDisplay';
 import HomeMap from "../HomeAddressSearch"
+import mobileGraph from "../../images/Mobile graphic - with text@2x.png"
+
 const google = window.google;
 
 
@@ -93,7 +95,6 @@ class Home extends Component {
     const autocomplete = new google.maps.places.Autocomplete(document.getElementById('ship-address'),{
       componentRestrictions: { country: ["us", "ca"] },
     })
-
     autocomplete.addListener("place_changed", ()=>{
       const place = autocomplete.getPlace();
       console.log(place)
@@ -199,17 +200,13 @@ class Home extends Component {
     console.log(this.state)
   }
 
-
-
-
   render() { 
     return (
       <>
       <div>
         <WebNavBar/>
       </div>
-
-      
+	  {/*<SocialLogin/>*/}
       {(() => {
         if (this.state.windowWidth >= 800) {
           return (
@@ -217,7 +214,8 @@ class Home extends Component {
             <div className = {styles.gridDisplayRight}>
               <img className = {styles.gridRightIcons} src = {appleImg}/> 
               <img className = {styles.gridRightIcons} src = {facebookImgSmall}/> 
-              <img className = {styles.gridRightIcons} src = {googleImgSmall}/> 
+              <img className = {styles.gridRightIcons} src = {googleImgSmall}/>
+
               <img className = {styles.gridRightIcons} src = {goToImg}/> 
             </div>	
             <div className =  {styles.whiteStripe}>		  
@@ -286,7 +284,7 @@ class Home extends Component {
 		<div class = {styles.howDoesContainer}>
             <div class = {styles.howDoesText}>
 			    <p style = {{marginLeft: '-90px', display:'inline', color: 'black'}}>How does<p style = {{marginLeft: '-78px', display:'inline', color: 'white'}}> MealFor.Me
-				<p style = {{marginLeft: '-78px', display:'inline', color:'black'}}> work?</p></p></p>
+				<p style = {{marginRight:'-100px', marginLeft: '-78px', display:'inline', color:'black'}}> work?</p></p></p>
 			</div>
 		</div>
 		
@@ -393,40 +391,9 @@ class Home extends Component {
             );*/
           } else {
             return (
-              <div style = {{display: 'inline-block', width: '100%', marginTop: '30px'}}>
-                <div className = {styles.stepsHeader} onClick={() => this.goToLink('select-meal')}>
-                  <img className = {styles.stepsImage} src = {exploreImg}></img>
-                  <div style = {{justifyContent: 'center', display: 'inline-flex'}}>
-                  <view className={styles.stepsNumber}>1</view>
-                    <h6 className = {styles.stepsTitleNarrow}>Explore</h6>
-                  </div>
-                  <h6 className = {styles.stepsTextNarrow}>Let your pallete be your guide. Explore the different cuisines (we have three!) and dishes available.</h6>
-                </div>
-                <div className = {styles.stepsHeader} onClick={() => this.goToLink('choose-plan')}>
-                  <img className = {styles.stepsImage} src = {purchaseImg}></img>
-                  <div style = {{justifyContent: 'center', display: 'inline-flex'}}>
-                  <view className={styles.stepsNumber}>2</view>
-                    <h6 className = {styles.stepsTitle}>Purchase</h6>
-                  </div>
-                  <h6 className = {styles.stepsTextNarrow}>Purchase a Meal Plan. Pre-pay with PayPal or Stripe. Get discounts if you purchase 2 or 4 weeks in advance.</h6>
-                </div>
-                <div className = {styles.stepsHeader}>
-                  <img className = {styles.stepsImage} src = {chooseImg}></img>
-                  <div style = {{justifyContent: 'center', display: 'inline-flex'}}>
-                  <view className={styles.stepsNumber}>3</view>
-                    <h6 className = {styles.stepsTitle}>Choose</h6>
-                  </div>
-                  <h6 className = {styles.stepsTextNarrow}>Choose the meals you want to receive each delivery up to 4 weeks in advance.</h6>
-                </div>
-                <div className = {styles.stepsHeader}>
-                  <img className = {styles.stepsImage} src = {enjoyImg}></img>
-                  <div style = {{justifyContent: 'center', display: 'inline-flex'}}>
-                  <view className={styles.stepsNumber}>4</view>
-                    <h6 className = {styles.stepsTitle}>Enjoy</h6>
-                  </div>
-                  <h6 className = {styles.stepsTextNarrow}>Heat, enjoy, and stay healthy!</h6>
-                </div>
-              </div>
+			<div>
+			<img style={{width:'100%'}} src= {mobileGraph}/>
+		  </div>
             );
           }
         })()}
@@ -445,7 +412,7 @@ class Home extends Component {
               <>
 		        <div class = {styles.howDoesContainer}>
                     <div class = {styles.howDoesText}>
-			        <p style = {{marginLeft: '-90px', display:'inline', color: 'black'}}>Our Partners Chefs and Restaurants</p>
+			        <p style = {{marginRight:'-600px',marginLeft: '-90px', display:'inline', color: 'black'}}>Our Partners Chefs and Restaurants</p>
 			        </div>
 		           </div>
                 <div style = {{display: 'inline-flex'}}>
