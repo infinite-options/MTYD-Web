@@ -54,8 +54,6 @@ class EditPlan extends React.Component {
       signUpSeen:false,
       total: '0.00',
       numDeliveryDays: 0,
-      /*nextBillingDate: "TBD",
-      nextBillingAmount: "0.00",*/
       fetchingNBD: true,
       fetchingNBA: true,
       firstName: "",
@@ -160,24 +158,12 @@ class EditPlan extends React.Component {
         total: "0.00",
         subtotal: "0.00"
       },
-      differenceSummary: {
-        mealSubPrice: "0.00",
-        discountAmount: "0.00",
-        addOns: "0.00",
-        tip: "2.00",
-        serviceFee: "0.00",
-        deliveryFee: "0.00",
-        taxRate: 0,
-        taxAmount: "0.00",
-        ambassadorDiscount: "0.00",
-        total: "0.00",
-        subtotal: "0.00"
-      },
-      subscriptionList: [],
+      subscriptionsList: [],
       subscriptionsLoaded: false,
       currentPlan: {
         id: null,
         active_subscription: {},
+        summary: {},
         meals: null,
         deliveries: null,
         order_history: null,
@@ -188,6 +174,7 @@ class EditPlan extends React.Component {
       updatedPlan: {
         id: null,
         active_subscription: {},
+        summary: {},
         meals: null,
         deliveries: null,
         order_history: null,
@@ -195,8 +182,6 @@ class EditPlan extends React.Component {
         discount: null,
         next_billing_date: null
       }
-      /*subscriptionsFetched: false,
-      discountsFetched: false*/
     };
   }
 
@@ -428,16 +413,122 @@ class EditPlan extends React.Component {
     return sumAmountDue;
   }
 
-  loadSubscriptions = (subscriptions, discounts, deliveryDate, selections) => {
+  loadSubscriptions = (subscriptions, discounts) => {
+    let newSubList = [];
+    let defaultPlan = null;
+
+    subscriptions.forEach((sub, index) => {
+
+      let subscription = {};
+
+      console.log(" ");
+      console.log("======| subscription " + index + " |======");
+      console.log("Meal Plans: ", sub.items);
+      console.log("Purchase ID: ", sub.purchase_id);
+      console.log("Next Delivery Date: ", sub.sel_menu_date);
+      console.log("Next Delivery Status: ", sub.meal_selection);
+      console.log("Next Billing Date: ", sub.menu_date);
+
+      console.log(" ");
+
+      let parsedItems = JSON.parse(sub.items)[0];
+      let parsedMeals = parsedItems.name.substring(0,parsedItems.name.indexOf(" "));
+      let parsedDeliveries = parsedItems.qty;
+
+      console.log("(parsed) Meals: ", parsedMeals);
+      console.log("(parsed) Deliveries: ", parsedDeliveries);
+
+      let discountItem = discounts.filter( function(e) {
+        return e.deliveries === parsedDeliveries;
+      });
+
+      let parsedDiscount = discountItem[0].discount;
+
+      console.log("(parsed) discount: ", parsedDiscount);
+
+      let parsedId = sub.purchase_id.substring(sub.purchase_id.indexOf("-")+1,sub.purchase_id.length)
+
+      console.log("(parsed) Purchase ID: ", parsedId);
+
+      let parsedDeliveryDate = sub.sel_menu_date.substring(0,sub.sel_menu_date.indexOf(" "));
+
+      console.log("(parsed) Delivery Date: ", parsedDeliveryDate);
+
+      let parsedSelection = JSON.parse(sub.meal_selection)[0].name;
+      let parsedStatus = null;
+      if(parsedSelection !== 'SURPRISE' && parsedSelection !== 'SKIP'){
+        parsedStatus = 'SELECTED';
+      } else {
+        parsedStatus = parsedSelection;
+      }
+
+      console.log("(parsed) Delivery Status: ", parsedStatus);
+
+      let parsedBillingDate = sub.menu_date.substring(0,sub.menu_date.indexOf(" "));
+
+      console.log("(parsed) Billing Date: ", parsedBillingDate);
+
+      console.log(" ");
+      console.log("Base Amount: ", sub.base_amount);
+      console.log("Taxes: ", sub.taxes);
+      console.log("Delivery Fee: ", sub.delivery_fee);
+      console.log("Service Fee: ", sub.service_fee);
+      console.log("Driver Tip: ", sub.driver_tip);
+
+      let nextBillingAmount = (
+        sub.base_amount + 
+        sub.taxes +
+        sub.delivery_fee +
+        sub.service_fee + 
+        sub.driver_tip
+      ) - (parsedDiscount*0.01*sub.base_amount);
+
+      console.log("Next Billing Amount: ", nextBillingAmount);
+
+      console.log(" ");
+
+      subscription["load_order"] = index;
+      subscription["id"] = parsedId;
+      subscription["meals"] = parsedMeals;
+      subscription["deliveries"] = parsedDeliveries;
+      subscription["discount"] = parsedDiscount;
+      subscription["next_delivery_date"] = parsedDeliveryDate;
+      subscription["next_delivery_status"] = parsedStatus;
+      subscription["next_billing_date"] = parsedBillingDate;
+      subscription["next_billing_amount"] = nextBillingAmount.toFixed(2);
+      subscription["raw_data"] = sub;
+
+      console.log("Subscription index: ", index);
+      console.log("Subscription to be pushed: ", subscription);
+
+      if(index === 0){
+        defaultPlan = subscription;
+      }
+
+      newSubList.push(subscription);
+
+      console.log(" ");
+      
+    });
+
+    newSubList.sort(function(a,b) {
+      return a.load_order - b.load_order
+    });
+
+    this.setState({
+      subscriptionsList: newSubList,
+      subscriptionsLoaded: true,
+      currentPlan: defaultPlan,
+      updatedPlan: defaultPlan
+    });
+  }
+
+  /*loadSubscriptions = (subscriptions, discounts, deliveryDate, selections) => {
     console.log("loading subscription info...");
     console.log("(loadSubscriptions) subscriptions: ", subscriptions);
     console.log("(loadSubscriptions) discounts: ", discounts);
     console.log("(loadSubscriptions) delivery date: ", deliveryDate);
     console.log("(loadSubscriptions) selections: ", selections);
-
-    // this.setState({
-    //   subscriptionsLoaded: true
-    // });
 
 
 
@@ -457,7 +548,6 @@ class EditPlan extends React.Component {
 
       let planItems = JSON.parse(activeSub[0].items);
 
-      //console.log("plan items: ", planItems);
 
       let activeSubMeals = planItems[0]
         .name.substring(0,planItems[0].name.indexOf(" "));
@@ -491,29 +581,12 @@ class EditPlan extends React.Component {
       sub["meal_selection"] = mealSelection;
 
       let activeSubDiscount = discounts.filter( function(e) {
-        //return e.deliveries === sub.active_subscription.deliveries;
         return e.deliveries === sub.deliveries;
       });
 
       console.log("active sub discount: ", activeSubDiscount);
 
       sub["discount"] = activeSubDiscount[0].discount;
-
-      //activeSub[0]
-
-      // sub["payment_summary"] = {
-      //   meal_subscription: activeSub[0],
-      //   discount: activeSubDiscount[0].discount,
-      //   delivery_fee: activeSub[0].delivery_fee,
-      //   service_fee: activeSub[0].service_fee,
-      //   taxes: activeSub[0].taxes,
-      //   driver_tip: activeSub[0].driver_tip
-      // }
-
-      // this.setState({
-      //   updatedSummary: newSummary,
-      //   currentSummary: newSummary
-      // });
 
 
       console.log(sub.id + " active subscription: ", sub.active_subscription);
@@ -540,15 +613,6 @@ class EditPlan extends React.Component {
       }
     });
 
-    // let selectedMeals = planItems[0].name.substring(0,planItems[0].name.indexOf(" "));
-    // let selectedDeliveries = planItems[0].qty;
-    // let discount = 0;
-
-    // subData["next_billing_date"] = res.data.menu_date
-    // subData["meals"] = selectedMeals;
-    // subData["deliveries"] = selectedDeliveries;
-    // subData["discount"] = discount;
-
     console.log("new subscriptions: ", subscriptions);
 
     console.log("summary saved to state: ", newSummary);
@@ -557,12 +621,12 @@ class EditPlan extends React.Component {
       currentPlan,
       updatedPlan,
       subscriptionsLoaded: true,
-      subscriptionList: subscriptions,
+      subscriptionsList: subscriptions,
       updatedSummary: newSummary,
       currentSummary: newSummary
     })
 
-  }
+  }*/
 
   changePurchase() {
     let object = {
@@ -746,6 +810,55 @@ class EditPlan extends React.Component {
 
             this.props.fetchPlans();
 
+            let fetchedDiscounts = null;
+            let fetchedSubscriptions = null;
+
+            fetchDiscounts((discounts) => {
+              console.log("fetchDiscounts callback: ", discounts);
+
+              fetchedDiscounts = discounts;
+
+              if(fetchedSubscriptions !== null){
+                console.log("(1) load subscriptions");
+                this.loadSubscriptions(fetchedSubscriptions, fetchedDiscounts);
+              }
+
+            });
+
+            axios.get(API_URL + 'next_meal_info/' + this.state.customerUid)
+              .then(res => {
+                console.log("next meal info res: ", res);
+
+                fetchedSubscriptions = res.data.result;
+
+                if(fetchedDiscounts !== null){
+                  console.log("(2) load subscriptions");
+                  this.loadSubscriptions(fetchedSubscriptions, fetchedDiscounts);
+                }
+
+                // subs.forEach((sub, index) => {
+                //   console.log(" ");
+                //   console.log("======| subscription " + index + " |======");
+                //   console.log("Meal Plans: ", sub.items);
+                //   console.log("Purchase ID: ", sub.purchase_id);
+                //   console.log("Next Delivery Date: ", sub.sel_menu_date);
+                //   console.log("Next Delivery Status: ", sub.meal_selection);
+                //   console.log("Next Billing Date: ", sub.menu_date);
+                //   console.log("Next Billing Amount: ", sub.base_amount);
+                //   console.log(" ");
+
+                //   loadSubscription(sub);
+
+                //   if(index = subs.length){
+
+                //   }
+                // });
+              })
+              .catch(err => {
+                console.log(err);
+              });
+
+            /*
             let subscriptionsFetched = false;
             let fetchedSubscriptions = [];
             let fetchedDiscounts = null;
@@ -886,7 +999,7 @@ class EditPlan extends React.Component {
                     });
                 });
               });
-          });
+            */});
 
         })
         .catch(err => {
@@ -930,23 +1043,8 @@ class EditPlan extends React.Component {
     let selectedMealButton = styles.mealButton + " " + styles.mealButtonSelected;
     let mealButtons = [];
 
-    var sumAmountDue = 0;
+    this.state.subscriptionsList.forEach((sub) => {
 
-    console.log("subs before sorting: ", this.state.subscriptionList);
-
-    //let sortedSubscriptions = [...this.state.subscriptionList];
-
-
-    this.state.subscriptionList.sort(function(a,b) {
-      return b.load_order - a.load_order
-    });
-
-    console.log("subs after sorting: ", this.state.subscriptionList);
-
-    this.state.subscriptionList.slice().reverse().forEach((sub) => {
-      // console.log("SSM subInfo: ", subInfo);
-      // let sub = subInfo.active_subscription;
-      // console.log(pur.purchase_uid + " amount due: " + pur.amount_due);
       console.log("sub id: ", sub.id);
       console.log("curr id: ", this.state.currentPlan.id);
       mealButtons.push(
@@ -958,41 +1056,14 @@ class EditPlan extends React.Component {
               : deselectedMealButton
           }
           onClick={() => {
-            console.log("(1)======| SUB CLICKED |======(1)");
 
             console.log("new current plan: ", sub);
 
-            // NEED:
-            // -- surpise/canceled/skipped/selected value
-            // -- 
 
             this.setState({
-              currentPlan: sub
+              currentPlan: sub,
+              updatedPlan: sub
             });
-
-            //const temp_position = {lat:parseFloat(this.state.latitude), lng:parseFloat(this.state.longitude)}
-
-            //console.log(temp_position)
-
-            //window.map.setCenter(temp_position)
-
-            // if(this.state.latitude!=''){
-            //   window.map.setZoom(17);
-            //   new google.maps.Marker({
-            //     position: temp_position,
-            //     map: window.map
-            //   });
-            // }
-  
-            // this.props.chooseMealsDelivery(
-            //   selectedMeals,
-            //   selectedDeliveries,
-            //   this.props.plans
-            // );
-
-            //this.getNextBillingInfo(mealData);
-
-            console.log("(2)===========================(2)");
 
           }}
         >
@@ -1003,19 +1074,19 @@ class EditPlan extends React.Component {
             {sub.meals} Meals, {sub.deliveries} Deliveries
           </div>
           <div className={styles.mealButtonPlan}>
-            {sub.id.substring(sub.id.indexOf("-")+1,sub.id.length)}
+            {sub.id}
           </div>
           <div className={styles.mealButtonSection}>
-            {sub.next_delivery_date.substring(0,sub.next_billing_date.indexOf(" "))}
+            {sub.next_delivery_date}
           </div>
           <div className={styles.mealButtonSection}>
-            {sub.meal_selection}
+            {sub.next_delivery_status}
           </div>
           <div className={styles.mealButtonSection}>
-            {sub.next_billing_date.substring(0,sub.next_billing_date.indexOf(" "))}
+            {sub.next_billing_date}
           </div>
           <div className={styles.mealButtonSection}>
-            ${sub.amount_due.toFixed(2)}
+            ${sub.next_billing_amount}
           </div>
         </div>
       );
