@@ -5,7 +5,7 @@
   width: 549px;
   height: 1047px;
   background: white;
-  border:3px solid #FF8500;
+  border:3px solid #F26522;
   opacity: 1;
   margin-top: 80px;
 }
@@ -16,7 +16,7 @@
   width: 428px;
   height: 49px;
   background: #FFFFFF;
-  border:2px solid #FF8500;
+  border:2px solid #F26522;
   border-radius: 10px;
   opacity: 1;
   margin-bottom: 6px;
@@ -34,4 +34,16 @@
   background-image: url('../../images/closeIcon.png');
   background-size: cover;
   background-position: center;
+}
+input[type="text"]::placeholder { 
+  text-align: center;
+  color:grey;
+  font-size:25px;
+}
+input[type="SFProText"]::placeholder {
+  text-align: left;
+  color:black;
+  font-size:24px;
+  font:SF Pro;
+  font-weight:medium;  
 }

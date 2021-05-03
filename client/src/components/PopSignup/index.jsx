@@ -214,14 +214,15 @@ export class PopSignup extends Component {
           marginBottom:'33px',
           fontSize: '26px',
           fontWeight:'bold',
-          marginLeft:'230px'
+          marginLeft:'230px',
+		  font:'SF Pro'
         }}
         >
           Sign up
         </div>
 
         <div>
-          <SocialLogin />
+		<SocialLogin />
         </div>
 
         <div  
@@ -234,7 +235,8 @@ export class PopSignup extends Component {
           opacity: 1,
           marginTop:'28px',
           marginBottom:'25px',
-          fontWeight:'bold'
+          fontWeight:'bold',
+		  font:'SF Pro'
         }}>
           OR
         </div>
@@ -247,7 +249,7 @@ export class PopSignup extends Component {
           style={{
             display:'flex'
           }}>
-            <input
+            <input type = "SFProText"
               style={{
                 width:'208px',
                 marginRight:'12px'
@@ -261,7 +263,7 @@ export class PopSignup extends Component {
             >
             </input>
 
-            <input 
+            <input type = "SFProText"
               style={{
                 width:'208px'
               }} 
@@ -278,16 +280,24 @@ export class PopSignup extends Component {
 
 
 
-          <input 
+          <input type = "SFProText"
             className='inputBox'
-            placeholder='Email address (for order confirmation)'
+            placeholder='Email address'
             value={this.props.email}
             onChange={e => {
               this.props.changeNewEmail(e.target.value);
             }}
           >
           </input>
-
+          <input type = "SFProText"
+            className='inputBox'
+            placeholder='Confirm Email address'
+            value={this.props.email}
+            onChange={e => {
+              this.props.changeNewEmail(e.target.value);
+            }}
+          >
+          </input>
           <input 
             className='inputBox'
             placeholder='Create Password'
@@ -308,62 +318,7 @@ export class PopSignup extends Component {
               this.props.changeNewPasswordConfirm(e.target.value);
             }}>
           </input>
-
-          <input 
-            className='inputBox'
-
-            id="ship-address"
-            name="ship-address"
-
-            placeholder='Street Address'
-          />
-
-          <input 
-            style={{
-              width:'208px',
-              marginRight:'12px'
-            }} 
-            className='inputBox'
-            placeholder='Unit'
-            value={this.props.unit}
-            onChange={e => {
-              this.props.changeNewUnit(e.target.value);
-            }}
-          />
-
-          <input             
-            style={{
-              width:'208px',
-              marginRight:'12px'
-            }} 
-            className='inputBox'
-            placeholder='City'
-            id="locality" name="locality"
-            />
-
-
-
-          <input             
-            style={{
-              width:'208px',
-              marginRight:'12px'
-            }} 
-            className='inputBox'
-            placeholder='State'
-            id="state" name="state"
-            />
-
-
-          <input             
-              style={{
-                width:'208px',
-                marginRight:'12px'
-              }} 
-              className='inputBox'
-              placeholder='Zip'
-              id="postcode" name="postcode"
-
-            />
+        <br/><br/>
         </div>
 
 
