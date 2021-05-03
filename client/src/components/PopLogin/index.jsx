@@ -93,7 +93,7 @@ export class PopLogin extends Component {
 
 
           <input
-            type='text'
+            type='SFProtext'
             placeholder='Username'
             className="loginSectionItem"
             onChange={e => {
