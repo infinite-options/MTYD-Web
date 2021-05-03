@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import styles from "./popSignup.css"
+import styles from "./popAccPswd.css"
 import SocialLogin from "../Landing/socialLogin"
 import {
   changeNewEmail,
@@ -22,7 +22,7 @@ import axios from 'axios';
 
 const google = window.google;
 
-export class PopSignup extends Component {
+export class PopAccPswd extends Component {
 
   constructor(props){
     super(props);
@@ -202,21 +202,23 @@ export class PopSignup extends Component {
 
   render() {
     return (
+      
       <div
         className="model_content"
       >
         <div className="close" onClick={this.handleClick}/>
+
         <div
         style={{
           marginTop:'59px',
           marginBottom:'33px',
           fontSize: '26px',
           fontWeight:'bold',
-          marginLeft:'230px',
+          marginLeft:'100px',
 		  font:'SF Pro'
         }}
         >
-          Sign up
+          Create an account
         </div>
 
         <div>
@@ -243,59 +245,6 @@ export class PopSignup extends Component {
           marginLeft:'61px',
         }}>
 
-          <div
-          style={{
-            display:'flex'
-          }}>
-            <input type = "SFProText"
-              style={{
-                width:'208px',
-                marginRight:'12px'
-              }} 
-              className='inputBox'
-              placeholder='First name'
-              value={this.props.firstName}
-              onChange={e => {
-                this.props.changeNewFirstName(e.target.value);
-              }}
-            >
-            </input>
-
-            <input type = "SFProText"
-              style={{
-                width:'208px'
-              }} 
-            
-              className='inputBox'
-              placeholder='Last name'
-              value={this.props.lastName}
-              onChange={e => {
-                this.props.changeNewLastName(e.target.value);
-              }}
-            >
-            </input>
-          </div>
-
-
-
-          <input type = "SFProText"
-            className='inputBox'
-            placeholder='Email address'
-            value={this.props.email}
-            onChange={e => {
-              this.props.changeNewEmail(e.target.value);
-            }}
-          >
-          </input>
-          <input type = "SFProText"
-            className='inputBox'
-            placeholder='Confirm Email address'
-            value={this.props.email}
-            onChange={e => {
-              this.props.changeNewEmail(e.target.value);
-            }}
-          >
-          </input>
           <input 
             className='inputBox'
             placeholder='Create Password'
@@ -316,75 +265,7 @@ export class PopSignup extends Component {
               this.props.changeNewPasswordConfirm(e.target.value);
             }}>
           </input>
-<<<<<<< HEAD
-
-          <input 
-            className='inputBox'
-            placeholder='Phone Number'
-            value={this.props.phone}
-            onChange={e => {
-              this.props.changeNewPasswordConfirm(e.target.value);
-            }}>
-          </input>
-
-          <input 
-            className='inputBox'
-
-            id="ship-address"
-            name="ship-address"
-
-            placeholder='Street Address'
-          />
-
-          <input 
-            style={{
-              width:'208px',
-              marginRight:'12px'
-            }} 
-            className='inputBox'
-            placeholder='Unit'
-            value={this.props.unit}
-            onChange={e => {
-              this.props.changeNewUnit(e.target.value);
-            }}
-          />
-
-          <input             
-            style={{
-              width:'208px',
-              marginRight:'12px'
-            }} 
-            className='inputBox'
-            placeholder='City'
-            id="locality" name="locality"
-            />
-
-
-
-          <input             
-            style={{
-              width:'208px',
-              marginRight:'12px'
-            }} 
-            className='inputBox'
-            placeholder='State'
-            id="state" name="state"
-            />
-
-
-          <input             
-              style={{
-                width:'208px',
-                marginRight:'12px'
-              }} 
-              className='inputBox'
-              placeholder='Zip'
-              id="postcode" name="postcode"
-
-            />
-=======
         <br/><br/>
->>>>>>> origin/TrainingCards
         </div>
 
 
@@ -459,4 +340,4 @@ const functionList = {
   loginAttempt,
 };
 
-export default connect(mapStateToProps, functionList)(withRouter(PopSignup));
+export default connect(mapStateToProps, functionList)(withRouter(PopAccPswd));

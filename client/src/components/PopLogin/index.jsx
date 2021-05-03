@@ -54,7 +54,8 @@ export class PopLogin extends Component {
             opacity: 1,
             marginTop:'58px',
             marginBottom:'25px',
-            fontWeight:'bold'
+            fontWeight:'bold',
+			font:'SF Pro'
             }} 
           >
           Login
@@ -71,7 +72,7 @@ export class PopLogin extends Component {
                 justifyContent: "space-between",
               }}
           > */}
-            <SocialLogin />
+		  <SocialLogin />
           {/* </div> */}
 
           <div  
@@ -84,15 +85,16 @@ export class PopLogin extends Component {
             opacity: 1,
             marginTop:'28px',
             marginBottom:'25px',
-            fontWeight:'bold'
+            fontWeight:'bold',
+			font:'SF Pro'
           }}>
             OR
           </div>
 
 
           <input
-            type='text'
-            placeholder='USER NAME'
+            type='SFProtext'
+            placeholder='Username'
             className="loginSectionItem"
             onChange={e => {
               this.props.changeEmail(e.target.value);
@@ -106,7 +108,7 @@ export class PopLogin extends Component {
             style={{marginBottom: "0px"}}
             type='password'
             id='password'
-            placeholder='PASSWORD'
+            placeholder='Password'
             size="56"
             value={this.props.password}
             onChange={e => {
@@ -125,7 +127,9 @@ export class PopLogin extends Component {
             color:'black',
             paddingTop:0,
             marginTop:10,
-            textDecoration:"underline"
+            textDecoration:"underline",
+			font:'SF Pro',
+			fontWeight:'medium'
           }}>
             Forgot password?
           </p>
@@ -149,6 +153,8 @@ export class PopLogin extends Component {
               letterSpacing: '0.32px',
               color: '#FFFFFF',
               opacity: 1,
+			  font:'SF Pro',
+			  fontSize:'25px'
             }}>
               Login
             </p>

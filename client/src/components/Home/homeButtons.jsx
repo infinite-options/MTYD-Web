@@ -7,6 +7,8 @@ import styles from './home.module.css'
 import {Link} from "react-router-dom";
 import becomeAnAmbassadorImg from "../../images/Group 180.png"
 import facebookAndInstagramImg from "../../images/Group 68.svg"
+import facebookSimpleImg from "../../images/Icon simple-facebook.png"
+import instagramSimpleImg from "../../images/Icon simple-instagram.png"
 import closeIconImg from "../../images/Icon ionic-ios-close-circle.png"
 import LTBAA from "../../images/Group 450.png"
 import SUTBAA from "../../images/Group 234 for Ambassador.png"
@@ -34,6 +36,15 @@ class HomeLink extends Component {
         return (
             <Link to={this.props.link}>
               <img className = {styles.buttonsBelowTheLogo} src = {this.props.text} style = {this.props.style}/>
+            </Link>
+         );
+    }
+}
+class FooterSocialLink extends Component {
+    render() { 
+        return (
+            <Link to={this.props.link}>
+              <img className = {styles.footerLogo} src = {this.props.text} style = {this.props.style}/>
             </Link>
          );
     }
@@ -76,12 +87,13 @@ class FootLink extends Component {
 			{/*<AmbassadorLink text = "Click here" link='/select-meal'>
 			</AmbassadorLink>*/}	
             <p className = {styles.findUs}>Find us 			
-            <img className = {styles.footerLogo} src = {facebookAndInstagramImg} alt="facebookAndInstagramImg" />
+            <a className= {styles.footerLogo} href ="https://www.facebook.com/Meals-For-Me-101737768566584"><img src= {facebookSimpleImg} /></a>
+	        <a className= {styles.footerLogo} style = {{marginLeft:'45px'}} href ="https://www.instagram.com/mealsfor.me/?hl=en"><img src = {instagramSimpleImg} /></a>
             </p>
             <div className = {styles.footerRight}>
             <img onClick={() => this.togglePop()} style = {{width: '320px', height:'67px'}} src = {becomeAnAmbassadorImg} style = {{marginTop: '25px'}}/>			
             </div>
-			{this.state.seen ? <AddMeals toggle={this.togglePop} /> : null}	
+			{this.state.seen ? <AmbassadorLink toggle={this.togglePop} /> : null}	
             </div>
          );
     }

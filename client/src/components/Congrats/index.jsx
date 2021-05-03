@@ -15,7 +15,8 @@ import createAnAccountImage from  '../../images/Group 234.png';
 import pathFromCAAToSYM from '../../images/Path 49.png';
 import pathFromRYMToHAE from '../../images/Path 29.png';
 import selectYourMealImage from '../../images/Group 114_SYM.png';
-import {HomeLink, FootLink, CreateAccPWSU1} from "../Home/homeButtons"
+import {HomeLink, FootLink} from "../Home/homeButtons"
+import PopAccPswd from "../PopAccPswd";
 
 export class Congrats extends Component {
 
@@ -140,7 +141,7 @@ export class Congrats extends Component {
 					 <img style = {{marginLeft: '-20%'}} src = {path28_bottom}/>
 					 <br/>
                      <img src = {createAnAccountImage} style = {{marginTop:'-20px',marginLeft: '-70px', marginBottom:'-10px', width:'320px', height:'50px'}} onClick={() => this.togglePop()}/>
-                     {this.state.seen ? <CreateAccPWSU1 toggle={this.togglePop} /> : null}
+                     {this.state.seen ? <PopAccPswd toggle={this.togglePop} /> : null}
 					 <div style = {{marginTop: '10px', marginLeft:'-90px'}}>
 					 <img style = {{ width:'280px', height:'120px'}} src = {pathFromCAAToSYM}/>
 					 </div>
