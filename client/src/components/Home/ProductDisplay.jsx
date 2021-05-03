@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     height: '300px',
     paddingTop: '10px',
-	marginBottom: '180px'
+	  marginBottom: '180px',
   },
   title: {
     color: appColors.secondary,

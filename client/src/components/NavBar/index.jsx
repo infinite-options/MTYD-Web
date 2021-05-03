@@ -348,7 +348,6 @@ class NavBar extends React.Component {
                 >
                   Login
                 </button>
-
                 {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
               </div>
 

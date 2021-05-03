@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import {Link} from "react-router-dom";
-
+import axios from 'axios';
+import Popsignup from '../PopSignup';
+import {Redirect, withRouter} from 'react-router-dom';
 
 const google = window.google;
 
@@ -11,7 +12,20 @@ export class HomeMap extends Component {
     super(props);
     this.map = null;
     this.autocomplete = null;
+    this.state={
+      lat:'',
+      lng:'',
+      hooray:false,
+      stillGrowing:false,
+      signup:false,
+    }
   }
+
+  togglePopLogin = () => {
+    this.setState({
+     signup: !this.state.signup,
+    });
+   };
 
 
   componentDidMount(){
@@ -27,11 +41,18 @@ export class HomeMap extends Component {
 
     const autocomplete = new google.maps.places.Autocomplete(input, options);
 
-    console.log(autocomplete)
+    // console.log(autocomplete)
 
     autocomplete.addListener("place_changed", () => {
 
       const place = autocomplete.getPlace();
+
+      this.setState({
+        lat:place.geometry.location.lat(),
+        lng:place.geometry.location.lng(),
+      })
+
+      console.log(this.state)
   
       if (!place.geometry || !place.geometry.location) {
         // User entered the name of a Place that was not suggested and
@@ -39,6 +60,29 @@ export class HomeMap extends Component {
         window.alert("No details available for input: '" + place.name + "'");
         return;
       }
+
+      axios.get(`https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/categoricalOptions/${this.state.lng},${this.state.lat}`)
+      .then(res=>{
+        console.log(res)
+        if(res.data.result.length==0){
+          // alert('cannot deliver to this address')
+          this.setState({
+            stillGrowing:true
+          })
+          console.log('cannot deliver to this address')
+        }else{
+          this.setState({
+            hooray:true
+          })
+          console.log('we can deliver to this address')
+        }
+      })
+      .catch((err) => {
+        if (err.response) {
+          console.log(err.response);
+        }
+        console.log(err);
+      });
   
     });
 
@@ -55,6 +99,77 @@ export class HomeMap extends Component {
           height:'200px'
         }}
       >
+        {this.state.signup ? <Popsignup toggle={this.togglePopLogin}/> : null}
+
+
+        {this.state.hooray?
+        <div 
+          style={{
+            position:'absolute',
+            width:'500px',
+            height:'500px',
+            backgroundColor:'#42c5f5',
+            left:'30%',
+            top:'20%'
+          }}
+          onClick={()=>{this.setState({hooray:false})}}
+        >
+          hooray
+          <div
+            style={{
+              position:'relative',
+              width:'150px',
+              height:'50px',
+              backgroundColor:'white',
+              top:'100px',
+              left:'200px',
+            }}
+
+            onClick={()=>{this.setState({signup:true})}}
+          >
+            click to signup
+          </div>
+
+          <div
+            style={{
+              position:'relative',
+              width:'150px',
+              height:'50px',
+              backgroundColor:'white',
+              top:'100px',
+              left:'350px',
+            }}
+
+            onClick={()=>{this.props.history.push('/select-meal')}}
+          >
+            explore meals
+          </div>
+
+
+        </div>:null}
+
+
+
+
+
+
+
+        {this.state.stillGrowing?<div 
+        style={{
+          position:'absolute',
+          width:'500px',
+          height:'500px',
+          backgroundColor:'#b942f5',
+          left:'30%',
+          top:'20%'
+        }}
+        onClick={()=>{this.setState({stillGrowing:false})}}>
+          
+          nope
+          </div>
+          :null}
+
+
         <div id="pac-container">
           <input 
           id="pac-input" 
@@ -96,11 +211,8 @@ export class HomeMap extends Component {
               marginLeft:'95px',
               textAlign: 'center',
             }}
-
             >View Meals</a>
           </button>
-
-
 
         </div>
       </div>
@@ -109,4 +221,4 @@ export class HomeMap extends Component {
   }
 }
 
-export default HomeMap
+export default withRouter(HomeMap)

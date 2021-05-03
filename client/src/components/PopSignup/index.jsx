@@ -202,12 +202,10 @@ export class PopSignup extends Component {
 
   render() {
     return (
-      
       <div
         className="model_content"
       >
         <div className="close" onClick={this.handleClick}/>
-
         <div
         style={{
           marginTop:'59px',
@@ -304,6 +302,15 @@ export class PopSignup extends Component {
             placeholder='Confirm Password'
             type='password'
             value={this.props.passwordConfirm}
+            onChange={e => {
+              this.props.changeNewPasswordConfirm(e.target.value);
+            }}>
+          </input>
+
+          <input 
+            className='inputBox'
+            placeholder='Phone Number'
+            value={this.props.phone}
             onChange={e => {
               this.props.changeNewPasswordConfirm(e.target.value);
             }}>

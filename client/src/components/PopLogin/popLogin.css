@@ -13,7 +13,7 @@
 
 .pop_content {
   position: absolute;
-  top: 10%;
+  top: 85px;
   /* left: 50%; */
   right:1%;
   width: 549px;
@@ -21,7 +21,6 @@
   background: white;
   border:3px solid #FF8500;
   opacity: 1;
-  margin-top: 80px;
 }
 
 .loginSectionItem {

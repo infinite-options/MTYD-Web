@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import {Link} from "react-router-dom";
 import {WebNavBar} from "../NavBar";
 import SignUp from "./signUp"
-import {HomeLink, FootLink, AmbassadorLink, AddressLink} from "./homeButtons"
+import {HomeLink, FootLink, AmbassadorLink, AddressLink,AddMeals} from "./homeButtons"
 import Menu from "../Menu";
 import MenuCarousel from "./menuCarousel"
 import styles from "./home.module.css"
@@ -37,7 +37,7 @@ import pathFromPurchaseToChoose from "../../images/Path 50.svg"
 import howDoesImage from "../../images/howDoesImage.png"
 import axios from 'axios';
 import ProductDisplay from './ProductDisplay';
-import HomeMap from "../HomeAddressSearch"
+import HomeMap from "../HomeAddressSearch";
 const google = window.google;
 
 
@@ -205,7 +205,7 @@ class Home extends Component {
       <div>
         <WebNavBar/>
       </div>
-
+      {/* <AddMeals /> */}
       
       {(() => {
         if (this.state.windowWidth >= 800) {
@@ -220,11 +220,15 @@ class Home extends Component {
             <div className =  {styles.whiteStripe}>		  
               <div className = {styles.gridDisplayCenter}>
                 <div className = {styles.centerSubtitleText}>
-            <img className = {styles.centerImage} src = {Logo} alt="logo" /></div>
+                  <img className = {styles.centerImage} src = {Logo} alt="logo" />
+                </div>
+                <div
+                style={{
+                  zIndex:'100'
+                }}>
+                  <HomeMap/>
+                </div>
 
-
-
-                <HomeMap/>
 
                 <div style = {{display: 'inline-flex', justifyContent: 'space-between'}}/> 
                   
@@ -274,7 +278,7 @@ class Home extends Component {
         })()}
 		
         <div style = {{width: '100%', marginTop: '25px'}}>
-			<ProductDisplay />         
+			    <ProductDisplay />         
         </div>
 
 		<div class = {styles.howDoesContainer}>
