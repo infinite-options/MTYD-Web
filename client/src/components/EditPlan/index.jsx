@@ -91,7 +91,8 @@ class EditPlan extends React.Component {
         cc_num: "",
         cc_cvv: "",
         cc_zip: "",
-        cc_exp_date: ""
+        cc_exp_date: "",
+        instructions: ""
       },
       sumFees: 0,
       paymentSummary: {
@@ -112,6 +113,32 @@ class EditPlan extends React.Component {
         discountAmount: "0.00",
         addOns: "0.00",
         tip: "2.00",
+        serviceFee: "0.00",
+        deliveryFee: "0.00",
+        taxRate: 0,
+        taxAmount: "0.00",
+        ambassadorDiscount: "0.00",
+        total: "0.00",
+        subtotal: "0.00"
+      },
+      updatedSummary: {
+        mealSubPrice: "0.00",
+        discountAmount: "0.00",
+        addOns: "0.00",
+        tip: "2.00",
+        serviceFee: "0.00",
+        deliveryFee: "0.00",
+        taxRate: 0,
+        taxAmount: "0.00",
+        ambassadorDiscount: "0.00",
+        total: "0.00",
+        subtotal: "0.00"
+      },
+      diffSummary: {
+        mealSubPrice: "0.00",
+        discountAmount: "0.00",
+        addOns: "0.00",
+        tip: "0.00",
         serviceFee: "0.00",
         deliveryFee: "0.00",
         taxRate: 0,
@@ -198,70 +225,160 @@ class EditPlan extends React.Component {
     }
   };
 
-  calculateSubtotal() {
+  // calculateSubtotal() {
+  //   let subtotal = (
+  //     parseFloat(this.state.paymentSummary.mealSubPrice) -
+  //     parseFloat(this.state.paymentSummary.discountAmount) + 
+  //     parseFloat(this.state.paymentSummary.deliveryFee) + 
+  //     parseFloat(this.state.paymentSummary.serviceFee) +
+  //     parseFloat(this.state.paymentSummary.taxAmount) + 
+  //     parseFloat(this.state.paymentSummary.tip)
+  //   );
+  //   return subtotal.toFixed(2);
+  // }
+
+  // calculateTotal() {
+  //   let total = (
+  //     parseFloat(this.state.paymentSummary.mealSubPrice) -
+  //     parseFloat(this.state.paymentSummary.discountAmount) + 
+  //     parseFloat(this.state.paymentSummary.deliveryFee) + 
+  //     parseFloat(this.state.paymentSummary.serviceFee) +
+  //     parseFloat(this.state.paymentSummary.taxAmount) + 
+  //     parseFloat(this.state.paymentSummary.tip) -
+  //     parseFloat(this.state.paymentSummary.ambassadorDiscount)
+  //   );
+  //   return total.toFixed(2);
+  // }
+
+  // setTotal() {
+  //   let total = this.calculateTotal();
+  //   let subtotal = this.calculateSubtotal();
+  //   this.setState(prevState => ({
+  //     recalculatingPrice: false,
+  //     paymentSummary: {
+  //       ...prevState.paymentSummary,
+  //       total,
+  //       subtotal
+  //     }
+  //   }), ()=>{
+  //     console.log("setTotal new paymentSummary: ", this.state.paymentSummary);
+  //   });
+  // }
+
+  calculateSubtotal(summary) {
     let subtotal = (
-      parseFloat(this.state.paymentSummary.mealSubPrice) -
-      parseFloat(this.state.paymentSummary.discountAmount) + 
-      parseFloat(this.state.paymentSummary.deliveryFee) + 
-      parseFloat(this.state.paymentSummary.serviceFee) +
-      parseFloat(this.state.paymentSummary.taxAmount) + 
-      parseFloat(this.state.paymentSummary.tip)
+      parseFloat(summary.mealSubPrice) -
+      parseFloat(summary.discountAmount) + 
+      parseFloat(summary.deliveryFee) + 
+      parseFloat(summary.serviceFee) +
+      parseFloat(summary.taxAmount) + 
+      parseFloat(summary.tip)
     );
     return subtotal.toFixed(2);
   }
 
-  calculateTotal() {
+  calculateTotal(summary) {
     let total = (
-      parseFloat(this.state.paymentSummary.mealSubPrice) -
-      parseFloat(this.state.paymentSummary.discountAmount) + 
-      parseFloat(this.state.paymentSummary.deliveryFee) + 
-      parseFloat(this.state.paymentSummary.serviceFee) +
-      parseFloat(this.state.paymentSummary.taxAmount) + 
-      parseFloat(this.state.paymentSummary.tip) -
-      parseFloat(this.state.paymentSummary.ambassadorDiscount)
+      parseFloat(summary.mealSubPrice) -
+      parseFloat(summary.discountAmount) + 
+      parseFloat(summary.deliveryFee) + 
+      parseFloat(summary.serviceFee) +
+      parseFloat(summary.taxAmount) + 
+      parseFloat(summary.tip) -
+      parseFloat(summary.ambassadorDiscount)
     );
     return total.toFixed(2);
   }
 
-  setTotal() {
-    let total = this.calculateTotal();
-    let subtotal = this.calculateSubtotal();
-    this.setState(prevState => ({
-      recalculatingPrice: false,
-      paymentSummary: {
-        ...prevState.paymentSummary,
-        total,
-        subtotal
-      }
-    }), ()=>{
-      console.log("setTotal new paymentSummary: ", this.state.paymentSummary);
+  setTotal(summary) {
+    let total = this.calculateTotal(summary);
+    let subtotal = this.calculateSubtotal(summary);
+    let newSummary = {
+      ...summary,
+      total,
+      subtotal
+    }
+    return newSummary;
+  }
+
+  updatePaymentSummary(updatedPlan) {
+    console.log("changing updated plan: ", updatedPlan);
+    console.log("plan to update to: ", this.props.plans[updatedPlan.meals][updatedPlan.deliveries]);
+    let newPlan = this.props.plans[updatedPlan.meals][updatedPlan.deliveries];
+
+    let newUpdatedSummary = {
+      mealSubPrice: (newPlan.num_deliveries*newPlan.item_price).toFixed(2),
+      discountAmount: (newPlan.num_deliveries*newPlan.item_price*newPlan.delivery_discount*0.01).toFixed(2),
+      addOns: "0.00",
+      tip: updatedPlan.active_subscription.driver_tip.toFixed(2),
+      serviceFee: updatedPlan.active_subscription.service_fee.toFixed(2),
+      deliveryFee: updatedPlan.active_subscription.delivery_fee.toFixed(2),
+      taxRate: 0,
+      taxAmount: updatedPlan.active_subscription.taxes.toFixed(2),
+      ambassadorDiscount: "0.00",
+      total: "0.00",
+      subtotal: "0.00"
+    };
+    newUpdatedSummary = this.setTotal(newUpdatedSummary);
+
+    let currSum = this.state.currentSummary;
+    let diffMealSub = (
+      parseFloat(newUpdatedSummary.mealSubPrice) -
+      parseFloat(currSum.mealSubPrice)
+    ).toFixed(2);
+    let diffDiscount = (
+      parseFloat(newUpdatedSummary.discountAmount) -
+      parseFloat(currSum.discountAmount)
+    ).toFixed(2);
+    let diffTip = (
+      parseFloat(newUpdatedSummary.tip) -
+      parseFloat(currSum.tip)
+    ).toFixed(2);
+    let diffTotal = (
+      parseFloat(newUpdatedSummary.total) -
+      parseFloat(currSum.total)
+    ).toFixed(2);
+
+    let newDiffSummary = {
+      ...this.state.diffSum,
+      mealSubPrice: diffMealSub,
+      discountAmount: diffDiscount,
+      tip: diffTip,
+      total: diffTotal
+    }
+
+    console.log("updated payment summary: ", newUpdatedSummary);
+
+    this.setState({
+      updatedSummary: newUpdatedSummary,
+      diffSummary: newDiffSummary
     });
   }
 
-  calculateAdditionalCharges = () => {
-    // let currCharge = this.state.currentBillingAmount;
-    // let diffCharge = this.calculateTotal();
-    // let feesCharge = this.state.sumFees
+  // calculateAdditionalCharges = () => {
+  //   // let currCharge = this.state.currentBillingAmount;
+  //   // let diffCharge = this.calculateTotal();
+  //   // let feesCharge = this.state.sumFees
 
-    let currCharge = this.state.currentPlan.amount_due;
-    let diffCharge = this.calculateTotal();
-    let feesCharge = this.state.sumFees
+  //   let currCharge = this.state.currentPlan.amount_due;
+  //   let diffCharge = this.calculateTotal();
+  //   let feesCharge = this.state.sumFees
 
-    /*console.log("curr charge: ", currCharge);
-    console.log("diff charge: ", diffCharge);
-    console.log("fees charge: ", feesCharge);*/
+  //   /*console.log("curr charge: ", currCharge);
+  //   console.log("diff charge: ", diffCharge);
+  //   console.log("fees charge: ", feesCharge);*/
 
-    let addCharges = -(
-      parseFloat(currCharge) -  
-      parseFloat(diffCharge) -
-      feesCharge
-    );
+  //   let addCharges = -(
+  //     parseFloat(currCharge) -  
+  //     parseFloat(diffCharge) -
+  //     feesCharge
+  //   );
 
-    /*console.log("add charges (float): ", addCharges);
-    console.log("add charges (string): ", addCharges.toFixed(2));*/
+  //   /*console.log("add charges (float): ", addCharges);
+  //   console.log("add charges (string): ", addCharges.toFixed(2));*/
 
-    return addCharges.toFixed(2);
-  };
+  //   return addCharges.toFixed(2);
+  // };
 
   calculateNextBillingAmount = (orders) => {
     console.log("(CNBA) orders: ", orders);
@@ -326,6 +443,7 @@ class EditPlan extends React.Component {
 
     let currentPlan = null;
     let updatedPlan = null;
+    let newSummary = {};
 
     subscriptions.forEach((sub) => {
 
@@ -335,7 +453,9 @@ class EditPlan extends React.Component {
 
       sub["active_subscription"] = activeSub[0];
 
-      let planItems = JSON.parse(sub.active_subscription.items);
+      console.log("NEW ACTIVE SUBSCRIPTION: ", activeSub[0]);
+
+      let planItems = JSON.parse(activeSub[0].items);
 
       //console.log("plan items: ", planItems);
 
@@ -379,6 +499,22 @@ class EditPlan extends React.Component {
 
       sub["discount"] = activeSubDiscount[0].discount;
 
+      //activeSub[0]
+
+      // sub["payment_summary"] = {
+      //   meal_subscription: activeSub[0],
+      //   discount: activeSubDiscount[0].discount,
+      //   delivery_fee: activeSub[0].delivery_fee,
+      //   service_fee: activeSub[0].service_fee,
+      //   taxes: activeSub[0].taxes,
+      //   driver_tip: activeSub[0].driver_tip
+      // }
+
+      // this.setState({
+      //   updatedSummary: newSummary,
+      //   currentSummary: newSummary
+      // });
+
 
       console.log(sub.id + " active subscription: ", sub.active_subscription);
 
@@ -386,6 +522,21 @@ class EditPlan extends React.Component {
         console.log("currentPlan set to: ", sub);
         currentPlan = sub;
         updatedPlan = sub;
+        newSummary = {
+          mealSubPrice: activeSub[0].subtotal.toFixed(2),
+          discountAmount: (activeSubDiscount[0].discount*activeSub[0].subtotal*0.01).toFixed(2),
+          addOns: "0.00",
+          tip: activeSub[0].driver_tip.toFixed(2),
+          serviceFee: activeSub[0].service_fee.toFixed(2),
+          deliveryFee: activeSub[0].delivery_fee.toFixed(2),
+          taxRate: 0,
+          taxAmount: activeSub[0].taxes.toFixed(2),
+          ambassadorDiscount: "0.00",
+          total: "0.00",
+          subtotal: "0.00"
+        };
+        newSummary = this.setTotal(newSummary);
+        console.log("newer summary: ", newSummary);
       }
     });
 
@@ -400,14 +551,48 @@ class EditPlan extends React.Component {
 
     console.log("new subscriptions: ", subscriptions);
 
+    console.log("summary saved to state: ", newSummary);
 
     this.setState({
       currentPlan,
       updatedPlan,
       subscriptionsLoaded: true,
-      subscriptionList: subscriptions
+      subscriptionList: subscriptions,
+      updatedSummary: newSummary,
+      currentSummary: newSummary
     })
 
+  }
+
+  changePurchase() {
+    let object = {
+      cc_cvv: this.state.updatedPlan.cc_cvv,
+      cc_exp_date: this.state.updatedPlan.cc_cvv,
+      cc_num: this.state.updatedPlan.cc_cvv,
+      cc_zip: this.state.updatedPlan.cc_cvv,
+      customer_email: this.props.email,
+      items: [{
+        qty: this.props.selectedPlan.num_deliveries.toString(), 
+        name: this.props.selectedPlan.item_name, 
+        price: this.props.selectedPlan.item_price.toString(), 
+        item_uid: this.props.selectedPlan.item_uid, 
+        itm_business_uid: this.props.selectedPlan.itm_business_uid
+      }],
+      new_item_id: this.props.selectedPlan.item_uid,
+      purchase_id: this.state.updatedPlan.id,
+      start_delivery_date: this.state.updatedPlan.start_delivery_date
+    }
+    axios.post(API_URL + 'change_purchase/' + this.state.updatedPlan.id, object)
+      .then(res => {
+        console.log("change_purchase response: ", res);
+        this.props.history.push("/meal-plan");
+      })
+      .catch(err => {
+        console.log(err);
+        if (err.response) {
+          console.log("error: " + JSON.stringify(err.response));
+        }
+      });
   }
 
   componentDidMount() {
@@ -734,7 +919,7 @@ class EditPlan extends React.Component {
           width: '100%'
         }}
       >
-        Loading Subscriptions ...
+        Loading Subscriptions...
       </div>
     );
   }
@@ -836,86 +1021,6 @@ class EditPlan extends React.Component {
       );
     });
 
-      /*mealButtons.push(
-          <div
-            key={mealData.purchase_uid}
-            className={
-              this.state.selectedId === mealData.purchase_uid 
-                ? selectedMealButton
-                : deselectedMealButton
-            }
-            onClick={() => {
-              console.log("(1)======| SUB CLICKED |======(1)");
-
-              console.log("mealData: ", mealData);
-
-              // NEED:
-              // -- surpise/canceled/skipped/selected value
-              // -- 
-
-              this.setState({
-                selectedMeals,
-                selectedDeliveries,
-                selectedDiscount: discount,
-                selectedId: mealData.purchase_uid,
-                selectedMealPlan: mealData,
-                latitude: mealData.delivery_latitude,
-                longitude: mealData.delivery_longitude,
-                fetchingNBD: true,
-                fetchingNBA: true
-              });
-
-              const temp_position = {lat:parseFloat(this.state.latitude), lng:parseFloat(this.state.longitude)}
-
-              //console.log(temp_position)
-
-              window.map.setCenter(temp_position)
-
-              if(this.state.latitude!=''){
-                window.map.setZoom(17);
-                new google.maps.Marker({
-                  position: temp_position,
-                  map: window.map
-                });
-              }
-    
-              this.props.chooseMealsDelivery(
-                selectedMeals,
-                selectedDeliveries,
-                this.props.plans
-              );
-
-              //this.getNextBillingInfo(mealData);
-
-              console.log("(2)===========================(2)");
-
-            }}
-          >
-            <div className={styles.mealButtonEdit}>
-              ✏️
-            </div>
-            <div className={styles.mealButtonPlan}>
-              {selectedMeals} Meals, {selectedDeliveries} Deliveries
-            </div>
-            <div className={styles.mealButtonPlan}>
-              {planId}
-            </div>
-            <div className={styles.mealButtonSection}>
-              {this.state.nextBillingDate}
-            </div>
-            <div className={styles.mealButtonSection}>
-              Selected
-            </div>
-            <div className={styles.mealButtonSection}>
-              {this.state.nextBillingDate}
-            </div>
-            <div className={styles.mealButtonSection}>
-              ${this.state.nextBillingAmount}
-            </div>
-
-          </div>
-      );
-    }*/
     return(
       <div style={{width: '100%'}}>
         {mealButtons}
@@ -928,7 +1033,7 @@ class EditPlan extends React.Component {
       <>
       <div className={styles.boxPDleft}>
 
-      <div style={{/*border: 'double',*/ width: 'fit-content'}}>
+      <div style={{width: 'fit-content'}}>
         <div className={styles.planHeader}>
           Current Plan
         </div>
@@ -1067,7 +1172,7 @@ class EditPlan extends React.Component {
               }
             })()*/}
             {(() => {
-              let chargeOrRefund = this.calculateAdditionalCharges();
+              let chargeOrRefund = -1;
               if (parseFloat(chargeOrRefund) >= 0) {
                 return (
                   <>
@@ -1075,7 +1180,7 @@ class EditPlan extends React.Component {
                       {"Additional Charges "}
                     </div>
                     <div className={styles.chargeAmount}>
-                      ${this.calculateAdditionalCharges()}
+                      ${-1}
                     </div>
                   </>
                 );
@@ -1086,7 +1191,7 @@ class EditPlan extends React.Component {
                       {"You will be refunded "}
                     </div>
                     <div className={styles.chargeAmount}>
-                      ${-this.calculateAdditionalCharges()}
+                      ${this.state.diffSummary.total}
                     </div>
                   </>
                 );
@@ -1096,7 +1201,7 @@ class EditPlan extends React.Component {
         </div>
 
         <br />
-        <button 
+        {/*<button 
           className={styles.chargeBtn}
           onClick = {() => {
             console.log("save changes clicked...");
@@ -1104,7 +1209,7 @@ class EditPlan extends React.Component {
           }}
         >
           Save Changes
-        </button>
+        </button>*/}
 
       </div> 
 
@@ -1115,39 +1220,36 @@ class EditPlan extends React.Component {
 
   saveEdits = () => {
     console.log("saving edits...");
-    console.log("edits to save: ", this.state.selectedMealPlan);
+    console.log("edits to save: ", this.state.deliveryInfo);
 
-    // axios
-    // .post(
-    //   process.env.REACT_APP_SERVER_BASE_URI + 'checkout',
-    //   data
-    // )
-    // .then(() => {
-    //   console.log("Checkout complete");
-    //   _callback();
-    // }).catch((err) => {
-    //   console.log(
-    //     'error happened while posting to checkoutapi',
-    //     err
-    //   );
-    //   if(err.response){
-    //     console.log("err.response: " + JSON.stringify(err.response));
-    //   }
-    // });
+    axios
+      .post(API_URL + 'update_delivery_info', this.state.deliveryInfo)
+      .then((res) => {
+        console.log("update delivery info res: ", res);
+      }).catch((err) => {
+        console.log(
+          'error happened while updating delivery info',
+          err
+        );
+        if(err.response){
+          console.log("err.response: " + JSON.stringify(err.response));
+        }
+      });
 
   }
 
   changeTip(newTip) {
-    this.setState(prevState => ({
-      recalculatingPrice: true,
-      paymentSummary: {
-        ...prevState.paymentSummary,
-        tip: newTip
-      }
-    }), () => {
-      this.setTotal();
-      console.log("changeTip new paymentSummary: ", this.state.paymentSummary);
-    });
+    console.log("attempted to change tip");
+    // this.setState(prevState => ({
+    //   recalculatingPrice: true,
+    //   paymentSummary: {
+    //     ...prevState.paymentSummary,
+    //     tip: newTip
+    //   }
+    // }), () => {
+    //   this.setTotal();
+    //   console.log("changeTip new paymentSummary: ", this.state.paymentSummary);
+    // });
   }
 
   mealsDelivery = () => {
@@ -1181,6 +1283,7 @@ class EditPlan extends React.Component {
               this.state.updatedPlan.deliveries,
               this.props.plans
             );
+            
             // console.log("===== mealIndex: " + mealIndex);
             // console.log("===== paymentOption: " + this.props.paymentOption);
             // this.setState({
@@ -1191,7 +1294,9 @@ class EditPlan extends React.Component {
                 ...prevState.updatedPlan,
                 meals: mealIndex
               }
-            }));
+            }), () => {
+              this.updatePaymentSummary(this.state.updatedPlan);
+            });
           }}
         >
           {mealIndex}
@@ -1397,18 +1502,18 @@ class EditPlan extends React.Component {
 
         {/*<div style={{display: 'flex', marginLeft: '8%', width: '42%'}}>*/}
         <div className={styles.containerSplit}>
-          <div style = {{display: 'inline-block', marginLeft: '8%', width: '40%', marginRight: '2%', border: 'solid'}}>
+          <div style = {{display: 'inline-block', marginLeft: '8%', width: '40%', marginRight: '2%'}}>
             <div style={{display: 'flex'}}>
               <input
                 type='text'
                 placeholder='First Name'
                 className={styles.inputContactLeft}
-                value={this.state.selectedMealPlan.delivery_first_name}
+                value={this.state.deliveryInfo.first_name}
                 onChange={e => {
                   this.setState(prevState => ({
-                    selectedMealPlan: {
-                      ...prevState.selectedMealPlan,
-                      delivery_first_name: e.target.value
+                    deliveryInfo: {
+                      ...prevState.deliveryInfo,
+                      first_name: e.target.value
                     }
                   }));
                 }}
@@ -1418,12 +1523,12 @@ class EditPlan extends React.Component {
                 type='text'
                 placeholder='Last Name'
                 className={styles.inputContactRight}
-                value={this.state.selectedMealPlan.delivery_last_name}
+                value={this.state.deliveryInfo.last_name}
                 onChange={e => {
                   this.setState(prevState => ({
-                    selectedMealPlan: {
-                      ...prevState.selectedMealPlan,
-                      delivery_last_name: e.target.value
+                    deliveryInfo: {
+                      ...prevState.deliveryInfo,
+                      last_name: e.target.value
                     }
                   }));
                 }}
@@ -1441,12 +1546,12 @@ class EditPlan extends React.Component {
               type='text'
               placeholder='Phone Number'
               className={styles.input}
-              value={this.state.selectedMealPlan.delivery_phone_num}
+              value={this.state.deliveryInfo.phone}
               onChange={e => {
                 this.setState(prevState => ({
-                  selectedMealPlan: {
-                    ...prevState.selectedMealPlan,
-                    delivery_phone_num: e.target.value
+                  deliveryInfo: {
+                    ...prevState.deliveryInfo,
+                    phone: e.target.value
                   }
                 }));
               }}
@@ -1463,12 +1568,12 @@ class EditPlan extends React.Component {
               type='text'
               placeholder={"Address 1"}
               className={styles.input}
-              value={this.state.selectedMealPlan.delivery_address}
+              value={this.state.deliveryInfo.address}
               onChange={e => {
                 this.setState(prevState => ({
-                  selectedMealPlan: {
-                    ...prevState.selectedMealPlan,
-                    delivery_address: e.target.value
+                  deliveryInfo: {
+                    ...prevState.deliveryInfo,
+                    address: e.target.value
                   }
                 }));
               }}
@@ -1479,33 +1584,27 @@ class EditPlan extends React.Component {
                 type='text'
                 placeholder={"Unit"}
                 className={styles.inputContactLeft}
-                value={this.state.selectedMealPlan.delivery_unit}
+                value={this.state.deliveryInfo.unit}
                 onChange={e => {
                   this.setState(prevState => ({
-                    selectedMealPlan: {
-                      ...prevState.selectedMealPlan,
-                      delivery_unit: e.target.value
+                    deliveryInfo: {
+                      ...prevState.deliveryInfo,
+                      unit: e.target.value
                     }
                   }));
                 }}
               />
-              {/*<input
-                type='text'
-                placeholder={"City"}
-                id="locality" name="locality"
 
-                className={styles.inputContactRight}
-              />*/}
               <input
                 type='text'
                 placeholder={"City"}
                 className={styles.inputContactRight}
-                value={this.state.selectedMealPlan.delivery_city}
+                value={this.state.deliveryInfo.city}
                 onChange={e => {
                   this.setState(prevState => ({
-                    selectedMealPlan: {
-                      ...prevState.selectedMealPlan,
-                      delivery_city: e.target.value
+                    deliveryInfo: {
+                      ...prevState.deliveryInfo,
+                      city: e.target.value
                     }
                   }));
                 }}
@@ -1517,12 +1616,12 @@ class EditPlan extends React.Component {
                 type='text'
                 placeholder={"State"}
                 className={styles.inputContactLeft}
-                value={this.state.selectedMealPlan.delivery_state}
+                value={this.state.deliveryInfo.state}
                 onChange={e => {
                   this.setState(prevState => ({
-                    selectedMealPlan: {
-                      ...prevState.selectedMealPlan,
-                      delivery_state: e.target.value
+                    deliveryInfo: {
+                      ...prevState.deliveryInfo,
+                      state: e.target.value
                     }
                   }));
                 }}
@@ -1531,12 +1630,12 @@ class EditPlan extends React.Component {
                 type='text'
                 placeholder={"Zip Code"}
                 className={styles.inputContactRight}
-                value={this.state.selectedMealPlan.delivery_zip}
+                value={this.state.deliveryInfo.zip}
                 onChange={e => {
                   this.setState(prevState => ({
-                    selectedMealPlan: {
-                      ...prevState.selectedMealPlan,
-                      delivery_zip: e.target.value
+                    deliveryInfo: {
+                      ...prevState.deliveryInfo,
+                      zip: e.target.value
                     }
                   }));
                 }}
@@ -1547,12 +1646,12 @@ class EditPlan extends React.Component {
               type={'text'}
               placeholder={'Delivery Instructions'}
               className={styles.input}
-              value={this.state.selectedMealPlan.delivery_instructions}
+              value={this.state.deliveryInfo.instructions}
               onChange={e => {
                 this.setState(prevState => ({
-                  selectedMealPlan: {
-                    ...prevState.selectedMealPlan,
-                    delivery_instructions: e.target.value
+                  deliveryInfo: {
+                    ...prevState.deliveryInfo,
+                    instructions: e.target.value
                   }
                 }));
               }}
@@ -1562,7 +1661,7 @@ class EditPlan extends React.Component {
 
             <div style={{textAlign: 'center'}}>
               <button 
-                className={styles.saveBtn}
+                className={styles.orangeBtn}
                 disabled={!this.state.subscriptionsLoaded}
                 onClick={()=>this.saveEdits()}
               >
@@ -1577,7 +1676,6 @@ class EditPlan extends React.Component {
                 // marginLeft:'100px',
                 width:'40%',
                 marginRight: '8%',
-                border: 'solid',
                 marginLeft: '2%'
               }}
             > 
@@ -1607,15 +1705,15 @@ class EditPlan extends React.Component {
                   </div>
 
                   <div className={styles.summaryRight}>
-                    ${this.state.paymentSummary.mealSubPrice}
+                    ${this.state.updatedSummary.mealSubPrice}
                   </div>
 
                   <div className={styles.summaryRight}>
-                    ${this.state.paymentSummary.mealSubPrice}
+                    ${this.state.currentSummary.mealSubPrice}
                   </div>
 
                   <div className={styles.summaryRight}>
-                    ${this.state.paymentSummary.mealSubPrice}
+                    ${this.state.diffSummary.mealSubPrice}
                   </div>
 
               </div>
@@ -1624,19 +1722,19 @@ class EditPlan extends React.Component {
                 style={{display: 'flex',borderBottom:'1px solid'}}>
 
                   <div className={styles.summaryLeft}>
-                  Discount ({this.props.selectedPlan.delivery_discount}%):
+                  Discount
                   </div>
 
                   <div className={styles.summaryRight}>
-                    -${this.state.paymentSummary.discountAmount}
+                    -${this.state.updatedSummary.discountAmount}
                   </div>
 
                   <div className={styles.summaryRight}>
-                    -${this.state.paymentSummary.discountAmount}
+                    -${this.state.currentSummary.discountAmount}
                   </div>
 
                   <div className={styles.summaryRight}>
-                    -${this.state.paymentSummary.discountAmount}
+                    -${this.state.diffSummary.discountAmount}
                   </div>
 
               </div>
@@ -1645,21 +1743,19 @@ class EditPlan extends React.Component {
                 style={{display: 'flex',borderBottom:'1px solid'}}>
 
                   <div className={styles.summaryLeft}>
-                    Total Delivery Fee For All {
-                        this.state.currentPlan.deliveries
-                      } Deliveries:
+                    Delivery Fee
                   </div>
 
                   <div className={styles.summaryRight}>
-                    ${(this.state.paymentSummary.deliveryFee)}
+                    ${(this.state.updatedSummary.deliveryFee)}
                   </div>
 
                   <div className={styles.summaryRight}>
-                    ${(this.state.paymentSummary.deliveryFee)}
+                    ${(this.state.currentSummary.deliveryFee)}
                   </div>
 
                   <div className={styles.summaryRight}>
-                    ${(this.state.paymentSummary.deliveryFee)}
+                    ${(this.state.diffSummary.deliveryFee)}
                   </div>
 
               </div>
@@ -1668,19 +1764,19 @@ class EditPlan extends React.Component {
                 style={{display: 'flex',borderBottom:'1px solid'}}>
 
                   <div className={styles.summaryLeft}>
-                    Service Fee:
+                    Service Fee
                   </div>
 
                   <div className={styles.summaryRight}>
-                    ${(this.state.paymentSummary.serviceFee)}
+                    ${(this.state.updatedSummary.serviceFee)}
                   </div>
 
                   <div className={styles.summaryRight}>
-                    ${(this.state.paymentSummary.serviceFee)}
+                    ${(this.state.currentSummary.serviceFee)}
                   </div>
 
                   <div className={styles.summaryRight}>
-                    ${(this.state.paymentSummary.serviceFee)}
+                    ${(this.state.diffSummary.serviceFee)}
                   </div>
 
               </div>
@@ -1689,19 +1785,19 @@ class EditPlan extends React.Component {
                 style={{display: 'flex',borderBottom:'1px solid'}}>
 
                   <div className={styles.summaryLeft}>
-                    Taxes:
+                    Taxes
                   </div>
 
                   <div className={styles.summaryRight}>
-                    ${(this.state.paymentSummary.taxAmount)}
+                    ${(this.state.updatedSummary.taxAmount)}
                   </div>
 
                   <div className={styles.summaryRight}>
-                    ${(this.state.paymentSummary.taxAmount)}
+                    ${(this.state.currentSummary.taxAmount)}
                   </div>
 
                   <div className={styles.summaryRight}>
-                    ${(this.state.paymentSummary.taxAmount)}
+                    ${(this.state.diffSummary.taxAmount)}
                   </div>
 
               </div>
@@ -1710,24 +1806,24 @@ class EditPlan extends React.Component {
                 style={{display: 'flex'}}>
 
                   <div className={styles.summaryLeft}>
-                    Chef and Driver Tip:
+                    Chef and Driver Tip
                   </div>
 
                   <div className={styles.summaryRight}>
-                    ${(this.state.paymentSummary.tip)}
+                    ${(this.state.updatedSummary.tip)}
                   </div>
 
                   <div className={styles.summaryRight}>
-                    ${(this.state.paymentSummary.tip)}
+                    ${(this.state.currentSummary.tip)}
                   </div>
 
                   <div className={styles.summaryRight}>
-                    ${(this.state.paymentSummary.tip)}
+                    ${(this.state.diffSummary.tip)}
                   </div>
 
               </div>
               <div 
-                style={{display: 'flex', border: 'inset'}}>
+                style={{display: 'flex'}}>
                   {(() => {
                       if (this.state.paymentSummary.tip === "0.00") {
                         return (
@@ -1744,7 +1840,7 @@ class EditPlan extends React.Component {
                       }
                     })()}
                     {(() => {
-                      if (this.state.paymentSummary.tip === "2.00") {
+                      if (this.state.updatedSummary.tip === "2.00") {
                         return (
                           <button className={styles.tipButtonSelected} onClick={() => this.changeTip("2.00")}>
                             $2
@@ -1759,7 +1855,7 @@ class EditPlan extends React.Component {
                       }
                     })()} 
                     {(() => {
-                      if (this.state.paymentSummary.tip === "3.00") {
+                      if (this.state.updatedSummary.tip === "3.00") {
                         return (
                           <button className={styles.tipButtonSelected} onClick={() => this.changeTip("3.00")}>
                             $3
@@ -1774,7 +1870,7 @@ class EditPlan extends React.Component {
                       }
                     })()} 
                     {(() => {
-                      if (this.state.paymentSummary.tip === "5.00") {
+                      if (this.state.updatedSummary.tip === "5.00") {
                         return (
                           <button className={styles.tipButtonSelected} onClick={() => this.changeTip("5.00")}>
                             $5
@@ -1812,24 +1908,24 @@ class EditPlan extends React.Component {
               <div 
                 style={{display: 'flex' ,marginBottom:'73px'}}>
                   <div className={styles.summaryLeft}>
-                    Total:
+                    Total
                   </div>
 
                   <div className={styles.summaryRight}>
-                    ${this.calculateTotal()}
+                    ${this.state.updatedSummary.total}
                   </div>
 
                   <div className={styles.summaryRight}>
-                    ${this.calculateTotal()}
+                    ${this.state.currentSummary.total}
                   </div>
 
                   <div className={styles.summaryRight}>
-                    ${this.calculateTotal()}
+                    ${this.state.diffSummary.total}
                   </div>
               </div>
 
                 
-          <button 
+          {/*<button 
           style={{
             backgroundColor: '#ff6505',
             width:'80%',
@@ -1838,6 +1934,11 @@ class EditPlan extends React.Component {
             // marginTop: '36px',
             // marginLeft: '60px',
           }}
+          >*/}
+          <button 
+            className={styles.orangeBtn}
+            disabled={!this.state.subscriptionsLoaded}
+            onClick={() => this.changePurchase()}
           >
             Complete Payment
           </button>
