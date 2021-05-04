@@ -106,44 +106,17 @@ class EditPlan extends React.Component {
         total: "0.00",
         subtotal: "0.00"
       },
-      currentSummary: {
-        mealSubPrice: "0.00",
-        discountAmount: "0.00",
-        addOns: "0.00",
-        tip: "2.00",
-        serviceFee: "0.00",
-        deliveryFee: "0.00",
-        taxRate: 0,
-        taxAmount: "0.00",
-        ambassadorDiscount: "0.00",
-        total: "0.00",
-        subtotal: "0.00"
-      },
-      diffSummary: {
-        mealSubPrice: "0.00",
-        discountAmount: "0.00",
-        addOns: "0.00",
-        tip: "0.00",
-        serviceFee: "0.00",
-        deliveryFee: "0.00",
-        taxRate: 0,
-        taxAmount: "0.00",
-        ambassadorDiscount: "0.00",
-        total: "0.00",
-        subtotal: "0.00"
-      },
-      updatedSummary: {
-        mealSubPrice: "0.00",
-        discountAmount: "0.00",
-        addOns: "0.00",
-        tip: "2.00",
-        serviceFee: "0.00",
-        deliveryFee: "0.00",
-        taxRate: 0,
-        taxAmount: "0.00",
-        ambassadorDiscount: "0.00",
-        total: "0.00",
-        subtotal: "0.00"
+      differenceSummary: {
+        base_amount: "0.00",
+        taxes: "0.00",
+        delivery_fee: "0.00",
+        service_fee: "0.00",
+        driver_tip: "0.00",
+        discount_amount: "0.00",
+        discount_rate: 0,
+        ambassador_discount: "0.00",
+        subtotal: "0.00",
+        total: "0.00"
       },
       subscriptionsList: [],
       subscriptionsLoaded: false,
@@ -279,6 +252,119 @@ class EditPlan extends React.Component {
     return sumAmountDue;
   }
 
+  /*
+  applyAmbassadorCode() {
+
+    if(this.state.email !== ""){
+      console.log("(Ambassador code) Valid email");
+    } else {
+      console.log("(Ambassador code) Invalid email");
+    }
+      
+    axios
+      .post(API_URL + 'brandAmbassador/generate_coupon',
+        {
+          amb_email: this.state.ambassadorCode,
+          cust_email: this.state.email
+        }
+      )
+      .then(res => {
+        let items = res.data
+        console.log("ambassador code response: " + JSON.stringify(res));
+
+        if(typeof(items) === "string") {
+          console.log("Invalid code");
+          this.setState({
+            validCode: false,
+            ambassadorMessage: items
+          });
+          this.displayAmbassadorError();
+        } else {
+          console.log("Valid code");
+          items = items.result[0];
+          console.log("result: " + JSON.stringify(items));
+          this.setState(prevState => ({
+            validCode: true,
+            recalculatingPrice: true,
+            paymentSummary: {
+              ...prevState.paymentSummary,
+              ambassadorDiscount: (
+                items.discount_amount +
+                items.discount_shipping
+              ).toFixed(2)
+            }
+          }), () => {
+            this.setTotal();
+          });
+          //this.setTotal();
+        }
+      })
+      .catch(err => {
+        console.log("Ambassador code error: " + err);
+      });
+  }
+  */
+
+  calculateDifference = () => {
+    // differenceSummary: {
+    //   base_amount: "0.00",
+    //   taxes: "0.00",
+    //   delivery_fee: "0.00",
+    //   service_fee: "0.00",
+    //   driver_tip: "0.00",
+    //   discount_amount: "0.00",
+    //   discount_rate: 0,
+    //   ambassador_discount: "0.00",
+    //   subtotal: "0.00",
+    //   total: "0.00"
+    // },
+
+    this.setState(prevState => ({
+      differenceSummary: {
+        base_amount: (
+          parseFloat(this.state.updatedPlan.payment_summary.base_amount) -
+          parseFloat(this.state.currentPlan.payment_summary.base_amount)
+        ).toFixed(2),
+        taxes: (
+          parseFloat(this.state.updatedPlan.payment_summary.taxes) -
+          parseFloat(this.state.currentPlan.payment_summary.taxes)
+        ).toFixed(2),
+        delivery_fee: (
+          parseFloat(this.state.updatedPlan.payment_summary.delivery_fee) -
+          parseFloat(this.state.currentPlan.payment_summary.delivery_fee)
+        ).toFixed(2),
+        service_fee: (
+          parseFloat(this.state.updatedPlan.payment_summary.service_fee) -
+          parseFloat(this.state.currentPlan.payment_summary.service_fee)
+        ).toFixed(2),
+        driver_tip: (
+          parseFloat(this.state.updatedPlan.payment_summary.driver_tip) -
+          parseFloat(this.state.currentPlan.payment_summary.driver_tip)
+        ).toFixed(2),
+        discount_amount: (
+          parseFloat(this.state.updatedPlan.payment_summary.discount_amount) -
+          parseFloat(this.state.currentPlan.payment_summary.discount_amount)
+        ).toFixed(2),
+        discount_rate: (
+          this.state.updatedPlan.payment_summary.discount_rate -
+          this.state.currentPlan.payment_summary.discount_rate
+        ),
+        ambassador_discount: (
+          parseFloat(this.state.updatedPlan.payment_summary.ambassador_discount) -
+          parseFloat(this.state.currentPlan.payment_summary.ambassador_discount)
+        ).toFixed(2),
+        subtotal: (
+          parseFloat(this.state.updatedPlan.payment_summary.subtotal) -
+          parseFloat(this.state.currentPlan.payment_summary.subtotal)
+        ).toFixed(2),
+        total: (
+          parseFloat(this.state.updatedPlan.payment_summary.total) -
+          parseFloat(this.state.currentPlan.payment_summary.total)
+        ).toFixed(2),
+      },
+    }));
+  }
+
   changePlans = (meals, deliveries) => {
     console.log(" ");
     console.log("======| changePlans |======");
@@ -303,15 +389,6 @@ class EditPlan extends React.Component {
     newUpdatedPlan.meals = meals;
     newUpdatedPlan.deliveries = deliveries;
     newUpdatedPlan.payment_summary.base_amount = newBaseAmount.toFixed(2);
-    // newUpdatedPlan.payment_summary.total = (
-    //   parseFloat(newUpdatedPlan.payment_summary.base_amount) +
-    //   newUpdatedPlan.payment_summary.taxes + 
-    //   newUpdatedPlan.payment_summary.service_fee +
-    //   newUpdatedPlan.payment_summary.delivery_fee +
-    //   newUpdatedPlan.payment_summary.driver_tip +
-    //   newUpdatedPlan.payment_summary.ambassador_discount
-    // ) - (parseFloat(newUpdatedPlan.payment_summary.base_amount)*mealPlan.delivery_discount*0.01);
-    // newUpdatedPlan.payment_summary.discount_amount = newBaseAmount.toFixed(2);
     
     newUpdatedPlan.payment_summary.discount_rate = mealPlan.delivery_discount;
     newUpdatedPlan.payment_summary.total = (
@@ -326,9 +403,11 @@ class EditPlan extends React.Component {
         parseFloat(newUpdatedPlan.payment_summary.base_amount)*mealPlan.delivery_discount*0.01
       )
     ).toFixed(2);
+    console.log("DISCOUNT BEFORE: ", newUpdatedPlan.payment_summary.discount_amount);
     newUpdatedPlan.payment_summary.discount_amount = (
       parseFloat(newUpdatedPlan.payment_summary.base_amount)*mealPlan.delivery_discount*0.01
     ).toFixed(2);
+    console.log("DISCOUNT AFTER: ", newUpdatedPlan.payment_summary.discount_amount);
 
     console.log("new payment summary: ", newUpdatedPlan.payment_summary);
 
@@ -347,6 +426,7 @@ class EditPlan extends React.Component {
       console.log("(3) updated plan: ", this.state.updatedPlan);
       console.log("(3) current plan: ", this.state.currentPlan);
       console.log(" ");
+      this.calculateDifference();
     });
   }
 
@@ -432,7 +512,7 @@ class EditPlan extends React.Component {
         service_fee: sub.service_fee.toFixed(2),
         driver_tip: sub.driver_tip.toFixed(2),
         discount_amount: (
-          parseFloat(nextBillingAmount) *
+          sub.base_amount *
           parsedDiscount *
           0.01
         ).toFixed(2),
@@ -458,8 +538,6 @@ class EditPlan extends React.Component {
       console.log("Subscription to be pushed: ", subscription);
 
       if(index === 0){
-        // defaultCurrentPlan = {...subscription};
-        // defaultUpdatedPlan = {...subscription};
 
         defaultCurrentPlan["load_order"] = index;
         defaultCurrentPlan["id"] = parsedId;
@@ -503,111 +581,6 @@ class EditPlan extends React.Component {
       updatedPlan: {...defaultUpdatedPlan}
     });
   }
-
-  /*loadSubscriptions = (subscriptions, discounts, deliveryDate, selections) => {
-    console.log("loading subscription info...");
-    console.log("(loadSubscriptions) subscriptions: ", subscriptions);
-    console.log("(loadSubscriptions) discounts: ", discounts);
-    console.log("(loadSubscriptions) delivery date: ", deliveryDate);
-    console.log("(loadSubscriptions) selections: ", selections);
-
-
-
-    let currentPlan = null;
-    let updatedPlan = null;
-    let newSummary = {};
-
-    subscriptions.forEach((sub) => {
-
-      let activeSub = sub.order_history.filter( function(e) {
-        return e.purchase_status === "ACTIVE";
-      });
-
-      sub["active_subscription"] = activeSub[0];
-
-      console.log("NEW ACTIVE SUBSCRIPTION: ", activeSub[0]);
-
-      let planItems = JSON.parse(activeSub[0].items);
-
-
-      let activeSubMeals = planItems[0]
-        .name.substring(0,planItems[0].name.indexOf(" "));
-      let activeSubDeliveries = planItems[0].qty;
-
-
-      let selectionsForId = selections.filter( function(e) {
-        return e.purchase_id === sub.id && e.sel_menu_date === deliveryDate;
-      });
-
-      console.log(sub.id + " meals selections: ", selectionsForId);
-
-      let mealSelection = "";
-
-      if(selectionsForId.length > 0){
-        let mealSelectionParsed = JSON.parse(selectionsForId[0].meal_selection);
-        console.log("MEAL SELECTION PARSED: ", mealSelectionParsed);
-        mealSelection = mealSelectionParsed[0].name;
-        console.log("NEW MEAL SELECTION: ", mealSelection);
-      }
-
-
-      console.log(sub.id + " order history: ", sub.order_history);
-      let amountDue = this.calculateNextBillingAmount(sub.order_history);
-
-
-      sub["meals"] = activeSubMeals;
-      sub["deliveries"] = activeSubDeliveries;
-      sub["amount_due"] = amountDue;
-      sub["next_delivery_date"] = deliveryDate;
-      sub["meal_selection"] = mealSelection;
-
-      let activeSubDiscount = discounts.filter( function(e) {
-        return e.deliveries === sub.deliveries;
-      });
-
-      console.log("active sub discount: ", activeSubDiscount);
-
-      sub["discount"] = activeSubDiscount[0].discount;
-
-
-      console.log(sub.id + " active subscription: ", sub.active_subscription);
-
-      if(sub.load_order === 0){
-        console.log("currentPlan set to: ", sub);
-        currentPlan = sub;
-        updatedPlan = sub;
-        newSummary = {
-          mealSubPrice: activeSub[0].subtotal.toFixed(2),
-          discountAmount: (activeSubDiscount[0].discount*activeSub[0].subtotal*0.01).toFixed(2),
-          addOns: "0.00",
-          tip: activeSub[0].driver_tip.toFixed(2),
-          serviceFee: activeSub[0].service_fee.toFixed(2),
-          deliveryFee: activeSub[0].delivery_fee.toFixed(2),
-          taxRate: 0,
-          taxAmount: activeSub[0].taxes.toFixed(2),
-          ambassadorDiscount: "0.00",
-          total: "0.00",
-          subtotal: "0.00"
-        };
-        newSummary = this.setTotal(newSummary);
-        console.log("newer summary: ", newSummary);
-      }
-    });
-
-    console.log("new subscriptions: ", subscriptions);
-
-    console.log("summary saved to state: ", newSummary);
-
-    this.setState({
-      currentPlan,
-      updatedPlan,
-      subscriptionsLoaded: true,
-      subscriptionsList: subscriptions,
-      updatedSummary: newSummary,
-      currentSummary: newSummary
-    })
-
-  }*/
 
   changePurchase() {
     let object = {
@@ -766,20 +739,6 @@ class EditPlan extends React.Component {
       axios
         .get(API_URL + 'Profile/' + customerUid)
         .then(res => {
-
-          // NOTE: the following comments outline the purpose of the
-          // following section (everything contained within this "then" block)
-
-          // OBJECTIVE:
-          // Call all endpoints necessary for displaying data on page
-          // (ie. purchase history, billing dates, delivery dates, etc...)
-
-          // Challenges (why the following code here is so convoluted):
-          // -- When possible, endpoints are called in parallel in order
-          //    to maximize efficiency by reducing time spent awaiting responses
-          // -- All necessary data has to been returned by endpoints before 
-          //    the page loads (synchronization must be maintained)
-
           this.setState(prevState => ({
             customerUid,
             mounted: true
@@ -820,171 +779,11 @@ class EditPlan extends React.Component {
                   console.log("(2) load subscriptions");
                   this.loadSubscriptions(fetchedSubscriptions, fetchedDiscounts);
                 }
-
-                // subs.forEach((sub, index) => {
-                //   console.log(" ");
-                //   console.log("======| subscription " + index + " |======");
-                //   console.log("Meal Plans: ", sub.items);
-                //   console.log("Purchase ID: ", sub.purchase_id);
-                //   console.log("Next Delivery Date: ", sub.sel_menu_date);
-                //   console.log("Next Delivery Status: ", sub.meal_selection);
-                //   console.log("Next Billing Date: ", sub.menu_date);
-                //   console.log("Next Billing Amount: ", sub.base_amount);
-                //   console.log(" ");
-
-                //   loadSubscription(sub);
-
-                //   if(index = subs.length){
-
-                //   }
-                // });
               })
               .catch(err => {
                 console.log(err);
               });
-
-            /*
-            let subscriptionsFetched = false;
-            let fetchedSubscriptions = [];
-            let fetchedDiscounts = null;
-            let billingDatesFetched = 0;
-            let fetchedMealSelections = null;
-            let nextDeliveryDate = null;
-
-            // fetch discounts corresponding to each number of deliveries
-            fetchDiscounts((discounts) => {
-              console.log("fetchDiscounts callback: ", discounts);
-
-              fetchedDiscounts = discounts;
-
-              if(subscriptionsFetched === true && 
-                nextDeliveryDate !== null && 
-                fetchedMealSelections !== null){
-                console.log("(1) load subscriptions");
-                this.loadSubscriptions(fetchedSubscriptions, fetchedDiscounts, nextDeliveryDate, fetchedMealSelections);
-              }
-
             });
-
-            // fetch delivery dates
-            axios.get(API_URL + 'upcoming_menu_dates')
-              .then(res => {
-                console.log("upcoming menu dates res: ", res);
-                console.log("first date: ", res.data.result[0].menu_date);
-                nextDeliveryDate = res.data.result[0].menu_date;
-
-                if(subscriptionsFetched === true && 
-                  fetchedDiscounts !== null && 
-                  fetchedMealSelections !== null){
-                  console.log("(2) load subscriptions");
-                  this.loadSubscriptions(fetchedSubscriptions, fetchedDiscounts, nextDeliveryDate, fetchedMealSelections);
-                }
-              })
-              .catch(err => {
-                console.log(err);
-              });
-
-            // fetch meals selections
-            axios.get(API_URL + 'meals_selected', {
-              params: {customer_uid: this.state.customerUid}
-            })
-              .then(res => {
-                console.log("meals_selected res: ", res);
-                fetchedMealSelections = res.data.result;
-
-                if(subscriptionsFetched === true && 
-                  fetchedDiscounts !== null &&
-                  nextDeliveryDate !== null){
-                  console.log("(3) load subscriptions");
-                  this.loadSubscriptions(fetchedSubscriptions, fetchedDiscounts, nextDeliveryDate, fetchedMealSelections);
-                }
-              })
-              .catch(err => {
-                console.log(err);
-              });
-
-            // Fetch all subscriptions
-            this.props.fetchSubscribed(customerUid)              
-              .then((ids) => {
-                console.log("fetchSubscribed result: ", ids);
-
-                // Use subscription IDs to get each subscription's order history and next billing date
-                let load_order = 0;
-                ids.forEach((id) => {
-
-                  let currSubscription = {
-                    id,
-                    load_order,
-                    order_history: null,
-                    next_billing_date: null,
-                  };
-
-                  load_order++;
-
-                  // fetch order history for ID
-                  axios.get(API_URL + 'pid_history/' + id)
-                    .then(res => {
-
-                      console.log(id + " past purchases: ", res.data.result);
-
-                      currSubscription.order_history = res.data.result;
-
-                      console.log("sub histories fetched: ", fetchedSubscriptions.length);
-
-                      if(currSubscription.next_billing_date !== null){
-                        fetchedSubscriptions.push(currSubscription);
-                      }
-
-                      if(fetchedSubscriptions.length === ids.length && 
-                        billingDatesFetched === ids.length) {
-                        subscriptionsFetched = true;
-
-                        if(fetchedDiscounts !== null && 
-                          nextDeliveryDate !== null  && 
-                          fetchedMealSelections !== null){
-                          console.log("(4.1) load subscriptions");
-                          this.loadSubscriptions(fetchedSubscriptions, fetchedDiscounts, nextDeliveryDate, fetchedMealSelections);
-                        }
-
-                      }
-
-                    })
-                    .catch(err => {
-                      console.log(err);
-                    });
-
-                  // fetch next billing date for ID
-                  axios.get(API_URL + 'predict_autopay_day/' + id)
-                    .then(res => {
-                      billingDatesFetched++;
-                      currSubscription.next_billing_date = res.data.menu_date;
-
-                      console.log("billing dates fetched: ", billingDatesFetched);
-
-                      if(currSubscription.order_history !== null){
-                        fetchedSubscriptions.push(currSubscription);
-                      }
-
-                      if(fetchedSubscriptions.length === ids.length && 
-                        billingDatesFetched === ids.length) {
-                        subscriptionsFetched = true;
-
-                        if(fetchedDiscounts !== null && 
-                          nextDeliveryDate !== null && 
-                          fetchedMealSelections !== null){
-                          console.log("(4.2) load subscriptions");
-                          this.loadSubscriptions(fetchedSubscriptions, fetchedDiscounts, nextDeliveryDate, fetchedMealSelections);
-                        }
-
-                      }
-                
-                    })
-                    .catch(err => {
-                      console.log(err);
-                    });
-                });
-              });
-            */});
 
         })
         .catch(err => {
@@ -1044,9 +843,37 @@ class EditPlan extends React.Component {
 
             console.log("new current plan: ", sub);
 
+            let newCurrentPlan = {
+              deliveries: sub.deliveries,
+              discount: sub.discount,
+              id: sub.id,
+              load_order: sub.load_order,
+              meals: sub.meals,
+              next_billing_amount: sub.next_billing_amount,
+              next_billing_date: sub.next_billing_date,
+              next_delivery_date: sub.next_delivery_date,
+              next_delivery_status: sub.next_delivery_status,
+              payment_summary: {...sub.payment_summary},
+              raw_data: {...sub.raw_data}
+            };
+
+            let newUpdatedPlan = {
+              deliveries: sub.deliveries,
+              discount: sub.discount,
+              id: sub.id,
+              load_order: sub.load_order,
+              meals: sub.meals,
+              next_billing_amount: sub.next_billing_amount,
+              next_billing_date: sub.next_billing_date,
+              next_delivery_date: sub.next_delivery_date,
+              next_delivery_status: sub.next_delivery_status,
+              payment_summary: {...sub.payment_summary},
+              raw_data: {...sub.raw_data}
+            };
+
             this.setState({
-              currentPlan: {...sub},
-              updatedPlan: {...sub}
+              currentPlan: {...newCurrentPlan},
+              updatedPlan: {...newUpdatedPlan}
             });
 
           }}
@@ -1194,34 +1021,8 @@ class EditPlan extends React.Component {
 
         <div className={styles.chargeTotal}>
           <div style={{display: 'inline-flex'}}>
-            {/*(() => {
-              let chargeOrRefund = this.calculateAdditionalCharges();
-              if (parseFloat(chargeOrRefund) >= 0) {
-                return (
-                  <>
-                    <div className={styles.chargeText}>
-                      {"Additional Charges "}
-                    </div>
-                    <div className={styles.chargeAmount}>
-                      ${this.calculateAdditionalCharges()}
-                    </div>
-                  </>
-                );
-              } else {
-                return (
-                  <>
-                    <div className={styles.chargeText}>
-                      {"You will be refunded "}
-                    </div>
-                    <div className={styles.chargeAmount}>
-                      ${-this.calculateAdditionalCharges()}
-                    </div>
-                  </>
-                );
-              }
-            })()*/}
             {(() => {
-              let chargeOrRefund = -1;
+              let chargeOrRefund = this.state.differenceSummary.total;
               if (parseFloat(chargeOrRefund) >= 0) {
                 return (
                   <>
@@ -1229,7 +1030,7 @@ class EditPlan extends React.Component {
                       {"Additional Charges "}
                     </div>
                     <div className={styles.chargeAmount}>
-                      ${-1}
+                      ${this.state.differenceSummary.total}
                     </div>
                   </>
                 );
@@ -1240,7 +1041,7 @@ class EditPlan extends React.Component {
                       {"You will be refunded "}
                     </div>
                     <div className={styles.chargeAmount}>
-                      ${this.state.diffSummary.total}
+                      ${-1*this.state.differenceSummary.total}
                     </div>
                   </>
                 );
@@ -1248,17 +1049,6 @@ class EditPlan extends React.Component {
             })()}
           </div>
         </div>
-
-        <br />
-        {/*<button 
-          className={styles.chargeBtn}
-          onClick = {() => {
-            console.log("save changes clicked...");
-            this.saveChanges();
-          }}
-        >
-          Save Changes
-        </button>*/}
 
       </div> 
 
@@ -1729,7 +1519,7 @@ class EditPlan extends React.Component {
                   </div>
 
                   <div className={styles.summaryRight}>
-                    ${this.state.diffSummary.mealSubPrice}
+                    ${Math.abs(this.state.differenceSummary.base_amount).toFixed(2)}
                   </div>
 
               </div>
@@ -1756,7 +1546,10 @@ class EditPlan extends React.Component {
                   </div>
 
                   <div className={styles.summaryRight}>
-                    -${this.state.diffSummary.discountAmount}
+                    {
+                      "$" + Math.abs(this.state.differenceSummary.discount_amount).toFixed(2) + 
+                      " (" + Math.abs(this.state.differenceSummary.discount_rate) + "%)"
+                    }
                   </div>
 
               </div>
@@ -1777,7 +1570,7 @@ class EditPlan extends React.Component {
                   </div>
 
                   <div className={styles.summaryRight}>
-                    ${(this.state.diffSummary.deliveryFee)}
+                    ${Math.abs(this.state.differenceSummary.delivery_fee).toFixed(2)}
                   </div>
 
               </div>
@@ -1798,7 +1591,7 @@ class EditPlan extends React.Component {
                   </div>
 
                   <div className={styles.summaryRight}>
-                    ${(this.state.diffSummary.serviceFee)}
+                    ${Math.abs(this.state.differenceSummary.service_fee).toFixed(2)}
                   </div>
 
               </div>
@@ -1819,7 +1612,7 @@ class EditPlan extends React.Component {
                   </div>
 
                   <div className={styles.summaryRight}>
-                    ${(this.state.diffSummary.taxAmount)}
+                    ${Math.abs(this.state.differenceSummary.taxes).toFixed(2)}
                   </div>
 
               </div>
@@ -1840,7 +1633,7 @@ class EditPlan extends React.Component {
                   </div>
 
                   <div className={styles.summaryRight}>
-                    ${(this.state.diffSummary.tip)}
+                    ${Math.abs(this.state.differenceSummary.driver_tip).toFixed(2)}
                   </div>
 
               </div>
@@ -1942,7 +1735,7 @@ class EditPlan extends React.Component {
                   </div>
 
                   <div className={styles.summaryRight}>
-                    ${this.state.diffSummary.total}
+                    ${this.state.differenceSummary.total}
                   </div>
               </div>
 
