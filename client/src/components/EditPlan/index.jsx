@@ -65,6 +65,7 @@ class EditPlan extends React.Component {
       latitude: "",
       longitude: "",
       recalculatingPrice: false,
+      ambassadorCode: "",
       selectedMealPlan: {
         delivery_first_name: "",
         delivery_last_name: "",
@@ -164,7 +165,13 @@ class EditPlan extends React.Component {
         discount: null,
         next_billing_date: null
       },
-      discounts: []
+      discounts: [],
+      usePreviousCard: true,
+      new_card_num: "",
+      new_card_cvv: "",
+      new_card_zip: "",
+      new_card_exp_date: "",
+      defaultSet: false
     };
   }
 
@@ -252,14 +259,7 @@ class EditPlan extends React.Component {
     return sumAmountDue;
   }
 
-  /*
   applyAmbassadorCode() {
-
-    if(this.state.email !== ""){
-      console.log("(Ambassador code) Valid email");
-    } else {
-      console.log("(Ambassador code) Invalid email");
-    }
       
     axios
       .post(API_URL + 'brandAmbassador/generate_coupon',
@@ -294,16 +294,14 @@ class EditPlan extends React.Component {
               ).toFixed(2)
             }
           }), () => {
-            this.setTotal();
+            this.calculateDifference();
           });
-          //this.setTotal();
         }
       })
       .catch(err => {
         console.log("Ambassador code error: " + err);
       });
   }
-  */
 
   calculateDifference = () => {
     // differenceSummary: {
@@ -582,25 +580,110 @@ class EditPlan extends React.Component {
     });
   }
 
-  changePurchase() {
-    let object = {
-      cc_cvv: this.state.updatedPlan.cc_cvv,
-      cc_exp_date: this.state.updatedPlan.cc_cvv,
-      cc_num: this.state.updatedPlan.cc_cvv,
-      cc_zip: this.state.updatedPlan.cc_cvv,
-      customer_email: this.props.email,
-      items: [{
-        qty: this.props.selectedPlan.num_deliveries.toString(), 
-        name: this.props.selectedPlan.item_name, 
-        price: this.props.selectedPlan.item_price.toString(), 
-        item_uid: this.props.selectedPlan.item_uid, 
-        itm_business_uid: this.props.selectedPlan.itm_business_uid
-      }],
-      new_item_id: this.props.selectedPlan.item_uid,
-      purchase_id: this.state.updatedPlan.id,
-      start_delivery_date: this.state.updatedPlan.start_delivery_date
+  componentDidUpdate(prevProps, prevState) {
+    if (
+      prevProps.plans !== this.props.plans &&
+      this.state.updatedPlan.meals !== null &&
+      this.state.updatedPlan.deliveries !== null
+    ) {
+      console.log(
+        "(1) plans fetched; defaulting selection to: " + 
+        this.state.updatedPlan.meals + " meals, " + 
+        this.state.updatedPlan.deliveries + " deliveries"
+      );
+      this.props.chooseMealsDelivery(
+        this.state.updatedPlan.meals,
+        this.state.updatedPlan.deliveries,
+        this.props.plans
+      );
+      
+      this.props.choosePaymentOption(
+        this.state.updatedPlan.deliveries,
+        this.state.updatedPlan.meals,
+        this.props.plans
+      );
+      this.setState({
+        defaultSet: true
+      });
+    } else if (
+      JSON.stringify(this.props.plans) !== '{}' &&
+      prevState.updatedPlan.meals === null &&
+      this.state.updatedPlan.meals !== null &&
+      prevState.updatedPlan.deliveries === null &&
+      this.state.updatedPlan.deliveries !== null
+    ) {
+      console.log(
+        "(2) plans fetched; defaulting selection to: " + 
+        this.state.updatedPlan.meals + " meals, " + 
+        this.state.updatedPlan.deliveries + " deliveries"
+      );
+
+      this.props.chooseMealsDelivery(
+        this.state.updatedPlan.meals,
+        this.state.updatedPlan.deliveries,
+        this.props.plans
+      );
+      
+      this.props.choosePaymentOption(
+        this.state.updatedPlan.deliveries,
+        this.state.updatedPlan.meals,
+        this.props.plans
+      );
+      this.setState({
+        defaultSet: true
+      });
     }
-    axios.post(API_URL + 'change_purchase/' + this.state.updatedPlan.id, object)
+  }
+
+  confirmChanges() {
+    console.log("before change_purchase: ", this.state.updatedPlan);
+
+    let object = null;
+    if(this.state.usePreviousCard){
+
+      object = {
+        cc_cvv: "",
+        cc_exp_date: "",
+        cc_num: "",
+        cc_zip: "",
+        customer_email: this.props.email,
+        items: [{
+          qty: this.props.selectedPlan.num_deliveries.toString(), 
+          name: this.props.selectedPlan.item_name, 
+          price: this.props.selectedPlan.item_price.toString(), 
+          item_uid: this.props.selectedPlan.item_uid, 
+          itm_business_uid: this.props.selectedPlan.itm_business_uid
+        }],
+        new_item_id: this.props.selectedPlan.item_uid,
+        purchase_id: this.state.updatedPlan.raw_data.purchase_id,
+        start_delivery_date: ""
+      }
+      console.log("(old card) object for change_purchase: ", JSON.stringify(object));
+
+    } else {
+
+      object = {
+        cc_cvv: this.state.new_card_cvv,
+        cc_exp_date: this.state.new_card_exp_date,
+        cc_num: this.state.new_card_num,
+        cc_zip: this.state.new_card_zip,
+        customer_email: this.props.email,
+        items: [{
+          qty: this.props.selectedPlan.num_deliveries.toString(), 
+          name: this.props.selectedPlan.item_name, 
+          price: this.props.selectedPlan.item_price.toString(), 
+          item_uid: this.props.selectedPlan.item_uid, 
+          itm_business_uid: this.props.selectedPlan.itm_business_uid
+        }],
+        new_item_id: this.props.selectedPlan.item_uid,
+        purchase_id: this.state.updatedPlan.raw_data.purchase_id,
+        start_delivery_date: ""
+      }
+      console.log("(new card) object for change_purchase: ", JSON.stringify(object));
+
+    }
+
+    axios.post(API_URL + 'change_purchase/' + this.state.updatedPlan.raw_data.purchase_id, object)
       .then(res => {
         console.log("change_purchase response: ", res);
         this.props.history.push("/meal-plan");
@@ -611,6 +694,13 @@ class EditPlan extends React.Component {
           console.log("error: " + JSON.stringify(err.response));
         }
       });
+  }
+
+  handleCheck = (cb) => {
+    console.log("clicked checkbox: ", cb);
+    this.setState({
+      usePreviousCard: !this.state.usePreviousCard
+    });
   }
 
   componentDidMount() {
@@ -871,9 +961,11 @@ class EditPlan extends React.Component {
               raw_data: {...sub.raw_data}
             };
 
-            this.setState({
+            this.setState(prevState => ({
               currentPlan: {...newCurrentPlan},
               updatedPlan: {...newUpdatedPlan}
+            }), () => {
+              this.calculateDifference();
             });
 
           }}
@@ -910,7 +1002,82 @@ class EditPlan extends React.Component {
     );
   };
 
-  showPlanDetails= () => {
+  showCardForm = () => {
+    return (
+      <>
+        <div style={{borderTop: '1px solid'}}>
+
+          <div className={styles.cardLabel}>
+            Enter New Credit Card Details:
+          </div>
+
+          <div className={styles.cardDiv}>
+            <input
+              type='text'
+              maxLength='16'
+              placeholder='Card Number'
+              className={styles.inputCard}
+              value={this.state.new_card_num}
+              onChange={e => {
+                this.setState({
+                  new_card_num: e.target.value
+                });
+              }}
+            />
+            {/*<input
+              type='text'
+              placeholder='MM'
+              className={styles.inputCardDate}
+              value={this.state.new_card_}
+              onChange={e => {
+                this.setState({
+                  new_card_exp_date: e.target.value
+                });
+              }}
+            />*/}
+            <input
+              type='text'
+              maxLength='5'
+              placeholder='MM/YY'
+              className={styles.inputCardDate}
+              value={this.state.new_card_exp_date}
+              onChange={e => {
+                this.setState({
+                  new_card_exp_date: e.target.value
+                });
+              }}
+            />
+            <input
+              type='text'
+              maxLength='3'
+              placeholder='CVV'
+              className={styles.inputCardCvv}
+              value={this.state.new_card_cvv}
+              onChange={e => {
+                this.setState({
+                  new_card_cvv: e.target.value
+                });
+              }}
+            />
+            <input
+              type='text'
+              maxLength='5'
+              placeholder='ZIP'
+              className={styles.inputCardZip}
+              value={this.state.new_card_zip}
+              onChange={e => {
+                this.setState({
+                  new_card_zip: e.target.value
+                });
+              }}
+            />
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  showPlanDetails = () => {
     return (
       <>
       <div className={styles.boxPDleft}>
@@ -953,7 +1120,7 @@ class EditPlan extends React.Component {
             onClick={() => {
               axios
                 .put(`${API_URL}cancel_purchase`,{
-                  purchase_uid: this.state.selectedId,
+                  purchase_uid: this.state.updatedPlan.raw_data.purchase_id,
                 })
                 .then((response) => {
                   console.log("cancel_purchase response: " + JSON.stringify(response));
@@ -1041,7 +1208,7 @@ class EditPlan extends React.Component {
                       {"You will be refunded "}
                     </div>
                     <div className={styles.chargeAmount}>
-                      ${-1*this.state.differenceSummary.total}
+                      ${(-1*this.state.differenceSummary.total).toFixed(2)}
                     </div>
                   </>
                 );
@@ -1092,16 +1259,6 @@ class EditPlan extends React.Component {
       this.changePlans(this.state.updatedPlan.meals,this.state.updatedPlan.deliveries);
     });
 
-    // this.setState(prevState => ({
-    //   recalculatingPrice: true,
-    //   paymentSummary: {
-    //     ...prevState.paymentSummary,
-    //     tip: newTip
-    //   }
-    // }), () => {
-    //   this.setTotal();
-    //   console.log("changeTip new paymentSummary: ", this.state.paymentSummary);
-    // });
   }
 
   mealsDelivery = () => {
@@ -1294,8 +1451,8 @@ class EditPlan extends React.Component {
 
         </div>
 
-        <div className={styles.sectionHeader}>
-          Plan Details
+        <div className={styles.sectionHeaderUL}>
+          Edit Plan
         </div>
 
         <div className={styles.containerSplit}>
@@ -1721,7 +1878,7 @@ class EditPlan extends React.Component {
               </div>
 
               <div 
-                style={{display: 'flex' ,marginBottom:'73px'}}>
+                style={{display: 'flex' ,marginBottom:'50px'}}>
                   <div className={styles.summaryLeft}>
                     Total
                   </div>
@@ -1739,13 +1896,37 @@ class EditPlan extends React.Component {
                   </div>
               </div>
 
+          <div className={styles.checkboxContainer}>
+            <label className={styles.checkboxLabel}>
+              Use Previous Credit Card
+            </label>
+            <input
+              className={styles.checkbox}
+              type="checkbox"
+              checked={this.state.usePreviousCard}
+              onChange={this.handleCheck}
+            />
+          </div>
+
+          { this.state.usePreviousCard ? null : this.showCardForm()}
+
+
           <button 
-            className={styles.orangeBtn}
-            disabled={!this.state.subscriptionsLoaded}
-            onClick={() => this.changePurchase()}
+            className={styles.orangeBtn2}
+            disabled={!this.state.subscriptionsLoaded && this.state.defaultSet === false}
+            onClick={() => this.confirmChanges()}
           >
             Complete Payment
           </button>
+
+          {/*<button 
+            className={styles.orangeBtn3}
+            disabled={!this.state.subscriptionsLoaded && this.state.defaultSet === false}
+            onClick={() => this.confirmChanges()}
+          >
+            Keep Existing Meal Plan
+          </button>*/}
+
                 
               <div style={{display: 'flex'}}>
                 <div style = {{display: 'inline-block', width: '80%', height: '0px'}}>

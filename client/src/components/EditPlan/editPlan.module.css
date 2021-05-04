@@ -281,6 +281,18 @@
   border-radius: 0;
 }
 
+.checkbox {
+  height: 20px;
+  width: 20px;
+}
+/*.checkboxContainer {
+  border: solid;
+}*/
+.checkboxLabel {
+  margin-right: 15px;
+  font-size: 20px;
+}
+
 /*.deliveryButtonSelected {
   background-color: #FFBA00;
   outline: 0;
@@ -420,6 +432,71 @@
 }
 .orangeBtn:disabled {
   margin-top: 36px;
+  margin-bottom: 50px;
+  background-color: #ccc9c9;
+  color: white;
+  font-size: 20px;
+  border-radius: 15px;
+  border: none;
+  height: 54px;
+  width: 70%;
+}
+
+.orangeBtn2 {
+  margin-top: 50px;
+  margin-bottom: 10px;
+  background-color: #f26522;
+  color: white;
+  font-size: 20px;
+  border-radius: 15px;
+  border: none;
+  height: 54px;
+  width: 70%;
+}
+.orangeBtn2:hover {
+  margin-top: 50px;
+  margin-bottom: 10px;
+  background-color: #f26522;
+  color: white;
+  font-size: 20px;
+  border-radius: 15px;
+  border: none;
+  height: 54px;
+  width: 70%;
+}
+.orangeBtn2:disabled {
+  margin-top: 50px;
+  margin-bottom: 10px;
+  background-color: #ccc9c9;
+  color: white;
+  font-size: 20px;
+  border-radius: 15px;
+  border: none;
+  height: 54px;
+  width: 70%;
+}
+
+.orangeBtn3 {
+  margin-bottom: 50px;
+  background-color: #f26522;
+  color: white;
+  font-size: 20px;
+  border-radius: 15px;
+  border: none;
+  height: 54px;
+  width: 70%;
+}
+.orangeBtn3:hover {
+  margin-bottom: 50px;
+  background-color: #f26522;
+  color: white;
+  font-size: 20px;
+  border-radius: 15px;
+  border: none;
+  height: 54px;
+  width: 70%;
+}
+.orangeBtn3:disabled {
   margin-bottom: 50px;
   background-color: #ccc9c9;
   color: white;
@@ -592,8 +669,9 @@
     /*padding-left: 100px;*/
     padding-left: 8%;
     padding-top: 12px;
-    text-decoration: underline;
     font-size: 25px;
+    margin-bottom: 30px;
+    text-decoration: underline;
   }
 
   .headerItemContainer {
@@ -796,6 +874,110 @@
   margin: 10px 0px 10px 0px;
   /*border: solid;
   border-color: red;*/
+}
+
+.cardDiv {
+  margin-top: 15px;
+  display: flex;
+}
+.cardLabel {
+  margin-top: 15px;
+  display: flex;
+}
+
+.inputCard {
+  height: 40px;
+  width: 40%;
+  border-radius: 10px;
+  border: solid;
+  border-width: 2px;
+  border-color: #ff6505;
+  align-items: left;
+  padding: 6px 0px 6px 10px;
+  outline: 0;
+}
+.inputCard:focus {
+  height: 40px;
+  width: 40%;
+  border-radius: 10px;
+  border: solid;
+  border-width: 2px;
+  border-color: #ff6505;
+  align-items: left;
+  padding: 6px 0px 6px 10px;
+  outline: 0;
+}
+.inputCardDate {
+  width: 15%;
+  height: 40px;
+  border-radius: 10px;
+  border: solid;
+  border-width: 2px;
+  border-color: #ff6505;
+  align-items: left;
+  padding: 6px 0px 6px 10px;
+  outline: 0;
+  margin-left: 2%;
+}
+.inputCardDate:focus {
+  width: 15%;
+  height: 40px;
+  border-radius: 10px;
+  border: solid;
+  border-width: 2px;
+  border-color: #ff6505;
+  align-items: left;
+  padding: 6px 0px 6px 10px;
+  outline: 0;
+  margin-left: 2%;
+}
+.inputCardCvv {
+  width: 15%;
+  height: 40px;
+  border-radius: 10px;
+  border: solid;
+  border-width: 2px;
+  border-color: #ff6505;
+  align-items: left;
+  padding: 6px 0px 6px 10px;
+  outline: 0;
+  margin-left: 2%;
+}
+.inputCardCvv:focus {
+  width: 15%;
+  height: 40px;
+  border-radius: 10px;
+  border: solid;
+  border-width: 2px;
+  border-color: #ff6505;
+  align-items: left;
+  padding: 6px 0px 6px 10px;
+  outline: 0;
+  margin-left: 2%;
+}
+.inputCardZip {
+  width: 24%;
+  height: 40px;
+  border-radius: 10px;
+  border: solid;
+  border-width: 2px;
+  border-color: #ff6505;
+  align-items: left;
+  padding: 6px 0px 6px 10px;
+  outline: 0;
+  margin-left: 2%;
+}
+.inputCardZip:focus {
+  width: 24%;
+  height: 40px;
+  border-radius: 10px;
+  border: solid;
+  border-width: 2px;
+  border-color: #ff6505;
+  align-items: left;
+  padding: 6px 0px 6px 10px;
+  outline: 0;
+  margin-left: 2%;
 }
 
 /*.summaryRight {
