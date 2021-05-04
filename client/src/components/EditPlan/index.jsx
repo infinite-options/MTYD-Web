@@ -87,10 +87,10 @@ class EditPlan extends React.Component {
         city: "",
         state: "",
         zip: "",
-        cc_num: "",
-        cc_cvv: "",
-        cc_zip: "",
-        cc_exp_date: "",
+        cc_num: "NULL",
+        cc_cvv: "NULL",
+        cc_zip: "NULL",
+        cc_exp_date: "NULL",
         instructions: ""
       },
       sumFees: 0,
@@ -167,10 +167,6 @@ class EditPlan extends React.Component {
       },
       discounts: [],
       usePreviousCard: true,
-      new_card_num: "",
-      new_card_cvv: "",
-      new_card_zip: "",
-      new_card_exp_date: "",
       defaultSet: false
     };
   }
@@ -432,6 +428,22 @@ class EditPlan extends React.Component {
     let newSubList = [];
     let defaultCurrentPlan = {};
     let defaultUpdatedPlan = {};
+    let defaultDeliveryInfo = {
+      first_name: "",
+      last_name: "",
+      purchase_uid: "",
+      phone: "",
+      address: "",
+      unit: "",
+      city: "",
+      state: "",
+      zip: "",
+      cc_num: "",
+      cc_cvv: "",
+      cc_zip: "",
+      cc_exp_date: "",
+      instructions: ""
+    }
 
     subscriptions.forEach((sub, index) => {
 
@@ -560,6 +572,42 @@ class EditPlan extends React.Component {
         defaultUpdatedPlan["next_billing_amount"] = nextBillingAmount.toFixed(2);
         defaultUpdatedPlan["payment_summary"] = {...payment_summary};
         defaultUpdatedPlan["raw_data"] = sub;
+
+        // deliveryInfo: {
+        //   first_name: "",
+        //   last_name: "",
+        //   purchase_uid: "",
+        //   phone: "",
+        //   address: "",
+        //   unit: "",
+        //   city: "",
+        //   state: "",
+        //   zip: "",
+        //   cc_num: "",
+        //   cc_cvv: "",
+        //   cc_zip: "",
+        //   cc_exp_date: "",
+        //   instructions: ""
+        // },
+
+        console.log("sub: ", sub);
+
+        defaultDeliveryInfo = this.setDeliveryInfo(sub);
+
+        // defaultDeliveryInfo["first_name"] = sub.delivery_first_name;
+        // defaultDeliveryInfo["last_name"] = sub.delivery_last_name;
+        // defaultDeliveryInfo["purchase_uid"] = sub.purchase_uid;
+        // defaultDeliveryInfo["phone"] = sub.delivery_phone_num;
+        // defaultDeliveryInfo["address"] = sub.delivery_address;
+        // defaultDeliveryInfo["unit"] = sub.delivery_unit;
+        // defaultDeliveryInfo["city"] = sub.delivery_city;
+        // defaultDeliveryInfo["zip"] = sub.delivery_zip;
+        // defaultDeliveryInfo["state"] = sub.delivery_state;
+        // defaultDeliveryInfo["cc_num"] = sub.cc_num;
+        // defaultDeliveryInfo["cc_exp_date"] = sub.cc_exp_date;
+        // defaultDeliveryInfo["cc_cvv"] = sub.cc_cvv;
+        // defaultDeliveryInfo["cc_zip"] = sub.cc_zip;
+
       }
 
       newSubList.push(subscription);
@@ -576,7 +624,8 @@ class EditPlan extends React.Component {
       subscriptionsList: newSubList,
       subscriptionsLoaded: true,
       currentPlan: {...defaultCurrentPlan},
-      updatedPlan: {...defaultUpdatedPlan}
+      updatedPlan: {...defaultUpdatedPlan},
+      deliveryInfo: {...defaultDeliveryInfo}
     });
   }
 
@@ -635,6 +684,49 @@ class EditPlan extends React.Component {
     }
   }
 
+  discardChanges() {
+    console.log("(DISCARD) currentPlan: ", this.state.currentPlan);
+
+    let currCopy = {...this.state.currentPlan}
+
+    // let currDeliveryInfo = {
+    //   first_name: currCopy.raw_data.delivery_first_name,
+    //   last_name: currCopy.raw_data.delivery_last_name,
+    //   purchase_uid: currCopy.raw_data.purchase_uid,
+    //   phone: currCopy.raw_data.delivery_phone_num,
+    //   address: currCopy.raw_data.delivery_address,
+    //   unit: currCopy.raw_data.delivery_unit,
+    //   city: currCopy.raw_data.delivery_city,
+    //   state: currCopy.raw_data.delivery_state,
+    //   zip: currCopy.raw_data.cc_zip,
+    //   cc_num: "NULL",
+    //   cc_cvv: "NULL",
+    //   cc_zip: "NULL",
+    //   cc_exp_date: "NULL",
+    //   instructions: ""
+    // };
+
+    let currDeliveryInfo = this.setDeliveryInfo(currCopy.rawData);
+
+    // currDeliveryInfo["first_name"] = currCopy.raw_data.delivery_first_name;
+    // currDeliveryInfo["last_name"] = currCopy.raw_data.delivery_last_name;
+    // currDeliveryInfo["phone"] = currCopy.raw_data.delivery_phone_num;
+    // currDeliveryInfo["address"] = currCopy.raw_data.delivery_address;
+    // currDeliveryInfo["unit"] = currCopy.raw_data.delivery_unit;
+    // currDeliveryInfo["city"] = currCopy.raw_data.delivery_city;
+    // defaultDeliveryInfo["zip"] = currCopy.raw_data.delivery_zip;
+    // defaultDeliveryInfo["state"] = currCopy.raw_data.delivery_state;
+    // defaultDeliveryInfo["cc_num"] = currCopy.raw_data.cc_num;
+    // defaultDeliveryInfo["cc_exp_date"] = currCopy.raw_data.cc_exp_date;
+    // defaultDeliveryInfo["cc_cvv"] = currCopy.raw_data.cc_cvv;
+    // defaultDeliveryInfo["cc_zip"] = currCopy.raw_data.cc_zip;
+
+    this.setState({
+      updatedPlan: {...currCopy},
+      deliveryInfo: {...currDeliveryInfo}
+    });
+  }
+
   confirmChanges() {
     console.log("before change_purchase: ", this.state.updatedPlan);
 
@@ -655,7 +747,7 @@ class EditPlan extends React.Component {
           itm_business_uid: this.props.selectedPlan.itm_business_uid
         }],
         new_item_id: this.props.selectedPlan.item_uid,
-        purchase_id: this.state.updatedPlan.raw_data.purchase_id,
+        purchase_id: this.state.updatedPlan.raw_data.purchase_uid,
         start_delivery_date: ""
       }
       console.log("(old card) object for change_purchase: ", JSON.stringify(object));
@@ -663,10 +755,10 @@ class EditPlan extends React.Component {
     } else {
 
       object = {
-        cc_cvv: this.state.new_card_cvv,
-        cc_exp_date: this.state.new_card_exp_date,
-        cc_num: this.state.new_card_num,
-        cc_zip: this.state.new_card_zip,
+        cc_cvv: this.state.deliveryInfo.cc_cvv,
+        cc_exp_date: this.state.deliveryInfo.cc_exp_date,
+        cc_num: this.state.deliveryInfo.cc_num,
+        cc_zip: this.state.deliveryInfo.cc_zip,
         customer_email: this.props.email,
         items: [{
           qty: this.props.selectedPlan.num_deliveries.toString(), 
@@ -686,7 +778,25 @@ class EditPlan extends React.Component {
     axios.post(API_URL + 'change_purchase/' + this.state.updatedPlan.raw_data.purchase_id, object)
       .then(res => {
         console.log("change_purchase response: ", res);
-        this.props.history.push("/meal-plan");
+        //this.props.history.push("/meal-plan");
+        axios.get(API_URL + 'next_meal_info/' + this.state.customerUid)
+          .then(res => {
+            console.log("(after change) next meal info res: ", res);
+
+            let fetchedSubscriptions = res.data.result;
+
+            this.loadSubscriptions(fetchedSubscriptions, this.state.discounts);
+
+            // fetchedSubscriptions = res.data.result;
+
+            // if(fetchedDiscounts !== null){
+            //   console.log("(4) load subscriptions");
+            //   this.loadSubscriptions(fetchedSubscriptions, fetchedDiscounts);
+            // }
+          })
+          .catch(err => {
+            console.log(err);
+          });
       })
       .catch(err => {
         console.log(err);
@@ -894,6 +1004,83 @@ class EditPlan extends React.Component {
     }
   }
 
+  deletePurchase = () => {
+    axios
+      .put(`${API_URL}cancel_purchase`,{
+        purchase_uid: this.state.updatedPlan.raw_data.purchase_uid,
+      })
+      .then((response) => {
+        console.log("cancel_purchase response: " + JSON.stringify(response));
+        console.log("cancel_purchase customerUid: " + this.state.customerUid);
+        //this.props.fetchSubscribed(this.state.customerUid);
+
+        // let fetchedDiscounts = null;
+        // let fetchedSubscriptions = null;
+
+        // fetchDiscounts((discounts) => {
+        //   console.log("fetchDiscounts callback: ", discounts);
+
+        //   fetchedDiscounts = discounts;
+
+        //   this.setState({
+        //     discounts: fetchedDiscounts
+        //   });
+
+        //   if(fetchedSubscriptions !== null){
+        //     console.log("(3) load subscriptions");
+        //     this.loadSubscriptions(fetchedSubscriptions, fetchedDiscounts);
+        //   }
+
+        // });
+
+        axios.get(API_URL + 'next_meal_info/' + this.state.customerUid)
+          .then(res => {
+            console.log("(after deletion) next meal info res: ", res);
+
+            let fetchedSubscriptions = res.data.result;
+
+            this.loadSubscriptions(fetchedSubscriptions, this.state.discounts);
+
+            // fetchedSubscriptions = res.data.result;
+
+            // if(fetchedDiscounts !== null){
+            //   console.log("(4) load subscriptions");
+            //   this.loadSubscriptions(fetchedSubscriptions, fetchedDiscounts);
+            // }
+          })
+          .catch(err => {
+            console.log(err);
+          });
+
+      })
+      .catch((err) => {
+        if(err.response) {
+          console.log(err.response);
+        }
+        console.log(err);
+      });
+  }
+
+  setDeliveryInfo(plan) {
+    let newDeliveryInfo = {
+      first_name: (plan.delivery_first_name === 'NULL' ? '': plan.delivery_first_name),
+      last_name: (plan.delivery_last_name === 'NULL' ? '': plan.delivery_last_name),
+      purchase_uid: (plan.purchase_uid === 'NULL' ? '': plan.purchase_uid),
+      phone: (plan.delivery_phone_num === 'NULL' ? '': plan.delivery_phone_num),
+      address: (plan.delivery_address === 'NULL' ? '': plan.delivery_address),
+      unit: (plan.delivery_unit === 'NULL' ? '': plan.delivery_unit),
+      city: (plan.delivery_city === 'NULL' ? '': plan.delivery_city),
+      state: (plan.delivery_state === 'NULL' ? '': plan.delivery_state),
+      zip: (plan.delivery_zip === 'NULL' ? '': plan.delivery_zip),
+      cc_num: "NULL",
+      cc_cvv: "NULL",
+      cc_zip: "NULL",
+      cc_exp_date: "NULL",
+      instructions: ""
+    };
+    return newDeliveryInfo;
+  }
+
   hideSubscribedMeals = () => {
     console.log("discounts: NOTHING");
     return (
@@ -961,9 +1148,17 @@ class EditPlan extends React.Component {
               raw_data: {...sub.raw_data}
             };
 
+            console.log("(1) before new plan selected");
+            console.log("props.plans: ", this.props.plans);
+            console.log("new plan selected: ", this.props.plans[sub.meals][sub.deliveries]);
+
+            console.log("BEFORE SET newDeliveryInfo");
+            let newDeliveryInfo = this.setDeliveryInfo(newCurrentPlan.raw_data);
+
             this.setState(prevState => ({
               currentPlan: {...newCurrentPlan},
-              updatedPlan: {...newUpdatedPlan}
+              updatedPlan: {...newUpdatedPlan},
+              deliveryInfo: {...newDeliveryInfo}
             }), () => {
               this.calculateDifference();
             });
@@ -971,7 +1166,7 @@ class EditPlan extends React.Component {
           }}
         >
           <div className={styles.mealButtonEdit}>
-            ✏️
+            
           </div>
           <div className={styles.mealButtonPlan}>
             {sub.meals} Meals, {sub.deliveries} Deliveries
@@ -1017,34 +1212,29 @@ class EditPlan extends React.Component {
               maxLength='16'
               placeholder='Card Number'
               className={styles.inputCard}
-              value={this.state.new_card_num}
+              value={this.state.deliveryInfo.cc_num}
               onChange={e => {
-                this.setState({
-                  new_card_num: e.target.value
-                });
+                this.setState(prevState => ({
+                  deliveryInfo: {
+                    ...prevState.deliveryInfo,
+                    cc_num: e.target.value
+                  }
+                }));
               }}
             />
-            {/*<input
-              type='text'
-              placeholder='MM'
-              className={styles.inputCardDate}
-              value={this.state.new_card_}
-              onChange={e => {
-                this.setState({
-                  new_card_exp_date: e.target.value
-                });
-              }}
-            />*/}
             <input
               type='text'
               maxLength='5'
               placeholder='MM/YY'
               className={styles.inputCardDate}
-              value={this.state.new_card_exp_date}
+              value={this.state.deliveryInfo.cc_exp_date}
               onChange={e => {
-                this.setState({
-                  new_card_exp_date: e.target.value
-                });
+                this.setState(prevState => ({
+                  deliveryInfo: {
+                    ...prevState.deliveryInfo,
+                    cc_exp_date: e.target.value
+                  }
+                }));
               }}
             />
             <input
@@ -1052,11 +1242,14 @@ class EditPlan extends React.Component {
               maxLength='3'
               placeholder='CVV'
               className={styles.inputCardCvv}
-              value={this.state.new_card_cvv}
+              value={this.state.deliveryInfo.cc_cvv}
               onChange={e => {
-                this.setState({
-                  new_card_cvv: e.target.value
-                });
+                this.setState(prevState => ({
+                  deliveryInfo: {
+                    ...prevState.deliveryInfo,
+                    cc_cvv: e.target.value
+                  }
+                }));
               }}
             />
             <input
@@ -1064,11 +1257,14 @@ class EditPlan extends React.Component {
               maxLength='5'
               placeholder='ZIP'
               className={styles.inputCardZip}
-              value={this.state.new_card_zip}
+              value={this.state.deliveryInfo.cc_zip}
               onChange={e => {
-                this.setState({
-                  new_card_zip: e.target.value
-                });
+                this.setState(prevState => ({
+                  deliveryInfo: {
+                    ...prevState.deliveryInfo,
+                    cc_zip: e.target.value
+                  }
+                }));
               }}
             />
           </div>
@@ -1118,21 +1314,23 @@ class EditPlan extends React.Component {
           <div 
             className={styles.iconTrash}
             onClick={() => {
-              axios
-                .put(`${API_URL}cancel_purchase`,{
-                  purchase_uid: this.state.updatedPlan.raw_data.purchase_id,
-                })
-                .then((response) => {
-                  console.log("cancel_purchase response: " + JSON.stringify(response));
-                  console.log("cancel_purchase customerUid: " + this.state.customerUid);
-                  this.props.fetchSubscribed(this.state.customerUid);
-                })
-                .catch((err) => {
-                  if(err.response) {
-                    console.log(err.response);
-                  }
-                  console.log(err);
-                })
+              // axios
+              //   .put(`${API_URL}cancel_purchase`,{
+              //     purchase_uid: this.state.updatedPlan.raw_data.purchase_id,
+              //   })
+              //   .then((response) => {
+              //     console.log("cancel_purchase response: " + JSON.stringify(response));
+              //     console.log("cancel_purchase customerUid: " + this.state.customerUid);
+              //     this.props.fetchSubscribed(this.state.customerUid);
+              //   })
+              //   .catch((err) => {
+              //     if(err.response) {
+              //       console.log(err.response);
+              //     }
+              //     console.log(err);
+              //   })
+
+              this.deletePurchase();
             }}
           >
 
@@ -1226,12 +1424,34 @@ class EditPlan extends React.Component {
 
   saveEdits = () => {
     console.log("saving edits...");
-    console.log("edits to save: ", this.state.deliveryInfo);
+    
+    let object = {...this.state.deliveryInfo};
+
+    // deleting since field does not exist in endpoint
+    delete object['instructions'];
+
+    //object['purchase_uid'] = this.state.updatedPlan.raw_data.purchase_uid;
+    object['email'] = this.props.email;
+
+    console.log("edits to save: ", JSON.stringify(object));
 
     axios
-      .post(API_URL + 'update_delivery_info', this.state.deliveryInfo)
+      .post(API_URL + 'update_delivery_info', object)
       .then((res) => {
         console.log("update delivery info res: ", res);
+
+        axios.get(API_URL + 'next_meal_info/' + this.state.customerUid)
+          .then(res => {
+            console.log("(after change) next meal info res: ", res);
+
+            let fetchedSubscriptions = res.data.result;
+
+            this.loadSubscriptions(fetchedSubscriptions, this.state.discounts);
+          })
+          .catch(err => {
+            console.log(err);
+          });
+
       }).catch((err) => {
         console.log(
           'error happened while updating delivery info',
@@ -1606,7 +1826,7 @@ class EditPlan extends React.Component {
               />
             </div>
 
-            <input
+            {/* <input
               type={'text'}
               placeholder={'Delivery Instructions'}
               className={styles.input}
@@ -1619,7 +1839,7 @@ class EditPlan extends React.Component {
                   }
                 }));
               }}
-            />
+            /> */}
 
             <div className = {styles.googleMap} id = "map"/>     
 
@@ -1896,7 +2116,7 @@ class EditPlan extends React.Component {
                   </div>
               </div>
 
-          <div className={styles.checkboxContainer}>
+          {/* <div className={styles.checkboxContainer}>
             <label className={styles.checkboxLabel}>
               Use Previous Credit Card
             </label>
@@ -1906,9 +2126,9 @@ class EditPlan extends React.Component {
               checked={this.state.usePreviousCard}
               onChange={this.handleCheck}
             />
-          </div>
+          </div> */}
 
-          { this.state.usePreviousCard ? null : this.showCardForm()}
+          {/* { this.state.usePreviousCard ? null : this.showCardForm()} */}
 
 
           <button 
@@ -1919,13 +2139,13 @@ class EditPlan extends React.Component {
             Complete Payment
           </button>
 
-          {/*<button 
+          <button 
             className={styles.orangeBtn3}
             disabled={!this.state.subscriptionsLoaded && this.state.defaultSet === false}
-            onClick={() => this.confirmChanges()}
+            onClick={() => this.discardChanges()}
           >
             Keep Existing Meal Plan
-          </button>*/}
+          </button>
 
                 
               <div style={{display: 'flex'}}>
