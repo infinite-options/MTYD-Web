@@ -67,8 +67,9 @@ class EditPlan extends React.Component {
       instructions: "",
       latitude: "",
       longitude: "",
-      recalculatingPrice: false,
+      refreshingPrice: false,
       ambassadorCode: "",
+      validCode: null,
       selectedMealPlan: {
         delivery_first_name: "",
         delivery_last_name: "",
@@ -170,7 +171,12 @@ class EditPlan extends React.Component {
       },
       discounts: [],
       usePreviousCard: true,
-      defaultSet: false
+      defaultSet: false,
+      showErrorModal: false,
+      errorModal: null,
+      errorMessage: '',
+      errorLink: '',
+      errorLinkText: ''
     };
   }
 
@@ -198,6 +204,28 @@ class EditPlan extends React.Component {
       })
     }
   };
+
+  displayErrorModal = (message, linkText, link) => {
+    if(this.state.showErrorModal === false) {
+      this.setState({
+        errorModal: styles.errorModalPopUpShow,
+        showErrorModal: true,
+        errorMessage: message,
+        errorLinkText: linkText,
+        errorLink: link
+      });
+      console.log("\nerror pop up toggled to true");
+    }else{
+      this.setState({
+        errorModal: styles.errorModalPopUpHide,
+        showErrorModal: false,
+        errorMessage: message,
+        errorLinkText: linkText,
+        errorLink: link
+      });
+      console.log("\nerror pop up toggled to false");
+    }
+  }
 
   calculateSubtotal(summary) {
     let subtotal = (
@@ -259,63 +287,87 @@ class EditPlan extends React.Component {
   }
 
   applyAmbassadorCode() {
+
+    this.setState({
+      refreshingPrice: true,
+    }, () => {
+
+      console.log("bleh");
       
     axios
       .post(API_URL + 'brandAmbassador/generate_coupon',
         {
           amb_email: this.state.ambassadorCode,
-          cust_email: this.state.email
+          cust_email: this.props.email
         }
       )
       .then(res => {
         let items = res.data
         console.log("ambassador code response: " + JSON.stringify(res));
 
-        if(typeof(items) === "string") {
+        if(this.state.validCode === true) {
+
+          this.displayErrorModal('You have already entered a valid ambassador code.', 'Go Back', 'back');
+
+          this.setState({
+            refreshingPrice: false
+          });
+
+        } else if(typeof(items) === "string") {
+
           console.log("Invalid code");
+
           this.setState({
             validCode: false,
-            ambassadorMessage: items
+            refreshingPrice: false
           });
-          this.displayAmbassadorError();
+
+          this.displayErrorModal(items, 'Go Back', 'back');
+
+
         } else {
+
           console.log("Valid code");
           items = items.result[0];
           console.log("result: " + JSON.stringify(items));
+
           this.setState(prevState => ({
             validCode: true,
-            recalculatingPrice: true,
-            paymentSummary: {
-              ...prevState.paymentSummary,
-              ambassadorDiscount: (
-                items.discount_amount +
-                items.discount_shipping
-              ).toFixed(2)
+
+            // paymentSummary: {
+            //   ...prevState.paymentSummary,
+            //   ambassadorDiscount: (
+            //     items.discount_amount +
+            //     items.discount_shipping
+            //   ).toFixed(2)
+            // }
+
+            updatedPlan: {
+              ...prevState.updatedPlan,
+              payment_summary: {
+                ...prevState.updatedPlan.payment_summary,
+                ambassador_discount: (
+                  items.discount_amount +
+                  items.discount_shipping
+                ).toFixed(2)
+              }
             }
+
           }), () => {
+
             this.calculateDifference();
+
           });
         }
       })
       .catch(err => {
         console.log("Ambassador code error: " + err);
       });
+
+    });
   }
 
   calculateDifference = () => {
-    // differenceSummary: {
-    //   base_amount: "0.00",
-    //   taxes: "0.00",
-    //   delivery_fee: "0.00",
-    //   service_fee: "0.00",
-    //   driver_tip: "0.00",
-    //   discount_amount: "0.00",
-    //   discount_rate: 0,
-    //   ambassador_discount: "0.00",
-    //   subtotal: "0.00",
-    //   total: "0.00"
-    // },
-
     this.setState(prevState => ({
       differenceSummary: {
         base_amount: (
@@ -359,6 +411,7 @@ class EditPlan extends React.Component {
           parseFloat(this.state.currentPlan.payment_summary.total)
         ).toFixed(2),
       },
+      refreshingPrice: false
     }));
   }
 
@@ -428,6 +481,21 @@ class EditPlan extends React.Component {
   }
 
   loadSubscriptions = (subscriptions, discounts, setDefault) => {
+
+    console.log("(LS) subscriptions: ", subscriptions);
+
+    if(subscriptions.length === 0){
+      console.log("NO SUBSCRIPTIONS");
+
+      this.displayErrorModal(`
+        You cannot edit any meal plans as you are not currently subscribed to any. 
+      `, 
+        'Choose a Plan', '/choose-plan'
+      );
+
+      return null;
+    }
+
     let newSubList = [];
     let defaultCurrentPlan = {};
     let defaultUpdatedPlan = {};
@@ -857,20 +925,42 @@ class EditPlan extends React.Component {
             customerUid,
             mounted: true
           }), () => {
+
             this.props.fetchProfileInformation(customerUid);
             this.props.fetchPlans();
-            this.props.fetchSubscribed(customerUid)
-              .then((ids) => {
-                console.log("fetchSubscribed purchaseIds: ", ids);
-                for (const [subIndex, subData] of Object.entries(this.props.subscribedPlans)) {
-                  console.log("(1)======| SUBS FETCHED |======(1)");
-                  console.log("subIndex: ", subIndex);
-                  console.log("subData: ", subData);
-                  console.log("(2)============================(2)");
-                  if(subIndex === "0"){
 
-                  }
+            let fetchedDiscounts = null;
+            let fetchedSubscriptions = null;
+
+            fetchDiscounts((discounts) => {
+              console.log("fetchDiscounts callback: ", discounts);
+
+              fetchedDiscounts = discounts;
+
+              this.setState({
+                discounts: fetchedDiscounts
+              });
+
+              if(fetchedSubscriptions !== null){
+                console.log("(1) load subscriptions");
+                this.loadSubscriptions(fetchedSubscriptions, fetchedDiscounts, DEFAULT);
+              }
+
+            });
+
+            axios.get(API_URL + 'next_meal_info/' + this.state.customerUid)
+              .then(res => {
+                console.log("next meal info res: ", res);
+
+                fetchedSubscriptions = res.data.result;
+
+                if(fetchedDiscounts !== null){
+                  console.log("(2) load subscriptions");
+                  this.loadSubscriptions(fetchedSubscriptions, fetchedDiscounts, DEFAULT);
                 }
+              })
+              .catch(err => {
+                console.log(err);
               });
           });
 
@@ -907,10 +997,6 @@ class EditPlan extends React.Component {
             mounted: true
           }), () => {
             this.props.fetchProfileInformation(customerUid);
-            //this.props.fetchPlans();
-
-            console.log("plans before fetch: ", this.props.plans);
-
             this.props.fetchPlans();
 
             let fetchedDiscounts = null;
@@ -946,7 +1032,7 @@ class EditPlan extends React.Component {
               .catch(err => {
                 console.log(err);
               });
-            });
+          });
 
         })
         .catch(err => {
@@ -963,7 +1049,12 @@ class EditPlan extends React.Component {
       // Reroute to log in page
       // console.log("edit-plan NOT LOGGED IN");
       // console.log("edit plan props.location (not logged in): ", this.props.location);
-      this.props.history.push("/choose-plan");
+      //this.props.history.push("/choose-plan");
+      this.displayErrorModal(`
+        Please log in to edit your meals.
+      `, 
+        'Go Home', '/home'
+      );
     }
   }
 
@@ -1277,27 +1368,9 @@ class EditPlan extends React.Component {
           <div 
             className={styles.iconTrash}
             onClick={() => {
-              // axios
-              //   .put(`${API_URL}cancel_purchase`,{
-              //     purchase_uid: this.state.updatedPlan.raw_data.purchase_id,
-              //   })
-              //   .then((response) => {
-              //     console.log("cancel_purchase response: " + JSON.stringify(response));
-              //     console.log("cancel_purchase customerUid: " + this.state.customerUid);
-              //     this.props.fetchSubscribed(this.state.customerUid);
-              //   })
-              //   .catch((err) => {
-              //     if(err.response) {
-              //       console.log(err.response);
-              //     }
-              //     console.log(err);
-              //   })
-
               this.deletePurchase();
             }}
-          >
-
-          </div>
+          />
         </div>
 
 
@@ -1346,7 +1419,6 @@ class EditPlan extends React.Component {
       </div>
 
       <div className={styles.chargeContainer}>
-
         <div className={styles.chargeTotal}>
           <div style={{display: 'inline-flex'}}>
             {(() => {
@@ -1376,10 +1448,8 @@ class EditPlan extends React.Component {
               }
             })()}
           </div>
-        </div>
-
+        </div> 
       </div> 
-
     </div>
     </>
     );
@@ -1390,10 +1460,9 @@ class EditPlan extends React.Component {
     
     let object = {...this.state.deliveryInfo};
 
-    // deleting since field does not exist in endpoint
+    // deleting since field does not currently exist in endpoint
     delete object['instructions'];
 
-    //object['purchase_uid'] = this.state.updatedPlan.raw_data.purchase_uid;
     object['email'] = this.props.email;
 
     console.log("edits to save: ", JSON.stringify(object));
@@ -1428,7 +1497,6 @@ class EditPlan extends React.Component {
   }
 
   changeTip(newTip) {
-    console.log("attempted to change tip");
 
     this.setState(prevState => ({
       updatedPlan: {
@@ -1470,13 +1538,6 @@ class EditPlan extends React.Component {
           }
           onClick={() => {
 
-            console.log(" ");
-            console.log("======| mealsDelivery |======");
-            console.log("(old) meal selection: ", this.state.updatedPlan.meals);
-            console.log("(new) meal selection: ", mealIndex);
-            console.log("delivery selection: ", this.state.updatedPlan.deliveries);
-            console.log(" ");
-
             this.props.chooseMealsDelivery(
               mealIndex,
               this.state.updatedPlan.deliveries,
@@ -1484,14 +1545,6 @@ class EditPlan extends React.Component {
             );
 
             this.changePlans(mealIndex, this.state.updatedPlan.deliveries);
-            
-            // this.setState(prevState => ({
-            //   updatedPlan: {
-            //     ...prevState.updatedPlan,
-            //     meals: mealIndex
-            //   }
-            // }));
-
           }}
         >
           {mealIndex}
@@ -1513,10 +1566,6 @@ class EditPlan extends React.Component {
     var deliveryPlans = this.props.plans[2];
     var discount = null;
 
-    // let discountItem = discounts.filter( function(e) {
-    //   return e.deliveries === parsedDeliveries;
-    // });
-
     for (const [deliveryIndex, deliveryData] of Object.entries(deliveryPlans)) {
 
       let discountItem = this.state.discounts.filter( function(e) {
@@ -1524,12 +1573,6 @@ class EditPlan extends React.Component {
       });
 
       discount = discountItem[0].discount;
-
-      // console.log(" ");
-      // console.log("======| paymentFrequency |======");
-      // console.log("discountItem: ", discountItem);
-      // console.log("discount: ", discount);
-      // console.log(" ");
 
       paymentOptionButtons.push(
         <div className={styles.sameLine} key={deliveryIndex}>
@@ -1541,14 +1584,6 @@ class EditPlan extends React.Component {
                   : deselectedPaymentOption
               }
               onClick={() => {
-
-                console.log(" ");
-                console.log("======| mealsDelivery |======");
-                console.log("meal selection: ", this.state.updatedPlan.meals);
-                console.log("(old) delivery selection: ", this.state.updatedPlan.deliveries);
-                console.log("(new) delivery selection: ", deliveryIndex);
-                console.log(" ");
-
                 this.props.choosePaymentOption(
                   deliveryIndex,
                   this.state.updatedPlan.meals,
@@ -1556,13 +1591,6 @@ class EditPlan extends React.Component {
                 )
 
                 this.changePlans(this.state.updatedPlan.meals, deliveryIndex);
-
-                // this.setState(prevState => ({
-                //   updatedPlan: {
-                //     ...prevState.updatedPlan,
-                //     deliveries: deliveryData.num_deliveries.toString(),
-                //   }
-                // }));
               }}
             >
             <span style={{fontSize: '35px'}}>
@@ -1873,24 +1901,21 @@ class EditPlan extends React.Component {
                   </div>
 
                   <div className={styles.summaryRight}>
-                    {
-                      "-$" + this.state.updatedPlan.payment_summary.discount_amount + 
-                      " (" + this.state.updatedPlan.payment_summary.discount_rate + "%)"
-                    }
+                    {"-$" + this.state.updatedPlan.payment_summary.discount_amount}
+                    <br />
+                    {"(" + this.state.updatedPlan.payment_summary.discount_rate + "%)"}
                   </div>
 
                   <div className={styles.summaryRight}>
-                    {
-                      "-$" + this.state.currentPlan.payment_summary.discount_amount + 
-                      " (" + this.state.currentPlan.payment_summary.discount_rate + "%)"
-                    }
+                    {"-$" + this.state.currentPlan.payment_summary.discount_amount}
+                    <br />
+                    {"(" + this.state.currentPlan.payment_summary.discount_rate + "%)"}
                   </div>
 
                   <div className={styles.summaryRight}>
-                    {
-                      "$" + Math.abs(this.state.differenceSummary.discount_amount).toFixed(2) + 
-                      " (" + Math.abs(this.state.differenceSummary.discount_rate) + "%)"
-                    }
+                    {"$" + Math.abs(this.state.differenceSummary.discount_amount).toFixed(2)}
+                    <br />
+                    {"(" + Math.abs(this.state.differenceSummary.discount_rate) + "%)"}
                   </div>
 
               </div>
@@ -2042,23 +2067,35 @@ class EditPlan extends React.Component {
                     })()}
               </div>
 
-              <div style={{display: 'flex',borderBottom:'1px solid'}}>
+              {/* <div style={{display: 'flex',borderBottom:'1px solid'}}> */}
+              <div style={{display: 'flex', borderBottom:'1px solid'}}>
                 <input
-                    type='text'
-                    placeholder='Enter Ambassador Code'
-                    className={styles.inputAmbassador}
-                    onChange={e => {
-                      this.setState({
-                        ambassadorCode: e.target.value
-                      });
-                    }}
-                  />
-                  <button 
-                    className={styles.codeButton}
-                    onClick={() => this.applyAmbassadorCode()}
-                  >
-                    Verify
-                  </button>
+                  type='text'
+                  placeholder='Enter Ambassador Code'
+                  className={styles.inputAmbassador}
+                  onChange={e => {
+                    this.setState({
+                      ambassadorCode: e.target.value
+                    });
+                  }}
+                />
+                <button 
+                  className={styles.codeButton}
+                  onClick={() => this.applyAmbassadorCode()}
+                >
+                  Verify
+                </button>
+                <div className={styles.summarySubLeft}>
+                  -${this.state.updatedPlan.payment_summary.ambassador_discount}
+                </div>
+
+                <div className={styles.summarySubtotal}>
+                  -${this.state.currentPlan.payment_summary.ambassador_discount}
+                </div>
+
+                <div className={styles.summarySubtotal}>
+                  ${this.state.differenceSummary.ambassador_discount}
+                </div>
               </div>
 
               <div 
@@ -2097,7 +2134,11 @@ class EditPlan extends React.Component {
 
           <button 
             className={styles.orangeBtn2}
-            disabled={!this.state.subscriptionsLoaded && this.state.defaultSet === false}
+            disabled={
+              (!this.state.subscriptionsLoaded && 
+              this.state.defaultSet === false) ||
+              this.state.refreshingPrice === true
+            }
             onClick={() => this.confirmChanges()}
           >
             Complete Payment
@@ -2105,7 +2146,11 @@ class EditPlan extends React.Component {
 
           <button 
             className={styles.orangeBtn3}
-            disabled={!this.state.subscriptionsLoaded && this.state.defaultSet === false}
+            disabled={
+              (!this.state.subscriptionsLoaded && 
+              this.state.defaultSet === false) ||
+              this.state.refreshingPrice === true
+            }
             onClick={() => this.discardChanges()}
           >
             Keep Existing Meal Plan
@@ -2122,6 +2167,47 @@ class EditPlan extends React.Component {
               </div>
             </div>
           </div>
+
+          {(() => {
+            if (this.state.showErrorModal === true) {
+              return (
+                <>
+                  <div className = {this.state.errorModal}>
+                    <div className  = {styles.errorModalContainer}>
+
+                      <div className={styles.errorContainer}>
+                        <div className={styles.errorHeader}>
+                          Hmm...
+                        </div>
+
+                        <div className={styles.errorText}>
+                          {this.state.errorMessage}
+                        </div>
+
+                        <br />
+
+                        <button 
+                          className={styles.chargeBtn}
+                          onClick = {() => {
+                            if(this.state.errorLink === 'back'){
+                              this.displayErrorModal();
+                            } else {
+                              this.props.history.push(this.state.errorLink);
+                            }
+                            
+                          }}
+                        >
+                          {this.state.errorLinkText}
+                        </button>
+                        
+                      </div> 
+                    </div>
+                  </div>
+                </>
+              );
+            }
+          })()} 
+
         <FootLink/>
       </>
     );
