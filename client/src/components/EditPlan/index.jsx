@@ -716,42 +716,13 @@ class EditPlan extends React.Component {
   discardChanges() {
     console.log("(DISCARD) currentPlan: ", this.state.currentPlan);
 
-    let currCopy = {...this.state.currentPlan}
+    this.changePlans(this.state.currentPlan.meals, this.state.currentPlan.deliveries);
 
-    // let currDeliveryInfo = {
-    //   first_name: currCopy.raw_data.delivery_first_name,
-    //   last_name: currCopy.raw_data.delivery_last_name,
-    //   purchase_uid: currCopy.raw_data.purchase_uid,
-    //   phone: currCopy.raw_data.delivery_phone_num,
-    //   address: currCopy.raw_data.delivery_address,
-    //   unit: currCopy.raw_data.delivery_unit,
-    //   city: currCopy.raw_data.delivery_city,
-    //   state: currCopy.raw_data.delivery_state,
-    //   zip: currCopy.raw_data.cc_zip,
-    //   cc_num: "NULL",
-    //   cc_cvv: "NULL",
-    //   cc_zip: "NULL",
-    //   cc_exp_date: "NULL",
-    //   instructions: ""
-    // };
+    let currDeliveryInfo = this.setDeliveryInfo(this.state.currentPlan.raw_data);
 
-    let currDeliveryInfo = this.setDeliveryInfo(currCopy.raw_data);
-
-    // currDeliveryInfo["first_name"] = currCopy.raw_data.delivery_first_name;
-    // currDeliveryInfo["last_name"] = currCopy.raw_data.delivery_last_name;
-    // currDeliveryInfo["phone"] = currCopy.raw_data.delivery_phone_num;
-    // currDeliveryInfo["address"] = currCopy.raw_data.delivery_address;
-    // currDeliveryInfo["unit"] = currCopy.raw_data.delivery_unit;
-    // currDeliveryInfo["city"] = currCopy.raw_data.delivery_city;
-    // defaultDeliveryInfo["zip"] = currCopy.raw_data.delivery_zip;
-    // defaultDeliveryInfo["state"] = currCopy.raw_data.delivery_state;
-    // defaultDeliveryInfo["cc_num"] = currCopy.raw_data.cc_num;
-    // defaultDeliveryInfo["cc_exp_date"] = currCopy.raw_data.cc_exp_date;
-    // defaultDeliveryInfo["cc_cvv"] = currCopy.raw_data.cc_cvv;
-    // defaultDeliveryInfo["cc_zip"] = currCopy.raw_data.cc_zip;
+    this.changeTip(this.state.currentPlan.payment_summary.driver_tip);
 
     this.setState(prevState => ({
-      updatedPlan: {...currCopy},
       deliveryInfo: {...currDeliveryInfo}
     }), () => {
       this.calculateDifference();
