@@ -176,7 +176,8 @@ class EditPlan extends React.Component {
       errorModal: null,
       errorMessage: '',
       errorLink: '',
-      errorLinkText: ''
+      errorLinkText: '',
+      errorHeader: ''
     };
   }
 
@@ -205,14 +206,15 @@ class EditPlan extends React.Component {
     }
   };
 
-  displayErrorModal = (message, linkText, link) => {
+  displayErrorModal = (header, message, linkText, link) => {
     if(this.state.showErrorModal === false) {
       this.setState({
         errorModal: styles.errorModalPopUpShow,
         showErrorModal: true,
         errorMessage: message,
         errorLinkText: linkText,
-        errorLink: link
+        errorLink: link,
+        errorHeader: header
       });
       console.log("\nerror pop up toggled to true");
     }else{
@@ -221,7 +223,8 @@ class EditPlan extends React.Component {
         showErrorModal: false,
         errorMessage: message,
         errorLinkText: linkText,
-        errorLink: link
+        errorLink: link,
+        errorHeader: header
       });
       console.log("\nerror pop up toggled to false");
     }
@@ -307,7 +310,7 @@ class EditPlan extends React.Component {
 
         if(this.state.validCode === true) {
 
-          this.displayErrorModal('You have already entered a valid ambassador code.', 'Go Back', 'back');
+          this.displayErrorModal('Hmm...', 'You have already entered a valid ambassador code.', 'Go Back', 'back');
 
           this.setState({
             refreshingPrice: false
@@ -322,7 +325,7 @@ class EditPlan extends React.Component {
             refreshingPrice: false
           });
 
-          this.displayErrorModal(items, 'Go Back', 'back');
+          this.displayErrorModal('Hmm...', items, 'Go Back', 'back');
 
 
         } else {
@@ -333,15 +336,6 @@ class EditPlan extends React.Component {
 
           this.setState(prevState => ({
             validCode: true,
-
-            // paymentSummary: {
-            //   ...prevState.paymentSummary,
-            //   ambassadorDiscount: (
-            //     items.discount_amount +
-            //     items.discount_shipping
-            //   ).toFixed(2)
-            // }
-
             updatedPlan: {
               ...prevState.updatedPlan,
               payment_summary: {
@@ -355,7 +349,11 @@ class EditPlan extends React.Component {
 
           }), () => {
 
-            this.calculateDifference();
+            this.changePlans(
+              this.state.updatedPlan.meals,
+              this.state.updatedPlan.deliveries
+            );
+            //this.calculateDifference();
 
           });
         }
@@ -416,23 +414,23 @@ class EditPlan extends React.Component {
   }
 
   changePlans = (meals, deliveries) => {
-    console.log(" ");
-    console.log("======| changePlans |======");
-    console.log("meals: ", meals);
-    console.log("deliveries: ", deliveries);
+    // console.log(" ");
+    // console.log("======| changePlans |======");
+    // console.log("meals: ", meals);
+    // console.log("deliveries: ", deliveries);
 
     let mealPlan = this.props.plans[meals][deliveries];
 
-    console.log("meal plan: ", mealPlan);
-    console.log("(old) updated plan: ", this.state.updatedPlan);
+    // console.log("meal plan: ", mealPlan);
+    // console.log("(old) updated plan: ", this.state.updatedPlan);
 
-    console.log("(1) updated plan: ", this.state.updatedPlan);
-    console.log("(1) current plan: ", this.state.currentPlan);
-    console.log(" ");
+    // console.log("(1) updated plan: ", this.state.updatedPlan);
+    // console.log("(1) current plan: ", this.state.currentPlan);
+    // console.log(" ");
 
     let newBaseAmount = mealPlan.item_price * mealPlan.num_deliveries;
 
-    console.log("newBaseAmount: ", newBaseAmount);
+    // console.log("newBaseAmount: ", newBaseAmount);
 
     let newUpdatedPlan = {...this.state.updatedPlan};
 
@@ -447,35 +445,43 @@ class EditPlan extends React.Component {
         parseFloat(newUpdatedPlan.payment_summary.taxes) + 
         parseFloat(newUpdatedPlan.payment_summary.service_fee) +
         parseFloat(newUpdatedPlan.payment_summary.delivery_fee) +
-        parseFloat(newUpdatedPlan.payment_summary.driver_tip) +
+        parseFloat(newUpdatedPlan.payment_summary.driver_tip) -
         parseFloat(newUpdatedPlan.payment_summary.ambassador_discount)
       ) - (
         parseFloat(newUpdatedPlan.payment_summary.base_amount)*mealPlan.delivery_discount*0.01
       )
     ).toFixed(2);
-    console.log("DISCOUNT BEFORE: ", newUpdatedPlan.payment_summary.discount_amount);
+
+
+    // console.log("DISCOUNT BEFORE: ", newUpdatedPlan.payment_summary.discount_amount);
+
+
     newUpdatedPlan.payment_summary.discount_amount = (
       parseFloat(newUpdatedPlan.payment_summary.base_amount)*mealPlan.delivery_discount*0.01
     ).toFixed(2);
-    console.log("DISCOUNT AFTER: ", newUpdatedPlan.payment_summary.discount_amount);
 
-    console.log("new payment summary: ", newUpdatedPlan.payment_summary);
 
-    console.log("(new) updated plan: ", newUpdatedPlan);
-    console.log("current plan: ", this.state.currentPlan);
-    console.log(" ");
+    // console.log("DISCOUNT AFTER: ", newUpdatedPlan.payment_summary.discount_amount);
 
-    console.log("(2) updated plan: ", this.state.updatedPlan);
-    console.log("(2) current plan: ", this.state.currentPlan);
-    console.log(" ");
+    // console.log("new payment summary: ", newUpdatedPlan.payment_summary);
+
+    // console.log("(new) updated plan: ", newUpdatedPlan);
+    // console.log("current plan: ", this.state.currentPlan);
+    // console.log(" ");
+
+    // console.log("(2) updated plan: ", this.state.updatedPlan);
+    // console.log("(2) current plan: ", this.state.currentPlan);
+    // console.log(" ");
 
     this.setState(prevState => ({
       updatedPlan: newUpdatedPlan,
     }), () => {
-      console.log(" ");
-      console.log("(3) updated plan: ", this.state.updatedPlan);
-      console.log("(3) current plan: ", this.state.currentPlan);
-      console.log(" ");
+
+      // console.log(" ");
+      // console.log("(3) updated plan: ", this.state.updatedPlan);
+      // console.log("(3) current plan: ", this.state.currentPlan);
+      // console.log(" ");
+
       this.calculateDifference();
     });
   }
@@ -487,8 +493,8 @@ class EditPlan extends React.Component {
     if(subscriptions.length === 0){
       console.log("NO SUBSCRIPTIONS");
 
-      this.displayErrorModal(`
-        You cannot edit any meal plans as you are not currently subscribed to any. 
+      this.displayErrorModal('Hmm...', `
+        Please purchase a subscription. Once you have a subscription, you can manage it from here.
       `, 
         'Choose a Plan', '/choose-plan'
       );
@@ -787,6 +793,13 @@ class EditPlan extends React.Component {
 
             let fetchedSubscriptions = res.data.result;
 
+            this.displayErrorModal('Success!', `
+              OLD MEAL PLAN: ${this.state.currentPlan.meals} meals, ${this.state.currentPlan.deliveries} deliveries
+              NEW MEAL PLAN: ${this.state.updatedPlan.meals} meals, ${this.state.updatedPlan.deliveries} deliveries
+            `, 
+              'OK', 'back'
+            );
+
             this.loadSubscriptions(fetchedSubscriptions, this.state.discounts, CURRENT);
 
             // fetchedSubscriptions = res.data.result;
@@ -1021,7 +1034,7 @@ class EditPlan extends React.Component {
       // console.log("edit-plan NOT LOGGED IN");
       // console.log("edit plan props.location (not logged in): ", this.props.location);
       //this.props.history.push("/choose-plan");
-      this.displayErrorModal(`
+      this.displayErrorModal('Hmm...', `
         Please log in to edit your meals.
       `, 
         'Go Home', '/home'
@@ -1030,6 +1043,9 @@ class EditPlan extends React.Component {
   }
 
   deletePurchase = () => {
+
+    console.log("plan to cancel: ", this.state.updatedPlan);
+
     axios
       .put(`${API_URL}cancel_purchase`,{
         purchase_uid: this.state.updatedPlan.raw_data.purchase_uid,
@@ -1106,21 +1122,52 @@ class EditPlan extends React.Component {
     return newDeliveryInfo;
   }
 
-  hideSubscribedMeals = () => {
+  hideSubscribedMeals = (config) => {
     console.log("discounts: NOTHING");
-    return (
-      <div 
-        style={{
-          textAlign: 'center', 
-          paddingTop: '70px',
-          fontSize: '40px', 
-          fontWeight: 'bold',
-          width: '100%'
-        }}
-      >
-        Loading Subscriptions...
-      </div>
-    );
+
+    if(config === 'plan') {
+      return (
+        <div 
+          style={{
+            textAlign: 'center', 
+            paddingTop: '80px',
+            fontSize: '40px', 
+            fontWeight: 'bold',
+            width: '100%'
+          }}
+        >
+          Loading Subscriptions...
+        </div>
+      );
+    } else {
+      return (
+        <div 
+          style={{
+            textAlign: 'center', 
+            paddingTop: '70px',
+            fontSize: '40px', 
+            fontWeight: 'bold',
+            width: '100%',
+            marginBottom: '100px'
+          }}
+        >
+          Loading Subscriptions...
+        </div>
+      );
+    }
+    // return (
+    //   <div 
+    //     style={{
+    //       textAlign: 'center', 
+    //       paddingTop: '70px',
+    //       fontSize: '40px', 
+    //       fontWeight: 'bold',
+    //       width: '100%'
+    //     }}
+    //   >
+    //     Loading Subscriptions...
+    //   </div>
+    // );
   }
 
   showSubscribedMeals = () => {
@@ -1628,7 +1675,7 @@ class EditPlan extends React.Component {
             <div style={{display: 'flex'}}>
               {this.state.subscriptionsLoaded === true
                 ? this.showSubscribedMeals() 
-                : this.hideSubscribedMeals()}
+                : this.hideSubscribedMeals('plan')}
             </div>
           </div>
 
@@ -1642,7 +1689,7 @@ class EditPlan extends React.Component {
 
             {this.state.subscriptionsLoaded === true
               ? this.showPlanDetails() 
-              : this.hideSubscribedMeals()}
+              : this.hideSubscribedMeals('delivery_details')}
 
         </div>
 
@@ -2148,7 +2195,7 @@ class EditPlan extends React.Component {
 
                       <div className={styles.errorContainer}>
                         <div className={styles.errorHeader}>
-                          Hmm...
+                          {this.state.errorHeader}
                         </div>
 
                         <div className={styles.errorText}>
