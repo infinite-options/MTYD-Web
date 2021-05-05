@@ -40,6 +40,9 @@ import Popsignup from '../PopSignup';
 
 const google = window.google;
 
+const DEFAULT = true;
+const CURRENT= false;
+
 class EditPlan extends React.Component {
   constructor() {
     super();
@@ -424,7 +427,7 @@ class EditPlan extends React.Component {
     });
   }
 
-  loadSubscriptions = (subscriptions, discounts) => {
+  loadSubscriptions = (subscriptions, discounts, setDefault) => {
     let newSubList = [];
     let defaultCurrentPlan = {};
     let defaultUpdatedPlan = {};
@@ -449,48 +452,25 @@ class EditPlan extends React.Component {
 
       let subscription = {};
 
-      console.log(" ");
-      console.log("======| subscription " + index + " |======");
-      console.log("Meal Plans: ", sub.items);
-      console.log("Purchase ID: ", sub.purchase_id);
-      console.log("Next Delivery Date: ", sub.sel_menu_date);
-      console.log("Next Delivery Status: ", sub.meal_selection);
-      console.log("Next Billing Date: ", sub.menu_date);
-
-      console.log(" ");
-
       let parsedItems = JSON.parse(sub.items)[0];
       let parsedMeals = parsedItems.name.substring(0,parsedItems.name.indexOf(" "));
       let parsedDeliveries = parsedItems.qty;
-
-      console.log("(parsed) Meals: ", parsedMeals);
-      console.log("(parsed) Deliveries: ", parsedDeliveries);
 
       let discountItem = discounts.filter( function(e) {
         return e.deliveries === parsedDeliveries;
       });
 
       let parsedDiscount = discountItem[0].discount;
-
-      console.log("(parsed) discount: ", parsedDiscount);
-
       let parsedId = sub.purchase_id.substring(sub.purchase_id.indexOf("-")+1,sub.purchase_id.length)
-
-      console.log("(parsed) Purchase ID: ", parsedId);
-
       let parsedDeliveryDate = sub.sel_menu_date.substring(0,sub.sel_menu_date.indexOf(" "));
-
-      console.log("(parsed) Delivery Date: ", parsedDeliveryDate);
-
       let parsedSelection = JSON.parse(sub.meal_selection)[0].name;
       let parsedStatus = null;
+      
       if(parsedSelection !== 'SURPRISE' && parsedSelection !== 'SKIP'){
         parsedStatus = 'SELECTED';
       } else {
         parsedStatus = parsedSelection;
       }
-
-      console.log("(parsed) Delivery Status: ", parsedStatus);
 
       let parsedBillingDate = sub.menu_date.substring(0,sub.menu_date.indexOf(" "));
 
@@ -544,9 +524,6 @@ class EditPlan extends React.Component {
       subscription["payment_summary"] = {...payment_summary};
       subscription["raw_data"] = sub;
 
-      console.log("Subscription index: ", index);
-      console.log("Subscription to be pushed: ", subscription);
-
       if(index === 0){
 
         defaultCurrentPlan["load_order"] = index;
@@ -573,40 +550,7 @@ class EditPlan extends React.Component {
         defaultUpdatedPlan["payment_summary"] = {...payment_summary};
         defaultUpdatedPlan["raw_data"] = sub;
 
-        // deliveryInfo: {
-        //   first_name: "",
-        //   last_name: "",
-        //   purchase_uid: "",
-        //   phone: "",
-        //   address: "",
-        //   unit: "",
-        //   city: "",
-        //   state: "",
-        //   zip: "",
-        //   cc_num: "",
-        //   cc_cvv: "",
-        //   cc_zip: "",
-        //   cc_exp_date: "",
-        //   instructions: ""
-        // },
-
-        console.log("sub: ", sub);
-
         defaultDeliveryInfo = this.setDeliveryInfo(sub);
-
-        // defaultDeliveryInfo["first_name"] = sub.delivery_first_name;
-        // defaultDeliveryInfo["last_name"] = sub.delivery_last_name;
-        // defaultDeliveryInfo["purchase_uid"] = sub.purchase_uid;
-        // defaultDeliveryInfo["phone"] = sub.delivery_phone_num;
-        // defaultDeliveryInfo["address"] = sub.delivery_address;
-        // defaultDeliveryInfo["unit"] = sub.delivery_unit;
-        // defaultDeliveryInfo["city"] = sub.delivery_city;
-        // defaultDeliveryInfo["zip"] = sub.delivery_zip;
-        // defaultDeliveryInfo["state"] = sub.delivery_state;
-        // defaultDeliveryInfo["cc_num"] = sub.cc_num;
-        // defaultDeliveryInfo["cc_exp_date"] = sub.cc_exp_date;
-        // defaultDeliveryInfo["cc_cvv"] = sub.cc_cvv;
-        // defaultDeliveryInfo["cc_zip"] = sub.cc_zip;
 
       }
 
@@ -620,13 +564,30 @@ class EditPlan extends React.Component {
       return a.load_order - b.load_order
     });
 
-    this.setState({
-      subscriptionsList: newSubList,
-      subscriptionsLoaded: true,
-      currentPlan: {...defaultCurrentPlan},
-      updatedPlan: {...defaultUpdatedPlan},
-      deliveryInfo: {...defaultDeliveryInfo}
-    });
+    if(setDefault === true) {
+      this.setState(prevState => ({
+        subscriptionsList: newSubList,
+        subscriptionsLoaded: true,
+        currentPlan: {...defaultCurrentPlan},
+        updatedPlan: {...defaultUpdatedPlan},
+        deliveryInfo: {...defaultDeliveryInfo}
+      }), () => {
+        this.calculateDifference();
+      });
+    } else {
+      this.setState({
+        subscriptionsList: newSubList,
+        subscriptionsLoaded: true,
+      });
+    }
+
+    // this.setState({
+    //   subscriptionsList: newSubList,
+    //   subscriptionsLoaded: true,
+    //   currentPlan: {...defaultCurrentPlan},
+    //   updatedPlan: {...defaultUpdatedPlan},
+    //   deliveryInfo: {...defaultDeliveryInfo}
+    // });
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -706,7 +667,7 @@ class EditPlan extends React.Component {
     //   instructions: ""
     // };
 
-    let currDeliveryInfo = this.setDeliveryInfo(currCopy.rawData);
+    let currDeliveryInfo = this.setDeliveryInfo(currCopy.raw_data);
 
     // currDeliveryInfo["first_name"] = currCopy.raw_data.delivery_first_name;
     // currDeliveryInfo["last_name"] = currCopy.raw_data.delivery_last_name;
@@ -721,9 +682,11 @@ class EditPlan extends React.Component {
     // defaultDeliveryInfo["cc_cvv"] = currCopy.raw_data.cc_cvv;
     // defaultDeliveryInfo["cc_zip"] = currCopy.raw_data.cc_zip;
 
-    this.setState({
+    this.setState(prevState => ({
       updatedPlan: {...currCopy},
       deliveryInfo: {...currDeliveryInfo}
+    }), () => {
+      this.calculateDifference();
     });
   }
 
@@ -785,7 +748,7 @@ class EditPlan extends React.Component {
 
             let fetchedSubscriptions = res.data.result;
 
-            this.loadSubscriptions(fetchedSubscriptions, this.state.discounts);
+            this.loadSubscriptions(fetchedSubscriptions, this.state.discounts, CURRENT);
 
             // fetchedSubscriptions = res.data.result;
 
@@ -964,7 +927,7 @@ class EditPlan extends React.Component {
 
               if(fetchedSubscriptions !== null){
                 console.log("(1) load subscriptions");
-                this.loadSubscriptions(fetchedSubscriptions, fetchedDiscounts);
+                this.loadSubscriptions(fetchedSubscriptions, fetchedDiscounts, DEFAULT);
               }
 
             });
@@ -977,7 +940,7 @@ class EditPlan extends React.Component {
 
                 if(fetchedDiscounts !== null){
                   console.log("(2) load subscriptions");
-                  this.loadSubscriptions(fetchedSubscriptions, fetchedDiscounts);
+                  this.loadSubscriptions(fetchedSubscriptions, fetchedDiscounts, DEFAULT);
                 }
               })
               .catch(err => {
@@ -1039,7 +1002,7 @@ class EditPlan extends React.Component {
 
             let fetchedSubscriptions = res.data.result;
 
-            this.loadSubscriptions(fetchedSubscriptions, this.state.discounts);
+            this.loadSubscriptions(fetchedSubscriptions, this.state.discounts, DEFAULT);
 
             // fetchedSubscriptions = res.data.result;
 
@@ -1446,7 +1409,7 @@ class EditPlan extends React.Component {
 
             let fetchedSubscriptions = res.data.result;
 
-            this.loadSubscriptions(fetchedSubscriptions, this.state.discounts);
+            this.loadSubscriptions(fetchedSubscriptions, this.state.discounts, CURRENT);
           })
           .catch(err => {
             console.log(err);
@@ -1477,6 +1440,7 @@ class EditPlan extends React.Component {
       }
     }),() => {
       this.changePlans(this.state.updatedPlan.meals,this.state.updatedPlan.deliveries);
+      this.calculateDifference();
     });
 
   }
