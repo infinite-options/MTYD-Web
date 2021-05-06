@@ -7,6 +7,11 @@
   --fontSize: 24px;
 }
 
+.containerSplit {
+  text-align: center;
+  display: flex;
+}
+
 .mealHeader {
   background-color: #ff9e19;
   border-radius: 0px 0px 30px 30px;
@@ -75,6 +80,18 @@
   margin-bottom: 30px;
   margin-left: 2%;
   margin-top: 30px;
+}
+.sectionHeaderRight2 {
+  background-color: #ffba00;
+  width: 100%;
+  height: 60px;
+  font-weight: bold;
+  padding-left: 4%;
+  padding-top: 12px;
+  font-size: 25px;
+  margin-bottom: 30px;
+  margin-top: 30px;
+  text-align: left;
 }
 
 .topHeading {
@@ -411,16 +428,28 @@ select {
   margin-top: 15px;
 }
 
-.inputAmbassador {
+/* .inputAmbassador {
   width: 200px;
   height: 43px;
   border-radius: 15px;
   border: solid;
   border-width: 1px;
   background-color: white;
-  /* margin-left: 30px;
-  padding: 6px 0px 6px 10px; */
   margin-top: 17px;
+} */
+.inputAmbassador {
+  width: 40%;
+  height: 30px;
+  border-radius: 10px;
+  border: solid;
+  border-width: 2px;
+  border-color: #ff6505;
+  background-color: white;
+  outline: none;
+  padding: 6px 0px 6px 10px;
+  margin-top: 17px;
+  font-size: 12px;
+  font-weight: 500;
 }
 
 .input::placeholder {
@@ -484,16 +513,15 @@ select {
   margin-left: 20px;
 }
 
-.inputAmbassador::placeholder {
-  /* position: absolute;
-  font-size: large; */
+/* .inputAmbassador::placeholder {
   color: rgb(0, 0, 0);
   opacity: 1;
-}
+} */
 
 .buttonContainer {
   padding: 0 20px;
   margin: 10px 10px;
+  width: 100%;
 }
 
 .button {
@@ -521,7 +549,7 @@ select {
   margin: 0 0 20px 20px;
 }
 
-.codeButton {
+/* .codeButton {
   width: 126px;
   height: 43px;
   border: none;
@@ -534,9 +562,37 @@ select {
   font-size: 17px;
   font-weight: 500;
   color:white
+} */
+.codeButton {
+  width: 12%;
+  height: 30px;
+  border: none;
+  background-color: #ff6505;
+  border-radius: 10px;
+  border-width: 2px;
+  margin-left: 2%;
+  margin-top: 17px;
+  margin-bottom: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  color:white
+}
+.codeButton:hover {
+  width: 12%;
+  height: 30px;
+  border: none;
+  background-color: #ff6505;
+  border-radius: 10px;
+  border-width: 2px;
+  margin-left: 2%;
+  margin-top: 17px;
+  margin-bottom: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  color:white
 }
 
-.tipButton {
+/* .tipButton {
   border: solid;
   background-color: white;
   border-width: 1px;
@@ -553,14 +609,13 @@ select {
   border: solid;
   background-color: #ff9400;
   border-width: 1px;
-
   height: 30px;
   width: 63px;
   font-size: 12px;
   font-weight: 500;
   margin-right: 52px;
   margin-bottom: 10px;
-}
+} */
 
 /*.tipButton:focus {
   border: solid;
@@ -573,6 +628,95 @@ select {
   font-weight: 500;
   margin-right: 30px;
 }*/
+
+.tipButton {
+  border: solid;
+  border-color: #ff6505;
+  background-color: white;
+  border-width: 1px;
+  height: 30px;
+  width: 16%;
+  font-size: 12px;
+  font-weight: 500;
+  margin-bottom: 10px;
+  text-overflow: ellipsis;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  border-radius: 5px;
+}
+.tipButtonSelected {
+  border: solid;
+  border-color: #ff6505;
+  background-color: #ff6505;
+  color: #ffffff;
+  border-width: 1px;
+  height: 30px;
+  width: 16%;
+  font-size: 12px;
+  font-weight: 500;
+  margin-bottom: 10px;
+  border-radius: 5px;
+}
+.tipButtonSelected:hover {
+  border: solid;
+  border-color: #ff6505;
+  background-color: #ff6505;
+  color: #ffffff;
+  border-width: 1px;
+  height: 30px;
+  width: 16%;
+  font-size: 12px;
+  font-weight: 500;
+  margin-bottom: 10px;
+  border-radius: 5px;
+}
+
+.tipButton2 {
+  border: solid;
+  border-color: #ff6505;
+  background-color: white;
+  border-width: 1px;
+  height: 30px;
+  width: 16%;
+  font-size: 12px;
+  font-weight: 500;
+  margin-left: 12%;
+  margin-bottom: 10px;
+  text-overflow: ellipsis;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  border-radius: 5px;
+}
+.tipButtonSelected2 {
+  border: solid;
+  border-color: #ff6505;
+  background-color: #ff6505;
+  color: #ffffff;
+  border-width: 1px;
+  height: 30px;
+  width: 16%;
+  font-size: 12px;
+  font-weight: 500;
+  margin-left: 12%;
+  margin-bottom: 10px;
+  border-radius: 5px;
+}
+.tipButtonSelected2:hover {
+  border: solid;
+  border-color: #ff6505;
+  background-color: #ff6505;
+  color: #ffffff;
+  border-width: 1px;
+  height: 30px;
+  width: 16%;
+  font-size: 12px;
+  font-weight: 500;
+  margin-left: 12%;
+  margin-bottom: 10px;
+  border-radius: 5px;
+}
 
 .saveButton {
   width: 100px;
@@ -787,4 +931,58 @@ select {
   border: none;
   height: 54px;
   width: 70%;
+}
+
+.orangeBtn2 {
+  margin-top: 10px;
+  margin-bottom: 50px;
+  background-color: #f26522;
+  color: white;
+  font-size: 20px;
+  border-radius: 15px;
+  border: none;
+  height: 54px;
+  width: 70%;
+}
+.orangeBtn2:hover {
+  margin-top: 10px;
+  margin-bottom: 50px;
+  background-color: #f26522;
+  color: white;
+  font-size: 20px;
+  border-radius: 15px;
+  border: none;
+  height: 54px;
+  width: 70%;
+}
+.orangeBtn2:disabled {
+  margin-top: 10px;
+  margin-bottom: 50px;
+  background-color: #ccc9c9;
+  color: white;
+  font-size: 20px;
+  border-radius: 15px;
+  border: none;
+  height: 54px;
+  width: 70%;
+}
+
+.element {
+  display: block;
+  margin: 10px 0 20px 0;
+  padding: 10px 14px;
+  font-size: 1em;
+  font-family: Source Code Pro, monospace;
+  box-shadow: rgba(50, 50, 93, 0.14902) 0px 1px 3px, rgba(0, 0, 0, 0.0196078) 0px 1px 0px;
+  border: 0;
+  outline: 0;
+  border-radius: 4px;
+  background: white;
+  width: 100%;
+}
+
+.label {
+  color: #7d7d7d;
+  font-weight: 300;
+  letter-spacing: 0.025em;
 }

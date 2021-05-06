@@ -11,6 +11,8 @@ import Button from '@material-ui/core/Button';
 import withStyles from '@material-ui/styles/withStyles';
 import TextField from '@material-ui/core/TextField';
 
+import styles from "./paymentDetails.module.css";
+
 import PropTypes from "prop-types";
 import {connect} from "react-redux";
 
@@ -286,16 +288,21 @@ const StripeCheckout = (props) => {
         />
 
 
-        <div className={props.classes.label}>
-          <CardElement
+        <div className={styles.label}>
+          {/* <CardElement
             elementRef={(c) => (this._element = c)}
             className={props.classes.element}
+            options={options}
+          /> */}
+          <CardElement
+            elementRef={(c) => (this._element = c)}
+            className={styles.element}
             options={options}
           />
         </div>
 
 
-      <button
+      {/* <button
         className={props.classes.button}
         variant="outlined"
         size="small"
@@ -307,6 +314,14 @@ const StripeCheckout = (props) => {
         disabled={(props.fetchingFees || loadingState || props.recalculatingPrice)}
       >
         Pay With Stripe
+      </button> */}
+
+      <button 
+        className={styles.orangeBtn2}
+        disabled={(props.fetchingFees || loadingState || props.recalculatingPrice)}
+        onClick={() => this.confirmChanges()}
+      >
+        Complete Payment
       </button>
     </>
   );

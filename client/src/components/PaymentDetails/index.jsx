@@ -918,15 +918,6 @@ class PaymentDetails extends React.Component {
           }
         })()} 
 
-        {/* <div style={{display: 'flex'}}>
-          <div className={styles.topHeading}>
-            <h6 className={styles.subHeading}> Delivery Details </h6>
-          </div>
-          <div className={styles.topHeadingRight}>
-            <h6 className={styles.subHeadingRight}> Payment Summary</h6>
-          </div>
-        </div> */}
-
         <div style={{display: 'flex'}}>
           <div className={styles.sectionHeaderLeft}>
             Delivery Details
@@ -936,9 +927,9 @@ class PaymentDetails extends React.Component {
           </div>
         </div>
 
-            
-          <div style={{display: 'flex', border: 'solid'}}>
-            <div style = {{display: 'inline-block', marginLeft: '8%', width: '40%', marginRight: '2%', border: 'inset'}}>
+          <div className={styles.containerSplit}>
+
+            <div style = {{display: 'inline-block', marginLeft: '8%', width: '40%', marginRight: '4%'}}>
               <div style={{display: 'flex'}}>
                 <input
                   type='text'
@@ -1079,192 +1070,188 @@ class PaymentDetails extends React.Component {
                   Save and Proceed
                 </button>
               </div> 
-
-            </div>
-          </div>
-
-
-          <div
-          style={{
-            marginLeft:'0px',
-            width:'450px',
-          }}>        
-            <div
-              style={{
-                display:!this.state.showPaymentInfo?'block':'none',
-              }}
-            >
-              please fill out the delivery details,
-              save and proceed to view payment summary
             </div>
 
-
-            <div
-              style={{
-                visibility:this.state.showPaymentInfo?'visible':'hidden',
-                width:'450px'
-              }}
-            > 
-              <div 
-              style=
-              {{
-                display: 'flex',
-                borderBottom:'solid 2px black'
-              }}
+          <div style={{display: 'inline-block', width:'48%'}}>
+            <div style={{width: '84%'}}>
+              <div
+                style={{
+                  display:!this.state.showPaymentInfo?'block':'none',
+                  fontWeight: '500',
+                  textAlign: 'left'
+                }}
               >
-                <div 
-                  className={styles.summaryLeft}
-                  style={{
-                    fontWeight:'bold'
-                  }}
-
-                >Your box</div>
-                <div className={styles.summaryRight}>
-                  {
-                    this.props.selectedPlan.num_items
-                  } Meals for {
-                    this.props.selectedPlan.num_deliveries
-                  } Deliveries</div>
-
+                {"Please fill out the Delivery Details,"}
+                <br />
+                {"Save and Proceed to view Payment Summary."}
               </div>
-              <div 
-                style={{display: 'flex',borderBottom:'1px solid'}}>
-                  <div className={styles.summaryLeft}>
-                    Meal Subscription 
-                    <br/>({
+
+
+              <div
+                style={{
+                  visibility:this.state.showPaymentInfo?'visible':'hidden'
+                }}
+              > 
+                <div 
+                  style=
+                  {{
+                    display: 'flex',
+                    borderBottom:'solid 2px black'
+                  }}
+                >
+                  <div 
+                    className={styles.summaryLeft}
+                    style={{
+                      fontWeight:'bold'
+                    }}
+
+                  >Plan:</div>
+                  <div className={styles.summaryRight}>
+                    {
                       this.props.selectedPlan.num_items
                     } Meals for {
                       this.props.selectedPlan.num_deliveries
-                    } Deliveries):
-                  </div>
+                    } Deliveries</div>
 
-                  <div className={styles.summaryRight}>
-                    ${this.state.paymentSummary.mealSubPrice}
-                  </div>
-              </div>
-
-              <div 
-                style={{display: 'flex',borderBottom:'1px solid'}}>
-                  <div className={styles.summaryLeft}>
-                  Discount ({this.props.selectedPlan.delivery_discount}%):
-                  </div>
-
-                  <div className={styles.summaryRight}>
-                    -${this.state.paymentSummary.discountAmount}
-                  </div>
-              </div>
-
-              <div 
-                style={{display: 'flex',borderBottom:'1px solid'}}>
-                  <div className={styles.summaryLeft}>
-                    Total Delivery Fee For All {
+                </div>
+                <div 
+                  style={{display: 'flex',borderBottom:'1px solid'}}>
+                    <div className={styles.summaryLeft}>
+                      Meal Subscription 
+                      <br/>({
+                        this.props.selectedPlan.num_items
+                      } Meals for {
                         this.props.selectedPlan.num_deliveries
-                      } Deliveries:
-                  </div>
+                      } Deliveries):
+                    </div>
 
-                  <div className={styles.summaryRight}>
-                    ${(this.state.paymentSummary.deliveryFee)}
-                  </div>
-              </div>
+                    <div className={styles.summaryRight}>
+                      ${this.state.paymentSummary.mealSubPrice}
+                    </div>
+                </div>
 
-              <div 
-                style={{display: 'flex',borderBottom:'1px solid'}}>
-                  <div className={styles.summaryLeft}>
-                    Service Fee:
-                  </div>
+                <div 
+                  style={{display: 'flex',borderBottom:'1px solid'}}>
+                    <div className={styles.summaryLeft}>
+                    Discount ({this.props.selectedPlan.delivery_discount}%):
+                    </div>
 
-                  <div className={styles.summaryRight}>
-                    ${(this.state.paymentSummary.serviceFee)}
-                  </div>
-              </div>
+                    <div className={styles.summaryRight}>
+                      -${this.state.paymentSummary.discountAmount}
+                    </div>
+                </div>
 
-              <div 
-                style={{display: 'flex',borderBottom:'1px solid'}}>
-                  <div className={styles.summaryLeft}>
-                    Taxes:
-                  </div>
+                <div 
+                  style={{display: 'flex',borderBottom:'1px solid'}}>
+                    <div className={styles.summaryLeft}>
+                      Total Delivery Fee For All {
+                          this.props.selectedPlan.num_deliveries
+                        } Deliveries:
+                    </div>
 
-                  <div className={styles.summaryRight}>
-                    ${(this.state.paymentSummary.taxAmount)}
-                  </div>
-              </div>
+                    <div className={styles.summaryRight}>
+                      ${(this.state.paymentSummary.deliveryFee)}
+                    </div>
+                </div>
 
-              <div 
-                style={{display: 'flex'}}>
-                  <div className={styles.summaryLeft}>
-                    Chef and Driver Tip:
-                  </div>
+                <div 
+                  style={{display: 'flex',borderBottom:'1px solid'}}>
+                    <div className={styles.summaryLeft}>
+                      Service Fee:
+                    </div>
 
-                  <div className={styles.summaryRight}>
-                    ${(this.state.paymentSummary.tip)}
-                  </div>
-              </div>
-              <div 
-                style={{display: 'flex'}}>
-                  {(() => {
-                      if (this.state.paymentSummary.tip === "0.00") {
-                        return (
-                          <button className={styles.tipButtonSelected} onClick={() => this.changeTip("0.00")}>
-                            No Tip
-                          </button>
-                        );
-                      } else {
-                        return (
-                          <button className={styles.tipButton} onClick={() => this.changeTip("0.00")}>
-                            No Tip
-                          </button>
-                        );
-                      }
-                    })()}
+                    <div className={styles.summaryRight}>
+                      ${(this.state.paymentSummary.serviceFee)}
+                    </div>
+                </div>
+
+                <div 
+                  style={{display: 'flex',borderBottom:'1px solid'}}>
+                    <div className={styles.summaryLeft}>
+                      Taxes:
+                    </div>
+
+                    <div className={styles.summaryRight}>
+                      ${(this.state.paymentSummary.taxAmount)}
+                    </div>
+                </div>
+
+                <div 
+                  style={{display: 'flex'}}>
+                    <div className={styles.summaryLeft}>
+                      Chef and Driver Tip:
+                    </div>
+
+                    <div className={styles.summaryRight}>
+                      ${(this.state.paymentSummary.tip)}
+                    </div>
+                </div>
+                <div 
+                  style={{display: 'flex'}}>
                     {(() => {
-                      if (this.state.paymentSummary.tip === "2.00") {
-                        return (
-                          <button className={styles.tipButtonSelected} onClick={() => this.changeTip("2.00")}>
-                            $2
-                          </button>
-                        );
-                      } else {
-                        return (
-                          <button className={styles.tipButton} onClick={() => this.changeTip("2.00")}>
-                            $2
-                          </button>
-                        );
-                      }
-                    })()} 
-                    {(() => {
-                      if (this.state.paymentSummary.tip === "3.00") {
-                        return (
-                          <button className={styles.tipButtonSelected} onClick={() => this.changeTip("3.00")}>
-                            $3
-                          </button>
-                        );
-                      } else {
-                        return (
-                          <button className={styles.tipButton} onClick={() => this.changeTip("3.00")}>
-                            $3
-                          </button>
-                        );
-                      }
-                    })()} 
-                    {(() => {
-                      if (this.state.paymentSummary.tip === "5.00") {
-                        return (
-                          <button className={styles.tipButtonSelected} onClick={() => this.changeTip("5.00")}>
-                            $5
-                          </button>
-                        );
-                      } else {
-                        return (
-                          <button className={styles.tipButton} onClick={() => this.changeTip("5.00")}>
-                            $5
-                          </button>
-                        );
-                      }
-                    })()}
-              </div>
+                        if (this.state.paymentSummary.tip === "0.00") {
+                          return (
+                            <button className={styles.tipButtonSelected} onClick={() => this.changeTip("0.00")}>
+                              No Tip
+                            </button>
+                          );
+                        } else {
+                          return (
+                            <button className={styles.tipButton} onClick={() => this.changeTip("0.00")}>
+                              No Tip
+                            </button>
+                          );
+                        }
+                      })()}
+                      {(() => {
+                        if (this.state.paymentSummary.tip === "2.00") {
+                          return (
+                            <button className={styles.tipButtonSelected2} onClick={() => this.changeTip("2.00")}>
+                              $2
+                            </button>
+                          );
+                        } else {
+                          return (
+                            <button className={styles.tipButton2} onClick={() => this.changeTip("2.00")}>
+                              $2
+                            </button>
+                          );
+                        }
+                      })()} 
+                      {(() => {
+                        if (this.state.paymentSummary.tip === "3.00") {
+                          return (
+                            <button className={styles.tipButtonSelected2} onClick={() => this.changeTip("3.00")}>
+                              $3
+                            </button>
+                          );
+                        } else {
+                          return (
+                            <button className={styles.tipButton2} onClick={() => this.changeTip("3.00")}>
+                              $3
+                            </button>
+                          );
+                        }
+                      })()} 
+                      {(() => {
+                        if (this.state.paymentSummary.tip === "5.00") {
+                          return (
+                            <button className={styles.tipButtonSelected2} onClick={() => this.changeTip("5.00")}>
+                              $5
+                            </button>
+                          );
+                        } else {
+                          return (
+                            <button className={styles.tipButton2} onClick={() => this.changeTip("5.00")}>
+                              $5
+                            </button>
+                          );
+                        }
+                      })()}
+                </div>
 
-              <div style={{display: 'flex',borderBottom:'1px solid'}}>
-                <input
+                <div style={{display: 'flex',borderBottom:'1px solid'}}>
+                  <input
                     type='text'
                     placeholder='Enter Ambassador Code'
                     className={styles.inputAmbassador}
@@ -1278,12 +1265,11 @@ class PaymentDetails extends React.Component {
                     className={styles.codeButton}
                     onClick={() => this.applyAmbassadorCode()}
                   >
-                    APPLY CODE
+                    Verify
                   </button>
-              </div>
+                </div>
 
-              <div 
-                style={{display: 'flex' ,marginBottom:'73px'}}>
+                <div style={{display: 'flex' ,marginBottom:'73px'}}>
                   <div className={styles.summaryLeft}>
                     Total:
                   </div>
@@ -1291,34 +1277,18 @@ class PaymentDetails extends React.Component {
                   <div className={styles.summaryRight}>
                     ${this.calculateTotal()}
                   </div>
+                </div>
               </div>
-
-
-              {/* <div style={{display: 'flex'}}> */}
-              {/* <div className={styles.summaryRight2}>
-                    ${this.calculateSubtotal()}
-                  </div> */}
-                  {/* <div className={styles.summaryRight2}>
-                    {console.log("ambassador discount: " + this.state.ambassadorDiscount)}
-                    -${this.state.paymentSummary.ambassadorDiscount}
-                  </div> */}
-                {/* </div> */}
-
-                
-            <div 
-              style={{
-                backgroundColor: '#f8bb17',
-                width:'130%',
-                height:'60px',
-              }}
-            >
-              <h6 className={styles.subHeadingRight}>Complete Payment</h6>
+            </div>
+              
+            <div style={{width: '100%'}}>
+              <h6 className={styles.sectionHeaderRight2}>Complete Payment</h6>
             </div>
                 
-            <div style={{display: 'flex'}}>
-              <div style = {{display: 'inline-block', width: '80%', height: '0px'}}>
+            <div style={{width: '84%'}}>
+              <div style={{display: 'flex'}}>
 
-                <div className = {styles.buttonContainer}>
+                  <div className = {styles.buttonContainer}>
                     <StripeElement
                       stripePromise={this.state.stripePromise}
                       customerPassword={this.state.customerPassword}
@@ -1333,12 +1303,13 @@ class PaymentDetails extends React.Component {
                       phone={this.state.phone}
                       cardInfo={this.state.cardInfo}
                     />
-                </div>
+                  </div>
 
               </div>
-            </div>
 
+            </div>
           </div>
+
         </div>
       </div>
     );

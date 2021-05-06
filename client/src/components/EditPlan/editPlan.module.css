@@ -1039,6 +1039,7 @@
   display: block;
   white-space: nowrap;
   overflow: hidden;
+  border-radius: 5px;
 }
 
 .tipButtonSelected {
@@ -1053,6 +1054,7 @@
   font-weight: 500;
   margin-right: 10%;
   margin-bottom: 10px;
+  border-radius: 5px;
 }
 .tipButtonSelected:hover {
   border: solid;
@@ -1066,6 +1068,7 @@
   font-weight: 500;
   margin-right: 10%;
   margin-bottom: 10px;
+  border-radius: 5px;
 }
 
 /*.inputAmbassador {
