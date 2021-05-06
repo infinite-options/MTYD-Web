@@ -567,7 +567,7 @@ class MenuItemList extends Component {
 
 
     if(customer_uid==null){
-      return this.setState({unloginPopupShow:true,unloginPopupMessage:'xxxx'})
+      return this.setState({unloginPopupShow:true,unloginPopupMessage:'xxxxx'})
 
       // return alert('signin before do this')
     }
@@ -1273,9 +1273,7 @@ class MenuItemList extends Component {
                 <a className = {styles.popUpButton} onClick = {this.toggleDisplay}>OK</a>
               </div>
         </div>
-
-
-        {this.state.unloginPopupShow?<SelectMealGuestPop message={this.state.unloginPopupMessage}/>:null}
+        {this.state.unloginPopupShow?<SelectMealGuestPop message={this.state.unloginPopupMessage }/>:null}
         
       </div>
     );
