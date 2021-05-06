@@ -1026,22 +1026,20 @@
   margin-left: 2%;
 }
 
-/*.summaryRight {
-  width: 22%;
-  text-align: right;
-  margin-top:10px;
-  margin-bottom: 10px;
-  padding-right: 30px;
-  font-weight: bold;
-  border: solid;
-  border-color: green;
-}*/
 .summaryRight {
   width: 22%;
   text-align: right;
   margin-top:10px;
   margin-bottom: 10px;
   font-weight: bold;
+}
+.summaryGrey {
+  width: 22%;
+  text-align: right;
+  margin-top:10px;
+  margin-bottom: 10px;
+  font-weight: bold;
+  color: #ccc9c9;
 }
 .summarySubtotal {
   width: 22%;

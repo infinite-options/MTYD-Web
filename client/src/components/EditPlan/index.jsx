@@ -6,23 +6,7 @@ import {
   fetchSubscribed,
   chooseMealsDelivery,
   choosePaymentOption,
-  fetchProfileInformation,
-  changeAddressFirstName,
-  changeAddressLastName,
-  changeAddressStreet,
-  changeAddressUnit,
-  changeAddressCity,
-  changeAddressState,
-  changeAddressZip,
-  changeAddressPhone,
-  changeDeliveryInstructions,
-  changePaymentPassword,
-  changeCardNumber,
-  changeCardCvv,
-  changeCardMonth,
-  changeCardYear,
-  changeCardZip,
-  submitPayment
+  fetchProfileInformation
 } from "../../reducers/actions/subscriptionActions";
 
 import axios from "axios";
@@ -55,16 +39,7 @@ class EditPlan extends React.Component {
       deliveryDays: [],
       login_seen:false,
       signUpSeen:false,
-      total: '0.00',
       numDeliveryDays: 0,
-      fetchingNBD: true,
-      fetchingNBA: true,
-      firstName: "",
-      lastName: "",
-      email: "",
-      phone: "",
-      unit: "",
-      instructions: "",
       latitude: "",
       longitude: "",
       refreshingPrice: false,
@@ -294,8 +269,6 @@ class EditPlan extends React.Component {
     this.setState({
       refreshingPrice: true,
     }, () => {
-
-      console.log("bleh");
       
     axios
       .post(API_URL + 'brandAmbassador/generate_coupon',
@@ -353,7 +326,6 @@ class EditPlan extends React.Component {
               this.state.updatedPlan.meals,
               this.state.updatedPlan.deliveries
             );
-            //this.calculateDifference();
 
           });
         }
@@ -414,30 +386,14 @@ class EditPlan extends React.Component {
   }
 
   changePlans = (meals, deliveries) => {
-    // console.log(" ");
-    // console.log("======| changePlans |======");
-    // console.log("meals: ", meals);
-    // console.log("deliveries: ", deliveries);
 
     let mealPlan = this.props.plans[meals][deliveries];
-
-    // console.log("meal plan: ", mealPlan);
-    // console.log("(old) updated plan: ", this.state.updatedPlan);
-
-    // console.log("(1) updated plan: ", this.state.updatedPlan);
-    // console.log("(1) current plan: ", this.state.currentPlan);
-    // console.log(" ");
-
     let newBaseAmount = mealPlan.item_price * mealPlan.num_deliveries;
-
-    // console.log("newBaseAmount: ", newBaseAmount);
-
     let newUpdatedPlan = {...this.state.updatedPlan};
 
     newUpdatedPlan.meals = meals;
     newUpdatedPlan.deliveries = deliveries;
     newUpdatedPlan.payment_summary.base_amount = newBaseAmount.toFixed(2);
-    
     newUpdatedPlan.payment_summary.discount_rate = mealPlan.delivery_discount;
     newUpdatedPlan.payment_summary.total = (
       (
@@ -452,35 +408,13 @@ class EditPlan extends React.Component {
       )
     ).toFixed(2);
 
-
-    // console.log("DISCOUNT BEFORE: ", newUpdatedPlan.payment_summary.discount_amount);
-
-
     newUpdatedPlan.payment_summary.discount_amount = (
       parseFloat(newUpdatedPlan.payment_summary.base_amount)*mealPlan.delivery_discount*0.01
     ).toFixed(2);
 
-
-    // console.log("DISCOUNT AFTER: ", newUpdatedPlan.payment_summary.discount_amount);
-
-    // console.log("new payment summary: ", newUpdatedPlan.payment_summary);
-
-    // console.log("(new) updated plan: ", newUpdatedPlan);
-    // console.log("current plan: ", this.state.currentPlan);
-    // console.log(" ");
-
-    // console.log("(2) updated plan: ", this.state.updatedPlan);
-    // console.log("(2) current plan: ", this.state.currentPlan);
-    // console.log(" ");
-
     this.setState(prevState => ({
       updatedPlan: newUpdatedPlan,
     }), () => {
-
-      // console.log(" ");
-      // console.log("(3) updated plan: ", this.state.updatedPlan);
-      // console.log("(3) current plan: ", this.state.currentPlan);
-      // console.log(" ");
 
       this.calculateDifference();
     });
@@ -654,14 +588,6 @@ class EditPlan extends React.Component {
         subscriptionsLoaded: true,
       });
     }
-
-    // this.setState({
-    //   subscriptionsList: newSubList,
-    //   subscriptionsLoaded: true,
-    //   currentPlan: {...defaultCurrentPlan},
-    //   updatedPlan: {...defaultUpdatedPlan},
-    //   deliveryInfo: {...defaultDeliveryInfo}
-    // });
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -786,7 +712,6 @@ class EditPlan extends React.Component {
     axios.post(API_URL + 'change_purchase/' + this.state.updatedPlan.raw_data.purchase_id, object)
       .then(res => {
         console.log("change_purchase response: ", res);
-        //this.props.history.push("/meal-plan");
         axios.get(API_URL + 'next_meal_info/' + this.state.customerUid)
           .then(res => {
             console.log("(after change) next meal info res: ", res);
@@ -801,13 +726,6 @@ class EditPlan extends React.Component {
             );
 
             this.loadSubscriptions(fetchedSubscriptions, this.state.discounts, CURRENT);
-
-            // fetchedSubscriptions = res.data.result;
-
-            // if(fetchedDiscounts !== null){
-            //   console.log("(4) load subscriptions");
-            //   this.loadSubscriptions(fetchedSubscriptions, fetchedDiscounts);
-            // }
           })
           .catch(err => {
             console.log(err);
@@ -856,7 +774,7 @@ class EditPlan extends React.Component {
 
     //console.log("before id map");
 
-    // console.log(document.getElementById("map"));
+    //console.log(document.getElementById("map"));
 
     //console.log("before const map");
 
@@ -872,31 +790,11 @@ class EditPlan extends React.Component {
     // Clear Query parameters
     window.history.pushState({}, document.title, window.location.pathname);
 
-    /*else if (
-      document.cookie
-        .split(";")
-        .some(item => item.trim().startsWith("customer_uid="))
-    ) {
-      let customer_uid = document.cookie
-        .split("; ")
-        .find(item => item.startsWith("customer_uid="))
-        .split("=")[1];*/
-
-    //if (this.props.location.customerUid !== undefined) {
-    // if (true === true) {
-    //   console.log("edit-plan customerId: ", this.props.customerId);
-
-    //   console.log("edit-plan LOGGED IN");
-    //   //console.log("edit plan props.location (logged in): ", this.props.location);
-
-    //   let customerUid = this.props.customerId;
-
     if (urlParams.has("customer_uid")) {
       let customer_uid = urlParams.get("customer_uid");
       document.cookie = "customer_uid=" + customer_uid;
 
       console.log("1 edit-plan customerId: ", customer_uid);
-      // console.log("1 edit-plan LOGGED IN");
 
       let customerUid = customer_uid;
 
@@ -969,7 +867,6 @@ class EditPlan extends React.Component {
         .split("=")[1];
 
       console.log("2 edit-plan customerId: ", customer_uid);
-      // console.log("2 edit-plan LOGGED IN");
 
       let customerUid = customer_uid;
 
@@ -1030,10 +927,6 @@ class EditPlan extends React.Component {
 
     // Not logged in
     } else {
-      // Reroute to log in page
-      // console.log("edit-plan NOT LOGGED IN");
-      // console.log("edit plan props.location (not logged in): ", this.props.location);
-      //this.props.history.push("/choose-plan");
       this.displayErrorModal('Hmm...', `
         Please log in to edit your meals.
       `, 
@@ -1053,26 +946,6 @@ class EditPlan extends React.Component {
       .then((response) => {
         console.log("cancel_purchase response: " + JSON.stringify(response));
         console.log("cancel_purchase customerUid: " + this.state.customerUid);
-        //this.props.fetchSubscribed(this.state.customerUid);
-
-        // let fetchedDiscounts = null;
-        // let fetchedSubscriptions = null;
-
-        // fetchDiscounts((discounts) => {
-        //   console.log("fetchDiscounts callback: ", discounts);
-
-        //   fetchedDiscounts = discounts;
-
-        //   this.setState({
-        //     discounts: fetchedDiscounts
-        //   });
-
-        //   if(fetchedSubscriptions !== null){
-        //     console.log("(3) load subscriptions");
-        //     this.loadSubscriptions(fetchedSubscriptions, fetchedDiscounts);
-        //   }
-
-        // });
 
         axios.get(API_URL + 'next_meal_info/' + this.state.customerUid)
           .then(res => {
@@ -1081,13 +954,6 @@ class EditPlan extends React.Component {
             let fetchedSubscriptions = res.data.result;
 
             this.loadSubscriptions(fetchedSubscriptions, this.state.discounts, DEFAULT);
-
-            // fetchedSubscriptions = res.data.result;
-
-            // if(fetchedDiscounts !== null){
-            //   console.log("(4) load subscriptions");
-            //   this.loadSubscriptions(fetchedSubscriptions, fetchedDiscounts);
-            // }
           })
           .catch(err => {
             console.log(err);
@@ -1155,19 +1021,6 @@ class EditPlan extends React.Component {
         </div>
       );
     }
-    // return (
-    //   <div 
-    //     style={{
-    //       textAlign: 'center', 
-    //       paddingTop: '70px',
-    //       fontSize: '40px', 
-    //       fontWeight: 'bold',
-    //       width: '100%'
-    //     }}
-    //   >
-    //     Loading Subscriptions...
-    //   </div>
-    // );
   }
 
   showSubscribedMeals = () => {
@@ -1631,8 +1484,6 @@ class EditPlan extends React.Component {
   };
 
   render() {
-    console.log("(rerender) current plan: ", this.state.currentPlan);
-    console.log("(rerender) updated plan: ", this.state.updatedPlan);
     return (
       <>
         <WebNavBar 
@@ -2085,7 +1936,6 @@ class EditPlan extends React.Component {
                     })()}
               </div>
 
-              {/* <div style={{display: 'flex',borderBottom:'1px solid'}}> */}
               <div style={{display: 'flex', borderBottom:'1px solid'}}>
                 <input
                   type='text'
@@ -2135,54 +1985,45 @@ class EditPlan extends React.Component {
                   </div>
               </div>
 
-          {/* <div className={styles.checkboxContainer}>
-            <label className={styles.checkboxLabel}>
-              Use Previous Credit Card
-            </label>
-            <input
-              className={styles.checkbox}
-              type="checkbox"
-              checked={this.state.usePreviousCard}
-              onChange={this.handleCheck}
-            />
-          </div> */}
+              {/* <div className={styles.checkboxContainer}>
+                <label className={styles.checkboxLabel}>
+                  Use Previous Credit Card
+                </label>
+                <input
+                  className={styles.checkbox}
+                  type="checkbox"
+                  checked={this.state.usePreviousCard}
+                  onChange={this.handleCheck}
+                />
+              </div> */}
 
-          {/* { this.state.usePreviousCard ? null : this.showCardForm()} */}
+              {/* { this.state.usePreviousCard ? null : this.showCardForm()} */}
 
+              <button 
+                className={styles.orangeBtn2}
+                disabled={
+                  (!this.state.subscriptionsLoaded && 
+                  this.state.defaultSet === false) ||
+                  this.state.refreshingPrice === true
+                }
+                onClick={() => this.confirmChanges()}
+              >
+                Complete Payment
+              </button>
 
-          <button 
-            className={styles.orangeBtn2}
-            disabled={
-              (!this.state.subscriptionsLoaded && 
-              this.state.defaultSet === false) ||
-              this.state.refreshingPrice === true
-            }
-            onClick={() => this.confirmChanges()}
-          >
-            Complete Payment
-          </button>
-
-          <button 
-            className={styles.orangeBtn3}
-            disabled={
-              (!this.state.subscriptionsLoaded && 
-              this.state.defaultSet === false) ||
-              this.state.refreshingPrice === true
-            }
-            onClick={() => this.discardChanges()}
-          >
-            Keep Existing Meal Plan
-          </button>
+              <button 
+                className={styles.orangeBtn3}
+                disabled={
+                  (!this.state.subscriptionsLoaded && 
+                  this.state.defaultSet === false) ||
+                  this.state.refreshingPrice === true
+                }
+                onClick={() => this.discardChanges()}
+              >
+                Keep Existing Meal Plan
+              </button>
 
                 
-              <div style={{display: 'flex'}}>
-                <div style = {{display: 'inline-block', width: '80%', height: '0px'}}>
-
-                  <div className = {styles.buttonContainer}>
-                  </div>
-
-                </div>
-              </div>
             </div>
           </div>
 
@@ -2212,12 +2053,10 @@ class EditPlan extends React.Component {
                             } else {
                               this.props.history.push(this.state.errorLink);
                             }
-                            
                           }}
                         >
                           {this.state.errorLinkText}
                         </button>
-                        
                       </div> 
                     </div>
                   </div>
@@ -2257,21 +2096,5 @@ export default connect(mapStateToProps, {
   fetchSubscribed,
   chooseMealsDelivery,
   choosePaymentOption,
-  fetchProfileInformation,
-  changeAddressFirstName,
-  changeAddressLastName,
-  changeAddressStreet,
-  changeAddressUnit,
-  changeAddressCity,
-  changeAddressState,
-  changeAddressZip,
-  changeAddressPhone,
-  changeDeliveryInstructions,
-  changePaymentPassword,
-  changeCardNumber,
-  changeCardCvv,
-  changeCardMonth,
-  changeCardYear,
-  changeCardZip,
-  submitPayment
+  fetchProfileInformation
 })(withRouter(EditPlan));

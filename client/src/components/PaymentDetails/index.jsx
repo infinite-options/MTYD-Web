@@ -814,25 +814,6 @@ class PaymentDetails extends React.Component {
         });
     }
     console.log("after key payment");
-    /*axios.get("https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/stripe-key")
-      .then(result=>{
-        console.log("(PaymentDetails) Stripe-key then result (1): " + JSON.stringify(result));
-        //console.log("Stripe-key then result (json): ", result.json());
-        //return result.json();
-        let stripePromise = loadStripe(result.data.publicKey);
-        console.log("(PaymentDetails) setting state with stripePromise");
-        this.setState({
-          stripePromise: stripePromise
-        });
-        //setStripePromise(loadStripe(result.data.publicKey));
-        console.log("(PaymentDetails) stripePromise set!");
-      })
-      .catch(err => {
-        console.log(err);
-        if (err.response) {
-          console.log("(PaymentDetails) error: " + JSON.stringify(err.response));
-        }
-      });*/
   }
 
   saveAndProceedButton(){
