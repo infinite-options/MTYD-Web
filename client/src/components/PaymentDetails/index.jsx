@@ -839,30 +839,9 @@ class PaymentDetails extends React.Component {
         {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
 
         {(() => {
-          // console.log("\ndisplay checkout error message? " + this.state.checkoutError + "\n\n");
           if (this.state.checkoutError === true) {
             return (
               <>
-                {/*<div className = {this.state.checkoutErrorModal}>
-                  <div className  = {styles.changeErrorModalContainer}>
-                    <a  style = {{
-                            color: 'black',
-                            textAlign: 'center', 
-                            fontSize: '45px', 
-                            zIndex: '2', 
-                            float: 'right', 
-                            position: 'absolute', top: '0px', left: '350px', 
-                            transform: 'rotate(45deg)', 
-                            cursor: 'pointer'}} 
-                            
-                            onClick = {this.displayCheckoutError}>+</a>
-
-                    <div style = {{display: 'block', width: '300px', margin: '40px auto 0px'}}>
-                      <h6 style = {{margin: '5px', color: 'orange', fontWeight: 'bold', fontSize: '25px'}}>Hmm..</h6>
-                      {this.state.checkoutMessage}
-                    </div> 
-                  </div>
-                </div>*/}
                 <div className = {this.state.checkoutErrorModal}>
                   <div className  = {styles.chargeModalContainer}>
                     <div
@@ -910,7 +889,6 @@ class PaymentDetails extends React.Component {
           }
         })()} 
         {(() => {
-          // console.log("\ndisplay ambassador error message? " + this.state.ambassadorError + "\n\n");
           if (this.state.ambassadorError === true) {
             return (
               <>
@@ -940,32 +918,27 @@ class PaymentDetails extends React.Component {
           }
         })()} 
 
-        <div style={{display: 'flex'}}>
+        {/* <div style={{display: 'flex'}}>
           <div className={styles.topHeading}>
             <h6 className={styles.subHeading}> Delivery Details </h6>
           </div>
-
           <div className={styles.topHeadingRight}>
             <h6 className={styles.subHeadingRight}> Payment Summary</h6>
           </div>
+        </div> */}
 
+        <div style={{display: 'flex'}}>
+          <div className={styles.sectionHeaderLeft}>
+            Delivery Details
+          </div>
+          <div className={styles.sectionHeaderRight}>
+            Payment Summary
+          </div>
         </div>
 
-
-        <div
-          style={{
-            alignSelf: "center",
-            paddingBottom: "15px",
-            marginLeft: "200px",
-            marginRight:'200px',
-            marginTop:'55px'
-          }}
-        >
             
-          <div style={{display: 'flex'}}>
-
-            <div style = {{display: 'inline-block', height: '382px'}}>
-
+          <div style={{display: 'flex', border: 'solid'}}>
+            <div style = {{display: 'inline-block', marginLeft: '8%', width: '40%', marginRight: '2%', border: 'inset'}}>
               <div style={{display: 'flex'}}>
                 <input
                   type='text'
@@ -1097,23 +1070,18 @@ class PaymentDetails extends React.Component {
               />
 
               <div className = {styles.googleMap} id = "map"/>     
-              <button 
-                style={{
-                  width:'345px',
-                  height:'54px',
-                  marginLeft:'267px',
-                  marginTop:'36px',
-                  backgroundColor:'#f26522',
-                  borderRadius:'15px',
-                  border:'none',
-                  color:'white',
-                  fontSize:'20px'
-                }}
-                onClick={()=>this.proceedToPayment()}
-              >
-                    Save and Proceed
-              </button>
+
+              <div style={{textAlign: 'center'}}>
+                <button 
+                  className={styles.orangeBtn}
+                  onClick={()=>this.proceedToPayment()}
+                >
+                  Save and Proceed
+                </button>
+              </div> 
+
             </div>
+          </div>
 
 
           <div
@@ -1124,7 +1092,6 @@ class PaymentDetails extends React.Component {
             <div
               style={{
                 display:!this.state.showPaymentInfo?'block':'none',
-                // marginLeft:'100px'
               }}
             >
               please fill out the delivery details,
@@ -1135,7 +1102,6 @@ class PaymentDetails extends React.Component {
             <div
               style={{
                 visibility:this.state.showPaymentInfo?'visible':'hidden',
-                // marginLeft:'100px',
                 width:'450px'
               }}
             > 
@@ -1339,66 +1305,40 @@ class PaymentDetails extends React.Component {
                 {/* </div> */}
 
                 
-          <div 
-          style={{
-            backgroundColor: '#f8bb17',
-            width:'130%',
-            height:'60px',
-            // marginTop: '36px',
-            // marginLeft: '60px',
-          }}
-          >
-            <h6 className={styles.subHeadingRight}> Complete Payment</h6>
-          </div>
+            <div 
+              style={{
+                backgroundColor: '#f8bb17',
+                width:'130%',
+                height:'60px',
+              }}
+            >
+              <h6 className={styles.subHeadingRight}>Complete Payment</h6>
+            </div>
                 
-              <div style={{display: 'flex'}}>
-                <div style = {{display: 'inline-block', width: '80%', height: '0px'}}>
+            <div style={{display: 'flex'}}>
+              <div style = {{display: 'inline-block', width: '80%', height: '0px'}}>
 
-                  <div className = {styles.buttonContainer}>
-                      <StripeElement
-                        stripePromise={this.state.stripePromise}
-                        customerPassword={this.state.customerPassword}
-                        deliveryInstructions={this.state.instructions}
-                        setPaymentType={this.setPaymentType}
-                        paymentSummary={this.state.paymentSummary}
-                        loggedInByPassword={loggedInByPassword}
-                        latitude={this.state.latitude.toString()}
-                        longitude={this.state.longitude.toString()}
-                        email={this.state.email}
-                        customerUid={this.state.customerUid}
-                        phone={this.state.phone}
-                        cardInfo={this.state.cardInfo}
-                      />
-                  </div>
-
+                <div className = {styles.buttonContainer}>
+                    <StripeElement
+                      stripePromise={this.state.stripePromise}
+                      customerPassword={this.state.customerPassword}
+                      deliveryInstructions={this.state.instructions}
+                      setPaymentType={this.setPaymentType}
+                      paymentSummary={this.state.paymentSummary}
+                      loggedInByPassword={loggedInByPassword}
+                      latitude={this.state.latitude.toString()}
+                      longitude={this.state.longitude.toString()}
+                      email={this.state.email}
+                      customerUid={this.state.customerUid}
+                      phone={this.state.phone}
+                      cardInfo={this.state.cardInfo}
+                    />
                 </div>
+
               </div>
             </div>
 
-            </div>
-
-            {/* <div
-            style={{
-              width:'200px',
-              height:'500px'
-            }}
-            >
-              placeholder
-              </div> */}
-
-
-
           </div>
-
-
-
-          
-
-
-
-
-
-            
         </div>
       </div>
     );

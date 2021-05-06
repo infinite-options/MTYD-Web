@@ -403,14 +403,9 @@ class ChoosePlan extends React.Component {
     let deselectedPaymentOption = styles.deliveryButton;
     let selectedPaymentOption = styles.deliveryButton + " " + styles.deliveryButtonSelected;
     let paymentOptionButtons = [];
-    //console.log(this.props.plans);
-    //console.log(this.state.unlogin_plans);
       
     var discounts = this.props.plans[2];
     var discount = null;
-
-    //console.log("discounts: " + discounts);
-    //console.log("typeof(discounts) " + typeof(discounts));
 
     console.log("(paymentFrequency2) === (1)");
     console.log("(paymentFrequency2) === typeof(discounts): " + typeof(discounts));
@@ -452,11 +447,6 @@ class ChoosePlan extends React.Component {
                         : deselectedPaymentOption) +
                       " " + (active && styles.disabledBtn)
                     }
-                    /*className={
-                      this.props.paymentOption === deliveryIndex
-                        ? selectedPaymentOption
-                        : deselectedPaymentOption
-                    }*/
                     onClick={() => {
                       this.props.choosePaymentOption(
                         deliveryIndex,
