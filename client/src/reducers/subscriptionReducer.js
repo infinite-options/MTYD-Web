@@ -144,7 +144,7 @@ export default function(state = initialState, action) {
         }
       };
     case CHANGE_CONTACT_DETAILS:
-      console.log("new email: " + action.payload.email);
+      //console.log("new email: " + action.payload.email);
       return {
         ...state,
         addressInfo: {
@@ -341,7 +341,7 @@ export default function(state = initialState, action) {
         errors: action.payload
       };
     case FETCH_SUBSCRIBED_INFO:
-      console.log("FETCH_SUBSCRIBED_INFO payload: " + JSON.stringify(action.payload));
+      //console.log("FETCH_SUBSCRIBED_INFO payload: " + JSON.stringify(action.payload));
       return {
         ...state,
         subscribedPlans: action.payload
