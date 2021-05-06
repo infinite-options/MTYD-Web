@@ -20,6 +20,10 @@ class MenuItem extends React.Component {
   changeHeart(e){
     let customerID = this.props.customer_uid;
 
+    if(customerID==null){
+      return alert('signin before like a meal')
+    }
+
     console.log(e.target.getAttribute('id'))
     var tempimg = e.target.getAttribute('src');
 

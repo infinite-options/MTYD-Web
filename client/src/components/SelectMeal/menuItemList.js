@@ -14,6 +14,7 @@ import {
   fetchProfileInformation
 } from "../../reducers/actions/subscriptionActions";
 import Burgermenu from "./example";
+import { SelectMealGuestPop } from "../SelectMealGuestPop/SelectMealGuestPop";
 
 class MenuItemList extends Component {
   constructor(props) {
@@ -32,7 +33,9 @@ class MenuItemList extends Component {
       popUpText: 'Hello',
       dateButtonList:[],
       surpriseSkipSave : [],
-      testnum:1,
+      unloginPopupShow:false,
+      unloginPopupMessage:'',
+
     };
   }
 
@@ -559,6 +562,16 @@ class MenuItemList extends Component {
   };
 
   makeSelection = e => {
+
+    const customer_uid = Cookies.get("customer_uid");
+
+
+    if(customer_uid==null){
+      return this.setState({unloginPopupShow:true,unloginPopupMessage:'xxxx'})
+
+      // return alert('signin before do this')
+    }
+
     this.setState({
       selectValue: e.target.value
     });
@@ -596,11 +609,8 @@ class MenuItemList extends Component {
                 >
                   {extraInfo}
                 </div>
-                
         </button>
       )
-  
-  
       this.setState({dateButtonList:this.state.dateButtonList.map((info)=>info.key===this.state.myDate?tempNewButton:info)})
       if (this.state.myDate !== "") {
         const supriseData = [
@@ -879,15 +889,17 @@ class MenuItemList extends Component {
         this.toggleDisplay('SAVE')
     }
     
-    console.log(buttonStyle)
-
-
-
-
+    // console.log(buttonStyle)
 
   };
 
   addToCart = menuitem => {
+
+
+    if(Cookies.get("customer_uid")==null){
+      return alert('signin before use + - button')
+    }
+
     const cartItems = this.state.cartItems.slice();
     let alreadyInCart = false;
     if (this.state.totalCount < this.state.totalMeals) {
@@ -937,6 +949,11 @@ class MenuItemList extends Component {
   }
 
   removeFromCart = menuitem => {
+
+    if(Cookies.get("customer_uid")==null){
+      return alert('signin before use + - button')
+    }
+
     const cartItems = this.state.cartItems.slice();
     // let alreadyInCart_1 = false;
     cartItems.forEach(item => {
@@ -1255,7 +1272,10 @@ class MenuItemList extends Component {
 
                 <a className = {styles.popUpButton} onClick = {this.toggleDisplay}>OK</a>
               </div>
-          </div>
+        </div>
+
+
+        {this.state.unloginPopupShow?<SelectMealGuestPop message={this.state.unloginPopupMessage}/>:null}
         
       </div>
     );

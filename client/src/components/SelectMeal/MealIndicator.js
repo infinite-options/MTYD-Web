@@ -14,7 +14,6 @@ class MealIndicator extends Component {
     const percentage = totalCount * temp;
 
 
-
     const myarr = [];
 
     for (let i = 0; i < totalCount; i++) {
@@ -64,9 +63,10 @@ class MealIndicator extends Component {
             color:"black"
           }}
         >
-          {selectCount === 0
+          {this.props.totalMeals==null?"Select meals after signup":
+            (selectCount === 0
             ? "All Meals Selected!"
-            : `Select ${selectCount} meals`}
+            : `Select ${selectCount} meals`)}
         </h4>
 
         <div

@@ -1,0 +1,12 @@
+.close {
+  color: Black;
+  width:30px;
+  height:30px;
+  opacity: 1;
+  margin:10px;
+  text-align: center;
+  border-radius: 50%;
+  /* background-image: url('../../images/closeIcon.png'); */
+  background-size: cover;
+  background-position: center;
+}

@@ -589,9 +589,11 @@
 .supriseSkipSave {
   display: flex;
   flex-direction: row;
+
   justify-content: space-between;
   box-sizing: border-box;
 }
+
 @media (max-width: 500px) {
   .root {
     --navBarWidth: 0px;
@@ -646,9 +648,6 @@
     width: 60rem;
     padding-left: 20%;
   }
-  /* .indicatorWrapper {
-    width: 400px;
-  } */
 }
 
 .popUpHide {

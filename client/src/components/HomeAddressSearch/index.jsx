@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import axios from 'axios';
 import Popsignup from '../PopSignup';
 import {Redirect, withRouter} from 'react-router-dom';
+import close from '../../images/closeIcon.png'
 
 const google = window.google;
 
@@ -103,46 +104,90 @@ export class HomeMap extends Component {
 
 
         {this.state.hooray?
+        // {/* {true? */}
         <div 
           style={{
             position:'absolute',
-            width:'500px',
-            height:'500px',
-            backgroundColor:'#42c5f5',
-            left:'30%',
-            top:'20%'
+            width:'384px',
+            height:'371px',
+            backgroundColor:'white',
+            border:'2px solid #F26522',
+            left:'65%',
+            top:'40%'
           }}
-          onClick={()=>{this.setState({hooray:false})}}
         >
-          hooray
-          <div
-            style={{
-              position:'relative',
-              width:'150px',
-              height:'50px',
-              backgroundColor:'white',
-              top:'100px',
-              left:'200px',
-            }}
 
-            onClick={()=>{this.setState({signup:true})}}
+          <div className="close" onClick={()=>{this.setState({hooray:false})}}/>
+
+          <div
+           style={{
+             position:'relative',
+             top:'29px',
+             left:'144px',
+             width:'96px',
+             height:'31px',
+             fontSize:'26px',
+             fontWeight:'bold',
+           }}
           >
-            click to signup
+            Hooray!
           </div>
 
           <div
-            style={{
-              position:'relative',
-              width:'150px',
-              height:'50px',
-              backgroundColor:'white',
-              top:'100px',
-              left:'350px',
-            }}
-
-            onClick={()=>{this.props.history.push('/select-meal')}}
+           style={{
+             position:'relative',
+             top:'57px',
+             left:'27px',
+             width:'330px',
+             height:'69px',
+             fontSize:'18px',
+             textAlign:'center',
+            //  fontWeight:'',
+           }}
           >
-            explore meals
+            Looks like we deliver to your address. Click the button below to see the variety of meals we offer.
+          </div>
+
+          <div
+           style={{
+             position:'relative',
+             top:'100px',
+             left:'92px',
+             width:'200px',
+             height:'50px',
+             fontSize:'18px',
+             textAlign:'center',
+             backgroundColor:'#F26522',
+             color:'white',
+             paddingTop:'10px',
+             borderRadius:'15px'
+            //  fontWeight:'',
+           }}
+
+           onClick={()=>{this.props.history.push('/select-meal')}}
+          >
+              Explore Meals
+          </div>
+
+          <div
+           style={{
+             position:'relative',
+             top:'113px',
+             left:'92px',
+             width:'200px',
+             height:'50px',
+             fontSize:'18px',
+             textAlign:'center',
+             backgroundColor:'#F26522',
+             color:'white',
+             paddingTop:'10px',
+             borderRadius:'15px'
+            //  fontWeight:'',
+           }}
+
+           onClick={()=>{this.setState({signup:true,hooray:false})}}
+          >
+              Sign up
           </div>
 
 

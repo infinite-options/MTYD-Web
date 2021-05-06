@@ -11,6 +11,7 @@ import moment from 'moment';
 import PopLogin from '../PopLogin';
 import Popsignup from '../PopSignup';
 import { blue } from "@material-ui/core/colors";
+import { SelectMealGuestPop } from "../SelectMealGuestPop/SelectMealGuestPop";
 
 class Header extends Component {
 
@@ -100,20 +101,27 @@ class Header extends Component {
         displayMessage = 'Skip this day';
       }
 
+      let classForbutton = ''
+      if(this.props.customer_uid==null){
+        classForbutton = styles.selectionStyles 
+      }
+      else{
+        classForbutton=this.props.selectValue === "" ||
+        this.props.selectValue !== selectionOptions
+          ? styles.selectionStyles: 
+          styles.selectionStyles && styles.selectedDays
+      }
+
+      // console.log(classForbutton)
+
       selections.push(
         <button
           id={selectionOptions}
           key={selectionOptions}
           value={selectionOptions}
-          className={
-            this.props.selectValue === "" ||
-            this.props.selectValue !== selectionOptions
-              ? styles.selectionStyles
-              : styles.selectionStyles && styles.selectedDays
-          }
+          className={classForbutton}
           onClick={e => this.props.makeSelection(e)}
         >
-
           {displayMessage}
         </button>
       );
@@ -131,7 +139,12 @@ class Header extends Component {
     //To disable and enable save button
     if (document.getElementById("SAVE") !== null) {
       if (totalCount !== totalMeals) {
-        document.getElementById("SAVE").disabled = true;
+
+        if(this.props.customer_uid==null){
+          document.getElementById("SAVE").disabled = false;
+        }else{
+          document.getElementById("SAVE").disabled = true;
+        }
       } else {
         document.getElementById("SAVE").disabled = false;
       }
@@ -167,8 +180,10 @@ class Header extends Component {
       </p>
     return (
       <>
-      {/* {console.log(this.props)} */}
+
         <WebNavBar/>
+
+        {/* <SelectMealGuestPop message = 'message here'/> */}
 
         
         <MenuBar show={true} 
@@ -192,36 +207,23 @@ class Header extends Component {
         >
           {this.props.dateButtonArray}
         </div>
-
-        {/* {this.props.dateButtonArray} */}
-
-        
-
-        {this.props.subscribedPlans.length ? (
           
-          <div>
-            
-            <div>
-              <div className={styles.supriseSkipSave}>
-                <div class={styles.divider}/>
-                {this.showSelectionOptions()}
-                <div class={styles.divider}/>
-              </div>
-            </div>
 
-            <div className={styles.stickyHeader + " px-5 "}>
-
-              <MealIndicator
-                totalCount={this.props.totalCount}
-                totalMeals={this.props.totalMeals}
-              />
-
-            </div>
-          </div>
+        <div className={styles.supriseSkipSave}>
+          <div class={styles.divider}/>
+            {this.showSelectionOptions()}
+          <div class={styles.divider}/>
+        </div>
 
 
-        ) : (""
-        )}
+        <div className={styles.stickyHeader + " px-5 "}>
+          <MealIndicator
+            totalCount={this.props.totalCount}
+            totalMeals={this.props.totalMeals}
+          />
+        </div>
+
+
       </>
     );
   }
