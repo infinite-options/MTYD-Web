@@ -983,7 +983,7 @@ class EditPlan extends React.Component {
       cc_cvv: "NULL",
       cc_zip: "NULL",
       cc_exp_date: "NULL",
-      instructions: ""
+      instructions: (plan.delivery_isntructions === 'NULL' ? '': plan.delivery_instructions)
     };
     return newDeliveryInfo;
   }
@@ -1687,7 +1687,7 @@ class EditPlan extends React.Component {
               />
             </div>
 
-            {/* <input
+            <input
               type={'text'}
               placeholder={'Delivery Instructions'}
               className={styles.input}
@@ -1700,7 +1700,7 @@ class EditPlan extends React.Component {
                   }
                 }));
               }}
-            /> */}
+            />
 
             <div className = {styles.googleMap} id = "map"/>     
 

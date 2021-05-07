@@ -139,6 +139,42 @@ class PaymentDetails extends React.Component {
     document.getElementById("pac-input").value = this.props.street;
     document.getElementById("postcode").value = this.props.zip;
 
+    console.log("calling fetchAddressCoordinates...");
+    
+    fetchAddressCoordinates( //(address, city, state, zip, _callback) {
+      this.props.street,
+      this.props.city,
+      this.props.state,
+      this.props.zip,
+      (coords) => {
+        console.log("(mount) Fetched coordinates: " + JSON.stringify(coords));
+
+        this.setState({
+          latitude: coords.latitude,
+          longitude: coords.longitude,
+        });
+
+        // console.log(this.state.latitude);
+        // console.log(this.state.longitude);
+
+        // console.log(parseFloat(this.state.latitude))
+
+        const temp_position = {lat:parseFloat(coords.latitude), lng:parseFloat(coords.longitude)}
+
+        console.log(temp_position)
+
+        map.setCenter(temp_position)
+
+        if(coords.latitude !== ''){
+          map.setZoom(17);
+          new google.maps.Marker({
+            position: temp_position,
+            map,
+          });
+        }
+      }
+    );
+
     if(JSON.stringify(this.props.selectedPlan) === '{}'){
       this.displayError(DATA_ERROR, 'No plans selected. Please select a Meal Plan to proceed.');
     }
@@ -165,36 +201,37 @@ class PaymentDetails extends React.Component {
       zoom: 12,
     });
 
-    if(this.props.customerId!=''){
+    // if(this.props.customerId!=''){
 
-      axios.get(API_URL + "Profile/" + this.props.customerId)
-        .then(res=>{
+    //   axios.get(API_URL + "Profile/" + this.props.customerId)
+    //     .then(res=>{
 
-          this.setState({
-            latitude: res.data.result[0].customer_lat,
-            longitude: res.data.result[0].customer_long,
-          });
+    //       this.setState({
+    //         latitude: res.data.result[0].customer_lat,
+    //         longitude: res.data.result[0].customer_long,
+    //       });
 
-          console.log(this.state.latitude);
-          console.log(this.state.longitude);
+    //       console.log(this.state.latitude);
+    //       console.log(this.state.longitude);
 
-          console.log(parseFloat(this.state.latitude))
+    //       console.log(parseFloat(this.state.latitude))
 
-          const temp_position = {lat:parseFloat(this.state.latitude), lng:parseFloat(this.state.longitude)}
+    //       const temp_position = {lat:parseFloat(this.state.latitude), lng:parseFloat(this.state.longitude)}
 
-          console.log(temp_position)
+    //       console.log(temp_position)
 
-          map.setCenter(temp_position)
+    //       map.setCenter(temp_position)
 
-          if(this.state.latitude!=''){
-            map.setZoom(17);
-            new google.maps.Marker({
-              position: temp_position,
-              map,
-            });
-          }
-        })
-    }
+    //       if(this.state.latitude!=''){
+    //         map.setZoom(17);
+    //         new google.maps.Marker({
+    //           position: temp_position,
+    //           map,
+    //         });
+    //       }
+
+    //     })
+    // }
 
     const input = document.getElementById("pac-input");
     const options = {
