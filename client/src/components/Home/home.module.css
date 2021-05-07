@@ -257,10 +257,11 @@ input[type="zipCode"]:focus {
   align-items: center;
 }
 .gridDisplayRight {
-  padding: 9px;	 
-  display: grid;
-  justify-content: right;
-  align-items: right;
+
+  width:100px;
+  height: 200px;
+  /* background-color: white; */
+
 }
 .whiteStripe {
   top: 367px;

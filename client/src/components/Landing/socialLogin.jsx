@@ -20,6 +20,13 @@ import socialA from "../../images/socialApple.png"
 
 class SocialLogin extends Component {
 
+  constructor(props){
+    super(props);
+    this.state = { 
+      verticalFormat : false,
+    }
+  }
+
   successLogin = page => {
     this.props.history.push(`/${page}`);
   };
@@ -28,13 +35,18 @@ class SocialLogin extends Component {
     this.props.history.push("social-sign-up");
   };
 
-    componentDidMount() {
-        window.AppleID.auth.init({
-            clientId: process.env.REACT_APP_APPLE_CLIENT_ID,
-            scope: "email",
-            redirectURI: process.env.REACT_APP_APPLE_REDIRECT_URI
-          });
+  componentDidMount() {
+    if(this.props.verticalFormat){
+      console.log('here')
+      this.setState({verticalFormat:this.props.verticalFormat})
     }
+
+    window.AppleID.auth.init({
+        clientId: process.env.REACT_APP_APPLE_CLIENT_ID,
+        scope: "email",
+        redirectURI: process.env.REACT_APP_APPLE_REDIRECT_URI
+      });
+  }
 
     responseGoogle = response => {
         console.log(response);
@@ -101,9 +113,9 @@ class SocialLogin extends Component {
 
     render() { 
         return ( 
-            // <div className={styles.socialLogin}
-            <div>
 
+          !this.state.verticalFormat?
+            <div>
               <div
                 style={{
                   width:'412px',
@@ -131,7 +143,6 @@ class SocialLogin extends Component {
                   cookiePolicy={"single_host_origin"}
                 />
               </div>
-
               <div
               style={{
                 width:'412px',
@@ -153,7 +164,6 @@ class SocialLogin extends Component {
                   textButton=''
                 />
               </div>
-
               <div
                 style={{
                   width:'412px',
@@ -172,13 +182,68 @@ class SocialLogin extends Component {
                   }}
                   className={styles.appleLogin}
                 >
-                  {/* <i
-                    className='fa fa-apple'
-                    style={{fontSize: "28px", color: "white"}}
-                  ></i> */}
                 </button>
               </div>
-          </div>
+              </div>
+              :
+              <div className={styles.socialLogin}>
+                <div>
+                  <GoogleLogin
+                    clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
+                    render={renderProps => (
+                      <button
+                        className={styles.googleBtnCircle}
+                        onClick={renderProps.onClick}
+                        disabled={renderProps.disabled}
+                        style={{
+                          marginLeft:'15px'
+                        }}
+                      ></button>
+                    )}
+                    onSuccess={this.responseGoogle}
+                    onFailure={this.responseGoogle}
+                    isSignedIn={false}
+                    disabled={false}
+                    cookiePolicy={"single_host_origin"}
+                  />
+                </div>
+                <div>
+                  <FacebookLogin
+                    appId={process.env.REACT_APP_FACEBOOK_APP_ID}
+                    autoLoad={false}
+                    fields={"name,email,picture"}
+                    callback={this.responseFacebook}
+                    cssClass={styles.fbLoginCircle}
+                    textButton=''
+                  />
+                </div>
+
+                <div>
+                  <button
+                    onClick={() => {
+                      window.AppleID.auth.signIn();
+                    }}
+                    className={styles.appleLoginCircle}
+                    style={{
+                      marginLeft:'15px'
+                    }}
+                  >
+                    <i
+                      className='fa fa-apple'
+                      style={{fontSize: "35px", color: "black"}}
+                    ></i>
+                  </button>
+                </div>
+              </div>
+
+
+
+
+
+
+
+
+
          );
     }
 }

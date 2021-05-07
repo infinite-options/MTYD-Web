@@ -253,22 +253,9 @@ class SocialSignUp extends React.Component {
                 </div>
               </div>
               <h6 className={styles.subHeading}> Address </h6>
-
-
-
-
-
-
-
-
-
-
-
               <div className={styles.inputContainer}>
                 <div className={styles.inputItemAddress}>
                   <input
-                    
-
                     id="ship-address-social-login"
                     name="ship-address-social-login"
 
