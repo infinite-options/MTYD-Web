@@ -3,19 +3,9 @@ import PropTypes from "prop-types";
 import {connect} from "react-redux";
 import {
   fetchProfileInformation,
-  changeAddressEmail,
   changeDeliveryDetails,
   changeContactDetails,
   changePaymentDetails,
-  changeAddressFirstName,
-  changeAddressLastName,
-  changeAddressStreet,
-  changeAddressUnit,
-  changeAddressCity,
-  changeAddressState,
-  changeAddressZip,
-  changeAddressPhone,
-  changeDeliveryInstructions,
   changePaymentPassword,
   changeCardNumber,
   changeCardMonth,
@@ -28,7 +18,6 @@ import {
 } from "../../reducers/actions/subscriptionActions";
 import PayPal from './Paypal';
 import { loadStripe } from '@stripe/stripe-js';
-import {submitGuestSignUp} from "../../reducers/actions/loginActions";
 
 import {withRouter} from "react-router";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -36,7 +25,8 @@ import {
   faBars,
   faBell,
   faShareAlt,
-  faSearch
+  faSearch,
+  faTruckLoading
 } from "@fortawesome/free-solid-svg-icons";
 import {WebNavBar, BottomNavBar} from "../NavBar";
 import {WrappedMap} from "../Map";
@@ -54,6 +44,14 @@ import createGuestAccount from '../../utils/CreateGuestAccount';
 import fetchAddressCoordinates from '../../utils/FetchAddressCoordinates';
 
 const google = window.google;
+
+const CLOSED = -1;
+const DATA_ERROR = 0;
+const CHECKOUT_ERROR = 1;
+const AMBASSADOR_ERROR = 2;
+const EMAIL_ERROR = 3;
+
+const sserdda = "Address 1";
 
 class PaymentDetails extends React.Component {
   constructor() {
@@ -75,15 +73,6 @@ class PaymentDetails extends React.Component {
         total: "0.00",
         subtotal: "0.00"
       },
-      cardInfo: {
-        name: "",
-        number: "",
-        month: "",
-        year: "",
-        cvv: "",
-        cardZip: ""
-      },
-      validCode: true,
       name: "",
       number: "",
       month: "",
@@ -107,9 +96,8 @@ class PaymentDetails extends React.Component {
       checkoutMessage: "",
       login_seen: false,
       signUpSeen: false, 
-      checkoutError: false,
-      ambassadorMessage: "",
-      ambassadorError: false,
+      errorType: CLOSED,
+      errorMessage: "",
       paymentType: 'NULL',
       fetchingFees: true,
       recalculatingPrice: false,
@@ -142,16 +130,18 @@ class PaymentDetails extends React.Component {
   };
 
   componentDidMount() {
-    /*axios.get(API_URL + "Profile/" + this.props.customerId)
-    .then(res=>{
+    console.log("(mount) props: ", this.props);
+    console.log("(mount) selectedPlan: ", this.props.selectedPlan);
+    console.log("(mount) email: ", this.props.email);
 
-      this.setState({
-        latitude: res.data.result[0].customer_lat,
-        longitude: res.data.result[0].customer_long,
-      })
-      console.log(this.state.latitude);
-      console.log(this.state.longitude);
-    });*/
+    document.getElementById("locality").value = this.props.city;
+    document.getElementById("state").value = this.props.state;
+    document.getElementById("pac-input").value = this.props.street;
+    document.getElementById("postcode").value = this.props.zip;
+
+    if(JSON.stringify(this.props.selectedPlan) === '{}'){
+      this.displayError(DATA_ERROR, 'No plans selected. Please select a Meal Plan to proceed.');
+    }
 
     let temp_lat;
     let temp_lng;
@@ -176,32 +166,34 @@ class PaymentDetails extends React.Component {
     });
 
     if(this.props.customerId!=''){
+
       axios.get(API_URL + "Profile/" + this.props.customerId)
-      .then(res=>{
+        .then(res=>{
 
-        this.setState({
-          latitude: res.data.result[0].customer_lat,
-          longitude: res.data.result[0].customer_long,
-        })
-        console.log(this.state.latitude);
-        console.log(this.state.longitude);
-
-        console.log(parseFloat(this.state.latitude))
-
-        const temp_position = {lat:parseFloat(this.state.latitude), lng:parseFloat(this.state.longitude)}
-
-        console.log(temp_position)
-
-        map.setCenter(temp_position)
-
-        if(this.state.latitude!=''){
-          map.setZoom(17);
-          new google.maps.Marker({
-            position: temp_position,
-            map,
+          this.setState({
+            latitude: res.data.result[0].customer_lat,
+            longitude: res.data.result[0].customer_long,
           });
-        }
-      })
+
+          console.log(this.state.latitude);
+          console.log(this.state.longitude);
+
+          console.log(parseFloat(this.state.latitude))
+
+          const temp_position = {lat:parseFloat(this.state.latitude), lng:parseFloat(this.state.longitude)}
+
+          console.log(temp_position)
+
+          map.setCenter(temp_position)
+
+          if(this.state.latitude!=''){
+            map.setZoom(17);
+            new google.maps.Marker({
+              position: temp_position,
+              map,
+            });
+          }
+        })
     }
 
     const input = document.getElementById("pac-input");
@@ -216,10 +208,15 @@ class PaymentDetails extends React.Component {
     });
 
     autocomplete.addListener("place_changed", () => {
-      let address1 = "";
-      let postcode = "";
+      let address1 = '';
+      let postcode = '';
       let city = '';
       let state = '';
+      // let address1 = this.props.address.street;
+      // let city = this.props.address.city;
+      // let state = this.props.address.state;
+      // let postcode = this.props.address.zip;
+
       let address1Field = document.querySelector("#pac-input");
       let postalField = document.querySelector("#postcode");
 
@@ -281,25 +278,15 @@ class PaymentDetails extends React.Component {
 
       this.setState({
         name: place.name,
-        //street_address: address1,
         street: address1,
         city: city,
         state: state,
-        //zip_code: postcode,
         addressZip: postcode,
-        //lat:place.geometry.location.lat(),
-        //lng:place.geometry.location.lng(),
         latitude: place.geometry.location.lat(),
         longitude: place.geometry.location.lng(),
       })
 
-
-
     });
-
-
-
-
 
     if (
       document.cookie
@@ -310,10 +297,29 @@ class PaymentDetails extends React.Component {
         .split("; ")
         .find(item => item.startsWith("customer_uid="))
         .split("=")[1];
-      console.log("customer uid: " + customerUid);
+
+      console.log("(mount) customer uid: " + customerUid);
+      console.log("(mount) email: " + this.props.email);
+
       this.setState(prevState => ({
         mounted: true,
         customerUid: customerUid,
+        // street: this.props.address.street,
+        // city: this.props.address.city,
+        // state: this.props.address.state,
+        // addressZip: this.props.address.zip,
+        unit: this.props.address.unit,
+        instructions: this.props.instructions,
+        firstName: this.props.addressInfo.firstName,
+        lastName: this.props.addressInfo.lastName,
+        email: this.props.email,
+        phone: this.props.addressInfo.phoneNumber,
+        // name: this.props.creditCard.name,
+        // number: this.props.creditCard.number,
+        // cvv: this.props.creditCard.cvv,
+        // month: this.props.creditCard.month,
+        year: this.props.creditCard.year,
+        cardZip: this.props.creditCard.zip,
         recalculatingPrice: true,
         paymentSummary: {
           ...prevState.paymentSummary,
@@ -336,14 +342,12 @@ class PaymentDetails extends React.Component {
       }), () => {
         this.setTotal();
       });
-      console.log("paymentSummary: " + JSON.stringify(this.state.paymentSummary));
-      console.log("taxAmount toFixed: " + this.state.taxAmount);
-      console.log("discountAmount toFixed: " + this.state.discountAmount);
-      this.props.fetchProfileInformation(customerUid);
-      //console.log("payment details props: " + JSON.stringify(this.props));
+
     } else {
+
       // Reroute to log in page
       console.log("Payment-details NOT LOGGED IN");
+
       this.setState(prevState => ({
         mounted: true,
         customerUid: "GUEST",
@@ -369,27 +373,27 @@ class PaymentDetails extends React.Component {
       }), () => {
         this.setTotal();
       });
-      //this.setTotal();
+
     }
       
-    this.setState({
-      street: this.props.address.street,
-      city: this.props.address.city,
-      state: this.props.address.state,
-      addressZip: this.props.address.zip,
-      unit: this.props.address.unit,
-      instructions: this.props.instructions,
-      firstName: this.props.addressInfo.firstName,
-      lastName: this.props.addressInfo.lastName,
-      email: this.props.email,
-      phone: this.props.addressInfo.phoneNumber,
-      name: this.props.creditCard.name,
-      number: this.props.creditCard.number,
-      cvv: this.props.creditCard.cvv,
-      month: this.props.creditCard.month,
-      year: this.props.creditCard.year,
-      cardZip: this.props.creditCard.zip
-    });
+    // this.setState({
+    //   street: this.props.address.street,
+    //   city: this.props.address.city,
+    //   state: this.props.address.state,
+    //   addressZip: this.props.address.zip,
+    //   unit: this.props.address.unit,
+    //   instructions: this.props.instructions,
+    //   firstName: this.props.addressInfo.firstName,
+    //   lastName: this.props.addressInfo.lastName,
+    //   email: this.props.email,
+    //   phone: this.props.addressInfo.phoneNumber,
+    //   name: this.props.creditCard.name,
+    //   number: this.props.creditCard.number,
+    //   cvv: this.props.creditCard.cvv,
+    //   month: this.props.creditCard.month,
+    //   year: this.props.creditCard.year,
+    //   cardZip: this.props.creditCard.zip
+    // });
   }
     
   changeTip(newTip) {
@@ -595,18 +599,20 @@ class PaymentDetails extends React.Component {
         console.log("ambassador code response: " + JSON.stringify(res));
 
         if(typeof(items) === "string") {
+
           console.log("Invalid code");
-          this.setState({
-            validCode: false,
-            ambassadorMessage: items
-          });
-          this.displayAmbassadorError();
+
+          this.displayError(AMBASSADOR_ERROR, items);
+
         } else {
+          
           console.log("Valid code");
+
           items = items.result[0];
+
           console.log("result: " + JSON.stringify(items));
+
           this.setState(prevState => ({
-            validCode: true,
             recalculatingPrice: true,
             paymentSummary: {
               ...prevState.paymentSummary,
@@ -618,7 +624,7 @@ class PaymentDetails extends React.Component {
           }), () => {
             this.setTotal();
           });
-          //this.setTotal();
+
         }
       })
       .catch(err => {
@@ -626,34 +632,23 @@ class PaymentDetails extends React.Component {
       });
   }
 
-  displayCheckoutError = () => {
-    if(this.state.checkoutError === false) {
-      this.setState({
-        checkoutErrorModal: styles.chargeModalPopUpShow,
-        checkoutError: true,
-      });
-    }else{
-      this.setState({
-        checkoutErrorModal: styles.chargeModalPopUpHide,
-        checkoutError: false
-      });
-    }
-    console.log("\ncheckout error toggled to " + this.state.checkoutError + "\n\n");
-  }
+  displayError = (type, message) => {
 
-  displayAmbassadorError = () => {
-    if(this.state.ambassadorError === false) {
+    if(type === CLOSED) {
       this.setState({
-        ambassadorErrorModal: styles.changeErrorModalPopUpShow,
-        ambassadorError: true,
-      })
-    }else{
+        errorModal: styles.errorModalPopUpHide,
+        errorType: type,
+        errorMessage: ''
+      });
+    } else {
       this.setState({
-        ambassadorErrorModal: styles.changeErrorModalPopUpHide,
-        ambassadorError: false
-      })
+        errorModal: styles.errorModalPopUpShow,
+        errorType: type,
+        errorMessage: message
+      });
     }
-    console.log("\nambassador error toggled to " + this.state.ambassadorError + "\n\n");
+
+    console.log("\npop up error toggled to " + type + "\n\n");
   }
 
   setPaymentType(type) {
@@ -671,10 +666,6 @@ class PaymentDetails extends React.Component {
       parseFloat(this.state.paymentSummary.taxAmount) + 
       parseFloat(this.state.paymentSummary.tip)
     );
-    /*this.setState(prevState => ({
-      ...prevState.paymentSummary,
-      subtotal: subtotal.toFixed(2)
-    }));*/
     return subtotal.toFixed(2);
   }
 
@@ -688,18 +679,14 @@ class PaymentDetails extends React.Component {
       parseFloat(this.state.paymentSummary.tip) -
       parseFloat(this.state.paymentSummary.ambassadorDiscount)
     );
-    /*this.setState(prevState => ({
-      ...prevState.paymentSummary,
-      total: total.toFixed(2)
-    }));*/
     return total.toFixed(2);
   }
 
   setTotal() {
+
     let total = this.calculateTotal();
     let subtotal = this.calculateSubtotal();
-    /*console.log("setTotal total: " + total);
-    console.log("setTotal subtotal: " + subtotal);*/
+
     this.setState(prevState => ({
       recalculatingPrice: false,
       paymentSummary: {
@@ -710,11 +697,13 @@ class PaymentDetails extends React.Component {
     }), ()=>{
       console.log("setTotal new paymentSummary: ", this.state.paymentSummary);
     });
+
   }
 
   proceedToPayment() {
     this.saveDeliveryDetails();
     this.saveContactDetails();
+
     if(this.state.customerUid === "GUEST"){
       console.log("Before createGuestAccount");
       createGuestAccount(
@@ -740,9 +729,6 @@ class PaymentDetails extends React.Component {
           mobile_refresh_token: "FALSE"
         },
         (response) => {
-          console.log("createGuestAccount callback res: ", response);
-          console.log("CGA code: ", response.code);
-          console.log("CGA message: ", response.message);
           if (response.code >= 200 && response.code <= 299) {
             this.props.fetchProfileInformation(response.data.result.customer_uid);
             this.setState({
@@ -750,70 +736,61 @@ class PaymentDetails extends React.Component {
               showPaymentInfo: true
             });
           } else if (response.code === 409) {
-            this.setState(prevState => ({
-              checkoutMessage: "Looks like the email address is already in use by another account. Please login to continue with that user account."
-            }), () => {
-              this.displayCheckoutError()
-            });
+            this.displayError(EMAIL_ERROR, `
+              Looks like the email address is already in use by another account. 
+              Please login to continue with that user account.
+            `);
           } else {
-            this.setState(prevState => ({
-              checkoutMessage: response.message,
-            }), () => {
-              this.displayCheckoutError()
-            });
+            this.displayError(EMAIL_ERROR, response.message);
           }
         }
       );
-      console.log("After createGuestAccount");
+
     } else {
-      console.log("Proceed without creating guest account");
       this.setState({
         showPaymentInfo: true
       });
     }
-    
-    console.log("payment deliveryInstructions 3: " + this.state.instructions);
 
     if(this.state.instructions === 'M4METEST'){
+
       // Fetch public key
-      console.log("fetching public key");
+      console.log("(m4metest) fetching stripe key");
+
       axios.get("https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/stripe_key/M4METEST")
         .then(result=>{
-          console.log("(1 PaymentDetails) Stripe-key then result (1): " + JSON.stringify(result));
           let stripePromise = loadStripe(result.data.publicKey);
-          console.log("(1 PaymentDetails) setting state with stripePromise");
           this.setState({
             stripePromise: stripePromise
           });
-          console.log("(1 PaymentDetails) stripePromise set!");
         })
         .catch(err => {
           console.log(err);
           if (err.response) {
-            console.log("(1 PaymentDetails) error: " + JSON.stringify(err.response));
+            console.log("(m4metest) stripe_key error: " + JSON.stringify(err.response));
           }
         });
+
     } else {
+
       // Fetch public key live
-      console.log("fetching public key live");
+      console.log("(live) fetching stripe key");
+      
       axios.get("https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/stripe_key/LIVE")
         .then(result=>{
-          console.log("(2 PaymentDetails) Stripe-key then result (1): " + JSON.stringify(result));
           let stripePromise = loadStripe(result.data.publicKey);
-          console.log("(2 PaymentDetails) setting state with stripePromise");
           this.setState({
             stripePromise: stripePromise
           });
-          console.log("(2 PaymentDetails) stripePromise set!");
         })
         .catch(err => {
           console.log(err);
           if (err.response) {
-            console.log("(2 PaymentDetails) error: " + JSON.stringify(err.response));
+            console.log("(live) stripe_key error: " + JSON.stringify(err.response));
           }
         });
+
     }
-    console.log("after key payment");
   }
 
   saveAndProceedButton(){
@@ -832,49 +809,51 @@ class PaymentDetails extends React.Component {
     return (
       <div>
         <WebNavBar 
-        poplogin = {this.togglePopLogin}
-        popSignup = {this.togglePopSignup}
+          poplogin = {this.togglePopLogin}
+          popSignup = {this.togglePopSignup}
         />
         {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
         {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
 
         {(() => {
-          if (this.state.checkoutError === true) {
+          if (this.state.errorType === EMAIL_ERROR) {
             return (
               <>
-                <div className = {this.state.checkoutErrorModal}>
-                  <div className  = {styles.chargeModalContainer}>
+                <div className = {this.state.errorModal}>
+                  <div className  = {styles.errorModalContainer}>
                     <div
-                      className={styles.chargeCancelButton}
+                      className={styles.errorCancelButton}
                       onClick = {() => {
-                        this.displayCheckoutError();
+                        this.displayError(CLOSED, '');
                       }} 
                     />
 
-                    <div className={styles.chargeContainer}>    
+                    <div className={styles.errorContainer}>    
 
                       <h6 style = {{margin: '5px', fontWeight: 'bold', fontSize: '25px'}}>Hmm..</h6>
 
                       <div style = {{display: 'block', width: '300px', margin: '20px auto 0px'}}>
-                        {this.state.checkoutMessage}
+                        {this.state.errorMessage}
                       </div> 
 
                       <br />
+
                       <button 
-                        className={styles.chargeBtn}
+                        className={styles.errorBtn}
                         onClick = {() => {
                           console.log("go back clicked...");
-                          this.displayCheckoutError();
+                          this.displayError(CLOSED, '');
                         }}
                       >
                         Go Back
                       </button>
+
                       <button 
-                        className={styles.chargeBtn}
+                        className={styles.errorBtn}
                         onClick = {() => {
                           console.log("login clicked...");
-                          this.displayCheckoutError();
-                          this.togglePopLogin();
+                          this.displayError();
+                          this.togglePopLogin(CLOSED, '');
                         }}
                       >
                         Login
@@ -886,33 +865,66 @@ class PaymentDetails extends React.Component {
 
               </>
             );
-          }
-        })()} 
-        {(() => {
-          if (this.state.ambassadorError === true) {
+          } else if (this.state.errorType === AMBASSADOR_ERROR) {
             return (
               <>
-              <div className = {this.state.ambassadorErrorModal}>
-                <div className  = {styles.changeErrorModalContainer}>
-                    <a  style = {{
-                            color: 'black',
-                            textAlign: 'center', 
-                            fontSize: '45px', 
-                            zIndex: '2', 
-                            float: 'right', 
-                            position: 'absolute', top: '0px', left: '350px', 
-                            transform: 'rotate(45deg)', 
-                            cursor: 'pointer'}} 
-                            
-                            onClick = {this.displayAmbassadorError}>+</a>
+                <div className = {this.state.errorModal}>
+                  <div className  = {styles.errorModalContainer}>
 
-                    <div style = {{display: 'block', width: '300px', margin: '40px auto 0px'}}>
-                      <h6 style = {{margin: '5px', color: 'orange', fontWeight: 'bold', fontSize: '25px'}}>AMBASSADOR CODE ERROR</h6>
-                      <text>{this.state.ambassadorMessage}</text>
-                    </div> 
+                    <div className={styles.errorContainer}>    
 
+                      <h6 style = {{margin: '5px', fontWeight: 'bold', fontSize: '25px'}}>Hmm..</h6>
+
+                      <div style = {{display: 'block', width: '300px', margin: '20px auto 0px'}}>
+                        {this.state.errorMessage}
+                      </div> 
+
+                      <br />
+
+                      <button 
+                        className={styles.errorBtn}
+                        onClick = {() => {
+                          this.displayError(CLOSED, '');
+                        }}
+                      >
+                        OK
+                      </button>
+
+                    </div>
                   </div>
                 </div>
+
+              </>
+            );
+          } else if (this.state.errorType === DATA_ERROR) {
+            return (
+              <>
+                <div className = {this.state.errorModal}>
+                  <div className  = {styles.errorModalContainer}>
+
+                    <div className={styles.errorContainer}>    
+
+                      <h6 style = {{margin: '5px', fontWeight: 'bold', fontSize: '25px'}}>Hmm..</h6>
+
+                      <div style = {{display: 'block', width: '300px', margin: '20px auto 0px'}}>
+                        {this.state.errorMessage}
+                      </div> 
+
+                      <br />
+
+                      <button 
+                        className={styles.errorBtn}
+                        onClick = {() => {
+                          this.props.history.goBack();
+                        }}
+                      >
+                        Choose a Plan
+                      </button>
+
+                    </div>
+                  </div>
+                </div>
+
               </>
             );
           }
@@ -927,156 +939,202 @@ class PaymentDetails extends React.Component {
           </div>
         </div>
 
-          <div className={styles.containerSplit}>
+        <div className={styles.containerSplit}>
 
-            <div style = {{display: 'inline-block', marginLeft: '8%', width: '40%', marginRight: '4%'}}>
-              <div style={{display: 'flex'}}>
-                <input
-                  type='text'
-                  placeholder='First Name'
-                  className={styles.inputContactLeft}
-                  value={this.state.firstName}
-                  onChange={e => {
-                    this.setState({
-                      firstName: e.target.value
-                    });
-                  }}
-                />
-
-                <input
-                  type='text'
-                  placeholder='Last Name'
-                  className={styles.inputContactRight}
-                  value={this.state.lastName}
-                  onChange={e => {
-                    this.setState({
-                      lastName: e.target.value
-                    });
-                  }}
-                />
-              </div>
-
-
-
-              {(() => {
-                  if (this.state.customerUid === "GUEST") {
-                    return (
-                      <input
-                        type='text'
-                        placeholder='Email'
-                        className={styles.input}
-                        value={this.state.email}
-                        onChange={e => {
-                          this.setState({
-                            email: e.target.value
-                          })
-                        }}
-                      />
-                    );
-                  } else {
-                    return (
-                      <input
-                        type='text'
-                        placeholder='Email'
-                        className={styles.input}
-                        value={this.props.email}
-                        onChange={e => {
-                    
-                        }}
-                      />
-                    );
-                  }
-                })()} 
-
+          <div style = {{display: 'inline-block', marginLeft: '8%', width: '40%', marginRight: '4%'}}>
+            <div style={{display: 'flex'}}>
               <input
                 type='text'
-                placeholder='Phone Number'
-                className={styles.input}
-                value={this.state.phone}
+                placeholder='First Name'
+                className={styles.inputContactLeft}
+                value={this.state.firstName}
                 onChange={e => {
                   this.setState({
-                    phone: e.target.value
+                    firstName: e.target.value
                   });
                 }}
               />
 
-
               <input
                 type='text'
-                placeholder={this.props.address.street==''?"street":this.props.address.street}
-                className={styles.input}
-                id="pac-input"
-              />
-
-
-              <div style={{display: 'flex'}}>
-                <input
-                  type='text'
-                  placeholder={this.props.address.unit==''?'Unit':this.props.address.unit}
-                  className={styles.inputContactLeft}
-                  value={this.state.unit}
-                  onChange={e => {
-                    this.setState({
-                      unit: e.target.value
-                    });
-                  }}
-                />
-                <input
-                  type='text'
-                  placeholder={this.props.address.city==''?"city":this.props.address.city}
-                  id="locality" name="locality"
-
-                  className={styles.inputContactRight}
-                />
-              </div>
-
-
-              <div style={{display: 'flex'}}>
-                <input
-                  type='text'
-                  placeholder={this.props.address.state==''?"State":this.props.address.state}
-                  
-                  className={styles.inputContactLeft}
-                  id="state" name="state"
-                />
-                <input
-                  type='text'
-                  placeholder={this.props.address.zip==''?"zip":this.props.address.zip}
-                  className={styles.inputContactRight}
-                  id="postcode" name="postcode"
-                />
-
-              </div>
-
-              <input
-                type='text'
-                placeholder='Delivery Instructions (Gate code, Ring bell, Call on arrival, etc.)'
-                className={styles.input}
-                value={this.state.instructions}
+                placeholder='Last Name'
+                className={styles.inputContactRight}
+                value={this.state.lastName}
                 onChange={e => {
                   this.setState({
-                    instructions: e.target.value
+                    lastName: e.target.value
                   });
                 }}
               />
-
-              <div className = {styles.googleMap} id = "map"/>     
-
-              <div style={{textAlign: 'center'}}>
-                <button 
-                  className={styles.orangeBtn}
-                  onClick={()=>this.proceedToPayment()}
-                >
-                  Save and Proceed
-                </button>
-              </div> 
             </div>
 
+            {(() => {
+              if (this.state.customerUid === "GUEST") {
+                return (
+                  <input
+                    type='text'
+                    placeholder='Email'
+                    className={styles.input}
+                    value={this.state.email}
+                    onChange={e => {
+                      this.setState({
+                        email: e.target.value
+                      })
+                    }}
+                  />
+                );
+              } else {
+                return (
+                  <input
+                    type='text'
+                    placeholder='Email'
+                    className={styles.input}
+                    value={this.props.email}
+                    onChange={e => {
+                
+                    }}
+                  />
+                );
+              }
+            })()} 
+
+            <input
+              type='text'
+              placeholder='Phone Number'
+              className={styles.input}
+              value={this.state.phone}
+              onChange={e => {
+                this.setState({
+                  phone: e.target.value
+                });
+              }}
+            />
+
+            {/* <input
+              type='text'
+              placeholder={this.props.address.street==''?"street":this.props.address.street}
+              className={styles.input}
+              id="pac-input"
+            />
+
+            <div style={{display: 'flex'}}>
+              <input
+                type='text'
+                placeholder={this.props.address.unit==''?'Unit':this.props.address.unit}
+                className={styles.inputContactLeft}
+                value={this.state.unit}
+                onChange={e => {
+                  this.setState({
+                    unit: e.target.value
+                  });
+                }}
+              />
+              <input
+                type='text'
+                placeholder={this.props.address.city==''?"city":this.props.address.city}
+                id="locality" name="locality"
+
+                className={styles.inputContactRight}
+              />
+            </div>
+
+            <div style={{display: 'flex'}}>
+              <input
+                type='text'
+                placeholder={this.props.address.state==''?"State":this.props.address.state}
+                
+                className={styles.inputContactLeft}
+                id="state" name="state"
+              />
+              <input
+                type='text'
+                placeholder={this.props.address.zip==''?"zip":this.props.address.zip}
+                className={styles.inputContactRight}
+                id="postcode" name="postcode"
+              />
+            </div> */}
+
+            <input
+              type='text'
+              placeholder={"Address 1"}
+              className={styles.input}
+              id="pac-input" name="pac-input"
+            />
+
+              {/* <input
+                type='text'
+                placeholder={'Zip Code'}
+                autocomplete="bs"
+                className={styles.inputContactRight}
+                id="postcode" name="postcode"
+              /> */}
+
+            <div style={{display: 'flex'}}>
+              <input
+                type='text'
+                placeholder={'Unit'}
+                className={styles.inputContactLeft}
+                value={this.state.unit}
+                onChange={e => {
+                  this.setState({
+                    unit: e.target.value
+                  });
+                }}
+              />
+              
+              <input
+                type='text'
+                placeholder={'City'}
+                id="locality" name="locality"
+                className={styles.inputContactRight}
+              />
+            </div>
+
+            <div style={{display: 'flex'}}>
+              <input
+                type='text'
+                placeholder={'State'}
+                className={styles.inputContactLeft}
+                id="state" name="state"
+              />
+              <input
+                type='text'
+                placeholder={'Zip Code'}
+                className={styles.inputContactRight}
+                id="postcode" name="postcode"
+              />
+            </div> 
+
+            <input
+              type='text'
+              placeholder='Delivery Instructions'
+              className={styles.input}
+              value={this.state.instructions}
+              onChange={e => {
+                this.setState({
+                  instructions: e.target.value
+                });
+              }}
+            />
+
+            <div className = {styles.googleMap} id = "map"/>     
+
+            <div style={{textAlign: 'center'}}>
+              <button 
+                className={styles.orangeBtn}
+                onClick={()=>this.proceedToPayment()}
+              >
+                Save and Proceed
+              </button>
+            </div> 
+
+          </div>
+
           <div style={{display: 'inline-block', width:'48%'}}>
-            <div style={{width: '84%'}}>
+            <div style={{width: '84%', marginLeft: '6%'}}>
               <div
                 style={{
-                  display:!this.state.showPaymentInfo?'block':'none',
+                  display: !this.state.showPaymentInfo?'block':'none',
                   fontWeight: '500',
                   textAlign: 'left'
                 }}
@@ -1267,6 +1325,10 @@ class PaymentDetails extends React.Component {
                   >
                     Verify
                   </button>
+
+                  <div className={styles.summaryAmb}>
+                    -${this.state.paymentSummary.ambassadorDiscount}
+                  </div>
                 </div>
 
                 <div style={{display: 'flex' ,marginBottom:'73px'}}>
@@ -1281,57 +1343,50 @@ class PaymentDetails extends React.Component {
               </div>
             </div>
               
-            <div style={{width: '100%'}}>
-              <h6 className={styles.sectionHeaderRight2}>Complete Payment</h6>
-            </div>
-                
-            <div style={{width: '84%'}}>
-              <div style={{display: 'flex'}}>
+            {
+              this.state.showPaymentInfo
+                ? (<>
+                    <div style={{width: '100%'}}>
+                      <h6 className={styles.sectionHeaderRight2}>Complete Payment</h6>
+                    </div>
+                        
+                    <div style={{width: '84%', textAlign: 'left'}}>
+                      <div style={{display: 'flex'}}>
+                          <div className = {styles.buttonContainer}>
+                            <StripeElement
+                              stripePromise={this.state.stripePromise}
+                              customerPassword={this.state.customerPassword}
+                              deliveryInstructions={this.state.instructions}
+                              setPaymentType={this.setPaymentType}
+                              paymentSummary={this.state.paymentSummary}
+                              loggedInByPassword={loggedInByPassword}
+                              latitude={this.state.latitude.toString()}
+                              longitude={this.state.longitude.toString()}
+                              email={this.state.email}
+                              customerUid={this.state.customerUid}
+                              phone={this.state.phone}
+                            />
+                          </div>
+                      </div>
+                    </div>
+                  </>)
+                : null
+            }
 
-                  <div className = {styles.buttonContainer}>
-                    <StripeElement
-                      stripePromise={this.state.stripePromise}
-                      customerPassword={this.state.customerPassword}
-                      deliveryInstructions={this.state.instructions}
-                      setPaymentType={this.setPaymentType}
-                      paymentSummary={this.state.paymentSummary}
-                      loggedInByPassword={loggedInByPassword}
-                      latitude={this.state.latitude.toString()}
-                      longitude={this.state.longitude.toString()}
-                      email={this.state.email}
-                      customerUid={this.state.customerUid}
-                      phone={this.state.phone}
-                      cardInfo={this.state.cardInfo}
-                    />
-                  </div>
-
-              </div>
-
-            </div>
           </div>
-
         </div>
       </div>
     );
+    
   }
 }
 
 PaymentDetails.propTypes = {
-  changeAddressEmail: PropTypes.func.isRequired,
   changeDeliveryDetails: PropTypes.func.isRequired,
   changeContactDetails: PropTypes.func.isRequired,
   changePaymentDetails: PropTypes.func.isRequired,
-  changeAddressFirstName: PropTypes.func.isRequired,
-  changeAddressLastName: PropTypes.func.isRequired,
-  changeAddressStreet: PropTypes.func.isRequired,
-  changeAddressUnit: PropTypes.func.isRequired,
-  changeAddressState: PropTypes.func.isRequired,
-  changeAddressZip: PropTypes.func.isRequired,
-  changeAddressPhone: PropTypes.func.isRequired,
-  changeDeliveryInstructions: PropTypes.func.isRequired,
   changePaymentPassword: PropTypes.func.isRequired,
   submitPayment: PropTypes.func.isRequired,
-  submitGuestSignUp: PropTypes.func.isRequired,
   firstName: PropTypes.string.isRequired,
   lastName: PropTypes.string.isRequired,
   street: PropTypes.string.isRequired,
@@ -1360,7 +1415,6 @@ const mapStateToProps = state => ({
   instructions: state.subscribe.deliveryInstructions,
   selectedPlan: state.subscribe.selectedPlan,
   loginPassword: state.login.password,
-  userInfo: state.login.newUserInfo,
   password: state.subscribe.paymentPassword,
   address: state.subscribe.address,
   addressInfo: state.subscribe.addressInfo,
@@ -1369,19 +1423,9 @@ const mapStateToProps = state => ({
 
 const functionList = {
   fetchProfileInformation,
-  changeAddressEmail,
   changeDeliveryDetails,
   changeContactDetails,
   changePaymentDetails,
-  changeAddressFirstName,
-  changeAddressLastName,
-  changeAddressStreet,
-  changeAddressUnit,
-  changeAddressCity,
-  changeAddressState,
-  changeAddressZip,
-  changeAddressPhone,
-  changeDeliveryInstructions,
   changePaymentPassword,
   changeCardNumber,
   changeCardMonth,
@@ -1390,8 +1434,7 @@ const functionList = {
   changeCardCvv,
   submitPayment,
   chooseMealsDelivery,
-  choosePaymentOption,
-  submitGuestSignUp
+  choosePaymentOption
 };
 
 export default connect(

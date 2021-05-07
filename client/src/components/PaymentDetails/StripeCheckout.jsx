@@ -240,6 +240,7 @@ const StripeCheckout = (props) => {
                 },
                 () => {
                   history.push("/congrats")
+                  //https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/add_surprise/400-000002
                 }
               );
 
@@ -277,49 +278,29 @@ const StripeCheckout = (props) => {
 
   return (
     <>
-        <input
-          variant="outlined" 
-          size="small" 
-          placeholder="cardholder name"
-          fullWidth 
-          onChange={e => {
-            changeCardholderName(e.target.value);
-          }}
-        />
-
-
-        <div className={styles.label}>
-          {/* <CardElement
-            elementRef={(c) => (this._element = c)}
-            className={props.classes.element}
-            options={options}
-          /> */}
-          <CardElement
-            elementRef={(c) => (this._element = c)}
-            className={styles.element}
-            options={options}
-          />
-        </div>
-
-
-      {/* <button
-        className={props.classes.button}
-        variant="outlined"
-        size="small"
-        color="paragraphText"
-        onClick={() => {
-          console.log("PAY BUTTON CLICKED");
-          pay();
+      <input
+        className={styles.input}
+        variant="outlined" 
+        size="small" 
+        placeholder="Cardholder Name"
+        fullWidth 
+        onChange={e => {
+          changeCardholderName(e.target.value);
         }}
-        disabled={(props.fetchingFees || loadingState || props.recalculatingPrice)}
-      >
-        Pay With Stripe
-      </button> */}
+      />
+
+      <div className={styles.label}>
+        <CardElement
+          elementRef={(c) => (this._element = c)}
+          className={styles.element}
+          options={options}
+        />
+      </div>
 
       <button 
         className={styles.orangeBtn2}
         disabled={(props.fetchingFees || loadingState || props.recalculatingPrice)}
-        onClick={() => this.confirmChanges()}
+        onClick={() => pay()}
       >
         Complete Payment
       </button>
