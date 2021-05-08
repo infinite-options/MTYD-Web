@@ -5,6 +5,8 @@ import {BING_LOCATION_API_URL} from '../reducers/constants';
 export default async function fetchAddressCoordinates(address, city, state, zip, _callback) {
   let latitude, longitude;
 
+  console.log("(FAC) getting lat and lon...");
+
   axios
     .get(BING_LOCATION_API_URL, {
       params: {
@@ -18,6 +20,8 @@ export default async function fetchAddressCoordinates(address, city, state, zip,
     })
     .then(res => {
       let locationApiResult = res.data;
+
+      console.log("(FAC) fetchAddressCoordinates res: ", res);
 
       if (locationApiResult.statusCode === 200) {
         let locations = locationApiResult.resourceSets[0].resources;
@@ -37,7 +41,7 @@ export default async function fetchAddressCoordinates(address, city, state, zip,
       
     })
     .catch(err => {
-      console.log(err);
+      console.log("(FAC) error: ", err);
       if (err.response) {
         console.log(err.response);
       }

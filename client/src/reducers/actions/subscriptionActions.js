@@ -139,6 +139,7 @@ const calculateTotalPayment = (dispatch, plans, meal, options) => {
 };
 
 export const fetchProfileInformation = customerId => dispatch => {
+  console.log("fetching profile information...");
   axios
     .get(API_URL + 'Profile/' + customerId)
     .then(res => {
@@ -159,6 +160,11 @@ export const fetchProfileInformation = customerId => dispatch => {
           customerInfo.user_social_media !== null
             ? customerInfo.user_social_media
             : 'NULL';
+        console.log("dispatching: ", {
+          customerId: customerId,
+          email: email,
+          socialMedia: socialMedia,
+        });
         dispatch({
           type: FETCH_PROFILE_INFO,
           payload: {

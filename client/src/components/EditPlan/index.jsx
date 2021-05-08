@@ -18,14 +18,19 @@ import {WebNavBar, BottomNavBar} from "../NavBar";
 import {HomeLink, FootLink, AmbassadorLink, AddressLink} from "../Home/homeButtons";
 
 import fetchDiscounts from '../../utils/FetchDiscounts';
+import fetchAddressCoordinates from '../../utils/FetchAddressCoordinates';
 
 import PopLogin from '../PopLogin';
 import Popsignup from '../PopSignup';
 
 const google = window.google;
 
-const DEFAULT = true;
-const CURRENT= false;
+var map;
+var autocomplete;
+
+const DEFAULT = 0;
+const CURRENT = 1;
+const UPDATED = 2;
 
 class EditPlan extends React.Component {
   constructor() {
@@ -558,6 +563,134 @@ class EditPlan extends React.Component {
         defaultUpdatedPlan["payment_summary"] = {...payment_summary};
         defaultUpdatedPlan["raw_data"] = sub;
 
+        console.log("sub at index 0: ", sub);
+
+        // document.getElementById("locality").value = this.props.city;
+        // document.getElementById("state").value = this.props.state;
+        // document.getElementById("pac-input").value = this.props.street;
+        // document.getElementById("postcode").value = this.props.zip;
+        document.getElementById("locality").value = sub.delivery_city;
+        document.getElementById("state").value = sub.delivery_state;
+        document.getElementById("pac-input").value = sub.delivery_address;
+        document.getElementById("postcode").value = sub.delivery_zip;
+
+        fetchAddressCoordinates( //(address, city, state, zip, _callback) {
+          sub.delivery_address,
+          sub.delivery_city,
+          sub.delivery_state,
+          sub.delivery_zip,
+          (coords) => {
+            console.log("(default) Fetched coordinates: " + JSON.stringify(coords));
+    
+            this.setState({
+              latitude: coords.latitude,
+              longitude: coords.longitude,
+            });
+    
+            const temp_position = {lat:parseFloat(coords.latitude), lng:parseFloat(coords.longitude)}
+    
+            console.log(temp_position)
+    
+            map.setCenter(temp_position)
+    
+            if(coords.latitude !== ''){
+              map.setZoom(17);
+              new google.maps.Marker({
+                position: temp_position,
+                map,
+              });
+            }
+          }
+        );
+
+        const input = document.getElementById("pac-input");
+        const options = {
+          componentRestrictions: { country: "us" }
+        };
+        autocomplete = new google.maps.places.Autocomplete(input, options);
+    
+        autocomplete.bindTo("bounds", map);
+        const marker = new google.maps.Marker({
+          map,
+        });
+
+        autocomplete.addListener("place_changed", () => {
+          let address1 = '';
+          let postcode = '';
+          let city = '';
+          let state = '';
+
+          let address1Field = document.querySelector("#pac-input");
+          let postalField = document.querySelector("#postcode");
+
+          marker.setVisible(false);
+          const place = autocomplete.getPlace();
+          console.log(place)
+          if (!place.geometry || !place.geometry.location) {
+            // User entered the name of a Place that was not suggested and
+            // pressed the Enter key, or the Place Details request failed.
+            window.alert("No details available for input: '" + place.name + "'");
+            return;
+          }
+          
+          if (place.geometry.viewport) {
+            console.log('here')
+            map.fitBounds(place.geometry.viewport);
+          } else {
+            console.log('there')
+            map.setCenter(place.geometry.location);
+          }
+
+          map.setZoom(17);
+          marker.setPosition(place.geometry.location);
+          marker.setVisible(true);
+
+          for (const component of place.address_components) {
+            const componentType = component.types[0];
+            switch (componentType) {
+              case "street_number": {
+                address1 = `${component.long_name} ${address1}`;
+                break;
+              }
+        
+              case "route": {
+                address1 += component.short_name;
+                break;
+              }
+        
+              case "postal_code": {
+                postcode = `${component.long_name}${postcode}`;
+                break;
+              }
+      
+              case "locality":
+                document.querySelector("#locality").value = component.long_name;
+                city = component.long_name;
+                break;
+        
+              case "administrative_area_level_1": {
+                document.querySelector("#state").value = component.short_name;
+                state= component.short_name;
+                break;
+              }
+              
+            }
+          }
+          address1Field.value = address1;
+          postalField.value = postcode;
+
+          this.setState({
+            name: place.name,
+            street: address1,
+            city: city,
+            state: state,
+            addressZip: postcode,
+            latitude: place.geometry.location.lat(),
+            longitude: place.geometry.location.lng(),
+          })
+
+        });
+
         defaultDeliveryInfo = this.setDeliveryInfo(sub);
 
       }
@@ -572,13 +705,26 @@ class EditPlan extends React.Component {
       return a.load_order - b.load_order
     });
 
-    if(setDefault === true) {
+    if(setDefault === DEFAULT) {
       this.setState(prevState => ({
         subscriptionsList: newSubList,
         subscriptionsLoaded: true,
         currentPlan: {...defaultCurrentPlan},
         updatedPlan: {...defaultUpdatedPlan},
         deliveryInfo: {...defaultDeliveryInfo}
+      }), () => {
+        this.calculateDifference();
+      });
+    } else if (setDefault === UPDATED) {
+      console.log("(UPDATED) current Plan: ", this.state.currentPlan);
+      console.log("(UPDATED) updated Plan: ", this.state.updatedPlan);
+
+      this.setState(prevState => ({
+        subscriptionsList: newSubList,
+        subscriptionsLoaded: true,
+        // currentPlan: {...defaultCurrentPlan},
+        // updatedPlan: {...defaultUpdatedPlan},
+        // deliveryInfo: {...defaultDeliveryInfo}
       }), () => {
         this.calculateDifference();
       });
@@ -725,7 +871,7 @@ class EditPlan extends React.Component {
               'OK', 'back'
             );
 
-            this.loadSubscriptions(fetchedSubscriptions, this.state.discounts, CURRENT);
+            this.loadSubscriptions(fetchedSubscriptions, this.state.discounts, UPDATED);
           })
           .catch(err => {
             console.log(err);
@@ -755,6 +901,11 @@ class EditPlan extends React.Component {
     // console.log("google: ", google);
     // console.log("after google");
 
+    console.log("(mount) props: ", this.props);
+    // console.log("(mount) selectedPlan: ", this.props.selectedPlan);
+    // console.log("(mount) email: ", this.props.email);
+
+
     let temp_lat;
     let temp_lng;
 
@@ -776,9 +927,9 @@ class EditPlan extends React.Component {
 
     //console.log(document.getElementById("map"));
 
-    //console.log("before const map");
+    console.log("before var map");
 
-    window.map = new google.maps.Map(document.getElementById("map"), {
+    map = new google.maps.Map(document.getElementById("map"), {
       center: { lat: temp_lat, lng: temp_lng},
       zoom: 12,
     });
@@ -832,12 +983,12 @@ class EditPlan extends React.Component {
 
             axios.get(API_URL + 'next_meal_info/' + this.state.customerUid)
               .then(res => {
-                console.log("next meal info res: ", res);
+                console.log("(1) next meal info res: ", res);
 
                 fetchedSubscriptions = res.data.result;
 
                 if(fetchedDiscounts !== null){
-                  console.log("(2) load subscriptions");
+                  console.log("(1) load subscriptions");
                   this.loadSubscriptions(fetchedSubscriptions, fetchedDiscounts, DEFAULT);
                 }
               })
@@ -901,7 +1052,7 @@ class EditPlan extends React.Component {
 
             axios.get(API_URL + 'next_meal_info/' + this.state.customerUid)
               .then(res => {
-                console.log("next meal info res: ", res);
+                console.log("(2) next meal info res: ", res);
 
                 fetchedSubscriptions = res.data.result;
 
@@ -969,6 +1120,7 @@ class EditPlan extends React.Component {
   }
 
   setDeliveryInfo(plan) {
+
     let newDeliveryInfo = {
       first_name: (plan.delivery_first_name === 'NULL' ? '': plan.delivery_first_name),
       last_name: (plan.delivery_last_name === 'NULL' ? '': plan.delivery_last_name),
@@ -983,8 +1135,9 @@ class EditPlan extends React.Component {
       cc_cvv: "NULL",
       cc_zip: "NULL",
       cc_exp_date: "NULL",
-      instructions: ""
+      instructions: (plan.delivery_isntructions === 'NULL' ? '': plan.delivery_instructions)
     };
+
     return newDeliveryInfo;
   }
 
@@ -1077,8 +1230,44 @@ class EditPlan extends React.Component {
             console.log("props.plans: ", this.props.plans);
             console.log("new plan selected: ", this.props.plans[sub.meals][sub.deliveries]);
 
+            let rawData = newCurrentPlan.raw_data;
+
             console.log("BEFORE SET newDeliveryInfo");
-            let newDeliveryInfo = this.setDeliveryInfo(newCurrentPlan.raw_data);
+            let newDeliveryInfo = this.setDeliveryInfo(rawData);
+
+            document.getElementById("locality").value = rawData.delivery_city;
+            document.getElementById("state").value = rawData.delivery_state;
+            document.getElementById("pac-input").value = rawData.delivery_address;
+            document.getElementById("postcode").value = rawData.delivery_zip;
+    
+            fetchAddressCoordinates( //(address, city, state, zip, _callback) {
+              rawData.delivery_address,
+              rawData.delivery_city,
+              rawData.delivery_state,
+              rawData.delivery_zip,
+              (coords) => {
+                console.log("(click) Fetched coordinates: " + JSON.stringify(coords));
+        
+                this.setState({
+                  latitude: coords.latitude,
+                  longitude: coords.longitude,
+                });
+        
+                const temp_position = {lat:parseFloat(coords.latitude), lng:parseFloat(coords.longitude)}
+        
+                console.log(temp_position)
+        
+                map.setCenter(temp_position)
+        
+                if(coords.latitude !== ''){
+                  map.setZoom(17);
+                  new google.maps.Marker({
+                    position: temp_position,
+                    map,
+                  });
+                }
+              }
+            );
 
             this.setState(prevState => ({
               currentPlan: {...newCurrentPlan},
@@ -1336,10 +1525,60 @@ class EditPlan extends React.Component {
 
     object['email'] = this.props.email;
 
-    console.log("edits to save: ", JSON.stringify(object));
+    //console.log("edits to save: ", JSON.stringify(object));
+
+    let city = document.getElementById("locality").value;
+    let state = document.getElementById("state").value;
+    let address = document.getElementById("pac-input").value;
+    let zip = document.getElementById("postcode").value;
+
+    console.log("2 pac-input: ", document.getElementById("pac-input").value);
+
+  //   {
+  //     "first_name":"Welks",
+  //     "last_name":" C",
+  //     "purchase_uid": "400-000027",
+  //     "phone":"1234567890",
+  //     "email":"welks@gmail.com",
+  //     "address":"213 Mora",
+  //     "unit":"",
+  //     "city":"Santa Cruz",
+  //     "state":"CA",
+  //     "zip":"95064",
+  //     "cc_num":"4242424242424242",
+  //     "cc_cvv":"424",
+  //     "cc_zip":"95129",
+  //     "cc_exp_date":"2021-08-01"
+  // }
+
+    console.log("actual edits to save: ", {
+      first_name: object.first_name,
+      last_name: object.last_name,
+      purchase_uid: object.purchase_uid,
+      phone: object.phone,
+      address,
+      unit: object.unit,
+      city,
+      state,
+      zip,
+      email: object.email,
+      //instructions: "M4METEST"
+    });
 
     axios
-      .post(API_URL + 'update_delivery_info', object)
+      .post(API_URL + 'Update_Delivery_Info_Address', {
+        first_name: object.first_name,
+        last_name: object.last_name,
+        purchase_uid: object.purchase_uid,
+        phone: object.phone,
+        address,
+        unit: object.unit,
+        city,
+        state,
+        zip,
+        email: object.email,
+        //instructions: "M4METEST"
+      })
       .then((res) => {
         console.log("update delivery info res: ", res);
 
@@ -1609,7 +1848,7 @@ class EditPlan extends React.Component {
               }}
             />
 
-            <input
+            {/* <input
               type='text'
               placeholder={"Address 1"}
               className={styles.input}
@@ -1622,6 +1861,13 @@ class EditPlan extends React.Component {
                   }
                 }));
               }}
+            /> */}
+
+            <input
+              type='text'
+              placeholder={"Address 1"}
+              className={styles.input}
+              id="pac-input" name="pac-input"
             />
 
             <div style={{display: 'flex'}}>
@@ -1640,7 +1886,7 @@ class EditPlan extends React.Component {
                 }}
               />
 
-              <input
+              {/* <input
                 type='text'
                 placeholder={"City"}
                 className={styles.inputContactRight}
@@ -1653,11 +1899,18 @@ class EditPlan extends React.Component {
                     }
                   }));
                 }}
+              /> */}
+
+              <input
+                type='text'
+                placeholder={'City'}
+                id="locality" name="locality"
+                className={styles.inputContactRight}
               />
             </div>
 
             <div style={{display: 'flex'}}>
-              <input
+              {/* <input
                 type='text'
                 placeholder={"State"}
                 className={styles.inputContactLeft}
@@ -1684,10 +1937,23 @@ class EditPlan extends React.Component {
                     }
                   }));
                 }}
+              /> */}
+
+              <input
+                type='text'
+                placeholder={'State'}
+                className={styles.inputContactLeft}
+                id="state" name="state"
+              />
+              <input
+                type='text'
+                placeholder={'Zip Code'}
+                className={styles.inputContactRight}
+                id="postcode" name="postcode"
               />
             </div>
 
-            {/* <input
+            <input
               type={'text'}
               placeholder={'Delivery Instructions'}
               className={styles.input}
@@ -1700,7 +1966,7 @@ class EditPlan extends React.Component {
                   }
                 }));
               }}
-            /> */}
+            />
 
             <div className = {styles.googleMap} id = "map"/>     
 

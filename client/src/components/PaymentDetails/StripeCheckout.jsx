@@ -11,12 +11,16 @@ import Button from '@material-ui/core/Button';
 import withStyles from '@material-ui/styles/withStyles';
 import TextField from '@material-ui/core/TextField';
 
+import styles from "./paymentDetails.module.css";
+
 import PropTypes from "prop-types";
 import {connect} from "react-redux";
 
 import {
   submitPayment
 } from "../../reducers/actions/subscriptionActions";
+
+import { API_URL } from '../../reducers/constants';
 
 import checkoutItems from '../../utils/CheckoutItems';
 import createGuestAccount from '../../utils/CreateGuestAccount';
@@ -236,8 +240,21 @@ const StripeCheckout = (props) => {
                   subtotal: props.paymentSummary.mealSubPrice,
                   amb: props.paymentSummary.ambassadorDiscount
                 },
-                () => {
+                (res) => {
+                  axios
+                    .post(API_URL + 'add_surprise/' + res.data.purchase_id)
+                    .then((res2) => {
+                      console.log("add_suprise res: ", res2);
+                    })
+                    .catch(err => {
+                      console.log(err);
+                      if (err.response) {
+                        console.log("add_suprise error: " + JSON.stringify(err.response));
+                      }
+                    });
+
                   history.push("/congrats")
+                  //https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/add_surprise/400-000002
                 }
               );
 
@@ -275,38 +292,31 @@ const StripeCheckout = (props) => {
 
   return (
     <>
-        <input
-          variant="outlined" 
-          size="small" 
-          placeholder="cardholder name"
-          fullWidth 
-          onChange={e => {
-            changeCardholderName(e.target.value);
-          }}
-        />
-
-
-        <div className={props.classes.label}>
-          <CardElement
-            elementRef={(c) => (this._element = c)}
-            className={props.classes.element}
-            options={options}
-          />
-        </div>
-
-
-      <button
-        className={props.classes.button}
-        variant="outlined"
-        size="small"
-        color="paragraphText"
-        onClick={() => {
-          console.log("PAY BUTTON CLICKED");
-          pay();
+      <input
+        className={styles.input}
+        variant="outlined" 
+        size="small" 
+        placeholder="Cardholder Name"
+        fullWidth 
+        onChange={e => {
+          changeCardholderName(e.target.value);
         }}
+      />
+
+      <div className={styles.label}>
+        <CardElement
+          elementRef={(c) => (this._element = c)}
+          className={styles.element}
+          options={options}
+        />
+      </div>
+
+      <button 
+        className={styles.orangeBtn2}
         disabled={(props.fetchingFees || loadingState || props.recalculatingPrice)}
+        onClick={() => pay()}
       >
-        Pay With Stripe
+        Complete Payment
       </button>
     </>
   );
