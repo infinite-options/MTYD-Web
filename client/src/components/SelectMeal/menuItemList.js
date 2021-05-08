@@ -623,26 +623,37 @@ class MenuItemList extends Component {
               onClick={this.filterDates}
               className={buttonStyle} 
               autoFocus>
-                <div
+                <button
                 style={{
                   fontSize:'25px',
                   fontWeight:'bold',
                   lineHeight:'25px',
-                }}>
+                  backgroundColor:'rgba(0, 0, 0, 0)',
+                  border:'none'
+                }}
+                key={this.state.myDate} value={this.state.myDate} 
+                onClick={this.filterDates} 
+                id={this.state.myDate} 
+                >
                   {moment(this.state.myDate.split(" ")[0]).format("ddd")}
                   <br/>{moment(this.state.myDate.split(" ")[0]).format("MMM") +" "+ moment(this.state.myDate.split(" ")[0]).format("D")}
-                </div>
+                </button>
 
-                <div
+                <button
                 style={{
                   width:"122px",
                   height:"48px",
                   marginTop:"15px",
-                  fontSize:"15px"
+                  fontSize:"15px",
+                  backgroundColor:'rgba(0, 0, 0, 0)',
+                  border:'none'
                 }}
+                key={this.state.myDate} value={this.state.myDate} 
+                onClick={this.filterDates} 
+                id={this.state.myDate} 
                 >
                   {extraInfo}
-                </div>
+                </button>
         </button>
       )
       this.setState({dateButtonList:this.state.dateButtonList.map((info)=>info.key===this.state.myDate?tempNewButton:info)})
@@ -725,33 +736,39 @@ class MenuItemList extends Component {
               onClick={this.filterDates}
               className={buttonStyle} 
               autoFocus>
-                <div
+                <button
                   style={{
                     fontSize:'25px',
                     fontWeight:'bold',
                     lineHeight:'25px',
+                    backgroundColor:'rgba(0, 0, 0, 0)',
+                    border:'none'
                   }}
-                  value={this.state.myDate} 
-                  onClick={this.filterDates}
+                  key={this.state.myDate} value={this.state.myDate} 
+                  onClick={this.filterDates} 
+                  id={this.state.myDate} 
                   >
                   {moment(this.state.myDate.split(" ")[0]).format("ddd")}
                   <br/>{moment(this.state.myDate.split(" ")[0]).format("MMM") +" "+ moment(this.state.myDate.split(" ")[0]).format("D")}
-                </div>
+                </button>
 
-                <div
+                <button
                 style={{
                   width:"122px",
                   height:"48px",
                   marginTop:"15px",
-                  fontSize:"15px"
+                  fontSize:"15px",
+                  backgroundColor:'rgba(0, 0, 0, 0)',
+                  border:'none'
                 }}
-                value={this.state.myDate} 
-                onClick={this.filterDates}
+                key={this.state.myDate} value={this.state.myDate} 
+                onClick={this.filterDates} 
+                id={this.state.myDate} 
                 >
                   {extraInfo}
-                </div>
+                </button>
                 
-              </button>
+        </button>
       )
   
   
@@ -824,32 +841,39 @@ class MenuItemList extends Component {
               onClick={this.filterDates}
               className={buttonStyle} 
               autoFocus>
-                <div
+                <button
                 style={{
                   fontSize:'25px',
                   fontWeight:'bold',
                   lineHeight:'25px',
+                  backgroundColor:'rgba(0, 0, 0, 0)',
+                  border:'none'
                 }}
                 
-                value={this.state.myDate} 
-                onClick={this.filterDates}
+                key={this.state.myDate} value={this.state.myDate} 
+                onClick={this.filterDates} 
+                id={this.state.myDate} 
                 >
                   {moment(this.state.myDate.split(" ")[0]).format("ddd")}
                   <br/>{moment(this.state.myDate.split(" ")[0]).format("MMM") +" "+ moment(this.state.myDate.split(" ")[0]).format("D")}
-                </div>
+                </button>
 
-                <div
+                <button
                 style={{
                   width:"122px",
                   height:"48px",
                   marginTop:"15px",
-                  fontSize:"15px"
+                  fontSize:"15px",
+                  backgroundColor:'rgba(0, 0, 0, 0)',
+                  border:'none'
                 }}
-                value={this.state.myDate} 
-                onClick={this.filterDates}
+                key={this.state.myDate} value={this.state.myDate} 
+                onClick={this.filterDates} 
+                id={this.state.myDate} 
+
                 >
                   {extraInfo}
-                </div>
+                </button>
                 
               </button>
       // </button>
