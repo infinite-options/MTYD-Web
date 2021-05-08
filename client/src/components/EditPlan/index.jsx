@@ -28,8 +28,9 @@ const google = window.google;
 var map;
 var autocomplete;
 
-const DEFAULT = true;
-const CURRENT= false;
+const DEFAULT = 0;
+const CURRENT = 1;
+const UPDATED = 2;
 
 class EditPlan extends React.Component {
   constructor() {
@@ -704,13 +705,26 @@ class EditPlan extends React.Component {
       return a.load_order - b.load_order
     });
 
-    if(setDefault === true) {
+    if(setDefault === DEFAULT) {
       this.setState(prevState => ({
         subscriptionsList: newSubList,
         subscriptionsLoaded: true,
         currentPlan: {...defaultCurrentPlan},
         updatedPlan: {...defaultUpdatedPlan},
         deliveryInfo: {...defaultDeliveryInfo}
+      }), () => {
+        this.calculateDifference();
+      });
+    } else if (setDefault === UPDATED) {
+      console.log("(UPDATED) current Plan: ", this.state.currentPlan);
+      console.log("(UPDATED) updated Plan: ", this.state.updatedPlan);
+
+      this.setState(prevState => ({
+        subscriptionsList: newSubList,
+        subscriptionsLoaded: true,
+        // currentPlan: {...defaultCurrentPlan},
+        // updatedPlan: {...defaultUpdatedPlan},
+        // deliveryInfo: {...defaultDeliveryInfo}
       }), () => {
         this.calculateDifference();
       });
@@ -857,7 +871,7 @@ class EditPlan extends React.Component {
               'OK', 'back'
             );
 
-            this.loadSubscriptions(fetchedSubscriptions, this.state.discounts, CURRENT);
+            this.loadSubscriptions(fetchedSubscriptions, this.state.discounts, UPDATED);
           })
           .catch(err => {
             console.log(err);
