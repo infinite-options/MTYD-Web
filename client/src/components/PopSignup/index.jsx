@@ -51,19 +51,37 @@ export class PopSignup extends Component {
     })
     this.autocomplete.addListener("place_changed", this.handlePlaceSelect)
 
-    console.log(this.autocomplete)
+    console.log(this.props.nameFromHooray)
+
+    if(this.props.messageFromHooray){
+      this.setState({
+        name: 'xxx',
+        street_address: this.props.streetAddressFromHooray,
+        city: this.props.cityFromHooray,
+        state: this.props.stateFromHooray,
+        zip_code: this.props.zipCodeFromHooray,
+      })
+
+      console.log('inside if')
+      console.log(this.state)
+      console.log(this.props)
+
+
+    }
+
+    console.log(this.state)
+
   }
 
 
   handlePlaceSelect() {
-
-    console.log('here')
 
 
     let address1Field = document.querySelector("#ship-address");
     let postalField = document.querySelector("#postcode");
 
     let addressObject = this.autocomplete.getPlace()
+    console.log(addressObject);
     console.log(addressObject.address_components);
 
     let address1 = "";
@@ -101,15 +119,14 @@ export class PopSignup extends Component {
           state= component.short_name;
           break;
         }
-        
       }
     }
 
     address1Field.value = address1;
     postalField.value = postcode;
 
-    console.log(address1);
-    console.log(postcode)
+    // console.log(address1);
+    // console.log(postcode)
 
     this.setState({
       name: addressObject.name,
@@ -120,6 +137,8 @@ export class PopSignup extends Component {
       lat:addressObject.geometry.location.lat(),
       lng:addressObject.geometry.location.lng(),
     })
+
+    console.log(this.state)
 
     axios.get(`https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/categoricalOptions/${this.state.lng},${this.state.lat}`)
       .then(res=>{
@@ -140,7 +159,7 @@ export class PopSignup extends Component {
 
 
 
-    console.log(this.state)
+    // console.log(this.state)
   }
 
   handleChange(event) {

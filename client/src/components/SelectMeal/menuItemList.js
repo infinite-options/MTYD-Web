@@ -15,6 +15,8 @@ import {
 } from "../../reducers/actions/subscriptionActions";
 import Burgermenu from "./example";
 import { SelectMealGuestPop } from "../SelectMealGuestPop/SelectMealGuestPop";
+import Congrats from "../Congrats";
+import { red } from "@material-ui/core/colors";
 
 class MenuItemList extends Component {
   constructor(props) {
@@ -88,6 +90,7 @@ class MenuItemList extends Component {
       .then(response => response.json())
       .then(json => {
         let meals = [...json.result];
+        // console.log(meals)
         this.setState({
           meals: meals,
           purchaseID: meals[0].purchase_id,
@@ -244,6 +247,8 @@ class MenuItemList extends Component {
       .then(response => response.json())
       .then(json => {
         let mealSelected = [...json.result];
+
+        // console.log(mealSelected)
         this.setState({
           mealSelected
         });
@@ -254,20 +259,30 @@ class MenuItemList extends Component {
 
       this.dateButtonArray();
 
-    
-
     let planName = e.target.value;
+
+    console.log(planName)
+
+
     this.state.meals.map(mealItem => {
-      if (mealItem.purchase_id === planName) {
+
+      console.log(mealItem)
+
+      if (mealItem.purchase_uid === planName) {
         let meal = JSON.parse(mealItem.items)[0];
+
+        console.log(meal.name)
+
         let mystr = meal.name
           .toString()
           .slice(0, 2)
           .replace(/\s/g, "");
+
+        
         this.setState({
           // totalMeals: mystr,
           totalMeals: parseInt(mystr),
-          purchaseID: mealItem.purchase_id,
+          purchaseID: mealItem.purchase_uid,
           saveButton: true
         });
       } else {
@@ -285,10 +300,27 @@ class MenuItemList extends Component {
         item.sel_menu_date === this.state.myDate
     );
 
+    // let tempstring = JSON.parse(pulledSelection[0].items)[0].name
+    // myCounter = tempstring.substring(0,1);
+    // console.log(pulledSelection)
+
+
+
     if (pulledSelection.length > 0) {
       let selection = JSON.parse(pulledSelection[0].meal_selection);
       let addOnSelection = JSON.parse(pulledSelection[0].addon_selection);
       delivery_Day = pulledSelection[0].delivery_day;
+
+      // console.log(selection)
+
+      // if(JSON.parse(pulledSelection[0].items)!=[]){
+      //   let tempstring = JSON.parse(pulledSelection[0].items)[0].name
+      //   myCounter = tempstring.substring(0,1);
+      // }else{
+      //   myCounter=selection[0].qty
+      // }
+      
+
       selection.map(myItem => {
         let required_Id = myItem.item_uid;
         let menuItemCur = this.state.data.filter(
@@ -352,6 +384,8 @@ class MenuItemList extends Component {
 
     }
 
+
+    console.log('counter is '+ myCounter)
     return this.setState({
       deliveryDay: delivery_Day !== "" && delivery_Day !== "SKIP" ? delivery_Day : "Sunday",
       // deliveryDay: delivery_Day !== "" ? delivery_Day : "Sunday",
@@ -364,7 +398,7 @@ class MenuItemList extends Component {
   };
 
   filterDates = event => {
-    event.stopPropagation();
+    // event.stopPropagation();
 
     if(Cookies.get("customer_uid")==null){
       return this.setState({
@@ -1076,44 +1110,54 @@ class MenuItemList extends Component {
               }
             }
             buttonList.push(
-              <button key={date} value={date} 
+              <button 
+              key={date} value={date} 
               onClick={this.filterDates} 
               id={date} 
               className={classStyle} 
-              autoFocus={first==null}>
-                <div
+              autoFocus={first==null}
+              >
+                
+                <button
                 style={{
                   fontSize:'25px',
                   fontWeight:'bold',
                   lineHeight:'25px',
+                  backgroundColor:'rgba(0, 0, 0, 0)',
+                  border:'none'
                 }}
-                value={date} 
-                onClick={this.filterDates}
+                key={date} value={date} 
+                onClick={this.filterDates} 
+                id={date} 
 
                 >
                   {moment(date.split(" ")[0]).format("ddd")}
                   <br/>{moment(date.split(" ")[0]).format("MMM") +" "+ moment(date.split(" ")[0]).format("D")}
-                </div>
+                </button>
 
-                <div
+                <button
                 style={{
                   width:"122px",
                   height:"48px",
-                  marginTop:"15px",
-                  fontSize:"15px"
+                  marginTop:"10px",
+                  fontSize:"15px",
+                  backgroundColor:'rgba(0, 0, 0, 0)',
+                  border:'none'
                 }}
-                value={date} 
-                onClick={this.filterDates}
+                key={date} value={date} 
+                onClick={this.filterDates} 
+                id={date} 
                 >
                   {extraInfo}
-                </div>
+                </button>
+
                 
               </button>
             )
             first=1;
             lessThanTen++;
           }
-          console.log(buttonList)
+          // console.log(buttonList)
 
           this.setState({
             dateButtonList:buttonList

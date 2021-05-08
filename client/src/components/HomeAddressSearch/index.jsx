@@ -19,6 +19,12 @@ export class HomeMap extends Component {
       hooray:false,
       stillGrowing:false,
       signup:false,
+      name: '',
+      street_address: '',
+      city: '',
+      state: '',
+      zip_code: '',
+
     }
   }
 
@@ -35,25 +41,65 @@ export class HomeMap extends Component {
 
     const options = {
       componentRestrictions: { country: "us" },
-      fields: ["formatted_address", "geometry", "name"],
-
-      strictBounds: false,
     };
 
-    const autocomplete = new google.maps.places.Autocomplete(input, options);
+    this.autocomplete = new google.maps.places.Autocomplete(input, options);
 
     // console.log(autocomplete)
+    // console.log(this.autocomplete)
 
-    autocomplete.addListener("place_changed", () => {
+    this.autocomplete.addListener("place_changed", () => {
 
-      const place = autocomplete.getPlace();
+      let place = this.autocomplete.getPlace();
+
+      // console.log(place)
+      // console.log(place.address_components)
+
+      let address1 = "";
+      let postcode = "";
+      let city = '';
+      let state = '';
+
+      for (const component of place.address_components) {
+        const componentType = component.types[0];
+        switch (componentType) {
+          case "street_number": {
+            address1 = `${component.long_name} ${address1}`;
+            break;
+          }
+    
+          case "route": {
+            address1 += component.short_name;
+            break;
+          }
+    
+          case "postal_code": {
+            postcode = `${component.long_name}${postcode}`;
+            break;
+          }
+  
+          case "locality":
+            city = component.long_name;
+            break;
+    
+          case "administrative_area_level_1": {
+            state= component.short_name;
+            break;
+          }
+        }
+      }
 
       this.setState({
+        name: place.name,
+        street_address: address1,
+        city: city,
+        state: state,
+        zip_code: postcode,
         lat:place.geometry.location.lat(),
         lng:place.geometry.location.lng(),
       })
 
-      console.log(this.state)
+      // console.log(this.state)
   
       if (!place.geometry || !place.geometry.location) {
         // User entered the name of a Place that was not suggested and
@@ -100,7 +146,15 @@ export class HomeMap extends Component {
           height:'200px'
         }}
       >
-        {this.state.signup ? <Popsignup toggle={this.togglePopLogin}/> : null}
+        {this.state.signup ? <Popsignup toggle={this.togglePopLogin} 
+        messageFromHooray = {true}
+        nameFromHooray = {this.state.name}
+        streetAddressFromHooray = {this.state.street_address}
+        cityFromHooray = {this.state.city}
+        stateFromHooray = {this.state.state}
+        zipCodeFromHooray = {this.state.zip_code}
+        
+        /> : null}
 
 
         {this.state.hooray?
@@ -185,7 +239,7 @@ export class HomeMap extends Component {
             //  fontWeight:'',
            }}
 
-           onClick={()=>{this.setState({signup:true,hooray:false})}}
+           onClick={()=>{this.setState({signup:true,hooray:false}); console.log(this.state)}}
           >
               Sign up
           </div>

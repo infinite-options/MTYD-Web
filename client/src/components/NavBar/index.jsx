@@ -137,7 +137,7 @@ class NavBar extends React.Component {
     //check for logged in
     let currentState;
     const customer_uid = Cookies.get("customer_uid");
-    console.log("props: ", this.props.history.location.pathname);
+    // console.log("props: ", this.props.history.location.pathname);
     if (customer_uid) {
       this.setState({login: true});
       this.props.LoadUserInfo(customer_uid);
@@ -165,8 +165,8 @@ class NavBar extends React.Component {
       .then((response) => {
         const role = response.data.result[0].role.toLowerCase();
         this.setState({profileRole: role});
-        console.log("Profile role: " + this.state.profileRole);
-        console.log(response)
+        // console.log("Profile role: " + this.state.profileRole);
+        // console.log(response)
       })
       .catch((err) => {
         if (err.response) {
@@ -300,7 +300,7 @@ class NavBar extends React.Component {
           <Link to='/meal-plan' className={styles.showNameBtn} 
             style={nameFormat}
           >
-            {console.log(this.state)}
+            {/* {console.log(this.state)} */}
               {this.state.firstName} {this.state.lastName}
           </Link>
 
