@@ -24,6 +24,9 @@ import Popsignup from '../PopSignup';
 
 const google = window.google;
 
+var map;
+var autocomplete;
+
 const DEFAULT = true;
 const CURRENT= false;
 
@@ -558,6 +561,105 @@ class EditPlan extends React.Component {
         defaultUpdatedPlan["payment_summary"] = {...payment_summary};
         defaultUpdatedPlan["raw_data"] = sub;
 
+        console.log("sub at index 0: ", sub);
+
+        // document.getElementById("locality").value = this.props.city;
+        // document.getElementById("state").value = this.props.state;
+        // document.getElementById("pac-input").value = this.props.street;
+        // document.getElementById("postcode").value = this.props.zip;
+        document.getElementById("locality").value = sub.delivery_city;
+        document.getElementById("state").value = sub.delivery_state;
+        document.getElementById("pac-input").value = sub.delivery_address;
+        document.getElementById("postcode").value = sub.delivery_zip;
+
+        const input = document.getElementById("pac-input");
+        const options = {
+          componentRestrictions: { country: "us" }
+        };
+        autocomplete = new google.maps.places.Autocomplete(input, options);
+    
+        autocomplete.bindTo("bounds", map);
+        const marker = new google.maps.Marker({
+          map,
+        });
+
+        autocomplete.addListener("place_changed", () => {
+          let address1 = '';
+          let postcode = '';
+          let city = '';
+          let state = '';
+
+          let address1Field = document.querySelector("#pac-input");
+          let postalField = document.querySelector("#postcode");
+
+          marker.setVisible(false);
+          const place = autocomplete.getPlace();
+          console.log(place)
+          if (!place.geometry || !place.geometry.location) {
+            // User entered the name of a Place that was not suggested and
+            // pressed the Enter key, or the Place Details request failed.
+            window.alert("No details available for input: '" + place.name + "'");
+            return;
+          }
+          
+          if (place.geometry.viewport) {
+            console.log('here')
+            map.fitBounds(place.geometry.viewport);
+          } else {
+            console.log('there')
+            map.setCenter(place.geometry.location);
+          }
+
+          map.setZoom(17);
+          marker.setPosition(place.geometry.location);
+          marker.setVisible(true);
+
+          for (const component of place.address_components) {
+            const componentType = component.types[0];
+            switch (componentType) {
+              case "street_number": {
+                address1 = `${component.long_name} ${address1}`;
+                break;
+              }
+        
+              case "route": {
+                address1 += component.short_name;
+                break;
+              }
+        
+              case "postal_code": {
+                postcode = `${component.long_name}${postcode}`;
+                break;
+              }
+      
+              case "locality":
+                document.querySelector("#locality").value = component.long_name;
+                city = component.long_name;
+                break;
+        
+              case "administrative_area_level_1": {
+                document.querySelector("#state").value = component.short_name;
+                state= component.short_name;
+                break;
+              }
+              
+            }
+          }
+          address1Field.value = address1;
+          postalField.value = postcode;
+
+          this.setState({
+            name: place.name,
+            street: address1,
+            city: city,
+            state: state,
+            addressZip: postcode,
+            latitude: place.geometry.location.lat(),
+            longitude: place.geometry.location.lng(),
+          })
+
+        });
+
         defaultDeliveryInfo = this.setDeliveryInfo(sub);
 
       }
@@ -755,6 +857,11 @@ class EditPlan extends React.Component {
     // console.log("google: ", google);
     // console.log("after google");
 
+    console.log("(mount) props: ", this.props);
+    // console.log("(mount) selectedPlan: ", this.props.selectedPlan);
+    // console.log("(mount) email: ", this.props.email);
+
+
     let temp_lat;
     let temp_lng;
 
@@ -776,9 +883,9 @@ class EditPlan extends React.Component {
 
     //console.log(document.getElementById("map"));
 
-    //console.log("before const map");
+    console.log("before var map");
 
-    window.map = new google.maps.Map(document.getElementById("map"), {
+    map = new google.maps.Map(document.getElementById("map"), {
       center: { lat: temp_lat, lng: temp_lng},
       zoom: 12,
     });
@@ -832,12 +939,12 @@ class EditPlan extends React.Component {
 
             axios.get(API_URL + 'next_meal_info/' + this.state.customerUid)
               .then(res => {
-                console.log("next meal info res: ", res);
+                console.log("(1) next meal info res: ", res);
 
                 fetchedSubscriptions = res.data.result;
 
                 if(fetchedDiscounts !== null){
-                  console.log("(2) load subscriptions");
+                  console.log("(1) load subscriptions");
                   this.loadSubscriptions(fetchedSubscriptions, fetchedDiscounts, DEFAULT);
                 }
               })
@@ -901,7 +1008,7 @@ class EditPlan extends React.Component {
 
             axios.get(API_URL + 'next_meal_info/' + this.state.customerUid)
               .then(res => {
-                console.log("next meal info res: ", res);
+                console.log("(2) next meal info res: ", res);
 
                 fetchedSubscriptions = res.data.result;
 
@@ -969,6 +1076,7 @@ class EditPlan extends React.Component {
   }
 
   setDeliveryInfo(plan) {
+
     let newDeliveryInfo = {
       first_name: (plan.delivery_first_name === 'NULL' ? '': plan.delivery_first_name),
       last_name: (plan.delivery_last_name === 'NULL' ? '': plan.delivery_last_name),
@@ -985,6 +1093,7 @@ class EditPlan extends React.Component {
       cc_exp_date: "NULL",
       instructions: (plan.delivery_isntructions === 'NULL' ? '': plan.delivery_instructions)
     };
+
     return newDeliveryInfo;
   }
 
@@ -1609,7 +1718,7 @@ class EditPlan extends React.Component {
               }}
             />
 
-            <input
+            {/* <input
               type='text'
               placeholder={"Address 1"}
               className={styles.input}
@@ -1622,6 +1731,13 @@ class EditPlan extends React.Component {
                   }
                 }));
               }}
+            /> */}
+
+            <input
+              type='text'
+              placeholder={"Address 1"}
+              className={styles.input}
+              id="pac-input" name="pac-input"
             />
 
             <div style={{display: 'flex'}}>
@@ -1640,7 +1756,7 @@ class EditPlan extends React.Component {
                 }}
               />
 
-              <input
+              {/* <input
                 type='text'
                 placeholder={"City"}
                 className={styles.inputContactRight}
@@ -1653,11 +1769,18 @@ class EditPlan extends React.Component {
                     }
                   }));
                 }}
+              /> */}
+
+              <input
+                type='text'
+                placeholder={'City'}
+                id="locality" name="locality"
+                className={styles.inputContactRight}
               />
             </div>
 
             <div style={{display: 'flex'}}>
-              <input
+              {/* <input
                 type='text'
                 placeholder={"State"}
                 className={styles.inputContactLeft}
@@ -1684,6 +1807,19 @@ class EditPlan extends React.Component {
                     }
                   }));
                 }}
+              /> */}
+
+              <input
+                type='text'
+                placeholder={'State'}
+                className={styles.inputContactLeft}
+                id="state" name="state"
+              />
+              <input
+                type='text'
+                placeholder={'Zip Code'}
+                className={styles.inputContactRight}
+                id="postcode" name="postcode"
               />
             </div>
 

@@ -16,25 +16,16 @@ import {
   choosePaymentOption,
   submitPayment
 } from "../../reducers/actions/subscriptionActions";
-import PayPal from './Paypal';
+
 import { loadStripe } from '@stripe/stripe-js';
 
 import {withRouter} from "react-router";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {
-  faBars,
-  faBell,
-  faShareAlt,
-  faSearch,
-  faTruckLoading
-} from "@fortawesome/free-solid-svg-icons";
-import {WebNavBar, BottomNavBar} from "../NavBar";
-import {WrappedMap} from "../Map";
+
+import {WebNavBar} from "../NavBar";
 import axios from 'axios';
 import { API_URL } from '../../reducers/constants';
 
 import styles from "./paymentDetails.module.css";
-import { ThemeProvider } from "react-bootstrap";
 import PopLogin from '../PopLogin';
 import Popsignup from '../PopSignup';
 
@@ -50,8 +41,6 @@ const DATA_ERROR = 0;
 const CHECKOUT_ERROR = 1;
 const AMBASSADOR_ERROR = 2;
 const EMAIL_ERROR = 3;
-
-const sserdda = "Address 1";
 
 class PaymentDetails extends React.Component {
   constructor() {
@@ -154,11 +143,6 @@ class PaymentDetails extends React.Component {
           longitude: coords.longitude,
         });
 
-        // console.log(this.state.latitude);
-        // console.log(this.state.longitude);
-
-        // console.log(parseFloat(this.state.latitude))
-
         const temp_position = {lat:parseFloat(coords.latitude), lng:parseFloat(coords.longitude)}
 
         console.log(temp_position)
@@ -201,37 +185,7 @@ class PaymentDetails extends React.Component {
       zoom: 12,
     });
 
-    // if(this.props.customerId!=''){
 
-    //   axios.get(API_URL + "Profile/" + this.props.customerId)
-    //     .then(res=>{
-
-    //       this.setState({
-    //         latitude: res.data.result[0].customer_lat,
-    //         longitude: res.data.result[0].customer_long,
-    //       });
-
-    //       console.log(this.state.latitude);
-    //       console.log(this.state.longitude);
-
-    //       console.log(parseFloat(this.state.latitude))
-
-    //       const temp_position = {lat:parseFloat(this.state.latitude), lng:parseFloat(this.state.longitude)}
-
-    //       console.log(temp_position)
-
-    //       map.setCenter(temp_position)
-
-    //       if(this.state.latitude!=''){
-    //         map.setZoom(17);
-    //         new google.maps.Marker({
-    //           position: temp_position,
-    //           map,
-    //         });
-    //       }
-
-    //     })
-    // }
 
     const input = document.getElementById("pac-input");
     const options = {
@@ -457,10 +411,15 @@ class PaymentDetails extends React.Component {
       
     if(this.state.customerUid !== "GUEST"){
       let object = {
+        //uid: this.state.customerUid,
+        // first_name: this.props.addressInfo.firstName,
+        // last_name: this.props.addressInfo.lastName,
+        // phone: this.props.addressInfo.phoneNumber,
+        // email: this.props.email,
         uid: this.state.customerUid,
-        first_name: this.props.addressInfo.firstName,
-        last_name: this.props.addressInfo.lastName,
-        phone: this.props.addressInfo.phoneNumber,
+        first_name: this.state.firstName,
+        last_name: this.state.lastName,
+        phone: this.state.phone,
         email: this.props.email,
         address: this.state.street,
         unit: this.state.unit,
@@ -563,46 +522,73 @@ class PaymentDetails extends React.Component {
     console.log("delivery props: " + JSON.stringify(this.props));
   }
     
-  saveContactDetails() {
-    console.log("Saving contact details...");
+  // saveContactDetails() {
+  //   console.log("Saving contact details...");
       
-    if(this.state.customerUid !== "GUEST"){
-      let object = {
-        uid: this.state.customerUid,
-        first_name: this.state.firstName,
-        last_name: this.state.lastName,
-        phone: this.state.phone,
-        email: this.props.email,
-        address: this.props.street,
-        unit: this.props.address.unit,
-        city: this.props.address.city,
-        state: this.props.address.state,
-        zip: this.props.address.zip,
-        noti: "false"
-      };
+  //   if(this.state.customerUid !== "GUEST"){
+  //     // let object = {
+  //     //   uid: this.state.customerUid,
+  //     //   first_name: this.state.firstName,
+  //     //   last_name: this.state.lastName,
+  //     //   phone: this.state.phone,
+  //     //   email: this.props.email,
+  //     //   address: this.props.street,
+  //     //   unit: this.props.address.unit,
+  //     //   city: this.props.address.city,
+  //     //   state: this.props.address.state,
+  //     //   zip: this.props.address.zip,
+  //     //   noti: "false"
+  //     // };
+  //     let object = {
+  //       uid: this.state.customerUid,
+  //       first_name: this.state.firstName,
+  //       last_name: this.state.lastName,
+  //       phone: this.state.phone,
+  //       email: this.props.email,
+  //       address: this..street,
+  //       unit: this.pro.address.unit,
+  //       city: this.props.address.city,
+  //       state: this.props.address.state,
+  //       zip: this.props.address.zip,
+  //       noti: "false"
+  //     };
+
+  //     // let object = {
+  //     //   uid: this.state.customerUid,
+  //     //   first_name: this.props.addressInfo.firstName,
+  //     //   last_name: this.props.addressInfo.lastName,
+  //     //   phone: this.props.addressInfo.phoneNumber,
+  //     //   email: this.props.email,
+  //     //   address: this.state.street,
+  //     //   unit: this.state.unit,
+  //     //   city: this.state.city,
+  //     //   state: this.state.state,
+  //     //   zip: this.state.addressZip,
+  //     //   noti: "false"
+  //     // };
                   
-      console.log("(saveContactDetails) updateProfile object: " + JSON.stringify(object));
+  //     console.log("(saveContactDetails) updateProfile object: " + JSON.stringify(object));
       
-      axios
-        .post(API_URL + 'UpdateProfile', object)
-        .then(res => {
-          console.log(res);
-        })
-        .catch(err => {
-          console.log(err);
-          if (err.response) {
-            console.log("error: " + JSON.stringify(err.response));
-          }
-        });
-    }
+  //     axios
+  //       .post(API_URL + 'UpdateProfile', object)
+  //       .then(res => {
+  //         console.log(res);
+  //       })
+  //       .catch(err => {
+  //         console.log(err);
+  //         if (err.response) {
+  //           console.log("error: " + JSON.stringify(err.response));
+  //         }
+  //       });
+  //   }
       
-    this.props.changeContactDetails({
-      firstName: this.state.firstName,
-      lastName: this.state.lastName,
-      email: this.state.email,
-      phone: this.state.phone
-    });
-  }
+  //   this.props.changeContactDetails({
+  //     firstName: this.state.firstName,
+  //     lastName: this.state.lastName,
+  //     email: this.state.email,
+  //     phone: this.state.phone
+  //   });
+  // }
     
   savePaymentDetails() {
     console.log("Saving payment details...");
@@ -739,7 +725,7 @@ class PaymentDetails extends React.Component {
 
   proceedToPayment() {
     this.saveDeliveryDetails();
-    this.saveContactDetails();
+    //this.saveContactDetails();
 
     if(this.state.customerUid === "GUEST"){
       console.log("Before createGuestAccount");
@@ -830,13 +816,13 @@ class PaymentDetails extends React.Component {
     }
   }
 
-  saveAndProceedButton(){
-    this.saveDeliveryDetails();
-    this.saveContactDetails();
-    this.setState({
-      showPaymentInfo: true
-    });
-  }
+  // saveAndProceedButton(){
+  //   this.saveDeliveryDetails();
+  //   this.saveContactDetails();
+  //   this.setState({
+  //     showPaymentInfo: true
+  //   });
+  // }
 
   render() {
     let loggedInByPassword = false;
@@ -1051,7 +1037,7 @@ class PaymentDetails extends React.Component {
               type='text'
               placeholder={this.props.address.street==''?"street":this.props.address.street}
               className={styles.input}
-              id="pac-input"
+              id="pac-iput"
             />
 
             <div style={{display: 'flex'}}>
