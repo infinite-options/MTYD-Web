@@ -20,6 +20,8 @@ import {
   submitPayment
 } from "../../reducers/actions/subscriptionActions";
 
+import { API_URL } from '../../reducers/constants';
+
 import checkoutItems from '../../utils/CheckoutItems';
 import createGuestAccount from '../../utils/CreateGuestAccount';
 
@@ -238,7 +240,19 @@ const StripeCheckout = (props) => {
                   subtotal: props.paymentSummary.mealSubPrice,
                   amb: props.paymentSummary.ambassadorDiscount
                 },
-                () => {
+                (res) => {
+                  axios
+                    .post(API_URL + 'add_surprise/' + res.data.purchase_id)
+                    .then((res2) => {
+                      console.log("add_suprise res: ", res2);
+                    })
+                    .catch(err => {
+                      console.log(err);
+                      if (err.response) {
+                        console.log("add_suprise error: " + JSON.stringify(err.response));
+                      }
+                    });
+
                   history.push("/congrats")
                   //https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/add_surprise/400-000002
                 }

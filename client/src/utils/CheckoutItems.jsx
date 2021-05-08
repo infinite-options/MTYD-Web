@@ -13,9 +13,9 @@ export default async function checkoutItems(data, _callback) {
         process.env.REACT_APP_SERVER_BASE_URI + 'checkout',
         data
       )
-      .then(() => {
-        console.log("Checkout complete");
-        _callback();
+      .then((res) => {
+        console.log("Checkout complete; response: ", res);
+        _callback(res);
       }).catch((err) => {
         console.log(
           'error happened while posting to checkoutapi',

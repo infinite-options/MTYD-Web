@@ -522,74 +522,6 @@ class PaymentDetails extends React.Component {
     console.log("delivery props: " + JSON.stringify(this.props));
   }
     
-  // saveContactDetails() {
-  //   console.log("Saving contact details...");
-      
-  //   if(this.state.customerUid !== "GUEST"){
-  //     // let object = {
-  //     //   uid: this.state.customerUid,
-  //     //   first_name: this.state.firstName,
-  //     //   last_name: this.state.lastName,
-  //     //   phone: this.state.phone,
-  //     //   email: this.props.email,
-  //     //   address: this.props.street,
-  //     //   unit: this.props.address.unit,
-  //     //   city: this.props.address.city,
-  //     //   state: this.props.address.state,
-  //     //   zip: this.props.address.zip,
-  //     //   noti: "false"
-  //     // };
-  //     let object = {
-  //       uid: this.state.customerUid,
-  //       first_name: this.state.firstName,
-  //       last_name: this.state.lastName,
-  //       phone: this.state.phone,
-  //       email: this.props.email,
-  //       address: this..street,
-  //       unit: this.pro.address.unit,
-  //       city: this.props.address.city,
-  //       state: this.props.address.state,
-  //       zip: this.props.address.zip,
-  //       noti: "false"
-  //     };
-
-  //     // let object = {
-  //     //   uid: this.state.customerUid,
-  //     //   first_name: this.props.addressInfo.firstName,
-  //     //   last_name: this.props.addressInfo.lastName,
-  //     //   phone: this.props.addressInfo.phoneNumber,
-  //     //   email: this.props.email,
-  //     //   address: this.state.street,
-  //     //   unit: this.state.unit,
-  //     //   city: this.state.city,
-  //     //   state: this.state.state,
-  //     //   zip: this.state.addressZip,
-  //     //   noti: "false"
-  //     // };
-                  
-  //     console.log("(saveContactDetails) updateProfile object: " + JSON.stringify(object));
-      
-  //     axios
-  //       .post(API_URL + 'UpdateProfile', object)
-  //       .then(res => {
-  //         console.log(res);
-  //       })
-  //       .catch(err => {
-  //         console.log(err);
-  //         if (err.response) {
-  //           console.log("error: " + JSON.stringify(err.response));
-  //         }
-  //       });
-  //   }
-      
-  //   this.props.changeContactDetails({
-  //     firstName: this.state.firstName,
-  //     lastName: this.state.lastName,
-  //     email: this.state.email,
-  //     phone: this.state.phone
-  //   });
-  // }
-    
   savePaymentDetails() {
     console.log("Saving payment details...");
     this.props.changePaymentDetails({
@@ -725,7 +657,6 @@ class PaymentDetails extends React.Component {
 
   proceedToPayment() {
     this.saveDeliveryDetails();
-    //this.saveContactDetails();
 
     if(this.state.customerUid === "GUEST"){
       console.log("Before createGuestAccount");

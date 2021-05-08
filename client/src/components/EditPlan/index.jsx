@@ -18,6 +18,7 @@ import {WebNavBar, BottomNavBar} from "../NavBar";
 import {HomeLink, FootLink, AmbassadorLink, AddressLink} from "../Home/homeButtons";
 
 import fetchDiscounts from '../../utils/FetchDiscounts';
+import fetchAddressCoordinates from '../../utils/FetchAddressCoordinates';
 
 import PopLogin from '../PopLogin';
 import Popsignup from '../PopSignup';
@@ -571,6 +572,35 @@ class EditPlan extends React.Component {
         document.getElementById("state").value = sub.delivery_state;
         document.getElementById("pac-input").value = sub.delivery_address;
         document.getElementById("postcode").value = sub.delivery_zip;
+
+        fetchAddressCoordinates( //(address, city, state, zip, _callback) {
+          sub.delivery_address,
+          sub.delivery_city,
+          sub.delivery_state,
+          sub.delivery_zip,
+          (coords) => {
+            console.log("(default) Fetched coordinates: " + JSON.stringify(coords));
+    
+            this.setState({
+              latitude: coords.latitude,
+              longitude: coords.longitude,
+            });
+    
+            const temp_position = {lat:parseFloat(coords.latitude), lng:parseFloat(coords.longitude)}
+    
+            console.log(temp_position)
+    
+            map.setCenter(temp_position)
+    
+            if(coords.latitude !== ''){
+              map.setZoom(17);
+              new google.maps.Marker({
+                position: temp_position,
+                map,
+              });
+            }
+          }
+        );
 
         const input = document.getElementById("pac-input");
         const options = {
@@ -1186,8 +1216,44 @@ class EditPlan extends React.Component {
             console.log("props.plans: ", this.props.plans);
             console.log("new plan selected: ", this.props.plans[sub.meals][sub.deliveries]);
 
+            let rawData = newCurrentPlan.raw_data;
+
             console.log("BEFORE SET newDeliveryInfo");
-            let newDeliveryInfo = this.setDeliveryInfo(newCurrentPlan.raw_data);
+            let newDeliveryInfo = this.setDeliveryInfo(rawData);
+
+            document.getElementById("locality").value = rawData.delivery_city;
+            document.getElementById("state").value = rawData.delivery_state;
+            document.getElementById("pac-input").value = rawData.delivery_address;
+            document.getElementById("postcode").value = rawData.delivery_zip;
+    
+            fetchAddressCoordinates( //(address, city, state, zip, _callback) {
+              rawData.delivery_address,
+              rawData.delivery_city,
+              rawData.delivery_state,
+              rawData.delivery_zip,
+              (coords) => {
+                console.log("(click) Fetched coordinates: " + JSON.stringify(coords));
+        
+                this.setState({
+                  latitude: coords.latitude,
+                  longitude: coords.longitude,
+                });
+        
+                const temp_position = {lat:parseFloat(coords.latitude), lng:parseFloat(coords.longitude)}
+        
+                console.log(temp_position)
+        
+                map.setCenter(temp_position)
+        
+                if(coords.latitude !== ''){
+                  map.setZoom(17);
+                  new google.maps.Marker({
+                    position: temp_position,
+                    map,
+                  });
+                }
+              }
+            );
 
             this.setState(prevState => ({
               currentPlan: {...newCurrentPlan},
@@ -1445,10 +1511,60 @@ class EditPlan extends React.Component {
 
     object['email'] = this.props.email;
 
-    console.log("edits to save: ", JSON.stringify(object));
+    //console.log("edits to save: ", JSON.stringify(object));
+
+    let city = document.getElementById("locality").value;
+    let state = document.getElementById("state").value;
+    let address = document.getElementById("pac-input").value;
+    let zip = document.getElementById("postcode").value;
+
+    console.log("2 pac-input: ", document.getElementById("pac-input").value);
+
+  //   {
+  //     "first_name":"Welks",
+  //     "last_name":" C",
+  //     "purchase_uid": "400-000027",
+  //     "phone":"1234567890",
+  //     "email":"welks@gmail.com",
+  //     "address":"213 Mora",
+  //     "unit":"",
+  //     "city":"Santa Cruz",
+  //     "state":"CA",
+  //     "zip":"95064",
+  //     "cc_num":"4242424242424242",
+  //     "cc_cvv":"424",
+  //     "cc_zip":"95129",
+  //     "cc_exp_date":"2021-08-01"
+  // }
+
+    console.log("actual edits to save: ", {
+      first_name: object.first_name,
+      last_name: object.last_name,
+      purchase_uid: object.purchase_uid,
+      phone: object.phone,
+      address,
+      unit: object.unit,
+      city,
+      state,
+      zip,
+      email: object.email,
+      //instructions: "M4METEST"
+    });
 
     axios
-      .post(API_URL + 'update_delivery_info', object)
+      .post(API_URL + 'Update_Delivery_Info_Address', {
+        first_name: object.first_name,
+        last_name: object.last_name,
+        purchase_uid: object.purchase_uid,
+        phone: object.phone,
+        address,
+        unit: object.unit,
+        city,
+        state,
+        zip,
+        email: object.email,
+        //instructions: "M4METEST"
+      })
       .then((res) => {
         console.log("update delivery info res: ", res);
 
