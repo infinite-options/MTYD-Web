@@ -559,6 +559,8 @@ class PaymentDetails extends React.Component {
       console.log("(Ambassador code) Invalid email");
     }
       
+    console.log("amb code: ", this.state.ambassadorCode);
+
     axios
       .post(API_URL + 'brandAmbassador/generate_coupon',
         {
@@ -568,7 +570,7 @@ class PaymentDetails extends React.Component {
       )
       .then(res => {
         let items = res.data
-        console.log("ambassador code response: " + JSON.stringify(res));
+        console.log("ambassador code response: ", res);
 
         if(typeof(items) === "string") {
 
@@ -600,7 +602,7 @@ class PaymentDetails extends React.Component {
         }
       })
       .catch(err => {
-        console.log("Ambassador code error: " + err);
+        console.log("Ambassador code error: ", err);
       });
   }
 

@@ -1623,6 +1623,40 @@ class EditPlan extends React.Component {
 
   }
 
+  activeChanges = () => {
+
+    let updatedSummary = this.state.updatedPlan.payment_summary;
+    let currentSummary = this.state.currentPlan.payment_summary;
+
+    // base_amount: "0.00",
+    // taxes: "0.00",
+    // delivery_fee: "0.00",
+    // service_fee: "0.00",
+    // driver_tip: "2.00",
+    // discount_amount: "0.00",
+    // discount_rate: 0,
+    // ambassador_discount: "0.00",
+    // subtotal: "0.00",
+    // total: "0.00"
+
+    if(
+      updatedSummary.base_amount === currentSummary.base_amount &&
+      updatedSummary.discount_amount === currentSummary.discount_amount &&
+      updatedSummary.delivery_fee === currentSummary.delivery_fee &&
+      updatedSummary.service_fee === currentSummary.service_fee &&
+      updatedSummary.driver_tip === currentSummary.driver_tip &&
+      updatedSummary.ambassador_discount === currentSummary.ambassador_discount &&
+      updatedSummary.subtotal === currentSummary.subtotal &&
+      updatedSummary.total === currentSummary.total &&
+      updatedSummary.taxes === currentSummary.taxes
+    ) {
+      return false;
+    }
+
+    return true;
+
+  }
+
   mealsDelivery = () => {
 
     let deselectedPlateButton = styles.plateButton;
@@ -1993,7 +2027,7 @@ class EditPlan extends React.Component {
 
                 <div className={styles.summaryLeft} style={{fontWeight:'bold'}}></div>
 
-                <div className={styles.summaryRight}>
+                <div className={this.activeChanges() ? styles.summaryRight : styles.summaryGray}>
                   {this.state.updatedPlan.meals} Meals,{" "}
                   {this.state.updatedPlan.deliveries} Deliveries
                 </div>
@@ -2002,7 +2036,7 @@ class EditPlan extends React.Component {
                   Current
                 </div>
 
-                <div className={styles.summaryRight}>
+                <div className={this.activeChanges() ? styles.summaryRight : styles.summaryGray}>
                   Difference
                 </div>
 
@@ -2014,7 +2048,7 @@ class EditPlan extends React.Component {
                     Meal Subscription 
                   </div>
 
-                  <div className={styles.summaryRight}>
+                  {/* <div className={styles.summaryRight}>
                     ${this.state.updatedPlan.payment_summary.base_amount}
                   </div>
 
@@ -2023,6 +2057,18 @@ class EditPlan extends React.Component {
                   </div>
 
                   <div className={styles.summaryRight}>
+                    ${Math.abs(this.state.differenceSummary.base_amount).toFixed(2)}
+                  </div> */}
+
+                  <div className={this.activeChanges() ? styles.summaryRight : styles.summaryGray}>
+                    ${this.state.updatedPlan.payment_summary.base_amount}
+                  </div>
+
+                  <div className={styles.summaryRight}>
+                    ${this.state.currentPlan.payment_summary.base_amount}
+                  </div>
+
+                  <div className={this.activeChanges() ? styles.summaryRight : styles.summaryGray}>
                     ${Math.abs(this.state.differenceSummary.base_amount).toFixed(2)}
                   </div>
 
@@ -2035,7 +2081,7 @@ class EditPlan extends React.Component {
                   Discount
                   </div>
 
-                  <div className={styles.summaryRight}>
+                  <div className={this.activeChanges() ? styles.summaryRight : styles.summaryGray}>
                     {"-$" + this.state.updatedPlan.payment_summary.discount_amount}
                     <br />
                     {"(" + this.state.updatedPlan.payment_summary.discount_rate + "%)"}
@@ -2047,7 +2093,7 @@ class EditPlan extends React.Component {
                     {"(" + this.state.currentPlan.payment_summary.discount_rate + "%)"}
                   </div>
 
-                  <div className={styles.summaryRight}>
+                  <div className={this.activeChanges() ? styles.summaryRight : styles.summaryGray}>
                     {"$" + Math.abs(this.state.differenceSummary.discount_amount).toFixed(2)}
                     <br />
                     {"(" + Math.abs(this.state.differenceSummary.discount_rate) + "%)"}
@@ -2062,7 +2108,7 @@ class EditPlan extends React.Component {
                     Delivery Fee
                   </div>
 
-                  <div className={styles.summaryRight}>
+                  <div className={this.activeChanges() ? styles.summaryRight : styles.summaryGray}>
                     ${(this.state.updatedPlan.payment_summary.delivery_fee)}
                   </div>
 
@@ -2070,7 +2116,7 @@ class EditPlan extends React.Component {
                     ${(this.state.currentPlan.payment_summary.delivery_fee)}
                   </div>
 
-                  <div className={styles.summaryRight}>
+                  <div className={this.activeChanges() ? styles.summaryRight : styles.summaryGray}>
                     ${Math.abs(this.state.differenceSummary.delivery_fee).toFixed(2)}
                   </div>
 
@@ -2083,7 +2129,7 @@ class EditPlan extends React.Component {
                     Service Fee
                   </div>
 
-                  <div className={styles.summaryRight}>
+                  <div className={this.activeChanges() ? styles.summaryRight : styles.summaryGray}>
                     ${(this.state.updatedPlan.payment_summary.service_fee)}
                   </div>
 
@@ -2091,7 +2137,7 @@ class EditPlan extends React.Component {
                     ${(this.state.currentPlan.payment_summary.service_fee)}
                   </div>
 
-                  <div className={styles.summaryRight}>
+                  <div className={this.activeChanges() ? styles.summaryRight : styles.summaryGray}>
                     ${Math.abs(this.state.differenceSummary.service_fee).toFixed(2)}
                   </div>
 
@@ -2104,7 +2150,7 @@ class EditPlan extends React.Component {
                     Taxes
                   </div>
 
-                  <div className={styles.summaryRight}>
+                  <div className={this.activeChanges() ? styles.summaryRight : styles.summaryGray}>
                     ${(this.state.updatedPlan.payment_summary.taxes)}
                   </div>
 
@@ -2112,7 +2158,7 @@ class EditPlan extends React.Component {
                     ${(this.state.currentPlan.payment_summary.taxes)}
                   </div>
 
-                  <div className={styles.summaryRight}>
+                  <div className={this.activeChanges() ? styles.summaryRight : styles.summaryGray}>
                     ${Math.abs(this.state.differenceSummary.taxes).toFixed(2)}
                   </div>
 
@@ -2125,7 +2171,7 @@ class EditPlan extends React.Component {
                     Chef and Driver Tip
                   </div>
 
-                  <div className={styles.summaryRight}>
+                  <div className={this.activeChanges() ? styles.summaryRight : styles.summaryGray}>
                     ${(this.state.updatedPlan.payment_summary.driver_tip)}
                   </div>
 
@@ -2133,7 +2179,7 @@ class EditPlan extends React.Component {
                     ${(this.state.currentPlan.payment_summary.driver_tip)}
                   </div>
 
-                  <div className={styles.summaryRight}>
+                  <div className={this.activeChanges() ? styles.summaryRight : styles.summaryGray}>
                     ${Math.abs(this.state.differenceSummary.driver_tip).toFixed(2)}
                   </div>
 
@@ -2238,7 +2284,7 @@ class EditPlan extends React.Component {
                     Total
                   </div>
 
-                  <div className={styles.summaryRight}>
+                  <div className={this.activeChanges() ? styles.summaryRight : styles.summaryGray}>
                     ${this.state.updatedPlan.payment_summary.total}
                   </div>
 
@@ -2246,7 +2292,7 @@ class EditPlan extends React.Component {
                     ${this.state.currentPlan.payment_summary.total}
                   </div>
 
-                  <div className={styles.summaryRight}>
+                  <div className={this.activeChanges() ? styles.summaryRight : styles.summaryGray}>
                     ${this.state.differenceSummary.total}
                   </div>
               </div>
