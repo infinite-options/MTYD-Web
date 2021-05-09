@@ -131,10 +131,14 @@ class PaymentDetails extends React.Component {
     console.log("calling fetchAddressCoordinates...");
     
     fetchAddressCoordinates( //(address, city, state, zip, _callback) {
-      this.props.street,
-      this.props.city,
-      this.props.state,
-      this.props.zip,
+      // this.props.street,
+      // this.props.city,
+      // this.props.state,
+      // this.props.zip,
+      document.getElementById("pac-input").value,
+      document.getElementById("locality").value,
+      document.getElementById("state").value,
+      document.getElementById("postcode").value,
       (coords) => {
         console.log("(mount) Fetched coordinates: " + JSON.stringify(coords));
 
@@ -421,11 +425,16 @@ class PaymentDetails extends React.Component {
         last_name: this.state.lastName,
         phone: this.state.phone,
         email: this.props.email,
-        address: this.state.street,
+        // address: this.state.street,
+        // unit: this.state.unit,
+        // city: this.state.city,
+        // state: this.state.state,
+        // zip: this.state.addressZip,
+        address: document.getElementById("pac-input").value,
+        city: document.getElementById("locality").value,
+        state: document.getElementById("state").value,
+        zip: document.getElementById("postcode").value,
         unit: this.state.unit,
-        city: this.state.city,
-        state: this.state.state,
-        zip: this.state.addressZip,
         noti: "false"
       };
                   
@@ -445,19 +454,27 @@ class PaymentDetails extends React.Component {
     }
       
     this.props.changeDeliveryDetails({
-      street: this.state.street,
-      city: this.state.city,
-      state: this.state.state,
-      zip: this.state.addressZip,
+      // street: this.state.street,
+      // city: this.state.city,
+      // state: this.state.state,
+      // zip: this.state.addressZip,
+      street: document.getElementById("pac-input").value,
+      city: document.getElementById("locality").value,
+      state: document.getElementById("state").value,
+      zip: document.getElementById("postcode").value,
       unit: this.state.unit,
       instructions: this.state.instructions
     });
 
     fetchAddressCoordinates(
-      this.state.street,
-      this.state.city,
-      this.state.state,
-      this.state.addressZip,
+      // this.state.street,
+      // this.state.city,
+      // this.state.state,
+      // this.state.addressZip,
+      document.getElementById("pac-input").value,
+      document.getElementById("locality").value,
+      document.getElementById("state").value,
+      document.getElementById("postcode").value,
       (coords) => {
         console.log("Fetched coordinates: " + JSON.stringify(coords));
         this.setState({
@@ -666,11 +683,16 @@ class PaymentDetails extends React.Component {
           first_name: this.state.firstName,
           last_name: this.state.lastName,
           phone_number: this.state.phone,
-          address: this.state.street,
+          // address: this.state.street,
+          // unit: this.state.unit,
+          // city: this.state.city,
+          // state: this.state.state,
+          // zip_code: this.state.addressZip,
+          address: document.getElementById("pac-input").value,
+          city: document.getElementById("locality").value,
+          state: document.getElementById("state").value,
+          zip: document.getElementById("postcode").value,
           unit: this.state.unit,
-          city: this.state.city,
-          state: this.state.state,
-          zip_code: this.state.addressZip,
           latitude: this.state.latitude.toString(),
           longitude: this.state.longitude.toString(),
           referral_source: "WEB",
