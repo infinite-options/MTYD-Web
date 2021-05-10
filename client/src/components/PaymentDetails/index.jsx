@@ -293,20 +293,12 @@ class PaymentDetails extends React.Component {
       this.setState(prevState => ({
         mounted: true,
         customerUid: customerUid,
-        // street: this.props.address.street,
-        // city: this.props.address.city,
-        // state: this.props.address.state,
-        // addressZip: this.props.address.zip,
         unit: this.props.address.unit,
         instructions: this.props.instructions,
         firstName: this.props.addressInfo.firstName,
         lastName: this.props.addressInfo.lastName,
         email: this.props.email,
         phone: this.props.addressInfo.phoneNumber,
-        // name: this.props.creditCard.name,
-        // number: this.props.creditCard.number,
-        // cvv: this.props.creditCard.cvv,
-        // month: this.props.creditCard.month,
         year: this.props.creditCard.year,
         cardZip: this.props.creditCard.zip,
         recalculatingPrice: true,
@@ -546,13 +538,17 @@ class PaymentDetails extends React.Component {
     
   applyAmbassadorCode() {
 
-    if(this.state.email !== ""){
-      console.log("(Ambassador code) Valid email");
-    } else {
-      console.log("(Ambassador code) Invalid email");
-    }
+    // if(this.state.email !== ""){
+    //   console.log("(Ambassador code) Valid email");
+    // } else {
+    //   console.log("(Ambassador code) Invalid email");
+    // }
       
     console.log("amb code: ", this.state.ambassadorCode);
+
+    this.setState({
+      recalculatingPrice: true,
+    }, () => {
 
     if (this.state.customerUid === "GUEST") {
 
@@ -579,7 +575,7 @@ class PaymentDetails extends React.Component {
           this.displayError(AMBASSADOR_ERROR, res.data.message);
 
           this.setState(prevState => ({
-            recalculatingPrice: true,
+            //recalculatingPrice: true,
             paymentSummary: {
               ...prevState.paymentSummary,
               ambassadorDiscount: '0.00'
@@ -595,7 +591,7 @@ class PaymentDetails extends React.Component {
           console.log("(GUEST) result: ", res.data);
 
           this.setState(prevState => ({
-            recalculatingPrice: true,
+            //recalculatingPrice: true,
             paymentSummary: {
               ...prevState.paymentSummary,
               ambassadorDiscount: (
@@ -606,19 +602,6 @@ class PaymentDetails extends React.Component {
           }), () => {
             this.setTotal();
           });
-
-          // this.setState(prevState => ({
-          //   recalculatingPrice: true,
-          //   paymentSummary: {
-          //     ...prevState.paymentSummary,
-          //     ambassadorDiscount: (
-          //       items.discount_amount +
-          //       items.discount_shipping
-          //     ).toFixed(2)
-          //   }
-          // }), () => {
-          //   this.setTotal();
-          // });
 
         }
       })
@@ -646,7 +629,7 @@ class PaymentDetails extends React.Component {
           this.displayError(AMBASSADOR_ERROR, res.data.message);
 
           this.setState(prevState => ({
-            recalculatingPrice: true,
+            //recalculatingPrice: true,
             paymentSummary: {
               ...prevState.paymentSummary,
               ambassadorDiscount: '0.00'
@@ -662,7 +645,7 @@ class PaymentDetails extends React.Component {
           console.log("(CUST) result: ", res.data);
 
           this.setState(prevState => ({
-            recalculatingPrice: true,
+            //recalculatingPrice: true,
             paymentSummary: {
               ...prevState.paymentSummary,
               ambassadorDiscount: (
@@ -674,19 +657,6 @@ class PaymentDetails extends React.Component {
             this.setTotal();
           });
 
-          // this.setState(prevState => ({
-          //   recalculatingPrice: true,
-          //   paymentSummary: {
-          //     ...prevState.paymentSummary,
-          //     ambassadorDiscount: (
-          //       items.discount_amount +
-          //       items.discount_shipping
-          //     ).toFixed(2)
-          //   }
-          // }), () => {
-          //   this.setTotal();
-          // });
-
         }
       })
       .catch(err => {
@@ -694,6 +664,8 @@ class PaymentDetails extends React.Component {
       });
 
     }
+
+  });
 
     /*axios
       .post(API_URL + 'brandAmbassador/generate_coupon',
@@ -1430,6 +1402,7 @@ class PaymentDetails extends React.Component {
                   />
                   <button 
                     className={styles.codeButton}
+                    disabled={this.state.recalculatingPrice}
                     onClick={() => this.applyAmbassadorCode()}
                   >
                     Verify

@@ -270,13 +270,205 @@ class EditPlan extends React.Component {
     return sumAmountDue;
   }
 
+  /*applyAmbassadorCode() {
+
+    if(this.state.email !== ""){
+      console.log("(Ambassador code) Valid email");
+    } else {
+      console.log("(Ambassador code) Invalid email");
+    }
+      
+    console.log("amb code: ", this.state.ambassadorCode);
+
+    if (this.state.customerUid === "GUEST") {
+
+      axios
+      .post(API_URL + 'brandAmbassador/discount_checker',
+        {
+          code: this.state.ambassadorCode,
+          info: (
+            document.getElementById("pac-input").value + ', ' +
+            document.getElementById("locality").value + ', ' +
+            document.getElementById("state").value + ', ' +
+            document.getElementById("postcode").value
+          ),
+          IsGuest: 'TRUE'
+        }
+      )
+      .then(res => {
+        console.log("(GUEST) ambassador code response: ", res);
+
+        if (res.data.code !== 200) {
+
+          console.log("(GUEST) Invalid code");
+
+          this.displayError(AMBASSADOR_ERROR, res.data.message);
+
+          this.setState(prevState => ({
+            recalculatingPrice: true,
+            paymentSummary: {
+              ...prevState.paymentSummary,
+              ambassadorDiscount: '0.00'
+            }
+          }), () => {
+            this.setTotal();
+          });
+
+        } else {
+          
+          console.log("(GUEST) Valid code");
+
+          console.log("(GUEST) result: ", res.data);
+
+          this.setState(prevState => ({
+            recalculatingPrice: true,
+            paymentSummary: {
+              ...prevState.paymentSummary,
+              ambassadorDiscount: (
+                res.data.sub.discount_amount +
+                res.data.sub.discount_shipping
+              ).toFixed(2)
+            }
+          }), () => {
+            this.setTotal();
+          });
+
+        }
+      })
+      .catch(err => {
+        console.log("(GUEST) Ambassador code error: ", err);
+      });
+
+    } else {
+
+      axios
+      .post(API_URL + 'brandAmbassador/discount_checker',
+        {
+          code: this.state.ambassadorCode,
+          info: this.props.email,
+          IsGuest: 'False'
+        }
+      )
+      .then(res => {
+        console.log("(CUST) ambassador code response: ", res);
+
+        if (res.data.code !== 200) {
+
+          console.log("(CUST) Invalid code");
+
+          this.displayError(AMBASSADOR_ERROR, res.data.message);
+
+          this.setState(prevState => ({
+            recalculatingPrice: true,
+            paymentSummary: {
+              ...prevState.paymentSummary,
+              ambassadorDiscount: '0.00'
+            }
+          }), () => {
+            this.setTotal();
+          });
+
+        } else {
+          
+          console.log("(CUST) Valid code");
+
+          console.log("(CUST) result: ", res.data);
+
+          this.setState(prevState => ({
+            recalculatingPrice: true,
+            paymentSummary: {
+              ...prevState.paymentSummary,
+              ambassadorDiscount: (
+                res.data.sub.discount_amount +
+                res.data.sub.discount_shipping
+              ).toFixed(2)
+            }
+          }), () => {
+            this.setTotal();
+          });
+
+        }
+      })
+      .catch(err => {
+        console.log("(CUST) Ambassador code error: ", err);
+      });
+
+    }*/
+
   applyAmbassadorCode() {
 
     this.setState({
       refreshingPrice: true,
     }, () => {
-      
+
     axios
+      .post(API_URL + 'brandAmbassador/discount_checker',
+        {
+          code: this.state.ambassadorCode,
+          info: this.props.email,
+          IsGuest: 'False'
+        }
+      )
+      .then(res => {
+        console.log("(CUST) ambassador code response: ", res);
+
+        if (res.data.code !== 200) {
+
+          console.log("(CUST) Invalid code");
+
+          this.displayErrorModal('Hmm...', res.data.message, 'Go Back', 'back');
+
+          this.setState(prevState => ({
+
+            updatedPlan: {
+              ...prevState.updatedPlan,
+              payment_summary: {
+                ...prevState.updatedPlan.payment_summary,
+                ambassador_discount: '0.00'
+              }
+            }
+
+          }), () => {
+            this.changePlans(
+              this.state.updatedPlan.meals,
+              this.state.updatedPlan.deliveries
+            );
+          });
+
+        } else {
+          
+          console.log("(CUST) Valid code");
+
+          console.log("(CUST) result: ", res.data);
+
+          this.setState(prevState => ({
+
+            updatedPlan: {
+              ...prevState.updatedPlan,
+              payment_summary: {
+                ...prevState.updatedPlan.payment_summary,
+                ambassador_discount: (
+                  res.data.sub.discount_amount +
+                  res.data.sub.discount_shipping
+                ).toFixed(2)
+              }
+            }
+            
+          }), () => {
+            this.changePlans(
+              this.state.updatedPlan.meals,
+              this.state.updatedPlan.deliveries
+            );
+          });
+
+        }
+
+      })
+      .catch(err => {
+        console.log("Ambassador code error: " + err);
+      });
+
+    /*axios
       .post(API_URL + 'brandAmbassador/generate_coupon',
         {
           amb_email: this.state.ambassadorCode,
@@ -339,6 +531,7 @@ class EditPlan extends React.Component {
       .catch(err => {
         console.log("Ambassador code error: " + err);
       });
+    });*/
 
     });
   }
@@ -2251,6 +2444,7 @@ class EditPlan extends React.Component {
                 />
                 <button 
                   className={styles.codeButton}
+                  disabled={this.state.refreshingPrice}
                   onClick={() => this.applyAmbassadorCode()}
                 >
                   Verify
