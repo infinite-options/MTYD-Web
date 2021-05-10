@@ -461,7 +461,7 @@ class PaymentDetails extends React.Component {
       document.getElementById("state").value,
       document.getElementById("postcode").value,
       (coords) => {
-        
+
         console.log("Fetched coordinates: " + JSON.stringify(coords));
         this.setState({
           latitude: coords.latitude,
@@ -495,8 +495,8 @@ class PaymentDetails extends React.Component {
                 fetchingFees: false
               }), () => {
                 this.setTotal();
-                console.log("catOptions taxAmount: " + this.state.paymentSummary.taxAmount);
-                console.log("catOptions new payment summary: ", this.state.paymentSummary);
+                console.log("(1) catOptions taxAmount: " + this.state.paymentSummary.taxAmount);
+                console.log("(1) catOptions new payment summary: ", this.state.paymentSummary);
               });
               //this.setTotal();
               //console.log("catOptions taxAmount: " + this.state.paymentSummary.taxAmount);
@@ -514,6 +514,8 @@ class PaymentDetails extends React.Component {
                 fetchingFees: false
               }), () => {
                 this.setTotal();
+                console.log("(2) catOptions taxAmount: " + this.state.paymentSummary.taxAmount);
+                console.log("(2) catOptions new payment summary: ", this.state.paymentSummary);
               });
               //this.setTotal();
             }

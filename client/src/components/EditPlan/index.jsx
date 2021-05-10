@@ -2312,7 +2312,7 @@ class EditPlan extends React.Component {
                 }
                 onClick={() => this.confirmChanges()}
               >
-                Complete Payment
+                Update Meal Plan
               </button>
 
               <button 
