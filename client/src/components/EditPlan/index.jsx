@@ -157,7 +157,8 @@ class EditPlan extends React.Component {
       errorMessage: '',
       errorLink: '',
       errorLinkText: '',
-      errorHeader: ''
+      errorHeader: '',
+      processingChanges: false
     };
   }
 
@@ -565,10 +566,6 @@ class EditPlan extends React.Component {
 
         console.log("sub at index 0: ", sub);
 
-        // document.getElementById("locality").value = this.props.city;
-        // document.getElementById("state").value = this.props.state;
-        // document.getElementById("pac-input").value = this.props.street;
-        // document.getElementById("postcode").value = this.props.zip;
         document.getElementById("locality").value = sub.delivery_city;
         document.getElementById("state").value = sub.delivery_state;
         document.getElementById("pac-input").value = sub.delivery_address;
@@ -718,13 +715,19 @@ class EditPlan extends React.Component {
     } else if (setDefault === UPDATED) {
       console.log("(UPDATED) current Plan: ", this.state.currentPlan);
       console.log("(UPDATED) updated Plan: ", this.state.updatedPlan);
+      console.log("(UPDATED) deliveryInfo: ", this.state.deliveryInfo);
+
+      console.log("(DEFAULT) current Plan: ", defaultCurrentPlan);
+      console.log("(DEFAULT) updated Plan: ", defaultUpdatedPlan);
+      console.log("(DEFAULT) deliveryInfo: ", defaultDeliveryInfo);
 
       this.setState(prevState => ({
         subscriptionsList: newSubList,
         subscriptionsLoaded: true,
-        // currentPlan: {...defaultCurrentPlan},
-        // updatedPlan: {...defaultUpdatedPlan},
-        // deliveryInfo: {...defaultDeliveryInfo}
+        currentPlan: {...defaultCurrentPlan},
+        updatedPlan: {...defaultUpdatedPlan},
+        deliveryInfo: {...defaultDeliveryInfo},
+        processingChanges: false
       }), () => {
         this.calculateDifference();
       });
@@ -852,37 +855,47 @@ class EditPlan extends React.Component {
         start_delivery_date: ""
       }
       console.log("(new card) object for change_purchase: ", JSON.stringify(object));
-
     }
 
-    // axios.post(API_URL + 'change_purchase/' + this.state.updatedPlan.raw_data.purchase_uid, object)
-    //   .then(res => {
-    //     console.log("change_purchase response: ", res);
-    //     axios.get(API_URL + 'next_meal_info/' + this.state.customerUid)
-    //       .then(res => {
-    //         console.log("(after change) next meal info res: ", res);
+    this.setState({
+      processingChanges: true
+    }, () => {
 
-    //         let fetchedSubscriptions = res.data.result;
+    axios.post(API_URL + 'change_purchase/' + this.state.updatedPlan.raw_data.purchase_uid, object)
+      .then(res => {
+        console.log("change_purchase response: ", res);
+        axios.get(API_URL + 'next_meal_info/' + this.state.customerUid)
+          .then(res => {
+            console.log("(after change) next meal info res: ", res);
 
-    //         this.displayErrorModal('Success!', `
-    //           OLD MEAL PLAN: ${this.state.currentPlan.meals} meals, ${this.state.currentPlan.deliveries} deliveries
-    //           NEW MEAL PLAN: ${this.state.updatedPlan.meals} meals, ${this.state.updatedPlan.deliveries} deliveries
-    //         `, 
-    //           'OK', 'back'
-    //         );
+            let fetchedSubscriptions = res.data.result;
 
-    //         this.loadSubscriptions(fetchedSubscriptions, this.state.discounts, UPDATED);
-    //       })
-    //       .catch(err => {
-    //         console.log(err);
-    //       });
-    //   })
-    //   .catch(err => {
-    //     console.log(err);
-    //     if (err.response) {
-    //       console.log("error: " + JSON.stringify(err.response));
-    //     }
-    //   });
+            this.displayErrorModal('Success!', `
+              OLD MEAL PLAN: ${this.state.currentPlan.meals} meals, ${this.state.currentPlan.deliveries} deliveries
+              NEW MEAL PLAN: ${this.state.updatedPlan.meals} meals, ${this.state.updatedPlan.deliveries} deliveries
+            `, 
+              'OK', 'back'
+            );
+
+            console.log("subscriptions loaded? ", this.state.subscriptionsLoaded);
+            console.log(this.state.defaultSet === false);
+            console.log(this.state.refreshingPrice);
+            console.log(this.activeChanges());
+
+            this.loadSubscriptions(fetchedSubscriptions, this.state.discounts, UPDATED);
+          })
+          .catch(err => {
+            console.log(err);
+          });
+      })
+      .catch(err => {
+        console.log(err);
+        if (err.response) {
+          console.log("error: " + JSON.stringify(err.response));
+        }
+      });
+
+    });
   }
 
   handleCheck = (cb) => {
@@ -2294,7 +2307,8 @@ class EditPlan extends React.Component {
                   (!this.state.subscriptionsLoaded && 
                   this.state.defaultSet === false) ||
                   this.state.refreshingPrice === true || 
-                  !this.activeChanges()
+                  !this.activeChanges() ||
+                  this.state.processingChanges
                 }
                 onClick={() => this.confirmChanges()}
               >
@@ -2307,7 +2321,8 @@ class EditPlan extends React.Component {
                   (!this.state.subscriptionsLoaded && 
                   this.state.defaultSet === false) ||
                   this.state.refreshingPrice === true || 
-                  !this.activeChanges()
+                  !this.activeChanges() ||
+                  this.state.processingChanges
                 }
                 onClick={() => this.discardChanges()}
               >

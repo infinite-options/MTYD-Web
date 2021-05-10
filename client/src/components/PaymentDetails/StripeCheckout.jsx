@@ -116,10 +116,7 @@ const StripeCheckout = (props) => {
     currency: "usd"
   };
 
-  console.log("orderData: " + JSON.stringify(orderData));
-
   const changeCardholderName = (name) => {
-    console.log("Name changes: " + name);
     setCardholderName(name);
   }
 
@@ -134,17 +131,14 @@ const StripeCheckout = (props) => {
     };
   
     if (cardholderName !== null) {
-      console.log("cardholderName is not null");
       data["billing_details"]["name"] = cardholderName;
-    } else {
-      console.log("cardholderName is null");
     }
   
     const cardElement = await elements.getElement(CardElement);
   
-    console.log("stripe: ", stripe);
-    console.log("cardElement: ", cardElement);
-    console.log("data: ", data);
+    // console.log("stripe: ", stripe);
+    // console.log("cardElement: ", cardElement);
+    // console.log("data: ", data);
 
     orderData.customer_uid = props.customerUid;
     orderData.business_code = props.deliveryInstructions;
