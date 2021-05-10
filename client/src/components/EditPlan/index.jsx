@@ -848,14 +848,14 @@ class EditPlan extends React.Component {
           itm_business_uid: this.props.selectedPlan.itm_business_uid
         }],
         new_item_id: this.props.selectedPlan.item_uid,
-        purchase_id: this.state.updatedPlan.raw_data.purchase_id,
+        purchase_id: this.state.updatedPlan.raw_data.purchase_uid,
         start_delivery_date: ""
       }
       console.log("(new card) object for change_purchase: ", JSON.stringify(object));
 
     }
 
-    axios.post(API_URL + 'change_purchase/' + this.state.updatedPlan.raw_data.purchase_id, object)
+    axios.post(API_URL + 'change_purchase/' + this.state.updatedPlan.raw_data.purchase_uid, object)
       .then(res => {
         console.log("change_purchase response: ", res);
         axios.get(API_URL + 'next_meal_info/' + this.state.customerUid)
@@ -1628,17 +1628,6 @@ class EditPlan extends React.Component {
     let updatedSummary = this.state.updatedPlan.payment_summary;
     let currentSummary = this.state.currentPlan.payment_summary;
 
-    // base_amount: "0.00",
-    // taxes: "0.00",
-    // delivery_fee: "0.00",
-    // service_fee: "0.00",
-    // driver_tip: "2.00",
-    // discount_amount: "0.00",
-    // discount_rate: 0,
-    // ambassador_discount: "0.00",
-    // subtotal: "0.00",
-    // total: "0.00"
-
     if(
       updatedSummary.base_amount === currentSummary.base_amount &&
       updatedSummary.discount_amount === currentSummary.discount_amount &&
@@ -2047,18 +2036,6 @@ class EditPlan extends React.Component {
                   <div className={styles.summaryLeft}>
                     Meal Subscription 
                   </div>
-
-                  {/* <div className={styles.summaryRight}>
-                    ${this.state.updatedPlan.payment_summary.base_amount}
-                  </div>
-
-                  <div className={styles.summaryRight}>
-                    ${this.state.currentPlan.payment_summary.base_amount}
-                  </div>
-
-                  <div className={styles.summaryRight}>
-                    ${Math.abs(this.state.differenceSummary.base_amount).toFixed(2)}
-                  </div> */}
 
                   <div className={this.activeChanges() ? styles.summaryRight : styles.summaryGray}>
                     ${this.state.updatedPlan.payment_summary.base_amount}

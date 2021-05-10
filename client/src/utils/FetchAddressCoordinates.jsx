@@ -37,6 +37,8 @@ export default async function fetchAddressCoordinates(address, city, state, zip,
         console.log("Latitude: " + latitude);
         console.log("Longitude: " + longitude);
         _callback({ latitude, longitude });
+      } else {
+        console.log("(FAC) location api error");
       }
       
     })

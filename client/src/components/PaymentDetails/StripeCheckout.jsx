@@ -145,8 +145,6 @@ const StripeCheckout = (props) => {
     console.log("stripe: ", stripe);
     console.log("cardElement: ", cardElement);
     console.log("data: ", data);
-  
-    //changeLoadingState(true);
 
     orderData.customer_uid = props.customerUid;
     orderData.business_code = props.deliveryInstructions;
@@ -198,7 +196,7 @@ const StripeCheckout = (props) => {
 
             console.log("customerUid before checkout: ", props.customerUid);
 
-            if(props.customerUid !== 'GUEST') {
+            // if(props.customerUid !== 'GUEST') {
               console.log("STRIPE CHECKOUT (1) -- not a guest");
               console.log("STRIPE CHECKOUT (1) -- amount_due: " + props.paymentSummary.total);
       
@@ -245,12 +243,14 @@ const StripeCheckout = (props) => {
                     .post(API_URL + 'add_surprise/' + res.data.purchase_id)
                     .then((res2) => {
                       console.log("add_suprise res: ", res2);
+                      changeLoadingState(false);
                     })
                     .catch(err => {
                       console.log(err);
                       if (err.response) {
                         console.log("add_suprise error: " + JSON.stringify(err.response));
                       }
+                      changeLoadingState(false);
                     });
 
                   history.push("/congrats")
@@ -258,10 +258,10 @@ const StripeCheckout = (props) => {
                 }
               );
 
-            } else {
-              console.log("STRIPE CHECKOUT (3) -- error; wrong data");
-              changeLoadingState(false);
-            }
+            // } else {
+            //   console.log("STRIPE CHECKOUT (3) -- error; wrong data");
+            //   changeLoadingState(false);
+            // }
 
           })
           .catch(err => {

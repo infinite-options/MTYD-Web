@@ -88,7 +88,8 @@ class PaymentDetails extends React.Component {
       errorType: CLOSED,
       errorMessage: "",
       paymentType: 'NULL',
-      fetchingFees: true,
+      fetchingFees: false,
+      loadingMap: true,
       recalculatingPrice: false,
       stripePromise: null,
       createGuestErrorCode: -1
@@ -130,11 +131,7 @@ class PaymentDetails extends React.Component {
 
     console.log("calling fetchAddressCoordinates...");
     
-    fetchAddressCoordinates( //(address, city, state, zip, _callback) {
-      // this.props.street,
-      // this.props.city,
-      // this.props.state,
-      // this.props.zip,
+    fetchAddressCoordinates( //(address, city, state, zip, _callback) {å
       document.getElementById("pac-input").value,
       document.getElementById("locality").value,
       document.getElementById("state").value,
@@ -145,6 +142,7 @@ class PaymentDetails extends React.Component {
         this.setState({
           latitude: coords.latitude,
           longitude: coords.longitude,
+          loadingMap: false
         });
 
         const temp_position = {lat:parseFloat(coords.latitude), lng:parseFloat(coords.longitude)}
@@ -207,10 +205,6 @@ class PaymentDetails extends React.Component {
       let postcode = '';
       let city = '';
       let state = '';
-      // let address1 = this.props.address.street;
-      // let city = this.props.address.city;
-      // let state = this.props.address.state;
-      // let postcode = this.props.address.zip;
 
       let address1Field = document.querySelector("#pac-input");
       let postalField = document.querySelector("#postcode");
@@ -425,11 +419,6 @@ class PaymentDetails extends React.Component {
         last_name: this.state.lastName,
         phone: this.state.phone,
         email: this.props.email,
-        // address: this.state.street,
-        // unit: this.state.unit,
-        // city: this.state.city,
-        // state: this.state.state,
-        // zip: this.state.addressZip,
         address: document.getElementById("pac-input").value,
         city: document.getElementById("locality").value,
         state: document.getElementById("state").value,
@@ -452,12 +441,10 @@ class PaymentDetails extends React.Component {
           }
         });
     }
+
+    console.log("(2) Saving delivery details");
       
     this.props.changeDeliveryDetails({
-      // street: this.state.street,
-      // city: this.state.city,
-      // state: this.state.state,
-      // zip: this.state.addressZip,
       street: document.getElementById("pac-input").value,
       city: document.getElementById("locality").value,
       state: document.getElementById("state").value,
@@ -466,26 +453,31 @@ class PaymentDetails extends React.Component {
       instructions: this.state.instructions
     });
 
+    console.log("(3) Saving delivery details");
+
     fetchAddressCoordinates(
-      // this.state.street,
-      // this.state.city,
-      // this.state.state,
-      // this.state.addressZip,
       document.getElementById("pac-input").value,
       document.getElementById("locality").value,
       document.getElementById("state").value,
       document.getElementById("postcode").value,
       (coords) => {
+        
         console.log("Fetched coordinates: " + JSON.stringify(coords));
         this.setState({
           latitude: coords.latitude,
-          longitude: coords.longitude
+          longitude: coords.longitude,
+          loadingMap: false
         });
+
+        console.log("Calling categorical options...");
         axios
           .get(`${API_URL}categoricalOptions/${coords.longitude},${coords.latitude}`)
           .then((response) => {
-            console.log("Categorical Options response: " + JSON.stringify(response));
+            console.log("Categorical Options response: ", response);
+
             if(response.data.result.length !== 0) {
+
+              console.log("cat options for: ", document.getElementById("pac-input").value);
               this.setState(prevState => ({
                 recalculatingPrice: true,
                 paymentSummary: {
@@ -518,7 +510,8 @@ class PaymentDetails extends React.Component {
                   serviceFee: "0.00",
                   deliveryFee: "0.00",
                   taxAmount: "0.00"
-                }
+                },
+                fetchingFees: false
               }), () => {
                 this.setTotal();
               });
@@ -534,9 +527,7 @@ class PaymentDetails extends React.Component {
       }
     );
 
-    //console.log("NEW COORDIANTES: " + JSON.stringify(coordinates));
-
-    console.log("delivery props: " + JSON.stringify(this.props));
+    //console.log("delivery props: " + JSON.stringify(this.props));
   }
     
   savePaymentDetails() {
@@ -685,11 +676,6 @@ class PaymentDetails extends React.Component {
           first_name: this.state.firstName,
           last_name: this.state.lastName,
           phone_number: this.state.phone,
-          // address: this.state.street,
-          // unit: this.state.unit,
-          // city: this.state.city,
-          // state: this.state.state,
-          // zip_code: this.state.addressZip,
           address: document.getElementById("pac-input").value,
           city: document.getElementById("locality").value,
           state: document.getElementById("state").value,
@@ -770,14 +756,6 @@ class PaymentDetails extends React.Component {
 
     }
   }
-
-  // saveAndProceedButton(){
-  //   this.saveDeliveryDetails();
-  //   this.saveContactDetails();
-  //   this.setState({
-  //     showPaymentInfo: true
-  //   });
-  // }
 
   render() {
     let loggedInByPassword = false;
@@ -1100,10 +1078,11 @@ class PaymentDetails extends React.Component {
             <div style={{textAlign: 'center'}}>
               <button 
                 className={styles.orangeBtn}
+                disabled={this.state.loadingMap || this.state.fetchingFees}
                 onClick={()=>this.proceedToPayment()}
               >
                 Save and Proceed
-              </button>
+              </button> 
             </div> 
 
           </div>
@@ -1112,7 +1091,10 @@ class PaymentDetails extends React.Component {
             <div style={{width: '84%', marginLeft: '6%'}}>
               <div
                 style={{
-                  display: !this.state.showPaymentInfo?'block':'none',
+                  display: (
+                    !this.state.showPaymentInfo ||
+                    this.state.fetchingFees
+                  ) ?'block':'none',
                   fontWeight: '500',
                   textAlign: 'left'
                 }}
@@ -1125,7 +1107,10 @@ class PaymentDetails extends React.Component {
 
               <div
                 style={{
-                  visibility:this.state.showPaymentInfo?'visible':'hidden'
+                  visibility: (
+                    this.state.showPaymentInfo && 
+                    !this.state.fetchingFees
+                  ) ? 'visible' : 'hidden'
                 }}
               > 
                 <div 
@@ -1322,7 +1307,7 @@ class PaymentDetails extends React.Component {
             </div>
               
             {
-              this.state.showPaymentInfo
+              (this.state.showPaymentInfo && !this.state.fetchingFees)
                 ? (<>
                     <div style={{width: '100%'}}>
                       <h6 className={styles.sectionHeaderRight2}>Complete Payment</h6>
@@ -1343,6 +1328,7 @@ class PaymentDetails extends React.Component {
                               email={this.state.email}
                               customerUid={this.state.customerUid}
                               phone={this.state.phone}
+                              fetchingFees={this.state.fetchingFees}
                             />
                           </div>
                       </div>
