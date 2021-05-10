@@ -65,7 +65,8 @@ class ChoosePlan extends React.Component {
       login_seen:false,
       signUpSeen:false,
       total: '0.00',
-      numDeliveryDays: 0
+      numDeliveryDays: 0,
+      profileLoaded: false
     };
   }
 
@@ -149,6 +150,11 @@ class ChoosePlan extends React.Component {
           this.props.changeAddressZip(data.customer_zip)
           this.props.changeAddressPhone(data.customer_phone_num)
           //console.log("(2) choose-plan address props: " + JSON.stringify(this.props.address));
+
+          this.setState({
+            profileLoaded: true
+          });
+
         })
         .catch(err => {
           console.log(err)
@@ -178,6 +184,11 @@ class ChoosePlan extends React.Component {
           this.props.changeAddressZip(data.customer_zip)
           this.props.changeAddressPhone(data.customer_phone_num)
           //console.log("(3) choose-plan address props: " + JSON.stringify(this.props.address));
+
+          this.setState({
+            profileLoaded: true
+          });
+
         })
         .catch(err => {
           console.log(err)
@@ -194,7 +205,8 @@ class ChoosePlan extends React.Component {
       this.setState({
         mounted: true,
         customerUid: "NULL",
-        loggedIn: false
+        loggedIn: false,
+        profileLoaded: true
       });
       //this.props.history.push("/");
     }
@@ -493,6 +505,10 @@ class ChoosePlan extends React.Component {
     return deal;
   };
 
+  proceedToPayment = () => {
+    this.props.history.push("/payment-details");
+  }
+
   render() {
     if (!this.state.mounted) {
       return null;
@@ -636,9 +652,18 @@ class ChoosePlan extends React.Component {
                                 That's only ${this.calculateDeal()} per freshly cooked meal
                               </div>
                               <div className={styles.proceedWrapper}>
-                                <Link className={styles.proceedBtn} to='/payment-details'>
+                                {/* <Link className={styles.proceedBtn} to='/payment-details'>
                                   PROCEED
-                                </Link>
+                                </Link> */}
+                                <button 
+                                  className={styles.proceedBtn} 
+                                  disabled={!this.state.profileLoaded}
+                                  onClick={() => {
+                                    this.proceedToPayment()
+                                  }}
+                                >
+                                  PROCEED
+                                </button>
                               </div>
                             </div>
                             </div>

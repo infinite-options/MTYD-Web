@@ -107,7 +107,41 @@ export class Congrats extends Component {
         {/*Change the following to medium later on, using bold for testing*/}
 		<br/>
         <p style = {{marginLeft: '80px', font: 'SF Pro', fontWeight:'medium', fontSize: '24px'}}>To your address:<br/></p>
-		<p style = {{marginTop:'-20px', font: 'SF Pro',fontWeight: 'bold', fontSize: '24px' , color:'black', marginLeft:'80px'}}>{this.state.user_address}</p>
+
+		{/* <p 
+      style = {{
+        marginTop:'-20px', 
+        font: 'SF Pro',
+        fontWeight: 'bold', 
+        fontSize: '24px', 
+        color:'black', 
+        marginLeft:'80px'
+      }}
+    >
+      {this.state.user_address}
+    </p> */}
+
+    <p 
+      style = {{
+        marginTop:'-20px', 
+        font: 'SF Pro',
+        fontWeight: 'bold', 
+        fontSize: '24px', 
+        color:'black', 
+        marginLeft:'80px'
+      }}
+    >
+      {
+        this.props.location.delivery_address + ", "
+      }
+      <br />
+      {
+        this.props.location.delivery_city + ", " +
+        this.props.location.delivery_state + ", " +
+        this.props.location.delivery_zip
+      }
+    </p>
+
         </div>
        {(() => {
 			if(this.state.user_id != "not login"){
