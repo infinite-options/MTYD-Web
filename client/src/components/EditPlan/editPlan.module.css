@@ -1042,7 +1042,7 @@
   margin-bottom: 10px;
   font-weight: bold;
 }
-.summarySubtotalGray {
+.summarySubGray {
   width: 22%;
   text-align: right;
   margin-top: 20px;
@@ -1056,6 +1056,14 @@
   margin-top: 20px;
   margin-bottom: 10px;
   font-weight: bold;
+}
+.summarySubLeftGray {
+  width: 14%;
+  text-align: right;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  font-weight: bold;
+  color: #9c9c9c;
 }
 .summaryUpdated {
   width: 19%;

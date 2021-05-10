@@ -855,34 +855,34 @@ class EditPlan extends React.Component {
 
     }
 
-    axios.post(API_URL + 'change_purchase/' + this.state.updatedPlan.raw_data.purchase_uid, object)
-      .then(res => {
-        console.log("change_purchase response: ", res);
-        axios.get(API_URL + 'next_meal_info/' + this.state.customerUid)
-          .then(res => {
-            console.log("(after change) next meal info res: ", res);
+    // axios.post(API_URL + 'change_purchase/' + this.state.updatedPlan.raw_data.purchase_uid, object)
+    //   .then(res => {
+    //     console.log("change_purchase response: ", res);
+    //     axios.get(API_URL + 'next_meal_info/' + this.state.customerUid)
+    //       .then(res => {
+    //         console.log("(after change) next meal info res: ", res);
 
-            let fetchedSubscriptions = res.data.result;
+    //         let fetchedSubscriptions = res.data.result;
 
-            this.displayErrorModal('Success!', `
-              OLD MEAL PLAN: ${this.state.currentPlan.meals} meals, ${this.state.currentPlan.deliveries} deliveries
-              NEW MEAL PLAN: ${this.state.updatedPlan.meals} meals, ${this.state.updatedPlan.deliveries} deliveries
-            `, 
-              'OK', 'back'
-            );
+    //         this.displayErrorModal('Success!', `
+    //           OLD MEAL PLAN: ${this.state.currentPlan.meals} meals, ${this.state.currentPlan.deliveries} deliveries
+    //           NEW MEAL PLAN: ${this.state.updatedPlan.meals} meals, ${this.state.updatedPlan.deliveries} deliveries
+    //         `, 
+    //           'OK', 'back'
+    //         );
 
-            this.loadSubscriptions(fetchedSubscriptions, this.state.discounts, UPDATED);
-          })
-          .catch(err => {
-            console.log(err);
-          });
-      })
-      .catch(err => {
-        console.log(err);
-        if (err.response) {
-          console.log("error: " + JSON.stringify(err.response));
-        }
-      });
+    //         this.loadSubscriptions(fetchedSubscriptions, this.state.discounts, UPDATED);
+    //       })
+    //       .catch(err => {
+    //         console.log(err);
+    //       });
+    //   })
+    //   .catch(err => {
+    //     console.log(err);
+    //     if (err.response) {
+    //       console.log("error: " + JSON.stringify(err.response));
+    //     }
+    //   });
   }
 
   handleCheck = (cb) => {
@@ -2242,7 +2242,7 @@ class EditPlan extends React.Component {
                 >
                   Verify
                 </button>
-                <div className={styles.summarySubLeft}>
+                <div className={this.activeChanges() ? styles.summarySubLeft : styles.summarySubLeftGray}>
                   -${this.state.updatedPlan.payment_summary.ambassador_discount}
                 </div>
 
@@ -2250,7 +2250,7 @@ class EditPlan extends React.Component {
                   -${this.state.currentPlan.payment_summary.ambassador_discount}
                 </div>
 
-                <div className={styles.summarySubtotal}>
+                <div className={this.activeChanges() ? styles.summarySubtotal : styles.summarySubGray}>
                   ${this.state.differenceSummary.ambassador_discount}
                 </div>
               </div>
@@ -2293,7 +2293,8 @@ class EditPlan extends React.Component {
                 disabled={
                   (!this.state.subscriptionsLoaded && 
                   this.state.defaultSet === false) ||
-                  this.state.refreshingPrice === true
+                  this.state.refreshingPrice === true || 
+                  !this.activeChanges()
                 }
                 onClick={() => this.confirmChanges()}
               >
@@ -2305,7 +2306,8 @@ class EditPlan extends React.Component {
                 disabled={
                   (!this.state.subscriptionsLoaded && 
                   this.state.defaultSet === false) ||
-                  this.state.refreshingPrice === true
+                  this.state.refreshingPrice === true || 
+                  !this.activeChanges()
                 }
                 onClick={() => this.discardChanges()}
               >
