@@ -557,7 +557,7 @@ class PaymentDetails extends React.Component {
     if (this.state.customerUid === "GUEST") {
 
       axios
-      .post(API_URL + 'brandAmbassador/generate_coupon',
+      .post(API_URL + 'brandAmbassador/discount_checker',
         {
           code: this.state.ambassadorCode,
           info: (
@@ -578,11 +578,34 @@ class PaymentDetails extends React.Component {
 
           this.displayError(AMBASSADOR_ERROR, res.data.message);
 
+          this.setState(prevState => ({
+            recalculatingPrice: true,
+            paymentSummary: {
+              ...prevState.paymentSummary,
+              ambassadorDiscount: '0.00'
+            }
+          }), () => {
+            this.setTotal();
+          });
+
         } else {
           
           console.log("(GUEST) Valid code");
 
           console.log("(GUEST) result: ", res.data);
+
+          this.setState(prevState => ({
+            recalculatingPrice: true,
+            paymentSummary: {
+              ...prevState.paymentSummary,
+              ambassadorDiscount: (
+                res.data.sub.discount_amount +
+                res.data.sub.discount_shipping
+              ).toFixed(2)
+            }
+          }), () => {
+            this.setTotal();
+          });
 
           // this.setState(prevState => ({
           //   recalculatingPrice: true,
@@ -606,7 +629,7 @@ class PaymentDetails extends React.Component {
     } else {
 
       axios
-      .post(API_URL + 'brandAmbassador/generate_coupon',
+      .post(API_URL + 'brandAmbassador/discount_checker',
         {
           code: this.state.ambassadorCode,
           info: this.props.email,
@@ -622,11 +645,34 @@ class PaymentDetails extends React.Component {
 
           this.displayError(AMBASSADOR_ERROR, res.data.message);
 
+          this.setState(prevState => ({
+            recalculatingPrice: true,
+            paymentSummary: {
+              ...prevState.paymentSummary,
+              ambassadorDiscount: '0.00'
+            }
+          }), () => {
+            this.setTotal();
+          });
+
         } else {
           
           console.log("(CUST) Valid code");
 
           console.log("(CUST) result: ", res.data);
+
+          this.setState(prevState => ({
+            recalculatingPrice: true,
+            paymentSummary: {
+              ...prevState.paymentSummary,
+              ambassadorDiscount: (
+                res.data.sub.discount_amount +
+                res.data.sub.discount_shipping
+              ).toFixed(2)
+            }
+          }), () => {
+            this.setTotal();
+          });
 
           // this.setState(prevState => ({
           //   recalculatingPrice: true,
