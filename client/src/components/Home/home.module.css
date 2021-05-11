@@ -273,12 +273,11 @@ input[type="zipCode"]:focus {
   margin-top: 30px;
 }
 .gridRightIcons {
-  vertical-align: middle;
-  margin-top: 5.9px;
-  margin-right: 65px;
-  margin-bottom: 2.8px;
+  position: absolute;
   height: 50px;
   width: 50px;
+  right:25px;
+  top:270px;
 }
 .stepsHeaderForHowDoesSection {
   /*margin: 20px 20px 0 0px;*/

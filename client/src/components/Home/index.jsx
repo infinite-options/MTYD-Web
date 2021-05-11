@@ -207,6 +207,16 @@ class Home extends Component {
         <WebNavBar/>
       </div>
       {/* <AddMeals /> */}
+      <div
+      style={{
+        position:'absolute',
+        right:'150px',
+        top:'0px'
+      }}
+      >
+        {this.state.login_seen? <PopLogin/>:null}
+      </div>
+
       
       {(() => {
         if (this.state.windowWidth >= 800) {
@@ -215,6 +225,9 @@ class Home extends Component {
             <div className = {styles.gridDisplayRight}>
 
               <SocialLogin verticalFormat={true}/>
+              <img className = {styles.gridRightIcons} src = {goToImg}
+              onClick={this.togglePopLogin}
+              />
             </div>	
             <div className =  {styles.whiteStripe}>		  
               <div className = {styles.gridDisplayCenter}>
@@ -236,10 +249,10 @@ class Home extends Component {
           return (
           <div className = {styles.topBackground}>
               <div className = {styles.gridDisplayRight}>
-                <img className = {styles.gridRightIcons} src = {appleImg}/> 
+                {/* <img className = {styles.gridRightIcons} src = {appleImg}/> 
                 <img className = {styles.gridRightIcons} src = {facebookImgSmall}/> 
                 <img className = {styles.gridRightIcons} src = {googleImgSmall}/> 
-                <img className = {styles.gridRightIcons} src = {goToImg}/> 
+                <img className = {styles.gridRightIcons} src = {goToImg}/>  */}
               </div>
             <div className =  {styles.whiteStripe}>		  
               <div className = {styles.gridDisplayCenter}>
