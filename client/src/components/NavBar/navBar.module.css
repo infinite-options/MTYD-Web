@@ -49,13 +49,12 @@
   border-radius: 20px;
 } */
 
-.navbar > ul a:hover {
+/* .navbar > ul a:hover {
   color: var(--light-color);
   color: blue;
   cursor: pointer;
-  /* background-color: #5d7ebb; */
   border-radius: 20px;
-}
+} */
 .navbar > ul a:active {
   transform: translateY(2px);
 }

@@ -38,6 +38,7 @@ import howDoesImage from "../../images/howDoesImage.png"
 import axios from 'axios';
 import ProductDisplay from './ProductDisplay';
 import HomeMap from "../HomeAddressSearch";
+import SocialLogin from "../Landing/socialLogin"
 const google = window.google;
 
 
@@ -212,10 +213,8 @@ class Home extends Component {
           return (
           <div className = {styles.topBackground}>
             <div className = {styles.gridDisplayRight}>
-              <img className = {styles.gridRightIcons} src = {appleImg}/> 
-              <img className = {styles.gridRightIcons} src = {facebookImgSmall}/> 
-              <img className = {styles.gridRightIcons} src = {googleImgSmall}/> 
-              <img className = {styles.gridRightIcons} src = {goToImg}/> 
+
+              <SocialLogin verticalFormat={true}/>
             </div>	
             <div className =  {styles.whiteStripe}>		  
               <div className = {styles.gridDisplayCenter}>
@@ -229,9 +228,6 @@ class Home extends Component {
                   <HomeMap/>
                 </div>
 
-
-                <div style = {{display: 'inline-flex', justifyContent: 'space-between'}}/> 
-                  
               </div>
             </div>		  
           </div>
@@ -530,12 +526,14 @@ class Home extends Component {
 		<div style = {{textAlign: 'center', marginTop: '30px', marginBottom: '50px',fontWeight: 'bold'}}>
              <HomeLink text = {startServingNowImg} link = "/choose-plan" style = {{height:'68px', width:'432px', marginTop:'77.66px', marginLeft:'auto'}}/>			
         </div>
+
+        <FootLink/>			
         
       {/*<span>
         {this.state.windowWidth} x {this.state.windowHeight}
       </span>*/}
 
-        {(() => {
+        {/* {(() => {
           if (this.state.windowWidth >= 800) {
             return (
 			<FootLink/>			
@@ -545,7 +543,7 @@ class Home extends Component {
 			<FootLink/>			
             );
           }
-        })()}
+        })()} */}
         
     </>
     );

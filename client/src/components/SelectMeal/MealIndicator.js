@@ -13,6 +13,9 @@ class MealIndicator extends Component {
     let temp = 100 / totalMeals;
     const percentage = totalCount * temp;
 
+    // console.log('total count is '+ totalCount);
+    // console.log('totalmeals is ' + totalMeals)
+
 
     const myarr = [];
 

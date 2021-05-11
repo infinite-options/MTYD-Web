@@ -4,6 +4,7 @@ import axios from 'axios';
 import Popsignup from '../PopSignup';
 import {Redirect, withRouter} from 'react-router-dom';
 import close from '../../images/closeIcon.png'
+import { OutlinedInput } from '@material-ui/core';
 
 const google = window.google;
 
@@ -19,6 +20,12 @@ export class HomeMap extends Component {
       hooray:false,
       stillGrowing:false,
       signup:false,
+      name: '',
+      street_address: '',
+      city: '',
+      state: '',
+      zip_code: '',
+
     }
   }
 
@@ -35,25 +42,65 @@ export class HomeMap extends Component {
 
     const options = {
       componentRestrictions: { country: "us" },
-      fields: ["formatted_address", "geometry", "name"],
-
-      strictBounds: false,
     };
 
-    const autocomplete = new google.maps.places.Autocomplete(input, options);
+    this.autocomplete = new google.maps.places.Autocomplete(input, options);
 
     // console.log(autocomplete)
+    // console.log(this.autocomplete)
 
-    autocomplete.addListener("place_changed", () => {
+    this.autocomplete.addListener("place_changed", () => {
 
-      const place = autocomplete.getPlace();
+      let place = this.autocomplete.getPlace();
+
+      // console.log(place)
+      // console.log(place.address_components)
+
+      let address1 = "";
+      let postcode = "";
+      let city = '';
+      let state = '';
+
+      for (const component of place.address_components) {
+        const componentType = component.types[0];
+        switch (componentType) {
+          case "street_number": {
+            address1 = `${component.long_name} ${address1}`;
+            break;
+          }
+    
+          case "route": {
+            address1 += component.short_name;
+            break;
+          }
+    
+          case "postal_code": {
+            postcode = `${component.long_name}${postcode}`;
+            break;
+          }
+  
+          case "locality":
+            city = component.long_name;
+            break;
+    
+          case "administrative_area_level_1": {
+            state= component.short_name;
+            break;
+          }
+        }
+      }
 
       this.setState({
+        name: place.name,
+        street_address: address1,
+        city: city,
+        state: state,
+        zip_code: postcode,
         lat:place.geometry.location.lat(),
         lng:place.geometry.location.lng(),
       })
 
-      console.log(this.state)
+      // console.log(this.state)
   
       if (!place.geometry || !place.geometry.location) {
         // User entered the name of a Place that was not suggested and
@@ -100,8 +147,6 @@ export class HomeMap extends Component {
           height:'200px'
         }}
       >
-        {this.state.signup ? <Popsignup toggle={this.togglePopLogin}/> : null}
-
 
         {this.state.hooray?
         // {/* {true? */}
@@ -185,32 +230,93 @@ export class HomeMap extends Component {
             //  fontWeight:'',
            }}
 
-           onClick={()=>{this.setState({signup:true,hooray:false})}}
+           onClick={()=>{this.setState({signup:true,hooray:false}); console.log(this.state)}}
           >
               Sign up
           </div>
-
-
         </div>:null}
 
-
-
-
-
-
-
         {this.state.stillGrowing?<div 
+        // {true?<div
         style={{
           position:'absolute',
-          width:'500px',
-          height:'500px',
-          backgroundColor:'#b942f5',
-          left:'30%',
-          top:'20%'
-        }}
-        onClick={()=>{this.setState({stillGrowing:false})}}>
+          width:'384px',
+          height:'371px',
+          backgroundColor:'white',
+          border:'2px solid #F26522',
+          left:'65%',
+          top:'40%'
+        }}>
+
+          <div className="close" onClick={()=>{this.setState({stillGrowing:false})}}/>
           
-          nope
+          <div
+            style={{
+              position:'relative',
+              top:'29px',
+              left:'106px',
+              width:'172px',
+              height:'31px',
+              fontSize:'26px',
+              fontWeight:'bold',
+            }}
+            >
+              Still Growing
+            </div>
+
+            <div
+           style={{
+             position:'relative',
+             top:'57px',
+             left:'27px',
+             width:'332px',
+             height:'69px',
+             fontSize:'18px',
+             textAlign:'center',
+            //  fontWeight:'',
+           }}
+          >
+            Sorry, it looks like we don’t deliver to your neighborhood yet. Enter your email address and we will let you know as soon as we come to your neighborhood.
+          </div>
+
+          <input
+            placeholder='Enter you email'
+            style={{
+              position:'relative',
+              top:'140px',
+              left:'17px',
+              width:'351px',
+              height:'40px',
+              fontSize:'18px',
+              textAlign:'center',
+              border:'2px solid #F26522',
+              color:'black',
+              paddingTop:'10px',
+              borderRadius:'15px',
+              outline:'none'
+            }}
+          >    
+          </input>
+
+          <button
+          style={{
+            position:'relative',
+            top:'153px',
+            left:'92px',
+            width:'200px',
+            height:'50px',
+            fontSize:'18px',
+            textAlign:'center',
+            backgroundColor:'#F26522',
+            color:'white',
+            paddingTop:'10px',
+            borderRadius:'15px',
+            border:'none'
+          }}
+          >
+            Okay
+          </button>
+
           </div>
           :null}
 
@@ -258,8 +364,17 @@ export class HomeMap extends Component {
             }}
             >View Meals</a>
           </button>
-
         </div>
+
+
+        {this.state.signup ? <Popsignup toggle={this.togglePopLogin} 
+        messageFromHooray = {true}
+        nameFromHooray = {this.state.name}
+        streetAddressFromHooray = {this.state.street_address}
+        cityFromHooray = {this.state.city}
+        stateFromHooray = {this.state.state}
+        zipCodeFromHooray = {this.state.zip_code}
+        /> : null}
       </div>
       
     )

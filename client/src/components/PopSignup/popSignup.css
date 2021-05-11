@@ -36,3 +36,20 @@
   background-size: cover;
   background-position: center;
 }
+
+.StreetinputBox{
+  top: 333px;
+  left: 86px;
+  width: 428px;
+  height: 49px;
+  background: #FFFFFF;
+  border:2px solid #FF8500;
+  border-radius: 10px;
+  opacity: 1;
+  margin-bottom: 6px;
+  outline: none;
+}
+.StreetinputBox::placeholder{
+  color: black;
+  font-size: large;
+}

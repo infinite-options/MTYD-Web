@@ -41,7 +41,7 @@ const Menu = props => {
                 style={{
                   position:"absolute",
                   top:'68px',
-                  left:'1376px',
+                  right:'20px'
                 }}
               >
                 {props.subscribedPlans.length ? (
@@ -53,9 +53,11 @@ const Menu = props => {
                       {props.meals.map(mealItem => {
                         let meal = JSON.parse(mealItem.items)[0];
                         let mealName = meal.name;
+                        // console.log(mealItem);
                         return (
                           <option
-                            value={mealItem.purchase_id}
+                            value={mealItem.purchase_uid}
+                            // modifiedValue={mealItem.purchase_id}
                             key={mealItem.purchase_uid}
                           >
                             {mealName.toUpperCase()}

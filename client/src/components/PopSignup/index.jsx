@@ -33,6 +33,17 @@ export class PopSignup extends Component {
   }
 
   initialState() {
+
+    if(this.props.messageFromHooray){
+      return{
+        name: 'xxx',
+        street_address: this.props.streetAddressFromHooray,
+        city: this.props.cityFromHooray,
+        state: this.props.stateFromHooray,
+        zip_code: this.props.zipCodeFromHooray,
+      }
+    }
+    
     return {
       name: '',
       street_address: '',
@@ -51,19 +62,19 @@ export class PopSignup extends Component {
     })
     this.autocomplete.addListener("place_changed", this.handlePlaceSelect)
 
-    console.log(this.autocomplete)
+    console.log(this.state)
+
   }
 
 
   handlePlaceSelect() {
-
-    console.log('here')
 
 
     let address1Field = document.querySelector("#ship-address");
     let postalField = document.querySelector("#postcode");
 
     let addressObject = this.autocomplete.getPlace()
+    console.log(addressObject);
     console.log(addressObject.address_components);
 
     let address1 = "";
@@ -101,15 +112,14 @@ export class PopSignup extends Component {
           state= component.short_name;
           break;
         }
-        
       }
     }
 
     address1Field.value = address1;
     postalField.value = postcode;
 
-    console.log(address1);
-    console.log(postcode)
+    // console.log(address1);
+    // console.log(postcode)
 
     this.setState({
       name: addressObject.name,
@@ -120,6 +130,8 @@ export class PopSignup extends Component {
       lat:addressObject.geometry.location.lat(),
       lng:addressObject.geometry.location.lng(),
     })
+
+    console.log(this.state)
 
     axios.get(`https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/categoricalOptions/${this.state.lng},${this.state.lat}`)
       .then(res=>{
@@ -140,7 +152,7 @@ export class PopSignup extends Component {
 
 
 
-    console.log(this.state)
+    // console.log(this.state)
   }
 
   handleChange(event) {
@@ -317,12 +329,12 @@ export class PopSignup extends Component {
           </input>
 
           <input 
-            className='inputBox'
+            className={this.state.street_address==''?'inputBox':'StreetinputBox'}
 
             id="ship-address"
             name="ship-address"
 
-            placeholder='Street Address'
+            placeholder={this.state.street_address==''? 'Street Address':this.state.street_address}
           />
 
           <input 
@@ -346,6 +358,7 @@ export class PopSignup extends Component {
             className='inputBox'
             placeholder='City'
             id="locality" name="locality"
+            value = {this.state.city}
             />
 
 
@@ -358,6 +371,7 @@ export class PopSignup extends Component {
             className='inputBox'
             placeholder='State'
             id="state" name="state"
+            value = {this.state.state}
             />
 
 
@@ -369,6 +383,7 @@ export class PopSignup extends Component {
               className='inputBox'
               placeholder='Zip'
               id="postcode" name="postcode"
+              value = {this.state.zip_code}
 
             />
         </div>
