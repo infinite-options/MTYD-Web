@@ -33,6 +33,17 @@ export class PopSignup extends Component {
   }
 
   initialState() {
+
+    if(this.props.messageFromHooray){
+      return{
+        name: 'xxx',
+        street_address: this.props.streetAddressFromHooray,
+        city: this.props.cityFromHooray,
+        state: this.props.stateFromHooray,
+        zip_code: this.props.zipCodeFromHooray,
+      }
+    }
+    
     return {
       name: '',
       street_address: '',
@@ -50,24 +61,6 @@ export class PopSignup extends Component {
       componentRestrictions: { country: ["us", "ca"] },
     })
     this.autocomplete.addListener("place_changed", this.handlePlaceSelect)
-
-    console.log(this.props.nameFromHooray)
-
-    if(this.props.messageFromHooray){
-      this.setState({
-        name: 'xxx',
-        street_address: this.props.streetAddressFromHooray,
-        city: this.props.cityFromHooray,
-        state: this.props.stateFromHooray,
-        zip_code: this.props.zipCodeFromHooray,
-      })
-
-      console.log('inside if')
-      console.log(this.state)
-      console.log(this.props)
-
-
-    }
 
     console.log(this.state)
 
@@ -336,12 +329,12 @@ export class PopSignup extends Component {
           </input>
 
           <input 
-            className='inputBox'
+            className={this.state.street_address==''?'inputBox':'StreetinputBox'}
 
             id="ship-address"
             name="ship-address"
 
-            placeholder='Street Address'
+            placeholder={this.state.street_address==''? 'Street Address':this.state.street_address}
           />
 
           <input 
@@ -365,6 +358,7 @@ export class PopSignup extends Component {
             className='inputBox'
             placeholder='City'
             id="locality" name="locality"
+            value = {this.state.city}
             />
 
 
@@ -377,6 +371,7 @@ export class PopSignup extends Component {
             className='inputBox'
             placeholder='State'
             id="state" name="state"
+            value = {this.state.state}
             />
 
 
@@ -388,6 +383,7 @@ export class PopSignup extends Component {
               className='inputBox'
               placeholder='Zip'
               id="postcode" name="postcode"
+              value = {this.state.zip_code}
 
             />
         </div>

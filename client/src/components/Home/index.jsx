@@ -526,12 +526,14 @@ class Home extends Component {
 		<div style = {{textAlign: 'center', marginTop: '30px', marginBottom: '50px',fontWeight: 'bold'}}>
              <HomeLink text = {startServingNowImg} link = "/choose-plan" style = {{height:'68px', width:'432px', marginTop:'77.66px', marginLeft:'auto'}}/>			
         </div>
+
+        <FootLink/>			
         
       {/*<span>
         {this.state.windowWidth} x {this.state.windowHeight}
       </span>*/}
 
-        {(() => {
+        {/* {(() => {
           if (this.state.windowWidth >= 800) {
             return (
 			<FootLink/>			
@@ -541,7 +543,7 @@ class Home extends Component {
 			<FootLink/>			
             );
           }
-        })()}
+        })()} */}
         
     </>
     );

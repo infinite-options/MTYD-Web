@@ -79,7 +79,7 @@
 }
 
 .mealButton:hover {
-  background-color: #eeeeee;
+  /* background-color: #eeeeee; */
   flex: 1;
 }
 

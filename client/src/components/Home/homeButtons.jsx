@@ -70,20 +70,41 @@ class FootLink extends Component {
       });
     };
     render() { 
-	    
-        return (		
-            <div className = {styles.footerBackground}>	
-			{/*<AmbassadorLink text = "Click here" link='/select-meal'>
-			</AmbassadorLink>*/}	
-            <p className = {styles.findUs}>Find us 			
-            <img className = {styles.footerLogo} src = {facebookAndInstagramImg} alt="facebookAndInstagramImg" />
+      return (		
+          <div className = {styles.footerBackground}>	
+            <p className = {styles.findUs}>Find us 		
+
+              <img className = {styles.footerLogo} src = {facebookAndInstagramImg} alt="facebookAndInstagramImg" />
+              <a href='https://www.facebook.com/Meals-For-Me-101737768566584'
+              style={{
+                position:'absolute',
+                width:'50px',
+                height:'50px',
+                backgroundColor:'red',
+                bottom:'0px',
+                left:'200px',
+                opacity:'0',
+              }}/>
+
+              <a href='https://www.instagram.com/mealsfor.me/?hl=en'
+              style={{
+                position:'absolute',
+                width:'50px',
+                height:'50px',
+                backgroundColor:'red',
+                bottom:'0px',
+                left:'260px',
+                opacity:'0',
+              }}/>
+
+
             </p>
             <div className = {styles.footerRight}>
-            <img onClick={() => this.togglePop()} style = {{width: '320px', height:'67px'}} src = {becomeAnAmbassadorImg} style = {{marginTop: '25px'}}/>			
+              <img onClick={() => this.togglePop()} style = {{width: '320px', height:'67px'}} src = {becomeAnAmbassadorImg} style = {{marginTop: '25px'}}/>			
             </div>
-			{this.state.seen ? <AddMeals toggle={this.togglePop} /> : null}	
-            </div>
-         );
+            {this.state.seen ? <AddMeals toggle={this.togglePop} /> : null}	
+          </div>
+        );
     }
 }
 class AmbassadorLink extends Component {
@@ -299,9 +320,6 @@ class AddMeals extends Component {
     }else{
       this.setState({user_id:'not login'})
       this.setState({user_address: 'not login yet'});
-	/*Use the following for setting the user */ 
-	 /*this.setState({user_id:'anup'});
-	this.setState({user_address: '214 Main Ave, San Jose, CA 91101'});*/
     }
     
   }
@@ -315,22 +333,22 @@ class AddMeals extends Component {
         {(() => {
 			if(this.state.user_id == "not login") {
 					return (
-					  <div className={styles.modal}>
-						<div className={styles.modal_content}>
-			                <p style = {{font:'SF Pro', fontSize: '24px', fontWeight:'medium', textAlign: 'left', color:'black'}}>Looks like you’re enjoying MealsFor.Me!<br/> The <img src = {negativeSign}/> <img src ={positiveSign}/> buttons help you add / <br/>remove meals from your meal plan.</p>	
-							<br/><br/>
-						    <span onClick={this.handleClick}>
-						       <img style = {{marginLeft:'80px'}} src={continueExploring}/>
-			                </span>
-							<p style = {{marginLeft:'50px',font: 'SF Pro', fontWeight:'bold', fontSize:'18px',textAlign: 'left', paddingTop:'15px', color:'black'}}>Already a Customer?</p>
-							<img src ={loginButton} style= {{display: 'block', marginLeft: '80px',marginTop:'-20px', marginRight: 'auto'}} onClick={() => this.togglePopLogin()}/>
-                            {this.state.wantToLogin ? <LoginModal toggle={this.togglePopWTL} /> : null}
-							<p style = {{marginLeft:'80px',font: 'SF Pro', fontWeight:'bold', fontSize:'18px',textAlign: 'left', paddingTop:'15px', color:'black'}}>Ready to start eating better?</p>
-							<img style= {{display: 'block', marginLeft: '80px', marginTop:'-15px',marginRight: 'auto'}} src = {signupButton} onClick={() => this.togglePopSignup()}/>
-                            {this.state.wantToSignUp ? <SignUpModal toggle={this.togglePopWTS} /> : null}                    
+              <div className={styles.becomeAnAmbassadorPopup}>
+                <p style = {{font:'SF Pro', fontSize: '24px', fontWeight:'medium', textAlign: 'left', color:'black'}}>Looks like you’re enjoying MealsFor.Me!<br/> The <img src = {negativeSign}/> <img src ={positiveSign}/> buttons help you add / <br/>remove meals from your meal plan.</p>	
+                <br/>
+                <br/>
+                <span onClick={this.handleClick}>
+                  <img style = {{marginLeft:'80px'}} src={continueExploring}/>
+                </span>
+                <p style = {{marginLeft:'50px',font: 'SF Pro', fontWeight:'bold', fontSize:'18px',textAlign: 'left', paddingTop:'15px', color:'black'}}>Already a Customer?</p>
+                
+                <img src ={loginButton} style= {{display: 'block', marginLeft: '80px',marginTop:'-20px', marginRight: 'auto'}} onClick={() => this.togglePopLogin()}/>
+                              {this.state.wantToLogin ? <LoginModal toggle={this.togglePopWTL} /> : null}
+                <p style = {{marginLeft:'80px',font: 'SF Pro', fontWeight:'bold', fontSize:'18px',textAlign: 'left', paddingTop:'15px', color:'black'}}>Ready to start eating better?</p>
+                <img style= {{display: 'block', marginLeft: '80px', marginTop:'-15px',marginRight: 'auto'}} src = {signupButton} onClick={() => this.togglePopSignup()}/>
+                              {this.state.wantToSignUp ? <SignUpModal toggle={this.togglePopWTS} /> : null}                    
 
-						</div>
-					  </div>
+              </div>
 				)}
 		}) ()}
 		</div>

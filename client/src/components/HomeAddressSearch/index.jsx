@@ -4,6 +4,7 @@ import axios from 'axios';
 import Popsignup from '../PopSignup';
 import {Redirect, withRouter} from 'react-router-dom';
 import close from '../../images/closeIcon.png'
+import { OutlinedInput } from '@material-ui/core';
 
 const google = window.google;
 
@@ -146,16 +147,6 @@ export class HomeMap extends Component {
           height:'200px'
         }}
       >
-        {this.state.signup ? <Popsignup toggle={this.togglePopLogin} 
-        messageFromHooray = {true}
-        nameFromHooray = {this.state.name}
-        streetAddressFromHooray = {this.state.street_address}
-        cityFromHooray = {this.state.city}
-        stateFromHooray = {this.state.state}
-        zipCodeFromHooray = {this.state.zip_code}
-        
-        /> : null}
-
 
         {this.state.hooray?
         // {/* {true? */}
@@ -243,28 +234,89 @@ export class HomeMap extends Component {
           >
               Sign up
           </div>
-
-
         </div>:null}
 
-
-
-
-
-
-
         {this.state.stillGrowing?<div 
+        // {true?<div
         style={{
           position:'absolute',
-          width:'500px',
-          height:'500px',
-          backgroundColor:'#b942f5',
-          left:'30%',
-          top:'20%'
-        }}
-        onClick={()=>{this.setState({stillGrowing:false})}}>
+          width:'384px',
+          height:'371px',
+          backgroundColor:'white',
+          border:'2px solid #F26522',
+          left:'65%',
+          top:'40%'
+        }}>
+
+          <div className="close" onClick={()=>{this.setState({stillGrowing:false})}}/>
           
-          nope
+          <div
+            style={{
+              position:'relative',
+              top:'29px',
+              left:'106px',
+              width:'172px',
+              height:'31px',
+              fontSize:'26px',
+              fontWeight:'bold',
+            }}
+            >
+              Still Growing
+            </div>
+
+            <div
+           style={{
+             position:'relative',
+             top:'57px',
+             left:'27px',
+             width:'332px',
+             height:'69px',
+             fontSize:'18px',
+             textAlign:'center',
+            //  fontWeight:'',
+           }}
+          >
+            Sorry, it looks like we don’t deliver to your neighborhood yet. Enter your email address and we will let you know as soon as we come to your neighborhood.
+          </div>
+
+          <input
+            placeholder='Enter you email'
+            style={{
+              position:'relative',
+              top:'140px',
+              left:'17px',
+              width:'351px',
+              height:'40px',
+              fontSize:'18px',
+              textAlign:'center',
+              border:'2px solid #F26522',
+              color:'black',
+              paddingTop:'10px',
+              borderRadius:'15px',
+              outline:'none'
+            }}
+          >    
+          </input>
+
+          <button
+          style={{
+            position:'relative',
+            top:'153px',
+            left:'92px',
+            width:'200px',
+            height:'50px',
+            fontSize:'18px',
+            textAlign:'center',
+            backgroundColor:'#F26522',
+            color:'white',
+            paddingTop:'10px',
+            borderRadius:'15px',
+            border:'none'
+          }}
+          >
+            Okay
+          </button>
+
           </div>
           :null}
 
@@ -312,8 +364,17 @@ export class HomeMap extends Component {
             }}
             >View Meals</a>
           </button>
-
         </div>
+
+
+        {this.state.signup ? <Popsignup toggle={this.togglePopLogin} 
+        messageFromHooray = {true}
+        nameFromHooray = {this.state.name}
+        streetAddressFromHooray = {this.state.street_address}
+        cityFromHooray = {this.state.city}
+        stateFromHooray = {this.state.state}
+        zipCodeFromHooray = {this.state.zip_code}
+        /> : null}
       </div>
       
     )
