@@ -157,7 +157,8 @@ class EditPlan extends React.Component {
       errorMessage: '',
       errorLink: '',
       errorLinkText: '',
-      errorHeader: ''
+      errorHeader: '',
+      processingChanges: false
     };
   }
 
@@ -269,13 +270,205 @@ class EditPlan extends React.Component {
     return sumAmountDue;
   }
 
+  /*applyAmbassadorCode() {
+
+    if(this.state.email !== ""){
+      console.log("(Ambassador code) Valid email");
+    } else {
+      console.log("(Ambassador code) Invalid email");
+    }
+      
+    console.log("amb code: ", this.state.ambassadorCode);
+
+    if (this.state.customerUid === "GUEST") {
+
+      axios
+      .post(API_URL + 'brandAmbassador/discount_checker',
+        {
+          code: this.state.ambassadorCode,
+          info: (
+            document.getElementById("pac-input").value + ', ' +
+            document.getElementById("locality").value + ', ' +
+            document.getElementById("state").value + ', ' +
+            document.getElementById("postcode").value
+          ),
+          IsGuest: 'TRUE'
+        }
+      )
+      .then(res => {
+        console.log("(GUEST) ambassador code response: ", res);
+
+        if (res.data.code !== 200) {
+
+          console.log("(GUEST) Invalid code");
+
+          this.displayError(AMBASSADOR_ERROR, res.data.message);
+
+          this.setState(prevState => ({
+            recalculatingPrice: true,
+            paymentSummary: {
+              ...prevState.paymentSummary,
+              ambassadorDiscount: '0.00'
+            }
+          }), () => {
+            this.setTotal();
+          });
+
+        } else {
+          
+          console.log("(GUEST) Valid code");
+
+          console.log("(GUEST) result: ", res.data);
+
+          this.setState(prevState => ({
+            recalculatingPrice: true,
+            paymentSummary: {
+              ...prevState.paymentSummary,
+              ambassadorDiscount: (
+                res.data.sub.discount_amount +
+                res.data.sub.discount_shipping
+              ).toFixed(2)
+            }
+          }), () => {
+            this.setTotal();
+          });
+
+        }
+      })
+      .catch(err => {
+        console.log("(GUEST) Ambassador code error: ", err);
+      });
+
+    } else {
+
+      axios
+      .post(API_URL + 'brandAmbassador/discount_checker',
+        {
+          code: this.state.ambassadorCode,
+          info: this.props.email,
+          IsGuest: 'False'
+        }
+      )
+      .then(res => {
+        console.log("(CUST) ambassador code response: ", res);
+
+        if (res.data.code !== 200) {
+
+          console.log("(CUST) Invalid code");
+
+          this.displayError(AMBASSADOR_ERROR, res.data.message);
+
+          this.setState(prevState => ({
+            recalculatingPrice: true,
+            paymentSummary: {
+              ...prevState.paymentSummary,
+              ambassadorDiscount: '0.00'
+            }
+          }), () => {
+            this.setTotal();
+          });
+
+        } else {
+          
+          console.log("(CUST) Valid code");
+
+          console.log("(CUST) result: ", res.data);
+
+          this.setState(prevState => ({
+            recalculatingPrice: true,
+            paymentSummary: {
+              ...prevState.paymentSummary,
+              ambassadorDiscount: (
+                res.data.sub.discount_amount +
+                res.data.sub.discount_shipping
+              ).toFixed(2)
+            }
+          }), () => {
+            this.setTotal();
+          });
+
+        }
+      })
+      .catch(err => {
+        console.log("(CUST) Ambassador code error: ", err);
+      });
+
+    }*/
+
   applyAmbassadorCode() {
 
     this.setState({
       refreshingPrice: true,
     }, () => {
-      
+
     axios
+      .post(API_URL + 'brandAmbassador/discount_checker',
+        {
+          code: this.state.ambassadorCode,
+          info: this.props.email,
+          IsGuest: 'False'
+        }
+      )
+      .then(res => {
+        console.log("(CUST) ambassador code response: ", res);
+
+        if (res.data.code !== 200) {
+
+          console.log("(CUST) Invalid code");
+
+          this.displayErrorModal('Hmm...', res.data.message, 'Go Back', 'back');
+
+          this.setState(prevState => ({
+
+            updatedPlan: {
+              ...prevState.updatedPlan,
+              payment_summary: {
+                ...prevState.updatedPlan.payment_summary,
+                ambassador_discount: '0.00'
+              }
+            }
+
+          }), () => {
+            this.changePlans(
+              this.state.updatedPlan.meals,
+              this.state.updatedPlan.deliveries
+            );
+          });
+
+        } else {
+          
+          console.log("(CUST) Valid code");
+
+          console.log("(CUST) result: ", res.data);
+
+          this.setState(prevState => ({
+
+            updatedPlan: {
+              ...prevState.updatedPlan,
+              payment_summary: {
+                ...prevState.updatedPlan.payment_summary,
+                ambassador_discount: (
+                  res.data.sub.discount_amount +
+                  res.data.sub.discount_shipping
+                ).toFixed(2)
+              }
+            }
+            
+          }), () => {
+            this.changePlans(
+              this.state.updatedPlan.meals,
+              this.state.updatedPlan.deliveries
+            );
+          });
+
+        }
+
+      })
+      .catch(err => {
+        console.log("Ambassador code error: " + err);
+      });
+
+    /*axios
       .post(API_URL + 'brandAmbassador/generate_coupon',
         {
           amb_email: this.state.ambassadorCode,
@@ -338,6 +531,7 @@ class EditPlan extends React.Component {
       .catch(err => {
         console.log("Ambassador code error: " + err);
       });
+    });*/
 
     });
   }
@@ -565,10 +759,6 @@ class EditPlan extends React.Component {
 
         console.log("sub at index 0: ", sub);
 
-        // document.getElementById("locality").value = this.props.city;
-        // document.getElementById("state").value = this.props.state;
-        // document.getElementById("pac-input").value = this.props.street;
-        // document.getElementById("postcode").value = this.props.zip;
         document.getElementById("locality").value = sub.delivery_city;
         document.getElementById("state").value = sub.delivery_state;
         document.getElementById("pac-input").value = sub.delivery_address;
@@ -718,13 +908,19 @@ class EditPlan extends React.Component {
     } else if (setDefault === UPDATED) {
       console.log("(UPDATED) current Plan: ", this.state.currentPlan);
       console.log("(UPDATED) updated Plan: ", this.state.updatedPlan);
+      console.log("(UPDATED) deliveryInfo: ", this.state.deliveryInfo);
+
+      console.log("(DEFAULT) current Plan: ", defaultCurrentPlan);
+      console.log("(DEFAULT) updated Plan: ", defaultUpdatedPlan);
+      console.log("(DEFAULT) deliveryInfo: ", defaultDeliveryInfo);
 
       this.setState(prevState => ({
         subscriptionsList: newSubList,
         subscriptionsLoaded: true,
-        // currentPlan: {...defaultCurrentPlan},
-        // updatedPlan: {...defaultUpdatedPlan},
-        // deliveryInfo: {...defaultDeliveryInfo}
+        currentPlan: {...defaultCurrentPlan},
+        updatedPlan: {...defaultUpdatedPlan},
+        deliveryInfo: {...defaultDeliveryInfo},
+        processingChanges: false
       }), () => {
         this.calculateDifference();
       });
@@ -848,14 +1044,17 @@ class EditPlan extends React.Component {
           itm_business_uid: this.props.selectedPlan.itm_business_uid
         }],
         new_item_id: this.props.selectedPlan.item_uid,
-        purchase_id: this.state.updatedPlan.raw_data.purchase_id,
+        purchase_id: this.state.updatedPlan.raw_data.purchase_uid,
         start_delivery_date: ""
       }
       console.log("(new card) object for change_purchase: ", JSON.stringify(object));
-
     }
 
-    axios.post(API_URL + 'change_purchase/' + this.state.updatedPlan.raw_data.purchase_id, object)
+    this.setState({
+      processingChanges: true
+    }, () => {
+
+    axios.post(API_URL + 'change_purchase/' + this.state.updatedPlan.raw_data.purchase_uid, object)
       .then(res => {
         console.log("change_purchase response: ", res);
         axios.get(API_URL + 'next_meal_info/' + this.state.customerUid)
@@ -871,6 +1070,11 @@ class EditPlan extends React.Component {
               'OK', 'back'
             );
 
+            console.log("subscriptions loaded? ", this.state.subscriptionsLoaded);
+            console.log(this.state.defaultSet === false);
+            console.log(this.state.refreshingPrice);
+            console.log(this.activeChanges());
+
             this.loadSubscriptions(fetchedSubscriptions, this.state.discounts, UPDATED);
           })
           .catch(err => {
@@ -883,6 +1087,8 @@ class EditPlan extends React.Component {
           console.log("error: " + JSON.stringify(err.response));
         }
       });
+
+    });
   }
 
   handleCheck = (cb) => {
@@ -1623,6 +1829,29 @@ class EditPlan extends React.Component {
 
   }
 
+  activeChanges = () => {
+
+    let updatedSummary = this.state.updatedPlan.payment_summary;
+    let currentSummary = this.state.currentPlan.payment_summary;
+
+    if(
+      updatedSummary.base_amount === currentSummary.base_amount &&
+      updatedSummary.discount_amount === currentSummary.discount_amount &&
+      updatedSummary.delivery_fee === currentSummary.delivery_fee &&
+      updatedSummary.service_fee === currentSummary.service_fee &&
+      updatedSummary.driver_tip === currentSummary.driver_tip &&
+      updatedSummary.ambassador_discount === currentSummary.ambassador_discount &&
+      updatedSummary.subtotal === currentSummary.subtotal &&
+      updatedSummary.total === currentSummary.total &&
+      updatedSummary.taxes === currentSummary.taxes
+    ) {
+      return false;
+    }
+
+    return true;
+
+  }
+
   mealsDelivery = () => {
 
     let deselectedPlateButton = styles.plateButton;
@@ -1993,7 +2222,7 @@ class EditPlan extends React.Component {
 
                 <div className={styles.summaryLeft} style={{fontWeight:'bold'}}></div>
 
-                <div className={styles.summaryRight}>
+                <div className={this.activeChanges() ? styles.summaryRight : styles.summaryGray}>
                   {this.state.updatedPlan.meals} Meals,{" "}
                   {this.state.updatedPlan.deliveries} Deliveries
                 </div>
@@ -2002,7 +2231,7 @@ class EditPlan extends React.Component {
                   Current
                 </div>
 
-                <div className={styles.summaryRight}>
+                <div className={this.activeChanges() ? styles.summaryRight : styles.summaryGray}>
                   Difference
                 </div>
 
@@ -2014,7 +2243,7 @@ class EditPlan extends React.Component {
                     Meal Subscription 
                   </div>
 
-                  <div className={styles.summaryRight}>
+                  <div className={this.activeChanges() ? styles.summaryRight : styles.summaryGray}>
                     ${this.state.updatedPlan.payment_summary.base_amount}
                   </div>
 
@@ -2022,7 +2251,7 @@ class EditPlan extends React.Component {
                     ${this.state.currentPlan.payment_summary.base_amount}
                   </div>
 
-                  <div className={styles.summaryRight}>
+                  <div className={this.activeChanges() ? styles.summaryRight : styles.summaryGray}>
                     ${Math.abs(this.state.differenceSummary.base_amount).toFixed(2)}
                   </div>
 
@@ -2035,7 +2264,7 @@ class EditPlan extends React.Component {
                   Discount
                   </div>
 
-                  <div className={styles.summaryRight}>
+                  <div className={this.activeChanges() ? styles.summaryRight : styles.summaryGray}>
                     {"-$" + this.state.updatedPlan.payment_summary.discount_amount}
                     <br />
                     {"(" + this.state.updatedPlan.payment_summary.discount_rate + "%)"}
@@ -2047,7 +2276,7 @@ class EditPlan extends React.Component {
                     {"(" + this.state.currentPlan.payment_summary.discount_rate + "%)"}
                   </div>
 
-                  <div className={styles.summaryRight}>
+                  <div className={this.activeChanges() ? styles.summaryRight : styles.summaryGray}>
                     {"$" + Math.abs(this.state.differenceSummary.discount_amount).toFixed(2)}
                     <br />
                     {"(" + Math.abs(this.state.differenceSummary.discount_rate) + "%)"}
@@ -2062,7 +2291,7 @@ class EditPlan extends React.Component {
                     Delivery Fee
                   </div>
 
-                  <div className={styles.summaryRight}>
+                  <div className={this.activeChanges() ? styles.summaryRight : styles.summaryGray}>
                     ${(this.state.updatedPlan.payment_summary.delivery_fee)}
                   </div>
 
@@ -2070,7 +2299,7 @@ class EditPlan extends React.Component {
                     ${(this.state.currentPlan.payment_summary.delivery_fee)}
                   </div>
 
-                  <div className={styles.summaryRight}>
+                  <div className={this.activeChanges() ? styles.summaryRight : styles.summaryGray}>
                     ${Math.abs(this.state.differenceSummary.delivery_fee).toFixed(2)}
                   </div>
 
@@ -2083,7 +2312,7 @@ class EditPlan extends React.Component {
                     Service Fee
                   </div>
 
-                  <div className={styles.summaryRight}>
+                  <div className={this.activeChanges() ? styles.summaryRight : styles.summaryGray}>
                     ${(this.state.updatedPlan.payment_summary.service_fee)}
                   </div>
 
@@ -2091,7 +2320,7 @@ class EditPlan extends React.Component {
                     ${(this.state.currentPlan.payment_summary.service_fee)}
                   </div>
 
-                  <div className={styles.summaryRight}>
+                  <div className={this.activeChanges() ? styles.summaryRight : styles.summaryGray}>
                     ${Math.abs(this.state.differenceSummary.service_fee).toFixed(2)}
                   </div>
 
@@ -2104,7 +2333,7 @@ class EditPlan extends React.Component {
                     Taxes
                   </div>
 
-                  <div className={styles.summaryRight}>
+                  <div className={this.activeChanges() ? styles.summaryRight : styles.summaryGray}>
                     ${(this.state.updatedPlan.payment_summary.taxes)}
                   </div>
 
@@ -2112,7 +2341,7 @@ class EditPlan extends React.Component {
                     ${(this.state.currentPlan.payment_summary.taxes)}
                   </div>
 
-                  <div className={styles.summaryRight}>
+                  <div className={this.activeChanges() ? styles.summaryRight : styles.summaryGray}>
                     ${Math.abs(this.state.differenceSummary.taxes).toFixed(2)}
                   </div>
 
@@ -2125,7 +2354,7 @@ class EditPlan extends React.Component {
                     Chef and Driver Tip
                   </div>
 
-                  <div className={styles.summaryRight}>
+                  <div className={this.activeChanges() ? styles.summaryRight : styles.summaryGray}>
                     ${(this.state.updatedPlan.payment_summary.driver_tip)}
                   </div>
 
@@ -2133,7 +2362,7 @@ class EditPlan extends React.Component {
                     ${(this.state.currentPlan.payment_summary.driver_tip)}
                   </div>
 
-                  <div className={styles.summaryRight}>
+                  <div className={this.activeChanges() ? styles.summaryRight : styles.summaryGray}>
                     ${Math.abs(this.state.differenceSummary.driver_tip).toFixed(2)}
                   </div>
 
@@ -2215,11 +2444,12 @@ class EditPlan extends React.Component {
                 />
                 <button 
                   className={styles.codeButton}
+                  disabled={this.state.refreshingPrice}
                   onClick={() => this.applyAmbassadorCode()}
                 >
                   Verify
                 </button>
-                <div className={styles.summarySubLeft}>
+                <div className={this.activeChanges() ? styles.summarySubLeft : styles.summarySubLeftGray}>
                   -${this.state.updatedPlan.payment_summary.ambassador_discount}
                 </div>
 
@@ -2227,7 +2457,7 @@ class EditPlan extends React.Component {
                   -${this.state.currentPlan.payment_summary.ambassador_discount}
                 </div>
 
-                <div className={styles.summarySubtotal}>
+                <div className={this.activeChanges() ? styles.summarySubtotal : styles.summarySubGray}>
                   ${this.state.differenceSummary.ambassador_discount}
                 </div>
               </div>
@@ -2238,7 +2468,7 @@ class EditPlan extends React.Component {
                     Total
                   </div>
 
-                  <div className={styles.summaryRight}>
+                  <div className={this.activeChanges() ? styles.summaryRight : styles.summaryGray}>
                     ${this.state.updatedPlan.payment_summary.total}
                   </div>
 
@@ -2246,7 +2476,7 @@ class EditPlan extends React.Component {
                     ${this.state.currentPlan.payment_summary.total}
                   </div>
 
-                  <div className={styles.summaryRight}>
+                  <div className={this.activeChanges() ? styles.summaryRight : styles.summaryGray}>
                     ${this.state.differenceSummary.total}
                   </div>
               </div>
@@ -2270,11 +2500,13 @@ class EditPlan extends React.Component {
                 disabled={
                   (!this.state.subscriptionsLoaded && 
                   this.state.defaultSet === false) ||
-                  this.state.refreshingPrice === true
+                  this.state.refreshingPrice === true || 
+                  !this.activeChanges() ||
+                  this.state.processingChanges
                 }
                 onClick={() => this.confirmChanges()}
               >
-                Complete Payment
+                Update Meal Plan
               </button>
 
               <button 
@@ -2282,7 +2514,9 @@ class EditPlan extends React.Component {
                 disabled={
                   (!this.state.subscriptionsLoaded && 
                   this.state.defaultSet === false) ||
-                  this.state.refreshingPrice === true
+                  this.state.refreshingPrice === true || 
+                  !this.activeChanges() ||
+                  this.state.processingChanges
                 }
                 onClick={() => this.discardChanges()}
               >

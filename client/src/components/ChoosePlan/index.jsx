@@ -65,7 +65,8 @@ class ChoosePlan extends React.Component {
       login_seen:false,
       signUpSeen:false,
       total: '0.00',
-      numDeliveryDays: 0
+      numDeliveryDays: 0,
+      profileLoaded: false
     };
   }
 
@@ -148,7 +149,12 @@ class ChoosePlan extends React.Component {
           this.props.changeAddressState(data.customer_state)
           this.props.changeAddressZip(data.customer_zip)
           this.props.changeAddressPhone(data.customer_phone_num)
-          console.log("(2) choose-plan address props: " + JSON.stringify(this.props.address));
+          //console.log("(2) choose-plan address props: " + JSON.stringify(this.props.address));
+
+          this.setState({
+            profileLoaded: true
+          });
+
         })
         .catch(err => {
           console.log(err)
@@ -177,7 +183,12 @@ class ChoosePlan extends React.Component {
           this.props.changeAddressState(data.customer_state)
           this.props.changeAddressZip(data.customer_zip)
           this.props.changeAddressPhone(data.customer_phone_num)
-          console.log("(3) choose-plan address props: " + JSON.stringify(this.props.address));
+          //console.log("(3) choose-plan address props: " + JSON.stringify(this.props.address));
+
+          this.setState({
+            profileLoaded: true
+          });
+
         })
         .catch(err => {
           console.log(err)
@@ -189,12 +200,13 @@ class ChoosePlan extends React.Component {
       });
     } else {
       // Reroute to log in page
-      console.log("Choose-plan NOT LOGGED IN");
+      //console.log("Choose-plan NOT LOGGED IN");
       this.props.fetchPlans();
       this.setState({
         mounted: true,
         customerUid: "NULL",
-        loggedIn: false
+        loggedIn: false,
+        profileLoaded: true
       });
       //this.props.history.push("/");
     }
@@ -204,7 +216,7 @@ class ChoosePlan extends React.Component {
       .then(res => {
         // console.log(res.data.result[0])
         let resultDays = res.data.result;
-        console.log("delivery_weekdays response: " + JSON.stringify(resultDays));
+        //console.log("delivery_weekdays response: " + JSON.stringify(resultDays));
         this.setState({
           deliveryDays: resultDays
         }, () => {
@@ -320,7 +332,7 @@ class ChoosePlan extends React.Component {
         this.setState(prevState => {
           return {numDeliveryDays: prevState.numDeliveryDays+1}
         }, () => {
-          console.log("new num weekdays delivered: " + this.state.numDeliveryDays);
+          //console.log("new num weekdays delivered: " + this.state.numDeliveryDays);
         });
       }
     }
@@ -357,8 +369,8 @@ class ChoosePlan extends React.Component {
               this.props.paymentOption,
               this.props.plans
             );
-            console.log("===== mealIndex: " + mealIndex);
-            console.log("===== paymentOption: " + this.props.paymentOption);
+            // console.log("===== mealIndex: " + mealIndex);
+            // console.log("===== paymentOption: " + this.props.paymentOption);
             //console.log("===== plans: " + JSON.stringify(this.props.plans));
           }}
         >
@@ -381,11 +393,11 @@ class ChoosePlan extends React.Component {
     var discounts = this.props.plans[2];
     var discount = null;
 
-    console.log("(paymentFrequency2) === (1)");
-    console.log("(paymentFrequency2) === typeof(discounts): " + typeof(discounts));
+    // console.log("(paymentFrequency2) === (1)");
+    // console.log("(paymentFrequency2) === typeof(discounts): " + typeof(discounts));
 
     if(typeof(discounts) !== "undefined"){
-      console.log("(paymentFrequency2) === (2)");
+      // console.log("(paymentFrequency2) === (2)");
       for (const [deliveryIndex, deliveryData] of Object.entries(discounts)) {
         let active = false;
         if (this.props.meals === "") {
@@ -427,8 +439,8 @@ class ChoosePlan extends React.Component {
                         this.props.meals,
                         tempPlan
                       )
-                      console.log("##### deliveryIndex: " + deliveryIndex);
-                      console.log("##### meals: " + this.props.meals);
+                      // console.log("##### deliveryIndex: " + deliveryIndex);
+                      // console.log("##### meals: " + this.props.meals);
                     }}
                   >
                     <span style={{fontSize: '35px'}}>
@@ -492,6 +504,10 @@ class ChoosePlan extends React.Component {
 
     return deal;
   };
+
+  proceedToPayment = () => {
+    this.props.history.push("/payment-details");
+  }
 
   render() {
     if (!this.state.mounted) {
@@ -636,9 +652,18 @@ class ChoosePlan extends React.Component {
                                 That's only ${this.calculateDeal()} per freshly cooked meal
                               </div>
                               <div className={styles.proceedWrapper}>
-                                <Link className={styles.proceedBtn} to='/payment-details'>
+                                {/* <Link className={styles.proceedBtn} to='/payment-details'>
                                   PROCEED
-                                </Link>
+                                </Link> */}
+                                <button 
+                                  className={styles.proceedBtn} 
+                                  disabled={!this.state.profileLoaded}
+                                  onClick={() => {
+                                    this.proceedToPayment()
+                                  }}
+                                >
+                                  PROCEED
+                                </button>
                               </div>
                             </div>
                             </div>

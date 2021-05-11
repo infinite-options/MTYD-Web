@@ -576,6 +576,20 @@ select {
   font-weight: 500;
   color:white
 }
+.codeButton:disabled {
+  width: 20%;
+  height: 30px;
+  border: none;
+  background-color: #ccc9c9;
+  border-radius: 10px;
+  border-width: 2px;
+  margin-left: 2%;
+  margin-top: 17px;
+  margin-bottom: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  color:white
+}
 
 /* .tipButton {
   border: solid;
