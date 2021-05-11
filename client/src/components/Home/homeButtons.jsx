@@ -29,6 +29,8 @@ import SocialLogin from "../Landing"
 import GoogleLogin from "react-google-login";
 import FacebookLogin from "react-facebook-login";
 
+import ambassadorNotLogin from '../../images/ambassadorNotLogin.png'
+
 class HomeLink extends Component {
     render() { 
         return (
@@ -75,7 +77,7 @@ class FootLink extends Component {
             <p className = {styles.findUs}>Find us 		
 
               <img className = {styles.footerLogo} src = {facebookAndInstagramImg} alt="facebookAndInstagramImg" />
-              <a href='https://www.facebook.com/Meals-For-Me-101737768566584'
+              <a href='https://www.facebook.com/Meals-For-Me-101737768566584' target="_blank"
               style={{
                 position:'absolute',
                 width:'50px',
@@ -86,7 +88,7 @@ class FootLink extends Component {
                 opacity:'0',
               }}/>
 
-              <a href='https://www.instagram.com/mealsfor.me/?hl=en'
+              <a href='https://www.instagram.com/mealsfor.me/?hl=en' target="_blank"
               style={{
                 position:'absolute',
                 width:'50px',
@@ -327,29 +329,93 @@ class AddMeals extends Component {
   render() {
     return (
       <div>
-        {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
-        {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
+        <div
+        className={styles.poploginsignup}
+
+        >
+          {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
+          {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
+        </div>
+
+
 
         {(() => {
 			if(this.state.user_id == "not login") {
 					return (
               <div className={styles.becomeAnAmbassadorPopup}>
-                <p style = {{font:'SF Pro', fontSize: '24px', fontWeight:'medium', textAlign: 'left', color:'black'}}>Looks like you’re enjoying MealsFor.Me!<br/> The <img src = {negativeSign}/> <img src ={positiveSign}/> buttons help you add / <br/>remove meals from your meal plan.</p>	
+                {/* <p 
+                  style = {{font:'SF Pro', fontSize: '24px', fontWeight:'medium', textAlign: 'left', color:'black', paddingTop:'40px'}}
+                  >Looks like you’re enjoying MealsFor.Me!<br/> The <img src = {negativeSign}/> <img src ={positiveSign}/> buttons help you add / <br/>remove meals from your meal plan.
+                </p>	
                 <br/>
-                <br/>
-                <span onClick={this.handleClick}>
-                  <img style = {{marginLeft:'80px'}} src={continueExploring}/>
-                </span>
-                <p style = {{marginLeft:'50px',font: 'SF Pro', fontWeight:'bold', fontSize:'18px',textAlign: 'left', paddingTop:'15px', color:'black'}}>Already a Customer?</p>
-                
-                <img src ={loginButton} style= {{display: 'block', marginLeft: '80px',marginTop:'-20px', marginRight: 'auto'}} onClick={() => this.togglePopLogin()}/>
-                              {this.state.wantToLogin ? <LoginModal toggle={this.togglePopWTL} /> : null}
-                <p style = {{marginLeft:'80px',font: 'SF Pro', fontWeight:'bold', fontSize:'18px',textAlign: 'left', paddingTop:'15px', color:'black'}}>Ready to start eating better?</p>
-                <img style= {{display: 'block', marginLeft: '80px', marginTop:'-15px',marginRight: 'auto'}} src = {signupButton} onClick={() => this.togglePopSignup()}/>
+                <br/> */}
+
+                <div
+                style= 
+                {{
+                  position:'absolute',
+                  width:'50px',
+                  height:'50px',
+                  backgroundColor:'red',
+                  top:'20px',
+                  right:'20px',
+                  opacity:0
+                }} 
+                onClick={this.handleClick}
+                />
+                <div
+                style= 
+                  {{
+                    position:'absolute',
+                    width:'450px',
+                    height:'80px',
+                    backgroundColor:'red',
+                    top:'335px',
+                    left:'80px',
+                    opacity:0
+                  }} 
+                  onClick={() => this.togglePopLogin()}
+                />
+
+                {this.state.wantToLogin ? <LoginModal toggle={this.togglePopWTL} /> : null}
+
+                <div 
+                style={{
+                  position:'absolute',
+                  width:'450px',
+                  height:'80px',
+                  backgroundColor:'red',
+                  top:'475px',
+                  left:'80px',
+                  opacity:0
+                  
+                }} 
+                onClick={() => this.togglePopSignup()}/>
                               {this.state.wantToSignUp ? <SignUpModal toggle={this.togglePopWTS} /> : null}                    
 
               </div>
-				)}
+				)}else{
+          return (
+          <div
+          className={styles.becomeAnAmbassadorPopupSignin}
+          >
+            <div
+              style= 
+              {{
+                position:'absolute',
+                width:'50px',
+                height:'50px',
+                backgroundColor:'red',
+                top:'10px',
+                right:'5px',
+                opacity:0
+              }} 
+              onClick={this.handleClick}
+            />
+          </div>
+          )
+
+        }
 		}) ()}
 		</div>
     )

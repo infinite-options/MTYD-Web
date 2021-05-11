@@ -749,23 +749,43 @@ button {
 }
 
 .becomeAnAmbassadorPopup {
-
-  /* 
-  position: relative;
-  top: 20%;
-  left: 30%;
-  width: 40%;
-  padding: 20px;
-  border-radius: 5px;*/
-
   position: fixed;
-  background-color: white;
+  /* background-color: white; */
   z-index: 1;
   width: 600px;
   height: 600px;
   left: 30%;
   top: 20%;
   bottom: 10px;
+  background-image: url('../../images/ambassadorNotLogin.png');
+  background-size:1600px 800px;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.poploginsignup{
+  position: fixed;
+  background-color: white;
+  z-index: 1;
+  right: 0%;
+  top: -100px;
+}
+
+.becomeAnAmbassadorPopupSignin {
+  position: fixed;
+  /* background-color: white; */
+  z-index: 1;
+  width: 537px;
+  height: 580px;
+  left: 30%;
+  top: 20%;
+  bottom: 10px;
   border: 2px solid #F26522; 
+  background-color: white;
+  background-image: url('../../images/ambassadorLogin.png');
+  background-size:537px 556px;
+  background-position: center;
+  background-repeat: no-repeat;
+
 
 }

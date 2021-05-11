@@ -181,6 +181,7 @@ class NavBar extends React.Component {
     const nameLength = this.state.firstName.length*14+this.state.lastName.length*14+30;
     const nameFormat = {
       width: nameLength,
+      color:'white'
     }
 
     if(this.props.narrowView === false){
@@ -297,7 +298,7 @@ class NavBar extends React.Component {
           {this.state.login ? (
           <>
 
-          <Link to='/meal-plan' className={styles.showNameBtn} 
+          <Link to='/meal-plan' className={styles.whiteBackBtn} 
             style={nameFormat}
           >
             {/* {console.log(this.state)} */}
@@ -315,12 +316,8 @@ class NavBar extends React.Component {
             </a>
             </>
           ) 
-          
-          : 
-          
-          (
-            <>
-              <div
+          : (<>
+            <div
               style={{
                 height:'100%',
                 
@@ -332,10 +329,8 @@ class NavBar extends React.Component {
                 >
                   Sign Up
                 </button>
-
-                
               {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
-              </div>
+            </div>
 
               <div
                 style={{
@@ -350,9 +345,7 @@ class NavBar extends React.Component {
                 </button>
                 {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
               </div>
-
-            </>
-          )}
+            </>)}
         </ul>
 
 

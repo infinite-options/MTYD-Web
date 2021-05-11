@@ -69,7 +69,7 @@ export class MenuList extends Component {
                 height:"20px",
                 color:'white'
               }}>
-              Meal Plan
+              Change Meal Plans
             </a>
 
             <a href='/meal-plan'
