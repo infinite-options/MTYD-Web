@@ -412,6 +412,26 @@ class AddMeals extends Component {
               }} 
               onClick={this.handleClick}
             />
+
+            <input
+              style= 
+              {{
+                position:'absolute',
+                width:'385px',
+                height:'42px',
+                backgroundColor:'white',
+                top:'440px',
+                right:'74px',
+                border:'2px solid #F26522',
+                borderRadius:'15px',
+                outline:'none'
+                // opacity:0.5
+              }} 
+
+              placeholder="Enter your email here"
+            />
+
+
           </div>
           )
 
