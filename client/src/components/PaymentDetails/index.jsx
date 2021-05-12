@@ -88,7 +88,8 @@ class PaymentDetails extends React.Component {
       errorType: CLOSED,
       errorMessage: "",
       paymentType: 'NULL',
-      fetchingFees: true,
+      fetchingFees: false,
+      loadingMap: true,
       recalculatingPrice: false,
       stripePromise: null,
       createGuestErrorCode: -1
@@ -130,17 +131,18 @@ class PaymentDetails extends React.Component {
 
     console.log("calling fetchAddressCoordinates...");
     
-    fetchAddressCoordinates( //(address, city, state, zip, _callback) {
-      this.props.street,
-      this.props.city,
-      this.props.state,
-      this.props.zip,
+    fetchAddressCoordinates( //(address, city, state, zip, _callback) {å
+      document.getElementById("pac-input").value,
+      document.getElementById("locality").value,
+      document.getElementById("state").value,
+      document.getElementById("postcode").value,
       (coords) => {
         console.log("(mount) Fetched coordinates: " + JSON.stringify(coords));
 
         this.setState({
           latitude: coords.latitude,
           longitude: coords.longitude,
+          loadingMap: false
         });
 
         const temp_position = {lat:parseFloat(coords.latitude), lng:parseFloat(coords.longitude)}
@@ -203,10 +205,6 @@ class PaymentDetails extends React.Component {
       let postcode = '';
       let city = '';
       let state = '';
-      // let address1 = this.props.address.street;
-      // let city = this.props.address.city;
-      // let state = this.props.address.state;
-      // let postcode = this.props.address.zip;
 
       let address1Field = document.querySelector("#pac-input");
       let postalField = document.querySelector("#postcode");
@@ -295,20 +293,12 @@ class PaymentDetails extends React.Component {
       this.setState(prevState => ({
         mounted: true,
         customerUid: customerUid,
-        // street: this.props.address.street,
-        // city: this.props.address.city,
-        // state: this.props.address.state,
-        // addressZip: this.props.address.zip,
         unit: this.props.address.unit,
         instructions: this.props.instructions,
         firstName: this.props.addressInfo.firstName,
         lastName: this.props.addressInfo.lastName,
         email: this.props.email,
         phone: this.props.addressInfo.phoneNumber,
-        // name: this.props.creditCard.name,
-        // number: this.props.creditCard.number,
-        // cvv: this.props.creditCard.cvv,
-        // month: this.props.creditCard.month,
         year: this.props.creditCard.year,
         cardZip: this.props.creditCard.zip,
         recalculatingPrice: true,
@@ -421,11 +411,11 @@ class PaymentDetails extends React.Component {
         last_name: this.state.lastName,
         phone: this.state.phone,
         email: this.props.email,
-        address: this.state.street,
+        address: document.getElementById("pac-input").value,
+        city: document.getElementById("locality").value,
+        state: document.getElementById("state").value,
+        zip: document.getElementById("postcode").value,
         unit: this.state.unit,
-        city: this.state.city,
-        state: this.state.state,
-        zip: this.state.addressZip,
         noti: "false"
       };
                   
@@ -443,32 +433,43 @@ class PaymentDetails extends React.Component {
           }
         });
     }
+
+    console.log("(2) Saving delivery details");
       
     this.props.changeDeliveryDetails({
-      street: this.state.street,
-      city: this.state.city,
-      state: this.state.state,
-      zip: this.state.addressZip,
+      street: document.getElementById("pac-input").value,
+      city: document.getElementById("locality").value,
+      state: document.getElementById("state").value,
+      zip: document.getElementById("postcode").value,
       unit: this.state.unit,
       instructions: this.state.instructions
     });
 
+    console.log("(3) Saving delivery details");
+
     fetchAddressCoordinates(
-      this.state.street,
-      this.state.city,
-      this.state.state,
-      this.state.addressZip,
+      document.getElementById("pac-input").value,
+      document.getElementById("locality").value,
+      document.getElementById("state").value,
+      document.getElementById("postcode").value,
       (coords) => {
+
         console.log("Fetched coordinates: " + JSON.stringify(coords));
         this.setState({
           latitude: coords.latitude,
-          longitude: coords.longitude
+          longitude: coords.longitude,
+          loadingMap: false
         });
+
+        console.log("Calling categorical options...");
         axios
           .get(`${API_URL}categoricalOptions/${coords.longitude},${coords.latitude}`)
           .then((response) => {
-            console.log("Categorical Options response: " + JSON.stringify(response));
+            console.log("Categorical Options response: ", response);
+
             if(response.data.result.length !== 0) {
+
+              console.log("cat options for: ", document.getElementById("pac-input").value);
               this.setState(prevState => ({
                 recalculatingPrice: true,
                 paymentSummary: {
@@ -486,8 +487,8 @@ class PaymentDetails extends React.Component {
                 fetchingFees: false
               }), () => {
                 this.setTotal();
-                console.log("catOptions taxAmount: " + this.state.paymentSummary.taxAmount);
-                console.log("catOptions new payment summary: ", this.state.paymentSummary);
+                console.log("(1) catOptions taxAmount: " + this.state.paymentSummary.taxAmount);
+                console.log("(1) catOptions new payment summary: ", this.state.paymentSummary);
               });
               //this.setTotal();
               //console.log("catOptions taxAmount: " + this.state.paymentSummary.taxAmount);
@@ -501,9 +502,12 @@ class PaymentDetails extends React.Component {
                   serviceFee: "0.00",
                   deliveryFee: "0.00",
                   taxAmount: "0.00"
-                }
+                },
+                fetchingFees: false
               }), () => {
                 this.setTotal();
+                console.log("(2) catOptions taxAmount: " + this.state.paymentSummary.taxAmount);
+                console.log("(2) catOptions new payment summary: ", this.state.paymentSummary);
               });
               //this.setTotal();
             }
@@ -517,9 +521,7 @@ class PaymentDetails extends React.Component {
       }
     );
 
-    //console.log("NEW COORDIANTES: " + JSON.stringify(coordinates));
-
-    console.log("delivery props: " + JSON.stringify(this.props));
+    //console.log("delivery props: " + JSON.stringify(this.props));
   }
     
   savePaymentDetails() {
@@ -536,44 +538,65 @@ class PaymentDetails extends React.Component {
     
   applyAmbassadorCode() {
 
-    if(this.state.email !== ""){
-      console.log("(Ambassador code) Valid email");
-    } else {
-      console.log("(Ambassador code) Invalid email");
-    }
+    // if(this.state.email !== ""){
+    //   console.log("(Ambassador code) Valid email");
+    // } else {
+    //   console.log("(Ambassador code) Invalid email");
+    // }
       
-    axios
-      .post(API_URL + 'brandAmbassador/generate_coupon',
+    console.log("amb code: ", this.state.ambassadorCode);
+
+    this.setState({
+      recalculatingPrice: true,
+    }, () => {
+
+    if (this.state.customerUid === "GUEST") {
+
+      axios
+      .post(API_URL + 'brandAmbassador/discount_checker',
         {
-          amb_email: this.state.ambassadorCode,
-          cust_email: this.state.email
+          code: this.state.ambassadorCode,
+          info: (
+            document.getElementById("pac-input").value + ', ' +
+            document.getElementById("locality").value + ', ' +
+            document.getElementById("state").value + ', ' +
+            document.getElementById("postcode").value
+          ),
+          IsGuest: 'TRUE'
         }
       )
       .then(res => {
-        let items = res.data
-        console.log("ambassador code response: " + JSON.stringify(res));
+        console.log("(GUEST) ambassador code response: ", res);
 
-        if(typeof(items) === "string") {
+        if (res.data.code !== 200) {
 
-          console.log("Invalid code");
+          console.log("(GUEST) Invalid code");
 
-          this.displayError(AMBASSADOR_ERROR, items);
+          this.displayError(AMBASSADOR_ERROR, res.data.message);
+
+          this.setState(prevState => ({
+            //recalculatingPrice: true,
+            paymentSummary: {
+              ...prevState.paymentSummary,
+              ambassadorDiscount: '0.00'
+            }
+          }), () => {
+            this.setTotal();
+          });
 
         } else {
           
-          console.log("Valid code");
+          console.log("(GUEST) Valid code");
 
-          items = items.result[0];
-
-          console.log("result: " + JSON.stringify(items));
+          console.log("(GUEST) result: ", res.data);
 
           this.setState(prevState => ({
-            recalculatingPrice: true,
+            //recalculatingPrice: true,
             paymentSummary: {
               ...prevState.paymentSummary,
               ambassadorDiscount: (
-                items.discount_amount +
-                items.discount_shipping
+                res.data.sub.discount_amount +
+                res.data.sub.discount_shipping
               ).toFixed(2)
             }
           }), () => {
@@ -583,8 +606,113 @@ class PaymentDetails extends React.Component {
         }
       })
       .catch(err => {
-        console.log("Ambassador code error: " + err);
+        console.log("(GUEST) Ambassador code error: ", err);
       });
+
+    } else {
+
+      axios
+      .post(API_URL + 'brandAmbassador/discount_checker',
+        {
+          code: this.state.ambassadorCode,
+          info: this.props.email,
+          IsGuest: 'False'
+        }
+      )
+      .then(res => {
+        console.log("(CUST) ambassador code response: ", res);
+
+        if (res.data.code !== 200) {
+
+          console.log("(CUST) Invalid code");
+
+          this.displayError(AMBASSADOR_ERROR, res.data.message);
+
+          this.setState(prevState => ({
+            //recalculatingPrice: true,
+            paymentSummary: {
+              ...prevState.paymentSummary,
+              ambassadorDiscount: '0.00'
+            }
+          }), () => {
+            this.setTotal();
+          });
+
+        } else {
+          
+          console.log("(CUST) Valid code");
+
+          console.log("(CUST) result: ", res.data);
+
+          this.setState(prevState => ({
+            //recalculatingPrice: true,
+            paymentSummary: {
+              ...prevState.paymentSummary,
+              ambassadorDiscount: (
+                res.data.sub.discount_amount +
+                res.data.sub.discount_shipping
+              ).toFixed(2)
+            }
+          }), () => {
+            this.setTotal();
+          });
+
+        }
+      })
+      .catch(err => {
+        console.log("(CUST) Ambassador code error: ", err);
+      });
+
+    }
+
+  });
+
+    /*axios
+      .post(API_URL + 'brandAmbassador/generate_coupon',
+        {
+          code: this.state.ambassadorCode,
+          // cust_email: this.state.email
+          info: this.props.email,
+          isGuest: false
+        }
+      )
+      .then(res => {
+        // let items = res.data
+        console.log("ambassador code response: ", res);
+
+        //if(typeof(items) === "string") {
+        if (res.data.code !== 200) {
+
+          console.log("Invalid code");
+
+          this.displayError(AMBASSADOR_ERROR, res.data.message);
+
+        } else {
+          
+          console.log("Valid code");
+
+          // items = items.result[0];
+
+          console.log("result: ", res.data);
+
+          // this.setState(prevState => ({
+          //   recalculatingPrice: true,
+          //   paymentSummary: {
+          //     ...prevState.paymentSummary,
+          //     ambassadorDiscount: (
+          //       items.discount_amount +
+          //       items.discount_shipping
+          //     ).toFixed(2)
+          //   }
+          // }), () => {
+          //   this.setTotal();
+          // });
+
+        }
+      })
+      .catch(err => {
+        console.log("Ambassador code error: ", err);
+      });*/
   }
 
   displayError = (type, message) => {
@@ -666,11 +794,11 @@ class PaymentDetails extends React.Component {
           first_name: this.state.firstName,
           last_name: this.state.lastName,
           phone_number: this.state.phone,
-          address: this.state.street,
+          address: document.getElementById("pac-input").value,
+          city: document.getElementById("locality").value,
+          state: document.getElementById("state").value,
+          zip: document.getElementById("postcode").value,
           unit: this.state.unit,
-          city: this.state.city,
-          state: this.state.state,
-          zip_code: this.state.addressZip,
           latitude: this.state.latitude.toString(),
           longitude: this.state.longitude.toString(),
           referral_source: "WEB",
@@ -746,14 +874,6 @@ class PaymentDetails extends React.Component {
 
     }
   }
-
-  // saveAndProceedButton(){
-  //   this.saveDeliveryDetails();
-  //   this.saveContactDetails();
-  //   this.setState({
-  //     showPaymentInfo: true
-  //   });
-  // }
 
   render() {
     let loggedInByPassword = false;
@@ -1076,10 +1196,11 @@ class PaymentDetails extends React.Component {
             <div style={{textAlign: 'center'}}>
               <button 
                 className={styles.orangeBtn}
+                disabled={this.state.loadingMap || this.state.fetchingFees}
                 onClick={()=>this.proceedToPayment()}
               >
                 Save and Proceed
-              </button>
+              </button> 
             </div> 
 
           </div>
@@ -1088,7 +1209,10 @@ class PaymentDetails extends React.Component {
             <div style={{width: '84%', marginLeft: '6%'}}>
               <div
                 style={{
-                  display: !this.state.showPaymentInfo?'block':'none',
+                  display: (
+                    !this.state.showPaymentInfo ||
+                    this.state.fetchingFees
+                  ) ?'block':'none',
                   fontWeight: '500',
                   textAlign: 'left'
                 }}
@@ -1101,7 +1225,10 @@ class PaymentDetails extends React.Component {
 
               <div
                 style={{
-                  visibility:this.state.showPaymentInfo?'visible':'hidden'
+                  visibility: (
+                    this.state.showPaymentInfo && 
+                    !this.state.fetchingFees
+                  ) ? 'visible' : 'hidden'
                 }}
               > 
                 <div 
@@ -1275,6 +1402,7 @@ class PaymentDetails extends React.Component {
                   />
                   <button 
                     className={styles.codeButton}
+                    disabled={this.state.recalculatingPrice}
                     onClick={() => this.applyAmbassadorCode()}
                   >
                     Verify
@@ -1298,7 +1426,7 @@ class PaymentDetails extends React.Component {
             </div>
               
             {
-              this.state.showPaymentInfo
+              (this.state.showPaymentInfo && !this.state.fetchingFees)
                 ? (<>
                     <div style={{width: '100%'}}>
                       <h6 className={styles.sectionHeaderRight2}>Complete Payment</h6>
@@ -1319,6 +1447,7 @@ class PaymentDetails extends React.Component {
                               email={this.state.email}
                               customerUid={this.state.customerUid}
                               phone={this.state.phone}
+                              fetchingFees={this.state.fetchingFees}
                             />
                           </div>
                       </div>

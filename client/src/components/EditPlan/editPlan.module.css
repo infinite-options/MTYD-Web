@@ -1027,13 +1027,13 @@
   margin-bottom: 10px;
   font-weight: bold;
 }
-.summaryGrey {
+.summaryGray {
   width: 22%;
   text-align: right;
   margin-top:10px;
   margin-bottom: 10px;
   font-weight: bold;
-  color: #ccc9c9;
+  color: #9c9c9c;
 }
 .summarySubtotal {
   width: 22%;
@@ -1042,12 +1042,28 @@
   margin-bottom: 10px;
   font-weight: bold;
 }
+.summarySubGray {
+  width: 22%;
+  text-align: right;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  font-weight: bold;
+  color: #9c9c9c;
+}
 .summarySubLeft {
   width: 14%;
   text-align: right;
   margin-top: 20px;
   margin-bottom: 10px;
   font-weight: bold;
+}
+.summarySubLeftGray {
+  width: 14%;
+  text-align: right;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  font-weight: bold;
+  color: #9c9c9c;
 }
 .summaryUpdated {
   width: 19%;
@@ -1185,6 +1201,20 @@
   height: 30px;
   border: none;
   background-color: #ff6505;
+  border-radius: 10px;
+  border-width: 2px;
+  margin-left: 2%;
+  margin-top: 17px;
+  margin-bottom: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  color:white
+}
+.codeButton:disabled {
+  width: 12%;
+  height: 30px;
+  border: none;
+  background-color: #ccc9c9;
   border-radius: 10px;
   border-width: 2px;
   margin-left: 2%;

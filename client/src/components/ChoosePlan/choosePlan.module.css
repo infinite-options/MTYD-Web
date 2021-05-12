@@ -335,7 +335,41 @@
   background-color: #ff6505;
   margin-top: 20px;
   width: 60%;
+  border-width: 0;
 }
+.proceedBtn:hover {
+  text-align: center;
+  justify-content: center;
+  padding: 5px !important;
+  /*color: black !important;*/
+  color: #ffffff;
+  font-size: 16px !important;
+  /*border: 1px solid rgb(187, 174, 174);*/
+  border-radius: 10px;
+  min-width: 100px !important;
+  font-weight: bold;
+  background-color: #ff6505;
+  margin-top: 20px;
+  width: 60%;
+  border-width: 0;
+}
+.proceedBtn:disabled {
+  text-align: center;
+  justify-content: center;
+  padding: 5px !important;
+  /*color: black !important;*/
+  color: #ffffff;
+  font-size: 16px !important;
+  /*border: 1px solid rgb(187, 174, 174);*/
+  border-radius: 10px;
+  min-width: 100px !important;
+  font-weight: bold;
+  background-color: #ccc9c9;
+  margin-top: 20px;
+  width: 60%;
+  border-width: 0;
+}
+
 .proceedWrapper {
   display: flex;
   justify-content: center;

@@ -16,7 +16,8 @@ export default async function checkoutItems(data, _callback) {
       .then((res) => {
         console.log("Checkout complete; response: ", res);
         _callback(res);
-      }).catch((err) => {
+      })
+      .catch((err) => {
         console.log(
           'error happened while posting to checkoutapi',
           err

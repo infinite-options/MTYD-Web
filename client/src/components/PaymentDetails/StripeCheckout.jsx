@@ -116,10 +116,7 @@ const StripeCheckout = (props) => {
     currency: "usd"
   };
 
-  console.log("orderData: " + JSON.stringify(orderData));
-
   const changeCardholderName = (name) => {
-    console.log("Name changes: " + name);
     setCardholderName(name);
   }
 
@@ -134,19 +131,14 @@ const StripeCheckout = (props) => {
     };
   
     if (cardholderName !== null) {
-      console.log("cardholderName is not null");
       data["billing_details"]["name"] = cardholderName;
-    } else {
-      console.log("cardholderName is null");
     }
   
     const cardElement = await elements.getElement(CardElement);
   
-    console.log("stripe: ", stripe);
-    console.log("cardElement: ", cardElement);
-    console.log("data: ", data);
-  
-    //changeLoadingState(true);
+    // console.log("stripe: ", stripe);
+    // console.log("cardElement: ", cardElement);
+    // console.log("data: ", data);
 
     orderData.customer_uid = props.customerUid;
     orderData.business_code = props.deliveryInstructions;
@@ -198,7 +190,7 @@ const StripeCheckout = (props) => {
 
             console.log("customerUid before checkout: ", props.customerUid);
 
-            if(props.customerUid !== 'GUEST') {
+            // if(props.customerUid !== 'GUEST') {
               console.log("STRIPE CHECKOUT (1) -- not a guest");
               console.log("STRIPE CHECKOUT (1) -- amount_due: " + props.paymentSummary.total);
       
@@ -245,23 +237,33 @@ const StripeCheckout = (props) => {
                     .post(API_URL + 'add_surprise/' + res.data.purchase_id)
                     .then((res2) => {
                       console.log("add_suprise res: ", res2);
+                      changeLoadingState(false);
                     })
                     .catch(err => {
                       console.log(err);
                       if (err.response) {
                         console.log("add_suprise error: " + JSON.stringify(err.response));
                       }
+                      changeLoadingState(false);
                     });
 
-                  history.push("/congrats")
+                  //history.push("/congrats")
+                  history.push({
+                    pathname: '/congrats',
+                    delivery_address: props.address.street,
+                    delivery_city: props.city,
+                    delivery_state: props.state,
+                    delivery_zip: props.zip
+                  });
+
                   //https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/add_surprise/400-000002
                 }
               );
 
-            } else {
-              console.log("STRIPE CHECKOUT (3) -- error; wrong data");
-              changeLoadingState(false);
-            }
+            // } else {
+            //   console.log("STRIPE CHECKOUT (3) -- error; wrong data");
+            //   changeLoadingState(false);
+            // }
 
           })
           .catch(err => {
