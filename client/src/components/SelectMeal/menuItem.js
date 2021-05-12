@@ -133,6 +133,8 @@ class MenuItem extends React.Component {
   menuItemFilter = () => {
 
     const {cartItems, show} = this.props;
+
+    // console.log(cartItems)
     let x = this.props.data.filter(
       date => date.menu_date === this.props.myDate
     );
@@ -228,6 +230,15 @@ class MenuItem extends React.Component {
                   {0}
                 </div>
               ):(cartItems.map((item, index) => {
+
+                let tempint = 0;
+
+                console.log(item.menu_meal_id)
+                console.log("menu item id " + menuitem.menu_meal_id)
+                if(item.menu_meal_id === menuitem.menu_meal_id){
+                  console.log(item.count)
+                  tempint = item.count
+                } 
                 return (
                   <div key = {index}
                     style={{
@@ -239,7 +250,8 @@ class MenuItem extends React.Component {
                     className={styles.numElements}
                     id={styles.mealCounter}
                   >
-                    {item.menu_meal_id === menuitem.menu_meal_id?(item.count):(0) }
+                    {/* {console.log(tempint)} */}
+                    {tempint}
                   </div>
                 );
               }))
