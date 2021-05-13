@@ -398,7 +398,9 @@ class MenuItemList extends Component {
   };
 
   filterDates = event => {
-    // event.stopPropagation();
+
+    console.log(event.target)
+    event.stopPropagation();
 
     if(Cookies.get("customer_uid")==null){
       return this.setState({
@@ -1228,31 +1230,37 @@ class MenuItemList extends Component {
           id={date} className={styles.datebuttonSurprise} 
           autoFocus={first==null}
           >
-            <div
+            <button
               style={{
                 fontSize:'25px',
                 fontWeight:'bold',
                 lineHeight:'25px',
+                backgroundColor:'rgba(0, 0, 0, 0)',
+                border:'none'
               }}
+              key={date} value={date} 
               value={date} 
               onClick={this.filterDates}
               >
               {moment(date.split(" ")[0]).format("ddd")}
               <br/>{moment(date.split(" ")[0]).format("MMM") +" "+ moment(date.split(" ")[0]).format("D")}
-            </div>
+            </button>
 
-            <div
+            <button
             style={{
               width:"122px",
               height:"48px",
               marginTop:"15px",
-              fontSize:"15px"
+              fontSize:"15px",
+              backgroundColor:'rgba(0, 0, 0, 0)',
+              border:'none'
             }}
+            key={date} value={date} 
             value={date} 
             onClick={this.filterDates}
             >
               Surprise / No selection
-            </div>
+            </button>
             
           </button>
         )

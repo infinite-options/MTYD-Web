@@ -431,7 +431,7 @@
 .datebutton:focus {
   width: 134px;
   height:134px;
-  border: 2px solid #f08e1f; 
+  border: 4px solid #f08e1f; 
   outline:none;
 }
 
@@ -450,7 +450,7 @@
 .datebuttonSkip:focus {
   width: 134px;
   height:134px;
-  border: 2px solid #f08e1f; 
+  border: 4px solid #f08e1f; 
   outline:none;
 }
 
@@ -468,7 +468,7 @@
 .datebuttonSurprise:focus {
   width: 134px;
   height:134px;
-  border: 2px solid #f08e1f; 
+  border: 4px solid #f08e1f; 
   outline:none;
 }
 
@@ -485,7 +485,7 @@
 .datebuttonSave:focus {
   width: 134px;
   height:134px;
-  border: 2px solid #f08e1f; 
+  border: 4px solid #f08e1f; 
   outline:none;
 }
 

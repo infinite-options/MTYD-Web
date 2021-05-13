@@ -146,6 +146,23 @@ class MenuItem extends React.Component {
       x = x.filter(item => item.meal_cat === 'Add-On')
     }
 
+    var dict = {};
+    var tempxxx = 0;
+
+    x.map((i)=>{
+
+      cartItems.map((item)=>{
+        if(item.menu_meal_id === i.menu_meal_id){
+          dict[i.menu_meal_id] = item.count;
+        }
+      })
+
+      if(dict[i.menu_meal_id]==null){
+        dict[i.menu_meal_id]=0;
+      }
+    })
+
+    // console.log(dict)
 
 
     menuHTML = x.map((menuitem, index) => (
@@ -216,47 +233,65 @@ class MenuItem extends React.Component {
                 -
               </button>
 
-              {cartItems.length==0 ?(
-                <div key = {index}
-                  style={{
-                    width: '64px',
-                    height: '42px',
-                    top:'223px',
-                    right:'59.5px',
-                  }}
-                  className={styles.numElements}
-                  id={styles.mealCounter}
-                >
-                  {0}
-                </div>
-              ):(cartItems.map((item, index) => {
+              {/* {cartItems.length > 0 &&
+                cartItems.map((item, index) => {
 
-                let tempint = 0;
+                // let tempvar =  (item.menu_meal_id === menuitem.menu_meal_id) ? (0):(1);
+                // console.log(tempvar)
 
-                console.log(item.menu_meal_id)
-                console.log("menu item id " + menuitem.menu_meal_id)
-                if(item.menu_meal_id === menuitem.menu_meal_id){
-                  console.log(item.count)
-                  tempint = item.count
-                } 
-                return (
-                  <div key = {index}
+                // return (
+                //   (item.menu_meal_id === menuitem.menu_meal_id) && 
+                  (
+                    <div key = {index}
                     style={{
                       width: '64px',
                       height: '42px',
                       top:'223px',
                       right:'59.5px',
                     }}
-                    className={styles.numElements}
-                    id={styles.mealCounter}
-                  >
-                    {/* {console.log(tempint)} */}
-                    {tempint}
-                  </div>
-                );
-              }))
-              
-            }
+                      className={styles.numElements}
+                      id={styles.mealCounter}
+                    >
+                      {dict[menuitem.menu_meal_id]}
+                    </div>
+                  )
+
+                // );
+              })} */}
+
+                <div key = {index}
+                    style={{
+                      width: '64px',
+                      height: '42px',
+                      top:'223px',
+                      right:'59.5px',
+                    }}
+                      className={styles.numElements}
+                      id={styles.mealCounter}
+                    >
+                      {dict[menuitem.menu_meal_id]}
+                    </div>
+
+
+
+
+              {cartItems.length == 0 &&
+
+                <div key = {index}
+                style={{
+                  width: '64px',
+                  height: '42px',
+                  top:'223px',
+                  right:'59.5px',
+                }}
+                  className={styles.numElements}
+                  id={styles.mealCounter}
+                >
+                  {0}
+                </div>
+
+              }
+
             
               <button
                 onClick={() => this.props.addToCart(menuitem)}
