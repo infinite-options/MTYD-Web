@@ -25,6 +25,9 @@ import { API_URL } from '../../reducers/constants';
 import checkoutItems from '../../utils/CheckoutItems';
 import createGuestAccount from '../../utils/CreateGuestAccount';
 
+
+const termsLink = 'https://docs.google.com/document/d/1t3-ezfbHKieeJ27smeoe7eK_dJuJy5K_7McuI2AkAz8/edit?ts=609c2c3d#heading=h.s8e8vp6vn30s';
+
 const appColors = {
   primary: '#e88330',
   secondary: '#397d87',
@@ -111,6 +114,15 @@ const StripeCheckout = (props) => {
 
   const [cardholderName, setCardholderName] = useState(null);
   const [loadingState, changeLoadingState] = useState(false);
+  const [termsAccepted, setTermsAgreement] = useState(false);
+
+  function handleCheck(cb) {
+    console.log("clicked checkbox: ", cb);
+    // this.setState({
+    //   termsAccepted: !this.state.termsAccepted
+    // });
+    setTermsAgreement(!termsAccepted);
+  }
 
   var orderData = {
     currency: "usd"
@@ -313,9 +325,38 @@ const StripeCheckout = (props) => {
         />
       </div>
 
+      {/* <div className={styles.checkboxContainer}>
+        <input
+          className={styles.checkbox}
+          type="checkbox"
+          checked={termsAccepted}
+          onChange={handleCheck}
+        />
+        <label className={styles.checkboxLabel}>
+          I've read and accept the Terms and Conditions
+        </label>
+      </div> */}
+
+      <div style={{display: 'inline-flex'}}>
+        <input
+          className={styles.checkbox}
+          type="checkbox"
+          checked={termsAccepted}
+          onChange={handleCheck}
+        />
+        <div className={styles.checkboxLabel}>
+          {"I've read and accept the "}
+        </div>
+        <div className={styles.checkboxTerms}>
+          <a href={termsLink}>
+            {" Terms and Conditions"}
+          </a>
+        </div>
+      </div>
+
       <button 
         className={styles.orangeBtn2}
-        disabled={(props.fetchingFees || loadingState || props.recalculatingPrice)}
+        disabled={(props.fetchingFees || loadingState || props.recalculatingPrice || !termsAccepted)}
         onClick={() => pay()}
       >
         Complete Payment

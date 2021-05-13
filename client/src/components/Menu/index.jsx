@@ -41,7 +41,7 @@ const Menu = props => {
                 style={{
                   position:"absolute",
                   top:'68px',
-                  right:'20px'
+                  left: '70%'
                 }}
               >
                 {props.subscribedPlans.length ? (

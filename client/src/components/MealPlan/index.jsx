@@ -27,16 +27,25 @@ import { API_URL } from '../../reducers/constants';
 
 const MealPlan = props => {
   //check for logged in user
-  let customerId = null;
+  // let customerId = null;
+
+  const [customerId, setCustomerId] = useState(null);
+
   if (
     document.cookie
       .split(';')
-      .some(item => item.trim().startsWith('customer_uid='))
+      .some(item => item.trim().startsWith('customer_uid=')) && customerId === null
   ) {
-    customerId = document.cookie
-      .split('; ')
-      .find(item => item.startsWith('customer_uid='))
-      .split('=')[1];
+    // customerId = document.cookie
+    //   .split('; ')
+    //   .find(item => item.startsWith('customer_uid='))
+    //   .split('=')[1];
+    setCustomerId(
+      document.cookie
+        .split('; ')
+        .find(item => item.startsWith('customer_uid='))
+        .split('=')[1]
+    );
   }
     
   //console.log("Profile UID: " + customerId);
@@ -48,12 +57,40 @@ const MealPlan = props => {
   const [activePlans, updateActivePlans] = useState(props.subscribedPlans.filter((elt) => elt.purchase_status === 'ACTIVE'));
   const [cancelledPlans, updateCancelledPlans] = useState(props.subscribedPlans.filter((elt) => elt.purchase_status !== 'ACTIVE'));
 
-  /*const [activeIDs, updateActiveIDs] = useState({
-
-  });*/
-  
   //const activePlans = props.subscribedPlans.filter((elt) => elt.purchase_status === 'ACTIVE');
   //const cancelledPlans = props.subscribedPlans.filter((elt) => elt.purchase_status !== 'ACTIVE');
+
+  //https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/meals_selected_with_billing?customer_uid=100-000127&purchase_id=400-000189
+  useEffect(() => {
+
+    console.log("(mswb) customerId: ", customerId);
+
+    if(customerId !== null) {
+      axios
+        .get(API_URL + 'meals_selected_with_billing', { 
+          params: { 
+            customer_uid: customerId,
+            purchase_id: '400-000185'
+          } 
+        })
+        .then((res) => {
+          console.log("(mswb) res: ", res);
+        })
+        .catch((err) => {
+          if(err.response) {
+            console.log(err.response);
+          }
+          console.log(err);
+        })
+    }
+
+    // axios.get(API_URL + 'meals_selected_with_billing/', { params: { customer_uid: customerId } })
+    //   .then(() => {
+
+    //   })
+    //   .catch();
+
+  }, [customerId]);
 
   useEffect(() => {
     //console.log("SUBSCRIBED PLANS: " + JSON.stringify(props.subscribedPlans));
@@ -456,27 +493,71 @@ const MealPlan = props => {
   return (
     <>
       <WebNavBar />
+
+      <div className={styles.sectionHeader}>
+        Select Meal Plan
+      </div>
+
       <div className={styles.container}>
-        <Menu show={true} message={changePassword}/>
-        {modal !== null && modalShow[modal]}
+        {/* <Menu show={true} message={changePassword}/>
+        {modal !== null && modalShow[modal]} */}
+
+        <div style = {{display: 'inline-block', marginLeft: '8%', width: '30%', marginRight: '2%'}}>
+          <select
+            onChange={props.mealsOnChange}
+            className={styles.pickers}
+            id={styles.mealPlanPicker}
+          >
+            {activePlans.map(mealItem => {
+              let meal = JSON.parse(mealItem.items)[0];
+              let mealName = meal.name;
+              return (
+                <option
+                  value={mealItem.purchase_id}
+                  key={mealItem.purchase_uid}
+                >
+                  {mealName.toUpperCase()}
+                </option>
+              );
+            })}
+          </select>
+        </div>
+      </div>
+
+      <div className={styles.container}>
+        <div className={styles.box2}>
+
+          <div style={{display: 'inline-flex', width: '100%'}}>
+            <div className={styles.orangeHeaderLeft}>
+              Next Billing Date
+            </div>
+            <div className={styles.orangeHeaderRight}>
+              May 16, 2021
+            </div>
+          </div>
+
+          <div style={{display: 'inline-flex', width: '100%'}}>
+            <div className={styles.orangeHeaderLeft}>
+              Meal Plan
+            </div>
+            <div className={styles.orangeHeaderRight}>
+              2 Meals, 2 Deliveries
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div className={styles.container}>
+
         {(props.subscribedPlans.length && JSON.stringify(props.plans) !== '{}') ? (
           <div className={styles.box1}>
+
             <div className={'row ' + styles.fixedHeight}>
               <div className={'col-9 ' + styles.flexHeight}>
+
                 <div className={styles.box}>
-                  <div className="row">
-                    <input
-                      type="text"
-                      className={styles.logo}
-                      value={loadLetters(customerId)}
-                      readOnly
-                    />
-                  </div>
-                  <div className={'row pl-5 ' + styles.mealPlanImg}>
-                    <img src={chooseMeal} alt="Choose Meals" />
-                    <img src={prepay} alt="Prepay" />
-                    <img src={delivery} alt="Delivery" />
-                  </div>
+
                   <div className="row">
                     <div className={'col ml-5 ' + styles.textLeft}>
                       <p className={styles.header1}>YOUR MEAL PLANS</p>
@@ -490,12 +571,8 @@ const MealPlan = props => {
                       <p className={styles.header1}>DELIVERY INFORMATION</p>
                     </div>
                   </div>
-                  {/*console.log("ACTIVE PLANS " + JSON.stringify(activePlans))}
-                  {console.log("CANCELLED PLANS " + JSON.stringify(cancelledPlans))*/}
+
                   {activePlans.map((plan, index) => {
-                        
-                    // Endpoints where data comes from: 
-                    // pid_history/400-000021
                         
                     //console.log("plan " + index + ": " + JSON.stringify(plan.items));
                     let item = JSON.parse(plan.items)[0];
@@ -519,21 +596,8 @@ const MealPlan = props => {
                               className={styles.infoBtn}
                               readOnly
                             />
-                            {/*<button
-                              className={styles.iconBtn}
-                              onClick={() => setMealChange(index)}
-                            >
-                              <i className="fa fa-pencil"></i>
-                            </button>*/}
                             <button
                               className={styles.iconBtn}
-                              /*onClick={() => props.history.push({
-                                pathname: '/choose-plan',
-                                preselectedPlan: {
-                                  mealNum: numMeals,
-                                  deliveryNum: frequency.toString()
-                                }
-                              })}*/
                               onClick={() => {
                                 props.chooseMealsDelivery(
                                   numMeals,
@@ -545,7 +609,6 @@ const MealPlan = props => {
                                   numMeals,
                                   props.plans
                                 );
-                                //props.history.push('/choose-plan');
                                 props.history.push({
                                   pathname: '/edit-plan',
                                   customerUid: customerId

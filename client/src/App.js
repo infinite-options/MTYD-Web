@@ -82,6 +82,7 @@ function App() {
             <AppliedRoute exact path='/choose-plan' component={ChoosePlan} />
             {/*<AppliedRoute exact path='/meal-plan' component={MealPlan} />*/}
             <AppliedRoute exact path='/meal-plan' component={EditPlan} />
+            <AppliedRoute exact path='/subscription-history' component={MealPlan} />
             <AppliedRoute
               exact
               path='/payment-details'
@@ -94,7 +95,7 @@ function App() {
             <AppliedRoute exact path='/forgot-password' component={ForgotPassword} />
             <AppliedRoute exact path='/congrats' component={Congrats} />
             {/*<AppliedRoute exact path='/edit-plan' component={EditPlan} />*/}
-            <AppliedRoute exact path='/update-plan' component={UpdatePlan} />
+            {/* <AppliedRoute exact path='/update-plan' component={UpdatePlan} /> */}
 
             {/* <AppliedRoute exact path='/test' component={MapTest} /> */}
 

@@ -339,13 +339,21 @@
 .checkbox {
   height: 20px;
   width: 20px;
+  margin-top: 2px;
 }
 /*.checkboxContainer {
   border: solid;
 }*/
 .checkboxLabel {
-  margin-right: 15px;
-  font-size: 20px;
+  /* margin-right: 15px; */
+  margin-left: 10px;
+  font-size: 15px;
+  white-space: pre;
+}
+
+.checkboxTerms {
+  /* margin-right: 15px; */
+  font-size: 15px;
 }
 
 /*.deliveryButtonSelected {
@@ -498,8 +506,8 @@
 }
 
 .orangeBtn2 {
-  margin-top: 50px;
-  margin-bottom: 10px;
+  margin-top: 30px;
+  margin-bottom: 20px;
   background-color: #f26522;
   color: white;
   font-size: 20px;
@@ -509,8 +517,8 @@
   width: 70%;
 }
 .orangeBtn2:hover {
-  margin-top: 50px;
-  margin-bottom: 10px;
+  margin-top: 30px;
+  margin-bottom: 20px;
   background-color: #f26522;
   color: white;
   font-size: 20px;
@@ -520,8 +528,8 @@
   width: 70%;
 }
 .orangeBtn2:disabled {
-  margin-top: 50px;
-  margin-bottom: 10px;
+  margin-top: 30px;
+  margin-bottom: 20px;
   background-color: #ccc9c9;
   color: white;
   font-size: 20px;
@@ -532,7 +540,7 @@
 }
 
 .orangeBtn3 {
-  margin-bottom: 50px;
+  margin-bottom: 30px;
   background-color: #f26522;
   color: white;
   font-size: 20px;
@@ -542,7 +550,7 @@
   width: 70%;
 }
 .orangeBtn3:hover {
-  margin-bottom: 50px;
+  margin-bottom: 30px;
   background-color: #f26522;
   color: white;
   font-size: 20px;
@@ -552,7 +560,7 @@
   width: 70%;
 }
 .orangeBtn3:disabled {
-  margin-bottom: 50px;
+  margin-bottom: 30px;
   background-color: #ccc9c9;
   color: white;
   font-size: 20px;

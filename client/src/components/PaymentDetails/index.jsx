@@ -92,7 +92,8 @@ class PaymentDetails extends React.Component {
       loadingMap: true,
       recalculatingPrice: false,
       stripePromise: null,
-      createGuestErrorCode: -1
+      createGuestErrorCode: -1,
+      termsAccepted: false
     };
   }
   togglePopLogin = () => {
@@ -118,6 +119,13 @@ class PaymentDetails extends React.Component {
       })
     }
   };
+
+  // handleCheck = (cb) => {
+  //   console.log("clicked checkbox: ", cb);
+  //   this.setState({
+  //     termsAccepted: !this.state.termsAccepted
+  //   });
+  // }
 
   componentDidMount() {
     console.log("(mount) props: ", this.props);
@@ -1428,11 +1436,12 @@ class PaymentDetails extends React.Component {
             {
               (this.state.showPaymentInfo && !this.state.fetchingFees)
                 ? (<>
+
                     <div style={{width: '100%'}}>
                       <h6 className={styles.sectionHeaderRight2}>Complete Payment</h6>
                     </div>
                         
-                    <div style={{width: '84%', textAlign: 'left'}}>
+                    <div style={{width: '84%'}}>
                       <div style={{display: 'flex'}}>
                           <div className = {styles.buttonContainer}>
                             <StripeElement
@@ -1452,6 +1461,24 @@ class PaymentDetails extends React.Component {
                           </div>
                       </div>
                     </div>
+
+                    <div 
+                      style={{
+                        width: '74%',
+                        marginLeft: '5%',
+                        textAlign: 'left', 
+                        // border: 'solid', 
+                        marginBottom: '50px'
+                      }}
+                    >
+                      Your plan will automatically renew after you’ve 
+                      received your chosen number of deliveries. 
+                      Your subscription will renew at the price of 
+                      ${this.state.paymentSummary.total+' '}
+                      unless you cancel before 4PM PST the day 
+                      before your next delivery.
+                    </div>
+
                   </>)
                 : null
             }

@@ -13,6 +13,8 @@ class MenuItem extends React.Component {
     super();
     this.state={
       favList:[],
+      selectedMenuItems: [],
+      selectionValues: []
     }
     this.changeHeart = this.changeHeart.bind(this)
   }
@@ -133,6 +135,9 @@ class MenuItem extends React.Component {
   menuItemFilter = () => {
 
     const {cartItems, show} = this.props;
+
+    console.log("this.props: ", this.props);
+
     let x = this.props.data.filter(
       date => date.menu_date === this.props.myDate
     );
@@ -148,11 +153,17 @@ class MenuItem extends React.Component {
 
     menuHTML = x.map((menuitem, index) => (
 
-      
       <div
         key={index}
-        className={styles.menuitemIndividual}
+        className={
+          (typeof(this.state.selectionValues[index]) !== 'undefined' &&
+          this.state.selectionValues[index] > 0 )
+            ? styles.menuitemSelected
+            : styles.menuitemIndividual
+        }
+        // className={styles.menuitemIndividual}
       >
+        {console.log("index: ", index)}
         {/* {
           console.log(menuitem)
         } */}
@@ -202,7 +213,19 @@ class MenuItem extends React.Component {
           {/* {show ? ( */}
             <Fragment>
               <button
-                onClick={() => this.props.removeFromCart(menuitem)}
+                onClick={() => {
+                  this.props.removeFromCart(menuitem);
+                  if (typeof(this.state.selectionValues[index]) !== 'undefined' &&
+                    this.state.selectionValues[index] > 0) {
+
+                    let newSelectionValues = this.state.selectionValues;
+                    newSelectionValues[index] = this.state.selectionValues[index]--;
+                    this.setState({
+                      selectionValues: newSelectionValues
+                    });
+
+                  }
+                }}
                 style={{
                   width: '60px',
                   height: '42px',
@@ -214,6 +237,9 @@ class MenuItem extends React.Component {
                 -
               </button>
 
+              {/* {cartItems.length==0 ?( */}
+              {/*this.state.selectionValues[index] === undefined ||
+              this.state.selectionValues[index] === 0 ?( */}
               {cartItems.length==0 ?(
                 <div key = {index}
                   style={{
@@ -245,9 +271,89 @@ class MenuItem extends React.Component {
               }))
               
             }
+
+            {/* {typeof(this.state.selectionValues[index]) !== 'undefined' &&
+              this.state.selectionValues[index] > 0 &&
+              cartItems.length !== 0 ?(cartItems.map((item, index) => {
+                return (
+                  <div key = {index}
+                    style={{
+                      width: '64px',
+                      height: '42px',
+                      top:'223px',
+                      right:'59.5px',
+                    }}
+                    className={styles.numElements}
+                    id={styles.mealCounter}
+                  >
+                    {this.state.selectionValues[index]}
+                  </div>
+                );
+              })):(
+                <div key = {index}
+                  style={{
+                    width: '64px',
+                    height: '42px',
+                    top:'223px',
+                    right:'59.5px',
+                  }}
+                  className={styles.numElements}
+                  id={styles.mealCounter}
+                >
+                  {
+                    typeof(this.state.selectionValues[index]) !== 'undefined'
+                      ? this.state.selectionValues[index]
+                      : 0
+                  }
+                </div>
+              )
+              
+            } */}
             
               <button
-                onClick={() => this.props.addToCart(menuitem)}
+                onClick={() => {
+                  this.props.addToCart(menuitem);
+
+                  let newSelectionValues = [];
+
+                  console.log(" ");
+                  console.log("current index: ", index);
+
+                  console.log("1 ++ ", this.state.selectionValues[index]);
+
+                  if (this.state.selectionValues[index] !== undefined){ //&&
+                    //this.state.selectionValues[index] > 0) {
+
+                    newSelectionValues = this.state.selectionValues;
+
+                    console.log("2.1 ++ ", newSelectionValues);
+
+                    console.log("2.2 ++ ", this.state.selectionValues[index]);
+
+                    newSelectionValues[index] = newSelectionValues[index] + 1;
+
+                    console.log("2.3 ++ ", newSelectionValues[index]);
+
+                    this.setState({
+                      selectionValues: newSelectionValues
+                    });
+                    
+                  } else {
+
+                    console.log("3 ++ ", newSelectionValues[index]);
+
+                    newSelectionValues[index] = 1;
+
+                    //console.log("3 ++ ", newSelectionValues[index]);
+
+                    this.setState({
+                      selectionValues: newSelectionValues
+                    });
+                  }
+
+                  console.log(" ");
+
+                }}
                 style={{
                   width: '60px',
                   height: '42px',
@@ -272,7 +378,7 @@ class MenuItem extends React.Component {
           whiteSpace:'nowrap'
           }}>
             {menuitem.meal_name}
-            <br/>cal:{menuitem.meal_calories}
+            <br/>cal: {menuitem.meal_calories}
           </p>
       </div>
     ))

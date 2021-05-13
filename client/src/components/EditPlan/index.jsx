@@ -23,6 +23,8 @@ import fetchAddressCoordinates from '../../utils/FetchAddressCoordinates';
 import PopLogin from '../PopLogin';
 import Popsignup from '../PopSignup';
 
+const termsLink = 'https://docs.google.com/document/d/1t3-ezfbHKieeJ27smeoe7eK_dJuJy5K_7McuI2AkAz8/edit?ts=609c2c3d#heading=h.s8e8vp6vn30s';
+
 const google = window.google;
 
 var map;
@@ -151,6 +153,7 @@ class EditPlan extends React.Component {
       },
       discounts: [],
       usePreviousCard: true,
+      termsAccepted: false,
       defaultSet: false,
       showErrorModal: false,
       errorModal: null,
@@ -1094,7 +1097,8 @@ class EditPlan extends React.Component {
   handleCheck = (cb) => {
     console.log("clicked checkbox: ", cb);
     this.setState({
-      usePreviousCard: !this.state.usePreviousCard
+      // usePreviousCard: !this.state.usePreviousCard
+      termsAccepted: !this.state.termsAccepted
     });
   }
 
@@ -2463,7 +2467,7 @@ class EditPlan extends React.Component {
               </div>
 
               <div 
-                style={{display: 'flex' ,marginBottom:'50px'}}>
+                style={{display: 'flex' ,marginBottom:'30px'}}>
                   <div className={styles.summaryLeft}>
                     Total
                   </div>
@@ -2495,6 +2499,23 @@ class EditPlan extends React.Component {
 
               {/* { this.state.usePreviousCard ? null : this.showCardForm()} */}
 
+              <div style={{display: 'inline-flex'}}>
+                <input
+                  className={styles.checkbox}
+                  type="checkbox"
+                  checked={this.state.termsAccepted}
+                  onChange={this.handleCheck}
+                />
+                <div className={styles.checkboxLabel}>
+                  {"I've read and accept the "}
+                </div>
+                <div className={styles.checkboxTerms}>
+                  <a href={termsLink}>
+                    {" Terms and Conditions"}
+                  </a>
+                </div>
+              </div>
+
               <button 
                 className={styles.orangeBtn2}
                 disabled={
@@ -2502,7 +2523,8 @@ class EditPlan extends React.Component {
                   this.state.defaultSet === false) ||
                   this.state.refreshingPrice === true || 
                   !this.activeChanges() ||
-                  this.state.processingChanges
+                  this.state.processingChanges ||
+                  !this.state.termsAccepted
                 }
                 onClick={() => this.confirmChanges()}
               >
@@ -2514,7 +2536,7 @@ class EditPlan extends React.Component {
                 disabled={
                   (!this.state.subscriptionsLoaded && 
                   this.state.defaultSet === false) ||
-                  this.state.refreshingPrice === true || 
+                  this.state.refreshinsgPrice === true || 
                   !this.activeChanges() ||
                   this.state.processingChanges
                 }
@@ -2523,6 +2545,22 @@ class EditPlan extends React.Component {
                 Keep Existing Meal Plan
               </button>
 
+              <div 
+                style={{
+                  width: '80%',
+                  marginLeft: '10%',
+                  textAlign: 'left', 
+                  // border: 'solid', 
+                  marginBottom: '50px'
+                }}
+              >
+                Your plan will automatically renew after you’ve 
+                received your chosen number of deliveries. 
+                Your subscription will renew at the price of 
+                ${this.state.updatedPlan.payment_summary.total+' '}
+                unless you cancel before 4PM PST the day 
+                before your next delivery.
+              </div>
                 
             </div>
           </div>

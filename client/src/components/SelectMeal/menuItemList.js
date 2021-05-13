@@ -617,7 +617,7 @@ class MenuItemList extends Component {
 
     if (e.target.value === "SURPRISE") {
       buttonStyle = styles.datebuttonSurprise;
-      extraInfo = 'Surprise / No selection'
+      extraInfo = 'Surprise / No Selection'
       let tempNewButton = (
         <button key={this.state.myDate} value={this.state.myDate} 
               onClick={this.filterDates}
@@ -1116,7 +1116,7 @@ class MenuItemList extends Component {
             }
 
             let classStyle = styles.datebuttonSurprise ;
-            let extraInfo = 'Surprise / No selection'
+            let extraInfo = 'Surprise / No Selection'
 
             for(const surpriseInfo of this.state.surpriseSkipSave){
               if(surpriseInfo.date == date&&surpriseInfo.id==this.state.purchaseID){
@@ -1125,7 +1125,7 @@ class MenuItemList extends Component {
                   extraInfo='Skipped'
                 }else if(surpriseInfo.selection=='SURPRISE'){
                   classStyle = styles.datebuttonSurprise 
-                  extraInfo = 'Surprise / No selection'
+                  extraInfo = 'Surprise / No Selection'
                 }
                 else{
                   classStyle = styles.datebuttonSave
@@ -1251,7 +1251,7 @@ class MenuItemList extends Component {
             value={date} 
             onClick={this.filterDates}
             >
-              Surprise / No selection
+              Surprise / No Selection
             </div>
             
           </button>
