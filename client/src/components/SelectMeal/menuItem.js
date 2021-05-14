@@ -164,7 +164,7 @@ class MenuItem extends React.Component {
       }
     })
 
-    // console.log(x)
+    // console.log(dict)
 
 
     menuHTML = x.map((menuitem, index) => (

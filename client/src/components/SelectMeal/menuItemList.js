@@ -634,9 +634,12 @@ class MenuItemList extends Component {
       buttonStyle = styles.datebuttonSurprise;
       extraInfo = 'Surprise / No selection'
       let tempNewButton = (
-        <button key={this.state.myDate} value={this.state.myDate} 
+        <button 
+              key={this.state.myDate} 
+              value={this.state.myDate} 
               onClick={this.filterDates}
               className={buttonStyle} 
+              id={this.state.myDate} 
               autoFocus>
                 <button
                 style={{
@@ -750,6 +753,7 @@ class MenuItemList extends Component {
               value={this.state.myDate} 
               onClick={this.filterDates}
               className={buttonStyle} 
+              id={this.state.myDate} 
               autoFocus>
                 <button
                   style={{
@@ -820,10 +824,10 @@ class MenuItemList extends Component {
           data2
         )
         .then(response => {
-          console.log(response);
+          // console.log(response);
         })
         .catch(error => {
-          console.log(error);
+          // console.log(error);
         });
 
         axios
@@ -832,10 +836,10 @@ class MenuItemList extends Component {
           addOnData2
         )
         .then(response => {
-          console.log(response);
+          // console.log(response);
         })
         .catch(error => {
-          console.log(error);
+          // console.log(error);
         });
 
       this.toggleDisplay("SKIP")
@@ -855,6 +859,7 @@ class MenuItemList extends Component {
               value={this.state.myDate} 
               onClick={this.filterDates}
               className={buttonStyle} 
+              id={this.state.myDate} 
               autoFocus>
                 <button
                 style={{
@@ -968,16 +973,10 @@ class MenuItemList extends Component {
 
   addToCart = menuitem => {
 
-
     var elementBig = document. getElementById(menuitem.menu_meal_id);
-    var elementNum = document. getElementById(menuitem.menu_meal_id+'num');
-    var elementMinus = document. getElementById(menuitem.menu_meal_id+'-');
-    var elementPlus = document. getElementById(menuitem.menu_meal_id+'+');
 
-          elementBig.style.backgroundColor = '#F8BB17'
-          elementMinus.style.backgroundColor = '#F8BB17'
-          elementNum.style.backgroundColor = '#F8BB17'
-          elementPlus.style.backgroundColor = '#F8BB17'
+    
+          
     if(Cookies.get("customer_uid")==null){
       return alert('signin before use + - button')
     }
@@ -987,15 +986,12 @@ class MenuItemList extends Component {
     const cartItems = this.state.cartItems.slice();
     let alreadyInCart = false;
     if (this.state.totalCount < this.state.totalMeals) {
+      elementBig.style.backgroundColor = '#F8BB17'
+
       cartItems.forEach(item => {
         if (item.menu_uid === menuitem.menu_uid) {
           item.count++;
           alreadyInCart = true;
-
-
-      
-
-
         }
       });
       if (!alreadyInCart) {
@@ -1040,18 +1036,11 @@ class MenuItemList extends Component {
   removeFromCart = (menuitem) => {
     var elementBig = document. getElementById(menuitem.menu_meal_id);
     var elementNum = document. getElementById(menuitem.menu_meal_id+'num');
-    var elementMinus = document. getElementById(menuitem.menu_meal_id+'-');
-    var elementPlus = document. getElementById(menuitem.menu_meal_id+'+');
+
     if((elementNum.textContent)>1){
-      elementBig.style.backgroundColor = '#F8BB17'
-      elementMinus.style.backgroundColor = '#F8BB17'
-      elementNum.style.backgroundColor = '#F8BB17'
-      elementPlus.style.backgroundColor = '#F8BB17'
+      // elementBig.style.backgroundColor = '#F8BB17'
     }else{
       elementBig.style.backgroundColor = 'white'
-      elementMinus.style.backgroundColor = 'white'
-      elementNum.style.backgroundColor = 'white'
-      elementPlus.style.backgroundColor = 'white'
     }
 
     if(Cookies.get("customer_uid")==null){
