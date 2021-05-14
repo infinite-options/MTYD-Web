@@ -233,19 +233,19 @@ const StripeCheckout = (props) => {
                   amb: props.paymentSummary.ambassadorDiscount
                 },
                 (res) => {
-                  axios
-                    .post(API_URL + 'add_surprise/' + res.data.purchase_id)
-                    .then((res2) => {
-                      console.log("add_suprise res: ", res2);
-                      changeLoadingState(false);
-                    })
-                    .catch(err => {
-                      console.log(err);
-                      if (err.response) {
-                        console.log("add_suprise error: " + JSON.stringify(err.response));
-                      }
-                      changeLoadingState(false);
-                    });
+                  // axios
+                  //   .post(API_URL + 'add_surprise/' + res.data.purchase_id)
+                  //   .then((res2) => {
+                  //     console.log("add_suprise res: ", res2);
+                  //     changeLoadingState(false);
+                  //   })
+                  //   .catch(err => {
+                  //     console.log(err);
+                  //     if (err.response) {
+                  //       console.log("add_suprise error: " + JSON.stringify(err.response));
+                  //     }
+                  //     changeLoadingState(false);
+                  //   });
 
                   //history.push("/congrats")
                   history.push({
