@@ -37,6 +37,7 @@ class MenuItemList extends Component {
       surpriseSkipSave : [],
       unloginPopupShow:false,
       unloginPopupMessage:'',
+      currentSelectedDate:'',
 
     };
   }
@@ -399,7 +400,19 @@ class MenuItemList extends Component {
 
   filterDates = event => {
 
-    console.log(event.target)
+    if(this.state.currentSelectedDate === ''){
+      this.setState({currentSelectedDate:event.target.value});
+    }else{
+      var tempElement = document.getElementById(this.state.currentSelectedDate);
+      tempElement.style.border = 'none'
+      this.setState({currentSelectedDate:event.target.value});
+    }
+
+    // console.log(event.target)
+    var element = document.getElementById(event.target.value);
+    // console.log(element.style)
+    element.style.border = '4px solid #F8BB17'
+
     event.stopPropagation();
 
     if(Cookies.get("customer_uid")==null){
@@ -505,7 +518,7 @@ class MenuItemList extends Component {
       });
     }
 
-    console.log(event.target.getAttribute('value'));
+    // console.log(event.target.getAttribute('value'));
 
     return this.setState({
       deliveryDay: delivery_Day !== "" && delivery_Day !== "SKIP" ? delivery_Day : "Sunday",
@@ -955,10 +968,13 @@ class MenuItemList extends Component {
 
   addToCart = menuitem => {
 
-
     if(Cookies.get("customer_uid")==null){
       return alert('signin before use + - button')
     }
+
+
+
+
 
     const cartItems = this.state.cartItems.slice();
     let alreadyInCart = false;
@@ -972,6 +988,15 @@ class MenuItemList extends Component {
       if (!alreadyInCart) {
         cartItems.push({...menuitem, count: 1});
       }
+      
+      var elementBig = document. getElementById(menuitem.menu_meal_id);
+      var elementMinus = document. getElementById(menuitem.menu_meal_id+'-');
+      var elementPlus = document. getElementById(menuitem.menu_meal_id+'+');
+      elementBig.style.backgroundColor = '#F8BB17'
+      elementMinus.style.backgroundColor = '#F8BB17'
+      elementPlus.style.backgroundColor = '#F8BB17'
+
+
 
       this.setState({
         cartItems,
@@ -1008,11 +1033,17 @@ class MenuItemList extends Component {
       });
   }
 
-  removeFromCart = menuitem => {
+  removeFromCart = (menuitem) => {
+
+
 
     if(Cookies.get("customer_uid")==null){
       return alert('signin before use + - button')
     }
+
+    var elementBig = document. getElementById(menuitem.menu_meal_id);
+
+
 
     const cartItems = this.state.cartItems.slice();
     // let alreadyInCart_1 = false;
@@ -1023,6 +1054,12 @@ class MenuItemList extends Component {
             // alreadyInCart_1 = true;
             item.count--;
           }
+
+          if(item.count==0){
+            elementBig.style.backgroundColor = 'white'
+          }
+
+
           this.setState({
             cartItems,
             totalCount: this.state.totalCount - 1,
