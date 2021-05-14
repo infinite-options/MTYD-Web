@@ -147,39 +147,46 @@ class MenuItem extends React.Component {
     }
 
     var dict = {};
-    var tempxxx = 0;
+    var colorDict = {};
 
     x.map((i)=>{
 
       cartItems.map((item)=>{
         if(item.menu_meal_id === i.menu_meal_id){
           dict[i.menu_meal_id] = item.count;
+          colorDict[i.menu_meal_id] = '#F8BB17';
         }
       })
 
       if(dict[i.menu_meal_id]==null){
         dict[i.menu_meal_id]=0;
+        colorDict[i.menu_meal_id] = 'white';
       }
     })
 
-    // console.log(dict)
+    // console.log(x)
 
 
     menuHTML = x.map((menuitem, index) => (
-
       
       <div
         key={index}
         className={styles.menuitemIndividual}
+        id = {menuitem.menu_meal_id}
+        style={{
+          backgroundColor:colorDict[menuitem.menu_meal_id]
+        }}
       >
         {/* {
           console.log(menuitem)
         } */}
+
         <div
           style={{
             backgroundImage: `url(${menuitem.meal_photo_URL})`,
             backgroundSize: "cover",
             backgroundPosition:'center'
+            
             // backgroundColor:"black"
             
           }}
@@ -218,65 +225,53 @@ class MenuItem extends React.Component {
             ></img>
           </button>
 
-          {/* {show ? ( */}
             <Fragment>
               <button
                 onClick={() => this.props.removeFromCart(menuitem)}
                 style={{
                   width: '60px',
                   height: '42px',
-                  top:'223px'
+                  top:'223px',
+                  backgroundColor:'rgb(0, 0, 0,0)'
                 }}
                 className={styles.minusElements}
-                id={styles.mealCounter}
+                id = {String(menuitem.menu_meal_id+'-')}
               >
                 -
               </button>
 
-              {/* {cartItems.length > 0 &&
-                cartItems.map((item, index) => {
+              <div key = {index}
+                style={{
+                  width: '64px',
+                  height: '42px',
+                  top:'223px',
+                  right:'59.5px',
+                  // backgroundColor:colorDict[menuitem.menu_meal_id]
+                  backgroundColor:'rgb(0, 0, 0,0)'
+                }}
+                  className={styles.numElements}
+                  id = {String(menuitem.menu_meal_id+'num')}
+                >
+                  {dict[menuitem.menu_meal_id]}
+              </div>
 
-                // let tempvar =  (item.menu_meal_id === menuitem.menu_meal_id) ? (0):(1);
-                // console.log(tempvar)
-
-                // return (
-                //   (item.menu_meal_id === menuitem.menu_meal_id) && 
-                  (
-                    <div key = {index}
-                    style={{
-                      width: '64px',
-                      height: '42px',
-                      top:'223px',
-                      right:'59.5px',
-                    }}
-                      className={styles.numElements}
-                      id={styles.mealCounter}
-                    >
-                      {dict[menuitem.menu_meal_id]}
-                    </div>
-                  )
-
-                // );
-              })} */}
-
-                <div key = {index}
-                    style={{
-                      width: '64px',
-                      height: '42px',
-                      top:'223px',
-                      right:'59.5px',
-                    }}
-                      className={styles.numElements}
-                      id={styles.mealCounter}
-                    >
-                      {dict[menuitem.menu_meal_id]}
-                    </div>
-
-
+              <button
+                onClick={() => this.props.addToCart(menuitem)}
+                style={{
+                  width: '60px',
+                  height: '42px',
+                  top:'223px',
+                  left:'124px',
+                  backgroundColor:'rgb(0, 0, 0,0)'
+                }}
+                className={styles.plusElements}
+                id = {String(menuitem.menu_meal_id+'+')}
+              >
+                +
+              </button> 
 
 
               {cartItems.length == 0 &&
-
                 <div key = {index}
                 style={{
                   width: '64px',
@@ -289,28 +284,10 @@ class MenuItem extends React.Component {
                 >
                   {0}
                 </div>
-
               }
 
-            
-              <button
-                onClick={() => this.props.addToCart(menuitem)}
-                style={{
-                  width: '60px',
-                  height: '42px',
-                  top:'223px',
-                  left:'124px'
-                }}
-                className={styles.plusElements}
-                id={styles.mealCounter}
-              >
-                +
-              </button> 
             </Fragment>
           ) 
-          {/* : (
-            ""
-          )} */}
         </div>
         <p id={styles.menuItemTitle}
         style = {{
