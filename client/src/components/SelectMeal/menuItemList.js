@@ -411,7 +411,7 @@ class MenuItemList extends Component {
     // console.log(event.target)
     var element = document.getElementById(event.target.value);
     // console.log(element.style)
-    element.style.border = '4px solid #F8BB17'
+    element.style.border = '4px solid #f08e1f'
 
     event.stopPropagation();
 
@@ -968,11 +968,19 @@ class MenuItemList extends Component {
 
   addToCart = menuitem => {
 
+
+    var elementBig = document. getElementById(menuitem.menu_meal_id);
+    var elementNum = document. getElementById(menuitem.menu_meal_id+'num');
+    var elementMinus = document. getElementById(menuitem.menu_meal_id+'-');
+    var elementPlus = document. getElementById(menuitem.menu_meal_id+'+');
+
+          elementBig.style.backgroundColor = '#F8BB17'
+          elementMinus.style.backgroundColor = '#F8BB17'
+          elementNum.style.backgroundColor = '#F8BB17'
+          elementPlus.style.backgroundColor = '#F8BB17'
     if(Cookies.get("customer_uid")==null){
       return alert('signin before use + - button')
     }
-
-
 
 
 
@@ -983,20 +991,16 @@ class MenuItemList extends Component {
         if (item.menu_uid === menuitem.menu_uid) {
           item.count++;
           alreadyInCart = true;
+
+
+      
+
+
         }
       });
       if (!alreadyInCart) {
         cartItems.push({...menuitem, count: 1});
       }
-      
-      var elementBig = document. getElementById(menuitem.menu_meal_id);
-      var elementMinus = document. getElementById(menuitem.menu_meal_id+'-');
-      var elementPlus = document. getElementById(menuitem.menu_meal_id+'+');
-      elementBig.style.backgroundColor = '#F8BB17'
-      elementMinus.style.backgroundColor = '#F8BB17'
-      elementPlus.style.backgroundColor = '#F8BB17'
-
-
 
       this.setState({
         cartItems,
@@ -1034,16 +1038,25 @@ class MenuItemList extends Component {
   }
 
   removeFromCart = (menuitem) => {
-
-
+    var elementBig = document. getElementById(menuitem.menu_meal_id);
+    var elementNum = document. getElementById(menuitem.menu_meal_id+'num');
+    var elementMinus = document. getElementById(menuitem.menu_meal_id+'-');
+    var elementPlus = document. getElementById(menuitem.menu_meal_id+'+');
+    if((elementNum.textContent)>1){
+      elementBig.style.backgroundColor = '#F8BB17'
+      elementMinus.style.backgroundColor = '#F8BB17'
+      elementNum.style.backgroundColor = '#F8BB17'
+      elementPlus.style.backgroundColor = '#F8BB17'
+    }else{
+      elementBig.style.backgroundColor = 'white'
+      elementMinus.style.backgroundColor = 'white'
+      elementNum.style.backgroundColor = 'white'
+      elementPlus.style.backgroundColor = 'white'
+    }
 
     if(Cookies.get("customer_uid")==null){
       return alert('signin before use + - button')
     }
-
-    var elementBig = document. getElementById(menuitem.menu_meal_id);
-
-
 
     const cartItems = this.state.cartItems.slice();
     // let alreadyInCart_1 = false;
@@ -1054,12 +1067,6 @@ class MenuItemList extends Component {
             // alreadyInCart_1 = true;
             item.count--;
           }
-
-          if(item.count==0){
-            elementBig.style.backgroundColor = 'white'
-          }
-
-
           this.setState({
             cartItems,
             totalCount: this.state.totalCount - 1,

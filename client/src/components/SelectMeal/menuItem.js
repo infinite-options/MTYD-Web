@@ -246,7 +246,6 @@ class MenuItem extends React.Component {
                   height: '42px',
                   top:'223px',
                   right:'59.5px',
-                  // backgroundColor:colorDict[menuitem.menu_meal_id]
                   backgroundColor:'rgb(0, 0, 0,0)'
                 }}
                   className={styles.numElements}
