@@ -340,8 +340,228 @@ class Terms extends React.Component {
           The MealsFor.Me name, logo and all related names, logos, product and service names, designs and slogans are trademarks of Infinite Options LLC. or its affiliates or licensors. You must not use such marks without the prior written permission of MealsFor.Me. All other names, logos, product and service names, designs and slogans on the Site and/or the App are the trademarks of their respective owners.
           </div>
 
+          <br />
+
           <div>
           Facebook® and Instagram® are registered trademarks of Facebook, Inc. (“Facebook”). LinkedIn® is a registered trademark of LinkedIn Corporation (“LinkedIn”). Pinterest® is a registered trademark of Pinterest, Inc. (“Pinterest”). Twitter® is a registered trademark of Twitter, Inc. (“Twitter”). Snapchat® is a registered trademark of Snapchat, Inc. YouTube® is a registered trademark of Google, Inc. (“Google”). Please be advised that MealsFor.Me is not in any way affiliated with Facebook, Google, LinkedIn, Pinterest or Twitter, and the MealsFor.Me Offerings are not endorsed, administered or sponsored by any of those parties.
+          </div>
+
+          <h6 style={{fontWeight: 'bold', marginBottom: '20px'}}>
+          Policy/DMCA Compliance
+          </h6>
+
+          <div>
+          If you believe any materials accessible on or from the Site and/or the APP infringe your copyright, you may request removal of those materials (or access thereto) from the Site and/or the App by contacting MealsFor.Me (as set forth below) and providing the following information:
+          </div>
+
+          <br />
+
+          <div>
+          Identification of the copyrighted work that you believe to be infringed. Please describe the work and, where possible, include a copy or the location (e.g., URL) of an authorized version of the work.
+          </div>
+
+          <br />
+
+          <div>
+          Identification of the material that you believe to be infringing and its location. Please describe the material, and provide us with its URL or any other pertinent information that will allow us to locate the material.
+          </div>
+
+          <br />
+
+          <div>
+          Your name, address, telephone number, and e-mail address.
+          </div>
+
+          <br />
+
+          <div>
+          A statement that you have a good faith belief that the complained use of the materials is not authorized by the copyright owner, its agent, or the law.
+          </div>
+
+          <br />
+
+          <div>
+          A statement that the information that you have supplied is accurate, and indicating that “under penalty of perjury”, you are the copyright owner or are authorized to act on the copyright owner’s behalf.
+          </div>
+
+          <br />
+
+          <div>
+          A signature or the electronic equivalent from the copyright holder or authorized representative.
+          </div>
+
+          <br />
+
+          <div>
+          Send this information by mail to MealsFor.Me, 6123 Corte de la Reina, San Jose, CA 95120, ATTN: Legal Department. In an effort to protect the rights of copyright owners, MealsFor.Me maintains a policy for the termination, in appropriate circumstances, of subscribers and account holders of the Site who are repeat infringers.
+          </div>
+
+          <h6 style={{fontWeight: 'bold', marginBottom: '20px'}}>
+          Changes to the Site
+          </h6>
+
+          <div>
+          MealsFor.Me may update the content on the Site/and or the App from time to time, but its content is not necessarily complete or up-to-date. Any of the material on the Site may be out of date at any given time, and MealsFor.Me is under no obligation to update such material.
+          </div>
+
+          <br />
+
+          <div>
+          Information About You and Your Visits to the Site and/or the APP
+          </div>
+
+          <div>
+          All information we collect on this Site and/or the App is subject to our Privacy Policy. By using the Site and/or the App, you consent to all actions taken by MealsFor.Me with respect to your information in compliance with the Privacy Policy.
+          </div>
+
+          <h6 style={{fontWeight: 'bold', marginBottom: '20px'}}>
+          Online Purchases and Other Terms and Conditions
+          </h6>
+
+          <div>
+          All purchases through this Site and/or the App or other transactions for the sale of goods or services or information formed through the Site and/or the App or as a result of visits made by you are governed by this Agreement.  
+          </div>
+
+          <br />
+
+          <div>
+          Additional terms and conditions may also apply to specific portions, services or features of the Site and/or the App. All such additional terms and conditions are hereby incorporated by this reference into this Agreement.
+          </div>
+
+          <h6 style={{fontWeight: 'bold', marginBottom: '20px'}}>
+          Links from the Site and/or the App
+          </h6>
+
+          <div>
+          If the Site and/or the App contains links to other sites and resources provided by third parties, these links are provided for your convenience only. This includes links contained in advertisements, including banner advertisements and sponsored links. MealsFor.Me has no control over the contents of those sites or resources, and accepts no responsibility for them or for any loss or damage that may arise from your use of them. If you decide to access any of the third-party websites linked to this Site and/or the App, you do so entirely at your own risk and subject to the terms and conditions of use for such websites.
+          </div>
+
+          <br />
+
+          <div>
+          The Site and/or the App may include content provided by third parties, including materials provided by other users, bloggers and third-party licensors, syndicators, aggregators and/or reporting services. All statements and/or opinions expressed in these materials, and all articles and responses to questions and other content, other than the content provided by MealsFor.Me, are solely the opinions and the responsibility of the person or entity providing those materials. These materials do not necessarily reflect the opinion of MealsFor.Me. MealsFor.Me is not responsible, or liable to you or any third party, for the content or accuracy of any materials provided by any third parties.
+          </div>
+
+          <h6 style={{fontWeight: 'bold', marginBottom: '20px'}}>
+          Warranties
+          </h6>
+
+          <div>
+          THE MEALSFOR.ME OFFERINGS AND/OR ANY OTHER CONTENT, INFORMATION, PRODUCTS AND/OR SERVICES OFFERED BY AND THROUGH SAME ARE PROVIDED TO YOU ON AN “AS IS” AND “AS AVAILABLE” BASIS AND ALL WARRANTIES, EXPRESS AND IMPLIED STATUTORY OR OTHERWISE, ARE DISCLAIMED TO THE FULLEST EXTENT PERMISSIBLE PURSUANT TO APPLICABLE LAW (INCLUDING, BUT NOT LIMITED TO, THE DISCLAIMER OF ANY WARRANTIES OF MERCHANTABILITY, NON-INFRINGEMENT OF THIRD PARTIES’ RIGHTS, AND FITNESS FOR PARTICULAR PURPOSE). IN PARTICULAR, BUT NOT AS A LIMITATION THEREOF, MEALSFOR.ME MAKES NO WARRANTY THAT THE MEALSFOR.ME OFFERINGS AND/OR ANY OTHER CONTENT, INFORMATION, PRODUCTS AND/OR SERVICES OFFERED BY AND THROUGH SAME: (A) WILL MEET YOUR REQUIREMENTS; (B) WILL BE UNINTERRUPTED, TIMELY, SECURE OR ERROR-FREE OR THAT DEFECTS WILL BE CORRECTED; (C) WILL BE FREE OF HARMFUL COMPONENTS; (D) WILL RESULT IN ANY SPECIFIC DIETARY BENEFIT, WEIGHT LOSS OR OTHER HEALTH-RELATED OUTCOME; AND/OR (E) WILL BE ACCURATE OR RELIABLE. THE MEALSFOR.ME OFFERINGS AND/OR ANY OTHER CONTENT, INFORMATION, PRODUCTS AND/OR SERVICES OFFERED BY AND THROUGH SAME MAY CONTAIN BUGS, ERRORS, PROBLEMS OR OTHER LIMITATIONS. MEALSFOR.ME WILL NOT BE LIABLE FOR THE AVAILABILITY OF THE UNDERLYING INTERNET AND/OR MOBILE NETWORK CONNECTION ASSOCIATED WITH THE MEALSFOR.ME OFFERINGS. NO ADVICE OR INFORMATION, WHETHER ORAL OR WRITTEN, OBTAINED BY YOU FROM MEALSFOR.ME OR OTHERWISE THROUGH OR FROM THE MEALSFOR.ME OFFERINGS SHALL CREATE ANY WARRANTY NOT EXPRESSLY STATED IN THE AGREEMENT. WITHOUT LIMITING THE FOREGOING, MEALSFOR.ME DOES NOT ENDORSE USER CONTENT OR FEEDBACK AND SPECIFICALLY DISCLAIMS ANY RESPONSIBILITY OR LIABILITY TO ANY PERSON OR ENTITY FOR ANY LOSS, DAMAGE (WHETHER ACTUAL, CONSEQUENTIAL, PUNITIVE OR OTHERWISE), INJURY, CLAIM, LIABILITY OR OTHER CAUSE OF ANY KIND OR CHARACTER BASED UPON OR RESULTING FROM ANY FEEDBACK.
+          </div>
+
+          <br />
+
+          <div>
+          MealsFor.Me makes no warranty as to the reliability, accuracy, timeliness, usefulness, adequacy, completeness or suitability of the Site and/or the App. MealsFor.Me cannot and does not warrant against human and machine errors, omissions, delays, interruptions or losses, including loss of data. MealsFor.Me cannot and does not guarantee or warrant that files available for downloading from the Site and/or the App will be free of infection by viruses, worms, Trojan horses, or other codes that manifest contaminating or destructive properties. MealsFor.Me cannot and does not guarantee or warrant that any content you post on the Site and/or the App will remain on the Site and/or the App. MealsFor.Me does not warrant or guarantee that the functions or services performed on the Site and/or the App will be uninterrupted or error-free or that defects in the Site and/or the App will be corrected.
+          </div>
+
+          <br />
+
+          <div>
+          MealsFor.Me may disable all or any social media features and any links at any time without notice at our discretion.
+          </div>
+
+          <h6 style={{fontWeight: 'bold', marginBottom: '20px'}}>
+          Limitation of Liability
+          </h6>
+
+          <div>
+          YOU EXPRESSLY UNDERSTAND AND AGREE THAT NEITHER MEALSFOR.ME IS TO DISCONTINUE YOUR USE OF THE SITE. MEALSFOR.ME, NOR ANY OF ITS DIRECTORS, OFFICERS, EMPLOYEES, SHAREHOLDERS, AFFILIATES, AGENTS, REPRESENTATIVES, THIRD-PARTY INFORMATION PROVIDERS, MERCHANTS, OR LICENSORS (COLLECTIVELY,"MEALSFOR.ME PARTIES") SHALL BE LIABLE TO YOU OR THIRD PARTY FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL AND/OR EXEMPLARY DAMAGES INCLUDING BUT NOT LIMITED TO DAMAGES FOR LOSS OF PROFITS, GOODWILL, USE, DATA OR OTHER INTANGIBLE LOSSES, (EVEN IF MEALSFOR.ME OR THE APPLICABLE MEALSFOR.ME PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES), TO THE FULLEST EXTENT PERMISSIBLE BY LAW FOR: (A) THE USE OR THE INABILITY TO USE THE MEALSFOR.ME OFFERINGS AND/OR ANY OTHER CONTENT, INFORMATION, PRODUCTS AND/OR SERVICES OFFERED BY AND THROUGH SAME; (B) THE COST OF PROCUREMENT OF SUBSTITUTE GOODS AND SERVICES RESULTING FROM ANY GOODS, DATA, INFORMATION, CONTENT AND/OR ANY OTHER PRODUCTS PURCHASED OR OBTAINED FROM OR THROUGH THE MEALSFOR.ME OFFERINGS; (C) THE UNAUTHORIZED ACCESS TO, OR ALTERATION OF, YOUR ACCOUNT INFORMATION; (D) THE FAILURE TO REALIZE ANY SPECIFIC DIETARY BENEFIT, WEIGHT LOSS OR OTHER HEALTH-RELATED OUTCOME; AND/OR (E) ANY OTHER MATTER RELATING TO THE MEALSFOR.ME OFFERINGS AND/OR ANY OTHER CONTENT, INFORMATION, PRODUCTS AND/OR SERVICES OFFERED BY AND/OR THROUGH SAME. THIS LIMITATION APPLIES TO ALL CAUSES OF ACTION, IN THE AGGREGATE INCLUDING, BUT NOT LIMITED TO, BREACH OF CONTRACT, BREACH OF WARRANTY, NEGLIGENCE, STRICT LIABILITY, MISREPRESENTATION AND ANY AND ALL OTHER TORTS. YOU HEREBY RELEASE MEALSFOR.ME AND THE MEALSFOR.ME PARTIES FROM ANY AND ALL OBLIGATIONS, LIABILITIES AND CLAIMS IN EXCESS OF THE LIMITATIONS STATED HEREIN. IF APPLICABLE LAW DOES NOT PERMIT SUCH LIMITATIONS, THE MAXIMUM LIABILITY OF MEALSFOR.ME TO YOU UNDER ANY AND ALL CIRCUMSTANCES WILL BE AS SET FORTH IN THE DISPUTE RESOLUTION PROVISIONS OF THESE TERMS AND CONDITIONS. NO ACTION, REGARDLESS OF FORM, ARISING OUT OF YOUR USE OF THE MEALSFOR.ME OFFERINGS AND/OR ANY OTHER PRODUCTS AND/OR SERVICES OFFERED BY AND/OR THROUGH SAME, MAY BE BROUGHT BY YOU OR MEALSFOR.ME MORE THAN ONE (1) YEAR FOLLOWING THE EVENT WHICH GAVE RISE TO THE SUBJECT CAUSE OF ACTION. THE NEGATION OF DAMAGES SET FORTH ABOVE IS A FUNDAMENTAL ELEMENT OF THE BASIS OF THE BARGAIN BETWEEN YOU AND MEALSFOR.ME. ACCESS TO THE MEALSFOR.ME OFFERINGS AND/OR ANY OTHER CONTENT, INFORMATION, PRODUCTS AND/OR SERVICES OFFERED BY AND/OR THROUGH SAME WOULD NOT BE PROVIDED TO YOU WITHOUT SUCH LIMITATIONS. BECAUSE SOME STATES OR JURISDICTIONS DO NOT ALLOW THE EXCLUSION OR THE LIMITATION OF LIABILITY FOR CONSEQUENTIAL OR INCIDENTAL DAMAGES, IN SUCH STATES OR JURISDICTIONS, MEALSFOR.ME’S AND ‘”THE MEALSFOR.ME PARTIES’ LIABILITY SHALL BE LIMITED TO THE EXTENT PERMITTED BY LAW.
+          </div>
+
+          <br />
+
+          <div>
+          Indemnification
+          </div>
+
+          <div>
+          You agree to indemnify, defend, and hold MealsFor.Me, its officers, directors, employees, shareholders, affiliates agents, licensors, and suppliers, harmless from and against any claims, actions or demands, liabilities and settlements including without limitation, reasonable legal and accounting fees, resulting from, or alleged to result from, your violation of this Agreement or your use of the MealsFor.Me Offerings or your use of any information obtained from the MealsFor.Me Offerings.
+          </div>
+
+          <h6 style={{fontWeight: 'bold', marginBottom: '20px'}}>
+          Governing Law and Jurisdiction
+          </h6>
+
+          <div>
+          This Agreement shall be governed by and construed in accordance with the laws of the State of California, without regard to its conflict of laws rules.
+          </div>
+
+          <h6 style={{fontWeight: 'bold', marginBottom: '20px'}}>
+          Resolving Disputes — Arbitration
+          </h6>
+
+          <div>
+          Most customer concerns can be resolved quickly and to the customer’s satisfaction BY calling our customer service department at 1-925-400-7469. IF MealsFor.Me’s customer service department is unable to resolve a complaint you may have to your satisfaction (or if MealsFor.Me has not been able to resolve a dispute it has with you after attempting to do so informally), we each agree to resolve those disputes through binding arbitration or small claims court instead of in courts of general jurisdiction.
+          </div>
+
+          <br />
+
+          <div>
+          All disputes or claims that arise under or related to this Agreement (whether in contract, tort or otherwise, whether past, pre-existing, or future, and including statutory, consumer protection, common law, intentional tort, injunctive, and equitable claims) will be resolved either in small claims court or by individual arbitration in accordance with the rules of the American Arbitration Association ("AAA"). Unless you and MealsFor.Me agree otherwise, any arbitration hearings will take place in the county (or parish) of your billing address. The AAA Rules are available online at adr.org, by calling the AAA at 1-800-778-7879. MealsFor.Me agrees that it will pay a consumer’s filing fee FOR the arbitration.
+          </div>
+
+          <br />
+
+          <div>
+          You agree to arbitration on an individual basis. In any dispute,   NEITHER CUSTOMER NOR MEALSFOR.ME SHALL BE ENTITLED TO JOIN OR CONSOLIDATE CLAIMS BY OR AGAINST OTHER CUSTOMERS, OR ARBITRATE OR OTHERWISE PARTICIPATE IN ANY CLAIMS AS A REPRESENTATIVE, CLASS MEMBER, OR IN A PRIVATE ATTORNEY GENERAL CAPACITY. If any provision of this arbitration agreement is found unenforceable, the unenforceable provision shall be severed, and the remaining arbitration terms shall be enforced (but in no case shall there be a class arbitration).  
+          </div>
+
+          <br />
+
+          <div>
+          The arbitrator shall be empowered to grant whatever relief would be available in court under law. Any award of the arbitrator shall be final and binding on each of the parties, and may be entered as a judgment in any court of competent jurisdiction. This transaction and the arbitration shall be governed by the Federal Arbitration Act 9 U.S.C. sec. 1-16 (FAA).
+          </div>
+
+          <h6 style={{fontWeight: 'bold', marginBottom: '20px'}}>
+          Waiver and Severability
+          </h6>
+
+          <div>
+          No waiver by MealsFor.Me of any of the terms and conditions set forth in this Agreement shall be deemed a further or continuing waiver of such term or condition or a waiver of any other term or condition, and any failure of MealsFor.Me to assert a right or provision under these Terms and Conditions shall not constitute a waiver of such right or provision.
+          </div>
+
+          <br />
+
+          <div>
+          If any provision of this Agreement is held by a court or other tribunal of competent jurisdiction to be invalid, illegal or unenforceable for any reason, such provision shall be eliminated or limited to the minimum extent such that the remaining provisions of this Agreement will continue in full force and effect.
+          </div>
+
+          <h6 style={{fontWeight: 'bold', marginBottom: '20px'}}>
+          Entire Agreement
+          </h6>
+
+          <div>
+          This Agreement and our Privacy Policy constitute the sole and entire agreement between you and MealsFor.Me with respect to the MealsFor.Me Offerings and supersede all prior and contemporaneous understandings, agreements, representations and warranties, both written and oral, with respect to the MealsFor.Me Offerings.
+          </div>
+
+          <h6 style={{fontWeight: 'bold', marginBottom: '20px'}}>
+          Notice
+          </h6>
+
+          <div>
+          MealsFor.Me may deliver notice to you under this Agreement by means of electronic mail, a general notice on the site, or by written communication delivered by first class U.S. mail to your address on record in your MealsFor.Me account. You may give notice to MealsFor.Me at any time via electronic mail or by letter delivered by first class postage prepaid U.S. mail or overnight courier to the following address: MealsFor.Me, 6123 Corte de la Reina, San Jose CA 95120, Attn: Legal Department.
+          </div>
+
+          <h6 style={{fontWeight: 'bold', marginBottom: '20px'}}>
+          Telephone Calls and SMS Text Messages
+          </h6>
+
+          <div>
+          Upon registration for an account, you will be asked to provide us with a telephone number at which we can reach you. That number is required for shipping and so that MealsFor.Me can reach you with informational calls related to your transactions. The frequency of text messages that we send to you depends on your transactions with us and you consent to receive text messages sent through an automatic telephone dialing system. All calls to and from MealsFor.Me may be monitored or recorded for quality and training purposes.
+          </div>
+
+          <br />
+
+          <div>
+          If you elect to receive text messages about your account, we may also send you promotional text messages and you consent to receive recurring SMS text messages sent through an automatic telephone dialing system. This service is optional, and is not a condition of purchase. You can opt out of receiving SMS messages at any time by texting STOP in response. Message and data rates may apply. We will treat data collected through text messages in accordance with our Privacy Policy.
+          </div>
+
+          <br />
+
+          <div>
+          All charges are billed by and payable to your wireless service provider. Please contact your wireless service provider for pricing plans and details. If you wish to opt out of such text messages, you may do so by following the "opt-out" instructions in the text message, or by editing your account settings. Message and data rates may apply. We will treat data collected through text messages in accordance with our Privacy Policy.
           </div>
 
         </div>
