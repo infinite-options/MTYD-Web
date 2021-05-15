@@ -328,6 +328,12 @@ const MealPlan = props => {
 
         <div className={styles.box2}>
 
+          <div className={styles.dropdownSelection}>
+            2 Meals, 2 Deliveries: 000022
+            <div className={styles.dropdownArrow}>
+              ARROW
+            </div>
+          </div>
           {menuButtons}
 
           <div style={{marginTop: '50px', marginBottom: '50px', border: 'solid'}}>
