@@ -23,7 +23,6 @@
 .container {
   margin-left: 8%;
   margin-right: 8%;
-  border: solid;
   /* text-align: center; */
   /*margin-left: 20px;
   margin-right: 20px;
@@ -569,6 +568,12 @@
     font-size: 25px;
     margin-bottom: 30px;
     margin-top: 30px;
+  }
+
+  .subsectionHeader {
+    font-weight: bold;
+    margin-bottom: 20px;
+    margin-top: 60px;
   }
 
   .sectionHeaderScroll {

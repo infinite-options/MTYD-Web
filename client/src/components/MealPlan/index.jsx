@@ -201,7 +201,11 @@ const MealPlan = props => {
 
       console.log("sel items: ", sel.items);
       
-      let selectionItems = JSON.parse(sel.items);
+      let selectionItems = JSON.parse(sel.items)[0];
+
+      let parsedMeals = selectionItems.name.substring(
+        0, selectionItems.name.indexOf(" ")
+      );
 
       let selectionMeals = JSON.parse(sel.meal_selection);
 
@@ -235,7 +239,7 @@ const MealPlan = props => {
               Meal Plan
             </div>
             <div className={styles.orangeHeaderRight}>
-              {currentPlan}
+              {parsedMeals} Meals, {selectionItems.qty} Deliveries
             </div>
           </div>
 
@@ -324,6 +328,12 @@ const MealPlan = props => {
 
         <div className={styles.box2}>
 
+          <div className={styles.dropdownSelection}>
+            2 Meals, 2 Deliveries: 000022
+            <div className={styles.dropdownArrow}>
+              ARROW
+            </div>
+          </div>
           {menuButtons}
 
           <div style={{marginTop: '50px', marginBottom: '50px', border: 'solid'}}>
