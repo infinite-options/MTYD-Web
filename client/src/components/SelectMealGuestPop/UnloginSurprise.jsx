@@ -1,20 +1,6 @@
 import React, { Component } from 'react'
-import {withRouter} from 'react-router-dom';
-import negativeSign from '../../images/Group 504.png';
-import positiveSign from '../../images/Group 505.png';
 
-export class SelectMealGuestPop extends Component {
-  constructor(props){
-    super();
-
-    this.handleClick= this.handleClick.bind(this)
-  }
-
-  handleClick () {
-    // console.log('inside handle click function')
-    this.props.closeFunction();
-  };
-
+export class UnloginSurprise extends Component {
   render() {
     return (
       <div 
@@ -41,11 +27,8 @@ export class SelectMealGuestPop extends Component {
             paddingTop:'43px'
 
           }}
-          >Looks like you’re enjoying 
-          <span style={{color: '#F26522'}}>MealsFor.me</span>!
-          <br/> 
-          The <img style={{width:'30px',height:'26px'}}src = {negativeSign}/> <img style={{width:'30px',height:'18px'}}src ={positiveSign}/> buttons 
-          help you add / <br/>remove meals from your meal plan.
+          >
+          <span style={{color: '#F26522'}}>Surprise!</span> means we’ll give you an assortment of meals on the specific delivery day.
         </p>
 
 
@@ -62,9 +45,8 @@ export class SelectMealGuestPop extends Component {
              color:'white',
              paddingTop:'10px',
              borderRadius:'15px'
-            //  fontWeight:'',
            }}
-           onClick = {this.handleClick}
+          //  onclick = {this.handleClick}
           >
               Continue Exploring
           </div>
@@ -147,4 +129,4 @@ export class SelectMealGuestPop extends Component {
   }
 }
 
-export default (withRouter(SelectMealGuestPop))
+export default UnloginSurprise

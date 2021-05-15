@@ -5,7 +5,7 @@ import Header from "./header";
 import Cookies from "js-cookie";
 import {API_URL} from "../../reducers/constants";
 import styles from "./selectmeal.module.css";
-import MenuBar from "../Menu";
+
 import moment from 'moment';
 
 import {connect} from "react-redux";
@@ -13,10 +13,12 @@ import {
   fetchSubscribed,
   fetchProfileInformation
 } from "../../reducers/actions/subscriptionActions";
-import Burgermenu from "./example";
+
 import { SelectMealGuestPop } from "../SelectMealGuestPop/SelectMealGuestPop";
-import Congrats from "../Congrats";
-import { red } from "@material-ui/core/colors";
+import {UnloginSave} from "../SelectMealGuestPop/UnloginSave"
+import {UnloginSurprise} from "../SelectMealGuestPop/UnloginSurprise"
+import {UnloginSkip} from "../SelectMealGuestPop/UnloginSkip"
+
 
 class MenuItemList extends Component {
   constructor(props) {
@@ -35,8 +37,7 @@ class MenuItemList extends Component {
       popUpText: 'Hello',
       dateButtonList:[],
       surpriseSkipSave : [],
-      unloginPopupShow:false,
-      unloginPopupMessage:'',
+      unloginPopupShowPM:false,
       currentSelectedDate:'',
 
     };
@@ -239,6 +240,10 @@ class MenuItemList extends Component {
         console.error(error);
       });
   };
+
+  closepopPlusMinus = ()=>{
+    this.setState({unloginPopupShowPM:false})
+  }
 
   mealsOnChange = e => {
     let cust_id = Cookies.get("customer_uid");
@@ -615,11 +620,9 @@ class MenuItemList extends Component {
     const customer_uid = Cookies.get("customer_uid");
 
 
-    if(customer_uid==null){
-      return this.setState({unloginPopupShow:true,unloginPopupMessage:'xxxxx'})
-
-      // return alert('signin before do this')
-    }
+    // if(customer_uid==null){
+    //   return this.setState({unloginPopupShow:true})
+    // }
 
     this.setState({
       selectValue: e.target.value
@@ -975,10 +978,8 @@ class MenuItemList extends Component {
 
     var elementBig = document. getElementById(menuitem.menu_meal_id);
 
-    
-          
     if(Cookies.get("customer_uid")==null){
-      return alert('signin before use + - button')
+      return this.setState({unloginPopupShowPM:true})
     }
 
 
@@ -1044,7 +1045,7 @@ class MenuItemList extends Component {
     }
 
     if(Cookies.get("customer_uid")==null){
-      return alert('signin before use + - button')
+      return this.setState({unloginPopupShowPM:true})
     }
 
     const cartItems = this.state.cartItems.slice();
@@ -1382,7 +1383,12 @@ class MenuItemList extends Component {
                 <a className = {styles.popUpButton} onClick = {this.toggleDisplay}>OK</a>
               </div>
         </div>
-        {this.state.unloginPopupShow?<SelectMealGuestPop message={this.state.unloginPopupMessage }/>:null}
+        {this.state.unloginPopupShowPM?
+        <SelectMealGuestPop closeFunction = {this.closepopPlusMinus}/>:null}
+
+        {/* <UnloginSave/> */}
+        {/* <UnloginSkip/> */}
+        {/* <UnloginSurprise/> */}
         
       </div>
     );
