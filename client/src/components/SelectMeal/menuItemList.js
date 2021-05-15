@@ -40,6 +40,10 @@ class MenuItemList extends Component {
       unloginPopupShowPM:false,
       currentSelectedDate:'',
 
+      unloginPopupSave:false,
+      unloginPopupSurprise:false,
+      unloginPopupSkip:false,
+
     };
   }
 
@@ -244,6 +248,17 @@ class MenuItemList extends Component {
   closepopPlusMinus = ()=>{
     this.setState({unloginPopupShowPM:false})
   }
+
+  closepopSave = ()=>{
+    this.setState({unloginPopupSave:false})
+  }
+  closepopSurprise = ()=>{
+    this.setState({unloginPopupSurprise:false})
+  }
+  closepopSkip = ()=>{
+    this.setState({unloginPopupSkip:false})
+  }
+
 
   mealsOnChange = e => {
     let cust_id = Cookies.get("customer_uid");
@@ -620,9 +635,15 @@ class MenuItemList extends Component {
     const customer_uid = Cookies.get("customer_uid");
 
 
-    // if(customer_uid==null){
-    //   return this.setState({unloginPopupShow:true})
-    // }
+    if(customer_uid==null){
+      if (e.target.value === "SURPRISE"){
+        return this.setState({unloginPopupSurprise:true})
+      }else if(e.target.value === "SKIP"){
+        return this.setState({unloginPopupSkip:true})
+      }else{
+        return this.setState({unloginPopupSave:true})
+      }
+    }
 
     this.setState({
       selectValue: e.target.value
@@ -1386,9 +1407,9 @@ class MenuItemList extends Component {
         {this.state.unloginPopupShowPM?
         <SelectMealGuestPop closeFunction = {this.closepopPlusMinus}/>:null}
 
-        {/* <UnloginSave/> */}
-        {/* <UnloginSkip/> */}
-        {/* <UnloginSurprise/> */}
+      {this.state.unloginPopupSave?<UnloginSave closeFunction = {this.closepopSave}/>:null}
+      {this.state.unloginPopupSurprise?<UnloginSurprise closeFunction = {this.closepopSurprise}/>:null}
+      {this.state.unloginPopupSkip?<UnloginSkip closeFunction = {this.closepopSkip}/>:null}
         
       </div>
     );
