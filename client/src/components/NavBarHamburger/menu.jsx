@@ -9,7 +9,7 @@ export class MenuList extends Component {
         style={{
           position:"absolute",
           width:"100%",
-          height:"393px",
+          height:"430px",
           backgroundColor:"#F26522",
           left:"0px",
           top:"0px",
@@ -54,15 +54,6 @@ export class MenuList extends Component {
               Select Meals
             </a>
 
-            <a href='/choose-plan'
-              style ={{
-                fontSize:"26px",
-                height:"20px",
-                color:'white'
-              }}>
-              Add Subscription
-            </a >
-
             <a href='/meal-plan'
               style ={{
                 fontSize:"26px",
@@ -70,6 +61,33 @@ export class MenuList extends Component {
                 color:'white'
               }}>
               Change Meal Plans
+            </a>
+
+            <a href='/choose-plan'
+              style ={{
+                fontSize:"26px",
+                height:"20px",
+                color:'white'
+              }}>
+              Add Subscriptions
+            </a >
+
+            <a href='/subscription-history'
+              style ={{
+                fontSize:"26px",
+                height:"20px",
+                color:'white'
+              }}>
+              Subscription History
+            </a>
+
+            <a href='/'
+              style ={{
+                fontSize:"26px",
+                height:"20px",
+                color:'white'
+              }}>
+              Become and Ambassador
             </a>
 
             <a href='/meal-plan'
