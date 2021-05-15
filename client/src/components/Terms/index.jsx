@@ -68,7 +68,7 @@ class Terms extends React.Component {
           
         <div className={styles.container}>
 
-          <h6 style={{fontWeight: 'bold', marginBottom: '20px'}}>
+          <h6 className={styles.subsectionHeader}>
           Updated: May 2021
           </h6>
 
@@ -94,9 +94,7 @@ class Terms extends React.Component {
           We may modify this Agreement from time to time at our sole discretion. When changes are made, we will notify you by making the revised version available on this webpage, and will indicate at the top of this page the date that revisions were last made. You should revisit this Agreement on a regular basis as revised versions will be binding on you. Any such modification will be effective upon our posting of new terms and conditions. You are responsible for staying informed of any changes and are expected to check this page from time to time so you are aware of any changes. You understand and agree that your continued access to or use of the MealsFor.Me Offerings after any posted modification to this Agreement indicates your acceptance of the modifications. If you do not agree with the modified terms and conditions, you should stop using the MealsFor.Me Offerings.
           </div>
 
-          <br />
-
-          <h6 style={{fontWeight: 'bold', marginBottom: '20px'}}>
+          <h6 className={styles.subsectionHeader}>
           Eligibility
           </h6>
 
@@ -104,9 +102,7 @@ class Terms extends React.Component {
           By using the MealsFor.Me Offerings, you represent that you are at least eighteen (18) years of age (or the applicable age of majority if greater than eighteen (18) years of age in your jurisdiction), and have the requisite power and authority to enter into the Agreement and perform your obligations hereunder.
           </div>
 
-          <br />
-
-          <h6 style={{fontWeight: 'bold', marginBottom: '20px'}}>
+          <h6 className={styles.subsectionHeader}>
           Registration
           </h6>
 
@@ -136,7 +132,7 @@ class Terms extends React.Component {
           Blog posts and other Content on the Site or in the App may contain recipes, meal recommendations, dietary advice (collectively, the “Dietary Advice”) and the food products delivered in connection with the MealsFor.Me Service (collectively, the “Dietary Options”) will contain various ingredients. You should always consult with your physician or other healthcare professional before adopting any Dietary Advice or partaking in any Dietary Options, whether offered by and through the MealsFor.Me Offerings or otherwise. The Dietary Advice and/or Dietary Options may include ingredients that you are allergic to. You should always check the ingredients associated with any Dietary Advice and Dietary Options to avoid potential allergic reactions. If you have or suspect that you have an allergic reaction or other adverse health event, promptly contact your health care provider.
           </div>
 
-          <h6 style={{fontWeight: 'bold', marginBottom: '20px'}}>
+          <h6 className={styles.subsectionHeader}>
           MealsFor.Me Billing
           </h6>
 
@@ -168,7 +164,7 @@ class Terms extends React.Component {
           WHEN YOU REGISTER FOR THE MEALSFOR.ME SUBSCRIPTION SERVICE (AND EACH TIME YOU CHANGE YOUR PLAN) YOU EXPRESSLY AUTHORIZE AND AGREE THAT MEALSFOR.ME AND/OR OUR THIRD PARTY PAYMENT PROCESSOR IS AUTHORIZED TO AUTOMATICALLY CHARGE YOUR PAYMENT METHOD (AS DEFINED BELOW) ON A RECURRING BASIS IN AN AMOUNT EQUAL TO THE THEN-EFFECTIVE RATE FOR YOUR PLAN, TOGETHER WITH ANY APPLICABLE TAXES AND SHIPPING (the “PLAN RATE”), FOR AS LONG AS YOU CONTINUE TO USE THE MEALSFOR.ME SUBSCRIPTION SERVICE, UNLESS YOU CANCEL YOUR MEALSFOR.ME SUBSCRIPTION SERVICE IN ACCORDANCE WITH THIS AGREEMENT. YOU ACKNOWLEDGE AND AGREE THAT MEALSFOR.ME WILL NOT OBTAIN ANY ADDITIONAL AUTHORIZATION FROM YOU FOR SUCH AUTOMATIC, RECURRING PAYMENTS. IN ADDITION, YOU AUTHORIZE US (AND/OR OUR THIRD PARTY PAYMENT PROCESSOR) TO CHARGE YOUR PAYMENT METHOD FOR ANY ADDITIONAL MEALSFOR.ME OFFERINGS PURCHASED BY YOU FROM TIME TO TIME OUTSIDE OF OR IN EXCESS OF YOUR PLAN, PLUS ANY APPLICABLE TAXES AND SHIPPING. EVERY TIME THAT YOU USE THE MEALSFOR.ME SUBSCRIPTION SERVICE, YOU RE-AFFIRM THAT MEALSFOR.ME IS AUTHORIZED TO CHARGE YOUR PAYMENT METHOD AS PROVIDED IN THE AGREEMENT, AND TO HAVE ALL APPLICABLE FEES AND CHARGES APPLIED TO SAME.
           </div>
 
-          <h6 style={{fontWeight: 'bold', marginBottom: '20px'}}>
+          <h6 className={styles.subsectionHeader}>
           Cancel or Modify a Subscription
           </h6>
 
@@ -188,7 +184,7 @@ class Terms extends React.Component {
           If you cancel a subscription to a Plan before receiving your first order, your first order may or may not be cancelled and related amounts paid may or may not be refunded to you, depending on factors including the status of your meals in our production process, and any promotions applied. You will be notified at the time of cancellation if any of your charged orders will be cancelled and refunded, To confirm, email us at support@MealsFor.Me.
           </div>
 
-          <h6 style={{fontWeight: 'bold', marginBottom: '20px'}}>
+          <h6 className={styles.subsectionHeader}>
           Food Substitution Policy
           </h6>
 
@@ -208,7 +204,7 @@ class Terms extends React.Component {
           Please Note: MealsFor.Me’s food items may contain or may have been manufactured in a facility that also processes: dairy, eggs, fish, shellfish, soy, and tree nuts.
           </div>
 
-          <h6 style={{fontWeight: 'bold', marginBottom: '20px'}}>
+          <h6 className={styles.subsectionHeader}>
           Shipping
           </h6>
 
@@ -216,7 +212,7 @@ class Terms extends React.Component {
           We use third-party carriers (e.g. Just Delivered) to deliver your food packages and provide you with tracking information for every package. It is very important that you provide us with the proper shipping information and any special instructions that the delivery driver may need.
           </div>
 
-          <h6 style={{fontWeight: 'bold', marginBottom: '20px'}}>
+          <h6 className={styles.subsectionHeader}>
           App
           </h6>
 
@@ -230,7 +226,7 @@ class Terms extends React.Component {
           Export/Usage Restrictions. You agree that the App may not be transferred or exported into any other country, or used in any manner prohibited by U.S. or other applicable export laws and regulations. The MealsFor.Me Offerings are subject to, and you agree that you shall at all times comply with, all local, state, national and international laws, statutes, rules, regulations, ordinances and the like applicable to use of the MealsFor.Me Offerings. You agree not to use the MealsFor.Me Offerings: (a) for any commercial purposes; or (b) to conduct any business or activity, or solicit the performance of any activity, which is prohibited by law or any contractual provision by which you are bound.
           </div>
 
-          <h6 style={{fontWeight: 'bold', marginBottom: '20px'}}>
+          <h6 className={styles.subsectionHeader}>
           Content
           </h6>
 
@@ -238,7 +234,7 @@ class Terms extends React.Component {
           The Site and App contain Content which includes, but is not limited to, information pertaining to the MealsFor.Me Offerings, as well as regularly updated blog posts and third party links. The Content is offered for informational purposes only and is at all times subject to the disclaimers contained herein, and on the Site and in the App.
           </div>
 
-          <h6 style={{fontWeight: 'bold', marginBottom: '20px'}}>
+          <h6 className={styles.subsectionHeader}>
           Interactive Services
           </h6>
 
@@ -300,7 +296,7 @@ class Terms extends React.Component {
           MealsFor.Me has the right to terminate your account and your access to the Interactive Services for any reason, including, without limitation, if MealsFor.Me, in its sole discretion, considers your use to be unacceptable. MealsFor.Me may, but shall not be under any obligation to, provide you a warning prior to termination of your use of the Interactive Services.
           </div>
 
-          <h6 style={{fontWeight: 'bold', marginBottom: '20px'}}>
+          <h6 className={styles.subsectionHeader}>
           MealsFor.Me Intellectual Property
           </h6>
 
@@ -332,7 +328,7 @@ class Terms extends React.Component {
           If you print, copy, modify, download or otherwise use or provide any other person with access to any part of the Site and/or the App in breach of this Agreement, your right to use the Site and/or the App will cease immediately and you must, at our option, return or destroy any copies of the materials you have made. No right, title or interest in or to the Site and/or the App or any content on the Site and/or the App is transferred to you, and all rights not expressly granted are reserved by MealsFor.Me. Any use of the Site and/or the App not expressly permitted by this Agreement is a breach of this Agreement and may violate copyright, trademark and other laws.
           </div>
 
-          <h6 style={{fontWeight: 'bold', marginBottom: '20px'}}>
+          <h6 className={styles.subsectionHeader}>
           Trademarks
           </h6>
 
@@ -346,7 +342,7 @@ class Terms extends React.Component {
           Facebook® and Instagram® are registered trademarks of Facebook, Inc. (“Facebook”). LinkedIn® is a registered trademark of LinkedIn Corporation (“LinkedIn”). Pinterest® is a registered trademark of Pinterest, Inc. (“Pinterest”). Twitter® is a registered trademark of Twitter, Inc. (“Twitter”). Snapchat® is a registered trademark of Snapchat, Inc. YouTube® is a registered trademark of Google, Inc. (“Google”). Please be advised that MealsFor.Me is not in any way affiliated with Facebook, Google, LinkedIn, Pinterest or Twitter, and the MealsFor.Me Offerings are not endorsed, administered or sponsored by any of those parties.
           </div>
 
-          <h6 style={{fontWeight: 'bold', marginBottom: '20px'}}>
+          <h6 className={styles.subsectionHeader}>
           Policy/DMCA Compliance
           </h6>
 
@@ -396,7 +392,7 @@ class Terms extends React.Component {
           Send this information by mail to MealsFor.Me, 6123 Corte de la Reina, San Jose, CA 95120, ATTN: Legal Department. In an effort to protect the rights of copyright owners, MealsFor.Me maintains a policy for the termination, in appropriate circumstances, of subscribers and account holders of the Site who are repeat infringers.
           </div>
 
-          <h6 style={{fontWeight: 'bold', marginBottom: '20px'}}>
+          <h6 className={styles.subsectionHeader}>
           Changes to the Site
           </h6>
 
@@ -414,7 +410,7 @@ class Terms extends React.Component {
           All information we collect on this Site and/or the App is subject to our Privacy Policy. By using the Site and/or the App, you consent to all actions taken by MealsFor.Me with respect to your information in compliance with the Privacy Policy.
           </div>
 
-          <h6 style={{fontWeight: 'bold', marginBottom: '20px'}}>
+          <h6 className={styles.subsectionHeader}>
           Online Purchases and Other Terms and Conditions
           </h6>
 
@@ -428,7 +424,7 @@ class Terms extends React.Component {
           Additional terms and conditions may also apply to specific portions, services or features of the Site and/or the App. All such additional terms and conditions are hereby incorporated by this reference into this Agreement.
           </div>
 
-          <h6 style={{fontWeight: 'bold', marginBottom: '20px'}}>
+          <h6 className={styles.subsectionHeader}>
           Links from the Site and/or the App
           </h6>
 
@@ -442,7 +438,7 @@ class Terms extends React.Component {
           The Site and/or the App may include content provided by third parties, including materials provided by other users, bloggers and third-party licensors, syndicators, aggregators and/or reporting services. All statements and/or opinions expressed in these materials, and all articles and responses to questions and other content, other than the content provided by MealsFor.Me, are solely the opinions and the responsibility of the person or entity providing those materials. These materials do not necessarily reflect the opinion of MealsFor.Me. MealsFor.Me is not responsible, or liable to you or any third party, for the content or accuracy of any materials provided by any third parties.
           </div>
 
-          <h6 style={{fontWeight: 'bold', marginBottom: '20px'}}>
+          <h6 className={styles.subsectionHeader}>
           Warranties
           </h6>
 
@@ -462,7 +458,7 @@ class Terms extends React.Component {
           MealsFor.Me may disable all or any social media features and any links at any time without notice at our discretion.
           </div>
 
-          <h6 style={{fontWeight: 'bold', marginBottom: '20px'}}>
+          <h6 className={styles.subsectionHeader}>
           Limitation of Liability
           </h6>
 
@@ -480,7 +476,7 @@ class Terms extends React.Component {
           You agree to indemnify, defend, and hold MealsFor.Me, its officers, directors, employees, shareholders, affiliates agents, licensors, and suppliers, harmless from and against any claims, actions or demands, liabilities and settlements including without limitation, reasonable legal and accounting fees, resulting from, or alleged to result from, your violation of this Agreement or your use of the MealsFor.Me Offerings or your use of any information obtained from the MealsFor.Me Offerings.
           </div>
 
-          <h6 style={{fontWeight: 'bold', marginBottom: '20px'}}>
+          <h6 className={styles.subsectionHeader}>
           Governing Law and Jurisdiction
           </h6>
 
@@ -488,7 +484,7 @@ class Terms extends React.Component {
           This Agreement shall be governed by and construed in accordance with the laws of the State of California, without regard to its conflict of laws rules.
           </div>
 
-          <h6 style={{fontWeight: 'bold', marginBottom: '20px'}}>
+          <h6 className={styles.subsectionHeader}>
           Resolving Disputes — Arbitration
           </h6>
 
@@ -514,7 +510,7 @@ class Terms extends React.Component {
           The arbitrator shall be empowered to grant whatever relief would be available in court under law. Any award of the arbitrator shall be final and binding on each of the parties, and may be entered as a judgment in any court of competent jurisdiction. This transaction and the arbitration shall be governed by the Federal Arbitration Act 9 U.S.C. sec. 1-16 (FAA).
           </div>
 
-          <h6 style={{fontWeight: 'bold', marginBottom: '20px'}}>
+          <h6 className={styles.subsectionHeader}>
           Waiver and Severability
           </h6>
 
@@ -528,7 +524,7 @@ class Terms extends React.Component {
           If any provision of this Agreement is held by a court or other tribunal of competent jurisdiction to be invalid, illegal or unenforceable for any reason, such provision shall be eliminated or limited to the minimum extent such that the remaining provisions of this Agreement will continue in full force and effect.
           </div>
 
-          <h6 style={{fontWeight: 'bold', marginBottom: '20px'}}>
+          <h6 className={styles.subsectionHeader}>
           Entire Agreement
           </h6>
 
@@ -536,7 +532,7 @@ class Terms extends React.Component {
           This Agreement and our Privacy Policy constitute the sole and entire agreement between you and MealsFor.Me with respect to the MealsFor.Me Offerings and supersede all prior and contemporaneous understandings, agreements, representations and warranties, both written and oral, with respect to the MealsFor.Me Offerings.
           </div>
 
-          <h6 style={{fontWeight: 'bold', marginBottom: '20px'}}>
+          <h6 className={styles.subsectionHeader}>
           Notice
           </h6>
 
@@ -544,7 +540,7 @@ class Terms extends React.Component {
           MealsFor.Me may deliver notice to you under this Agreement by means of electronic mail, a general notice on the site, or by written communication delivered by first class U.S. mail to your address on record in your MealsFor.Me account. You may give notice to MealsFor.Me at any time via electronic mail or by letter delivered by first class postage prepaid U.S. mail or overnight courier to the following address: MealsFor.Me, 6123 Corte de la Reina, San Jose CA 95120, Attn: Legal Department.
           </div>
 
-          <h6 style={{fontWeight: 'bold', marginBottom: '20px'}}>
+          <h6 className={styles.subsectionHeader}>
           Telephone Calls and SMS Text Messages
           </h6>
 

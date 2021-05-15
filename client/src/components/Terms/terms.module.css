@@ -570,6 +570,12 @@
     margin-top: 30px;
   }
 
+  .subsectionHeader {
+    font-weight: bold;
+    margin-bottom: 20px;
+    margin-top: 60px;
+  }
+
   .sectionHeaderScroll {
     background-color: #ffba00;
     width: 100%;
