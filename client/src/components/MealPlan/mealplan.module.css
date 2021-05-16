@@ -229,13 +229,13 @@
   box-shadow: 0px 5px 10px gray;
   margin-bottom: 10px;
   display: flex;
+  width: 40%;
 }
 
-.dropwdownArrow {
+.dropdownArrow {
   width: 0; 
   height: 0; 
-  border-left: 20px solid transparent;
-  border-right: 20px solid transparent;
-  
+  border-left: 15px solid transparent;
+  border-right: 15px solid transparent;
   border-top: 20px solid white;
 }

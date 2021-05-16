@@ -36,6 +36,7 @@ const MealPlan = props => {
   const [mealSelections, setMealSelections] = useState([]);
   const [selectionDisplay, setSelectionDisplay] = useState();
   const [infoLoaded, loadInfo] = useState(false);
+  const [showDropdown, toggleDropdownDisplay] = useState(false);
 
   //check for logged in user
   //let customerId = null;
@@ -122,13 +123,30 @@ const MealPlan = props => {
 
           tempMenuButtons.push(
             <div 
-              onClick={() => {
-                console.log("pressed: ", plan.purchase_id);
-                setCurrentPlan(plan.purchase_id);
+              style={{
+                backgroundColor: '#f26522',
+                width: '40%',
+                height: '40px'
               }}
-              style={{border: 'solid'}}
             >
-              {index} : {plan.purchase_id}
+              <div 
+                onClick={() => {
+                  console.log("pressed: ", plan.purchase_id);
+                  setCurrentPlan(plan.purchase_id);
+                }}
+                style={{
+                  border: 'solid', 
+                  borderRadius: '10px', 
+                  borderWidth: '0',
+                  backgroundColor: 'white',
+                  height: '32px',
+                  width: '96%',
+                  paddingLeft: '10px',
+                  marginLeft: '2%',
+                }}
+              >
+                {index} : {plan.purchase_id}
+              </div>
             </div>
           );
 
@@ -181,6 +199,7 @@ const MealPlan = props => {
   useEffect(() => {
 
     console.log("current plan: ", currentPlan);
+    console.log("default set? ", defaultSet);
 
     let currSelections = [];
 
@@ -213,15 +232,28 @@ const MealPlan = props => {
 
       let mealsList = [];
 
-      selectionMeals.forEach((meal) => {
-        mealsList.push(
-          <div style={{border: 'inset'}}>
-            Quantity: {meal.qty}
-            <br />
-            Name: {meal.name}
-          </div>
-        );
-      });
+      // need to ensure not null when renders
+
+      if(selectionMeals !== null){
+        selectionMeals.forEach((meal) => {
+          mealsList.push(
+            <div style={{border: 'inset'}}>
+              Quantity: {meal.qty}
+              <br />
+              Name: {meal.name}
+            </div>
+          );
+        });
+      }
+      // selectionMeals.forEach((meal) => {
+      //   mealsList.push(
+      //     <div style={{border: 'inset'}}>
+      //       Quantity: {meal.qty}
+      //       <br />
+      //       Name: {meal.name}
+      //     </div>
+      //   );
+      // });
 
       tempSelectionDisplay.push(
         <div style={{marginTop: '50px', marginBottom: '50px', border: 'solid'}}>
@@ -315,7 +347,6 @@ const MealPlan = props => {
     console.log("\n");
   }, []);
 
-
   return (
     <>
       <WebNavBar />
@@ -328,13 +359,25 @@ const MealPlan = props => {
 
         <div className={styles.box2}>
 
-          <div className={styles.dropdownSelection}>
+          <div 
+            className={styles.dropdownSelection}
+            onClick={() => {
+              console.log("set show dropdown menu to: ", !showDropdown);
+              toggleDropdownDisplay(!showDropdown);
+            }}
+          >
             2 Meals, 2 Deliveries: 000022
             <div className={styles.dropdownArrow}>
-              ARROW
+              
             </div>
           </div>
-          {menuButtons}
+
+          {showDropdown
+            ? menuButtons
+            : null
+          }
+
+          {/*menuButtons*/}
 
           <div style={{marginTop: '50px', marginBottom: '50px', border: 'solid'}}>
             <div style={{display: 'inline-flex', width: '100%'}}>

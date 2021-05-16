@@ -87,7 +87,7 @@ export class MenuList extends Component {
                 height:"20px",
                 color:'white'
               }}>
-              Become and Ambassador
+              Become an Ambassador
             </a>
 
             <a href='/meal-plan'

@@ -1116,16 +1116,29 @@ class MenuItemList extends Component {
   };
 
   prepareSurpriseArr=(uid)=>{
+
+    console.log("PSA uid: ", uid);
+
     if(uid!=null){
+
+      console.log("PSA in if statement");
+
       fetch(
         `${API_URL}meals_selected?customer_uid=${uid}`
       )
         .then(response => response.json())
         .then(json => {
+
+          console.log("PSA json: ", json);
+
           let mealSelected = [...json.result];
           let tempArr = [];
           for(const eachData of mealSelected){
-            let tempselection = JSON.parse(eachData.meal_selection);
+            //let tempselection = JSON.parse(eachData.meal_selection);
+            let tempselection = JSON.parse(eachData.meals_selected);
+
+            console.log("tempselection: ", tempselection);
+
             tempArr.push({
               id:eachData.sel_purchase_id,
               date:eachData.sel_menu_date,
@@ -1217,7 +1230,7 @@ class MenuItemList extends Component {
             first=1;
             lessThanTen++;
           }
-          // console.log(buttonList)
+          console.log("buttonList: ", buttonList)
 
           this.setState({
             dateButtonList:buttonList
@@ -1236,9 +1249,12 @@ class MenuItemList extends Component {
 
     const customer_uid = Cookies.get("customer_uid");
 
-    
     const dates = this.state.data.map(date => date.menu_date);
     const uniqueDates = Array.from(new Set(dates));
+
+    console.log("customer_uid: ", customer_uid);
+    console.log("dates: ", dates);
+    console.log("uniqueDates: ", uniqueDates);
 
     let buttonList = [];
     let first=null;
