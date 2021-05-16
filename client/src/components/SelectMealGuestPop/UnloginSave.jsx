@@ -90,6 +90,8 @@ export class UnloginSave extends Component {
              borderRadius:'15px'
             //  fontWeight:'',
            }}
+
+           onClick = {this.props.login}
           >
               Login
           </div>
@@ -125,6 +127,8 @@ export class UnloginSave extends Component {
              borderRadius:'15px'
             //  fontWeight:'',
            }}
+
+           onClick = {this.props.signup}
           >
               Sign up
           </div>

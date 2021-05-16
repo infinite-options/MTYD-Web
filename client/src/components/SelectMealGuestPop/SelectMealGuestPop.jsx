@@ -98,6 +98,7 @@ export class SelectMealGuestPop extends Component {
              borderRadius:'15px'
             //  fontWeight:'',
            }}
+           onClick = {this.props.login}
           >
               Login
           </div>
@@ -133,6 +134,7 @@ export class SelectMealGuestPop extends Component {
              borderRadius:'15px'
             //  fontWeight:'',
            }}
+           onClick = {this.props.signup}
           >
               Sign up
           </div>
