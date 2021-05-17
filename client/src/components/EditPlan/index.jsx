@@ -669,8 +669,10 @@ class EditPlan extends React.Component {
 
       let parsedDiscount = discountItem[0].discount;
       let parsedId = sub.purchase_id.substring(sub.purchase_id.indexOf("-")+1,sub.purchase_id.length)
-      let parsedDeliveryDate = sub.sel_menu_date.substring(0,sub.sel_menu_date.indexOf(" "));
-      let parsedSelection = JSON.parse(sub.meal_selection)[0].name;
+      // let parsedDeliveryDate = sub.sel_menu_date.substring(0,sub.sel_menu_date.indexOf(" "));
+      let parsedDeliveryDate = "TBD";
+      // let parsedSelection = JSON.parse(sub.meal_selection)[0].name;
+      let parsedSelection = "N/A";
       let parsedStatus = null;
       
       if(parsedSelection !== 'SURPRISE' && parsedSelection !== 'SKIP'){
@@ -679,37 +681,46 @@ class EditPlan extends React.Component {
         parsedStatus = parsedSelection;
       }
 
+      // placeholder
+      parsedStatus = "N/A";
+
       let parsedBillingDate = sub.menu_date.substring(0,sub.menu_date.indexOf(" "));
 
       console.log("(parsed) Billing Date: ", parsedBillingDate);
 
       console.log(" ");
-      console.log("Base Amount: ", sub.base_amount);
+      // console.log("Base Amount: ", sub.base_amount);
+      console.log("Base Amount: ", sub.subtotal);
       console.log("Taxes: ", sub.taxes);
       console.log("Delivery Fee: ", sub.delivery_fee);
       console.log("Service Fee: ", sub.service_fee);
       console.log("Driver Tip: ", sub.driver_tip);
+      console.log("Ambassador Code/Discount: ", sub.ambassador_code);
 
       let nextBillingAmount = (
-        sub.base_amount + 
+        // sub.base_amount + 
+        sub.subtotal +
         sub.taxes +
         sub.delivery_fee +
         sub.service_fee + 
         sub.driver_tip
-      ) - (parsedDiscount*0.01*sub.base_amount);
+      // ) - (parsedDiscount*0.01*sub.base_amount);
+      ) - (parsedDiscount*0.01*sub.subtotal);
 
       console.log("Next Billing Amount: ", nextBillingAmount);
 
       console.log(" ");
 
       let payment_summary = {
-        base_amount: sub.base_amount.toFixed(2),
+        // base_amount: sub.base_amount.toFixed(2),
+        base_amount: sub.subtotal.toFixed(2),
         taxes: sub.taxes.toFixed(2),
         delivery_fee: sub.delivery_fee.toFixed(2),
         service_fee: sub.service_fee.toFixed(2),
         driver_tip: sub.driver_tip.toFixed(2),
         discount_amount: (
-          sub.base_amount *
+          // sub.base_amount *
+          sub.subtotal * 
           parsedDiscount *
           0.01
         ).toFixed(2),
@@ -1057,7 +1068,8 @@ class EditPlan extends React.Component {
     axios.post(API_URL + 'change_purchase/' + this.state.updatedPlan.raw_data.purchase_uid, object)
       .then(res => {
         console.log("change_purchase response: ", res);
-        axios.get(API_URL + 'next_meal_info/' + this.state.customerUid)
+        // axios.get(API_URL + 'next_meal_info/' + this.state.customerUid)
+        axios.get(API_URL + 'predict_next_billing_date/' + this.state.customerUid)
           .then(res => {
             console.log("(after change) next meal info res: ", res);
 
@@ -1187,7 +1199,8 @@ class EditPlan extends React.Component {
 
             });
 
-            axios.get(API_URL + 'next_meal_info/' + this.state.customerUid)
+            // axios.get(API_URL + 'next_meal_info/' + this.state.customerUid)
+            axios.get(API_URL + 'predict_next_billing_date/' + this.state.customerUid)
               .then(res => {
                 console.log("(1) next meal info res: ", res);
 
@@ -1256,7 +1269,8 @@ class EditPlan extends React.Component {
 
             });
 
-            axios.get(API_URL + 'next_meal_info/' + this.state.customerUid)
+            //axios.get(API_URL + 'next_meal_info/' + this.state.customerUid)
+            axios.get(API_URL + 'predict_next_billing_date/' + this.state.customerUid)
               .then(res => {
                 console.log("(2) next meal info res: ", res);
 
@@ -1304,7 +1318,8 @@ class EditPlan extends React.Component {
         console.log("cancel_purchase response: " + JSON.stringify(response));
         console.log("cancel_purchase customerUid: " + this.state.customerUid);
 
-        axios.get(API_URL + 'next_meal_info/' + this.state.customerUid)
+        // axios.get(API_URL + 'next_meal_info/' + this.state.customerUid)
+        axios.get(API_URL + 'predict_next_billing_date/' + this.state.customerUid)
           .then(res => {
             console.log("(after deletion) next meal info res: ", res);
 
@@ -1788,7 +1803,8 @@ class EditPlan extends React.Component {
       .then((res) => {
         console.log("update delivery info res: ", res);
 
-        axios.get(API_URL + 'next_meal_info/' + this.state.customerUid)
+        // axios.get(API_URL + 'next_meal_info/' + this.state.customerUid)
+        axios.get(API_URL + 'predict_next_billing_date/' + this.state.customerUid)
           .then(res => {
             console.log("(after change) next meal info res: ", res);
 

@@ -230,6 +230,8 @@
   margin-bottom: 10px;
   display: flex;
   width: 40%;
+  z-index: 2;
+  position: absolute;
 }
 
 .dropdownArrow {

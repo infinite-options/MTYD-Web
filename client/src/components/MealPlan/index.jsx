@@ -26,6 +26,7 @@ import axios from 'axios';
 import { API_URL } from '../../reducers/constants';
 
 import {FootLink} from "../Home/homeButtons";
+import zIndex from '@material-ui/core/styles/zIndex';
 
 const MealPlan = props => {
 
@@ -103,6 +104,8 @@ const MealPlan = props => {
     let tempMenuButtons = [];
     let tempMealSelections = [];
 
+    let dropdownLength = 30 + (props.subscribedPlans.length * 37);
+
     props.subscribedPlans.forEach((plan, index) => {
       console.log("(nmi) plan " + index + " id: ", plan.purchase_id);
 
@@ -122,13 +125,13 @@ const MealPlan = props => {
           }
 
           tempMenuButtons.push(
-            <div 
-              style={{
-                backgroundColor: '#f26522',
-                width: '40%',
-                height: '40px'
-              }}
-            >
+            // <div 
+            //   style={{
+            //     backgroundColor: '#f26522',
+            //     width: '40%',
+            //     height: '40px'
+            //   }}
+            // >
               <div 
                 onClick={() => {
                   console.log("pressed: ", plan.purchase_id);
@@ -137,17 +140,22 @@ const MealPlan = props => {
                 style={{
                   border: 'solid', 
                   borderRadius: '10px', 
-                  borderWidth: '0',
+                  borderWidth: '1px',
                   backgroundColor: 'white',
                   height: '32px',
                   width: '96%',
                   paddingLeft: '10px',
                   marginLeft: '2%',
+                  marginTop: (
+                    plansFetched === 0
+                      ? '20px'
+                      : '5px'
+                  )
                 }}
               >
                 {index} : {plan.purchase_id}
               </div>
-            </div>
+            // </div>
           );
 
           tempMealSelections.push(mealSelection);
@@ -161,8 +169,44 @@ const MealPlan = props => {
           plansFetched++;
 
           if (plansFetched === props.subscribedPlans.length) {
-            setMenuButtons(tempMenuButtons);
+            setMenuButtons(
+              <>
+                <div
+                  style={{
+                    height: '30px',
+                    border: 'dashed',
+                    borderColor: 'red'
+                  }}
+                />
+                <div
+                  style={{
+                    backgroundColor: '#f26522',
+                    width: '40%',
+                    height: dropdownLength,
+                    border: 'solid',
+                    position: 'absolute',
+                    zIndex: '1'
+                  }}
+                >
+                  {tempMenuButtons}
+                </div>
+              </>
+            );
+
             setMealSelections(tempMealSelections);
+            // setMealSelections(
+            //   <div
+            //     style={{
+            //       backgroundColor: '#f26522',
+            //       width: '40%',
+            //       height: '100px',
+            //       border: 'solid'
+            //     }}
+            //   >
+            //     {tempMealSelections}
+            //   </div>
+            // );
+
             loadInfo(true);
           }
 
@@ -287,12 +331,12 @@ const MealPlan = props => {
   }, [currentPlan]);
 
   useEffect(() => {
-    if (infoLoaded === true) {
-      mealSelections.forEach((item) => {
-        console.log("meal selection item: ", item);
+    // if (infoLoaded === true) {
+    //   mealSelections.forEach((item) => {
+    //     console.log("meal selection item: ", item);
 
-      });
-    }
+    //   });
+    // }
   }, [infoLoaded]);
 
 
@@ -359,23 +403,36 @@ const MealPlan = props => {
 
         <div className={styles.box2}>
 
-          <div 
-            className={styles.dropdownSelection}
-            onClick={() => {
-              console.log("set show dropdown menu to: ", !showDropdown);
-              toggleDropdownDisplay(!showDropdown);
+          <div
+            style={{
+              border: 'inset',
+              position: 'relative',
+              height: (
+                showDropdown
+                  ? 60 + (props.subscribedPlans.length * 37)
+                  : 60
+              )
             }}
           >
-            2 Meals, 2 Deliveries: 000022
-            <div className={styles.dropdownArrow}>
+            <div 
+              className={styles.dropdownSelection}
+              onClick={() => {
+                console.log("set show dropdown menu to: ", !showDropdown);
+                toggleDropdownDisplay(!showDropdown);
+              }}
+            >
+              2 Meals, 2 Deliveries: 000022
+              {/* <div className={styles.dropdownArrow}>
+                
+              </div> */}
               
             </div>
-          </div>
 
-          {showDropdown
-            ? menuButtons
-            : null
-          }
+            {showDropdown
+              ? menuButtons
+              : null
+            }
+          </div>
 
           {/*menuButtons*/}
 
