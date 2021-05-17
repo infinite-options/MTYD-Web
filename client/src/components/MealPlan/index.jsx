@@ -104,7 +104,7 @@ const MealPlan = props => {
     let tempMenuButtons = [];
     let tempMealSelections = [];
 
-    let dropdownLength = 30 + (props.subscribedPlans.length * 37);
+    let dropdownLength = 40 + (props.subscribedPlans.length * 42);
 
     props.subscribedPlans.forEach((plan, index) => {
       console.log("(nmi) plan " + index + " id: ", plan.purchase_id);
@@ -138,9 +138,7 @@ const MealPlan = props => {
                   setCurrentPlan(plan.purchase_id);
                 }}
                 style={{
-                  border: 'solid', 
-                  borderRadius: '10px', 
-                  borderWidth: '1px',
+                  borderRadius: '10px',
                   backgroundColor: 'white',
                   height: '32px',
                   width: '96%',
@@ -148,8 +146,8 @@ const MealPlan = props => {
                   marginLeft: '2%',
                   marginTop: (
                     plansFetched === 0
-                      ? '20px'
-                      : '5px'
+                      ? '35px'
+                      : '10px'
                   )
                 }}
               >
@@ -173,9 +171,7 @@ const MealPlan = props => {
               <>
                 <div
                   style={{
-                    height: '30px',
-                    border: 'dashed',
-                    borderColor: 'red'
+                    height: '20px'
                   }}
                 />
                 <div
@@ -183,9 +179,9 @@ const MealPlan = props => {
                     backgroundColor: '#f26522',
                     width: '40%',
                     height: dropdownLength,
-                    border: 'solid',
                     position: 'absolute',
-                    zIndex: '1'
+                    zIndex: '1',
+                    boxShadow: '0px 5px 10px gray',
                   }}
                 >
                   {tempMenuButtons}
@@ -405,11 +401,11 @@ const MealPlan = props => {
 
           <div
             style={{
-              border: 'inset',
+              // border: 'inset',
               position: 'relative',
               height: (
                 showDropdown
-                  ? 60 + (props.subscribedPlans.length * 37)
+                  ? 60 + (props.subscribedPlans.length * 42)
                   : 60
               )
             }}
