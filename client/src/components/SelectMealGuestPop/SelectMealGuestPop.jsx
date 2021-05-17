@@ -6,12 +6,10 @@ import positiveSign from '../../images/Group 505.png';
 export class SelectMealGuestPop extends Component {
   constructor(props){
     super();
-
     this.handleClick= this.handleClick.bind(this)
   }
 
   handleClick () {
-    // console.log('inside handle click function')
     this.props.closeFunction();
   };
 
@@ -100,6 +98,7 @@ export class SelectMealGuestPop extends Component {
              borderRadius:'15px'
             //  fontWeight:'',
            }}
+           onClick = {this.props.login}
           >
               Login
           </div>
@@ -135,6 +134,7 @@ export class SelectMealGuestPop extends Component {
              borderRadius:'15px'
             //  fontWeight:'',
            }}
+           onClick = {this.props.signup}
           >
               Sign up
           </div>

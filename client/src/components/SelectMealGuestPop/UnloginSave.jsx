@@ -1,6 +1,14 @@
 import React, { Component } from 'react'
 
 export class UnloginSave extends Component {
+  constructor(props){
+    super();
+    this.handleClick= this.handleClick.bind(this)
+  }
+
+  handleClick () {
+    this.props.closeFunction();
+  };
   render() {
     return (
       <div 
@@ -46,7 +54,7 @@ export class UnloginSave extends Component {
              paddingTop:'10px',
              borderRadius:'15px'
            }}
-          //  onClick = {()=>{console.log('inside div')}}
+           onClick = {this.handleClick}
           >
               Continue Exploring
           </div>
@@ -82,6 +90,8 @@ export class UnloginSave extends Component {
              borderRadius:'15px'
             //  fontWeight:'',
            }}
+
+           onClick = {this.props.login}
           >
               Login
           </div>
@@ -117,6 +127,8 @@ export class UnloginSave extends Component {
              borderRadius:'15px'
             //  fontWeight:'',
            }}
+
+           onClick = {this.props.signup}
           >
               Sign up
           </div>

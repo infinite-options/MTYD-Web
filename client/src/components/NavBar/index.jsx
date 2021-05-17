@@ -108,7 +108,6 @@ class NavBar extends React.Component {
         signUpSeen:false
       })
     }
-
    };
 
    togglePopSignup = () => {
