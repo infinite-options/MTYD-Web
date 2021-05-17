@@ -49,7 +49,7 @@ class EditPlan extends React.Component {
       longitude: "",
       refreshingPrice: false,
       ambassadorCode: "",
-      validCode: null,
+      validCode: false,
       selectedMealPlan: {
         delivery_first_name: "",
         delivery_last_name: "",
@@ -705,7 +705,11 @@ class EditPlan extends React.Component {
         sub.service_fee + 
         sub.driver_tip
       // ) - (parsedDiscount*0.01*sub.base_amount);
-      ) - (parsedDiscount*0.01*sub.subtotal);
+      ) - (
+        parsedDiscount*0.01*sub.subtotal
+      ) - (
+        sub.ambassador_code
+      );
 
       console.log("Next Billing Amount: ", nextBillingAmount);
 
@@ -725,7 +729,8 @@ class EditPlan extends React.Component {
           0.01
         ).toFixed(2),
         discount_rate: parsedDiscount,
-        ambassador_discount: "0.00",
+        // ambassador_discount: "0.00",
+        ambassador_discount: sub.ambassador_code.toFixed(2),
         subtotal: "0.00",
         total: nextBillingAmount.toFixed(2)
       }
@@ -2460,7 +2465,11 @@ class EditPlan extends React.Component {
                 />
                 <button 
                   className={styles.codeButton}
-                  disabled={this.state.refreshingPrice}
+                  disabled={
+                    this.state.refreshingPrice || 
+                    parseFloat(this.state.currentPlan.payment_summary.ambassador_discount) > 0 ||
+                    parseFloat(this.state.updatedPlan.payment_summary.ambassador_discount) > 0
+                  }
                   onClick={() => this.applyAmbassadorCode()}
                 >
                   Verify

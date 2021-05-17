@@ -406,7 +406,7 @@ const MealPlan = props => {
               height: (
                 showDropdown
                   ? 60 + (props.subscribedPlans.length * 42)
-                  : 60
+                  : 50
               )
             }}
           >

@@ -1402,7 +1402,10 @@ class PaymentDetails extends React.Component {
                   />
                   <button 
                     className={styles.codeButton}
-                    disabled={this.state.recalculatingPrice}
+                    disabled={
+                      this.state.recalculatingPrice || 
+                      parseFloat(this.state.paymentSummary.ambassadorDiscount) > 0
+                    }
                     onClick={() => this.applyAmbassadorCode()}
                   >
                     Verify

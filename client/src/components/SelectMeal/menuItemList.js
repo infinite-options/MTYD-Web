@@ -1134,6 +1134,11 @@ class MenuItemList extends Component {
           let mealSelected = [...json.result];
           let tempArr = [];
           for(const eachData of mealSelected){
+            console.log("eachData: ", eachData);
+
+
+            console.log("meals_selected before parse: ", eachData.meals_selected);
+
             //let tempselection = JSON.parse(eachData.meal_selection);
             let tempselection = JSON.parse(eachData.meals_selected);
 
