@@ -339,8 +339,30 @@ const MealPlan = props => {
             <div className={styles.orangeHeaderLeft}>
               Meal Plan
             </div>
-            <div className={styles.orangeHeaderRight}>
+            <div className={styles.orangeHeaderRightArrow}>
               {parsedMeals} Meals, {selectionItems.qty} Deliveries
+            </div>
+            <div 
+              style={{
+                width: '1%',
+                borderTop: 'solid',
+                borderWidth: '1px',
+                borderColor: '#f26522'
+              }} 
+            />
+            <div
+                style={{
+                  width: '3%',
+                  minWidth: '24px',
+                  // border: 'solid',
+                  // borderWidth: '1px',
+                  borderTop: 'solid',
+                  borderWidth: '1px',
+                  borderColor: '#f26522',
+                  paddingTop: '12px'
+                }}
+              >
+              <div className={styles.orangeArrowDown} /> 
             </div>
           </div>
 
@@ -499,10 +521,15 @@ const MealPlan = props => {
               <div className={styles.orangeHeaderLeft}>
                 Meal Plan
               </div>
-              <div className={styles.orangeHeaderRight}>
-                {currentPlan === null
-                  ? "wait..."
-                  : currentPlan.purchase_id}
+              <div className={styles.orangeHeaderRightUL}>
+                {
+                  currentPlan === null
+                    ? "wait..."
+                    : (
+                      currentPlan.meals + " Meals, " +
+                      currentPlan.deliveries + " Deliveries"
+                    )
+                }
               </div>
             </div>
           </div>

@@ -11,7 +11,7 @@
   font-weight: bold;
   /*padding-left: 100px;*/
   padding-left: 8%;
-  padding-top: 12px;
+  padding-top: 15px;
   font-size: 25px;
   margin-bottom: 30px;
   margin-top: 30px;
@@ -218,6 +218,33 @@
   text-align: right;
 }
 
+.orangeHeaderRightArrow {
+  border-top: solid;
+  /* border: solid; */
+  color: #f26522;
+  border-width: 1px;
+  font-size: 20px;
+  padding-top: 4px;
+  padding-right: 4px;
+  /* width: 50%; */
+  width: 46%;
+  height: 40px;
+  text-align: right;
+}
+
+.orangeHeaderRightUL {
+  border-top: solid;
+  color: #f26522;
+  border-width: 1px;
+  font-size: 20px;
+  padding-top: 4px;
+  padding-right: 4px;
+  width: 50%;
+  height: 40px;
+  text-align: right;
+  text-decoration: underline;
+}
+
 .mealHeaderLeft {
   border: solid;
   border-color: red;
@@ -289,6 +316,8 @@
 .orangeArrowDown {
   background-image: url('./static/orange_arrow_down.png');
   background-size: 100%;
+  width: 12px;
+  height: 11px;
 }
 
 .whiteArrowDown {
