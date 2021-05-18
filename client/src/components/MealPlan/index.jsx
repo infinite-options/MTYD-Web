@@ -15,18 +15,16 @@ import {withRouter} from 'react-router';
 import {fetchOrderHistory} from '../../reducers/actions/profileActions';
 import {WebNavBar} from '../NavBar';
 import styles from './mealplan.module.css';
-import Menu from '../Menu';
-import chooseMeal from '../ChoosePlan/static/choose_meals.svg';
-import prepay from '../ChoosePlan/static/prepay.png';
-import delivery from '../ChoosePlan/static/delivery.png';
-import ChangeMealPlan from './ChangeModals/ChangeMealPlan';
-import ChangeUserInfo from './ChangeModals/ChangeUserInfo';
-import ChangePassword from '../ChangePassword'
+import orangeUp from "./static/orange_arrow_up.png";
+import orangeDown from "./static/orange_arrow_down.png";
+import whiteDown from "./static/white_arrow_down.png";
 import axios from 'axios';
 import { API_URL } from '../../reducers/constants';
 
 import {FootLink} from "../Home/homeButtons";
 import zIndex from '@material-ui/core/styles/zIndex';
+import { Ellipsis } from 'react-bootstrap/esm/PageItem';
+import { lightBlue } from '@material-ui/core/colors';
 
 const MealPlan = props => {
 
@@ -53,61 +51,80 @@ const MealPlan = props => {
         .split('=')[1]
     );
   }
-    
 
-  const [modal, setModal] = useState(null);
+  const [subbedPlans, updateSubbedPlans] = useState(null);
 
   const [activePlans, updateActivePlans] = useState(props.subscribedPlans.filter((elt) => elt.purchase_status === 'ACTIVE'));
   const [cancelledPlans, updateCancelledPlans] = useState(props.subscribedPlans.filter((elt) => elt.purchase_status !== 'ACTIVE'));
 
+  // useEffect(() => {
+  //   console.log("current plan before endpoint: ", currentPlan);
+
+  // }, [currentPlan]);
+
+  // useEffect(() => {
+  //   console.log("(mswb) customerId: ", customerId);
+
+  // }, [customerId]);
+
   useEffect(() => {
-    console.log("current plan before endpoint: ", currentPlan);
+    console.log("(init) subscribed plans: ", props.subscribedPlans);
+    console.log("(init) plans length: ", props.subscribedPlans.length);
 
-  }, [currentPlan]);
+    let tempSubbedPlans = [];
 
-  useEffect(() => {
-    console.log("(mswb) customerId: ", customerId);
+    props.subscribedPlans.forEach((plan, index) => {
 
-    // if(customerId !== null && defaultSet === false) {
+      let parsedItems = JSON.parse(plan.items)[0];
+      console.log("parsedItems: ", parsedItems);
+      let parsedMeals = parsedItems.name.substring(0,parsedItems.name.indexOf(" "));
+      let parsedDeliveries = parsedItems.qty;
+      let parsedId = plan.purchase_id.substring(plan.purchase_id.indexOf("-")+1,plan.purchase_id.length);
 
-    //   axios.get(API_URL + 'next_meal_info/' + customerId)
-    //     .then(res => {
-    //       console.log("(nmi) res: ", res);
+      let tempPlan = {...plan}
 
-    //       res.data.result.forEach((plan, index) => {
-    //         console.log("(nmi) plan " + index + " id: ", plan.purchase_id);
+      tempPlan['meals'] = parsedMeals;
+      tempPlan['deliveries'] = parsedDeliveries;
+      tempPlan['id'] = parsedId;
 
-    //       });
+      tempSubbedPlans.push(tempPlan);
 
-    //     })
-    //     .catch(err => {
-    //       if(err.response) {
-    //         console.log(err.response);
-    //       }
-    //       console.log(err);
-    //     });
+    });
 
-    // }
+    updateSubbedPlans(tempSubbedPlans);
 
-  }, [customerId]);
+  }, [props.subscribedPlans]);
 
   useEffect(() => {
 
     console.log("RERENDER ON SUBSCRIBED PLANS CHANGE");
     console.log("updating active/cancelled plans...");
 
-    console.log("subscribed plans: ", props.subscribedPlans);
-    console.log("plans length: ", props.subscribedPlans.length);
+    if(subbedPlans !== null) {
+
+    console.log("subbedPlans initialized");
 
     let plansFetched = 0;
 
     let tempMenuButtons = [];
     let tempMealSelections = [];
 
-    let dropdownLength = 40 + (props.subscribedPlans.length * 42);
+    let dropdownLength = 40 + (subbedPlans.length * 42);
 
-    props.subscribedPlans.forEach((plan, index) => {
+    let dropdownTopMargin = [
+      <div
+        key={'space'}
+        style={{
+          height: '25px',
+          backgroundColor: '#f26522',
+        }}
+      />
+    ];
+
+    // props.subscribedPlans.forEach((plan, index) => {
+    subbedPlans.forEach((plan, index) => {
       console.log("(nmi) plan " + index + " id: ", plan.purchase_id);
+      console.log("(nmi) plan: ", plan);
 
       axios
         .get(API_URL + 'meals_selected_with_billing', { 
@@ -124,18 +141,18 @@ const MealPlan = props => {
             selections: res.data.result
           }
 
+          // let parsedItems = JSON.parse(plan.items)[0];
+          // console.log("parsedItems: ", parsedItems);
+          // let parsedMeals = parsedItems.name.substring(0,parsedItems.name.indexOf(" "));
+          // let parsedDeliveries = parsedItems.qty;
+          // let parsedId = plan.purchase_id.substring(plan.purchase_id.indexOf("-")+1,plan.purchase_id.length);
+
           tempMenuButtons.push(
-            // <div 
-            //   style={{
-            //     backgroundColor: '#f26522',
-            //     width: '40%',
-            //     height: '40px'
-            //   }}
-            // >
               <div 
+                key={index + ' : ' + plan.purchase_id}
                 onClick={() => {
                   console.log("pressed: ", plan.purchase_id);
-                  setCurrentPlan(plan.purchase_id);
+                  setCurrentPlan(plan);
                 }}
                 style={{
                   borderRadius: '10px',
@@ -144,29 +161,59 @@ const MealPlan = props => {
                   width: '96%',
                   paddingLeft: '10px',
                   marginLeft: '2%',
-                  marginTop: (
-                    plansFetched === 0
-                      ? '35px'
-                      : '10px'
-                  )
+                  marginTop: '10px',
+                  textOverflow: 'ellipsis',
+                  display: 'block',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden'
                 }}
               >
-                {index} : {plan.purchase_id}
+                {/* {index} : {plan.purchase_id} */}
+                {plan.meals} Meals, {plan.deliveries} Deliveries : {plan.id}
               </div>
-            // </div>
           );
+
+          // tempMenuButtons = dropdownTopMargin.concat(tempMenuButtons);
+
+          // console.log("sorting menu buttons...");
+          // tempMenuButtons.sort(function(a,b) {
+          //   console.log("a: ", a.key.substring(0,a.key.indexOf(' ')));
+          //   console.log("b: ", b.key.substring(0,b.key.indexOf(' ')));
+          //   return (
+          //     parseInt(a.key.substring(0,a.key.indexOf(' '))) - 
+          //     parseInt(b.key.substring(0,b.key.indexOf(' ')))
+          //   );
+          // });
+
+          tempMenuButtons.forEach((tmb) => {
+            console.log("tempMenuButtons data: ", tmb.key);
+          });
 
           tempMealSelections.push(mealSelection);
 
           if (defaultSet === false) {
             console.log("setting default to: ", plan.purchase_id);
-            setCurrentPlan(plan.purchase_id);
+            setCurrentPlan(plan);
             setDefault(true);
           }
 
           plansFetched++;
 
-          if (plansFetched === props.subscribedPlans.length) {
+          // if (plansFetched === props.subscribedPlans.length) {
+            if (plansFetched === subbedPlans.length) {
+
+            console.log("sorting menu buttons...");
+            tempMenuButtons.sort(function(a,b) {
+              console.log("a: ", a.key.substring(0,a.key.indexOf(' ')));
+              console.log("b: ", b.key.substring(0,b.key.indexOf(' ')));
+              return (
+                parseInt(a.key.substring(0,a.key.indexOf(' '))) - 
+                parseInt(b.key.substring(0,b.key.indexOf(' ')))
+              );
+            });
+
+            tempMenuButtons = dropdownTopMargin.concat(tempMenuButtons);
+
             setMenuButtons(
               <>
                 <div
@@ -190,18 +237,6 @@ const MealPlan = props => {
             );
 
             setMealSelections(tempMealSelections);
-            // setMealSelections(
-            //   <div
-            //     style={{
-            //       backgroundColor: '#f26522',
-            //       width: '40%',
-            //       height: '100px',
-            //       border: 'solid'
-            //     }}
-            //   >
-            //     {tempMealSelections}
-            //   </div>
-            // );
 
             loadInfo(true);
           }
@@ -214,27 +249,15 @@ const MealPlan = props => {
           console.log(err);
         })
 
-
-      // tempMenuButtons.push(
-      //   <div 
-      //     onClick={() => {
-      //       console.log("pressed: ", plan.purchase_id);
-      //       setCurrentPlan(plan.purchase_id);
-      //     }}
-      //     style={{border: 'solid'}}
-      //   >
-      //     {index} : {plan.purchase_id}
-      //   </div>
-      // );
-
     });
 
-    //setMenuButtons(tempMenuButtons);
+    }
 
     updateActivePlans(props.subscribedPlans.filter((elt) => elt.purchase_status === 'ACTIVE'));
     updateCancelledPlans(props.subscribedPlans.filter((elt) => elt.purchase_status !== 'ACTIVE'));
 
-  }, [props.subscribedPlans]);
+  // }, [props.subscribedPlans]);
+  }, [subbedPlans]);
 
   useEffect(() => {
 
@@ -245,7 +268,7 @@ const MealPlan = props => {
 
     mealSelections.forEach((item) => {
       console.log("item id: ", item.id);
-      if(item.id === currentPlan){
+      if(item.id === currentPlan.purchase_id){
         console.log("found id: ", item.id);
         currSelections = item.selections;
       }
@@ -272,28 +295,34 @@ const MealPlan = props => {
 
       let mealsList = [];
 
-      // need to ensure not null when renders
-
       if(selectionMeals !== null){
         selectionMeals.forEach((meal) => {
+
+          console.log("meal: ", meal);
+
+          console.log("meal selections: ", );
+          console.log("total deliveries: ", );
+
           mealsList.push(
-            <div style={{border: 'inset'}}>
-              Quantity: {meal.qty}
+            <div 
+              key={sel.purchase_uid + ' : ' + meal.item_uid}
+              style={{border: 'inset'}}
+            >
+              {/* Quantity: {meal.qty}
               <br />
-              Name: {meal.name}
+              Name: {meal.name} */}
+              <div style={{display: 'inline-flex', width: '100%'}}>
+                <div className={styles.mealHeaderLeft}>
+                  Meals Delivered
+                </div>
+                <div className={styles.mealHeaderRight}>
+                  [Placeholder Date]
+                </div>
+              </div>
             </div>
           );
         });
       }
-      // selectionMeals.forEach((meal) => {
-      //   mealsList.push(
-      //     <div style={{border: 'inset'}}>
-      //       Quantity: {meal.qty}
-      //       <br />
-      //       Name: {meal.name}
-      //     </div>
-      //   );
-      // });
 
       tempSelectionDisplay.push(
         <div style={{marginTop: '50px', marginBottom: '50px', border: 'solid'}}>
@@ -372,18 +401,12 @@ const MealPlan = props => {
             props.fetchOrderHistory(ids)
               .then(() => {
                 console.log("updating active/cancelled plans...");
-                //updateActivePlans(props.subscribedPlans.filter((elt) => elt.purchase_status === 'ACTIVE'));
-                //updateCancelledPlans(props.subscribedPlans.filter((elt) => elt.purchase_status !== 'ACTIVE'));
               });
           });
-        //updateActivePlans(props.subscribedPlans.filter((elt) => elt.purchase_status === 'ACTIVE'));
-        //updateCancelledPlans(props.subscribedPlans.filter((elt) => elt.purchase_status !== 'ACTIVE'));
       } catch (err) {
         console.log(err);
       }
     }
-    //console.log("subbed plans: " + JSON.stringify(props.subscribedPlans));
-    //eslint-disable-next-line
     console.log("\n");
   }, []);
 
@@ -417,11 +440,41 @@ const MealPlan = props => {
                 toggleDropdownDisplay(!showDropdown);
               }}
             >
-              2 Meals, 2 Deliveries: 000022
-              {/* <div className={styles.dropdownArrow}>
-                
-              </div> */}
-              
+              <div 
+                style={{
+                  // border: 'solid',
+                  // borderWidth: '1px',
+                  width: '80%',
+                  marginLeft: '5%',
+                  textOverflow: 'ellipsis',
+                  display: 'block',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden'
+                }}
+              >
+                {/* [placeholder default meal plan] */}
+                {
+                  currentPlan === null
+                    ? "wait..."
+                    : (
+                        currentPlan.meals + " Meals, " +
+                        currentPlan.deliveries + " Deliveries : " +
+                        currentPlan.id
+                      )
+                }
+              </div>
+              <div
+                style={{
+                  // border: 'solid',
+                  // borderWidth: '1px',
+                  // color: 'blue',
+                  width: '10%',
+                  minWidth: '24px',
+                  marginRight: '5%'
+                }}
+              >
+                <div className={styles.whiteArrowDown} /> 
+              </div>
             </div>
 
             {showDropdown
@@ -447,7 +500,9 @@ const MealPlan = props => {
                 Meal Plan
               </div>
               <div className={styles.orangeHeaderRight}>
-                {currentPlan}
+                {currentPlan === null
+                  ? "wait..."
+                  : currentPlan.purchase_id}
               </div>
             </div>
           </div>

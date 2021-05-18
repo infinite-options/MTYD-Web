@@ -218,6 +218,27 @@
   text-align: right;
 }
 
+.mealHeaderLeft {
+  border: solid;
+  border-color: red;
+  font-size: 20px;
+  padding-top: 4px;
+  padding-left: 4px;
+  width: 50%;
+  height: 40px;
+}
+
+.mealHeaderRight {
+  border: solid;
+  border-color: red;
+  font-size: 20px;
+  padding-top: 4px;
+  padding-right: 4px;
+  width: 50%;
+  height: 40px;
+  text-align: right;
+}
+
 .dropdownSelection {
   color: white;
   border-radius: 15px;
@@ -225,7 +246,6 @@
   font-size: 20px;
   height: 40px;
   padding-top: 5px;
-  padding-left: 15px;
   box-shadow: 0px 5px 10px gray;
   margin-bottom: 10px;
   display: flex;
@@ -240,4 +260,42 @@
   border-left: 15px solid transparent;
   border-right: 15px solid transparent;
   border-top: 20px solid white;
+}
+
+/* .orangeArrow {
+  color: #ffffff;
+  border: 1px solid #e4e4e4;
+  background-color: #ffffff;
+  border-radius: 50%;
+  padding: 0.75rem 0.75rem;
+  margin-top: 15px;
+  align-content: center;
+  flex: 1;
+  min-width: 20%;
+  font-size: 30px;
+  font-weight: 600;
+  outline: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('./static/yellow_plate.png');
+  background-size: 100%;
+} */
+
+.orangeArrowUp {
+  background-image: url('./static/orange_arrow_up.png');
+  background-size: 100%;
+}
+
+.orangeArrowDown {
+  background-image: url('./static/orange_arrow_down.png');
+  background-size: 100%;
+}
+
+.whiteArrowDown {
+  background-image: url('./static/white_arrow_down.png');
+  background-size: 100%;
+  width: 24px;
+  height: 16px;
+  margin-top: 6px;
+  float: right;
 }
