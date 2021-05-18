@@ -149,11 +149,16 @@ const StripeCheckout = (props) => {
     orderData.delivery_discount = props.selectedPlan.delivery_discount;
     orderData.payment_summary = props.paymentSummary;
 
-    console.log("orderData before createPaymentIntent: " + JSON.stringify(orderData));
+    console.log("==> payment_summary: ", props.paymentSummary);
+
+    // Possibly solve ambassador change/cancel problem?
+    orderData.payment_summary.subtotal = props.paymentSummary.mealSubPrice;
+
+    //console.log("orderData before createPaymentIntent: ", orderData);
 
     var clientSecret;
 
-    console.log("orderData: ", orderData);
+    console.log("===> orderData: ", JSON.stringify(orderData));
 
     await axios.post("https://huo8rhh76i.execute-api.us-west-1.amazonaws.com/dev/api/v2/createPaymentIntent", orderData)
     .then(function(result) {

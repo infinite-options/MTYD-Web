@@ -704,7 +704,7 @@ class EditPlan extends React.Component {
         sub.delivery_fee +
         sub.service_fee + 
         sub.driver_tip
-      // ) - (parsedDiscount*0.01*sub.base_amount);
+      // ) - (parsedDiscount*0.01*sub.subtotal);
       ) - (
         parsedDiscount*0.01*sub.subtotal
       ) - (
@@ -1042,7 +1042,7 @@ class EditPlan extends React.Component {
         purchase_id: this.state.updatedPlan.raw_data.purchase_uid,
         start_delivery_date: ""
       }
-      console.log("(old card) object for change_purchase: ", JSON.stringify(object));
+      console.log("(old card) object for change_purchase: ", object);
 
     } else {
 
@@ -1063,12 +1063,15 @@ class EditPlan extends React.Component {
         purchase_id: this.state.updatedPlan.raw_data.purchase_uid,
         start_delivery_date: ""
       }
-      console.log("(new card) object for change_purchase: ", JSON.stringify(object));
+      console.log("(new card) object for change_purchase: ", object);
     }
 
     this.setState({
       processingChanges: true
     }, () => {
+
+    console.log("===> ID: ", JSON.stringify(this.state.updatedPlan.raw_data.purchase_uid));
+    console.log("===> change_purchase: ", JSON.stringify(object));
 
     axios.post(API_URL + 'change_purchase/' + this.state.updatedPlan.raw_data.purchase_uid, object)
       .then(res => {
@@ -1317,7 +1320,9 @@ class EditPlan extends React.Component {
 
     axios
       .put(`${API_URL}cancel_purchase`,{
-        purchase_uid: this.state.updatedPlan.raw_data.purchase_uid,
+        //purchase_uid: this.state.updatedPlan.raw_data.purchase_uid,
+        //purchase_uid: this.state.updatedPlan.raw_data.purchase_uid
+        purchase_uid: this.state.updatedPlan.raw_data.purchase_uid
       })
       .then((response) => {
         console.log("cancel_purchase response: " + JSON.stringify(response));
@@ -2013,7 +2018,8 @@ class EditPlan extends React.Component {
               </div>
             </div>
             <div style={{display: 'flex'}}>
-              {this.state.subscriptionsLoaded === true
+              {this.state.subscriptionsLoaded === true &&
+               typeof(this.props.plans) !== 'undefined'
                 ? this.showSubscribedMeals() 
                 : this.hideSubscribedMeals('plan')}
             </div>
