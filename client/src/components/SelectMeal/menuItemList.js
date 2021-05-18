@@ -19,6 +19,9 @@ import {UnloginSave} from "../SelectMealGuestPop/UnloginSave"
 import {UnloginSurprise} from "../SelectMealGuestPop/UnloginSurprise"
 import {UnloginSkip} from "../SelectMealGuestPop/UnloginSkip"
 
+import PopLogin from "../PopLogin";
+import Popsignup, { PopSignup } from '../PopSignup';
+
 
 class MenuItemList extends Component {
   constructor(props) {
@@ -39,6 +42,12 @@ class MenuItemList extends Component {
       surpriseSkipSave : [],
       unloginPopupShowPM:false,
       currentSelectedDate:'',
+
+      unloginPopupSave:false,
+      unloginPopupSurprise:false,
+      unloginPopupSkip:false,
+      login_seen:false,
+      signUpSeen:false,
 
     };
   }
@@ -244,6 +253,50 @@ class MenuItemList extends Component {
   closepopPlusMinus = ()=>{
     this.setState({unloginPopupShowPM:false})
   }
+
+  closepopSave = ()=>{
+    this.setState({unloginPopupSave:false})
+  }
+  closepopSurprise = ()=>{
+    this.setState({unloginPopupSurprise:false})
+  }
+  closepopSkip = ()=>{
+    this.setState({unloginPopupSkip:false})
+  }
+
+  togglePopLogin = () => {
+    this.setState({
+     login_seen: !this.state.login_seen,
+     unloginPopupShowPM:false,
+     unloginPopupSave:false,
+     unloginPopupSurprise:false,
+     unloginPopupSkip:false
+    });
+
+    if(!this.state.login_seen){
+      this.setState({
+        signUpSeen:false
+      })
+    }
+  };
+
+  togglePopSignup = () => {
+    this.setState({
+     signUpSeen: !this.state.signUpSeen,
+     unloginPopupShowPM:false,
+     unloginPopupSave:false,
+     unloginPopupSurprise:false,
+     unloginPopupSkip:false
+    });
+
+    if(!this.state.signUpSeen){
+      this.setState({
+        login_seen:false
+      })
+    }
+  };
+
+
 
   mealsOnChange = e => {
     let cust_id = Cookies.get("customer_uid");
@@ -620,9 +673,15 @@ class MenuItemList extends Component {
     const customer_uid = Cookies.get("customer_uid");
 
 
-    // if(customer_uid==null){
-    //   return this.setState({unloginPopupShow:true})
-    // }
+    if(customer_uid==null){
+      if (e.target.value === "SURPRISE"){
+        return this.setState({unloginPopupSurprise:true})
+      }else if(e.target.value === "SKIP"){
+        return this.setState({unloginPopupSkip:true})
+      }else{
+        return this.setState({unloginPopupSave:true})
+      }
+    }
 
     this.setState({
       selectValue: e.target.value
@@ -1405,12 +1464,21 @@ class MenuItemList extends Component {
               </div>
         </div>
         {this.state.unloginPopupShowPM?
-        <SelectMealGuestPop closeFunction = {this.closepopPlusMinus}/>:null}
+      <SelectMealGuestPop closeFunction = {this.closepopPlusMinus}
+      login = {this.togglePopLogin} signup = {this.togglePopSignup}
+      />:null}
 
-        {/* <UnloginSave/> */}
-        {/* <UnloginSkip/> */}
-        {/* <UnloginSurprise/> */}
-        
+      {this.state.unloginPopupSave?<UnloginSave closeFunction = {this.closepopSave} 
+      login = {this.togglePopLogin} signup = {this.togglePopSignup}
+      />:null}
+      {this.state.unloginPopupSurprise?<UnloginSurprise closeFunction = {this.closepopSurprise}
+      login = {this.togglePopLogin} signup = {this.togglePopSignup}
+      />:null}
+      {this.state.unloginPopupSkip?<UnloginSkip closeFunction = {this.closepopSkip}
+      login = {this.togglePopLogin} signup = {this.togglePopSignup}
+      />:null}
+      {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
+      {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
       </div>
     );
   }

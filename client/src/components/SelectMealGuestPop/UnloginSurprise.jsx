@@ -1,6 +1,13 @@
 import React, { Component } from 'react'
 
 export class UnloginSurprise extends Component {
+  constructor(props){
+    super();
+    this.handleClick= this.handleClick.bind(this)
+  }
+  handleClick () {
+    this.props.closeFunction();
+  };
   render() {
     return (
       <div 
@@ -46,7 +53,7 @@ export class UnloginSurprise extends Component {
              paddingTop:'10px',
              borderRadius:'15px'
            }}
-          //  onclick = {this.handleClick}
+           onClick = {this.handleClick}
           >
               Continue Exploring
           </div>
@@ -82,6 +89,7 @@ export class UnloginSurprise extends Component {
              borderRadius:'15px'
             //  fontWeight:'',
            }}
+           onClick = {this.props.login}
           >
               Login
           </div>
@@ -117,6 +125,7 @@ export class UnloginSurprise extends Component {
              borderRadius:'15px'
             //  fontWeight:'',
            }}
+           onClick = {this.props.signup}
           >
               Sign up
           </div>

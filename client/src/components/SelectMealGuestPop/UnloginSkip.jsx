@@ -1,6 +1,15 @@
 import React, { Component } from 'react'
 
 export class UnloginSkip extends Component {
+  constructor(props){
+    super();
+    this.handleClick= this.handleClick.bind(this)
+  }
+
+  handleClick () {
+    this.props.closeFunction();
+  };
+
   render() {
     return (
       <div 
@@ -50,7 +59,7 @@ export class UnloginSkip extends Component {
              borderRadius:'15px'
             //  fontWeight:'',
            }}
-           onclick = {this.handleClick}
+           onClick = {this.handleClick}
           >
               Continue Exploring
           </div>
@@ -86,6 +95,7 @@ export class UnloginSkip extends Component {
              borderRadius:'15px'
             //  fontWeight:'',
            }}
+           onClick = {this.props.login}
           >
               Login
           </div>
@@ -121,6 +131,7 @@ export class UnloginSkip extends Component {
              borderRadius:'15px'
             //  fontWeight:'',
            }}
+           onClick = {this.props.signup}
           >
               Sign up
           </div>
