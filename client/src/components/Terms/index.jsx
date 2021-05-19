@@ -562,7 +562,7 @@ class Terms extends React.Component {
 
         </div>
 
-        <div style={{marginTop: '50px'}}>
+        <div style={{marginTop: '100px'}}>
           <FootLink/>  
         </div>
       </>

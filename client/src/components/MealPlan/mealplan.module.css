@@ -296,6 +296,7 @@
   min-width: 300px;
   z-index: 2;
   position: absolute;
+  cursor: pointer;
 }
 
 .dropdownArrow {
