@@ -35,7 +35,7 @@ const MealPlan = props => {
   const [mealSelections, setMealSelections] = useState([]);
   const [selectionDisplay, setSelectionDisplay] = useState();
   const [infoLoaded, loadInfo] = useState(false);
-  const [showDropdown, toggleDropdownDisplay] = useState(false);
+  const [showDropdown, toggleShowDropdown] = useState(false);
 
   //check for logged in user
   //let customerId = null;
@@ -153,6 +153,7 @@ const MealPlan = props => {
                 onClick={() => {
                   console.log("pressed: ", plan.purchase_id);
                   setCurrentPlan(plan);
+                  toggleShowDropdown(false);
                 }}
                 style={{
                   borderRadius: '10px',
@@ -225,10 +226,12 @@ const MealPlan = props => {
                   style={{
                     backgroundColor: '#f26522',
                     width: '40%',
+                    minWidth: '300px',
                     height: dropdownLength,
                     position: 'absolute',
                     zIndex: '1',
                     boxShadow: '0px 5px 10px gray',
+                    borderRadius: '15px'
                   }}
                 >
                   {tempMenuButtons}
@@ -459,7 +462,7 @@ const MealPlan = props => {
               className={styles.dropdownSelection}
               onClick={() => {
                 console.log("set show dropdown menu to: ", !showDropdown);
-                toggleDropdownDisplay(!showDropdown);
+                toggleShowDropdown(!showDropdown);
               }}
             >
               <div 

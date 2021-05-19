@@ -204,6 +204,10 @@
   padding-left: 4px;
   width: 50%;
   height: 40px;
+  text-overflow: ellipsis;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .orangeHeaderRight {
@@ -216,6 +220,10 @@
   width: 50%;
   height: 40px;
   text-align: right;
+  text-overflow: ellipsis;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .orangeHeaderRightArrow {
@@ -230,6 +238,10 @@
   width: 46%;
   height: 40px;
   text-align: right;
+  text-overflow: ellipsis;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .orangeHeaderRightUL {
@@ -243,6 +255,10 @@
   height: 40px;
   text-align: right;
   text-decoration: underline;
+  text-overflow: ellipsis;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .mealHeaderLeft {
@@ -277,6 +293,7 @@
   margin-bottom: 10px;
   display: flex;
   width: 40%;
+  min-width: 300px;
   z-index: 2;
   position: absolute;
 }
