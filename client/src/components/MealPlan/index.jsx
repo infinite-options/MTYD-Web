@@ -36,7 +36,7 @@ const MealPlan = props => {
   const [selectionDisplay, setSelectionDisplay] = useState([]);
   const [infoLoaded, loadInfo] = useState(false);
   const [showDropdown, toggleShowDropdown] = useState(false);
-  const [historyDropdowns, setHistoryDropdowns] = useState([]);
+  const [historyDropdowns, setHistoryDropdowns] = useState(null);
 
   const [placeholderState, setPlaceholderState] = useState(null);
   const [subbedPlans, updateSubbedPlans] = useState(null);
@@ -181,6 +181,8 @@ const MealPlan = props => {
 
             console.log("(mswb) dropdown status array: ", dropdownStatusArray);
 
+            setHistoryDropdowns(dropdownStatusArray);
+
             // Add space to top of dropdown menu buttons
             let dropdownTopMargin = [
               <div
@@ -233,8 +235,42 @@ const MealPlan = props => {
 
   }, [props.subscribedPlans]);
 
-  const toggleDeliveryDisplay = () => {
+  const getDisplayStatus = (date, id) => {
+    console.log("(getDisplayStatus) history dropdown statuses before: ", historyDropdowns);
 
+    let index = historyDropdowns.findIndex((dropdown) => {
+      return dropdown.menu_date === date && dropdown.purchase_id === id;
+    });
+
+    console.log("(getDisplayStatus) status index: ", index);
+
+    console.log("(getDisplayStatus) current dropdown: ", historyDropdowns[index]);
+
+    console.log("(getDisplayStatus) dropdown display status: ", historyDropdowns[index].display);
+
+    return historyDropdowns[index].display;
+  }
+
+  const toggleDeliveryDisplay = (date, id) => {
+    console.log("(toggleDeliveryDisplay) history dropdown statuses before: ", historyDropdowns);
+
+    let index = historyDropdowns.findIndex((dropdown) => {
+      return dropdown.menu_date === date && dropdown.purchase_id === id;
+    });
+
+    console.log("(toggleDeliveryDisplay) status index: ", index);
+
+    console.log("(toggleDeliveryDisplay) current dropdown: ", historyDropdowns[index]);
+
+    console.log("(toggleDeliveryDisplay) dropdown display status: ", historyDropdowns[index].display);
+
+    // let newStatus = !historyDropdowns[index].display;
+
+    let historyDropdownsCopy = [...historyDropdowns];
+
+    historyDropdownsCopy[index].display = !historyDropdowns[index].display;
+
+    setHistoryDropdowns(historyDropdownsCopy);
   }
 
   const showHistory = () => {
@@ -283,6 +319,10 @@ const MealPlan = props => {
 
           <div 
             onClick={() => {
+              console.log("(showHistory) orange dropdown clicked for: ", sel.menu_date);
+
+              toggleDeliveryDisplay(sel.menu_date, currentPlan.purchase_id);
+
               // console.log("(showHistory) orange dropdown clicked for: ", sel.menu_date);
               // console.log("(showHistory) display deliveries before: ", displayDeliveries);
 
@@ -352,6 +392,9 @@ const MealPlan = props => {
           {/* {displayDeliveries === true
             ? <div>YES</div>
             : <div>NO</div>} */}
+          {getDisplayStatus(sel.menu_date, currentPlan.purchase_id)
+            ? <div>YES</div>
+            : <div>NO</div>}
 
         </div>
       );
@@ -792,7 +835,7 @@ const MealPlan = props => {
       </div>
 
       {/* {infoLoaded === false */}
-      {currentPlan === null
+      {currentPlan === null || historyDropdowns === null
         ? (
             <div
               style={{
