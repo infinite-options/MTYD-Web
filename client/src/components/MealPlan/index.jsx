@@ -41,6 +41,8 @@ const MealPlan = props => {
   const [placeholderState, setPlaceholderState] = useState(null);
   const [subbedPlans, updateSubbedPlans] = useState(null);
 
+  const [buttonClicked, setButtonClicked] = useState(false);
+
   //check for logged in user
   //let customerId = null;
   if (
@@ -89,7 +91,8 @@ const MealPlan = props => {
 
     let tempDropdownButtons = [];
     let plansFetched = 0;
-    let tempMealSelections = [];
+
+    let dropdownStatusArray = [];
 
     props.subscribedPlans.forEach((plan, index) => {
 
@@ -121,6 +124,8 @@ const MealPlan = props => {
           // console.log("(mswb) parsedPlan: ", parsedPlan);
 
           parsedPlan["history"] = res.data.result;
+
+          dropdownStatusArray = dropdownStatusArray.concat(res.data.result);
 
           // Set default plan
           if (index === 0) {
@@ -169,6 +174,12 @@ const MealPlan = props => {
           // Once all plan information has been fetched, create dropdown menu
           if(plansFetched === props.subscribedPlans.length) {
             console.log("(mswb) all plans fetched!");
+
+            dropdownStatusArray.forEach((e) => {
+              e.display = false
+            });
+
+            console.log("(mswb) dropdown status array: ", dropdownStatusArray);
 
             // Add space to top of dropdown menu buttons
             let dropdownTopMargin = [
@@ -222,12 +233,40 @@ const MealPlan = props => {
 
   }, [props.subscribedPlans]);
 
+  const toggleDeliveryDisplay = () => {
+
+  }
+
   const showHistory = () => {
     console.log("(showHistory) current plan: ", currentPlan.purchase_id);
 
     let historyTabs = [];
 
+    // let displayDeliveries = false;
+
     currentPlan.history.forEach((sel) => {
+
+      // let displayDeliveries = false;
+
+      let mealsDelivered = [];
+
+      // let tempHistoryDropdowns = [];
+
+      console.log("(showHistory) sel: ", sel);
+
+      for(var i = 1; i <= currentPlan.deliveries; i++) {
+        mealsDelivered.push(
+          <div>
+            {i+" deliveries"}
+          </div>
+        );
+      }
+
+      // tempHistoryDropdowns.push({
+      //   menu_date: sel.menu_date,
+      //   display_info: false
+      // });
+
       historyTabs.push(
         <div 
           key={sel.menu_date}
@@ -244,6 +283,15 @@ const MealPlan = props => {
 
           <div 
             onClick={() => {
+              // console.log("(showHistory) orange dropdown clicked for: ", sel.menu_date);
+              // console.log("(showHistory) display deliveries before: ", displayDeliveries);
+
+              // displayDeliveries = !displayDeliveries;
+
+              // setButtonClicked(displayDeliveries);
+
+              // console.log("(showHistory) display deliveries after: ", displayDeliveries);
+
               // console.log("show past deliveries for: ", sel.menu_date);
               // console.log("dropdown arr before press: ", dropdownArray);
 
@@ -262,7 +310,7 @@ const MealPlan = props => {
               // setDropdownArray(newDropdownArr);
 
             }}
-            style={{display: 'inline-flex', width: '100%'}}
+            style={{display: 'inline-flex', width: '100%', cursor: 'pointer'}}
           >
             <div className={styles.orangeHeaderLeft}>
               Meal Plan
@@ -301,6 +349,9 @@ const MealPlan = props => {
               ? (<>[placeholder meals]</>)
               : null
           } */}
+          {/* {displayDeliveries === true
+            ? <div>YES</div>
+            : <div>NO</div>} */}
 
         </div>
       );
@@ -388,6 +439,8 @@ const MealPlan = props => {
       </div>
     );
   }
+
+  
 
   // useEffect(() => {
 
