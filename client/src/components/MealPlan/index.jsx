@@ -36,7 +36,7 @@ const MealPlan = props => {
   const [selectionDisplay, setSelectionDisplay] = useState([]);
   const [infoLoaded, loadInfo] = useState(false);
   const [showDropdown, toggleShowDropdown] = useState(false);
-  const [dropdownArray, setDropdownArray] = useState([]);
+  const [historyDropdowns, setHistoryDropdowns] = useState([]);
 
   const [placeholderState, setPlaceholderState] = useState(null);
   const [subbedPlans, updateSubbedPlans] = useState(null);
@@ -81,6 +81,7 @@ const MealPlan = props => {
   }, []);
 
 
+  // Initialize page in this render
   useEffect(() => {
     console.log("RERENDERING subscribedPlans");
     console.log("(init) subscribed plans: ", props.subscribedPlans);
@@ -88,7 +89,7 @@ const MealPlan = props => {
 
     let tempDropdownButtons = [];
     let plansFetched = 0;
-
+    let tempMealSelections = [];
 
     props.subscribedPlans.forEach((plan, index) => {
 
@@ -115,7 +116,11 @@ const MealPlan = props => {
           } 
         })
         .then((res) => {
+          console.log(' ');
           console.log("(mswb) res: ", res);
+          // console.log("(mswb) parsedPlan: ", parsedPlan);
+
+          parsedPlan["history"] = res.data.result;
 
           // Set default plan
           if (index === 0) {
@@ -123,6 +128,12 @@ const MealPlan = props => {
             setCurrentPlan(parsedPlan);
             setDefault(true);
           }
+
+          // Get meal selections (later history)
+          // let mealSelection = {
+          //   id: plan.purchase_id,
+          //   selections: res.data.result
+          // }
 
           // Push buttons into top dropdown menu
           tempDropdownButtons.push(
@@ -210,6 +221,18 @@ const MealPlan = props => {
     // updateSubbedPlans(tempSubbedPlans)
 
   }, [props.subscribedPlans]);
+
+  // const showHistory = () => {
+  //   console.log("(showHistory) current plan: ", currentPlan.purchase_id);
+
+    
+
+  //   return(
+  //     <div>
+  //       STUFF
+  //     </div>
+  //   );
+  // }
 
   // useEffect(() => {
 
@@ -594,7 +617,7 @@ const MealPlan = props => {
             <div 
               className={styles.dropdownSelection}
               onClick={() => {
-                console.log("set show dropdown menu to: ", !showDropdown);
+                // console.log("set show dropdown menu to: ", !showDropdown);
                 toggleShowDropdown(!showDropdown);
               }}
             >
@@ -623,9 +646,6 @@ const MealPlan = props => {
               </div>
               <div
                 style={{
-                  // border: 'solid',
-                  // borderWidth: '1px',
-                  // color: 'blue',
                   width: '10%',
                   minWidth: '24px',
                   marginRight: '5%'
@@ -668,6 +688,10 @@ const MealPlan = props => {
               </div>
             </div>
           </div>
+
+          {/* {currentPlan
+            ? showHistory()
+            : null} */}
 
           {/* {console.log("(render) selection display: ", selectionDisplay)}
           {selectionDisplay} */}
