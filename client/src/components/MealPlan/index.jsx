@@ -36,6 +36,7 @@ const MealPlan = props => {
   const [selectionDisplay, setSelectionDisplay] = useState();
   const [infoLoaded, loadInfo] = useState(false);
   const [showDropdown, toggleShowDropdown] = useState(false);
+  const [dropdownArray, setDropdownArray] = useState([]);
 
   //check for logged in user
   //let customerId = null;
@@ -53,19 +54,8 @@ const MealPlan = props => {
   }
 
   const [subbedPlans, updateSubbedPlans] = useState(null);
-
   const [activePlans, updateActivePlans] = useState(props.subscribedPlans.filter((elt) => elt.purchase_status === 'ACTIVE'));
   const [cancelledPlans, updateCancelledPlans] = useState(props.subscribedPlans.filter((elt) => elt.purchase_status !== 'ACTIVE'));
-
-  // useEffect(() => {
-  //   console.log("current plan before endpoint: ", currentPlan);
-
-  // }, [currentPlan]);
-
-  // useEffect(() => {
-  //   console.log("(mswb) customerId: ", customerId);
-
-  // }, [customerId]);
 
   useEffect(() => {
     console.log("(init) subscribed plans: ", props.subscribedPlans);
@@ -96,6 +86,16 @@ const MealPlan = props => {
   }, [props.subscribedPlans]);
 
   useEffect(() => {
+    console.log("RERENDERING new selection display: ", selectionDisplay);
+
+    console.log("IS EVERYTHING LOADED??");
+    console.log("default set? ", defaultSet);
+    console.log("current plan set? ", currentPlan);
+    console.log("selection display set? ", selectionDisplay);
+    
+  }, [selectionDisplay]);
+
+  useEffect(() => {
 
     console.log("RERENDER ON SUBSCRIBED PLANS CHANGE");
     console.log("updating active/cancelled plans...");
@@ -121,7 +121,6 @@ const MealPlan = props => {
       />
     ];
 
-    // props.subscribedPlans.forEach((plan, index) => {
     subbedPlans.forEach((plan, index) => {
       console.log("(nmi) plan " + index + " id: ", plan.purchase_id);
       console.log("(nmi) plan: ", plan);
@@ -140,12 +139,6 @@ const MealPlan = props => {
             id: plan.purchase_id,
             selections: res.data.result
           }
-
-          // let parsedItems = JSON.parse(plan.items)[0];
-          // console.log("parsedItems: ", parsedItems);
-          // let parsedMeals = parsedItems.name.substring(0,parsedItems.name.indexOf(" "));
-          // let parsedDeliveries = parsedItems.qty;
-          // let parsedId = plan.purchase_id.substring(plan.purchase_id.indexOf("-")+1,plan.purchase_id.length);
 
           tempMenuButtons.push(
               <div 
@@ -169,22 +162,9 @@ const MealPlan = props => {
                   overflow: 'hidden'
                 }}
               >
-                {/* {index} : {plan.purchase_id} */}
                 {plan.meals} Meals, {plan.deliveries} Deliveries : {plan.id}
               </div>
           );
-
-          // tempMenuButtons = dropdownTopMargin.concat(tempMenuButtons);
-
-          // console.log("sorting menu buttons...");
-          // tempMenuButtons.sort(function(a,b) {
-          //   console.log("a: ", a.key.substring(0,a.key.indexOf(' ')));
-          //   console.log("b: ", b.key.substring(0,b.key.indexOf(' ')));
-          //   return (
-          //     parseInt(a.key.substring(0,a.key.indexOf(' '))) - 
-          //     parseInt(b.key.substring(0,b.key.indexOf(' ')))
-          //   );
-          // });
 
           tempMenuButtons.forEach((tmb) => {
             console.log("tempMenuButtons data: ", tmb.key);
@@ -200,8 +180,7 @@ const MealPlan = props => {
 
           plansFetched++;
 
-          // if (plansFetched === props.subscribedPlans.length) {
-            if (plansFetched === subbedPlans.length) {
+          if (plansFetched === subbedPlans.length) {
 
             console.log("sorting menu buttons...");
             tempMenuButtons.sort(function(a,b) {
@@ -250,7 +229,7 @@ const MealPlan = props => {
             console.log(err.response);
           }
           console.log(err);
-        })
+        });
 
     });
 
@@ -259,12 +238,11 @@ const MealPlan = props => {
     updateActivePlans(props.subscribedPlans.filter((elt) => elt.purchase_status === 'ACTIVE'));
     updateCancelledPlans(props.subscribedPlans.filter((elt) => elt.purchase_status !== 'ACTIVE'));
 
-  // }, [props.subscribedPlans]);
   }, [subbedPlans]);
 
   useEffect(() => {
 
-    console.log("current plan: ", currentPlan);
+    console.log("=== current plan ===: ", currentPlan);
     console.log("default set? ", defaultSet);
 
     let currSelections = [];
@@ -280,6 +258,8 @@ const MealPlan = props => {
     console.log("curr selections: ", currSelections);
 
     let tempSelectionDisplay = [];
+    let tempDropdownArray = [];
+    let index = 0;
 
     currSelections.forEach((sel) => {
       console.log("sel: ", sel);
@@ -311,9 +291,6 @@ const MealPlan = props => {
               key={sel.purchase_uid + ' : ' + meal.item_uid}
               style={{border: 'inset'}}
             >
-              {/* Quantity: {meal.qty}
-              <br />
-              Name: {meal.name} */}
               <div style={{display: 'inline-flex', width: '100%'}}>
                 <div className={styles.mealHeaderLeft}>
                   Meals Delivered
@@ -327,18 +304,50 @@ const MealPlan = props => {
         });
       }
 
-      tempSelectionDisplay.push(
-        <div style={{marginTop: '50px', marginBottom: '50px', border: 'solid'}}>
+      tempDropdownArray.push({
+        date: sel.menu_date,
+        display: false
+      });
+
+      // tempSelectionDisplay.push(
+      let mealInfo = (
+        <div 
+          key={sel.menu_date}
+          style={{marginTop: '50px', marginBottom: '50px'}}
+        >
           <div style={{display: 'inline-flex', width: '100%'}}>
             <div className={styles.orangeHeaderLeft}>
-              Next Billing Date
+              Next Billing Date {" " + index}
             </div>
             <div className={styles.orangeHeaderRight}>
-              {sel.sel_menu_date}
+              {sel.menu_date}
             </div>
           </div>
 
-          <div style={{display: 'inline-flex', width: '100%'}}>
+          <div 
+            onClick={() => {
+              console.log("show past deliveries for: ", sel.menu_date);
+              console.log("dropdown arr before press: ", dropdownArray);
+
+              let newDropdownArr = [...dropdownArray];
+
+              // let currVal = newDropdownArr.filter((val) => {
+              //   return val.date === sel.menu_date
+              // });
+
+              let currVal = newDropdownArr.findIndex(val => val.date === sel.menu_date);
+
+              console.log("currVal: ", currVal);
+
+              // newDropdownArr[this.key] = !newDropdownArr[this.key];
+
+              // let newDropdownArr = [...dropdownArray];
+              // newDropdownArr[this.key] = !newDropdownArr[this.key];
+              // setDropdownArray(newDropdownArr);
+              // console.log("dropdown arr after press: ", dropdownArray);
+            }}
+            style={{display: 'inline-flex', width: '100%'}}
+          >
             <div className={styles.orangeHeaderLeft}>
               Meal Plan
             </div>
@@ -369,16 +378,36 @@ const MealPlan = props => {
             </div>
           </div>
 
-          {mealsList}
+          {/* {mealsList} */}
+          {console.log("dropdownArray at " + index + ": ", dropdownArray[index])}
+          {dropdownArray[index]
+            ? (<>I KILL PEOPLE</>)
+            : null}
 
         </div>
       );
+      // );
+
+      tempSelectionDisplay.push(mealInfo);
+
+      console.log("## new temp selection display: ", tempSelectionDisplay);
+
+      index++;
 
     });
 
-    setSelectionDisplay(tempSelectionDisplay);
+    console.log("initial dropdown array: ", tempDropdownArray);
 
-  }, [currentPlan]);
+    console.log("## setting selection display...");
+    setSelectionDisplay(tempSelectionDisplay);
+    setDropdownArray(tempDropdownArray);
+
+    // console.log("IS EVERYTHING LOADED??");
+    // console.log("default set? ", defaultSet);
+    // console.log("current plan set? ", currentPlan);
+    // console.log("selection display set? ", selectionDisplay);
+
+  }, [currentPlan, mealSelections]);
 
   useEffect(() => {
     // if (infoLoaded === true) {
@@ -537,11 +566,11 @@ const MealPlan = props => {
             </div>
           </div>
 
+          {console.log("(render) selection display: ", selectionDisplay)}
           {selectionDisplay}
 
         </div>
       </div>
-
 
       <FootLink />
     </>
