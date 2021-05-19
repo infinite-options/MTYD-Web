@@ -33,7 +33,7 @@ const MealPlan = props => {
   const [defaultSet, setDefault] = useState(false);
   const [menuButtons, setMenuButtons] = useState([]);
   const [mealSelections, setMealSelections] = useState([]);
-  const [selectionDisplay, setSelectionDisplay] = useState();
+  const [selectionDisplay, setSelectionDisplay] = useState([]);
   const [infoLoaded, loadInfo] = useState(false);
   const [showDropdown, toggleShowDropdown] = useState(false);
   const [dropdownArray, setDropdownArray] = useState([]);
@@ -92,7 +92,15 @@ const MealPlan = props => {
     console.log("default set? ", defaultSet);
     console.log("current plan set? ", currentPlan);
     console.log("selection display set? ", selectionDisplay);
-    
+
+    if (
+      defaultSet === true &&
+      currentPlan !== null &&
+      selectionDisplay.length > 0
+    ) {
+      loadInfo(true);
+    }
+
   }, [selectionDisplay]);
 
   useEffect(() => {
@@ -105,6 +113,8 @@ const MealPlan = props => {
     console.log("subbedPlans initialized");
 
     let plansFetched = 0;
+
+    let defaultPlanSet = false;
 
     let tempMenuButtons = [];
     let tempMealSelections = [];
@@ -141,29 +151,29 @@ const MealPlan = props => {
           }
 
           tempMenuButtons.push(
-              <div 
-                key={index + ' : ' + plan.purchase_id}
-                onClick={() => {
-                  console.log("pressed: ", plan.purchase_id);
-                  setCurrentPlan(plan);
-                  toggleShowDropdown(false);
-                }}
-                style={{
-                  borderRadius: '10px',
-                  backgroundColor: 'white',
-                  height: '32px',
-                  width: '96%',
-                  paddingLeft: '10px',
-                  marginLeft: '2%',
-                  marginTop: '10px',
-                  textOverflow: 'ellipsis',
-                  display: 'block',
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden'
-                }}
-              >
-                {plan.meals} Meals, {plan.deliveries} Deliveries : {plan.id}
-              </div>
+            <div 
+              key={index + ' : ' + plan.purchase_id}
+              onClick={() => {
+                console.log("pressed: ", plan.purchase_id);
+                setCurrentPlan(plan);
+                toggleShowDropdown(false);
+              }}
+              style={{
+                borderRadius: '10px',
+                backgroundColor: 'white',
+                height: '32px',
+                width: '96%',
+                paddingLeft: '10px',
+                marginLeft: '2%',
+                marginTop: '10px',
+                textOverflow: 'ellipsis',
+                display: 'block',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden'
+              }}
+            >
+              {plan.meals} Meals, {plan.deliveries} Deliveries : {plan.id}
+            </div>
           );
 
           tempMenuButtons.forEach((tmb) => {
@@ -172,7 +182,8 @@ const MealPlan = props => {
 
           tempMealSelections.push(mealSelection);
 
-          if (defaultSet === false) {
+          if (defaultPlanSet === false && index === 0) {
+            defaultPlanSet = true;
             console.log("setting default to: ", plan.purchase_id);
             setCurrentPlan(plan);
             setDefault(true);
@@ -220,7 +231,7 @@ const MealPlan = props => {
 
             setMealSelections(tempMealSelections);
 
-            loadInfo(true);
+            //loadInfo(true);
           }
 
         })
@@ -244,6 +255,8 @@ const MealPlan = props => {
 
     console.log("=== current plan ===: ", currentPlan);
     console.log("default set? ", defaultSet);
+
+    if(currentPlan !== null && mealSelections.length > 0){
 
     let currSelections = [];
 
@@ -335,7 +348,11 @@ const MealPlan = props => {
               //   return val.date === sel.menu_date
               // });
 
-              let currVal = newDropdownArr.findIndex(val => val.date === sel.menu_date);
+              let currVal = newDropdownArr.findIndex((val) => {
+                console.log("(findIndex) val: ", val);
+                console.log("(findIndex) sel: ", sel.menu_date);
+                return val.date === sel.menu_date;
+              });
 
               console.log("currVal: ", currVal);
 
@@ -402,42 +419,9 @@ const MealPlan = props => {
     setSelectionDisplay(tempSelectionDisplay);
     setDropdownArray(tempDropdownArray);
 
-    // console.log("IS EVERYTHING LOADED??");
-    // console.log("default set? ", defaultSet);
-    // console.log("current plan set? ", currentPlan);
-    // console.log("selection display set? ", selectionDisplay);
+    }
 
   }, [currentPlan, mealSelections]);
-
-  useEffect(() => {
-    // if (infoLoaded === true) {
-    //   mealSelections.forEach((item) => {
-    //     console.log("meal selection item: ", item);
-
-    //   });
-    // }
-  }, [infoLoaded]);
-
-
-  useEffect(() => {
-    console.log("RERENDER ON ACTIVE PLANS CHANGE");
-    for (let activePlan of activePlans) {
-
-      console.log("active plan id: ", activePlan.purchase_id);
-
-      //console.log("(1) id: " + activePlan.purchase_id + "\nstatus: " + activePlan.purchase_status + "\nitems: " + activePlan.items);
-      //console.log("whole plan: " + JSON.stringify(activePlan));
-    }
-  }, [activePlans]);
-
-  useEffect(() => {
-    console.log("RERENDER ON CANCELLED PLANS CHANGE");
-  }, [cancelledPlans]);
-
-  useEffect(() => {
-    console.log("RERENDER WHEN PLANS FETCHED");
-  }, [props.plans]);
-    
     
   useEffect(() => {
     console.log("\n");
@@ -464,6 +448,7 @@ const MealPlan = props => {
     console.log("\n");
   }, []);
 
+
   return (
     <>
       <WebNavBar />
@@ -471,6 +456,22 @@ const MealPlan = props => {
       <div className={styles.sectionHeader}>
         Select Meal Plan
       </div>
+
+      {infoLoaded === false
+        ? (
+            <div
+              style={{
+                fontSize: '40px',
+                fontWeight: 'bold',
+                marginLeft: '8%',
+                marginBottom: '100px',
+                marginRight: '8%'
+              }}
+            >
+              LOADING YOUR SUBSCRIPTION HISTORY...
+            </div>
+          )
+        : (<>
 
       <div className={styles.container}>
 
@@ -572,9 +573,12 @@ const MealPlan = props => {
         </div>
       </div>
 
+      </>)}
+
       <FootLink />
     </>
   );
+  
 };
 
 const mapStateToProps = state => ({
