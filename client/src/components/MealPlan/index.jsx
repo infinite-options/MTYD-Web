@@ -210,7 +210,7 @@ const MealPlan = props => {
           }
 
           // Everything is loaded, so render
-          loadInfo(true);
+          // loadInfo(true);
 
         });
 
@@ -222,17 +222,172 @@ const MealPlan = props => {
 
   }, [props.subscribedPlans]);
 
-  // const showHistory = () => {
-  //   console.log("(showHistory) current plan: ", currentPlan.purchase_id);
+  const showHistory = () => {
+    console.log("(showHistory) current plan: ", currentPlan.purchase_id);
 
+    let historyTabs = [];
+
+    currentPlan.history.forEach((sel) => {
+      historyTabs.push(
+        <div 
+          key={sel.menu_date}
+          style={{marginTop: '50px', marginBottom: '50px'}}
+        >
+          <div style={{display: 'inline-flex', width: '100%'}}>
+            <div className={styles.orangeHeaderLeft}>
+              Next Billing Date
+            </div>
+            <div className={styles.orangeHeaderRight}>
+              {sel.menu_date}
+            </div>
+          </div>
+
+          <div 
+            onClick={() => {
+              // console.log("show past deliveries for: ", sel.menu_date);
+              // console.log("dropdown arr before press: ", dropdownArray);
+
+              // let newDropdownArr = [...dropdownArray];
+
+              // let currVal = newDropdownArr.findIndex((val) => {
+              //   // console.log("(findIndex) val date: ", val.date);
+              //   // console.log("(findIndex) sel date: ", sel.menu_date);
+              //   return val.date === sel.menu_date;
+              // });
+
+              // console.log("currVal: ", currVal);
+
+              // newDropdownArr[currVal] = !newDropdownArr[currVal];
+
+              // setDropdownArray(newDropdownArr);
+
+            }}
+            style={{display: 'inline-flex', width: '100%'}}
+          >
+            <div className={styles.orangeHeaderLeft}>
+              Meal Plan
+            </div>
+            <div className={styles.orangeHeaderRightArrow}>
+              {currentPlan.meals} Meals, {currentPlan.deliveries} Deliveries
+            </div>
+            <div 
+              style={{
+                width: '1%',
+                borderTop: 'solid',
+                borderWidth: '1px',
+                borderColor: '#f26522'
+              }} 
+            />
+            <div
+                style={{
+                  width: '3%',
+                  minWidth: '24px',
+                  // border: 'solid',
+                  // borderWidth: '1px',
+                  borderTop: 'solid',
+                  borderWidth: '1px',
+                  borderColor: '#f26522',
+                  paddingTop: '12px'
+                }}
+              >
+              <div className={styles.orangeArrowDown} /> 
+            </div>
+          </div>
+
+          {/* {console.log("dropdownArray at " + index + ": ", dropdownArray[index])}
+          {
+            (typeof(dropdownArray[index]) !== 'undefined' &&
+            dropdownArray[index].display)
+              ? (<>[placeholder meals]</>)
+              : null
+          } */}
+
+        </div>
+      );
+    });
+    /*let historyTab = (
+      <div 
+        key={sel.menu_date}
+        style={{marginTop: '50px', marginBottom: '50px'}}
+      >
+        <div style={{display: 'inline-flex', width: '100%'}}>
+          <div className={styles.orangeHeaderLeft}>
+            Next Billing Date {" " + index}
+          </div>
+          <div className={styles.orangeHeaderRight}>
+            {sel.menu_date}
+          </div>
+        </div>
+
+        <div 
+          onClick={() => {
+            // console.log("show past deliveries for: ", sel.menu_date);
+            // console.log("dropdown arr before press: ", dropdownArray);
+
+            let newDropdownArr = [...dropdownArray];
+
+            let currVal = newDropdownArr.findIndex((val) => {
+              // console.log("(findIndex) val date: ", val.date);
+              // console.log("(findIndex) sel date: ", sel.menu_date);
+              return val.date === sel.menu_date;
+            });
+
+            console.log("currVal: ", currVal);
+
+            newDropdownArr[currVal] = !newDropdownArr[currVal];
+
+            setDropdownArray(newDropdownArr);
+
+          }}
+          style={{display: 'inline-flex', width: '100%'}}
+        >
+          <div className={styles.orangeHeaderLeft}>
+            Meal Plan
+          </div>
+          <div className={styles.orangeHeaderRightArrow}>
+            {parsedMeals} Meals, {selectionItems.qty} Deliveries
+          </div>
+          <div 
+            style={{
+              width: '1%',
+              borderTop: 'solid',
+              borderWidth: '1px',
+              borderColor: '#f26522'
+            }} 
+          />
+          <div
+              style={{
+                width: '3%',
+                minWidth: '24px',
+                // border: 'solid',
+                // borderWidth: '1px',
+                borderTop: 'solid',
+                borderWidth: '1px',
+                borderColor: '#f26522',
+                paddingTop: '12px'
+              }}
+            >
+            <div className={styles.orangeArrowDown} /> 
+          </div>
+        </div>
+
+        {console.log("dropdownArray at " + index + ": ", dropdownArray[index])}
+        {
+          (typeof(dropdownArray[index]) !== 'undefined' &&
+          dropdownArray[index].display)
+            ? (<>[placeholder meals]</>)
+            : null
+        }
+
+      </div>
+    );*/
     
-
-  //   return(
-  //     <div>
-  //       STUFF
-  //     </div>
-  //   );
-  // }
+    return(
+      <div>
+        {historyTabs}
+      </div>
+    );
+  }
 
   // useEffect(() => {
 
@@ -583,7 +738,8 @@ const MealPlan = props => {
         Select Meal Plan
       </div>
 
-      {infoLoaded === false
+      {/* {infoLoaded === false */}
+      {currentPlan === null
         ? (
             <div
               style={{
@@ -692,6 +848,7 @@ const MealPlan = props => {
           {/* {currentPlan
             ? showHistory()
             : null} */}
+          {showHistory()}
 
           {/* {console.log("(render) selection display: ", selectionDisplay)}
           {selectionDisplay} */}
