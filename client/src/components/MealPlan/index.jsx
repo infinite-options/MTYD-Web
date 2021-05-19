@@ -94,6 +94,8 @@ const MealPlan = props => {
 
     let dropdownStatusArray = [];
 
+    // let tempSubbedPlans = [];
+
     props.subscribedPlans.forEach((plan, index) => {
 
       // Parse meals, deliveries, and id for each plan
@@ -134,11 +136,8 @@ const MealPlan = props => {
             setDefault(true);
           }
 
-          // Get meal selections (later history)
-          // let mealSelection = {
-          //   id: plan.purchase_id,
-          //   selections: res.data.result
-          // }
+          // Save plans with pertinent info added
+          // tempSubbedPlans.push(parsedPlan);
 
           // Push buttons into top dropdown menu
           tempDropdownButtons.push(
@@ -146,7 +145,7 @@ const MealPlan = props => {
               key={index + ' : ' + plan.purchase_id}
               onClick={() => {
                 console.log("pressed: ", plan.purchase_id);
-                // setCurrentPlan(plan);
+                setCurrentPlan(parsedPlan);
                 // toggleShowDropdown(false);
               }}
               style={{
@@ -222,6 +221,8 @@ const MealPlan = props => {
             );
           }
 
+          // updateSubbedPlans(tempSubbedPlans);
+
           // Everything is loaded, so render
           // loadInfo(true);
 
@@ -274,7 +275,8 @@ const MealPlan = props => {
   }
 
   const showHistory = () => {
-    console.log("(showHistory) current plan: ", currentPlan.purchase_id);
+    console.log("(showHistory) current plan id: ", currentPlan.purchase_id);
+    console.log("(showHistory) current plan data: ", currentPlan);
 
     let historyTabs = [];
 
