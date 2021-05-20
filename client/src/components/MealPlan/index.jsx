@@ -274,6 +274,71 @@ const MealPlan = props => {
     setHistoryDropdowns(historyDropdownsCopy);
   }
 
+  const showMealsDelivered = () => {
+    return (
+      <div
+        style={{
+          border: 'solid',
+          display: 'flex'
+        }}
+      >
+
+        <div style={{display: 'inline-block', width: '100%'}}>
+    
+          <div style={{display: 'inline-flex', width: '100%'}}>
+            <div
+              style={{
+                border: 'inset',
+                width: '50%'
+              }}
+            >
+              Meals Delivered
+            </div>
+            <div
+              style={{
+                border: 'inset',
+                width: '50%',
+                textAlign: 'right'
+              }}
+            >
+              May 31, 2028
+            </div>
+          </div>
+
+          <div style={{display: 'inline-flex', width: '100%', height: '100px'}}>
+            <div
+              style={{
+                border: 'inset',
+                width: '10%'
+              }}
+            >
+              3
+            </div>
+            <div
+              style={{
+                border: 'inset',
+                width: '40%'
+              }}
+            >
+              Chicken Teriyaki Bowl
+            </div>
+            <div
+              style={{
+                border: 'inset',
+                width: '50%',
+                textAlign: 'right'
+              }}
+            >
+              May 31, 2029
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    );
+  }
+
   const showHistory = () => {
     console.log("(showHistory) current plan id: ", currentPlan.purchase_id);
     console.log("(showHistory) current plan data: ", currentPlan);
@@ -293,11 +358,7 @@ const MealPlan = props => {
       console.log("(showHistory) sel: ", sel);
 
       for(var i = 1; i <= currentPlan.deliveries; i++) {
-        mealsDelivered.push(
-          <div>
-            {i+" deliveries"}
-          </div>
-        );
+        mealsDelivered.push(showMealsDelivered());
       }
 
       // tempHistoryDropdowns.push({
@@ -395,8 +456,8 @@ const MealPlan = props => {
             ? <div>YES</div>
             : <div>NO</div>} */}
           {getDisplayStatus(sel.menu_date, currentPlan.purchase_id)
-            ? <div>YES</div>
-            : <div>NO</div>}
+            ? <div style={{marginTop: '15px'}}>{mealsDelivered}</div>
+            : null}
 
         </div>
       );
