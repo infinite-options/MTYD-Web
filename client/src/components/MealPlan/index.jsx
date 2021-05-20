@@ -146,7 +146,7 @@ const MealPlan = props => {
               onClick={() => {
                 console.log("pressed: ", plan.purchase_id);
                 setCurrentPlan(parsedPlan);
-                // toggleShowDropdown(false);
+                toggleShowDropdown(false);
               }}
               style={{
                 borderRadius: '10px',
@@ -160,6 +160,7 @@ const MealPlan = props => {
                 display: 'block',
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',
+                cursor: 'pointer'
               }}
             >
               {parsedPlan.meals} Meals, {parsedPlan.deliveries} Deliveries : {parsedPlan.id}
@@ -274,12 +275,67 @@ const MealPlan = props => {
     setHistoryDropdowns(historyDropdownsCopy);
   }
 
+  const showMealsForDelivery = (totalMeals) => {
+    let mealsForDelivery = [];
+    for(var i = 0; i < totalMeals; i++) {
+      mealsForDelivery.push(
+        <div style={{display: 'inline-flex', width: '100%', height: '110px'}}>
+          <div
+            style={{
+              // border: 'inset',
+              width: '8%',
+              fontSize: '40px',
+              fontWeight: '600',
+              paddingTop: '15px'
+            }}
+          >
+            3
+          </div>
+          <div
+            style={{
+              // border: 'inset',
+              width: '92%',
+              fontWeight: '600',
+              paddingTop: '33px'
+            }}
+          >
+            Chicken Teriyaki Bowl
+          </div>
+          <div
+            style={{
+              display: 'flex',
+              // border: 'inset',
+              width: '0%',
+              minWidth: '100px',
+              textAlign: 'right',
+              float: 'right',
+              fontWeight: '600'
+            }}
+          >
+            <div
+              style={{
+                border: 'dashed',
+                width: '100px',
+                height: '100px',
+                marginTop: '5px'
+              }}
+            >
+              {"<image goes here>"}
+            </div>
+          </div>
+        </div>
+      );
+    }
+    return mealsForDelivery;
+  }
+
   const showMealsDelivered = () => {
     return (
       <div
         style={{
-          border: 'solid',
-          display: 'flex'
+          // border: 'solid',
+          display: 'flex',
+          marginBottom: '10px'
         }}
       >
 
@@ -288,50 +344,71 @@ const MealPlan = props => {
           <div style={{display: 'inline-flex', width: '100%'}}>
             <div
               style={{
-                border: 'inset',
-                width: '50%'
+                // border: 'inset',
+                width: '50%',
+                fontWeight: '600'
               }}
             >
               Meals Delivered
             </div>
             <div
               style={{
-                border: 'inset',
+                // border: 'inset',
                 width: '50%',
-                textAlign: 'right'
+                textAlign: 'right',
+                fontWeight: '600'
               }}
             >
               May 31, 2028
             </div>
           </div>
 
-          <div style={{display: 'inline-flex', width: '100%', height: '100px'}}>
+          {showMealsForDelivery(2)}
+          {/* <div style={{display: 'inline-flex', width: '100%', height: '110px'}}>
             <div
               style={{
-                border: 'inset',
-                width: '10%'
+                // border: 'inset',
+                width: '8%',
+                fontSize: '40px',
+                fontWeight: '600',
+                paddingTop: '15px'
               }}
             >
               3
             </div>
             <div
               style={{
-                border: 'inset',
-                width: '40%'
+                // border: 'inset',
+                width: '92%',
+                fontWeight: '600',
+                paddingTop: '30px'
               }}
             >
               Chicken Teriyaki Bowl
             </div>
             <div
               style={{
-                border: 'inset',
-                width: '50%',
-                textAlign: 'right'
+                display: 'flex',
+                // border: 'inset',
+                width: '0%',
+                minWidth: '100px',
+                textAlign: 'right',
+                float: 'right',
+                fontWeight: '600'
               }}
             >
-              May 31, 2029
+              <div
+                style={{
+                  border: 'dashed',
+                  width: '100px',
+                  height: '100px',
+                  marginTop: '5px'
+                }}
+              >
+                {"<image goes here>"}
+              </div>
             </div>
-          </div>
+          </div> */}
 
         </div>
 
@@ -441,7 +518,10 @@ const MealPlan = props => {
                   paddingTop: '12px'
                 }}
               >
-              <div className={styles.orangeArrowDown} /> 
+              {/* <div className={styles.orangeArrowDown} />  */}
+              {getDisplayStatus(sel.menu_date, currentPlan.purchase_id)
+                ? <div className={styles.orangeArrowUp} /> 
+                : <div className={styles.orangeArrowDown} /> }
             </div>
           </div>
 
@@ -977,7 +1057,7 @@ const MealPlan = props => {
           </div>
 
 
-          <div style={{marginTop: '50px', marginBottom: '50px', border: 'solid'}}>
+          <div style={{marginTop: '50px', marginBottom: '50px', /*border: 'solid'*/}}>
             <div style={{display: 'inline-flex', width: '100%'}}>
               <div className={styles.orangeHeaderLeft}>
                 Next Billing Date

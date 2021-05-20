@@ -329,6 +329,8 @@
 .orangeArrowUp {
   background-image: url('./static/orange_arrow_up.png');
   background-size: 100%;
+  width: 12px;
+  height: 11px;
 }
 
 .orangeArrowDown {
