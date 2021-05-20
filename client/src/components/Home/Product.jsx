@@ -16,13 +16,12 @@ const Product = (props) => {
           width = "204px"
           height = "340px"
           overflow = "hidden"		  
-        > 
-          <img 
-              src={props.img} 
-              alt={props.name}
-              style = {{width:"180%", height:"100%"}}			  
-            />	
-        </Box>
+          style={{
+            backgroundImage: `url(${props.img})`,
+            backgroundSize:'cover',
+            backgroundPosition:'center',
+          }}
+        /> 
         <Box
           width="204px"
           p={0.1}

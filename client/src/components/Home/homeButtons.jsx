@@ -24,19 +24,29 @@ import heartImage from '../../images/Icon ionic-ios-heart.png'
 import continueWithApple from '../../images/Group 539.png'
 import continueWithFacebook from '../../images/Group 537.png'
 import continueWithGoogle from '../../images/Group 538.png'
+import store from "../../reducers/store";
 import eyeIcon from '../../images/Icon ionic-ios-eye.png'
 import SocialLogin from "../Landing"
 import GoogleLogin from "react-google-login";
 import FacebookLogin from "react-facebook-login";
 
 import ambassadorNotLogin from '../../images/ambassadorNotLogin.png'
+import {withRouter} from "react-router";
 
 class HomeLink extends Component {
     render() { 
         return (
-            <Link to={this.props.link}>
-              <img className = {styles.buttonsBelowTheLogo} src = {this.props.text} style = {this.props.style}/>
-            </Link>
+          <div style = {{textAlign: 'center', marginTop: '30px', marginBottom: '50px',fontWeight: 'bold'}}>
+
+            <a href = {this.props.link}
+                style = {{height:'68px', width:'432px', marginTop:'77.66px', marginLeft:'auto', marginRight:'auto',
+                backgroundImage: `url(${this.props.text})`
+              }}
+            >
+              
+            </a>
+          </div>
+
          );
     }
 }
@@ -64,13 +74,14 @@ class AddressLink extends Component {
 
 class FootLink extends Component {
     state = {
-       seen: false
+       seen: false,
     };
     togglePop = () => {
        this.setState({
        seen: !this.state.seen
       });
     };
+
     render() { 
       return (		
           <div className = {styles.footerBackground}>	
@@ -104,7 +115,12 @@ class FootLink extends Component {
             <div className = {styles.footerRight}>
               <img onClick={() => this.togglePop()} style = {{width: '320px', height:'67px'}} src = {becomeAnAmbassadorImg} style = {{marginTop: '25px'}}/>			
             </div>
-            {this.state.seen ? <AddMeals toggle={this.togglePop} /> : null}	
+
+
+            {this.state.seen ? <AddMeals toggle={this.togglePop}/> : null}	
+
+
+
           </div>
         );
     }
@@ -256,6 +272,8 @@ class AddMeals extends Component {
       wantToLogin:false,
       wantToSignUp:false,
 	  seenForAM: false,	  
+    hidden:1,
+    username:''
     };
   }
   handleClick = () => {
@@ -277,8 +295,10 @@ class AddMeals extends Component {
       });
     };  
   togglePopLogin = () => {
+
     this.setState({
      login_seen: !this.state.login_seen,
+     hidden:0
     });
 
     if(!this.state.login_seen){
@@ -286,12 +306,12 @@ class AddMeals extends Component {
         signUpSeen:false
       })
     }
-
-   };
+  };
 
    togglePopSignup = () => {
     this.setState({
-     signUpSeen: !this.state.signUpSeen
+     signUpSeen: !this.state.signUpSeen,
+     hidden:0
     });
 
     if(!this.state.signUpSeen){
@@ -301,6 +321,23 @@ class AddMeals extends Component {
     }
    };
 
+   sendAmbassadorEmail(){
+    let email = document.getElementById("becomeAmbassadorEmail").value
+    // alert(document.getElementById("becomeAmbassadorEmail").value)
+    axios
+      .post(API_URL + 'brandAmbassador/create_ambassador',
+        {
+          code: email
+        }).then(res=>{
+          console.log(res)
+        })
+    
+    alert('regisitered as ambassador')
+    this.handleClick();
+
+
+   }
+
   componentDidMount(){
     const customer_uid = Cookies.get("customer_uid");
     console.log(Cookies.get("customer_uid"))
@@ -309,8 +346,14 @@ class AddMeals extends Component {
       axios
       .get(`${API_URL}Profile/${customer_uid}`)
       .then((response) => {
+
+        console.log(response.data.result[0].customer_first_name)
+        console.log(response.data.result[0].customer_last_name)
+
         const addr = response.data.result[0].customer_address.toLowerCase();
-        this.setState({user_address: addr});
+        this.setState({user_address: addr,
+        username:response.data.result[0].customer_first_name+" "+ response.data.result[0].customer_last_name
+        });
       })
       .catch((err) => {
         if (err.response) {
@@ -331,7 +374,6 @@ class AddMeals extends Component {
       <div>
         <div
         className={styles.poploginsignup}
-
         >
           {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
           {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
@@ -342,13 +384,13 @@ class AddMeals extends Component {
         {(() => {
 			if(this.state.user_id == "not login") {
 					return (
-              <div className={styles.becomeAnAmbassadorPopup}>
-                {/* <p 
-                  style = {{font:'SF Pro', fontSize: '24px', fontWeight:'medium', textAlign: 'left', color:'black', paddingTop:'40px'}}
-                  >Looks like you’re enjoying MealsFor.Me!<br/> The <img src = {negativeSign}/> <img src ={positiveSign}/> buttons help you add / <br/>remove meals from your meal plan.
-                </p>	
-                <br/>
-                <br/> */}
+              <div 
+                style={{
+                  opacity:this.state.hidden
+                }}
+              className={styles.becomeAnAmbassadorPopup}
+
+              >
 
                 <div
                 style= 
@@ -367,31 +409,47 @@ class AddMeals extends Component {
                 style= 
                   {{
                     position:'absolute',
-                    width:'450px',
+                    width:'430px',
                     height:'80px',
-                    backgroundColor:'red',
+                    backgroundColor:'#f26522',
                     top:'335px',
-                    left:'80px',
-                    opacity:0
+                    left:'78px',
+                    opacity:1,
+                    borderRadius:'15px',
+                    textAlign:'center',
+                    paddingTop:'20px',
+                    color:'white',
+                    fontSize:'25px'
                   }} 
                   onClick={() => this.togglePopLogin()}
-                />
+                >
+                  Login to become an ambassador
+                  </div>
 
                 {this.state.wantToLogin ? <LoginModal toggle={this.togglePopWTL} /> : null}
 
                 <div 
                 style={{
                   position:'absolute',
-                  width:'450px',
+                  width:'430px',
                   height:'80px',
-                  backgroundColor:'red',
-                  top:'475px',
-                  left:'80px',
-                  opacity:0
-                  
+                  backgroundColor:'#f26522',
+                  top:'473px',
+                  left:'78px',
+                  opacity:1,
+                  borderRadius:'15px',
+                  textAlign:'center',
+                  paddingTop:'20px',
+                  color:'white',
+                  fontSize:'25px'
                 }} 
-                onClick={() => this.togglePopSignup()}/>
-                              {this.state.wantToSignUp ? <SignUpModal toggle={this.togglePopWTS} /> : null}                    
+                onClick={() => this.togglePopSignup()}>
+                  Signup for MealsForMe    
+                </div>  
+                
+                {this.state.wantToSignUp ? <SignUpModal toggle={this.togglePopWTS} /> : null}     
+
+                           
 
               </div>
 				)}else{
@@ -413,6 +471,24 @@ class AddMeals extends Component {
               onClick={this.handleClick}
             />
 
+            <div
+              style= 
+              {{
+                position:'absolute',
+                width:'200px',
+                height:'30px',
+                backgroundColor:'white',
+                top:'390px',
+                right:'40px',
+                // opacity:0.5,
+                color:'black',
+                textAlign:'center',
+                fontSize:'18px'
+              }} 
+              // onClick={this.handleClick}
+            >
+              {this.state.username}
+            </div>
             <input
               style= 
               {{
@@ -420,16 +496,35 @@ class AddMeals extends Component {
                 width:'385px',
                 height:'42px',
                 backgroundColor:'white',
-                top:'440px',
+                top:'432px',
                 right:'74px',
                 border:'2px solid #F26522',
                 borderRadius:'15px',
                 outline:'none'
                 // opacity:0.5
               }} 
-
+              id='becomeAmbassadorEmail'
               placeholder="Enter your email here"
             />
+
+            <div
+              style= 
+              {{
+                position:'absolute',
+                width:'410px',
+                height:'75px',
+                backgroundColor:'red',
+                top:'560px',
+                right:'60px',
+                opacity:0
+              }} 
+              onClick={()=>this.sendAmbassadorEmail()}
+            >
+            </div>
+
+
+
+
 
 
           </div>

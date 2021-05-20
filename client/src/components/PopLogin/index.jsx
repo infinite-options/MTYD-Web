@@ -35,6 +35,7 @@ export class PopLogin extends Component {
   }
 
   successLogin = page => {
+    console.log(page)
     this.props.history.push(`/${page}`);
   }; 
 
@@ -138,8 +139,8 @@ export class PopLogin extends Component {
                 this.props.password,
                 this.successLogin
               );
-              console.log(this.props.email)
-              console.log(this.props.password)
+              // console.log(this.props.email)
+              // console.log(this.props.password)
             }}
           >
 

@@ -763,26 +763,25 @@ button {
 }
 
 .poploginsignup{
-  position: fixed;
+  position: absolute;
   background-color: white;
   z-index: 1;
   right: 0%;
-  top: -100px;
+  top: -800px;
 }
 
 .becomeAnAmbassadorPopupSignin {
   position: fixed;
-  /* background-color: white; */
   z-index: 1;
-  width: 537px;
-  height: 580px;
+  width: 540px;
+  height: 666px;
   left: 30%;
   top: 20%;
   bottom: 10px;
   border: 2px solid #F26522; 
-  background-color: white;
+  background-color: red;
   background-image: url('../../images/ambassadorLogin.png');
-  background-size:537px 556px;
+  background-size:540px 666px;
   background-position: center;
   background-repeat: no-repeat;
 

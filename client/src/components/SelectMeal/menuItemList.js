@@ -101,7 +101,7 @@ class MenuItemList extends Component {
       .then(response => response.json())
       .then(json => {
         let meals = [...json.result];
-        // console.log(meals)
+        console.log(meals)
         this.setState({
           meals: meals,
           purchaseID: meals[0].purchase_id,
@@ -341,7 +341,7 @@ class MenuItemList extends Component {
         this.setState({
           // totalMeals: mystr,
           totalMeals: parseInt(mystr),
-          purchaseID: mealItem.purchase_uid,
+          purchaseID: mealItem.purchase_id,
           saveButton: true
         });
       } else {
@@ -1176,7 +1176,7 @@ class MenuItemList extends Component {
 
   prepareSurpriseArr=(uid)=>{
 
-    console.log("PSA uid: ", uid);
+    // console.log("PSA uid: ", uid);
 
     if(uid!=null){
 
@@ -1188,20 +1188,20 @@ class MenuItemList extends Component {
         .then(response => response.json())
         .then(json => {
 
-          console.log("PSA json: ", json);
+          // console.log("PSA json: ", json);
 
           let mealSelected = [...json.result];
           let tempArr = [];
           for(const eachData of mealSelected){
-            console.log("eachData: ", eachData);
+            // console.log("eachData: ", eachData);
 
 
-            console.log("meals_selected before parse: ", eachData.meals_selected);
+            // console.log("meals_selected before parse: ", eachData.meals_selected);
 
             //let tempselection = JSON.parse(eachData.meal_selection);
             let tempselection = JSON.parse(eachData.meals_selected);
 
-            console.log("tempselection: ", tempselection);
+            // console.log("tempselection: ", tempselection);
 
             tempArr.push({
               id:eachData.sel_purchase_id,
@@ -1294,7 +1294,7 @@ class MenuItemList extends Component {
             first=1;
             lessThanTen++;
           }
-          console.log("buttonList: ", buttonList)
+          // console.log("buttonList: ", buttonList)
 
           this.setState({
             dateButtonList:buttonList
@@ -1316,9 +1316,9 @@ class MenuItemList extends Component {
     const dates = this.state.data.map(date => date.menu_date);
     const uniqueDates = Array.from(new Set(dates));
 
-    console.log("customer_uid: ", customer_uid);
-    console.log("dates: ", dates);
-    console.log("uniqueDates: ", uniqueDates);
+    // console.log("customer_uid: ", customer_uid);
+    // console.log("dates: ", dates);
+    // console.log("uniqueDates: ", uniqueDates);
 
     let buttonList = [];
     let first=null;

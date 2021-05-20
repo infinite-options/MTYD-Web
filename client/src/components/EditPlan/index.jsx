@@ -621,7 +621,7 @@ class EditPlan extends React.Component {
 
   loadSubscriptions = (subscriptions, discounts, setDefault) => {
 
-    console.log("(LS) subscriptions: ", subscriptions);
+    // console.log("(LS) subscriptions: ", subscriptions);
 
     if(subscriptions.length === 0){
       console.log("NO SUBSCRIPTIONS");
@@ -1277,7 +1277,7 @@ class EditPlan extends React.Component {
             //axios.get(API_URL + 'next_meal_info/' + this.state.customerUid)
             axios.get(API_URL + 'predict_next_billing_date/' + this.state.customerUid)
               .then(res => {
-                console.log("(2) next meal info res: ", res);
+                // console.log("(2) next meal info res: ", res);
 
                 fetchedSubscriptions = res.data.result;
 
@@ -1368,7 +1368,7 @@ class EditPlan extends React.Component {
   }
 
   hideSubscribedMeals = (config) => {
-    console.log("discounts: NOTHING");
+    // console.log("discounts: NOTHING");
 
     if(config === 'plan') {
       return (

@@ -3,6 +3,95 @@ import {Link} from "react-router-dom";
 import forkClose from '../../images/forkClose.png'
 
 export class MenuList extends Component {
+
+  state = {
+    width:window.innerWidth,
+    height:window.innerHeight,
+    crossFork : 
+    {           
+      width:'44px',
+      height:'44px',
+      position:'absolute',
+      right:'100px',
+      top:'25px',
+      backgroundImage:`url(${forkClose})`,
+      backgroundSize:'cover',
+      backgroundPosition:'center',
+    }
+
+  }
+
+  componentDidMount() {
+    window.addEventListener('resize', this.updateDimensions);
+    if(window.innerWidth<=800){
+      this.setState({
+        crossFork:{
+          width:'44px',
+          height:'44px',
+          position:'absolute',
+          left:'50px',
+          top:'25px',
+          backgroundImage:`url(${forkClose})`,
+          backgroundSize:'cover',
+          backgroundPosition:'center',
+        }
+      })
+    }else{
+      this.setState({
+        crossFork:{
+          width:'44px',
+          height:'44px',
+          position:'absolute',
+          right:'100px',
+          top:'25px',
+          backgroundImage:`url(${forkClose})`,
+          backgroundSize:'cover',
+          backgroundPosition:'center',
+        }
+      })
+    }
+
+
+  }
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.updateDimensions);
+  }
+
+  updateDimensions = () => {
+
+    if(window.innerWidth<=800){
+      this.setState({
+        crossFork:{
+          width:'44px',
+          height:'44px',
+          position:'absolute',
+          left:'50px',
+          top:'25px',
+          backgroundImage:`url(${forkClose})`,
+          backgroundSize:'cover',
+          backgroundPosition:'center',
+        }
+      })
+    }else{
+      this.setState({
+        crossFork:{
+          width:'44px',
+          height:'44px',
+          position:'absolute',
+          right:'100px',
+          top:'25px',
+          backgroundImage:`url(${forkClose})`,
+          backgroundSize:'cover',
+          backgroundPosition:'center',
+        }
+      })
+    }
+
+    this.setState({ width: window.innerWidth, height: window.innerHeight });
+  };
+
+
+
   render() {
     return (
         <div
@@ -16,17 +105,12 @@ export class MenuList extends Component {
         }}
         >
 
+        {/* <span>Window size: {this.state.width} x {this.state.height}</span> */}
+
+
+
           <div
-          style={{
-            width:'44px',
-            height:'44px',
-            position:'absolute',
-            right:'100px',
-            top:'25px',
-            backgroundImage:`url(${forkClose})`,
-            backgroundSize:'cover',
-            backgroundPosition:'center',
-          }}
+          style={this.state.crossFork}
           onClick={this.props.close}
           />
 

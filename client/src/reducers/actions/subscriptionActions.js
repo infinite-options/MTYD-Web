@@ -148,7 +148,7 @@ export const fetchProfileInformation = customerId => dispatch => {
         !res.data.result.length ||
         res.data.code !== 200
       ) {
-        history.push('/choose-plan');
+        history.push('/select-meal');
         dispatch({
           type: ADD_ERROR,
           payload: 'Cannot get Profile Info.',

@@ -30,24 +30,23 @@ import {setAlert} from "./alertActions";
 export const preCallback = (customerInfo, callback) => {
   console.log('Check login role',customerInfo);
   const loginRole = customerInfo.role;
+  console.log(customerInfo.customer_uid)
   if(loginRole.toLowerCase() === "customer") {
     // Logic to change customer page based on if purchased before not needed
-    // axios
-    //   .get(`${API_URL}customer_lplp`, {
-    //     params: {
-    //       customer_uid: customerInfo.customer_uid
-    //     }
-    //   })
-    //   .then(res => {
-    //     console.log(res);
-    //     callback(res.data.result !== undefined);
-    //   })
-    //   .catch(err => {
-    //     console.log(err);
-    //     if (err.response) {
-    //       console.log(err.response);
-    //     }
-    //   });
+    fetch(`${API_URL}customer_lplp?customer_uid=${customerInfo.customer_uid}`)
+      .then(response => response.json())
+      .then(json => {
+        let meals = [...json.result];
+        if(meals.length==0){
+          console.log('no meal plan')
+        }else{
+          console.log('has meal plan')
+          callback('select-meal');
+        }
+      })
+      .catch(error => {
+        console.error(error);
+      });
     callback('meal-plan');
   } else {
     callback('admin');

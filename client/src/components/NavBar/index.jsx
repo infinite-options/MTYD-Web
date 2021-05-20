@@ -183,74 +183,73 @@ class NavBar extends React.Component {
       color:'white'
     }
 
-    if(this.props.narrowView === false){
-    return (
-      <div className={styles.navbar}>
-        <div>
-        <Link to='/home'>
-          <img style={{width: "60%", height:"60%"}} src={whiteLogo} alt="logo"/>
-        </Link>
-          
+    // if(this.props.narrowView === false){
+    // return (
+    //   <div className={styles.navbar}>
+    //     <div>
+    //     <Link to='/home'>
+    //       <img style={{width: "60%", height:"60%"}} src={whiteLogo} alt="logo"/>
+    //     </Link>
 
-        </div>
-        <ul>
-          {this.state.login ? (
-            <>
-          {(() => {
-            if (this.state.profileRole === 'admin') {
-              return (
-                <div>
-                  <Link to='/admin' className={styles.narrowBtn}>
-                    ADMIN
-                  </Link>
-                </div>
-              );
-            }
-          })()}
-          {/* <Link to='/home' className={styles.narrowBtn}>
-            HOME
-          </Link> */}
-          <Link to='/about' className={styles.narrowBtn}>
-            ABOUT
-          </Link>
-            <Link to='/meal-plan' className={styles.profileIconWrapper} 
-                style = {{display: 'flex', border: '4px solid orange', borderRadius: '20px', height: '90%', margin: '5px 0px'}}>
-                  <input
-                    className={styles.profileIcon}
-                    readOnly
-                    value={this.state.iconName}
-                    style = {{cursor: 'pointer'}}
-                  />
-                  <div style = {{marginLeft:'5px', width: '200px'}}>
-                    <h6 style = {{margin: '0', fontSize: '20px', textAlign: 'center'}}>{this.state.firstName} {this.state.lastName}</h6>
-                    <h6 style = {{margin: '0', fontSize: '15px', textAlign: 'center'}}>{this.state.email}</h6>
-                  </div> 
-                </Link>
+    //     </div>
+    //     <ul>
+    //       {this.state.login ? (
+    //         <>
+    //       {(() => {
+    //         if (this.state.profileRole === 'admin') {
+    //           return (
+    //             <div>
+    //               <Link to='/admin' className={styles.narrowBtn}>
+    //                 ADMIN
+    //               </Link>
+    //             </div>
+    //           );
+    //         }
+    //       })()}
+    //       {/* <Link to='/home' className={styles.narrowBtn}>
+    //         HOME
+    //       </Link> */}
+    //       <Link to='/about' className={styles.narrowBtn}>
+    //         ABOUT
+    //       </Link>
+    //         <Link to='/meal-plan' className={styles.profileIconWrapper} 
+    //             style = {{display: 'flex', border: '4px solid orange', borderRadius: '20px', height: '90%', margin: '5px 0px'}}>
+    //               <input
+    //                 className={styles.profileIcon}
+    //                 readOnly
+    //                 value={this.state.iconName}
+    //                 style = {{cursor: 'pointer'}}
+    //               />
+    //               <div style = {{marginLeft:'5px', width: '200px'}}>
+    //                 <h6 style = {{margin: '0', fontSize: '20px', textAlign: 'center'}}>{this.state.firstName} {this.state.lastName}</h6>
+    //                 <h6 style = {{margin: '0', fontSize: '15px', textAlign: 'center'}}>{this.state.email}</h6>
+    //               </div> 
+    //             </Link>
 
-                <a
-                  className={styles.profileIconWrapper}
-                  onClick={this.logOut}
-                  style={{display: "flex", alignItem: "center"}}
-                >
-                  {"  "}
-                  LOGOUT&nbsp;
-                  <i className='fa fa-sign-out'> </i>
-                </a>
-            </>
-          ) : (
-            <>
-              <Link to='/home' className={styles.signUpBtn}>
-                Sign Up
-              </Link>
-              <Link to='/login' className={styles.signInBtn}>
-                Sign In
-              </Link>
-            </>
-          )}
-        </ul>
-      </div>
-    );
-    } else {
+    //             <a
+    //               className={styles.profileIconWrapper}
+    //               onClick={this.logOut}
+    //               style={{display: "flex", alignItem: "center"}}
+    //             >
+    //               {"  "}
+    //               LOGOUT&nbsp;
+    //               <i className='fa fa-sign-out'> </i>
+    //             </a>
+    //         </>
+    //       ) : (
+    //         <>
+    //           <Link to='/home' className={styles.signUpBtn}>
+    //             Sign Up
+    //           </Link>
+    //           <Link to='/login' className={styles.signInBtn}>
+    //             Sign In
+    //           </Link>
+    //         </>
+    //       )}
+    //     </ul>
+    //   </div>
+    // );
+    // } else {
     return (
       <div className={styles.navbar}>
 
@@ -347,18 +346,9 @@ class NavBar extends React.Component {
             </>)}
         </ul>
 
-
-
-
-
-
-
-
-
-
       </div>
         );
-    }
+    // }
   }
 }
 

@@ -305,99 +305,63 @@ class Home extends Component {
         {(() => {
           if (this.state.windowWidth >= 800) {
             return (
-			<div style = {{display: 'inline-flex', marginTop: '30px', justifyContent: 'center', alignSelf: 'center', width:'100%'}}>
-				  <div className={styles.stepsContainer}>
-                    <img className = {styles.stepsImage} src = {exploreImg}></img>
+			        <div style = {{display: 'inline-flex', marginTop: '30px', justifyContent: 'center', alignSelf: 'center', width:'100%'}}>
+                <div className={styles.stepsContainer}>
+                  <img className = {styles.stepsImage} src = {exploreImg}></img>
                   <div className = {styles.stepsHeaderForHowDoesSection} onClick={() => this.goToLink('select-meal')}>
                       <h6 className = {styles.stepsTextForExplore}><h6 className={styles.stepsNumber}>
-                      1. Explore</h6><br/><br/>
-                  Let your pallete be your guide. Explore the different cuisines (we have three!) and dishes available.</h6>
-                    
-				    <img className = {styles.pathFromExploreToPickAPlan} src = {pathFromExploreToPickAPlan}></img>
-                    
+                        1. Explore</h6><br/><br/>
+                        Let your pallete be your guide. Explore the different cuisines (we have three!) and dishes available.
+                      </h6>
+                        
+                    <img className = {styles.pathFromExploreToPickAPlan} src = {pathFromExploreToPickAPlan}></img>
+                        
                   </div>
                 </div>
-				  <div className={styles.stepsContainer}>
-                  <div className = {styles.stepsHeaderForHowDoesSection}>
-                  </div>
+                <div className={styles.stepsContainer}>
+                        <div className = {styles.stepsHeaderForHowDoesSection}>
+                        </div>
                 </div>                
-                {
-				  <div className={styles.stepsContainer} style = {{marginLeft:'-230px', marginTop:'-50px'}}>
-                  <div className = {styles.stepsHeaderForHowDoesSection} styles= {{marginLeft:'-300px'}} onClick={() => this.goToLink('choose-plan')} style = {{marginTop:'200px'}}>
+                      
+                <div className={styles.stepsContainer} style = {{marginLeft:'-230px', marginTop:'-50px'}}>
+                        <div className = {styles.stepsHeaderForHowDoesSection} styles= {{marginLeft:'-300px'}} onClick={() => this.goToLink('choose-plan')} style = {{marginTop:'200px'}}>
 
-					<h6 className = {styles.stepsText}><h6 className={styles.stepsNumber}>2. Purchase</h6><br/><br/>
-                      Purchase a Meal Plan. Pre-pay with PayPal or Stripe. Get discounts if you purchase 2 or 4 weeks in advance.</h6>
-                   
-					<img className = {styles.stepsImageForPurchase} src = {purchaseImg}></img></div> 
-					<img className = {styles.pathFromPurchaseToChoose} src = {pathFromPurchaseToChoose}></img>
-                  
-                </div>}
-		         <div className={styles.stepsContainer} >
-                  <div className = {styles.stepsHeaderForHowDoesSection}>
-					<h6 className = {styles.stepsText}>
-                    <h6 className={styles.stepsNumber}>3. Choose</h6><br/><br/>
-                  Choose the meals you want to receive each delivery up to 4 weeks in advance.</h6>          
-                    <img className = {styles.stepsImageForChoose} src = {chooseImg}></img>
-						<img className = {styles.pathFromSelectMealsToEnjoy} src = {pathFromSelectMealsToEnjoy}></img></div>
+                      <h6 className = {styles.stepsText}><h6 className={styles.stepsNumber}>2. Purchase</h6><br/><br/>
+                                  Purchase a Meal Plan. Pre-pay with PayPal or Stripe. Get discounts if you purchase 2 or 4 weeks in advance.</h6>
+                              
+                      <img className = {styles.stepsImageForPurchase} src = {purchaseImg}></img></div> 
+                      <img className = {styles.pathFromPurchaseToChoose} src = {pathFromPurchaseToChoose}></img>
+                        
                 </div>
-				  <div className={styles.stepsContainer}>
-                  <div className = {styles.stepsHeaderForHowDoesSection}>
-                  </div>
+                <div className={styles.stepsContainer} >
+                      <div className = {styles.stepsHeaderForHowDoesSection}>
+                    <h6 className = {styles.stepsText}>
+                              <h6 className={styles.stepsNumber}>3. Choose</h6><br/><br/>
+                            Choose the meals you want to receive each delivery up to 4 weeks in advance.</h6>          
+                              <img className = {styles.stepsImageForChoose} src = {chooseImg}></img>
+                      <img className = {styles.pathFromSelectMealsToEnjoy} src = {pathFromSelectMealsToEnjoy}></img></div>
+                </div>
+                <div className={styles.stepsContainer}>
+                        <div className = {styles.stepsHeaderForHowDoesSection}>
+                        </div>
                 </div>
 
-				  <div className={styles.stepsContainer}>
-                  <div className = {styles.stepsHeaderForHowDoesSection}>
-                  </div>
+                <div className={styles.stepsContainer}>
+                        <div className = {styles.stepsHeaderForHowDoesSection}>
+                        </div>
                 </div>
-                {
-				  <div className={styles.stepsContainer}>
-                  <div className = {styles.stepsHeaderForHowDoesSection} style = {{marginLeft: '-350px',marginTop:'180px'}}>
-                    <h6 className = {styles.stepsText}>					
-                    <h6 className={styles.stepsNumber}>4. Enjoy</h6><br/><br/>
-					      Heat, enjoy, and stay healthy!</h6>
-                    <img className = {styles.stepsImageForEnjoy} src = {enjoyImg}></img></div>
-				<div>
-				</div>
-                </div>}
+                      
+                <div className={styles.stepsContainer}>
+                          <div className = {styles.stepsHeaderForHowDoesSection} style = {{marginLeft: '-350px',marginTop:'180px'}}>
+                            <h6 className = {styles.stepsText}>					
+                            <h6 className={styles.stepsNumber}>4. Enjoy</h6><br/><br/>
+                        Heat, enjoy, and stay healthy!</h6>
+                            <img className = {styles.stepsImageForEnjoy} src = {enjoyImg}></img></div>
+                    <div>
+                    </div>
+                </div>
               </div>			  
             );
-          /*} else if (this.state.windowWidth >= 800) {
-            return (
-              <div style = {{display: 'inline-flex', width: '100%', marginTop: '30px'}}>
-                <div className = {styles.stepsHeader} onClick={() => this.goToLink('select-meal')}>
-                  <img className = {styles.stepsImage} src = {exploreImg}></img>
-                  <div style = {{justifyContent: 'center', display: 'inline-flex'}}>
-                    <h6 className = {styles.stepsNumberNarrow}>1</h6>
-                    <h6 className = {styles.stepsTitle}>Explore</h6>
-                  </div>
-                  <h6 className = {styles.stepsTextMid}>Let your pallete be your guide. Explore the different cuisines (we have three!) and dishes available.</h6>
-                </div>
-                <div className = {styles.stepsHeader} onClick={() => this.goToLink('choose-plan')}>
-                  <img className = {styles.stepsImage} src = {purchaseImg}></img>
-                  <div style = {{justifyContent: 'center', display: 'inline-flex'}}>
-                    <h6 className = {styles.stepsNumberNarrow}>2</h6>
-                    <h6 className = {styles.stepsTitle}>Purchase</h6>
-                  </div>
-                  <h6 className = {styles.stepsTextMid}>Purchase a Meal Plan. Pre-pay with PayPal or Stripe. Get discounts if you purchase 2 or 4 weeks in advance.</h6>
-                </div>
-                <div className = {styles.stepsHeader}>
-                  <img className = {styles.stepsImage} src = {chooseImg}></img>
-                  <div style = {{justifyContent: 'center', display: 'inline-flex'}}>
-                    <h6 className = {styles.stepsNumberNarrow}>3</h6>
-                    <h6 className = {styles.stepsTitle}>Choose</h6>
-                  </div>
-                  <h6 className = {styles.stepsTextMid}>Choose the meals you want to receive each delivery up to 4 weeks in advance.</h6>
-                </div>
-                <div className = {styles.stepsHeader}>
-                  <img className = {styles.stepsImage} src = {enjoyImg}></img>
-                  <div style = {{justifyContent: 'center', display: 'inline-flex'}}>
-                    <h6 className = {styles.stepsNumberNarrow}>4</h6>
-                    <h6 className = {styles.stepsTitle}>Enjoy</h6>
-                  </div>
-                  <h6 className = {styles.stepsTextMid}>Heat, enjoy, and stay healthy!</h6>
-                </div>
-              </div>
-            );*/
           } else {
             return (
               <div style = {{display: 'inline-block', width: '100%', marginTop: '30px'}}>
@@ -438,9 +402,6 @@ class Home extends Component {
           }
         })()}
         
-        {/*<div style = {{display: 'inline-flex', width: '100%', marginTop: '20px'}}>
-          <h3 style = {{textAlign: 'left', marginTop: '50px', fontWeight: 'bold', marginLeft: '5%'}}>UPCOMING MENU</h3>
-        </div>*/}
         <div style = {{textAlign: 'center', marginTop: '50px', fontWeight: 'bold'}}>
 
         <HomeLink text = {getStartedImg} link = "/select-meal" style = {{height: '50px', width:'320px', marginBottom: '-30px', marginTop: '-10px'}}/>
@@ -536,10 +497,8 @@ class Home extends Component {
           }
         })()}
         
-		<div style = {{textAlign: 'center', marginTop: '30px', marginBottom: '50px',fontWeight: 'bold'}}>
-             <HomeLink text = {startServingNowImg} link = "/choose-plan" style = {{height:'68px', width:'432px', marginTop:'77.66px', marginLeft:'auto'}}/>			
-        </div>
 
+        <HomeLink text = {startServingNowImg} link = "/choose-plan" />			
         <FootLink/>			
         
       {/*<span>

@@ -6,13 +6,28 @@ export class NavMenu extends Component {
 
   state = {
     popSeen:false,
+    width:window.innerWidth,
+    height:window.innerHeight,
   }
 
   togglePopMenu = () => {
     this.setState({
      popSeen: !this.state.popSeen,
     });
-   };
+  };
+
+
+
+  componentDidMount() {
+    window.addEventListener('resize', this.updateDimensions);
+  }
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.updateDimensions);
+  }
+
+  updateDimensions = () => {
+    this.setState({ width: window.innerWidth, height: window.innerHeight });
+  };
 
 
   render() {
@@ -20,6 +35,9 @@ export class NavMenu extends Component {
     return (
       <div>
         <div>
+
+          {/* <span>Window size: {this.state.width} x {this.state.height}</span> */}
+
           <div
           style={{
             position:"absolute",

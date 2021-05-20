@@ -83,7 +83,7 @@ function NavBar() {
           </Nav>
           <Nav>
             <Nav.Link href="/admin/zones"> Zones </Nav.Link>
-            <Nav.Link href="/meal-plan">Profile</Nav.Link>
+            <Nav.Link href="/select-meal">Profile</Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Navbar>
