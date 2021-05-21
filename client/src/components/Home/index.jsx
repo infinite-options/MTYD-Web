@@ -236,7 +236,7 @@ class Home extends Component {
                 </div>
                 <div
                 style={{
-                  zIndex:'100'
+                  zIndex:'3'
                 }}>
                   <HomeMap/>
                 </div>

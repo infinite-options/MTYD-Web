@@ -17,7 +17,10 @@ export class MenuList extends Component {
       backgroundImage:`url(${forkClose})`,
       backgroundSize:'cover',
       backgroundPosition:'center',
-    }
+    },
+    showLogout : 'none',
+    showSigninSignup : 'none',
+    heightOfBlock:'380px'
 
   }
 
@@ -36,6 +39,20 @@ export class MenuList extends Component {
           backgroundPosition:'center',
         }
       })
+      if(this.props.login == true){
+        this.setState({
+          showLogout :'flex',
+          showSigninSignup:'none',
+          heightOfBlock:'410px'
+        })
+      }else{
+        this.setState({
+          showLogout :'none',
+          showSigninSignup:'flex',
+          heightOfBlock:'450px'
+        })
+      }
+      
     }else{
       this.setState({
         crossFork:{
@@ -50,8 +67,6 @@ export class MenuList extends Component {
         }
       })
     }
-
-
   }
   componentWillUnmount() {
     window.removeEventListener('resize', this.updateDimensions);
@@ -71,7 +86,23 @@ export class MenuList extends Component {
           backgroundSize:'cover',
           backgroundPosition:'center',
         }
+        
       })
+
+      if(this.props.login == true){
+        this.setState({
+          showLogout :'flex',
+          showSigninSignup:'none',
+          heightOfBlock:'410px'
+        })
+      }else{
+        this.setState({
+          showLogout :'none',
+          showSigninSignup:'flex',
+          heightOfBlock:'450px'
+        })
+      }
+
     }else{
       this.setState({
         crossFork:{
@@ -83,12 +114,25 @@ export class MenuList extends Component {
           backgroundImage:`url(${forkClose})`,
           backgroundSize:'cover',
           backgroundPosition:'center',
-        }
+        },
+        showLogout :'none',
+        showSigninSignup:'none',
+        heightOfBlock:'380px'
       })
     }
 
     this.setState({ width: window.innerWidth, height: window.innerHeight });
   };
+
+  showPopSignup = ()=>{
+    this.props.close();
+    this.props.togglePopSignup();
+  }
+
+  showPopLogin = ()=>{
+    this.props.close();
+    this.props.togglePopLogin();
+  }
 
 
 
@@ -98,7 +142,7 @@ export class MenuList extends Component {
         style={{
           position:"absolute",
           width:"100%",
-          height:"430px",
+          height:this.state.heightOfBlock,
           backgroundColor:"#F26522",
           left:"0px",
           top:"0px",
@@ -174,14 +218,42 @@ export class MenuList extends Component {
               Become an Ambassador
             </a>
 
-            <a href='/meal-plan'
+            <a href='/home'
               style ={{
                 fontSize:"26px",
                 height:"20px",
-                color:'white'
-              }}>
+                color:'white',
+                display:this.state.showLogout
+              }}
+              onClick = {this.props.LogoutFunction}
+              >
               Log out
             </a>
+
+            <a
+              style ={{
+                fontSize:"26px",
+                height:"20px",
+                color:'white',
+                display:this.state.showSigninSignup
+              }}
+              onClick = {this.showPopLogin}
+            >
+              Sign In
+            </a>
+
+            <a
+              style ={{
+                fontSize:"26px",
+                height:"20px",
+                color:'white',
+                display:this.state.showSigninSignup
+              }}
+              onClick = {this.showPopSignup}
+            >
+              Sign up
+            </a>
+
 
           </div>
 

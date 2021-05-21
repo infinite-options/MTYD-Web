@@ -37,7 +37,7 @@ class SocialLogin extends Component {
 
   componentDidMount() {
     if(this.props.verticalFormat){
-      console.log('here')
+      // console.log('here')
       this.setState({verticalFormat:this.props.verticalFormat})
     }
 

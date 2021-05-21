@@ -37,7 +37,6 @@ export class NavMenu extends Component {
         <div>
 
           {/* <span>Window size: {this.state.width} x {this.state.height}</span> */}
-
           <div
           style={{
             position:"absolute",
@@ -52,7 +51,13 @@ export class NavMenu extends Component {
           >
           </div>
           {this.state.popSeen?
-          <Menu close = {this.togglePopMenu}/>:null}
+          <Menu 
+            close = {this.togglePopMenu}
+            login = {this.props.login}
+            LogoutFunction = {this.props.LogoutFunction}
+            togglePopSignup = {this.props.togglePopSignup}
+            togglePopLogin = {this.props.togglePopLogin}
+          />:null}
         </div>
 
       </div>
