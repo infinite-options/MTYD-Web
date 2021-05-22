@@ -270,131 +270,6 @@ class EditPlan extends React.Component {
     return sumAmountDue;
   }
 
-  /*applyAmbassadorCode() {
-
-    if(this.state.email !== ""){
-      console.log("(Ambassador code) Valid email");
-    } else {
-      console.log("(Ambassador code) Invalid email");
-    }
-      
-    console.log("amb code: ", this.state.ambassadorCode);
-
-    if (this.state.customerUid === "GUEST") {
-
-      axios
-      .post(API_URL + 'brandAmbassador/discount_checker',
-        {
-          code: this.state.ambassadorCode,
-          info: (
-            document.getElementById("pac-input").value + ', ' +
-            document.getElementById("locality").value + ', ' +
-            document.getElementById("state").value + ', ' +
-            document.getElementById("postcode").value
-          ),
-          IsGuest: 'TRUE'
-        }
-      )
-      .then(res => {
-        console.log("(GUEST) ambassador code response: ", res);
-
-        if (res.data.code !== 200) {
-
-          console.log("(GUEST) Invalid code");
-
-          this.displayError(AMBASSADOR_ERROR, res.data.message);
-
-          this.setState(prevState => ({
-            recalculatingPrice: true,
-            paymentSummary: {
-              ...prevState.paymentSummary,
-              ambassadorDiscount: '0.00'
-            }
-          }), () => {
-            this.setTotal();
-          });
-
-        } else {
-          
-          console.log("(GUEST) Valid code");
-
-          console.log("(GUEST) result: ", res.data);
-
-          this.setState(prevState => ({
-            recalculatingPrice: true,
-            paymentSummary: {
-              ...prevState.paymentSummary,
-              ambassadorDiscount: (
-                res.data.sub.discount_amount +
-                res.data.sub.discount_shipping
-              ).toFixed(2)
-            }
-          }), () => {
-            this.setTotal();
-          });
-
-        }
-      })
-      .catch(err => {
-        console.log("(GUEST) Ambassador code error: ", err);
-      });
-
-    } else {
-
-      axios
-      .post(API_URL + 'brandAmbassador/discount_checker',
-        {
-          code: this.state.ambassadorCode,
-          info: this.props.email,
-          IsGuest: 'False'
-        }
-      )
-      .then(res => {
-        console.log("(CUST) ambassador code response: ", res);
-
-        if (res.data.code !== 200) {
-
-          console.log("(CUST) Invalid code");
-
-          this.displayError(AMBASSADOR_ERROR, res.data.message);
-
-          this.setState(prevState => ({
-            recalculatingPrice: true,
-            paymentSummary: {
-              ...prevState.paymentSummary,
-              ambassadorDiscount: '0.00'
-            }
-          }), () => {
-            this.setTotal();
-          });
-
-        } else {
-          
-          console.log("(CUST) Valid code");
-
-          console.log("(CUST) result: ", res.data);
-
-          this.setState(prevState => ({
-            recalculatingPrice: true,
-            paymentSummary: {
-              ...prevState.paymentSummary,
-              ambassadorDiscount: (
-                res.data.sub.discount_amount +
-                res.data.sub.discount_shipping
-              ).toFixed(2)
-            }
-          }), () => {
-            this.setTotal();
-          });
-
-        }
-      })
-      .catch(err => {
-        console.log("(CUST) Ambassador code error: ", err);
-      });
-
-    }*/
-
   applyAmbassadorCode() {
 
     this.setState({
@@ -467,71 +342,6 @@ class EditPlan extends React.Component {
       .catch(err => {
         console.log("Ambassador code error: " + err);
       });
-
-    /*axios
-      .post(API_URL + 'brandAmbassador/generate_coupon',
-        {
-          amb_email: this.state.ambassadorCode,
-          cust_email: this.props.email
-        }
-      )
-      .then(res => {
-        let items = res.data
-        console.log("ambassador code response: " + JSON.stringify(res));
-
-        if(this.state.validCode === true) {
-
-          this.displayErrorModal('Hmm...', 'You have already entered a valid ambassador code.', 'Go Back', 'back');
-
-          this.setState({
-            refreshingPrice: false
-          });
-
-        } else if(typeof(items) === "string") {
-
-          console.log("Invalid code");
-
-          this.setState({
-            validCode: false,
-            refreshingPrice: false
-          });
-
-          this.displayErrorModal('Hmm...', items, 'Go Back', 'back');
-
-
-        } else {
-
-          console.log("Valid code");
-          items = items.result[0];
-          console.log("result: " + JSON.stringify(items));
-
-          this.setState(prevState => ({
-            validCode: true,
-            updatedPlan: {
-              ...prevState.updatedPlan,
-              payment_summary: {
-                ...prevState.updatedPlan.payment_summary,
-                ambassador_discount: (
-                  items.discount_amount +
-                  items.discount_shipping
-                ).toFixed(2)
-              }
-            }
-
-          }), () => {
-
-            this.changePlans(
-              this.state.updatedPlan.meals,
-              this.state.updatedPlan.deliveries
-            );
-
-          });
-        }
-      })
-      .catch(err => {
-        console.log("Ambassador code error: " + err);
-      });
-    });*/
 
     });
   }
@@ -704,7 +514,7 @@ class EditPlan extends React.Component {
         sub.delivery_fee +
         sub.service_fee + 
         sub.driver_tip
-      // ) - (parsedDiscount*0.01*sub.base_amount);
+      // ) - (parsedDiscount*0.01*sub.subtotal);
       ) - (
         parsedDiscount*0.01*sub.subtotal
       ) - (
@@ -1022,6 +832,8 @@ class EditPlan extends React.Component {
   confirmChanges() {
     console.log("before change_purchase: ", this.state.updatedPlan);
 
+    console.log("(new change_purchase) driver_tip: ", this.state.updatedPlan.payment_summary.driver_tip);
+
     let object = null;
     if(this.state.usePreviousCard){
 
@@ -1038,11 +850,11 @@ class EditPlan extends React.Component {
           item_uid: this.props.selectedPlan.item_uid, 
           itm_business_uid: this.props.selectedPlan.itm_business_uid
         }],
-        new_item_id: this.props.selectedPlan.item_uid,
-        purchase_id: this.state.updatedPlan.raw_data.purchase_uid,
+        purchase_uid: this.state.updatedPlan.raw_data.purchase_uid,
+        driver_tip: this.state.updatedPlan.payment_summary.driver_tip,
         start_delivery_date: ""
       }
-      console.log("(old card) object for change_purchase: ", JSON.stringify(object));
+      console.log("(old card) object for change_purchase: ", object);
 
     } else {
 
@@ -1059,16 +871,19 @@ class EditPlan extends React.Component {
           item_uid: this.props.selectedPlan.item_uid, 
           itm_business_uid: this.props.selectedPlan.itm_business_uid
         }],
-        new_item_id: this.props.selectedPlan.item_uid,
-        purchase_id: this.state.updatedPlan.raw_data.purchase_uid,
+        purchase_uid: this.state.updatedPlan.raw_data.purchase_uid,
+        driver_tip: this.state.updatedPlan.payment_summary.driver_tip,
         start_delivery_date: ""
       }
-      console.log("(new card) object for change_purchase: ", JSON.stringify(object));
+      console.log("(new card) object for change_purchase: ", object);
     }
 
     this.setState({
       processingChanges: true
     }, () => {
+
+    console.log("===> ID: ", JSON.stringify(this.state.updatedPlan.raw_data.purchase_uid));
+    console.log("===> change_purchase: ", JSON.stringify(object));
 
     axios.post(API_URL + 'change_purchase/' + this.state.updatedPlan.raw_data.purchase_uid, object)
       .then(res => {
@@ -1317,7 +1132,9 @@ class EditPlan extends React.Component {
 
     axios
       .put(`${API_URL}cancel_purchase`,{
-        purchase_uid: this.state.updatedPlan.raw_data.purchase_uid,
+        //purchase_uid: this.state.updatedPlan.raw_data.purchase_uid,
+        //purchase_uid: this.state.updatedPlan.raw_data.purchase_uid
+        purchase_uid: this.state.updatedPlan.raw_data.purchase_uid
       })
       .then((response) => {
         console.log("cancel_purchase response: " + JSON.stringify(response));
@@ -2013,7 +1830,8 @@ class EditPlan extends React.Component {
               </div>
             </div>
             <div style={{display: 'flex'}}>
-              {this.state.subscriptionsLoaded === true
+              {this.state.subscriptionsLoaded === true &&
+               typeof(this.props.plans) !== 'undefined'
                 ? this.showSubscribedMeals() 
                 : this.hideSubscribedMeals('plan')}
             </div>

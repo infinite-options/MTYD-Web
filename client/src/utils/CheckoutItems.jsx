@@ -6,7 +6,7 @@ import hashPassword from './HashPassword';
 export default async function checkoutItems(data, _callback) {
 
     // POST to checkout endpoint
-    console.log('checkout data: ', data);
+    console.log('===> checkout data: ', JSON.stringify(data));
 
     axios
       .post(

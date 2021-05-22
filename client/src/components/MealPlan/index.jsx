@@ -15,29 +15,33 @@ import {withRouter} from 'react-router';
 import {fetchOrderHistory} from '../../reducers/actions/profileActions';
 import {WebNavBar} from '../NavBar';
 import styles from './mealplan.module.css';
-import Menu from '../Menu';
-import chooseMeal from '../ChoosePlan/static/choose_meals.svg';
-import prepay from '../ChoosePlan/static/prepay.png';
-import delivery from '../ChoosePlan/static/delivery.png';
-import ChangeMealPlan from './ChangeModals/ChangeMealPlan';
-import ChangeUserInfo from './ChangeModals/ChangeUserInfo';
-import ChangePassword from '../ChangePassword'
+import orangeUp from "./static/orange_arrow_up.png";
+import orangeDown from "./static/orange_arrow_down.png";
+import whiteDown from "./static/white_arrow_down.png";
 import axios from 'axios';
 import { API_URL } from '../../reducers/constants';
 
 import {FootLink} from "../Home/homeButtons";
 import zIndex from '@material-ui/core/styles/zIndex';
+import { Ellipsis } from 'react-bootstrap/esm/PageItem';
+import { lightBlue } from '@material-ui/core/colors';
 
 const MealPlan = props => {
 
   const [customerId, setCustomerId] = useState(null);
   const [currentPlan, setCurrentPlan] = useState(null);
   const [defaultSet, setDefault] = useState(false);
-  const [menuButtons, setMenuButtons] = useState([]);
+  const [dropdownButtons, setDropdownButtons] = useState([]);
   const [mealSelections, setMealSelections] = useState([]);
-  const [selectionDisplay, setSelectionDisplay] = useState();
+  const [selectionDisplay, setSelectionDisplay] = useState([]);
   const [infoLoaded, loadInfo] = useState(false);
-  const [showDropdown, toggleDropdownDisplay] = useState(false);
+  const [showDropdown, toggleShowDropdown] = useState(false);
+  const [historyDropdowns, setHistoryDropdowns] = useState(null);
+
+  const [placeholderState, setPlaceholderState] = useState(null);
+  const [subbedPlans, updateSubbedPlans] = useState(null);
+
+  const [buttonClicked, setButtonClicked] = useState(false);
 
   //check for logged in user
   //let customerId = null;
@@ -53,62 +57,62 @@ const MealPlan = props => {
         .split('=')[1]
     );
   }
-    
-
-  const [modal, setModal] = useState(null);
-
-  const [activePlans, updateActivePlans] = useState(props.subscribedPlans.filter((elt) => elt.purchase_status === 'ACTIVE'));
-  const [cancelledPlans, updateCancelledPlans] = useState(props.subscribedPlans.filter((elt) => elt.purchase_status !== 'ACTIVE'));
-
-  useEffect(() => {
-    console.log("current plan before endpoint: ", currentPlan);
-
-  }, [currentPlan]);
-
-  useEffect(() => {
-    console.log("(mswb) customerId: ", customerId);
-
-    // if(customerId !== null && defaultSet === false) {
-
-    //   axios.get(API_URL + 'next_meal_info/' + customerId)
-    //     .then(res => {
-    //       console.log("(nmi) res: ", res);
-
-    //       res.data.result.forEach((plan, index) => {
-    //         console.log("(nmi) plan " + index + " id: ", plan.purchase_id);
-
-    //       });
-
-    //     })
-    //     .catch(err => {
-    //       if(err.response) {
-    //         console.log(err.response);
-    //       }
-    //       console.log(err);
-    //     });
-
-    // }
-
-  }, [customerId]);
 
   useEffect(() => {
 
-    console.log("RERENDER ON SUBSCRIBED PLANS CHANGE");
-    console.log("updating active/cancelled plans...");
+    if (!customerId) {
+      props.history.push('/');
+    } else {
+      try {
+        props.fetchProfileInformation(customerId);
+        // props.fetchPlans();
+        console.log("useEffect customerId: " + customerId);
+        props.fetchSubscribed(customerId)
+          .then(ids => {
+            console.log("(mount) useEffect: " + ids);
+            // props.fetchOrderHistory(ids)
+            //   .then(() => {
+            //     console.log("updating active/cancelled plans...");
+            //   });
+          });
+      } catch (err) {
+        console.log(err);
+      }
+    }
 
-    console.log("subscribed plans: ", props.subscribedPlans);
-    console.log("plans length: ", props.subscribedPlans.length);
+  }, []);
 
+
+  // Initialize page in this render
+  useEffect(() => {
+    console.log("RERENDERING subscribedPlans");
+    console.log("(init) subscribed plans: ", props.subscribedPlans);
+    console.log("(init) subscribed plans length: ", props.subscribedPlans.length);
+
+    let tempDropdownButtons = [];
     let plansFetched = 0;
 
-    let tempMenuButtons = [];
-    let tempMealSelections = [];
+    let dropdownStatusArray = [];
 
-    let dropdownLength = 40 + (props.subscribedPlans.length * 42);
+    // let tempSubbedPlans = [];
 
     props.subscribedPlans.forEach((plan, index) => {
-      console.log("(nmi) plan " + index + " id: ", plan.purchase_id);
 
+      // Parse meals, deliveries, and id for each plan
+      let parsedItems = JSON.parse(plan.items)[0];
+      let parsedMeals = parsedItems.name.substring(0,parsedItems.name.indexOf(" "));
+      let parsedDeliveries = parsedItems.qty;
+      let parsedId = plan.purchase_id.substring(plan.purchase_id.indexOf("-")+1,plan.purchase_id.length);
+
+      let parsedPlan = {...plan}
+
+      parsedPlan['meals'] = parsedMeals;
+      parsedPlan['deliveries'] = parsedDeliveries;
+      parsedPlan['id'] = parsedId;
+
+      console.log("(init) id before mswb: ", parsedPlan.purchase_id);
+
+      // Fetch past billing info for each plan
       axios
         .get(API_URL + 'meals_selected_with_billing', { 
           params: { 
@@ -117,57 +121,83 @@ const MealPlan = props => {
           } 
         })
         .then((res) => {
-          console.log("(mswb) res " + index + ": ", res);
+          console.log(' ');
+          console.log("(mswb) res: ", res);
+          // console.log("(mswb) parsedPlan: ", parsedPlan);
 
-          let mealSelection = {
-            id: plan.purchase_id,
-            selections: res.data.result
-          }
+          parsedPlan["history"] = res.data.result;
 
-          tempMenuButtons.push(
-            // <div 
-            //   style={{
-            //     backgroundColor: '#f26522',
-            //     width: '40%',
-            //     height: '40px'
-            //   }}
-            // >
-              <div 
-                onClick={() => {
-                  console.log("pressed: ", plan.purchase_id);
-                  setCurrentPlan(plan.purchase_id);
-                }}
-                style={{
-                  borderRadius: '10px',
-                  backgroundColor: 'white',
-                  height: '32px',
-                  width: '96%',
-                  paddingLeft: '10px',
-                  marginLeft: '2%',
-                  marginTop: (
-                    plansFetched === 0
-                      ? '35px'
-                      : '10px'
-                  )
-                }}
-              >
-                {index} : {plan.purchase_id}
-              </div>
-            // </div>
-          );
+          dropdownStatusArray = dropdownStatusArray.concat(res.data.result);
 
-          tempMealSelections.push(mealSelection);
-
-          if (defaultSet === false) {
-            console.log("setting default to: ", plan.purchase_id);
-            setCurrentPlan(plan.purchase_id);
+          // Set default plan
+          if (index === 0) {
+            console.log("(mswb) setting default plan to: ", parsedPlan);
+            setCurrentPlan(parsedPlan);
             setDefault(true);
           }
 
+          // Save plans with pertinent info added
+          // tempSubbedPlans.push(parsedPlan);
+
+          // Push buttons into top dropdown menu
+          tempDropdownButtons.push(
+            <div 
+              key={index + ' : ' + plan.purchase_id}
+              onClick={() => {
+                console.log("pressed: ", plan.purchase_id);
+                setCurrentPlan(parsedPlan);
+                toggleShowDropdown(false);
+              }}
+              style={{
+                borderRadius: '10px',
+                backgroundColor: 'white',
+                height: '32px',
+                width: '96%',
+                paddingLeft: '10px',
+                marginLeft: '2%',
+                marginTop: '10px',
+                textOverflow: 'ellipsis',
+                display: 'block',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                cursor: 'pointer'
+              }}
+            >
+              {parsedPlan.meals} Meals, {parsedPlan.deliveries} Deliveries : {parsedPlan.id}
+            </div>
+          );
+
           plansFetched++;
 
-          if (plansFetched === props.subscribedPlans.length) {
-            setMenuButtons(
+          console.log("(mswb) plansFetched: ", plansFetched);
+
+          // Once all plan information has been fetched, create dropdown menu
+          if(plansFetched === props.subscribedPlans.length) {
+            console.log("(mswb) all plans fetched!");
+
+            dropdownStatusArray.forEach((e) => {
+              e.display = false
+            });
+
+            console.log("(mswb) dropdown status array: ", dropdownStatusArray);
+
+            setHistoryDropdowns(dropdownStatusArray);
+
+            // Add space to top of dropdown menu buttons
+            let dropdownTopMargin = [
+              <div
+                key={'space'}
+                style={{
+                  height: '25px',
+                  backgroundColor: '#f26522',
+                }}
+              />
+            ];
+
+            tempDropdownButtons = dropdownTopMargin.concat(tempDropdownButtons);
+
+            // Set dropdown menu buttons
+            setDropdownButtons(
               <>
                 <div
                   style={{
@@ -178,32 +208,576 @@ const MealPlan = props => {
                   style={{
                     backgroundColor: '#f26522',
                     width: '40%',
+                    minWidth: '300px',
+                    height: 40 + (plansFetched * 42),
+                    position: 'absolute',
+                    zIndex: '1',
+                    boxShadow: '0px 5px 10px gray',
+                    borderRadius: '15px'
+                  }}
+                >
+                  {tempDropdownButtons}
+                </div>
+              </>
+            );
+          }
+
+          // updateSubbedPlans(tempSubbedPlans);
+
+          // Everything is loaded, so render
+          // loadInfo(true);
+
+        });
+
+    });
+
+    // console.log("(init) subbed plans: ", tempSubbedPlans);
+
+    // updateSubbedPlans(tempSubbedPlans)
+
+  }, [props.subscribedPlans]);
+
+  const getDisplayStatus = (date, id) => {
+    console.log("(getDisplayStatus) history dropdown statuses before: ", historyDropdowns);
+
+    let index = historyDropdowns.findIndex((dropdown) => {
+      return dropdown.menu_date === date && dropdown.purchase_id === id;
+    });
+
+    console.log("(getDisplayStatus) status index: ", index);
+
+    console.log("(getDisplayStatus) current dropdown: ", historyDropdowns[index]);
+
+    console.log("(getDisplayStatus) dropdown display status: ", historyDropdowns[index].display);
+
+    return historyDropdowns[index].display;
+  }
+
+  const toggleDeliveryDisplay = (date, id) => {
+    console.log("(toggleDeliveryDisplay) history dropdown statuses before: ", historyDropdowns);
+
+    let index = historyDropdowns.findIndex((dropdown) => {
+      return dropdown.menu_date === date && dropdown.purchase_id === id;
+    });
+
+    console.log("(toggleDeliveryDisplay) status index: ", index);
+
+    console.log("(toggleDeliveryDisplay) current dropdown: ", historyDropdowns[index]);
+
+    console.log("(toggleDeliveryDisplay) dropdown display status: ", historyDropdowns[index].display);
+
+    // let newStatus = !historyDropdowns[index].display;
+
+    let historyDropdownsCopy = [...historyDropdowns];
+
+    historyDropdownsCopy[index].display = !historyDropdowns[index].display;
+
+    setHistoryDropdowns(historyDropdownsCopy);
+  }
+
+  const showMealsForDelivery = (totalMeals) => {
+    let mealsForDelivery = [];
+    for(var i = 0; i < totalMeals; i++) {
+      mealsForDelivery.push(
+        <div style={{display: 'inline-flex', width: '100%', height: '110px'}}>
+          <div
+            style={{
+              // border: 'inset',
+              width: '8%',
+              fontSize: '40px',
+              fontWeight: '600',
+              paddingTop: '15px'
+            }}
+          >
+            3
+          </div>
+          <div
+            style={{
+              // border: 'inset',
+              width: '92%',
+              fontWeight: '600',
+              paddingTop: '33px'
+            }}
+          >
+            Chicken Teriyaki Bowl
+          </div>
+          <div
+            style={{
+              display: 'flex',
+              // border: 'inset',
+              width: '0%',
+              minWidth: '100px',
+              textAlign: 'right',
+              float: 'right',
+              fontWeight: '600'
+            }}
+          >
+            <div
+              style={{
+                border: 'dashed',
+                width: '100px',
+                height: '100px',
+                marginTop: '5px'
+              }}
+            >
+              {"<image goes here>"}
+            </div>
+          </div>
+        </div>
+      );
+    }
+    return mealsForDelivery;
+  }
+
+  const showMealsDelivered = () => {
+    return (
+      <div
+        style={{
+          // border: 'solid',
+          display: 'flex',
+          marginBottom: '10px'
+        }}
+      >
+
+        <div style={{display: 'inline-block', width: '100%'}}>
+    
+          <div style={{display: 'inline-flex', width: '100%'}}>
+            <div
+              style={{
+                // border: 'inset',
+                width: '50%',
+                fontWeight: '600'
+              }}
+            >
+              Meals Delivered
+            </div>
+            <div
+              style={{
+                // border: 'inset',
+                width: '50%',
+                textAlign: 'right',
+                fontWeight: '600'
+              }}
+            >
+              May 31, 2028
+            </div>
+          </div>
+
+          {showMealsForDelivery(2)}
+          {/* <div style={{display: 'inline-flex', width: '100%', height: '110px'}}>
+            <div
+              style={{
+                // border: 'inset',
+                width: '8%',
+                fontSize: '40px',
+                fontWeight: '600',
+                paddingTop: '15px'
+              }}
+            >
+              3
+            </div>
+            <div
+              style={{
+                // border: 'inset',
+                width: '92%',
+                fontWeight: '600',
+                paddingTop: '30px'
+              }}
+            >
+              Chicken Teriyaki Bowl
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                // border: 'inset',
+                width: '0%',
+                minWidth: '100px',
+                textAlign: 'right',
+                float: 'right',
+                fontWeight: '600'
+              }}
+            >
+              <div
+                style={{
+                  border: 'dashed',
+                  width: '100px',
+                  height: '100px',
+                  marginTop: '5px'
+                }}
+              >
+                {"<image goes here>"}
+              </div>
+            </div>
+          </div> */}
+
+        </div>
+
+      </div>
+    );
+  }
+
+  const showHistory = () => {
+    console.log("(showHistory) current plan id: ", currentPlan.purchase_id);
+    console.log("(showHistory) current plan data: ", currentPlan);
+
+    let historyTabs = [];
+
+    // let displayDeliveries = false;
+
+    currentPlan.history.forEach((sel) => {
+
+      // let displayDeliveries = false;
+
+      let mealsDelivered = [];
+
+      // let tempHistoryDropdowns = [];
+
+      console.log("(showHistory) sel: ", sel);
+
+      for(var i = 1; i <= currentPlan.deliveries; i++) {
+        mealsDelivered.push(showMealsDelivered());
+      }
+
+      // tempHistoryDropdowns.push({
+      //   menu_date: sel.menu_date,
+      //   display_info: false
+      // });
+
+      historyTabs.push(
+        <div 
+          key={sel.menu_date}
+          style={{marginTop: '50px', marginBottom: '50px'}}
+        >
+          <div style={{display: 'inline-flex', width: '100%'}}>
+            <div className={styles.orangeHeaderLeft}>
+              Next Billing Date
+            </div>
+            <div className={styles.orangeHeaderRight}>
+              {sel.menu_date}
+            </div>
+          </div>
+
+          <div 
+            onClick={() => {
+              console.log("(showHistory) orange dropdown clicked for: ", sel.menu_date);
+
+              toggleDeliveryDisplay(sel.menu_date, currentPlan.purchase_id);
+
+              // console.log("(showHistory) orange dropdown clicked for: ", sel.menu_date);
+              // console.log("(showHistory) display deliveries before: ", displayDeliveries);
+
+              // displayDeliveries = !displayDeliveries;
+
+              // setButtonClicked(displayDeliveries);
+
+              // console.log("(showHistory) display deliveries after: ", displayDeliveries);
+
+              // console.log("show past deliveries for: ", sel.menu_date);
+              // console.log("dropdown arr before press: ", dropdownArray);
+
+              // let newDropdownArr = [...dropdownArray];
+
+              // let currVal = newDropdownArr.findIndex((val) => {
+              //   // console.log("(findIndex) val date: ", val.date);
+              //   // console.log("(findIndex) sel date: ", sel.menu_date);
+              //   return val.date === sel.menu_date;
+              // });
+
+              // console.log("currVal: ", currVal);
+
+              // newDropdownArr[currVal] = !newDropdownArr[currVal];
+
+              // setDropdownArray(newDropdownArr);
+
+            }}
+            style={{display: 'inline-flex', width: '100%', cursor: 'pointer'}}
+          >
+            <div className={styles.orangeHeaderLeft}>
+              Meal Plan
+            </div>
+            <div className={styles.orangeHeaderRightArrow}>
+              {currentPlan.meals} Meals, {currentPlan.deliveries} Deliveries
+            </div>
+            <div 
+              style={{
+                width: '1%',
+                borderTop: 'solid',
+                borderWidth: '1px',
+                borderColor: '#f26522'
+              }} 
+            />
+            <div
+                style={{
+                  width: '3%',
+                  minWidth: '24px',
+                  // border: 'solid',
+                  // borderWidth: '1px',
+                  borderTop: 'solid',
+                  borderWidth: '1px',
+                  borderColor: '#f26522',
+                  paddingTop: '12px'
+                }}
+              >
+              {/* <div className={styles.orangeArrowDown} />  */}
+              {getDisplayStatus(sel.menu_date, currentPlan.purchase_id)
+                ? <div className={styles.orangeArrowUp} /> 
+                : <div className={styles.orangeArrowDown} /> }
+            </div>
+          </div>
+
+          {/* {console.log("dropdownArray at " + index + ": ", dropdownArray[index])}
+          {
+            (typeof(dropdownArray[index]) !== 'undefined' &&
+            dropdownArray[index].display)
+              ? (<>[placeholder meals]</>)
+              : null
+          } */}
+          {/* {displayDeliveries === true
+            ? <div>YES</div>
+            : <div>NO</div>} */}
+          {getDisplayStatus(sel.menu_date, currentPlan.purchase_id)
+            ? <div style={{marginTop: '15px'}}>{mealsDelivered}</div>
+            : null}
+
+        </div>
+      );
+    });
+    /*let historyTab = (
+      <div 
+        key={sel.menu_date}
+        style={{marginTop: '50px', marginBottom: '50px'}}
+      >
+        <div style={{display: 'inline-flex', width: '100%'}}>
+          <div className={styles.orangeHeaderLeft}>
+            Next Billing Date {" " + index}
+          </div>
+          <div className={styles.orangeHeaderRight}>
+            {sel.menu_date}
+          </div>
+        </div>
+
+        <div 
+          onClick={() => {
+            // console.log("show past deliveries for: ", sel.menu_date);
+            // console.log("dropdown arr before press: ", dropdownArray);
+
+            let newDropdownArr = [...dropdownArray];
+
+            let currVal = newDropdownArr.findIndex((val) => {
+              // console.log("(findIndex) val date: ", val.date);
+              // console.log("(findIndex) sel date: ", sel.menu_date);
+              return val.date === sel.menu_date;
+            });
+
+            console.log("currVal: ", currVal);
+
+            newDropdownArr[currVal] = !newDropdownArr[currVal];
+
+            setDropdownArray(newDropdownArr);
+
+          }}
+          style={{display: 'inline-flex', width: '100%'}}
+        >
+          <div className={styles.orangeHeaderLeft}>
+            Meal Plan
+          </div>
+          <div className={styles.orangeHeaderRightArrow}>
+            {parsedMeals} Meals, {selectionItems.qty} Deliveries
+          </div>
+          <div 
+            style={{
+              width: '1%',
+              borderTop: 'solid',
+              borderWidth: '1px',
+              borderColor: '#f26522'
+            }} 
+          />
+          <div
+              style={{
+                width: '3%',
+                minWidth: '24px',
+                // border: 'solid',
+                // borderWidth: '1px',
+                borderTop: 'solid',
+                borderWidth: '1px',
+                borderColor: '#f26522',
+                paddingTop: '12px'
+              }}
+            >
+            <div className={styles.orangeArrowDown} /> 
+          </div>
+        </div>
+
+        {console.log("dropdownArray at " + index + ": ", dropdownArray[index])}
+        {
+          (typeof(dropdownArray[index]) !== 'undefined' &&
+          dropdownArray[index].display)
+            ? (<>[placeholder meals]</>)
+            : null
+        }
+
+      </div>
+    );*/
+    
+    return(
+      <div>
+        {historyTabs}
+      </div>
+    );
+  }
+
+  
+
+  // useEffect(() => {
+
+  // }, []);
+
+  // useEffect(() => {
+  //   console.log("RERENDERING new selection display: ", selectionDisplay);
+
+  //   // console.log("IS EVERYTHING LOADED??");
+  //   // console.log("default set? ", defaultSet);
+  //   // console.log("current plan set? ", currentPlan);
+  //   // console.log("selection display set? ", selectionDisplay);
+
+  //   if (
+  //     defaultSet === true &&
+  //     currentPlan !== null &&
+  //     selectionDisplay.length > 0
+  //   ) {
+  //     loadInfo(true);
+  //   }
+
+  // }, [selectionDisplay]);
+
+
+/*
+  useEffect(() => {
+
+    // console.log("RERENDER ON SUBSCRIBED PLANS CHANGE");
+    // console.log("updating active/cancelled plans...");
+
+    if(subbedPlans !== null) {
+
+    console.log("subbedPlans initialized");
+
+    let plansFetched = 0;
+
+    let defaultPlanSet = false;
+
+    let tempDropdownButtons = [];
+    let tempMealSelections = [];
+
+    let dropdownLength = 40 + (subbedPlans.length * 42);
+
+    let dropdownTopMargin = [
+      <div
+        key={'space'}
+        style={{
+          height: '25px',
+          backgroundColor: '#f26522',
+        }}
+      />
+    ];
+
+    subbedPlans.forEach((plan, index) => {
+      // console.log("(nmi) plan " + index + " id: ", plan.purchase_id);
+      // console.log("(nmi) plan: ", plan);
+
+      axios
+        .get(API_URL + 'meals_selected_with_billing', { 
+          params: { 
+            customer_uid: customerId,
+            purchase_id: plan.purchase_id
+          } 
+        })
+        .then((res) => {
+          // console.log("(mswb) res " + index + ": ", res);
+
+          let mealSelection = {
+            id: plan.purchase_id,
+            selections: res.data.result
+          }
+
+          tempDropdownButtons.push(
+            <div 
+              key={index + ' : ' + plan.purchase_id}
+              onClick={() => {
+                console.log("pressed: ", plan.purchase_id);
+                setCurrentPlan(plan);
+                toggleShowDropdown(false);
+              }}
+              style={{
+                borderRadius: '10px',
+                backgroundColor: 'white',
+                height: '32px',
+                width: '96%',
+                paddingLeft: '10px',
+                marginLeft: '2%',
+                marginTop: '10px',
+                textOverflow: 'ellipsis',
+                display: 'block',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+              }}
+            >
+              {plan.meals} Meals, {plan.deliveries} Deliveries : {plan.id}
+            </div>
+          );
+
+
+          tempMealSelections.push(mealSelection);
+
+          if (defaultPlanSet === false && index === 0) {
+            defaultPlanSet = true;
+            // console.log("setting default to: ", plan.purchase_id);
+            setCurrentPlan(plan);
+            setDefault(true);
+          }
+
+          plansFetched++;
+
+          if (plansFetched === subbedPlans.length) {
+
+            console.log("sorting menu buttons...");
+            tempDropdownButtons.sort(function(a,b) {
+              // console.log("a: ", a.key.substring(0,a.key.indexOf(' ')));
+              // console.log("b: ", b.key.substring(0,b.key.indexOf(' ')));
+              return (
+                parseInt(a.key.substring(0,a.key.indexOf(' '))) - 
+                parseInt(b.key.substring(0,b.key.indexOf(' ')))
+              );
+            });
+
+            tempDropdownButtons = dropdownTopMargin.concat(tempDropdownButtons);
+
+            setDropdownButtons(
+              <>
+                <div
+                  style={{
+                    height: '20px'
+                  }}
+                />
+                <div
+                  style={{
+                    backgroundColor: '#f26522',
+                    width: '40%',
+                    minWidth: '300px',
                     height: dropdownLength,
                     position: 'absolute',
                     zIndex: '1',
                     boxShadow: '0px 5px 10px gray',
+                    borderRadius: '15px'
                   }}
                 >
-                  {tempMenuButtons}
+                  {tempDropdownButtons}
                 </div>
               </>
             );
 
             setMealSelections(tempMealSelections);
-            // setMealSelections(
-            //   <div
-            //     style={{
-            //       backgroundColor: '#f26522',
-            //       width: '40%',
-            //       height: '100px',
-            //       border: 'solid'
-            //     }}
-            //   >
-            //     {tempMealSelections}
-            //   </div>
-            // );
 
-            loadInfo(true);
+            //loadInfo(true);
           }
 
         })
@@ -212,40 +786,32 @@ const MealPlan = props => {
             console.log(err.response);
           }
           console.log(err);
-        })
-
-
-      // tempMenuButtons.push(
-      //   <div 
-      //     onClick={() => {
-      //       console.log("pressed: ", plan.purchase_id);
-      //       setCurrentPlan(plan.purchase_id);
-      //     }}
-      //     style={{border: 'solid'}}
-      //   >
-      //     {index} : {plan.purchase_id}
-      //   </div>
-      // );
+        });
 
     });
 
-    //setMenuButtons(tempMenuButtons);
+    }
 
-    updateActivePlans(props.subscribedPlans.filter((elt) => elt.purchase_status === 'ACTIVE'));
-    updateCancelledPlans(props.subscribedPlans.filter((elt) => elt.purchase_status !== 'ACTIVE'));
+    // updateActivePlans(props.subscribedPlans.filter((elt) => elt.purchase_status === 'ACTIVE'));
+    // updateCancelledPlans(props.subscribedPlans.filter((elt) => elt.purchase_status !== 'ACTIVE'));
 
-  }, [props.subscribedPlans]);
+  // }, [subbedPlans]);
+  }, [placeholderState]);
+*/
 
+/*
   useEffect(() => {
 
-    console.log("current plan: ", currentPlan);
-    console.log("default set? ", defaultSet);
+    // console.log("=== current plan ===: ", currentPlan);
+    // console.log("default set? ", defaultSet);
+
+    if(currentPlan !== null && mealSelections.length > 0){
 
     let currSelections = [];
 
     mealSelections.forEach((item) => {
-      console.log("item id: ", item.id);
-      if(item.id === currentPlan){
+      // console.log("item id: ", item.id);
+      if(item.id === currentPlan.purchase_id){
         console.log("found id: ", item.id);
         currSelections = item.selections;
       }
@@ -254,11 +820,13 @@ const MealPlan = props => {
     console.log("curr selections: ", currSelections);
 
     let tempSelectionDisplay = [];
+    let tempDropdownArray = [];
+    let index = 0;
 
     currSelections.forEach((sel) => {
-      console.log("sel: ", sel);
+      // console.log("sel: ", sel);
 
-      console.log("sel items: ", sel.items);
+      // console.log("sel items: ", sel.items);
       
       let selectionItems = JSON.parse(sel.items)[0];
 
@@ -268,124 +836,138 @@ const MealPlan = props => {
 
       let selectionMeals = JSON.parse(sel.meal_selection);
 
-      console.log("selection meals: ", selectionMeals);
+      // console.log("selection meals: ", selectionMeals);
 
       let mealsList = [];
 
-      // need to ensure not null when renders
-
       if(selectionMeals !== null){
         selectionMeals.forEach((meal) => {
+
+          // console.log("meal: ", meal);
+
+          // console.log("meal selections: ", );
+          // console.log("total deliveries: ", );
+
           mealsList.push(
-            <div style={{border: 'inset'}}>
-              Quantity: {meal.qty}
-              <br />
-              Name: {meal.name}
+            <div 
+              key={sel.purchase_uid + ' : ' + meal.item_uid}
+              style={{border: 'inset'}}
+            >
+              <div style={{display: 'inline-flex', width: '100%'}}>
+                <div className={styles.mealHeaderLeft}>
+                  Meals Delivered
+                </div>
+                <div className={styles.mealHeaderRight}>
+                  [Placeholder Date]
+                </div>
+              </div>
             </div>
           );
         });
       }
-      // selectionMeals.forEach((meal) => {
-      //   mealsList.push(
-      //     <div style={{border: 'inset'}}>
-      //       Quantity: {meal.qty}
-      //       <br />
-      //       Name: {meal.name}
-      //     </div>
-      //   );
-      // });
 
-      tempSelectionDisplay.push(
-        <div style={{marginTop: '50px', marginBottom: '50px', border: 'solid'}}>
+      tempDropdownArray.push({
+        date: sel.menu_date,
+        display: false
+      });
+
+      // tempSelectionDisplay.push(
+      let mealInfo = (
+        <div 
+          key={sel.menu_date}
+          style={{marginTop: '50px', marginBottom: '50px'}}
+        >
           <div style={{display: 'inline-flex', width: '100%'}}>
             <div className={styles.orangeHeaderLeft}>
-              Next Billing Date
+              Next Billing Date {" " + index}
             </div>
             <div className={styles.orangeHeaderRight}>
-              {sel.sel_menu_date}
+              {sel.menu_date}
             </div>
           </div>
 
-          <div style={{display: 'inline-flex', width: '100%'}}>
+          <div 
+            onClick={() => {
+              // console.log("show past deliveries for: ", sel.menu_date);
+              // console.log("dropdown arr before press: ", dropdownArray);
+
+              let newDropdownArr = [...dropdownArray];
+
+              let currVal = newDropdownArr.findIndex((val) => {
+                // console.log("(findIndex) val date: ", val.date);
+                // console.log("(findIndex) sel date: ", sel.menu_date);
+                return val.date === sel.menu_date;
+              });
+
+              console.log("currVal: ", currVal);
+
+              newDropdownArr[currVal] = !newDropdownArr[currVal];
+
+              setDropdownArray(newDropdownArr);
+
+            }}
+            style={{display: 'inline-flex', width: '100%'}}
+          >
             <div className={styles.orangeHeaderLeft}>
               Meal Plan
             </div>
-            <div className={styles.orangeHeaderRight}>
+            <div className={styles.orangeHeaderRightArrow}>
               {parsedMeals} Meals, {selectionItems.qty} Deliveries
+            </div>
+            <div 
+              style={{
+                width: '1%',
+                borderTop: 'solid',
+                borderWidth: '1px',
+                borderColor: '#f26522'
+              }} 
+            />
+            <div
+                style={{
+                  width: '3%',
+                  minWidth: '24px',
+                  // border: 'solid',
+                  // borderWidth: '1px',
+                  borderTop: 'solid',
+                  borderWidth: '1px',
+                  borderColor: '#f26522',
+                  paddingTop: '12px'
+                }}
+              >
+              <div className={styles.orangeArrowDown} /> 
             </div>
           </div>
 
-          {mealsList}
+          {console.log("dropdownArray at " + index + ": ", dropdownArray[index])}
+          {
+            (typeof(dropdownArray[index]) !== 'undefined' &&
+            dropdownArray[index].display)
+              ? (<>[placeholder meals]</>)
+              : null
+          }
 
         </div>
       );
+      // );
+
+      tempSelectionDisplay.push(mealInfo);
+
+      // console.log("## new temp selection display: ", tempSelectionDisplay);
+
+      index++;
 
     });
 
+    // console.log("initial dropdown array: ", tempDropdownArray);
+
+    // console.log("## setting selection display...");
     setSelectionDisplay(tempSelectionDisplay);
+    setDropdownArray(tempDropdownArray);
 
-  }, [currentPlan]);
-
-  useEffect(() => {
-    // if (infoLoaded === true) {
-    //   mealSelections.forEach((item) => {
-    //     console.log("meal selection item: ", item);
-
-    //   });
-    // }
-  }, [infoLoaded]);
-
-
-  useEffect(() => {
-    console.log("RERENDER ON ACTIVE PLANS CHANGE");
-    for (let activePlan of activePlans) {
-
-      console.log("active plan id: ", activePlan.purchase_id);
-
-      //console.log("(1) id: " + activePlan.purchase_id + "\nstatus: " + activePlan.purchase_status + "\nitems: " + activePlan.items);
-      //console.log("whole plan: " + JSON.stringify(activePlan));
     }
-  }, [activePlans]);
 
-  useEffect(() => {
-    console.log("RERENDER ON CANCELLED PLANS CHANGE");
-  }, [cancelledPlans]);
-
-  useEffect(() => {
-    console.log("RERENDER WHEN PLANS FETCHED");
-  }, [props.plans]);
-    
-    
-  useEffect(() => {
-    console.log("\n");
-    if (!customerId) {
-      props.history.push('/');
-    } else {
-      try {
-        props.fetchProfileInformation(customerId);
-        props.fetchPlans();
-        console.log("useEffect customerId: " + customerId);
-        props
-          .fetchSubscribed(customerId)
-          .then(ids => {
-            console.log("useEffect: " + ids);
-            props.fetchOrderHistory(ids)
-              .then(() => {
-                console.log("updating active/cancelled plans...");
-                //updateActivePlans(props.subscribedPlans.filter((elt) => elt.purchase_status === 'ACTIVE'));
-                //updateCancelledPlans(props.subscribedPlans.filter((elt) => elt.purchase_status !== 'ACTIVE'));
-              });
-          });
-        //updateActivePlans(props.subscribedPlans.filter((elt) => elt.purchase_status === 'ACTIVE'));
-        //updateCancelledPlans(props.subscribedPlans.filter((elt) => elt.purchase_status !== 'ACTIVE'));
-      } catch (err) {
-        console.log(err);
-      }
-    }
-    //console.log("subbed plans: " + JSON.stringify(props.subscribedPlans));
-    //eslint-disable-next-line
-    console.log("\n");
-  }, []);
+  }, [currentPlan, mealSelections]);
+*/
 
   return (
     <>
@@ -394,6 +976,23 @@ const MealPlan = props => {
       <div className={styles.sectionHeader}>
         Select Meal Plan
       </div>
+
+      {/* {infoLoaded === false */}
+      {currentPlan === null || historyDropdowns === null
+        ? (
+            <div
+              style={{
+                fontSize: '40px',
+                fontWeight: 'bold',
+                marginLeft: '8%',
+                marginBottom: '100px',
+                marginRight: '8%'
+              }}
+            >
+              LOADING YOUR SUBSCRIPTION HISTORY...
+            </div>
+          )
+        : (<>
 
       <div className={styles.container}>
 
@@ -413,26 +1012,52 @@ const MealPlan = props => {
             <div 
               className={styles.dropdownSelection}
               onClick={() => {
-                console.log("set show dropdown menu to: ", !showDropdown);
-                toggleDropdownDisplay(!showDropdown);
+                // console.log("set show dropdown menu to: ", !showDropdown);
+                toggleShowDropdown(!showDropdown);
               }}
             >
-              2 Meals, 2 Deliveries: 000022
-              {/* <div className={styles.dropdownArrow}>
-                
-              </div> */}
-              
+              <div 
+                style={{
+                  // border: 'solid',
+                  // borderWidth: '1px',
+                  width: '80%',
+                  marginLeft: '5%',
+                  textOverflow: 'ellipsis',
+                  display: 'block',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden'
+                }}
+              >
+                {/* [placeholder default meal plan] */}
+                {
+                  currentPlan === null
+                    ? "wait..."
+                    : (
+                        currentPlan.meals + " Meals, " +
+                        currentPlan.deliveries + " Deliveries : " +
+                        currentPlan.id
+                      )
+                }
+              </div>
+              <div
+                style={{
+                  width: '10%',
+                  minWidth: '24px',
+                  marginRight: '5%'
+                }}
+              >
+                <div className={styles.whiteArrowDown} /> 
+              </div>
             </div>
 
             {showDropdown
-              ? menuButtons
+              ? dropdownButtons
               : null
             }
           </div>
 
-          {/*menuButtons*/}
 
-          <div style={{marginTop: '50px', marginBottom: '50px', border: 'solid'}}>
+          <div style={{marginTop: '50px', marginBottom: '50px', /*border: 'solid'*/}}>
             <div style={{display: 'inline-flex', width: '100%'}}>
               <div className={styles.orangeHeaderLeft}>
                 Next Billing Date
@@ -446,21 +1071,36 @@ const MealPlan = props => {
               <div className={styles.orangeHeaderLeft}>
                 Meal Plan
               </div>
-              <div className={styles.orangeHeaderRight}>
-                {currentPlan}
+              <div className={styles.orangeHeaderRightUL}>
+                {
+                  currentPlan === null
+                    ? "wait..."
+                    : (
+                      currentPlan.meals + " Meals, " +
+                      currentPlan.deliveries + " Deliveries"
+                    )
+                }
               </div>
             </div>
           </div>
 
-          {selectionDisplay}
+          {/* {currentPlan
+            ? showHistory()
+            : null} */}
+          {showHistory()}
+
+          {/* {console.log("(render) selection display: ", selectionDisplay)}
+          {selectionDisplay} */}
 
         </div>
       </div>
 
+      </>)}
 
       <FootLink />
     </>
   );
+  
 };
 
 const mapStateToProps = state => ({
