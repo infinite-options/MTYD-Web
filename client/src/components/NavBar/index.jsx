@@ -101,6 +101,8 @@ class NavBar extends React.Component {
   }
 
   togglePopLogin = () => {
+
+    console.log('inside toggle pop login')
     this.setState({
      login_seen: !this.state.login_seen,
     });
@@ -293,24 +295,24 @@ class NavBar extends React.Component {
                 >
                   Sign Up
                 </button>
-              {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
             </div>
+            {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
 
-              <div
-                style={{
-                  height:'100%',
-                  display: this.state.loginNameLogoutDisplay
-                }}
+            <div
+              style={{
+                height:'100%',
+                display: this.state.loginNameLogoutDisplay
+              }}
+            >
+              <button 
+                onClick={this.togglePopLogin}
+                className={styles.signInBtn}
               >
-                <button 
-                  onClick={this.togglePopLogin}
-                  className={styles.signInBtn}
-                >
-                  Login
-                </button>
-                {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
-              </div>
-            </>)}
+                Login
+              </button>
+            </div>
+            {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
+          </>)}
         </ul>
 
       </div>
