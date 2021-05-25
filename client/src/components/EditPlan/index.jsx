@@ -187,6 +187,8 @@ class EditPlan extends React.Component {
     }
   };
 
+
+  // Display pop up message
   displayErrorModal = (header, message, linkText, link) => {
     if(this.state.showErrorModal === false) {
       this.setState({
@@ -346,6 +348,9 @@ class EditPlan extends React.Component {
     });
   }
 
+
+  // Calculate values for difference column of payment summary.
+  // Call whenever current or updated plan are changed.
   calculateDifference = () => {
     this.setState(prevState => ({
       differenceSummary: {
@@ -394,6 +399,8 @@ class EditPlan extends React.Component {
     }));
   }
 
+
+  // Change updated plan
   changePlans = (meals, deliveries) => {
 
     let mealPlan = this.props.plans[meals][deliveries];
@@ -424,14 +431,15 @@ class EditPlan extends React.Component {
     this.setState(prevState => ({
       updatedPlan: newUpdatedPlan,
     }), () => {
-
       this.calculateDifference();
     });
   }
 
-  loadSubscriptions = (subscriptions, discounts, setDefault) => {
 
-    // console.log("(LS) subscriptions: ", subscriptions);
+  // Gets called whenever subscriptions are fetched, modified, or deleted.
+  // Parses user subscriptions for display and sorts them, sets default selection, 
+  // updates map, and updates payment summary.
+  loadSubscriptions = (subscriptions, discounts, setDefault) => {
 
     if(subscriptions.length === 0){
       console.log("NO SUBSCRIPTIONS");
@@ -477,12 +485,14 @@ class EditPlan extends React.Component {
         return e.deliveries === parsedDeliveries;
       });
 
+      console.log("PNDA info before parse: ", sub);
+
       let parsedDiscount = discountItem[0].discount;
       let parsedId = sub.purchase_id.substring(sub.purchase_id.indexOf("-")+1,sub.purchase_id.length)
-      // let parsedDeliveryDate = sub.sel_menu_date.substring(0,sub.sel_menu_date.indexOf(" "));
-      let parsedDeliveryDate = "TBD";
-      // let parsedSelection = JSON.parse(sub.meal_selection)[0].name;
-      let parsedSelection = "N/A";
+      // let parsedDeliveryDate = "TBD";
+      // let parsedSelection = "N/A";
+      let parsedDeliveryDate = sub.next_delivery.substring(0,sub.next_delivery.indexOf(" "));
+      let parsedSelection = sub.final_selection;
       let parsedStatus = null;
       
       if(parsedSelection !== 'SURPRISE' && parsedSelection !== 'SKIP'){
@@ -491,7 +501,6 @@ class EditPlan extends React.Component {
         parsedStatus = parsedSelection;
       }
 
-      // placeholder
       parsedStatus = "N/A";
 
       let parsedBillingDate = sub.menu_date.substring(0,sub.menu_date.indexOf(" "));
@@ -499,7 +508,6 @@ class EditPlan extends React.Component {
       console.log("(parsed) Billing Date: ", parsedBillingDate);
 
       console.log(" ");
-      // console.log("Base Amount: ", sub.base_amount);
       console.log("Base Amount: ", sub.subtotal);
       console.log("Taxes: ", sub.taxes);
       console.log("Delivery Fee: ", sub.delivery_fee);
@@ -508,13 +516,11 @@ class EditPlan extends React.Component {
       console.log("Ambassador Code/Discount: ", sub.ambassador_code);
 
       let nextBillingAmount = (
-        // sub.base_amount + 
         sub.subtotal +
         sub.taxes +
         sub.delivery_fee +
         sub.service_fee + 
         sub.driver_tip
-      // ) - (parsedDiscount*0.01*sub.subtotal);
       ) - (
         parsedDiscount*0.01*sub.subtotal
       ) - (
@@ -526,20 +532,17 @@ class EditPlan extends React.Component {
       console.log(" ");
 
       let payment_summary = {
-        // base_amount: sub.base_amount.toFixed(2),
         base_amount: sub.subtotal.toFixed(2),
         taxes: sub.taxes.toFixed(2),
         delivery_fee: sub.delivery_fee.toFixed(2),
         service_fee: sub.service_fee.toFixed(2),
         driver_tip: sub.driver_tip.toFixed(2),
         discount_amount: (
-          // sub.base_amount *
           sub.subtotal * 
           parsedDiscount *
           0.01
         ).toFixed(2),
         discount_rate: parsedDiscount,
-        // ambassador_discount: "0.00",
         ambassador_discount: sub.ambassador_code.toFixed(2),
         subtotal: "0.00",
         total: nextBillingAmount.toFixed(2)
@@ -551,7 +554,8 @@ class EditPlan extends React.Component {
       subscription["deliveries"] = parsedDeliveries;
       subscription["discount"] = parsedDiscount;
       subscription["next_delivery_date"] = parsedDeliveryDate;
-      subscription["next_delivery_status"] = parsedStatus;
+      // subscription["next_delivery_status"] = parsedStatus;
+      subscription["next_delivery_status"] = sub.final_selection
       subscription["next_billing_date"] = parsedBillingDate;
       subscription["next_billing_amount"] = nextBillingAmount.toFixed(2);
       subscription["payment_summary"] = {...payment_summary};
@@ -565,7 +569,8 @@ class EditPlan extends React.Component {
         defaultCurrentPlan["deliveries"] = parsedDeliveries;
         defaultCurrentPlan["discount"] = parsedDiscount;
         defaultCurrentPlan["next_delivery_date"] = parsedDeliveryDate;
-        defaultCurrentPlan["next_delivery_status"] = parsedStatus;
+        // defaultCurrentPlan["next_delivery_status"] = parsedStatus;
+        defaultCurrentPlan["next_delivery_status"] = sub.final_selection;
         defaultCurrentPlan["next_billing_date"] = parsedBillingDate;
         defaultCurrentPlan["next_billing_amount"] = nextBillingAmount.toFixed(2);
         defaultCurrentPlan["payment_summary"] = {...payment_summary};
@@ -577,7 +582,8 @@ class EditPlan extends React.Component {
         defaultUpdatedPlan["deliveries"] = parsedDeliveries;
         defaultUpdatedPlan["discount"] = parsedDiscount;
         defaultUpdatedPlan["next_delivery_date"] = parsedDeliveryDate;
-        defaultUpdatedPlan["next_delivery_status"] = parsedStatus;
+        // defaultUpdatedPlan["next_delivery_status"] = parsedStatus;
+        defaultUpdatedPlan["next_delivery_status"] = sub.final_selection;
         defaultUpdatedPlan["next_billing_date"] = parsedBillingDate;
         defaultUpdatedPlan["next_billing_amount"] = nextBillingAmount.toFixed(2);
         defaultUpdatedPlan["payment_summary"] = {...payment_summary};
@@ -590,7 +596,7 @@ class EditPlan extends React.Component {
         document.getElementById("pac-input").value = sub.delivery_address;
         document.getElementById("postcode").value = sub.delivery_zip;
 
-        fetchAddressCoordinates( //(address, city, state, zip, _callback) {
+        fetchAddressCoordinates(
           sub.delivery_address,
           sub.delivery_city,
           sub.delivery_state,
@@ -885,10 +891,9 @@ class EditPlan extends React.Component {
     console.log("===> ID: ", JSON.stringify(this.state.updatedPlan.raw_data.purchase_uid));
     console.log("===> change_purchase: ", JSON.stringify(object));
 
-    axios.post(API_URL + 'change_purchase/' + this.state.updatedPlan.raw_data.purchase_uid, object)
+    axios.put(API_URL + 'change_purchase', object)
       .then(res => {
         console.log("change_purchase response: ", res);
-        // axios.get(API_URL + 'next_meal_info/' + this.state.customerUid)
         axios.get(API_URL + 'predict_next_billing_date/' + this.state.customerUid)
           .then(res => {
             console.log("(after change) next meal info res: ", res);
@@ -923,6 +928,8 @@ class EditPlan extends React.Component {
     });
   }
 
+
+  // Change state of new credit card checkbox (not currently used)
   handleCheck = (cb) => {
     console.log("clicked checkbox: ", cb);
     this.setState({
@@ -932,17 +939,7 @@ class EditPlan extends React.Component {
 
   componentDidMount() {
 
-    // console.log("Mounting...");
-
-    // console.log("(mount) edit plan props: ", this.props);
-
-    // console.log("google: ", google);
-    // console.log("after google");
-
     console.log("(mount) props: ", this.props);
-    // console.log("(mount) selectedPlan: ", this.props.selectedPlan);
-    // console.log("(mount) email: ", this.props.email);
-
 
     let temp_lat;
     let temp_lng;
@@ -961,18 +958,12 @@ class EditPlan extends React.Component {
       temp_lng = this.state.longitude;
     }
 
-    //console.log("before id map");
-
-    //console.log(document.getElementById("map"));
-
     console.log("before var map");
 
     map = new google.maps.Map(document.getElementById("map"), {
       center: { lat: temp_lat, lng: temp_lng},
       zoom: 12,
     });
-
-    //console.log("after map");
 
     let queryString = this.props.location.search;
     let urlParams = new URLSearchParams(queryString);
@@ -1019,7 +1010,6 @@ class EditPlan extends React.Component {
 
             });
 
-            // axios.get(API_URL + 'next_meal_info/' + this.state.customerUid)
             axios.get(API_URL + 'predict_next_billing_date/' + this.state.customerUid)
               .then(res => {
                 console.log("(1) next meal info res: ", res);
@@ -1089,10 +1079,8 @@ class EditPlan extends React.Component {
 
             });
 
-            //axios.get(API_URL + 'next_meal_info/' + this.state.customerUid)
             axios.get(API_URL + 'predict_next_billing_date/' + this.state.customerUid)
               .then(res => {
-                // console.log("(2) next meal info res: ", res);
 
                 fetchedSubscriptions = res.data.result;
 
@@ -1184,8 +1172,9 @@ class EditPlan extends React.Component {
     return newDeliveryInfo;
   }
 
+
+  // Display when initial information has not been loaded on first page render
   hideSubscribedMeals = (config) => {
-    // console.log("discounts: NOTHING");
 
     if(config === 'plan') {
       return (
@@ -1219,6 +1208,8 @@ class EditPlan extends React.Component {
     }
   }
 
+
+  // Used to render menu at top showing all current meals plans
   showSubscribedMeals = () => {
 
     let deselectedMealButton = styles.mealButton;
@@ -1283,7 +1274,7 @@ class EditPlan extends React.Component {
             document.getElementById("pac-input").value = rawData.delivery_address;
             document.getElementById("postcode").value = rawData.delivery_zip;
     
-            fetchAddressCoordinates( //(address, city, state, zip, _callback) {
+            fetchAddressCoordinates(
               rawData.delivery_address,
               rawData.delivery_city,
               rawData.delivery_state,
@@ -1430,6 +1421,8 @@ class EditPlan extends React.Component {
     );
   }
 
+
+  // Used to render everything in "Plan Details" section
   showPlanDetails = () => {
     return (
       <>
@@ -1558,17 +1551,17 @@ class EditPlan extends React.Component {
     );
   }
 
+
+  // Update user information specified for current delivery.
   saveEdits = () => {
     console.log("saving edits...");
     
     let object = {...this.state.deliveryInfo};
 
-    // deleting since field does not currently exist in endpoint
+    // Deleting since instructions field does not currently exist in endpoint
     delete object['instructions'];
 
     object['email'] = this.props.email;
-
-    //console.log("edits to save: ", JSON.stringify(object));
 
     let city = document.getElementById("locality").value;
     let state = document.getElementById("state").value;
@@ -1576,23 +1569,6 @@ class EditPlan extends React.Component {
     let zip = document.getElementById("postcode").value;
 
     console.log("2 pac-input: ", document.getElementById("pac-input").value);
-
-  //   {
-  //     "first_name":"Welks",
-  //     "last_name":" C",
-  //     "purchase_uid": "400-000027",
-  //     "phone":"1234567890",
-  //     "email":"welks@gmail.com",
-  //     "address":"213 Mora",
-  //     "unit":"",
-  //     "city":"Santa Cruz",
-  //     "state":"CA",
-  //     "zip":"95064",
-  //     "cc_num":"4242424242424242",
-  //     "cc_cvv":"424",
-  //     "cc_zip":"95129",
-  //     "cc_exp_date":"2021-08-01"
-  // }
 
     console.log("actual edits to save: ", {
       first_name: object.first_name,
@@ -1605,7 +1581,6 @@ class EditPlan extends React.Component {
       state,
       zip,
       email: object.email,
-      //instructions: "M4METEST"
     });
 
     axios
@@ -1620,12 +1595,10 @@ class EditPlan extends React.Component {
         state,
         zip,
         email: object.email,
-        //instructions: "M4METEST"
       })
       .then((res) => {
         console.log("update delivery info res: ", res);
 
-        // axios.get(API_URL + 'next_meal_info/' + this.state.customerUid)
         axios.get(API_URL + 'predict_next_billing_date/' + this.state.customerUid)
           .then(res => {
             console.log("(after change) next meal info res: ", res);
@@ -1650,6 +1623,8 @@ class EditPlan extends React.Component {
 
   }
 
+
+  // Called when tip is changed
   changeTip(newTip) {
 
     this.setState(prevState => ({
@@ -1667,6 +1642,9 @@ class EditPlan extends React.Component {
 
   }
 
+
+  // Used to determine if buttons and payment information should be 
+  // grayed out/disabled due to lack of edits.
   activeChanges = () => {
 
     let updatedSummary = this.state.updatedPlan.payment_summary;
@@ -1685,11 +1663,11 @@ class EditPlan extends React.Component {
     ) {
       return false;
     }
-
     return true;
-
   }
 
+
+  // Call to render buttons for changing number of meals in updated plan
   mealsDelivery = () => {
 
     let deselectedPlateButton = styles.plateButton;
@@ -1735,6 +1713,8 @@ class EditPlan extends React.Component {
     return plateButtons;
   };
 
+
+  // Call to render buttons for changing number of deliveries in updated plan
   paymentFrequency = () => {
     let deselectedPaymentOption = styles.deliveryButton;
     let selectedPaymentOption = styles.deliveryButton + " " + styles.deliveryButtonSelected;
@@ -1916,21 +1896,6 @@ class EditPlan extends React.Component {
               }}
             />
 
-            {/* <input
-              type='text'
-              placeholder={"Address 1"}
-              className={styles.input}
-              value={this.state.deliveryInfo.address}
-              onChange={e => {
-                this.setState(prevState => ({
-                  deliveryInfo: {
-                    ...prevState.deliveryInfo,
-                    address: e.target.value
-                  }
-                }));
-              }}
-            /> */}
-
             <input
               type='text'
               placeholder={"Address 1"}
@@ -1954,21 +1919,6 @@ class EditPlan extends React.Component {
                 }}
               />
 
-              {/* <input
-                type='text'
-                placeholder={"City"}
-                className={styles.inputContactRight}
-                value={this.state.deliveryInfo.city}
-                onChange={e => {
-                  this.setState(prevState => ({
-                    deliveryInfo: {
-                      ...prevState.deliveryInfo,
-                      city: e.target.value
-                    }
-                  }));
-                }}
-              /> */}
-
               <input
                 type='text'
                 placeholder={'City'}
@@ -1978,35 +1928,6 @@ class EditPlan extends React.Component {
             </div>
 
             <div style={{display: 'flex'}}>
-              {/* <input
-                type='text'
-                placeholder={"State"}
-                className={styles.inputContactLeft}
-                value={this.state.deliveryInfo.state}
-                onChange={e => {
-                  this.setState(prevState => ({
-                    deliveryInfo: {
-                      ...prevState.deliveryInfo,
-                      state: e.target.value
-                    }
-                  }));
-                }}
-              />
-              <input
-                type='text'
-                placeholder={"Zip Code"}
-                className={styles.inputContactRight}
-                value={this.state.deliveryInfo.zip}
-                onChange={e => {
-                  this.setState(prevState => ({
-                    deliveryInfo: {
-                      ...prevState.deliveryInfo,
-                      zip: e.target.value
-                    }
-                  }));
-                }}
-              /> */}
-
               <input
                 type='text'
                 placeholder={'State'}
@@ -2049,7 +1970,7 @@ class EditPlan extends React.Component {
             </div>
 
           </div>
-        <div
+          <div
               style={{
                 visibility: 'visible',
                 width:'40%',
@@ -2337,6 +2258,7 @@ class EditPlan extends React.Component {
               </div> */}
 
               {/* { this.state.usePreviousCard ? null : this.showCardForm()} */}
+
 
               <button 
                 className={styles.orangeBtn2}
