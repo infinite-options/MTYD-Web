@@ -11,7 +11,7 @@
   font-weight: bold;
   /*padding-left: 100px;*/
   padding-left: 8%;
-  padding-top: 12px;
+  padding-top: 15px;
   font-size: 25px;
   margin-bottom: 30px;
   margin-top: 30px;
@@ -204,12 +204,76 @@
   padding-left: 4px;
   width: 50%;
   height: 40px;
+  text-overflow: ellipsis;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .orangeHeaderRight {
   border-top: solid;
   color: #f26522;
   border-width: 1px;
+  font-size: 20px;
+  padding-top: 4px;
+  padding-right: 4px;
+  width: 50%;
+  height: 40px;
+  text-align: right;
+  text-overflow: ellipsis;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.orangeHeaderRightArrow {
+  border-top: solid;
+  /* border: solid; */
+  color: #f26522;
+  border-width: 1px;
+  font-size: 20px;
+  padding-top: 4px;
+  padding-right: 4px;
+  /* width: 50%; */
+  width: 46%;
+  height: 40px;
+  text-align: right;
+  text-overflow: ellipsis;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.orangeHeaderRightUL {
+  border-top: solid;
+  color: #f26522;
+  border-width: 1px;
+  font-size: 20px;
+  padding-top: 4px;
+  padding-right: 4px;
+  width: 50%;
+  height: 40px;
+  text-align: right;
+  text-decoration: underline;
+  text-overflow: ellipsis;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.mealHeaderLeft {
+  border: solid;
+  border-color: red;
+  font-size: 20px;
+  padding-top: 4px;
+  padding-left: 4px;
+  width: 50%;
+  height: 40px;
+}
+
+.mealHeaderRight {
+  border: solid;
+  border-color: red;
   font-size: 20px;
   padding-top: 4px;
   padding-right: 4px;
@@ -225,13 +289,14 @@
   font-size: 20px;
   height: 40px;
   padding-top: 5px;
-  padding-left: 15px;
   box-shadow: 0px 5px 10px gray;
   margin-bottom: 10px;
   display: flex;
   width: 40%;
+  min-width: 300px;
   z-index: 2;
   position: absolute;
+  cursor: pointer;
 }
 
 .dropdownArrow {
@@ -240,4 +305,46 @@
   border-left: 15px solid transparent;
   border-right: 15px solid transparent;
   border-top: 20px solid white;
+}
+
+/* .orangeArrow {
+  color: #ffffff;
+  border: 1px solid #e4e4e4;
+  background-color: #ffffff;
+  border-radius: 50%;
+  padding: 0.75rem 0.75rem;
+  margin-top: 15px;
+  align-content: center;
+  flex: 1;
+  min-width: 20%;
+  font-size: 30px;
+  font-weight: 600;
+  outline: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('./static/yellow_plate.png');
+  background-size: 100%;
+} */
+
+.orangeArrowUp {
+  background-image: url('./static/orange_arrow_up.png');
+  background-size: 100%;
+  width: 12px;
+  height: 11px;
+}
+
+.orangeArrowDown {
+  background-image: url('./static/orange_arrow_down.png');
+  background-size: 100%;
+  width: 12px;
+  height: 11px;
+}
+
+.whiteArrowDown {
+  background-image: url('./static/white_arrow_down.png');
+  background-size: 100%;
+  width: 24px;
+  height: 16px;
+  margin-top: 6px;
+  float: right;
 }
