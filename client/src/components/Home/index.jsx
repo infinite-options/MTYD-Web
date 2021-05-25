@@ -217,85 +217,56 @@ class Home extends Component {
         {this.state.login_seen? <PopLogin/>:null}
       </div>
 
-      
+      <div className = {styles.topBackground}>
+          <div className = {styles.gridDisplayRight}>
+            <SocialLogin verticalFormat={true}/>
+            <img className = {styles.gridRightIcons} src = {goToImg}
+            onClick={this.togglePopLogin}
+            />
+          </div>
+
+        <div className =  {styles.whiteStripe}>		  
+          <div className = {styles.gridDisplayCenter}>
+            <div className = {styles.centerSubtitleText}>
+              <img className = {styles.centerImage} src = {Logo} alt="logo" />
+            </div>
+            <div
+            style={{
+              zIndex:'3'
+            }}>
+              <HomeMap/>
+            </div>
+
+          </div>
+        </div>		  
+      </div>
+
       {(() => {
         if (this.state.windowWidth >= 800) {
           return (
-          <div className = {styles.topBackground}>
-            <div className = {styles.gridDisplayRight}>
-
-              <SocialLogin verticalFormat={true}/>
-              <img className = {styles.gridRightIcons} src = {goToImg}
-              onClick={this.togglePopLogin}
-              />
-            </div>	
-            <div className =  {styles.whiteStripe}>		  
-              <div className = {styles.gridDisplayCenter}>
-                <div className = {styles.centerSubtitleText}>
-                  <img className = {styles.centerImage} src = {Logo} alt="logo" />
-                </div>
-                <div
-                style={{
-                  zIndex:'3'
-                }}>
-                  <HomeMap/>
-                </div>
-
-              </div>
-            </div>		  
-          </div>
+            <div style = {{display: 'inline-flex', width: '100%', marginTop: '37px'}}>
+              <h3 style = {{textAlign: 'left', fontWeight: 'bold', marginLeft: '5%', fontSize: '24px', height: '29px'}}><u>Explore</u> meals</h3>
+            </div>
           );
         } else {
           return (
-          <div className = {styles.topBackground}>
-              <div className = {styles.gridDisplayRight}>
-                {/* <img className = {styles.gridRightIcons} src = {appleImg}/> 
-                <img className = {styles.gridRightIcons} src = {facebookImgSmall}/> 
-                <img className = {styles.gridRightIcons} src = {googleImgSmall}/> 
-                <img className = {styles.gridRightIcons} src = {goToImg}/>  */}
-              </div>
-            <div className =  {styles.whiteStripe}>		  
-              <div className = {styles.gridDisplayCenter}>
-                <div className = {styles.centerSubtitleText}>
-                  <img className = {styles.centerImage} src = {Logo} alt="logo" />
-                </div>
-              {/* <img className = {styles.buttonsBelowTheLogo} src = {EnterZipCodeImg}/> */}
-              <img className = {styles.buttonsBelowTheLogo} src = {viewMealsImg}/> 
-              <div style = {{display: 'inline-flex', justifyContent: 'space-between'}}/>
-                
-              </div>
-            </div>		  
-          </div>		  
+          <div style = {{display: 'inline-flex', width: '100%', marginTop: '20px', justifyContent: 'center'}}>
+            <h3 style = {{fontWeight: 'bold'}}>Explore Meals</h3>
+          </div>
           );
         }
       })()}
-        
-        {(() => {
-          if (this.state.windowWidth >= 800) {
-            return (
-        <div style = {{display: 'inline-flex', width: '100%', marginTop: '37px'}}>
-          <h3 style = {{textAlign: 'left', fontWeight: 'bold', marginLeft: '5%', fontSize: '24px', height: '29px'}}><u>Explore</u> meals</h3>
-        </div>
-            );
-          } else {
-            return (
-        <div style = {{display: 'inline-flex', width: '100%', marginTop: '20px', justifyContent: 'center'}}>
-          <h3 style = {{fontWeight: 'bold'}}>Explore Meals</h3>
-        </div>
-            );
-          }
-        })()}
 		
-        <div style = {{width: '100%', marginTop: '25px'}}>
-			    <ProductDisplay />         
-        </div>
+      <div style = {{width: '100%', marginTop: '25px'}}>
+        <ProductDisplay />         
+      </div>
 
-		<div class = {styles.howDoesContainer}>
-            <div class = {styles.howDoesText}>
-			    <p style = {{marginLeft: '-90px', display:'inline', color: 'black'}}>How does<p style = {{marginLeft: '-78px', display:'inline', color: 'white'}}> MealFor.Me
-				<p style = {{marginLeft: '-78px', display:'inline', color:'black'}}> work?</p></p></p>
-			</div>
-		</div>
+      <div class = {styles.howDoesContainer}>
+        <div class = {styles.howDoesText}>
+          <p style = {{marginLeft: '-90px', display:'inline', color: 'black'}}>How does<p style = {{marginLeft: '-78px', display:'inline', color: 'white'}}> MealFor.Me
+          <p style = {{marginLeft: '-78px', display:'inline', color:'black'}}> work?</p></p></p>
+        </div>
+      </div>
 		
         <div>
 		  <br/>
@@ -352,12 +323,13 @@ class Home extends Component {
                 </div>
                       
                 <div className={styles.stepsContainer}>
-                          <div className = {styles.stepsHeaderForHowDoesSection} style = {{marginLeft: '-350px',marginTop:'180px'}}>
-                            <h6 className = {styles.stepsText}>					
-                            <h6 className={styles.stepsNumber}>4. Enjoy</h6><br/><br/>
-                        Heat, enjoy, and stay healthy!</h6>
-                            <img className = {styles.stepsImageForEnjoy} src = {enjoyImg}></img></div>
-                    <div>
+                  <div className = {styles.stepsHeaderForHowDoesSection} style = {{marginLeft: '-350px',marginTop:'180px'}}>
+                      <h6 className = {styles.stepsText}>					
+                        <h6 className={styles.stepsNumber}>4. Enjoy</h6>
+                        <br/><br/>
+                        Heat, enjoy, and stay healthy!
+                      </h6>
+                      <img className = {styles.stepsImageForEnjoy} src = {enjoyImg}></img>
                     </div>
                 </div>
               </div>			  
@@ -404,9 +376,19 @@ class Home extends Component {
         
         <div style = {{textAlign: 'center', marginTop: '50px', fontWeight: 'bold'}}>
 
-        <HomeLink text = {getStartedImg} link = "/select-meal" style = {{height: '50px', width:'320px', marginBottom: '-30px', marginTop: '-10px'}}/>
-		<img />
+          <div style = {{textAlign: 'center', marginTop: '30px', marginBottom: '50px',fontWeight: 'bold'}}>
+            <a href = "/select-meal"
+                style = {{height:'50px', width:'320px', marginTop:'77.66px', marginLeft:'auto', marginRight:'auto',
+                backgroundImage: `url(${getStartedImg})`,
+                backgroundSize:'cover',
+                backgroundPosition:'center',
+              }}
+            >
+            </a>
+          </div>
         </div>
+
+
         {(() => {
           if (this.state.windowWidth >= 800) {
             return (
@@ -459,6 +441,8 @@ class Home extends Component {
     	  </div>
 		  </div>
        </div>
+
+       
         {(() => {
           if (this.state.windowWidth >= 800) {
             return (
