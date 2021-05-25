@@ -218,16 +218,13 @@ class Home extends Component {
       </div>
 
       <div className = {styles.topBackground}>
-        {this.state.windowWidth>=800?
           <div className = {styles.gridDisplayRight}>
             <SocialLogin verticalFormat={true}/>
             <img className = {styles.gridRightIcons} src = {goToImg}
             onClick={this.togglePopLogin}
             />
           </div>
-          :
-          <div className = {styles.gridDisplayRight}/>
-        }
+
         <div className =  {styles.whiteStripe}>		  
           <div className = {styles.gridDisplayCenter}>
             <div className = {styles.centerSubtitleText}>
