@@ -158,9 +158,29 @@ class EditPlan extends React.Component {
       errorLink: '',
       errorLinkText: '',
       errorHeader: '',
-      processingChanges: false
+      processingChanges: false,
+      // windowHeight: 0,
+      // windowWidth: 0,
+      narrowView: true
     };
+
+    this.updateView = this.updateView.bind(this);
   }
+
+  updateView() {
+    this.setState({ narrowView: window.innerWidth <= 800 },
+    () => {
+      console.log(
+        "narrowView changed to: ", this.state.narrowView,
+        " (width = " + window.innerWidth + "px)"
+      );
+    });
+  }
+
+  // handleResize = () => this.setState({
+  //   windowHeight: window.innerHeight,
+  //   windowWidth: window.innerWidth
+  // });
 
   togglePopLogin = () => {
     this.setState({
@@ -940,6 +960,12 @@ class EditPlan extends React.Component {
   componentDidMount() {
 
     console.log("(mount) props: ", this.props);
+
+    // this.handleResize();
+    // window.addEventListener('resize', this.handleResize);
+
+    this.updateView();
+    window.addEventListener("resize", this.updateView);
 
     let temp_lat;
     let temp_lng;
@@ -1770,8 +1796,27 @@ class EditPlan extends React.Component {
   };
 
   render() {
+    const narrowView = this.state.narrowView;
+
     return (
       <>
+
+        {/* <span 
+          style={{
+            zIndex: '101',
+            position: 'fixed',
+            backgroundColor: 'white',
+            border: 'solid',
+            borderWidth: '1px',
+            borderColor: 'red',
+            width: '150px'
+          }}
+        >
+          Height: {this.state.windowHeight}px
+          <br />
+          Width: {this.state.windowWidth}px
+        </span> */}
+
         <WebNavBar 
           poplogin = {this.togglePopLogin}
           popSignup = {this.togglePopSignup}
@@ -1824,21 +1869,25 @@ class EditPlan extends React.Component {
         </div>
 
         <div className={styles.containerSplit}>
-
-            {this.state.subscriptionsLoaded === true
-              ? this.showPlanDetails() 
-              : this.hideSubscribedMeals('delivery_details')}
-
+          {this.state.subscriptionsLoaded === true
+            ? this.showPlanDetails() 
+            : this.hideSubscribedMeals('delivery_details')}
         </div>
 
+      {narrowView ? (
+        <div className={styles.sectionHeader}>
+          Edit Delivery Details
+        </div>
+      ) : (
         <div style={{display: 'flex'}}>
-          <div className={styles.sectionHeaderLeft}>
-            Edit Delivery Details
-          </div>
-          <div className={styles.sectionHeaderRight}>
-            Payment Summary
-          </div>
+        <div className={styles.sectionHeaderLeft}>
+          Edit Delivery Details
         </div>
+        <div className={styles.sectionHeaderRight}>
+          Payment Summary
+        </div>
+      </div>
+      )}
 
         <div className={styles.containerSplit}>
           <div style = {{display: 'inline-block', marginLeft: '8%', width: '40%', marginRight: '2%'}}>
