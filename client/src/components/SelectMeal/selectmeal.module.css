@@ -672,27 +672,33 @@
   justify-self: center;
   align-self: center;
   display: block;
-  border: orange solid thick;
+  border: #F26522 solid 2px;
   background-color: white;
-  border-radius: 20px;
+  border-radius: 0px;
   height: max-content;
-  width: 500px;
+  width: 384px;
+  height: 223px;
   z-index: 2;
 }
 
 .popUpButton {
   display: block;
   justify-self: center;
-  font-weight: bold;
+  /* font-weight: bold; */
   font-size: 20px;
   color: white;
-  background-color: orange;
-  height: max-content;
-  width: 50px;
+  background-color: #F26522;
+  height: 50px;
+  width: 200px;
   text-align: center;
   border-radius: 20px;
-  padding: 0px 10px 4px;
+  padding: 10px 10px 4px;
   cursor: pointer;
   margin: auto;
   margin-bottom: 15px;
+}
+
+.popUpButton:hover {
+  color:white;
+  text-decoration: none;
 }

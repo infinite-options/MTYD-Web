@@ -12,6 +12,16 @@ export class UnloginSkip extends Component {
 
   render() {
     return (
+      <div
+      style={{
+        width:'100%',
+        height:'100%',
+        position:'absolute',
+        backgroundColor:'null',
+        zIndex:99,
+        top:'0px'
+      }}
+      >
       <div 
       style={{
         position:'absolute',
@@ -138,7 +148,7 @@ export class UnloginSkip extends Component {
 
 
 
-
+      </div>
       </div>
     )
   }

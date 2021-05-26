@@ -32,6 +32,7 @@ import FacebookLogin from "react-facebook-login";
 
 import ambassadorNotLogin from '../../images/ambassadorNotLogin.png'
 import {withRouter} from "react-router";
+import zIndex from '@material-ui/core/styles/zIndex';
 
 class HomeLink extends Component {
     render() { 
@@ -386,7 +387,8 @@ class AddMeals extends Component {
 					return (
               <div 
                 style={{
-                  opacity:this.state.hidden
+                  opacity:this.state.hidden,
+                  zIndex:4
                 }}
               className={styles.becomeAnAmbassadorPopup}
 
@@ -456,6 +458,9 @@ class AddMeals extends Component {
           return (
           <div
           className={styles.becomeAnAmbassadorPopupSignin}
+          style={{
+            zIndex:4
+          }}
           >
             <div
               style= 
