@@ -95,12 +95,11 @@ export class BecomeAmbass extends Component {
       
     }else{
       this.setState({user_id:'not login'})
-      this.setState({user_address: 'not login yet'});
+      this.setState({user_address:'not login yet'});
     }
     
   }
   render() {
-    
     return (
       <div>
         <div
@@ -119,9 +118,7 @@ export class BecomeAmbass extends Component {
                   zIndex:4
                 }}
               className="becomeAnAmbassadorPopup"
-
               >
-
                 <div
                 style= 
                 {{
@@ -155,7 +152,6 @@ export class BecomeAmbass extends Component {
                 >
                   Login to become an ambassador
                   </div>
-
                 <div 
                 style={{
                   position:'absolute',
