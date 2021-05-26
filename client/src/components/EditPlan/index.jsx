@@ -1875,22 +1875,62 @@ class EditPlan extends React.Component {
         </div>
 
       {narrowView ? (
-        <div className={styles.sectionHeader}>
-          Edit Delivery Details
-        </div>
+        <>
+          <div className={styles.sectionHeader}>
+            Edit Delivery Details
+          </div>
+        </>
       ) : (
-        <div style={{display: 'flex'}}>
-        <div className={styles.sectionHeaderLeft}>
-          Edit Delivery Details
-        </div>
-        <div className={styles.sectionHeaderRight}>
-          Payment Summary
-        </div>
-      </div>
+        <>
+          <div style={{display: 'flex'}}>
+            <div className={styles.sectionHeaderLeft}>
+              Edit Delivery Details
+            </div>
+            <div className={styles.sectionHeaderRight}>
+              Payment Summary
+            </div>
+          </div>
+        </>
       )}
 
         <div className={styles.containerSplit}>
-          <div style = {{display: 'inline-block', marginLeft: '8%', width: '40%', marginRight: '2%'}}>
+        <div 
+          style = {
+            narrowView 
+              ? ({
+                  display: 'inline-block', 
+                  border: 'solid',
+                  borderColor: 'red',
+                  width: '100%'
+                })
+              : ({
+                  display: 'inline-flex', 
+                  border: 'solid',
+                  borderColor: 'red',
+                  width: '100%'
+                })
+          }
+        >
+
+          <div 
+            style = {
+              narrowView 
+                ? ({
+                    display: 'inline-block', 
+                    marginLeft: '8%', 
+                    width: '84%', 
+                    marginRight: '8%',
+                    border: 'solid'
+                  })
+                : ({
+                    display: 'inline-block', 
+                    marginLeft: '8%', 
+                    width: '40%', 
+                    marginRight: '2%',
+                    border: 'solid'
+                  })
+            }
+          >
             <div style={{display: 'flex'}}>
               <input
                 type='text'
@@ -2019,14 +2059,36 @@ class EditPlan extends React.Component {
             </div>
 
           </div>
+
           <div
-              style={{
-                visibility: 'visible',
-                width:'40%',
-                marginRight: '8%',
-                marginLeft: '2%'
-              }}
-            > 
+            //   style={{
+            //     visibility: 'visible',
+            //     width:'40%',
+            //     marginRight: '8%',
+            //     marginLeft: '2%',
+            //     border: 'solid'
+            //   }}
+            // > 
+
+            style = {
+              narrowView 
+                ? ({
+                    display: 'inline-block', 
+                    marginLeft: '8%', 
+                    width: '84%', 
+                    marginRight: '8%',
+                    border: 'solid'
+                  })
+                : ({
+                    display: 'inline-block', 
+                    marginLeft: '8%', 
+                    width: '40%', 
+                    marginRight: '2%',
+                    border: 'solid'
+                  })
+            }
+            >
+
               <div style={{display: 'flex', borderBottom:'solid 2px black'}}>
 
                 <div className={styles.summaryLeft} style={{fontWeight:'bold'}}></div>
@@ -2339,6 +2401,8 @@ class EditPlan extends React.Component {
 
                 
             </div>
+
+          </div>
           </div>
 
           {(() => {
