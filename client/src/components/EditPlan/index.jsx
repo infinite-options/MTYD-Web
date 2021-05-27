@@ -159,28 +159,28 @@ class EditPlan extends React.Component {
       errorLinkText: '',
       errorHeader: '',
       processingChanges: false,
-      // windowHeight: 0,
-      // windowWidth: 0,
-      narrowView: true
+      windowHeight: undefined,
+      windowWidth: undefined,
+      // narrowView: true
     };
 
-    this.updateView = this.updateView.bind(this);
+    // this.updateView = this.updateView.bind(this);
   }
 
-  updateView() {
-    this.setState({ narrowView: window.innerWidth <= 800 },
-    () => {
-      console.log(
-        "narrowView changed to: ", this.state.narrowView,
-        " (width = " + window.innerWidth + "px)"
-      );
-    });
-  }
+  // updateView() {
+  //   this.setState({ narrowView: window.innerWidth <= 800 },
+  //   () => {
+  //     console.log(
+  //       "narrowView changed to: ", this.state.narrowView,
+  //       " (width = " + window.innerWidth + "px)"
+  //     );
+  //   });
+  // }
 
-  // handleResize = () => this.setState({
-  //   windowHeight: window.innerHeight,
-  //   windowWidth: window.innerWidth
-  // });
+  handleResize = () => this.setState({
+    windowHeight: window.innerHeight,
+    windowWidth: window.innerWidth
+  });
 
   togglePopLogin = () => {
     this.setState({
@@ -961,11 +961,11 @@ class EditPlan extends React.Component {
 
     console.log("(mount) props: ", this.props);
 
-    // this.handleResize();
-    // window.addEventListener('resize', this.handleResize);
+    this.handleResize();
+    window.addEventListener('resize', this.handleResize);
 
-    this.updateView();
-    window.addEventListener("resize", this.updateView);
+    // this.updateView();
+    // window.addEventListener("resize", this.updateView);
 
     let temp_lat;
     let temp_lng;
@@ -1202,6 +1202,7 @@ class EditPlan extends React.Component {
   // Display when initial information has not been loaded on first page render
   hideSubscribedMeals = (config) => {
 
+    // For select meal plan section
     if(config === 'plan') {
       return (
         <div 
@@ -1216,6 +1217,8 @@ class EditPlan extends React.Component {
           Loading Subscriptions...
         </div>
       );
+
+    // For edit plan section
     } else {
       return (
         <div 
@@ -1449,132 +1452,271 @@ class EditPlan extends React.Component {
 
 
   // Used to render everything in "Plan Details" section
-  showPlanDetails = () => {
-    return (
-      <>
-      <div className={styles.boxPDleft}>
+  showPlanDetails = (width) => {
+    if(width < 800) {
+      return (
+        <div style={{display: 'flex'}}>
+        <div style={{display: 'inline-block'}}>
+          <div className={styles.boxPDnarrowTop}>
 
-      <div style={{width: 'fit-content'}}>
-        <div className={styles.planHeader}>
-          Current Plan
-        </div>
+            <div className={styles.planHeader}>
+              Current Plan
+            </div>
 
-        <div style={{paddingBottom: '50px'}}>
-          <div style={{paddingBottom: '10px'}}>
-            MEALS
-          </div>
-          <div className={styles.iconMeals}>
-            {this.state.currentPlan.meals}
-          </div>
-        </div>
-
-        <div style={{paddingBottom: '50px'}}>
-          <div style={{paddingBottom: '10px'}}>
-            DELIVERIES
-          </div>
-          <button className={styles.deliveryButtonCurrent}>
-            <span style={{fontSize: '35px'}}>
-              {this.state.currentPlan.deliveries}
-            </span>
-            <br></br>
-            <span style={{whiteSpace: "nowrap"}}>
-              {"(Save "+this.state.currentPlan.discount+"%)"}
-            </span>
-          </button>
-        </div>
-
-        <div>
-          <div style={{paddingBottom: '10px'}}>
-            CANCEL
-          </div>
-          <div 
-            className={styles.iconTrash}
-            onClick={() => {
-              this.deletePurchase();
-            }}
-          />
-        </div>
-
-
-          </div>
-
-    </div>
-
-    <div className={styles.boxPDright}>
-
-      <div className={styles.planHeader}>
-        Updated Plan
-      </div>
-
-      <div className={styles.menuSection}>
-        <div className={styles.center}>
-          <span className={styles.subHeader}>
-            NUMBER OF MEALS PER DELIVERY
-          </span>
-        </div>
-        {(()=>{
-          if(JSON.stringify(this.props.plans) !== "{}"){
-            return(
-              <div className={styles.buttonWrapper}>
-                {this.mealsDelivery()}
+            <div style={{paddingBottom: '50px'}}>
+              <div style={{paddingBottom: '10px'}}>
+                MEALS
               </div>
-            );
-          }
-        })()}
-      </div>
-        
-      <div className={styles.menuSection}>
-        <div className={styles.center}>
-          <span className={styles.subHeader}>
-            TOTAL NUMBER OF DELIVERIES
-          </span>
-        </div>
-        {(()=>{
-          if(JSON.stringify(this.props.plans) !== "{}"){
-            return(
-              <div className='row' style={{marginTop: '20px'}}>
-                {this.paymentFrequency()}
+              <div className={styles.iconMeals}>
+                {this.state.currentPlan.meals}
               </div>
-            );
-          }
-        })()}
-      </div>
+            </div>
 
-      <div className={styles.chargeContainer}>
-        <div className={styles.chargeTotal}>
-          <div style={{display: 'inline-flex'}}>
-            {(() => {
-              let chargeOrRefund = this.state.differenceSummary.total;
-              if (parseFloat(chargeOrRefund) >= 0) {
-                return (
-                  <>
-                    <div className={styles.chargeText}>
-                      {"Additional Charges "}
-                    </div>
-                    <div className={styles.chargeAmount}>
-                      ${this.state.differenceSummary.total}
-                    </div>
-                  </>
-                );
-              } else {
-                return (
-                  <>
-                    <div className={styles.chargeText}>
-                      {"You will be refunded "}
-                    </div>
-                    <div className={styles.chargeAmount}>
-                      ${(-1*this.state.differenceSummary.total).toFixed(2)}
-                    </div>
-                  </>
-                );
-              }
-            })()}
+            <div style={{paddingBottom: '50px'}}>
+              <div style={{paddingBottom: '10px'}}>
+                DELIVERIES
+              </div>
+              <button className={styles.deliveryButtonCurrent}>
+                <span style={{fontSize: '35px'}}>
+                  {this.state.currentPlan.deliveries}
+                </span>
+                <br></br>
+                <span style={{whiteSpace: "nowrap"}}>
+                  {"(Save "+this.state.currentPlan.discount+"%)"}
+                </span>
+              </button>
+            </div>
+
+            <div>
+              <div style={{paddingBottom: '10px'}}>
+                CANCEL
+              </div>
+              <div 
+                className={styles.iconTrash}
+                onClick={() => {
+                  this.deletePurchase();
+                }}
+              />
+            </div>
+
           </div>
-        </div> 
-      </div> 
-    </div>
-    </>
-    );
+
+          <div className={styles.boxPDnarrowBottom}>
+
+            <div className={styles.planHeader}>
+              Updated Plan
+            </div>
+
+            <div className={styles.menuSection}>
+              <div className={styles.center}>
+                <span className={styles.subHeader}>
+                  NUMBER OF MEALS PER DELIVERY
+                </span>
+              </div>
+              {(()=>{
+                if(JSON.stringify(this.props.plans) !== "{}"){
+                  return(
+                    <div className={styles.buttonWrapper}>
+                      {this.mealsDelivery()}
+                    </div>
+                  );
+                }
+              })()}
+            </div>
+            
+            <div className={styles.menuSection}>
+              <div className={styles.center}>
+                <span className={styles.subHeader}>
+                  TOTAL NUMBER OF DELIVERIES
+                </span>
+              </div>
+              {(()=>{
+                if(JSON.stringify(this.props.plans) !== "{}"){
+                  return(
+                    <div 
+                      className='row' 
+                      style={{
+                        marginTop: '20px', 
+                        marginBottom: '30px',
+                      }}
+                    >
+                      {/* <div
+                        style={{
+                          width: 'auto',
+                          flex: '0 0 auto'
+                        }}
+                      > */}
+                        {this.paymentFrequency()}
+                      {/* </div> */}
+                    </div>
+                  );
+                }
+              })()}
+            </div>
+
+            <div className={styles.chargeContainerNarrow}>
+              <div className={styles.chargeTotal}>
+                <div style={{display: 'inline-flex'}}>
+                  {(() => {
+                    let chargeOrRefund = this.state.differenceSummary.total;
+                    if (parseFloat(chargeOrRefund) >= 0) {
+                      return (
+                        <>
+                          <div className={styles.chargeText}>
+                            {"Additional Charges "}
+                          </div>
+                          <div className={styles.chargeAmount}>
+                            ${this.state.differenceSummary.total}
+                          </div>
+                        </>
+                      );
+                    } else {
+                      return (
+                        <>
+                          <div className={styles.chargeText}>
+                            {"You will be refunded "}
+                          </div>
+                          <div className={styles.chargeAmount}>
+                            ${(-1*this.state.differenceSummary.total).toFixed(2)}
+                          </div>
+                        </>
+                      );
+                    }
+                  })()}
+                </div>
+              </div> 
+            </div> 
+          </div>
+        </div>
+        </div>
+      );
+    } else {
+      return (
+        <>
+          <div className={styles.boxPDleft}>
+
+          <div style={{width: 'fit-content'}}>
+            <div className={styles.planHeader}>
+              Current Plan
+            </div>
+
+            <div style={{paddingBottom: '50px'}}>
+              <div style={{paddingBottom: '10px'}}>
+                MEALS
+              </div>
+              <div className={styles.iconMeals}>
+                {this.state.currentPlan.meals}
+              </div>
+            </div>
+
+            <div style={{paddingBottom: '50px'}}>
+              <div style={{paddingBottom: '10px'}}>
+                DELIVERIES
+              </div>
+              <button className={styles.deliveryButtonCurrent}>
+                <span style={{fontSize: '35px'}}>
+                  {this.state.currentPlan.deliveries}
+                </span>
+                <br></br>
+                <span style={{whiteSpace: "nowrap"}}>
+                  {"(Save "+this.state.currentPlan.discount+"%)"}
+                </span>
+              </button>
+            </div>
+
+            <div>
+              <div style={{paddingBottom: '10px'}}>
+                CANCEL
+              </div>
+              <div 
+                className={styles.iconTrash}
+                onClick={() => {
+                  this.deletePurchase();
+                }}
+              />
+            </div>
+
+
+              </div>
+
+          </div>
+
+          <div className={styles.boxPDright}>
+
+            <div className={styles.planHeader}>
+              Updated Plan
+            </div>
+
+            <div className={styles.menuSection}>
+              <div className={styles.center}>
+                <span className={styles.subHeader}>
+                  NUMBER OF MEALS PER DELIVERY
+                </span>
+              </div>
+              {(()=>{
+                if(JSON.stringify(this.props.plans) !== "{}"){
+                  return(
+                    <div className={styles.buttonWrapper}>
+                      {this.mealsDelivery()}
+                    </div>
+                  );
+                }
+              })()}
+            </div>
+            
+            <div className={styles.menuSection}>
+              <div className={styles.center}>
+                <span className={styles.subHeader}>
+                  TOTAL NUMBER OF DELIVERIES
+                </span>
+              </div>
+              {(()=>{
+                if(JSON.stringify(this.props.plans) !== "{}"){
+                  return(
+                    <div className='row' style={{marginTop: '20px'}}>
+                      {this.paymentFrequency()}
+                    </div>
+                  );
+                }
+              })()}
+            </div>
+
+            <div className={styles.chargeContainer}>
+              <div className={styles.chargeTotal}>
+                <div style={{display: 'inline-flex'}}>
+                  {(() => {
+                    let chargeOrRefund = this.state.differenceSummary.total;
+                    if (parseFloat(chargeOrRefund) >= 0) {
+                      return (
+                        <>
+                          <div className={styles.chargeText}>
+                            {"Additional Charges "}
+                          </div>
+                          <div className={styles.chargeAmount}>
+                            ${this.state.differenceSummary.total}
+                          </div>
+                        </>
+                      );
+                    } else {
+                      return (
+                        <>
+                          <div className={styles.chargeText}>
+                            {"You will be refunded "}
+                          </div>
+                          <div className={styles.chargeAmount}>
+                            ${(-1*this.state.differenceSummary.total).toFixed(2)}
+                          </div>
+                        </>
+                      );
+                    }
+                  })()}
+                </div>
+              </div> 
+            </div> 
+          </div>
+        </>
+      );
+    }
   }
 
 
@@ -1796,11 +1938,12 @@ class EditPlan extends React.Component {
   };
 
   render() {
-    const narrowView = this.state.narrowView;
+    // const narrowView = this.state.narrowView;
 
     return (
       <>
 
+        {/* For debugging window size */}
         {/* <span 
           style={{
             zIndex: '101',
@@ -1870,11 +2013,12 @@ class EditPlan extends React.Component {
 
         <div className={styles.containerSplit}>
           {this.state.subscriptionsLoaded === true
-            ? this.showPlanDetails() 
+            ? this.showPlanDetails(this.state.windowWidth) 
             : this.hideSubscribedMeals('delivery_details')}
         </div>
 
-      {narrowView ? (
+      {/* {narrowView ? ( */}
+      {this.state.windowWidth < 800 ? (
         <>
           <div className={styles.sectionHeader}>
             Edit Delivery Details
@@ -1896,17 +2040,18 @@ class EditPlan extends React.Component {
         <div className={styles.containerSplit}>
         <div 
           style = {
-            narrowView 
+            // narrowView 
+            this.state.windowWidth < 800
               ? ({
                   display: 'inline-block', 
-                  border: 'solid',
-                  borderColor: 'red',
+                  // border: 'solid',
+                  // borderColor: 'red',
                   width: '100%'
                 })
               : ({
                   display: 'inline-flex', 
-                  border: 'solid',
-                  borderColor: 'red',
+                  // border: 'solid',
+                  // borderColor: 'red',
                   width: '100%'
                 })
           }
@@ -1914,20 +2059,21 @@ class EditPlan extends React.Component {
 
           <div 
             style = {
-              narrowView 
+              // narrowView 
+              this.state.windowWidth < 800
                 ? ({
                     display: 'inline-block', 
                     marginLeft: '8%', 
                     width: '84%', 
                     marginRight: '8%',
-                    border: 'solid'
+                    // border: 'solid'
                   })
                 : ({
                     display: 'inline-block', 
                     marginLeft: '8%', 
                     width: '40%', 
                     marginRight: '2%',
-                    border: 'solid'
+                    // border: 'solid'
                   })
             }
           >
@@ -2060,6 +2206,37 @@ class EditPlan extends React.Component {
 
           </div>
 
+          {/* {narrowView ? ( */}
+          {this.state.windowWidth < 800 ? (
+            <>
+              <div style={{ marginTop: '20px' }}/>
+              <div className={styles.sectionHeader}>
+                Payment Summary
+              </div>
+            </>
+          ) : (
+            null
+          )}
+
+          {/* {narrowView ? (
+            <>
+              <div className={styles.sectionHeader}>
+                Edit Delivery Details
+              </div>
+            </>
+          ) : (
+            <>
+              <div style={{display: 'flex'}}>
+                <div className={styles.sectionHeaderLeft}>
+                  Edit Delivery Details
+                </div>
+                <div className={styles.sectionHeaderRight}>
+                  Payment Summary
+                </div>
+              </div>
+            </>
+          )} */}
+
           <div
             //   style={{
             //     visibility: 'visible',
@@ -2071,20 +2248,21 @@ class EditPlan extends React.Component {
             // > 
 
             style = {
-              narrowView 
+              // narrowView 
+              this.state.windowWidth < 800
                 ? ({
                     display: 'inline-block', 
                     marginLeft: '8%', 
                     width: '84%', 
                     marginRight: '8%',
-                    border: 'solid'
+                    // border: 'solid'
                   })
                 : ({
                     display: 'inline-block', 
                     marginLeft: '8%', 
                     width: '40%', 
                     marginRight: '2%',
-                    border: 'solid'
+                    // border: 'solid'
                   })
             }
             >

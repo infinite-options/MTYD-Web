@@ -70,11 +70,11 @@ class Home extends Component {
       })
     }
 
-   };
+  };
 
-   togglePopSignup = () => {
+  togglePopSignup = () => {
     this.setState({
-     signUpSeen: !this.state.signUpSeen
+      signUpSeen: !this.state.signUpSeen
     });
 
     if(!this.state.signUpSeen){
@@ -82,7 +82,7 @@ class Home extends Component {
         login_seen:false
       })
     }
-   };
+  };
 
   handleResize = () => this.setState({
     windowHeight: window.innerHeight,

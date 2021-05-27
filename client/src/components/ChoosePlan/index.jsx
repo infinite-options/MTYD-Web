@@ -66,9 +66,27 @@ class ChoosePlan extends React.Component {
       signUpSeen:false,
       total: '0.00',
       numDeliveryDays: 0,
-      profileLoaded: false
+      profileLoaded: false,
+      narrowView: false
     };
+
+    // this.updateView = this.updateView.bind(this);
   }
+
+  handleResize = () => this.setState({
+    windowHeight: window.innerHeight,
+    windowWidth: window.innerWidth
+  });
+
+  // updateView() {
+  //   this.setState({ narrowView: window.innerWidth <= 800 },
+  //   () => {
+  //     console.log(
+  //       "narrowView changed to: ", this.state.narrowView,
+  //       " (width = " + window.innerWidth + "px)"
+  //     );
+  //   });
+  // }
 
   togglePopLogin = () => {
     this.setState({
@@ -102,6 +120,12 @@ class ChoosePlan extends React.Component {
   componentDidMount() {
     //console.log("choose-plan props: " + JSON.stringify(this.props));
     //console.log(this.props)
+
+    // this.updateView();
+    // window.addEventListener("resize", this.updateView);
+
+    this.handleResize();
+    window.addEventListener('resize', this.handleResize);
 
     let queryString = this.props.location.search;
     let urlParams = new URLSearchParams(queryString);
@@ -515,6 +539,24 @@ class ChoosePlan extends React.Component {
     }
     return (
       <>
+
+        {/* For debugging window size */}
+        <span 
+          style={{
+            zIndex: '101',
+            position: 'fixed',
+            backgroundColor: 'white',
+            border: 'solid',
+            borderWidth: '1px',
+            borderColor: 'red',
+            width: '150px'
+          }}
+        >
+          Height: {this.state.windowHeight}px
+          <br />
+          Width: {this.state.windowWidth}px
+        </span>
+
           <WebNavBar 
             poplogin = {this.togglePopLogin}
             popSignup = {this.togglePopSignup}
@@ -586,16 +628,51 @@ class ChoosePlan extends React.Component {
           <div className={styles.container}>
             <div className={styles.box}>
               <div className={styles.box1}>
-                  
                 <div className={styles.menuSection}>     
                   {(() => {
                     if (JSON.stringify(this.props.selectedPlan) !== '{}') 
                     {
                       return (
-                        <>
-                        <div style={{display: 'flex'}}>
+                        // <div>
+                        <div style={{display: 'flex', width: '100%', border: 'inset'}}>
                           <div style={{display: 'inline-block'}}>
-                            <div className={styles.priceCalculation}>
+
+                            {
+                              this.state.windowWidth < 1100 ? (
+                                <div style={{ width: '100%', textAlign: 'center' }}>
+                                  {/* <div style={{ textAlign: 'center' }}> */}
+                                    <div>
+                                      <span className={styles.priceFormula}>
+                                        {this.props.selectedPlan.num_items} 
+                                      </span>
+                                      <br></br>
+                                      <span className={styles.priceSubtext}>
+                                        Meals
+                                      </span>
+                                    </div>
+                                  {/* </div> */}
+                                  <div>
+                                    <span className={styles.priceFormula}>
+                                      {this.props.selectedPlan.num_deliveries} 
+                                    </span>
+                                    <br></br>
+                                    <span className={styles.priceSubtext}>
+                                      Deliveries
+                                    </span>
+                                  </div>
+                                  <div style={{ width: '100%', border: 'dashed'}}>
+                                    <span className={styles.priceFormula}>
+                                      -{this.props.selectedPlan.delivery_discount}%
+                                    </span>
+                                    <br></br>
+                                    <span className={styles.priceSubtext}>
+                                      Discount applied
+                                    </span>
+                                  </div>
+                                </div>
+                              ) : (
+                                <>
+                                <div className={styles.priceCalculation}>
                               <div>
                                 <span className={styles.priceFormula}>
                                   {this.props.selectedPlan.num_items} 
@@ -605,9 +682,6 @@ class ChoosePlan extends React.Component {
                                   Meals
                                 </span>
                               </div>
-                              {/*<div className={styles.priceSymbol}>
-                                x
-                              </div>*/}
                               <div className={styles.priceSpaceSmall} />
                               <div>
                                 <span className={styles.priceFormula}>
@@ -652,9 +726,6 @@ class ChoosePlan extends React.Component {
                                 That's only ${this.calculateDeal()} per freshly cooked meal
                               </div>
                               <div className={styles.proceedWrapper}>
-                                {/* <Link className={styles.proceedBtn} to='/payment-details'>
-                                  PROCEED
-                                </Link> */}
                                 <button 
                                   className={styles.proceedBtn} 
                                   disabled={!this.state.profileLoaded}
@@ -667,11 +738,81 @@ class ChoosePlan extends React.Component {
                               </div>
                             </div>
                             </div>
+                            </>
+                              )
+                            }
+
+                            {/* <div className={styles.priceCalculation}>
+                              <div>
+                                <span className={styles.priceFormula}>
+                                  {this.props.selectedPlan.num_items} 
+                                </span>
+                                <br></br>
+                                <span className={styles.priceSubtext}>
+                                  Meals
+                                </span>
+                              </div>
+                              <div className={styles.priceSpaceSmall} />
+                              <div>
+                                <span className={styles.priceFormula}>
+                                  {this.props.selectedPlan.num_deliveries} 
+                                </span>
+                                <br></br>
+                                <span className={styles.priceSubtext}>
+                                  Deliveries
+                                </span>
+                              </div>
+                              <div className={styles.priceSpaceSmall} />
+                              <div>
+                                <span className={styles.priceFormula}>
+                                  -{this.props.selectedPlan.delivery_discount}%
+                                </span>
+                                <br></br>
+                                <span className={styles.priceSubtext}>
+                                  Discount applied
+                                </span>
+                              </div>
+                              <div className={styles.priceSpaceSmall} />
+
+                            <div style={{display: 'inline-block'}}>
+                              <div className={styles.priceTotal}>
+
+                                <div style={{display: 'inline-flex'}}>
+                                  <div className={styles.priceFormula}>
+                                    {this.props.selectedPlan.num_items}
+                                  </div>
+
+                                  <div className={styles.priceFormula2}>
+                                    meals{" "}for
+                                  </div>
+                                  
+                                  <div className={styles.priceFormula}>
+                                    ${this.calculateTotal()}
+                                  </div>
+                                </div>
+                                
+                              </div>
+                              <div className={styles.perMealDeal}>
+                                That's only ${this.calculateDeal()} per freshly cooked meal
+                              </div>
+                              <div className={styles.proceedWrapper}>
+                                <button 
+                                  className={styles.proceedBtn} 
+                                  disabled={!this.state.profileLoaded}
+                                  onClick={() => {
+                                    this.proceedToPayment()
+                                  }}
+                                >
+                                  PROCEED
+                                </button>
+                              </div>
+                            </div>
+                            </div> */}
 
                           </div>
                           </div>
 
-                        </>
+                        // </div>
                       );
                     } else {
                       return (
@@ -682,10 +823,8 @@ class ChoosePlan extends React.Component {
                     }
                     })()}
                             
-                </div>
-                  
-                </div>
-                
+                </div>  
+              </div>
             </div>   
           </div>
       </>

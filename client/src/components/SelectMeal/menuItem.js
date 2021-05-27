@@ -181,6 +181,7 @@ class MenuItem extends React.Component {
           console.log(menuitem)
         } */}
 
+        {console.log("meal photo url: ", menuitem.meal_photo_URL)}
         <div
           style={{
             backgroundImage: `url(${menuitem.meal_photo_URL})`,
