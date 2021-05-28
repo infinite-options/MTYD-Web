@@ -21,7 +21,8 @@ class MenuItem extends React.Component {
     let customerID = this.props.customer_uid;
 
     if(customerID==null){
-      return alert('signin before like a meal')
+      return this.props.openUnloginPopHeart();
+      // return alert('signin before like a meal')
     }
 
     console.log(e.target.getAttribute('id'))
@@ -182,18 +183,25 @@ class MenuItem extends React.Component {
         } */}
 
         <div
-          style={{
-            backgroundImage: `url(${menuitem.meal_photo_URL})`,
-            backgroundSize: "cover",
-            backgroundPosition:'center'
-            
-            // backgroundColor:"black"
-            
-          }}
           className={styles.menuItem}
         >
-          {/* <div className={styles.menuElements} id={styles.eyeBtn}></div> */}
 
+            <div className={styles.flipImage}>
+              <div className={styles.flipImageFront}>
+                <img 
+                  src = {menuitem.meal_photo_URL}
+                  style={{
+                    width:'184px',
+                    height:'170px',
+                    objectFit:'cover'
+                  }}
+                />
+              </div>
+
+              <div className={styles.flipImageBack}>
+                {menuitem.meal_desc}
+              </div>
+            </div>
 
           <Tooltip title={menuitem.meal_desc}>
             <button className={styles.infoButton}>
@@ -286,8 +294,9 @@ class MenuItem extends React.Component {
               }
 
             </Fragment>
-          ) 
+          {/* )  */}
         </div>
+        
         <p id={styles.menuItemTitle}
         style = {{
           display:'inline-block',

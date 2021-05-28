@@ -41,16 +41,17 @@ export class UnloginSkip extends Component {
             fontWeight:'normal', 
             textAlign: 'left', 
             color:'black',
-            paddingLeft:'20px',
-            paddingRight:'20px',
-            paddingTop:'43px'
+            paddingLeft:'34px',
+            paddingRight:'34px',
+            paddingTop:'43px',
+            userSelect:'none'
 
           }}
           >
 
           Not at home or have other plans? Its easy to 
-          <span style={{color: '#F26522'}}> Skip</span>!
-          a delivery and we’ll automatically extend your subscription.
+          <span style={{color: '#F26522'}}> Skip </span>
+           a delivery and we’ll automatically extend your subscription.
         </p>
 
 

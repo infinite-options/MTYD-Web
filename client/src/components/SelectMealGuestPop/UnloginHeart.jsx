@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
+import heart from '../../images/smallHeart.svg';
 
-export class UnloginSurprise extends Component {
+export class UnloginHeart extends Component {
   constructor(props){
     super();
     this.handleClick= this.handleClick.bind(this)
@@ -8,9 +9,9 @@ export class UnloginSurprise extends Component {
   handleClick () {
     this.props.closeFunction();
   };
+
   render() {
     return (
-
       <div
       style={{
         width:'100%',
@@ -43,65 +44,66 @@ export class UnloginSurprise extends Component {
               paddingRight:'34px',
               paddingTop:'43px',
               userSelect:'none'
-
             }}
             >
-            <span style={{color: '#F26522'}}>Surprise</span> means we’ll give you an assortment of meals on the specific delivery day.
+            Don’t forget your favorite meals!<br/> 
+            Click the <img style={{width:'19px',height:'19px'}}src = {heart}/> to easily find your favorite meals and get reminders.
           </p>
-            <div
-            style={{
-              position:'absolute',
-              top:'144px',
-              left:'32px',
-              width:'320px',
-              height:'50px',
-              fontSize:'18px',
-              textAlign:'center',
-              backgroundColor:'#F26522',
-              color:'white',
-              paddingTop:'10px',
-              borderRadius:'15px'
-            }}
-            onClick = {this.handleClick}
-            >
-                Continue Exploring
-            </div>
 
-            <div
-            style={{
-              position:'absolute',
-              top:'214px',
-              left:'32px',
-              width:'150px',
-              height:'20px',
-              fontSize:'14px',
-              textAlign:'center',
-              borderRadius:'15px'
-              //  fontWeight:'',
-            }}
-            >
-                Already a Customer?
-            </div>
+          <div
+          style={{
+            position:'absolute',
+            top:'144px',
+            left:'32px',
+            width:'320px',
+            height:'50px',
+            fontSize:'18px',
+            textAlign:'center',
+            backgroundColor:'#F26522',
+            color:'white',
+            paddingTop:'10px',
+            borderRadius:'15px'
+          }}
+          onClick = {this.handleClick}
+          >
+              Continue Exploring
+          </div>
 
-            <div
-            style={{
-              position:'absolute',
-              top:'237px',
-              left:'32px',
-              width:'320px',
-              height:'50px',
-              fontSize:'18px',
-              textAlign:'center',
-              backgroundColor:'#F26522',
-              color:'white',
-              paddingTop:'10px',
-              borderRadius:'15px'
-              //  fontWeight:'',
-            }}
-            onClick = {this.props.login}
-            >
-                Login
-            </div>
+          <div
+          style={{
+            position:'absolute',
+            top:'214px',
+            left:'32px',
+            width:'150px',
+            height:'20px',
+            fontSize:'14px',
+            textAlign:'center',
+            borderRadius:'15px'
+            //  fontWeight:'',
+          }}
+          >
+              Already a Customer?
+          </div>
+
+          <div
+          style={{
+            position:'absolute',
+            top:'237px',
+            left:'32px',
+            width:'320px',
+            height:'50px',
+            fontSize:'18px',
+            textAlign:'center',
+            backgroundColor:'#F26522',
+            color:'white',
+            paddingTop:'10px',
+            borderRadius:'15px'
+            //  fontWeight:'',
+          }}
+          onClick = {this.props.login}
+          >
+              Login
+          </div>
 
             <div
             style={{
@@ -138,14 +140,10 @@ export class UnloginSurprise extends Component {
             >
                 Sign up
             </div>
-
-
-
-
         </div>
       </div>
     )
   }
 }
 
-export default UnloginSurprise
+export default UnloginHeart

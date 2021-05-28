@@ -40,9 +40,10 @@ export class UnloginSave extends Component {
             fontWeight:'normal', 
             textAlign: 'left', 
             color:'black',
-            paddingLeft:'20px',
-            paddingRight:'20px',
-            paddingTop:'43px'
+            paddingLeft:'34px',
+            paddingRight:'34px',
+            paddingTop:'43px',
+            userSelect:'none'
 
           }}
           >

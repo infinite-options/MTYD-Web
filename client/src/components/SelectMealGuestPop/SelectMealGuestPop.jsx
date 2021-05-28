@@ -44,13 +44,13 @@ export class SelectMealGuestPop extends Component {
             fontWeight:'normal', 
             textAlign: 'left', 
             color:'black',
-            paddingLeft:'20px',
-            paddingRight:'20px',
-            paddingTop:'43px'
-
+            paddingLeft:'30px',
+            paddingRight:'30px',
+            paddingTop:'43px',
+            userSelect:'none'
           }}
           >Looks like you’re enjoying 
-          <span style={{color: '#F26522'}}>MealsFor.me</span>!
+          <span style={{color: '#F26522'}}> MealsFor.me</span>!
           <br/> 
           The <img style={{width:'30px',height:'26px'}}src = {negativeSign}/> <img style={{width:'30px',height:'18px'}}src ={positiveSign}/> buttons 
           help you add / <br/>remove meals from your meal plan.
