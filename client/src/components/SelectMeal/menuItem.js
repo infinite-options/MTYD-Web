@@ -6,6 +6,7 @@ import fullHeart from  './images/fullHeart.svg'
 import info from  './images/info.svg'
 import {API_URL} from "../../reducers/constants";
 import axios from "axios";
+import { convertToObject } from "typescript";
 
 class MenuItem extends React.Component {
 
@@ -13,9 +14,50 @@ class MenuItem extends React.Component {
     super();
     this.state={
       favList:[],
+      flipImageSide:'styles.flipImageFront',
+      flipWordSide:'styles.flipImageBack',
+
+      imageFront:'inline',
+      wordBack:'none',
     }
     this.changeHeart = this.changeHeart.bind(this)
+    this.flipCard = this.flipCard.bind(this)
+    this.switchImgAndWords = this.switchImgAndWords.bind(this)
   }
+
+  flipCard(){
+    // alert('clicked')
+    if(this.state.flipImageSide=='styles.flipImageFront'){
+      this.setState({
+        flipImageSide:'styles.flipImageBack',
+        flipWordSide:'styles.flipImageFront'
+      })
+    }else{
+      this.setState({
+        flipImageSide:'styles.flipImageFront',
+        flipWordSide:'styles.flipImageBack'
+      })
+    }
+  }
+
+  switchImgAndWords(meal_id){
+    // console.log(meal_id)
+
+    var frontSide = document.getElementById(meal_id+'front');
+    var backSide = document.getElementById(meal_id+'back');
+
+    var frontdisplay = frontSide.style.display;
+
+    if(frontdisplay=='inline'){
+      frontSide.style.display = 'none';
+      backSide.style.display = 'block';
+    }else{
+      frontSide.style.display = 'inline';
+      backSide.style.display = 'none';
+    }
+  }
+
+
 
   changeHeart(e){
     let customerID = this.props.customer_uid;
@@ -129,6 +171,12 @@ class MenuItem extends React.Component {
       console.log(this.props.customer_uid)
       this.favoriteGet(this.props.customer_uid);
     }
+
+    // var flipImage = document.querySelector('.flipImage');
+    // flipImage.addEventListener( 'click', function() {
+    //   // card.classList.toggle('is-flipped');
+    //   alert('clicked')
+    // });
   }
 
   menuItemFilter = () => {
@@ -173,7 +221,7 @@ class MenuItem extends React.Component {
       <div
         key={index}
         className={styles.menuitemIndividual}
-        id = {menuitem.menu_meal_id}
+        // id = {menuitem.menu_meal_id}
         style={{
           backgroundColor:colorDict[menuitem.menu_meal_id]
         }}
@@ -185,8 +233,9 @@ class MenuItem extends React.Component {
         <div
           className={styles.menuItem}
         >
-
-            <div className={styles.flipImage}>
+            {/* <div className={styles.flipImage}
+            onClick={this.flipCard}
+            >
               <div className={styles.flipImageFront}>
                 <img 
                   src = {menuitem.meal_photo_URL}
@@ -201,10 +250,41 @@ class MenuItem extends React.Component {
               <div className={styles.flipImageBack}>
                 {menuitem.meal_desc}
               </div>
-            </div>
+            </div> */}
 
-          <Tooltip title={menuitem.meal_desc}>
-            <button className={styles.infoButton}>
+              <div 
+                id={menuitem.menu_meal_id+'front'}
+                style={{
+                  // display:'inline'
+                  display:this.state.imageFront
+                }}
+              >
+                <img 
+                  src = {menuitem.meal_photo_URL}
+                  style={{
+                    width:'184px',
+                    height:'170px',
+                    objectFit:'cover'
+                  }}
+                />
+              </div>
+
+              <div 
+              id={menuitem.menu_meal_id+'back'}
+              style={{
+                display:this.state.wordBack,
+                paddingTop:'30px'
+              }}
+              >
+                {menuitem.meal_desc}
+              </div>
+
+
+
+          {/* <Tooltip title={menuitem.meal_desc}> */}
+            <button className={styles.infoButton}
+              onClick = {()=>this.switchImgAndWords(menuitem.menu_meal_id)}
+            >
               <img src={info}
                     style={{
                       height:30,
@@ -215,7 +295,7 @@ class MenuItem extends React.Component {
                     }}
               ></img>
             </button>
-          </Tooltip>
+          {/* </Tooltip> */}
 
           <button 
           onClick={this.changeHeart}
