@@ -43,6 +43,8 @@ const MealPlan = props => {
 
   const [buttonClicked, setButtonClicked] = useState(false);
 
+  const [subHistory, setSubHistory] = useState([]);
+
   //check for logged in user
   //let customerId = null;
   if (
@@ -113,7 +115,115 @@ const MealPlan = props => {
       console.log("(init) id before mswb: ", parsedPlan.purchase_id);
 
       // Fetch past billing info for each plan
-      axios
+      axios.get(API_URL + 'subscription_history/' + customerId)
+        .then((res) => {
+          console.log(" ");
+          console.log("(sh) res: ", res);
+
+          parsedPlan["history"] = res.data.result;
+
+          dropdownStatusArray = dropdownStatusArray.concat(res.data.result);
+
+          // Set default plan
+          if (index === 0) {
+            console.log("(mswb) setting default plan to: ", parsedPlan);
+            setCurrentPlan(parsedPlan);
+            setDefault(true);
+          }
+
+          // Push buttons into top dropdown menu
+          tempDropdownButtons.push(
+            <div 
+              key={index + ' : ' + plan.purchase_id}
+              onClick={() => {
+                console.log("pressed: ", plan.purchase_id);
+                setCurrentPlan(parsedPlan);
+                toggleShowDropdown(false);
+              }}
+              style={{
+                borderRadius: '10px',
+                backgroundColor: 'white',
+                height: '32px',
+                width: '96%',
+                paddingLeft: '10px',
+                marginLeft: '2%',
+                marginTop: '10px',
+                textOverflow: 'ellipsis',
+                display: 'block',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                cursor: 'pointer'
+              }}
+            >
+              {parsedPlan.meals} Meals, {parsedPlan.deliveries} Deliveries : {parsedPlan.id}
+            </div>
+          );
+
+          plansFetched++;
+
+          console.log("(sh) plansFetched: ", plansFetched);
+
+          // Once all plan information has been fetched, create dropdown menu
+          if(plansFetched === props.subscribedPlans.length) {
+            console.log("(mswb) all plans fetched!");
+
+            dropdownStatusArray.forEach((e) => {
+              e.display = false
+            });
+
+            console.log("(mswb) dropdown status array: ", dropdownStatusArray);
+
+            setHistoryDropdowns(dropdownStatusArray);
+
+            // Add space to top of dropdown menu buttons
+            let dropdownTopMargin = [
+              <div
+                key={'space'}
+                style={{
+                  height: '25px',
+                  backgroundColor: '#f26522',
+                }}
+              />
+            ];
+
+            tempDropdownButtons = dropdownTopMargin.concat(tempDropdownButtons);
+
+            // Set dropdown menu buttons
+            setDropdownButtons(
+              <>
+                <div
+                  style={{
+                    height: '20px'
+                  }}
+                />
+                <div
+                  style={{
+                    backgroundColor: '#f26522',
+                    width: '40%',
+                    minWidth: '300px',
+                    height: 40 + (plansFetched * 42),
+                    position: 'absolute',
+                    zIndex: '1',
+                    boxShadow: '0px 5px 10px gray',
+                    borderRadius: '15px'
+                  }}
+                >
+                  {tempDropdownButtons}
+                </div>
+              </>
+            );
+          }
+
+        })
+        .catch((err) => {
+          if(err.response) {
+            console.log(err.response);
+          }
+          console.log(err);
+        });
+
+
+      /*axios
         .get(API_URL + 'meals_selected_with_billing', { 
           params: { 
             customer_uid: customerId,
@@ -227,7 +337,7 @@ const MealPlan = props => {
           // Everything is loaded, so render
           // loadInfo(true);
 
-        });
+        });*/
 
     });
 
@@ -276,6 +386,7 @@ const MealPlan = props => {
   }
 
   const showMealsForDelivery = (totalMeals) => {
+    console.log("(showMealsForDelivery) total meals: ", totalMeals);
     let mealsForDelivery = [];
     for(var i = 0; i < totalMeals; i++) {
       mealsForDelivery.push(
@@ -419,12 +530,35 @@ const MealPlan = props => {
   const showHistory = () => {
     console.log("(showHistory) current plan id: ", currentPlan.purchase_id);
     console.log("(showHistory) current plan data: ", currentPlan);
+    console.log("(showHistory) current plan history: ", currentPlan.history);
 
     let historyTabs = [];
 
     // let displayDeliveries = false;
 
-    currentPlan.history.forEach((sel) => {
+    // tempDropdownButtons.sort(function(a,b) {
+    //   // console.log("a: ", a.key.substring(0,a.key.indexOf(' ')));
+    //   // console.log("b: ", b.key.substring(0,b.key.indexOf(' ')));
+    //   return (
+    //     parseInt(a.key.substring(0,a.key.indexOf(' '))) - 
+    //     parseInt(b.key.substring(0,b.key.indexOf(' ')))
+    //   );
+    // });
+
+    // Sorted selections, with same dates grouped together
+    let sortedSelections = currentPlan.history.sort(function(sel1,sel2) {
+      console.log("sel1: ", sel1);
+      console.log("sel2: ", sel2);
+      console.log("sel1 - sel2 result: ", Date.parse(sel1.sel_menu_date) - Date.parse(sel2.sel_menu_date));
+      return (
+        Date.parse(sel1.sel_menu_date) - Date.parse(sel2.sel_menu_date)
+      )
+    });
+
+    console.log("sorted selections: ", sortedSelections);
+
+    // currentPlan.history.forEach((sel) => {
+    sortedSelections.forEach((sel) => {
 
       // let displayDeliveries = false;
 
@@ -443,6 +577,7 @@ const MealPlan = props => {
       //   display_info: false
       // });
 
+      if(sel.sel_menu_date !== null) {
       historyTabs.push(
         <div 
           key={sel.menu_date}
@@ -453,7 +588,7 @@ const MealPlan = props => {
               Next Billing Date
             </div>
             <div className={styles.orangeHeaderRight}>
-              {sel.menu_date}
+              {sel.sel_menu_date}
             </div>
           </div>
 
@@ -541,7 +676,9 @@ const MealPlan = props => {
 
         </div>
       );
+      }
     });
+
     /*let historyTab = (
       <div 
         key={sel.menu_date}
