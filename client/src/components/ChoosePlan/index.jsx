@@ -634,24 +634,44 @@ class ChoosePlan extends React.Component {
                     {
                       return (
                         // <div>
-                        <div style={{display: 'flex', width: '100%', border: 'inset'}}>
-                          <div style={{display: 'inline-block'}}>
-
+                        <div 
+                          style={{
+                            display: 'flex', 
+                            width: '100%', 
+                            border: 'inset'
+                          }}
+                        >
+                          {/* <div 
+                            style={{
+                              display: 'inline-block', 
+                              border: 'solid', 
+                              borderColor: 'red',
+                              width: '100%',
+                              textAlign: 'center'
+                            }}
+                          > */}
                             {
                               this.state.windowWidth < 1100 ? (
-                                <div style={{ width: '100%', textAlign: 'center' }}>
-                                  {/* <div style={{ textAlign: 'center' }}> */}
-                                    <div>
-                                      <span className={styles.priceFormula}>
-                                        {this.props.selectedPlan.num_items} 
-                                      </span>
-                                      <br></br>
-                                      <span className={styles.priceSubtext}>
-                                        Meals
-                                      </span>
-                                    </div>
-                                  {/* </div> */}
+                                <>
+                                <div 
+                                  style={{
+                                    display: 'inline-block', 
+                                    border: 'solid', 
+                                    borderColor: 'red',
+                                    width: '100%',
+                                    textAlign: 'center'
+                                  }}
+                                >
                                   <div>
+                                    <span className={styles.priceFormula}>
+                                      {this.props.selectedPlan.num_items} 
+                                    </span>
+                                    <br></br>
+                                    <span className={styles.priceSubtext}>
+                                      Meals
+                                    </span>
+                                  </div>
+                                  <div style={{marginTop: '30px'}}>
                                     <span className={styles.priceFormula}>
                                       {this.props.selectedPlan.num_deliveries} 
                                     </span>
@@ -660,7 +680,7 @@ class ChoosePlan extends React.Component {
                                       Deliveries
                                     </span>
                                   </div>
-                                  <div style={{ width: '100%', border: 'dashed'}}>
+                                  <div style={{marginTop: '30px'}}>
                                     <span className={styles.priceFormula}>
                                       -{this.props.selectedPlan.delivery_discount}%
                                     </span>
@@ -669,9 +689,61 @@ class ChoosePlan extends React.Component {
                                       Discount applied
                                     </span>
                                   </div>
-                                </div>
+                                  {/* </div>
+                                  <div 
+                                    style={{
+                                      display: 'inline-block', 
+                                      marginTop: '50px', 
+                                      marginBottom: '50px',
+                                      border: 'double',
+                                      float: 'center'
+                                    }}
+                                  > */}
+                                    <div className={styles.priceTotalNarrow}>
+
+                                      {/* <div style={{display: 'inline-flex'}}> */}
+                                        <div className={styles.priceFormula}>
+                                          {this.props.selectedPlan.num_items}
+                                        </div>
+
+                                        <div className={styles.priceFormula2}>
+                                          meals{" "}for
+                                        </div>
+
+                                        <br />
+                                        
+                                        <div className={styles.priceFormula}>
+                                          ${this.calculateTotal()}
+                                        </div>
+                                      {/* </div> */}
+                                      
+                                    </div>
+                                    <div className={styles.perMealDeal}>
+                                      That's only ${this.calculateDeal()} per freshly cooked meal
+                                    </div>
+                                    <div className={styles.proceedWrapper}>
+                                      <button 
+                                        className={styles.proceedBtn} 
+                                        disabled={!this.state.profileLoaded}
+                                        onClick={() => {
+                                          this.proceedToPayment()
+                                        }}
+                                      >
+                                        PROCEED
+                                      </button>
+                                    </div>
+                                  </div>
+                                </>
                               ) : (
-                                <>
+                                <div 
+                                  style={{
+                                    display: 'inline-block', 
+                                    border: 'solid', 
+                                    borderColor: 'green',
+                                    width: '100%',
+                                    textAlign: 'center'
+                                  }}
+                                >
                                 <div className={styles.priceCalculation}>
                               <div>
                                 <span className={styles.priceFormula}>
@@ -704,41 +776,42 @@ class ChoosePlan extends React.Component {
                               </div>
                               <div className={styles.priceSpaceSmall} />
 
-                            <div style={{display: 'inline-block'}}>
-                              <div className={styles.priceTotal}>
+                              <div style={{display: 'inline-block'}}>
+                                <div className={styles.priceTotal}>
 
-                                <div style={{display: 'inline-flex'}}>
-                                  <div className={styles.priceFormula}>
-                                    {this.props.selectedPlan.num_items}
-                                  </div>
+                                  <div style={{display: 'inline-flex'}}>
+                                    <div className={styles.priceFormula}>
+                                      {this.props.selectedPlan.num_items}
+                                    </div>
 
-                                  <div className={styles.priceFormula2}>
-                                    meals{" "}for
+                                    <div className={styles.priceFormula2}>
+                                      meals{" "}for
+                                    </div>
+                                    
+                                    <div className={styles.priceFormula}>
+                                      ${this.calculateTotal()}
+                                    </div>
                                   </div>
                                   
-                                  <div className={styles.priceFormula}>
-                                    ${this.calculateTotal()}
-                                  </div>
                                 </div>
-                                
+                                <div className={styles.perMealDeal}>
+                                  That's only ${this.calculateDeal()} per freshly cooked meal
+                                </div>
+                                <div className={styles.proceedWrapper}>
+                                  <button 
+                                    className={styles.proceedBtn} 
+                                    disabled={!this.state.profileLoaded}
+                                    onClick={() => {
+                                      this.proceedToPayment()
+                                    }}
+                                  >
+                                    PROCEED
+                                  </button>
+                                </div>
                               </div>
-                              <div className={styles.perMealDeal}>
-                                That's only ${this.calculateDeal()} per freshly cooked meal
-                              </div>
-                              <div className={styles.proceedWrapper}>
-                                <button 
-                                  className={styles.proceedBtn} 
-                                  disabled={!this.state.profileLoaded}
-                                  onClick={() => {
-                                    this.proceedToPayment()
-                                  }}
-                                >
-                                  PROCEED
-                                </button>
-                              </div>
+                              
                             </div>
                             </div>
-                            </>
                               )
                             }
 
@@ -809,7 +882,9 @@ class ChoosePlan extends React.Component {
                             </div>
                             </div> */}
 
-                          </div>
+                          {/* </div> */}
+
+                          
                           </div>
 
                         // </div>

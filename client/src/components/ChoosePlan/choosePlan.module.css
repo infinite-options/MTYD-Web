@@ -39,8 +39,14 @@
   font-size: 20px;
 }
 
-.menuSection {
+/* .menuSection {
   margin: 50px 0px 50px 0px;
+  border: dashed;
+} */
+.menuSection {
+  margin-left: 8%;
+  margin-right: 8%;
+  margin-bottom: 50px;
   border: dashed;
 }
 
@@ -77,6 +83,10 @@
   text-align: center;
   margin: 0px 30px 0px 30px;
   /*border: dotted;*/
+  text-overflow: ellipsis;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .priceFormula2 {
@@ -95,6 +105,11 @@
   border-radius: 25px;
   border-color: #ff6505;
   height: 120px;
+}
+.priceTotalNarrow {
+  border: solid;
+  border-radius: 25px;
+  border-color: #ff6505;
 }
 
 /*.priceWaitMessage {
@@ -136,7 +151,7 @@
 
 .box {
   /* padding: 20px; */
-  margin: 0px 100px;
+  /* margin: 0px 100px; */
   text-align: left;
   /*border: solid;
   border-color: red;*/
