@@ -541,7 +541,7 @@ class ChoosePlan extends React.Component {
       <>
 
         {/* For debugging window size */}
-        <span 
+        {/* <span 
           style={{
             zIndex: '101',
             position: 'fixed',
@@ -555,7 +555,7 @@ class ChoosePlan extends React.Component {
           Height: {this.state.windowHeight}px
           <br />
           Width: {this.state.windowWidth}px
-        </span>
+        </span> */}
 
           <WebNavBar 
             poplogin = {this.togglePopLogin}
@@ -638,7 +638,7 @@ class ChoosePlan extends React.Component {
                           style={{
                             display: 'flex', 
                             width: '100%', 
-                            border: 'inset'
+                            // border: 'inset'
                           }}
                         >
                           {/* <div 
@@ -656,8 +656,8 @@ class ChoosePlan extends React.Component {
                                 <div 
                                   style={{
                                     display: 'inline-block', 
-                                    border: 'solid', 
-                                    borderColor: 'red',
+                                    // border: 'solid', 
+                                    // borderColor: 'red',
                                     width: '100%',
                                     textAlign: 'center',
                                     marginBottom: '50px'
@@ -687,6 +687,14 @@ class ChoosePlan extends React.Component {
                                       Discount applied
                                     </span>
                                   </div>
+                                  <div 
+                                    style={{
+                                      display: 'flex',
+                                      width: '100%', 
+                                      // border: 'dashed',
+                                      justifyContent: 'center'
+                                    }}
+                                  >
                                     <div className={styles.priceTotalNarrow}>
 
                                       {/* <div style={{display: 'inline-flex'}}> */}
@@ -705,6 +713,7 @@ class ChoosePlan extends React.Component {
                                         </div>
                                       {/* </div> */}
                                       
+                                    </div>
                                     </div>
                                     <div className={styles.perMealDeal}>
                                       That's only ${this.calculateDeal()} per freshly cooked meal
@@ -726,8 +735,8 @@ class ChoosePlan extends React.Component {
                                 <div 
                                   style={{
                                     display: 'inline-block', 
-                                    border: 'solid', 
-                                    borderColor: 'green',
+                                    // border: 'solid', 
+                                    // borderColor: 'green',
                                     width: '100%',
                                     textAlign: 'center'
                                   }}

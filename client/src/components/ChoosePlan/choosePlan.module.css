@@ -44,7 +44,7 @@
   font-size: 20px;
   margin-left: 8%;
   margin-right: 8%;
-  border: solid;
+  /* border: solid; */
   margin-top: 50px;
   margin-bottom: 50px;
 }
@@ -64,7 +64,7 @@
   margin-left: 8%;
   margin-right: 8%;
   margin-bottom: 50px;
-  border: dashed;
+  /* border: dashed; */
 }
 
 .priceCalculation {
@@ -75,7 +75,7 @@
   text-align: center;
   margin-top: 150px;
   padding-bottom: 50px;
-  border: dashed;
+  /* border: dashed; */
 }
 
 /*.perMealDeal {
@@ -99,7 +99,7 @@
   font-size: 70px;
   text-align: center;
   margin: 0px 30px 0px 30px;
-  border: dotted;
+  /* border: dotted; */
   text-overflow: ellipsis;
   display: block;
   white-space: nowrap;
@@ -110,7 +110,7 @@
   /*font-weight: bold;*/
   font-size: 25px;
   text-align: center;
-  border: dashed;
+  /* border: dashed; */
   white-space: nowrap;
   /*padding-bottom: 50px;*/
   margin-top: 35px;
@@ -119,7 +119,7 @@
   /*font-weight: bold;*/
   font-size: 25px;
   text-align: center;
-  border: dashed;
+  /* border: dashed; */
   white-space: nowrap;
   /*padding-bottom: 50px;*/
 }
@@ -135,7 +135,8 @@
   border: solid;
   border-radius: 25px;
   border-color: #ff6505;
-  margin-top: 30px;
+  margin-top: 50px;
+  width: 400px;
 }
 
 /*.priceWaitMessage {
@@ -172,7 +173,7 @@
 .priceSubtext {
   font-size: 25px;
   text-align: center;
-  border: solid;
+  /* border: solid; */
 }
 
 .box {
