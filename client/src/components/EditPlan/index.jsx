@@ -508,7 +508,7 @@ class EditPlan extends React.Component {
       console.log("PNDA info before parse: ", sub);
 
       let parsedDiscount = discountItem[0].discount;
-      let parsedId = sub.purchase_id.substring(sub.purchase_id.indexOf("-")+1,sub.purchase_id.length)
+      let parsedId = sub.purchase_id.substring(sub.purchase_id.indexOf("-")+1,sub.purchase_id.length);
       // let parsedDeliveryDate = "TBD";
       // let parsedSelection = "N/A";
       let parsedDeliveryDate = sub.next_delivery.substring(0,sub.next_delivery.indexOf(" "));

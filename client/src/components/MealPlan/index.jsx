@@ -67,16 +67,30 @@ const MealPlan = props => {
     } else {
       try {
         props.fetchProfileInformation(customerId);
-        // props.fetchPlans();
+        
         console.log("useEffect customerId: " + customerId);
-        props.fetchSubscribed(customerId)
-          .then(ids => {
-            console.log("(mount) useEffect: " + ids);
-            // props.fetchOrderHistory(ids)
-            //   .then(() => {
-            //     console.log("updating active/cancelled plans...");
-            //   });
+        // props.fetchSubscribed(customerId)
+        //   .then(ids => {
+        //     console.log("(mount) useEffect: " + ids);
+        //     // props.fetchOrderHistory(ids)
+        //     //   .then(() => {
+        //     //     console.log("updating active/cancelled plans...");
+        //     //   });
+        //   });
+
+        axios.get(API_URL + 'subscription_history/' + customerId)
+          .then((res) => {
+            console.log("(sh) res: ", res.data.result);
+
+            setSubHistory(res.data.result);
+          })
+          .catch((err) => {
+            if(err.response) {
+              console.log(err.response);
+            }
+            console.log(err);
           });
+        
       } catch (err) {
         console.log(err);
       }
@@ -97,25 +111,43 @@ const MealPlan = props => {
     let dropdownStatusArray = [];
 
     // let tempSubbedPlans = [];
+    var defaultSub = null;
 
-    props.subscribedPlans.forEach((plan, index) => {
+    subHistory.forEach((sub) => {
+      console.log("(init) sub: ", sub);
+      console.log("(init) current plan: ", currentPlan);
+      if(defaultSub === null) {
+        console.log("(init) setting current plan: ", sub.purchase_id);
+        // setCurrentPlan(sub.purchase_id);
+        defaultSub = sub.purchase_id;
+      }
+    });
+
+    setCurrentPlan(defaultSub);
+
+    console.log("(init) current plan set: ", currentPlan);
+
+    // props.subscribedPlans.forEach((plan, index) => {
 
       // Parse meals, deliveries, and id for each plan
-      let parsedItems = JSON.parse(plan.items)[0];
-      let parsedMeals = parsedItems.name.substring(0,parsedItems.name.indexOf(" "));
-      let parsedDeliveries = parsedItems.qty;
-      let parsedId = plan.purchase_id.substring(plan.purchase_id.indexOf("-")+1,plan.purchase_id.length);
+      // let parsedItems = JSON.parse(plan.items)[0];
+      // let parsedMeals = parsedItems.name.substring(0,parsedItems.name.indexOf(" "));
+      // let parsedDeliveries = parsedItems.qty;
+      // let parsedId = plan.purchase_id.substring(plan.purchase_id.indexOf("-")+1,plan.purchase_id.length);
 
-      let parsedPlan = {...plan}
+      // let parsedPlan = {...plan}
 
-      parsedPlan['meals'] = parsedMeals;
-      parsedPlan['deliveries'] = parsedDeliveries;
-      parsedPlan['id'] = parsedId;
+      // parsedPlan['meals'] = parsedMeals;
+      // parsedPlan['deliveries'] = parsedDeliveries;
+      // parsedPlan['id'] = parsedId;
 
-      console.log("(init) id before mswb: ", parsedPlan.purchase_id);
+      // console.log("(init) id before mswb: ", parsedPlan.purchase_id);
+
+      // console.log("(init) parsed plan: ", parsedPlan);
+      // setCurrentPlan(parsedPlan);
 
       // Fetch past billing info for each plan
-      axios.get(API_URL + 'subscription_history/' + customerId)
+      /*axios.get(API_URL + 'subscription_history/' + customerId)
         .then((res) => {
           console.log(" ");
           console.log("(sh) res: ", res);
@@ -220,132 +252,11 @@ const MealPlan = props => {
             console.log(err.response);
           }
           console.log(err);
-        });
-
-
-      /*axios
-        .get(API_URL + 'meals_selected_with_billing', { 
-          params: { 
-            customer_uid: customerId,
-            purchase_id: plan.purchase_id
-          } 
-        })
-        .then((res) => {
-          console.log(' ');
-          console.log("(mswb) res: ", res);
-          // console.log("(mswb) parsedPlan: ", parsedPlan);
-
-          parsedPlan["history"] = res.data.result;
-
-          dropdownStatusArray = dropdownStatusArray.concat(res.data.result);
-
-          // Set default plan
-          if (index === 0) {
-            console.log("(mswb) setting default plan to: ", parsedPlan);
-            setCurrentPlan(parsedPlan);
-            setDefault(true);
-          }
-
-          // Save plans with pertinent info added
-          // tempSubbedPlans.push(parsedPlan);
-
-          // Push buttons into top dropdown menu
-          tempDropdownButtons.push(
-            <div 
-              key={index + ' : ' + plan.purchase_id}
-              onClick={() => {
-                console.log("pressed: ", plan.purchase_id);
-                setCurrentPlan(parsedPlan);
-                toggleShowDropdown(false);
-              }}
-              style={{
-                borderRadius: '10px',
-                backgroundColor: 'white',
-                height: '32px',
-                width: '96%',
-                paddingLeft: '10px',
-                marginLeft: '2%',
-                marginTop: '10px',
-                textOverflow: 'ellipsis',
-                display: 'block',
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                cursor: 'pointer'
-              }}
-            >
-              {parsedPlan.meals} Meals, {parsedPlan.deliveries} Deliveries : {parsedPlan.id}
-            </div>
-          );
-
-          plansFetched++;
-
-          console.log("(mswb) plansFetched: ", plansFetched);
-
-          // Once all plan information has been fetched, create dropdown menu
-          if(plansFetched === props.subscribedPlans.length) {
-            console.log("(mswb) all plans fetched!");
-
-            dropdownStatusArray.forEach((e) => {
-              e.display = false
-            });
-
-            console.log("(mswb) dropdown status array: ", dropdownStatusArray);
-
-            setHistoryDropdowns(dropdownStatusArray);
-
-            // Add space to top of dropdown menu buttons
-            let dropdownTopMargin = [
-              <div
-                key={'space'}
-                style={{
-                  height: '25px',
-                  backgroundColor: '#f26522',
-                }}
-              />
-            ];
-
-            tempDropdownButtons = dropdownTopMargin.concat(tempDropdownButtons);
-
-            // Set dropdown menu buttons
-            setDropdownButtons(
-              <>
-                <div
-                  style={{
-                    height: '20px'
-                  }}
-                />
-                <div
-                  style={{
-                    backgroundColor: '#f26522',
-                    width: '40%',
-                    minWidth: '300px',
-                    height: 40 + (plansFetched * 42),
-                    position: 'absolute',
-                    zIndex: '1',
-                    boxShadow: '0px 5px 10px gray',
-                    borderRadius: '15px'
-                  }}
-                >
-                  {tempDropdownButtons}
-                </div>
-              </>
-            );
-          }
-
-          // updateSubbedPlans(tempSubbedPlans);
-
-          // Everything is loaded, so render
-          // loadInfo(true);
-
         });*/
 
-    });
+    // });
 
-    // console.log("(init) subbed plans: ", tempSubbedPlans);
-
-    // updateSubbedPlans(tempSubbedPlans)
-
-  }, [props.subscribedPlans]);
+  }, [subHistory]);
 
   const getDisplayStatus = (date, id) => {
     console.log("(getDisplayStatus) history dropdown statuses before: ", historyDropdowns);

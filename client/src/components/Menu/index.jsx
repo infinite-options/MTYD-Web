@@ -51,8 +51,17 @@ const Menu = props => {
                       id={styles.mealPlanPicker}
                     >
                       {props.meals.map(mealItem => {
-                        let meal = JSON.parse(mealItem.items)[0];
-                        let mealName = meal.name;
+                        // let meal = JSON.parse(mealItem.items)[0];
+                        // let mealName = meal.name;
+
+                        let parsedItems = JSON.parse(mealItem.items)[0];
+                        let parsedMeals = parsedItems.name.substring(0,parsedItems.name.indexOf(" "));
+                        let parsedDeliveries = parsedItems.qty;
+
+                        let parsedId = mealItem.purchase_uid.substring(
+                          mealItem.purchase_uid.indexOf("-")+1,
+                          mealItem.purchase_uid.length
+                        );
                         // console.log(mealItem);
                         return (
                           <option
@@ -60,7 +69,12 @@ const Menu = props => {
                             // modifiedValue={mealItem.purchase_id}
                             key={mealItem.purchase_uid}
                           >
-                            {mealName.toUpperCase()}
+                            {/* {mealName.toUpperCase()} */}
+                            {
+                              parsedMeals + " Meals, " + 
+                              parsedDeliveries + " Deliveries : " + 
+                              parsedId
+                            }
                           </option>
                         );
                       })}

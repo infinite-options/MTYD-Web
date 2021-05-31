@@ -185,14 +185,14 @@ class Header extends Component {
 
         {/* <SelectMealGuestPop message = 'message here'/> */}
 
-        
+
         <MenuBar show={true} 
         message={message} 
         login = {login} 
         subscribedPlans = {this.props.subscribedPlans} 
         mealsOnChange={this.props.mealsOnChange}
         meals={meals}
-        />
+        />  
 
         <div class={styles.divider}/>
 
