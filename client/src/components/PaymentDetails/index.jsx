@@ -92,9 +92,17 @@ class PaymentDetails extends React.Component {
       loadingMap: true,
       recalculatingPrice: false,
       stripePromise: null,
-      createGuestErrorCode: -1
+      createGuestErrorCode: -1,
+      windowHeight: undefined,
+      windowWidth: undefined
     };
   }
+
+  handleResize = () => this.setState({
+    windowHeight: window.innerHeight,
+    windowWidth: window.innerWidth
+  });
+
   togglePopLogin = () => {
     this.setState({
      login_seen: !this.state.login_seen,
@@ -123,6 +131,9 @@ class PaymentDetails extends React.Component {
     console.log("(mount) props: ", this.props);
     console.log("(mount) selectedPlan: ", this.props.selectedPlan);
     console.log("(mount) email: ", this.props.email);
+
+    this.handleResize();
+    window.addEventListener('resize', this.handleResize);
 
     document.getElementById("locality").value = this.props.city;
     document.getElementById("state").value = this.props.state;
@@ -881,7 +892,25 @@ class PaymentDetails extends React.Component {
       loggedInByPassword = true;
     }
     return (
-      <div>
+      <>
+
+        {/* For debugging window size */}
+        {/* <span 
+          style={{
+            zIndex: '101',
+            position: 'fixed',
+            backgroundColor: 'white',
+            border: 'solid',
+            borderWidth: '1px',
+            borderColor: 'red',
+            width: '150px'
+          }}
+        >
+          Height: {this.state.windowHeight}px
+          <br />
+          Width: {this.state.windowWidth}px
+        </span> */}
+
         <WebNavBar 
           poplogin = {this.togglePopLogin}
           popSignup = {this.togglePopSignup}
@@ -1004,18 +1033,81 @@ class PaymentDetails extends React.Component {
           }
         })()} 
 
-        <div style={{display: 'flex'}}>
+        {/* <div style={{display: 'flex'}}>
           <div className={styles.sectionHeaderLeft}>
             Delivery Details
           </div>
           <div className={styles.sectionHeaderRight}>
             Payment Summary
           </div>
-        </div>
+        </div> */}
 
-        <div className={styles.containerSplit}>
+        {this.state.windowWidth < 800 
+          ? (
+              <div className={styles.sectionHeader}>
+                Delivery Details
+              </div>
+          ) : (
+            <div style={{display: 'flex'}}>
+              <div className={styles.sectionHeaderLeft}>
+                Delivery Details
+              </div>
+              <div className={styles.sectionHeaderRight}>
+                Payment Summary
+              </div>
+            </div>
+          )
+        }
 
-          <div style = {{display: 'inline-block', marginLeft: '8%', width: '40%', marginRight: '4%'}}>
+        {/* <div className={styles.containerSplit}> */}
+
+        <div 
+          className={
+            this.state.windowWidth < 800 
+              ? styles.containerNarrow
+              : styles.containerSplit
+          }
+        >
+
+          {/* <div style = {{display: 'inline-block', marginLeft: '8%', width: '40%', marginRight: '4%'}}> */}
+
+          <div
+            style = {
+              this.state.windowWidth < 800
+                ? ({
+                    display: 'inline-block', 
+                    marginLeft: '8%', 
+                    width: '84%', 
+                    marginRight: '8%',
+                    // border: 'solid'
+                  })
+                : ({
+                    display: 'inline-block', 
+                    marginLeft: '8%', 
+                    width: '40%', 
+                    marginRight: '4%',
+                    // border: 'solid'
+                  })
+            }
+          >
+
+          {/* {this.state.windowWidth < 800 
+          ? (
+              <div className={styles.sectionHeader}>
+                Delivery Details
+              </div>
+          ) : (
+            <div style={{display: 'flex'}}>
+              <div className={styles.sectionHeaderLeft}>
+                Delivery Details
+              </div>
+              <div className={styles.sectionHeaderRight}>
+                Payment Summary
+              </div>
+            </div>
+          )
+        } */}
+        
             <div style={{display: 'flex'}}>
               <input
                 type='text'
@@ -1205,8 +1297,44 @@ class PaymentDetails extends React.Component {
 
           </div>
 
-          <div style={{display: 'inline-block', width:'48%'}}>
-            <div style={{width: '84%', marginLeft: '6%'}}>
+          {this.state.windowWidth < 800 
+            ? (
+                <div className={styles.sectionHeader}>
+                  Payment Summary
+                </div>
+            ) : (
+              null
+            )
+          }
+
+          {/* <div style={{display: 'inline-block', width:'48%', border: 'solid'}}> */}
+
+          <div 
+            style={
+              this.state.windowWidth < 800 
+                ? ({
+                    display: 'inline-block', 
+                    width:'84%', 
+                    // border: 'solid'
+                  })
+                : ({
+                    display: 'inline-block', 
+                    width:'48%', 
+                    // border: 'solid'
+                  })
+            }
+          >
+
+            {/* <div style={{width: '84%', marginLeft: '6%'}}> */}
+
+            <div 
+              style={
+                this.state.windowWidth < 800 
+                  ? ({width: '100%'})
+                  : ({width: '84%', marginLeft: '6%'})
+              }
+            >
+
               <div
                 style={{
                   display: (
@@ -1214,7 +1342,8 @@ class PaymentDetails extends React.Component {
                     this.state.fetchingFees
                   ) ?'block':'none',
                   fontWeight: '500',
-                  textAlign: 'left'
+                  textAlign: 'left',
+                  marginBottom: '50px'
                 }}
               >
                 {"Please fill out the Delivery Details,"}
@@ -1223,14 +1352,17 @@ class PaymentDetails extends React.Component {
               </div>
 
 
-              <div
+              {/* <div
                 style={{
                   visibility: (
                     this.state.showPaymentInfo && 
                     !this.state.fetchingFees
                   ) ? 'visible' : 'hidden'
                 }}
-              > 
+              >  */}
+
+            {this.state.showPaymentInfo && !this.state.fetchingFees ? (
+              <div>
                 <div 
                   style=
                   {{
@@ -1426,10 +1558,12 @@ class PaymentDetails extends React.Component {
                   </div>
                 </div>
               </div>
+            ) : (null)}
+
             </div>
               
             {
-              (this.state.showPaymentInfo && !this.state.fetchingFees)
+              (this.state.showPaymentInfo && !this.state.fetchingFees && this.state.windowWidth >= 800)
                 ? (<>
                     <div style={{width: '100%'}}>
                       <h6 className={styles.sectionHeaderRight2}>Complete Payment</h6>
@@ -1460,8 +1594,74 @@ class PaymentDetails extends React.Component {
             }
 
           </div>
+
+          {/* <div 
+            style={
+              this.state.windowWidth < 800 
+                ? ({
+                    display: 'inline-block', 
+                    width:'84%', 
+                    border: 'solid'
+                  })
+                : ({
+                    display: 'inline-block', 
+                    width:'48%', 
+                    border: 'solid'
+                  })
+            }
+          >
+
+          </div> */}
+
+          {
+            (this.state.showPaymentInfo && !this.state.fetchingFees && this.state.windowWidth < 800)
+              ? (<div>
+                  <div style={{width: '100%'}}>
+                    {/* <h6 className={styles.sectionHeaderRight2}>Complete Payment</h6> */}
+                    <h6
+                      className={
+                        this.state.windowWidth < 800 
+                          ? styles.sectionHeaderBottom
+                          : styles.sectionHeaderRight2
+                      }
+                    >
+                      Complete Payment
+                    </h6>
+                  </div>
+                      
+                  <div 
+                    style={{
+                      width: '84%', 
+                      textAlign: 'left', 
+                      // border: 'dashed',
+                      marginLeft: '8%'
+                    }}
+                  >
+                    <div style={{display: 'flex'}}>
+                        <div className = {styles.buttonContainer}>
+                          <StripeElement
+                            stripePromise={this.state.stripePromise}
+                            customerPassword={this.state.customerPassword}
+                            deliveryInstructions={this.state.instructions}
+                            setPaymentType={this.setPaymentType}
+                            paymentSummary={this.state.paymentSummary}
+                            loggedInByPassword={loggedInByPassword}
+                            latitude={this.state.latitude.toString()}
+                            longitude={this.state.longitude.toString()}
+                            email={this.state.email}
+                            customerUid={this.state.customerUid}
+                            phone={this.state.phone}
+                            fetchingFees={this.state.fetchingFees}
+                          />
+                        </div>
+                    </div>
+                  </div>
+                </div>)
+              : null
+          }
+
         </div>
-      </div>
+      </>
     );
     
   }
