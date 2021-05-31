@@ -910,7 +910,6 @@ class EditPlan extends React.Component {
 
     console.log("===> ID: ", JSON.stringify(this.state.updatedPlan.raw_data.purchase_uid));
     console.log("===> change_purchase: ", JSON.stringify(object));
-
     axios.put(API_URL + 'change_purchase', object)
       .then(res => {
         console.log("change_purchase response: ", res);

@@ -139,14 +139,14 @@ export class MenuList extends Component {
   render() {
     return (
         <div
-        style={{
-          position:"absolute",
-          width:"100%",
-          height:this.state.heightOfBlock,
-          backgroundColor:"#F26522",
-          left:"0px",
-          top:"0px",
-        }}
+          style={{
+            position:"absolute",
+            width:"100%",
+            height:this.state.heightOfBlock,
+            backgroundColor:"#F26522",
+            left:"0px",
+            top:"0px",
+          }}
         >
 
         {/* <span>Window size: {this.state.width} x {this.state.height}</span> */}
@@ -154,7 +154,16 @@ export class MenuList extends Component {
 
 
           <div
-          style={this.state.crossFork}
+          style={{
+            width:'44px',
+            height:'44px',
+            position:'absolute',
+            left:'50px',
+            top:'25px',
+            backgroundImage:`url(${forkClose})`,
+            backgroundSize:'cover',
+            backgroundPosition:'center',
+          }}
           onClick={this.props.close}
           />
 
