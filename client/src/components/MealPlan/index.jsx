@@ -45,7 +45,7 @@ const MealPlan = props => {
 
   const [subHistory, setSubHistory] = useState([]);
 
-  const [uniquePlans, setUniquePlans] = useState([]);
+  const [uniquePlans, setUniquePlans] = useState(null);
 
   //check for logged in user
   //let customerId = null;
@@ -105,27 +105,10 @@ const MealPlan = props => {
   // (3) Set default plan and associated dropdowns
   useEffect(() => {
     console.log("(UE currentPlan) current plan set: ", currentPlan);
-
-    // let tempDropdownButtons = [];
-    // let plansFetched = 0;
-
-    // let dropdownStatusArray = [];
-
-    // Add space to top of dropdown menu buttons
-    // let dropdownTopMargin = [
-    //   <div
-    //     key={'space'}
-    //     style={{
-    //       height: '25px',
-    //       backgroundColor: '#f26522',
-    //     }}
-    //   />
-    // ];
-
-    // tempDropdownButtons = dropdownTopMargin.concat(tempDropdownButtons);
+    console.log("(UE currentPlan) unique plans: ", uniquePlans);
 
 
-  }, [currentPlan]);
+  }, [currentPlan, uniquePlans]);
 
 
   // (2) Set default plan
@@ -135,12 +118,14 @@ const MealPlan = props => {
     console.log("(init) subscribed plans length: ", props.subscribedPlans.length);
 
     let tempDropdownButtons = [];
-    let plansFetched = 0;
+    // let plansFetched = 0;
+    let uniquePlansFetched = 0;
 
     // let dropdownStatusArray = [];
 
     // let tempSubbedPlans = [];
-    var defaultSub = null;
+    // var defaultSub = null;
+    let defaultSub = false;
 
     let tempUniquePlans = [];
 
@@ -151,126 +136,69 @@ const MealPlan = props => {
       console.log("(init) sub: ", sub);
       console.log("(init) current plan: ", currentPlan);
 
-      plansFetched++;
+      // // plansFetched++;
 
-      // Parse meals, deliveries, and id for each plan
-      let parsedItems = JSON.parse(sub.items)[0];
-      console.log("(parse) parsedItems: ", parsedItems);
+      // // Parse meals, deliveries, and id for each plan
+      // let parsedItems = JSON.parse(sub.items)[0];
+      // console.log("(parse) parsedItems: ", parsedItems);
 
-      let parsedMeals = parsedItems.name.substring(
-        0,
-        parsedItems.name.indexOf(" ")
-      );
-      console.log("(parse) parsedMeals ", parsedMeals);
+      // let parsedMeals = parsedItems.name.substring(
+      //   0,
+      //   parsedItems.name.indexOf(" ")
+      // );
+      // console.log("(parse) parsedMeals ", parsedMeals);
 
-      let parsedDeliveries = parsedItems.qty;
-      console.log("(parse) parsedDeliveries: ", parsedDeliveries);
+      // let parsedDeliveries = parsedItems.qty;
+      // console.log("(parse) parsedDeliveries: ", parsedDeliveries);
 
-      let parsedId = sub.purchase_id.substring(
-        sub.purchase_id.indexOf("-")+1,
-        sub.purchase_id.length
-      );
+      // let parsedId = sub.purchase_id.substring(
+      //   sub.purchase_id.indexOf("-")+1,
+      //   sub.purchase_id.length
+      // );
 
-      let parsedPlan = {...sub}
+      // let parsedPlan = {...sub}
 
-      parsedPlan['meals'] = parsedMeals;
-      parsedPlan['deliveries'] = parsedDeliveries;
-      parsedPlan['id'] = parsedId;
+      // parsedPlan['meals'] = parsedMeals;
+      // parsedPlan['deliveries'] = parsedDeliveries;
+      // parsedPlan['id'] = parsedId;
 
-      // Push buttons into top dropdown menu
-      tempDropdownButtons.push(
-        <div 
-          key={dropdownIndex + ' : ' + sub.purchase_id}
-          onClick={() => {
-            console.log("pressed: ", sub.purchase_id);
-            setCurrentPlan(parsedPlan);
-            toggleShowDropdown(false);
-          }}
-          style={{
-            borderRadius: '10px',
-            backgroundColor: 'white',
-            height: '32px',
-            width: '96%',
-            paddingLeft: '10px',
-            marginLeft: '2%',
-            marginTop: '10px',
-            textOverflow: 'ellipsis',
-            display: 'block',
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            cursor: 'pointer'
-          }}
-        >
-          {parsedPlan.meals} Meals, {parsedPlan.deliveries} Deliveries : {parsedPlan.id}
-        </div>
-      );
+      // // Push buttons into top dropdown menu
+      // tempDropdownButtons.push(
+      //   <div 
+      //     key={dropdownIndex + ' : ' + sub.purchase_id}
+      //     onClick={() => {
+      //       console.log("pressed: ", sub.purchase_id);
+      //       setCurrentPlan(parsedPlan);
+      //       toggleShowDropdown(false);
+      //     }}
+      //     style={{
+      //       borderRadius: '10px',
+      //       backgroundColor: 'white',
+      //       height: '32px',
+      //       width: '96%',
+      //       paddingLeft: '10px',
+      //       marginLeft: '2%',
+      //       marginTop: '10px',
+      //       textOverflow: 'ellipsis',
+      //       display: 'block',
+      //       whiteSpace: 'nowrap',
+      //       overflow: 'hidden',
+      //       cursor: 'pointer'
+      //     }}
+      //   >
+      //     {parsedPlan.meals} Meals, {parsedPlan.deliveries} Deliveries : {parsedPlan.id}
+      //   </div>
+      // );
 
-      dropdownIndex++;
+      // dropdownIndex++;
 
 
-      if(defaultSub === null) {
-        console.log("(init) setting current plan: ", sub.purchase_id);
-        // setCurrentPlan(sub.purchase_id);
-        defaultSub = sub.purchase_id;
-
-        // // Parse meals, deliveries, and id for each plan
-        // let parsedItems = JSON.parse(sub.items)[0];
-        // console.log("(parse) parsedItems: ", parsedItems);
-
-        // let parsedMeals = parsedItems.name.substring(
-        //   0,
-        //   parsedItems.name.indexOf(" ")
-        // );
-        // console.log("(parse) parsedMeals ", parsedMeals);
-
-        // let parsedDeliveries = parsedItems.qty;
-        // console.log("(parse) parsedDeliveries: ", parsedDeliveries);
-
-        // let parsedId = sub.purchase_id.substring(
-        //   sub.purchase_id.indexOf("-")+1,
-        //   sub.purchase_id.length
-        // );
-
-        // let parsedPlan = {...sub}
-
-        // parsedPlan['meals'] = parsedMeals;
-        // parsedPlan['deliveries'] = parsedDeliveries;
-        // parsedPlan['id'] = parsedId;
-
-        setCurrentPlan(parsedPlan);
-
-        // Push buttons into top dropdown menu
-        // tempDropdownButtons.push(
-        //   <div 
-        //     key={dropdownIndex + ' : ' + sub.purchase_id}
-        //     onClick={() => {
-        //       console.log("pressed: ", sub.purchase_id);
-        //       setCurrentPlan(parsedPlan);
-        //       toggleShowDropdown(false);
-        //     }}
-        //     style={{
-        //       borderRadius: '10px',
-        //       backgroundColor: 'white',
-        //       height: '32px',
-        //       width: '96%',
-        //       paddingLeft: '10px',
-        //       marginLeft: '2%',
-        //       marginTop: '10px',
-        //       textOverflow: 'ellipsis',
-        //       display: 'block',
-        //       whiteSpace: 'nowrap',
-        //       overflow: 'hidden',
-        //       cursor: 'pointer'
-        //     }}
-        //   >
-        //     {parsedPlan.meals} Meals, {parsedPlan.deliveries} Deliveries : {parsedPlan.id}
-        //   </div>
-        // );
-
-        // dropdownIndex++;
-      }
-
-      // if (!tempUniquePlans.includes(sub.purchase_id)) {
+      // if(defaultSub === null) {
+      //   console.log("(init) setting current plan: ", sub.purchase_id);
+      //   // setCurrentPlan(sub.purchase_id);
+      //   defaultSub = sub.purchase_id;
+      // }
+      
       let el = tempUniquePlans.find(element => element.id === sub.purchase_id);
       let elIndex = tempUniquePlans.findIndex(element => element.id === sub.purchase_id);
       console.log('(1) ====================');
@@ -292,6 +220,67 @@ const MealPlan = props => {
 
         console.log("-- new unique plan array: ", tempUniquePlans);
 
+        uniquePlansFetched++;
+
+        // Parse meals, deliveries, and id for each plan
+        let parsedItems = JSON.parse(sub.items)[0];
+        console.log("(parse) parsedItems: ", parsedItems);
+
+        let parsedMeals = parsedItems.name.substring(
+          0,
+          parsedItems.name.indexOf(" ")
+        );
+        console.log("(parse) parsedMeals ", parsedMeals);
+
+        let parsedDeliveries = parsedItems.qty;
+        console.log("(parse) parsedDeliveries: ", parsedDeliveries);
+
+        let parsedId = sub.purchase_id.substring(
+          sub.purchase_id.indexOf("-")+1,
+          sub.purchase_id.length
+        );
+
+        let parsedPlan = {...sub}
+
+        parsedPlan['meals'] = parsedMeals;
+        parsedPlan['deliveries'] = parsedDeliveries;
+        parsedPlan['id'] = parsedId;
+
+        if(defaultSub === false) {
+          defaultSub = true;
+          setCurrentPlan(parsedPlan);
+        }
+
+        // Push buttons into top dropdown menu
+        tempDropdownButtons.push(
+          <div 
+            key={dropdownIndex + ' : ' + sub.purchase_id}
+            onClick={() => {
+              console.log("pressed: ", sub.purchase_id);
+              setCurrentPlan(parsedPlan);
+              toggleShowDropdown(false);
+            }}
+            style={{
+              borderRadius: '10px',
+              backgroundColor: 'white',
+              height: '32px',
+              width: '96%',
+              paddingLeft: '10px',
+              marginLeft: '2%',
+              marginTop: '10px',
+              textOverflow: 'ellipsis',
+              display: 'block',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              cursor: 'pointer'
+            }}
+          >
+            {parsedPlan.meals} Meals, {parsedPlan.deliveries} Deliveries : {parsedPlan.id}
+          </div>
+        );
+
+        dropdownIndex++;
+
       } else {
         console.log("-- adding to plan: ", sub);
         tempUniquePlans[elIndex].history.push(sub);
@@ -303,6 +292,8 @@ const MealPlan = props => {
 
     // console.log(' ');
     console.log("(init) temp unique plans: ", tempUniquePlans);
+
+    setUniquePlans(tempUniquePlans);
 
     // setCurrentPlan(defaultSub);
     // setDropdownButtons(tempDropdownButtons);
@@ -319,6 +310,8 @@ const MealPlan = props => {
 
     tempDropdownButtons = dropdownTopMargin.concat(tempDropdownButtons);
 
+    console.log("dropdown buttons before set: ", dropdownButtons);
+
     // Set dropdown menu buttons
     setDropdownButtons(
       <>
@@ -332,7 +325,7 @@ const MealPlan = props => {
             backgroundColor: '#f26522',
             width: '40%',
             minWidth: '300px',
-            height: 40 + (plansFetched * 42),
+            height: 40 + (uniquePlansFetched * 42),
             position: 'absolute',
             zIndex: '1',
             boxShadow: '0px 5px 10px gray',
@@ -343,7 +336,8 @@ const MealPlan = props => {
         </div>
       </>
     );
-    setHistoryDropdowns([]);
+
+    // setHistoryDropdowns([]);
 
     console.log("(init) current plan set: ", currentPlan);
 
@@ -661,54 +655,17 @@ const MealPlan = props => {
   const showHistory = () => {
     console.log("(showHistory) current plan id: ", currentPlan.purchase_id);
     console.log("(showHistory) current plan data: ", currentPlan);
-    console.log("(showHistory) current plan history: ", currentPlan.history);
+
+    // console.log("(showHistory) current plan history: ", currentPlan.history);
+
+    let currentHistory = uniquePlans.find(element => element.id === currentPlan.purchase_id);
+
+    console.log("(showHistory) current history: ", currentHistory);
 
     let historyTabs = [];
 
-    // let displayDeliveries = false;
 
-    // tempDropdownButtons.sort(function(a,b) {
-    //   // console.log("a: ", a.key.substring(0,a.key.indexOf(' ')));
-    //   // console.log("b: ", b.key.substring(0,b.key.indexOf(' ')));
-    //   return (
-    //     parseInt(a.key.substring(0,a.key.indexOf(' '))) - 
-    //     parseInt(b.key.substring(0,b.key.indexOf(' ')))
-    //   );
-    // });
-
-    // Sorted selections, with same dates grouped together
-    let sortedSelections = currentPlan.history.sort(function(sel1,sel2) {
-      console.log("sel1: ", sel1);
-      console.log("sel2: ", sel2);
-      console.log("sel1 - sel2 result: ", Date.parse(sel1.sel_menu_date) - Date.parse(sel2.sel_menu_date));
-      return (
-        Date.parse(sel1.sel_menu_date) - Date.parse(sel2.sel_menu_date)
-      )
-    });
-
-    console.log("sorted selections: ", sortedSelections);
-
-    // currentPlan.history.forEach((sel) => {
-    sortedSelections.forEach((sel) => {
-
-      // let displayDeliveries = false;
-
-      let mealsDelivered = [];
-
-      // let tempHistoryDropdowns = [];
-
-      console.log("(showHistory) sel: ", sel);
-
-      for(var i = 1; i <= currentPlan.deliveries; i++) {
-        mealsDelivered.push(showMealsDelivered());
-      }
-
-      // tempHistoryDropdowns.push({
-      //   menu_date: sel.menu_date,
-      //   display_info: false
-      // });
-
-      if(sel.sel_menu_date !== null) {
+    currentHistory.history.forEach((sel) => {
       historyTabs.push(
         <div 
           key={sel.menu_date}
@@ -727,34 +684,7 @@ const MealPlan = props => {
             onClick={() => {
               console.log("(showHistory) orange dropdown clicked for: ", sel.menu_date);
 
-              toggleDeliveryDisplay(sel.menu_date, currentPlan.purchase_id);
-
-              // console.log("(showHistory) orange dropdown clicked for: ", sel.menu_date);
-              // console.log("(showHistory) display deliveries before: ", displayDeliveries);
-
-              // displayDeliveries = !displayDeliveries;
-
-              // setButtonClicked(displayDeliveries);
-
-              // console.log("(showHistory) display deliveries after: ", displayDeliveries);
-
-              // console.log("show past deliveries for: ", sel.menu_date);
-              // console.log("dropdown arr before press: ", dropdownArray);
-
-              // let newDropdownArr = [...dropdownArray];
-
-              // let currVal = newDropdownArr.findIndex((val) => {
-              //   // console.log("(findIndex) val date: ", val.date);
-              //   // console.log("(findIndex) sel date: ", sel.menu_date);
-              //   return val.date === sel.menu_date;
-              // });
-
-              // console.log("currVal: ", currVal);
-
-              // newDropdownArr[currVal] = !newDropdownArr[currVal];
-
-              // setDropdownArray(newDropdownArr);
-
+              // toggleDeliveryDisplay(sel.menu_date, currentPlan.purchase_id);
             }}
             style={{display: 'inline-flex', width: '100%', cursor: 'pointer'}}
           >
@@ -784,23 +714,86 @@ const MealPlan = props => {
                   paddingTop: '12px'
                 }}
               >
-              {/* <div className={styles.orangeArrowDown} />  */}
+              {/* {getDisplayStatus(sel.menu_date, currentPlan.purchase_id)
+                ? <div className={styles.orangeArrowUp} /> 
+                : <div className={styles.orangeArrowDown} /> } */}
+            </div>
+          </div>
+
+          {/* {getDisplayStatus(sel.menu_date, currentPlan.purchase_id)
+            ? <div style={{marginTop: '15px'}}>{mealsDelivered}</div>
+            : null} */}
+
+        </div>
+      );
+    });
+
+
+    /*sortedSelections.forEach((sel) => {
+
+      let mealsDelivered = [];
+
+      console.log("(showHistory) sel: ", sel);
+
+      for(var i = 1; i <= currentPlan.deliveries; i++) {
+        mealsDelivered.push(showMealsDelivered());
+      }
+
+      if(sel.sel_menu_date !== null) {
+      historyTabs.push(
+        <div 
+          key={sel.menu_date}
+          style={{marginTop: '50px', marginBottom: '50px'}}
+        >
+          <div style={{display: 'inline-flex', width: '100%'}}>
+            <div className={styles.orangeHeaderLeft}>
+              Next Billing Date
+            </div>
+            <div className={styles.orangeHeaderRight}>
+              {sel.sel_menu_date}
+            </div>
+          </div>
+
+          <div 
+            onClick={() => {
+              console.log("(showHistory) orange dropdown clicked for: ", sel.menu_date);
+
+              toggleDeliveryDisplay(sel.menu_date, currentPlan.purchase_id);
+            }}
+            style={{display: 'inline-flex', width: '100%', cursor: 'pointer'}}
+          >
+            <div className={styles.orangeHeaderLeft}>
+              Meal Plan
+            </div>
+            <div className={styles.orangeHeaderRightArrow}>
+              {currentPlan.meals} Meals, {currentPlan.deliveries} Deliveries
+            </div>
+            <div 
+              style={{
+                width: '1%',
+                borderTop: 'solid',
+                borderWidth: '1px',
+                borderColor: '#f26522'
+              }} 
+            />
+            <div
+                style={{
+                  width: '3%',
+                  minWidth: '24px',
+                  // border: 'solid',
+                  // borderWidth: '1px',
+                  borderTop: 'solid',
+                  borderWidth: '1px',
+                  borderColor: '#f26522',
+                  paddingTop: '12px'
+                }}
+              >
               {getDisplayStatus(sel.menu_date, currentPlan.purchase_id)
                 ? <div className={styles.orangeArrowUp} /> 
                 : <div className={styles.orangeArrowDown} /> }
             </div>
           </div>
 
-          {/* {console.log("dropdownArray at " + index + ": ", dropdownArray[index])}
-          {
-            (typeof(dropdownArray[index]) !== 'undefined' &&
-            dropdownArray[index].display)
-              ? (<>[placeholder meals]</>)
-              : null
-          } */}
-          {/* {displayDeliveries === true
-            ? <div>YES</div>
-            : <div>NO</div>} */}
           {getDisplayStatus(sel.menu_date, currentPlan.purchase_id)
             ? <div style={{marginTop: '15px'}}>{mealsDelivered}</div>
             : null}
@@ -808,7 +801,7 @@ const MealPlan = props => {
         </div>
       );
       }
-    });
+    });*/
 
     /*let historyTab = (
       <div 
@@ -1246,7 +1239,8 @@ const MealPlan = props => {
       </div>
 
       {/* {infoLoaded === false */}
-      {currentPlan === null || historyDropdowns === null
+      {/* {currentPlan === null || historyDropdowns === null */}
+      {currentPlan === null || uniquePlans === null
         ? (
             <div
               style={{
@@ -1355,7 +1349,7 @@ const MealPlan = props => {
           {/* {currentPlan
             ? showHistory()
             : null} */}
-          {/* {showHistory()} */}
+          {showHistory()}
 
           {/* {console.log("(render) selection display: ", selectionDisplay)}
           {selectionDisplay} */}
