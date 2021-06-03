@@ -102,14 +102,27 @@ const MealPlan = props => {
   }, []);
 
 
-  // Set default plan and associated dropdowns
+  // (3) Set default plan and associated dropdowns
   useEffect(() => {
     console.log("(UE currentPlan) current plan set: ", currentPlan);
 
-    let tempDropdownButtons = [];
-    let plansFetched = 0;
+    // let tempDropdownButtons = [];
+    // let plansFetched = 0;
 
-    let dropdownStatusArray = [];
+    // let dropdownStatusArray = [];
+
+    // Add space to top of dropdown menu buttons
+    // let dropdownTopMargin = [
+    //   <div
+    //     key={'space'}
+    //     style={{
+    //       height: '25px',
+    //       backgroundColor: '#f26522',
+    //     }}
+    //   />
+    // ];
+
+    // tempDropdownButtons = dropdownTopMargin.concat(tempDropdownButtons);
 
 
   }, [currentPlan]);
@@ -121,7 +134,7 @@ const MealPlan = props => {
     console.log("(init) subscribed plans: ", props.subscribedPlans);
     console.log("(init) subscribed plans length: ", props.subscribedPlans.length);
 
-    // let tempDropdownButtons = [];
+    let tempDropdownButtons = [];
     // let plansFetched = 0;
 
     // let dropdownStatusArray = [];
@@ -131,6 +144,8 @@ const MealPlan = props => {
 
     let tempUniquePlans = [];
 
+    let dropdownIndex = 0;
+
     subHistory.forEach((sub) => {
       console.log(' ');
       console.log("(init) sub: ", sub);
@@ -139,6 +154,62 @@ const MealPlan = props => {
         console.log("(init) setting current plan: ", sub.purchase_id);
         // setCurrentPlan(sub.purchase_id);
         defaultSub = sub.purchase_id;
+
+        // Parse meals, deliveries, and id for each plan
+        let parsedItems = JSON.parse(sub.items)[0];
+        console.log("(parse) parsedItems: ", parsedItems);
+
+        let parsedMeals = parsedItems.name.substring(
+          0,
+          parsedItems.name.indexOf(" ")
+        );
+        console.log("(parse) parsedMeals ", parsedMeals);
+
+        let parsedDeliveries = parsedItems.qty;
+        console.log("(parse) parsedDeliveries: ", parsedDeliveries);
+
+        let parsedId = sub.purchase_id.substring(
+          sub.purchase_id.indexOf("-")+1,
+          sub.purchase_id.length
+        );
+
+        let parsedPlan = {...sub}
+
+        parsedPlan['meals'] = parsedMeals;
+        parsedPlan['deliveries'] = parsedDeliveries;
+        parsedPlan['id'] = parsedId;
+
+        setCurrentPlan(parsedPlan);
+
+        // Push buttons into top dropdown menu
+        tempDropdownButtons.push(
+          <div 
+            key={dropdownIndex + ' : ' + sub.purchase_id}
+            onClick={() => {
+              console.log("pressed: ", sub.purchase_id);
+              setCurrentPlan(parsedPlan);
+              toggleShowDropdown(false);
+            }}
+            style={{
+              borderRadius: '10px',
+              backgroundColor: 'white',
+              height: '32px',
+              width: '96%',
+              paddingLeft: '10px',
+              marginLeft: '2%',
+              marginTop: '10px',
+              textOverflow: 'ellipsis',
+              display: 'block',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              cursor: 'pointer'
+            }}
+          >
+            {parsedPlan.meals} Meals, {parsedPlan.deliveries} Deliveries : {parsedPlan.id}
+          </div>
+        );
+
+        dropdownIndex++;
       }
 
       // if (!tempUniquePlans.includes(sub.purchase_id)) {
@@ -175,7 +246,9 @@ const MealPlan = props => {
     // console.log(' ');
     console.log("(init) temp unique plans: ", tempUniquePlans);
 
-    setCurrentPlan(defaultSub);
+    // setCurrentPlan(defaultSub);
+    setDropdownButtons(tempDropdownButtons);
+    setHistoryDropdowns([]);
 
     console.log("(init) current plan set: ", currentPlan);
 
@@ -1187,7 +1260,7 @@ const MealPlan = props => {
           {/* {currentPlan
             ? showHistory()
             : null} */}
-          {showHistory()}
+          {/* {showHistory()} */}
 
           {/* {console.log("(render) selection display: ", selectionDisplay)}
           {selectionDisplay} */}
