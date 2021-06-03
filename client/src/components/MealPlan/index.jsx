@@ -45,6 +45,8 @@ const MealPlan = props => {
 
   const [subHistory, setSubHistory] = useState([]);
 
+  const [uniquePlans, setUniquePlans] = useState([]);
+
   //check for logged in user
   //let customerId = null;
   if (
@@ -60,6 +62,7 @@ const MealPlan = props => {
     );
   }
 
+  // (1) Fetch profile info and subscription history info
   useEffect(() => {
 
     if (!customerId) {
@@ -99,21 +102,37 @@ const MealPlan = props => {
   }, []);
 
 
-  // Initialize page in this render
+  // Set default plan and associated dropdowns
   useEffect(() => {
-    console.log("RERENDERING subscribedPlans");
-    console.log("(init) subscribed plans: ", props.subscribedPlans);
-    console.log("(init) subscribed plans length: ", props.subscribedPlans.length);
+    console.log("(UE currentPlan) current plan set: ", currentPlan);
 
     let tempDropdownButtons = [];
     let plansFetched = 0;
 
     let dropdownStatusArray = [];
 
+
+  }, [currentPlan]);
+
+
+  // (2) Set default plan
+  useEffect(() => {
+    console.log("RERENDERING subscribedPlans");
+    console.log("(init) subscribed plans: ", props.subscribedPlans);
+    console.log("(init) subscribed plans length: ", props.subscribedPlans.length);
+
+    // let tempDropdownButtons = [];
+    // let plansFetched = 0;
+
+    // let dropdownStatusArray = [];
+
     // let tempSubbedPlans = [];
     var defaultSub = null;
 
+    let tempUniquePlans = [];
+
     subHistory.forEach((sub) => {
+      console.log(' ');
       console.log("(init) sub: ", sub);
       console.log("(init) current plan: ", currentPlan);
       if(defaultSub === null) {
@@ -121,7 +140,36 @@ const MealPlan = props => {
         // setCurrentPlan(sub.purchase_id);
         defaultSub = sub.purchase_id;
       }
+
+      // if (!tempUniquePlans.includes(sub.purchase_id)) {
+      let el = tempUniquePlans.find(element => element.id === sub.purchase_id);
+      console.log('(1) ====================');
+      console.log("el: ", el);
+      // if (tempUniquePlans.find(element => element.includes(sub.purchase_id))) {
+      if (typeof(el) === 'undefined') {
+        console.log("-- UNIQUE PLAN FOUND: ", sub.purchase_id);
+        console.log("-- element: ", el);
+
+        let tempUniquePlan = {
+          id: sub.purchase_id,
+          history: []
+        };
+
+        console.log("-- plan to be pushed: ", tempUniquePlan);
+
+        tempUniquePlans.push(tempUniquePlan);
+
+        console.log("-- new unique plan array: ", tempUniquePlans);
+
+      } else if (tempUniquePlans.includes(sub.purchase_id))  {
+        console.log("-- adding to plan");
+      }
+
+      console.log('(2) ====================');
+
     });
+
+    // console.log(' ');
 
     setCurrentPlan(defaultSub);
 
