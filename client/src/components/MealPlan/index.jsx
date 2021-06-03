@@ -566,6 +566,112 @@ const MealPlan = props => {
     return mealsForDelivery;
   }
 
+  const displayMealInfo = (data) => {
+    // console.log("(showMealsForDelivery) total meals: ", totalMeals);
+    let mealsForDelivery = [];
+    // for(var i = 0; i < totalMeals; i++) {
+    if(data.meal_uid !== null){
+      mealsForDelivery.push(
+        <div style={{display: 'inline-flex', width: '100%', height: '110px'}}>
+          <div
+            style={{
+              // border: 'inset',
+              width: '8%',
+              fontSize: '40px',
+              fontWeight: '600',
+              paddingTop: '15px'
+            }}
+          >
+            {data.meal_qty}
+          </div>
+          <div
+            style={{
+              // border: 'inset',
+              width: '92%',
+              fontWeight: '600',
+              paddingTop: '33px'
+            }}
+          >
+            {data.meal_name}
+          </div>
+          <div
+            style={{
+              display: 'flex',
+              // border: 'inset',
+              width: '0%',
+              minWidth: '100px',
+              textAlign: 'right',
+              float: 'right',
+              fontWeight: '600'
+            }}
+          >
+            <div
+              style={{
+                border: 'dashed',
+                width: '100px',
+                height: '100px',
+                marginTop: '5px',
+                backgroundImage: `url(${data.meal_photo_URL})`,
+                backgroundSize: 'cover'
+              }}
+            >
+              {/* {data.meal_photo_URL} */}
+            </div>
+          </div>
+        </div>
+      );
+    } else {
+      mealsForDelivery.push(
+        <div style={{display: 'inline-flex', width: '100%', height: '110px'}}>
+          {/* <div
+            style={{
+              // border: 'inset',
+              width: '8%',
+              fontSize: '40px',
+              fontWeight: '600',
+              paddingTop: '15px'
+            }}
+          >
+            {"SURPRISE"}
+          </div> */}
+          <div
+            style={{
+              // border: 'inset',
+              width: '92%',
+              fontWeight: '600',
+              paddingTop: '33px'
+            }}
+          >
+            {"SURPRISE"}
+          </div>
+          <div
+            style={{
+              display: 'flex',
+              // border: 'inset',
+              width: '0%',
+              minWidth: '100px',
+              textAlign: 'right',
+              float: 'right',
+              fontWeight: '600'
+            }}
+          >
+            <div
+              style={{
+                border: 'dashed',
+                width: '100px',
+                height: '100px',
+                marginTop: '5px'
+              }}
+            >
+              {"SURPRISE"}
+            </div>
+          </div>
+        </div>
+      );
+    }
+    return mealsForDelivery;
+  }
+
   const showMealsDelivered = () => {
     return (
       <div
@@ -646,6 +752,51 @@ const MealPlan = props => {
               </div>
             </div>
           </div> */}
+
+        </div>
+
+      </div>
+    );
+  }  
+  
+  const showPastMeals = (data) => {
+    console.log("(showPastMeals) data: ", data);
+
+    return (
+      <div
+        style={{
+          border: 'solid',
+          display: 'flex',
+          marginBottom: '10px'
+        }}
+      >
+
+        <div style={{display: 'inline-block', width: '100%'}}>
+    
+          <div style={{display: 'inline-flex', width: '100%'}}>
+            <div
+              style={{
+                border: 'inset',
+                width: '50%',
+                fontWeight: '600'
+              }}
+            >
+              Meals Delivered
+            </div>
+            <div
+              style={{
+                border: 'inset',
+                width: '50%',
+                textAlign: 'right',
+                fontWeight: '600'
+              }}
+            >
+              {data.start_delivery_date}
+            </div>
+          </div>
+
+          {/* {showMealsForDelivery(data.ms)} */}
+          {displayMealInfo(data)}
 
         </div>
 
@@ -742,6 +893,10 @@ const MealPlan = props => {
           {/* {getDisplayStatus(sel.menu_date, currentPlan.purchase_id)
             ? <div style={{marginTop: '15px'}}>{mealsDelivered}</div>
             : null} */}
+          
+          {sel.display
+              ? showPastMeals(sel)
+              : null }
 
         </div>
       );
