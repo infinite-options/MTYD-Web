@@ -282,6 +282,7 @@ const MealPlan = props => {
         dropdownIndex++;
 
       } else {
+        sub.display = false;
         console.log("-- adding to plan: ", sub);
         tempUniquePlans[elIndex].history.push(sub);
       }
@@ -659,13 +660,14 @@ const MealPlan = props => {
     // console.log("(showHistory) current plan history: ", currentPlan.history);
 
     let currentHistory = uniquePlans.find(element => element.id === currentPlan.purchase_id);
+    let currentHistoryIndex = uniquePlans.findIndex(element => element.id === currentPlan.purchase_id);
 
     console.log("(showHistory) current history: ", currentHistory);
 
     let historyTabs = [];
 
 
-    currentHistory.history.forEach((sel) => {
+    currentHistory.history.forEach((sel, index) => {
       historyTabs.push(
         <div 
           key={sel.menu_date}
@@ -682,7 +684,20 @@ const MealPlan = props => {
 
           <div 
             onClick={() => {
-              console.log("(showHistory) orange dropdown clicked for: ", sel.menu_date);
+              console.log("(showHistory) orange dropdown clicked for: ", sel.sel_menu_date);
+              console.log("(showHistory) index 1: ", currentHistoryIndex);
+              console.log("(showHistory) index 2: ", index);
+
+              let uniquePlanCopy = [...uniquePlans];
+
+              console.log("(showHistory) unique plan copy: ", uniquePlanCopy);
+
+              uniquePlanCopy[currentHistoryIndex].history[index].display = !uniquePlanCopy[currentHistoryIndex].history[index].display;
+
+              console.log("(showHistory) curr: ", uniquePlanCopy[currentHistoryIndex].history[index]);
+              console.log("(showHistory) display set to: ", uniquePlanCopy[currentHistoryIndex].history[index].display);
+
+              setUniquePlans(uniquePlanCopy);
 
               // toggleDeliveryDisplay(sel.menu_date, currentPlan.purchase_id);
             }}
@@ -717,6 +732,10 @@ const MealPlan = props => {
               {/* {getDisplayStatus(sel.menu_date, currentPlan.purchase_id)
                 ? <div className={styles.orangeArrowUp} /> 
                 : <div className={styles.orangeArrowDown} /> } */}
+              {console.log("(showHistory) display? ", sel.display)}
+              {sel.display
+                ? <div className={styles.orangeArrowUp} /> 
+                : <div className={styles.orangeArrowDown} /> }
             </div>
           </div>
 
