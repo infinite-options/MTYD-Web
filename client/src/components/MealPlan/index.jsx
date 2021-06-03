@@ -135,7 +135,7 @@ const MealPlan = props => {
     console.log("(init) subscribed plans length: ", props.subscribedPlans.length);
 
     let tempDropdownButtons = [];
-    // let plansFetched = 0;
+    let plansFetched = 0;
 
     // let dropdownStatusArray = [];
 
@@ -150,66 +150,124 @@ const MealPlan = props => {
       console.log(' ');
       console.log("(init) sub: ", sub);
       console.log("(init) current plan: ", currentPlan);
+
+      plansFetched++;
+
+      // Parse meals, deliveries, and id for each plan
+      let parsedItems = JSON.parse(sub.items)[0];
+      console.log("(parse) parsedItems: ", parsedItems);
+
+      let parsedMeals = parsedItems.name.substring(
+        0,
+        parsedItems.name.indexOf(" ")
+      );
+      console.log("(parse) parsedMeals ", parsedMeals);
+
+      let parsedDeliveries = parsedItems.qty;
+      console.log("(parse) parsedDeliveries: ", parsedDeliveries);
+
+      let parsedId = sub.purchase_id.substring(
+        sub.purchase_id.indexOf("-")+1,
+        sub.purchase_id.length
+      );
+
+      let parsedPlan = {...sub}
+
+      parsedPlan['meals'] = parsedMeals;
+      parsedPlan['deliveries'] = parsedDeliveries;
+      parsedPlan['id'] = parsedId;
+
+      // Push buttons into top dropdown menu
+      tempDropdownButtons.push(
+        <div 
+          key={dropdownIndex + ' : ' + sub.purchase_id}
+          onClick={() => {
+            console.log("pressed: ", sub.purchase_id);
+            setCurrentPlan(parsedPlan);
+            toggleShowDropdown(false);
+          }}
+          style={{
+            borderRadius: '10px',
+            backgroundColor: 'white',
+            height: '32px',
+            width: '96%',
+            paddingLeft: '10px',
+            marginLeft: '2%',
+            marginTop: '10px',
+            textOverflow: 'ellipsis',
+            display: 'block',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            cursor: 'pointer'
+          }}
+        >
+          {parsedPlan.meals} Meals, {parsedPlan.deliveries} Deliveries : {parsedPlan.id}
+        </div>
+      );
+
+      dropdownIndex++;
+
+
       if(defaultSub === null) {
         console.log("(init) setting current plan: ", sub.purchase_id);
         // setCurrentPlan(sub.purchase_id);
         defaultSub = sub.purchase_id;
 
-        // Parse meals, deliveries, and id for each plan
-        let parsedItems = JSON.parse(sub.items)[0];
-        console.log("(parse) parsedItems: ", parsedItems);
+        // // Parse meals, deliveries, and id for each plan
+        // let parsedItems = JSON.parse(sub.items)[0];
+        // console.log("(parse) parsedItems: ", parsedItems);
 
-        let parsedMeals = parsedItems.name.substring(
-          0,
-          parsedItems.name.indexOf(" ")
-        );
-        console.log("(parse) parsedMeals ", parsedMeals);
+        // let parsedMeals = parsedItems.name.substring(
+        //   0,
+        //   parsedItems.name.indexOf(" ")
+        // );
+        // console.log("(parse) parsedMeals ", parsedMeals);
 
-        let parsedDeliveries = parsedItems.qty;
-        console.log("(parse) parsedDeliveries: ", parsedDeliveries);
+        // let parsedDeliveries = parsedItems.qty;
+        // console.log("(parse) parsedDeliveries: ", parsedDeliveries);
 
-        let parsedId = sub.purchase_id.substring(
-          sub.purchase_id.indexOf("-")+1,
-          sub.purchase_id.length
-        );
+        // let parsedId = sub.purchase_id.substring(
+        //   sub.purchase_id.indexOf("-")+1,
+        //   sub.purchase_id.length
+        // );
 
-        let parsedPlan = {...sub}
+        // let parsedPlan = {...sub}
 
-        parsedPlan['meals'] = parsedMeals;
-        parsedPlan['deliveries'] = parsedDeliveries;
-        parsedPlan['id'] = parsedId;
+        // parsedPlan['meals'] = parsedMeals;
+        // parsedPlan['deliveries'] = parsedDeliveries;
+        // parsedPlan['id'] = parsedId;
 
         setCurrentPlan(parsedPlan);
 
         // Push buttons into top dropdown menu
-        tempDropdownButtons.push(
-          <div 
-            key={dropdownIndex + ' : ' + sub.purchase_id}
-            onClick={() => {
-              console.log("pressed: ", sub.purchase_id);
-              setCurrentPlan(parsedPlan);
-              toggleShowDropdown(false);
-            }}
-            style={{
-              borderRadius: '10px',
-              backgroundColor: 'white',
-              height: '32px',
-              width: '96%',
-              paddingLeft: '10px',
-              marginLeft: '2%',
-              marginTop: '10px',
-              textOverflow: 'ellipsis',
-              display: 'block',
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
-              cursor: 'pointer'
-            }}
-          >
-            {parsedPlan.meals} Meals, {parsedPlan.deliveries} Deliveries : {parsedPlan.id}
-          </div>
-        );
+        // tempDropdownButtons.push(
+        //   <div 
+        //     key={dropdownIndex + ' : ' + sub.purchase_id}
+        //     onClick={() => {
+        //       console.log("pressed: ", sub.purchase_id);
+        //       setCurrentPlan(parsedPlan);
+        //       toggleShowDropdown(false);
+        //     }}
+        //     style={{
+        //       borderRadius: '10px',
+        //       backgroundColor: 'white',
+        //       height: '32px',
+        //       width: '96%',
+        //       paddingLeft: '10px',
+        //       marginLeft: '2%',
+        //       marginTop: '10px',
+        //       textOverflow: 'ellipsis',
+        //       display: 'block',
+        //       whiteSpace: 'nowrap',
+        //       overflow: 'hidden',
+        //       cursor: 'pointer'
+        //     }}
+        //   >
+        //     {parsedPlan.meals} Meals, {parsedPlan.deliveries} Deliveries : {parsedPlan.id}
+        //   </div>
+        // );
 
-        dropdownIndex++;
+        // dropdownIndex++;
       }
 
       // if (!tempUniquePlans.includes(sub.purchase_id)) {
@@ -247,7 +305,44 @@ const MealPlan = props => {
     console.log("(init) temp unique plans: ", tempUniquePlans);
 
     // setCurrentPlan(defaultSub);
-    setDropdownButtons(tempDropdownButtons);
+    // setDropdownButtons(tempDropdownButtons);
+
+    let dropdownTopMargin = [
+      <div
+        key={'space'}
+        style={{
+          height: '25px',
+          backgroundColor: '#f26522',
+        }}
+      />
+    ];
+
+    tempDropdownButtons = dropdownTopMargin.concat(tempDropdownButtons);
+
+    // Set dropdown menu buttons
+    setDropdownButtons(
+      <>
+        <div
+          style={{
+            height: '20px'
+          }}
+        />
+        <div
+          style={{
+            backgroundColor: '#f26522',
+            width: '40%',
+            minWidth: '300px',
+            height: 40 + (plansFetched * 42),
+            position: 'absolute',
+            zIndex: '1',
+            boxShadow: '0px 5px 10px gray',
+            borderRadius: '15px'
+          }}
+        >
+          {tempDropdownButtons}
+        </div>
+      </>
+    );
     setHistoryDropdowns([]);
 
     console.log("(init) current plan set: ", currentPlan);
