@@ -143,8 +143,10 @@ const MealPlan = props => {
 
       // if (!tempUniquePlans.includes(sub.purchase_id)) {
       let el = tempUniquePlans.find(element => element.id === sub.purchase_id);
+      let elIndex = tempUniquePlans.findIndex(element => element.id === sub.purchase_id);
       console.log('(1) ====================');
       console.log("el: ", el);
+      console.log("el index: ", elIndex);
       // if (tempUniquePlans.find(element => element.includes(sub.purchase_id))) {
       if (typeof(el) === 'undefined') {
         console.log("-- UNIQUE PLAN FOUND: ", sub.purchase_id);
@@ -161,8 +163,9 @@ const MealPlan = props => {
 
         console.log("-- new unique plan array: ", tempUniquePlans);
 
-      } else if (tempUniquePlans.includes(sub.purchase_id))  {
-        console.log("-- adding to plan");
+      } else {
+        console.log("-- adding to plan: ", sub);
+        tempUniquePlans[elIndex].history.push(sub);
       }
 
       console.log('(2) ====================');
@@ -170,6 +173,7 @@ const MealPlan = props => {
     });
 
     // console.log(' ');
+    console.log("(init) temp unique plans: ", tempUniquePlans);
 
     setCurrentPlan(defaultSub);
 
