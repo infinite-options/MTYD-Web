@@ -218,6 +218,17 @@ const MealPlan = props => {
 
         tempUniquePlans.push(tempUniquePlan);
 
+        elIndex = tempUniquePlans.findIndex(element => element.id === sub.purchase_id);
+        console.log("-- element index: ", elIndex);
+
+        // sub.display = false;
+        // console.log("-- (2) adding to plan: ", sub);
+        // tempUniquePlans[elIndex].history.push(sub);
+
+        sub.display = false;
+        console.log("-- (1) adding to plan: ", sub);
+        tempUniquePlans[elIndex].history.push(sub);
+
         console.log("-- new unique plan array: ", tempUniquePlans);
 
         uniquePlansFetched++;
@@ -283,7 +294,7 @@ const MealPlan = props => {
 
       } else {
         sub.display = false;
-        console.log("-- adding to plan: ", sub);
+        console.log("-- (2) adding to plan: ", sub);
         tempUniquePlans[elIndex].history.push(sub);
       }
 
@@ -607,7 +618,7 @@ const MealPlan = props => {
           >
             <div
               style={{
-                border: 'dashed',
+                // border: 'dashed',
                 width: '100px',
                 height: '100px',
                 marginTop: '5px',
@@ -707,51 +718,6 @@ const MealPlan = props => {
           </div>
 
           {showMealsForDelivery(2)}
-          {/* <div style={{display: 'inline-flex', width: '100%', height: '110px'}}>
-            <div
-              style={{
-                // border: 'inset',
-                width: '8%',
-                fontSize: '40px',
-                fontWeight: '600',
-                paddingTop: '15px'
-              }}
-            >
-              3
-            </div>
-            <div
-              style={{
-                // border: 'inset',
-                width: '92%',
-                fontWeight: '600',
-                paddingTop: '30px'
-              }}
-            >
-              Chicken Teriyaki Bowl
-            </div>
-            <div
-              style={{
-                display: 'flex',
-                // border: 'inset',
-                width: '0%',
-                minWidth: '100px',
-                textAlign: 'right',
-                float: 'right',
-                fontWeight: '600'
-              }}
-            >
-              <div
-                style={{
-                  border: 'dashed',
-                  width: '100px',
-                  height: '100px',
-                  marginTop: '5px'
-                }}
-              >
-                {"<image goes here>"}
-              </div>
-            </div>
-          </div> */}
 
         </div>
 
@@ -765,7 +731,7 @@ const MealPlan = props => {
     return (
       <div
         style={{
-          border: 'solid',
+          // border: 'solid',
           display: 'flex',
           marginBottom: '10px'
         }}
@@ -776,7 +742,7 @@ const MealPlan = props => {
           <div style={{display: 'inline-flex', width: '100%'}}>
             <div
               style={{
-                border: 'inset',
+                // border: 'inset',
                 width: '50%',
                 fontWeight: '600'
               }}
@@ -785,13 +751,14 @@ const MealPlan = props => {
             </div>
             <div
               style={{
-                border: 'inset',
+                // border: 'inset',
                 width: '50%',
                 textAlign: 'right',
                 fontWeight: '600'
               }}
             >
-              {data.start_delivery_date}
+              {/* {data.start_delivery_date} */}
+              {data.sel_menu_date}
             </div>
           </div>
 
@@ -817,8 +784,46 @@ const MealPlan = props => {
 
     let historyTabs = [];
 
+    console.log(' ');
+    console.log("#################### (1)");
 
     currentHistory.history.forEach((sel, index) => {
+      // let deliveriesForDate = [];
+      console.log("========================================|");
+      console.log("selection: ", sel);
+      console.log("payment time stamp: ", sel.payment_time_stamp);
+      let sameDateTab = historyTabs.find(element => element.purchase_time === sel.payment_time_stamp);
+      let sameDateIndex = historyTabs.findIndex(element => element.purchase_time === sel.payment_time_stamp);
+      console.log("-- same date tab: ", sameDateTab);
+
+      if (typeof(sameDateTab) === 'undefined') {
+        console.log("-- (1.1) date not found; pushing new one...");
+        historyTabs.push({
+          date: sel.start_delivery_date,
+          purchase_time: sel.payment_time_stamp,
+          deliveries: []
+        });
+        sameDateIndex = historyTabs.findIndex(element => element.purchase_time === sel.payment_time_stamp);
+        historyTabs[sameDateIndex].deliveries.push(sel.meal_desc);
+        console.log("-- (1.2) new deliveries: ", historyTabs[sameDateIndex].deliveries);
+      } else {
+        console.log("-- (2.1) date found! adding delivery to tab...");
+        historyTabs[sameDateIndex].deliveries.push(sel.meal_desc);
+        console.log("-- (2.2) new deliveries: ", historyTabs[sameDateIndex].deliveries);
+      }
+      // historyTabs.push(
+      //   <div>
+          
+      //   </div>
+      // );
+    });
+
+    console.log("final history tabs: ", historyTabs);
+
+    console.log("#################### (2)");
+    console.log(' ');
+
+    /*currentHistory.history.forEach((sel, index) => {
       historyTabs.push(
         <div 
           key={sel.menu_date}
@@ -829,13 +834,14 @@ const MealPlan = props => {
               Next Billing Date
             </div>
             <div className={styles.orangeHeaderRight}>
-              {sel.sel_menu_date}
+              {sel.start_delivery_date}
             </div>
           </div>
 
           <div 
             onClick={() => {
-              console.log("(showHistory) orange dropdown clicked for: ", sel.sel_menu_date);
+              // console.log("(showHistory) orange dropdown clicked for: ", sel.sel_menu_date);
+              console.log("(showHistory) orange dropdown clicked for: ", sel.start_delivery_date);
               console.log("(showHistory) index 1: ", currentHistoryIndex);
               console.log("(showHistory) index 2: ", index);
 
@@ -880,19 +886,12 @@ const MealPlan = props => {
                   paddingTop: '12px'
                 }}
               >
-              {/* {getDisplayStatus(sel.menu_date, currentPlan.purchase_id)
-                ? <div className={styles.orangeArrowUp} /> 
-                : <div className={styles.orangeArrowDown} /> } */}
               {console.log("(showHistory) display? ", sel.display)}
               {sel.display
                 ? <div className={styles.orangeArrowUp} /> 
                 : <div className={styles.orangeArrowDown} /> }
             </div>
           </div>
-
-          {/* {getDisplayStatus(sel.menu_date, currentPlan.purchase_id)
-            ? <div style={{marginTop: '15px'}}>{mealsDelivered}</div>
-            : null} */}
           
           {sel.display
               ? showPastMeals(sel)
@@ -900,163 +899,16 @@ const MealPlan = props => {
 
         </div>
       );
-    });
-
-
-    /*sortedSelections.forEach((sel) => {
-
-      let mealsDelivered = [];
-
-      console.log("(showHistory) sel: ", sel);
-
-      for(var i = 1; i <= currentPlan.deliveries; i++) {
-        mealsDelivered.push(showMealsDelivered());
-      }
-
-      if(sel.sel_menu_date !== null) {
-      historyTabs.push(
-        <div 
-          key={sel.menu_date}
-          style={{marginTop: '50px', marginBottom: '50px'}}
-        >
-          <div style={{display: 'inline-flex', width: '100%'}}>
-            <div className={styles.orangeHeaderLeft}>
-              Next Billing Date
-            </div>
-            <div className={styles.orangeHeaderRight}>
-              {sel.sel_menu_date}
-            </div>
-          </div>
-
-          <div 
-            onClick={() => {
-              console.log("(showHistory) orange dropdown clicked for: ", sel.menu_date);
-
-              toggleDeliveryDisplay(sel.menu_date, currentPlan.purchase_id);
-            }}
-            style={{display: 'inline-flex', width: '100%', cursor: 'pointer'}}
-          >
-            <div className={styles.orangeHeaderLeft}>
-              Meal Plan
-            </div>
-            <div className={styles.orangeHeaderRightArrow}>
-              {currentPlan.meals} Meals, {currentPlan.deliveries} Deliveries
-            </div>
-            <div 
-              style={{
-                width: '1%',
-                borderTop: 'solid',
-                borderWidth: '1px',
-                borderColor: '#f26522'
-              }} 
-            />
-            <div
-                style={{
-                  width: '3%',
-                  minWidth: '24px',
-                  // border: 'solid',
-                  // borderWidth: '1px',
-                  borderTop: 'solid',
-                  borderWidth: '1px',
-                  borderColor: '#f26522',
-                  paddingTop: '12px'
-                }}
-              >
-              {getDisplayStatus(sel.menu_date, currentPlan.purchase_id)
-                ? <div className={styles.orangeArrowUp} /> 
-                : <div className={styles.orangeArrowDown} /> }
-            </div>
-          </div>
-
-          {getDisplayStatus(sel.menu_date, currentPlan.purchase_id)
-            ? <div style={{marginTop: '15px'}}>{mealsDelivered}</div>
-            : null}
-
-        </div>
-      );
-      }
     });*/
-
-    /*let historyTab = (
-      <div 
-        key={sel.menu_date}
-        style={{marginTop: '50px', marginBottom: '50px'}}
-      >
-        <div style={{display: 'inline-flex', width: '100%'}}>
-          <div className={styles.orangeHeaderLeft}>
-            Next Billing Date {" " + index}
-          </div>
-          <div className={styles.orangeHeaderRight}>
-            {sel.menu_date}
-          </div>
-        </div>
-
-        <div 
-          onClick={() => {
-            // console.log("show past deliveries for: ", sel.menu_date);
-            // console.log("dropdown arr before press: ", dropdownArray);
-
-            let newDropdownArr = [...dropdownArray];
-
-            let currVal = newDropdownArr.findIndex((val) => {
-              // console.log("(findIndex) val date: ", val.date);
-              // console.log("(findIndex) sel date: ", sel.menu_date);
-              return val.date === sel.menu_date;
-            });
-
-            console.log("currVal: ", currVal);
-
-            newDropdownArr[currVal] = !newDropdownArr[currVal];
-
-            setDropdownArray(newDropdownArr);
-
-          }}
-          style={{display: 'inline-flex', width: '100%'}}
-        >
-          <div className={styles.orangeHeaderLeft}>
-            Meal Plan
-          </div>
-          <div className={styles.orangeHeaderRightArrow}>
-            {parsedMeals} Meals, {selectionItems.qty} Deliveries
-          </div>
-          <div 
-            style={{
-              width: '1%',
-              borderTop: 'solid',
-              borderWidth: '1px',
-              borderColor: '#f26522'
-            }} 
-          />
-          <div
-              style={{
-                width: '3%',
-                minWidth: '24px',
-                // border: 'solid',
-                // borderWidth: '1px',
-                borderTop: 'solid',
-                borderWidth: '1px',
-                borderColor: '#f26522',
-                paddingTop: '12px'
-              }}
-            >
-            <div className={styles.orangeArrowDown} /> 
-          </div>
-        </div>
-
-        {console.log("dropdownArray at " + index + ": ", dropdownArray[index])}
-        {
-          (typeof(dropdownArray[index]) !== 'undefined' &&
-          dropdownArray[index].display)
-            ? (<>[placeholder meals]</>)
-            : null
-        }
-
-      </div>
-    );*/
     
+    // return(
+    //   <div>
+    //     {historyTabs}
+    //   </div>
+    // );
     return(
       <div>
-        {historyTabs}
+        {"history stuff"}
       </div>
     );
   }
