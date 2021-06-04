@@ -132,119 +132,64 @@ const MealPlan = props => {
     let dropdownIndex = 0;
 
     subHistory.forEach((sub) => {
-      console.log(' ');
-      console.log("(init) sub: ", sub);
-      console.log("(init) current plan: ", currentPlan);
-
-      // // plansFetched++;
-
-      // // Parse meals, deliveries, and id for each plan
-      // let parsedItems = JSON.parse(sub.items)[0];
-      // console.log("(parse) parsedItems: ", parsedItems);
-
-      // let parsedMeals = parsedItems.name.substring(
-      //   0,
-      //   parsedItems.name.indexOf(" ")
-      // );
-      // console.log("(parse) parsedMeals ", parsedMeals);
-
-      // let parsedDeliveries = parsedItems.qty;
-      // console.log("(parse) parsedDeliveries: ", parsedDeliveries);
-
-      // let parsedId = sub.purchase_id.substring(
-      //   sub.purchase_id.indexOf("-")+1,
-      //   sub.purchase_id.length
-      // );
-
-      // let parsedPlan = {...sub}
-
-      // parsedPlan['meals'] = parsedMeals;
-      // parsedPlan['deliveries'] = parsedDeliveries;
-      // parsedPlan['id'] = parsedId;
-
-      // // Push buttons into top dropdown menu
-      // tempDropdownButtons.push(
-      //   <div 
-      //     key={dropdownIndex + ' : ' + sub.purchase_id}
-      //     onClick={() => {
-      //       console.log("pressed: ", sub.purchase_id);
-      //       setCurrentPlan(parsedPlan);
-      //       toggleShowDropdown(false);
-      //     }}
-      //     style={{
-      //       borderRadius: '10px',
-      //       backgroundColor: 'white',
-      //       height: '32px',
-      //       width: '96%',
-      //       paddingLeft: '10px',
-      //       marginLeft: '2%',
-      //       marginTop: '10px',
-      //       textOverflow: 'ellipsis',
-      //       display: 'block',
-      //       whiteSpace: 'nowrap',
-      //       overflow: 'hidden',
-      //       cursor: 'pointer'
-      //     }}
-      //   >
-      //     {parsedPlan.meals} Meals, {parsedPlan.deliveries} Deliveries : {parsedPlan.id}
-      //   </div>
-      // );
-
-      // dropdownIndex++;
-
-
-      // if(defaultSub === null) {
-      //   console.log("(init) setting current plan: ", sub.purchase_id);
-      //   // setCurrentPlan(sub.purchase_id);
-      //   defaultSub = sub.purchase_id;
-      // }
+      // console.log(' ');
+      // console.log("(init) sub: ", sub);
+      // console.log("(init) current plan: ", currentPlan);
       
-      let el = tempUniquePlans.find(element => element.id === sub.purchase_id);
+      // let el = tempUniquePlans.find(element => element.id === sub.purchase_id);
       let elIndex = tempUniquePlans.findIndex(element => element.id === sub.purchase_id);
-      console.log('(1) ====================');
-      console.log("el: ", el);
-      console.log("el index: ", elIndex);
-      // if (tempUniquePlans.find(element => element.includes(sub.purchase_id))) {
-      if (typeof(el) === 'undefined') {
-        console.log("-- UNIQUE PLAN FOUND: ", sub.purchase_id);
-        console.log("-- element: ", el);
+
+      console.log(' ');
+      console.log('(1) ==============================');
+      console.log("sub: ", sub);
+      // console.log("el: ", el);
+      // console.log("el index: ", elIndex);
+
+      // if (typeof(el) === 'undefined') {
+      if (elIndex === -1) {
+
+        console.log("-- (1.1) UNIQUE PLAN FOUND: ", sub.purchase_id);
+        // console.log("-- element: ", el);
 
         let tempUniquePlan = {
           id: sub.purchase_id,
           history: []
         };
 
-        console.log("-- plan to be pushed: ", tempUniquePlan);
+        console.log("-- (1.2) plan to be pushed: ", tempUniquePlan);
 
         tempUniquePlans.push(tempUniquePlan);
 
         elIndex = tempUniquePlans.findIndex(element => element.id === sub.purchase_id);
-        console.log("-- element index: ", elIndex);
 
-        // sub.display = false;
-        // console.log("-- (2) adding to plan: ", sub);
+        console.log("-- (1.3) element index: ", elIndex);
+        console.log("-- (1.4) adding to plan: ", sub);
+        
         // tempUniquePlans[elIndex].history.push(sub);
+        let historyTab = {
+          date: sub.payment_time_stamp,
+          show_dropdown: false,
+          deliveries: []
+        };
+        tempUniquePlans[elIndex].history.push(historyTab);
+        tempUniquePlans[elIndex].history[0].deliveries.push(sub);
 
-        sub.display = false;
-        console.log("-- (1) adding to plan: ", sub);
-        tempUniquePlans[elIndex].history.push(sub);
-
-        console.log("-- new unique plan array: ", tempUniquePlans);
+        // console.log("-- new unique plan array: ", JSON.parse(JSON.stringify(tempUniquePlans)));
 
         uniquePlansFetched++;
 
         // Parse meals, deliveries, and id for each plan
         let parsedItems = JSON.parse(sub.items)[0];
-        console.log("(parse) parsedItems: ", parsedItems);
+        // console.log("(parse) parsedItems: ", parsedItems);
 
         let parsedMeals = parsedItems.name.substring(
           0,
           parsedItems.name.indexOf(" ")
         );
-        console.log("(parse) parsedMeals ", parsedMeals);
+        // console.log("(parse) parsedMeals ", parsedMeals);
 
         let parsedDeliveries = parsedItems.qty;
-        console.log("(parse) parsedDeliveries: ", parsedDeliveries);
+        // console.log("(parse) parsedDeliveries: ", parsedDeliveries);
 
         let parsedId = sub.purchase_id.substring(
           sub.purchase_id.indexOf("-")+1,
@@ -293,17 +238,40 @@ const MealPlan = props => {
         dropdownIndex++;
 
       } else {
-        sub.display = false;
-        console.log("-- (2) adding to plan: ", sub);
-        tempUniquePlans[elIndex].history.push(sub);
+        // sub.display = false;
+        // console.log("-- (2.1) adding to plan: ", sub);
+        console.log("-- (2.1) data before: ", JSON.parse(JSON.stringify(tempUniquePlans[elIndex].history)));
+        let dateIndex = tempUniquePlans[elIndex].history.findIndex(
+          element => element.date === sub.payment_time_stamp
+        );
+        console.log("-- (2.2) date index: ", dateIndex);
+        if(dateIndex === -1) {
+          console.log("---- (2A) deliveries for date not found; creating new tab...");
+          let historyTab = {
+            date: sub.payment_time_stamp,
+            show_dropdown: false,
+            deliveries: []
+          };
+          tempUniquePlans[elIndex].history.push(historyTab);
+          console.log("----      history length: ", tempUniquePlans[elIndex].history.length);
+          tempUniquePlans[elIndex].history[(tempUniquePlans[elIndex].history.length)-1].deliveries.push(sub);
+        } else {
+          console.log("---- (2B) deliveries for date found at " + dateIndex + "! adding to tab...");
+          tempUniquePlans[elIndex].history[dateIndex].deliveries.push(sub);
+        }
+        console.log("-- (2.3) data after: ", JSON.parse(JSON.stringify(tempUniquePlans[elIndex].history)));
+        // tempUniquePlans[elIndex].history.push(sub);
+        // tempUniquePlans[elIndex].history.push(sub);
+      
       }
 
-      console.log('(2) ====================');
+      console.log("-- new unique plan array: ", JSON.parse(JSON.stringify(tempUniquePlans)));
+      console.log('(2) ==============================');
 
     });
 
-    // console.log(' ');
-    console.log("(init) temp unique plans: ", tempUniquePlans);
+    console.log(' ');
+    console.log("(init) final temp unique plans: ", tempUniquePlans);
 
     setUniquePlans(tempUniquePlans);
 
@@ -484,7 +452,7 @@ const MealPlan = props => {
 
   }, [subHistory]);
 
-  const getDisplayStatus = (date, id) => {
+  /*const getDisplayStatus = (date, id) => {
     console.log("(getDisplayStatus) history dropdown statuses before: ", historyDropdowns);
 
     let index = historyDropdowns.findIndex((dropdown) => {
@@ -520,7 +488,7 @@ const MealPlan = props => {
     historyDropdownsCopy[index].display = !historyDropdowns[index].display;
 
     setHistoryDropdowns(historyDropdownsCopy);
-  }
+  }*/
 
   const showMealsForDelivery = (totalMeals) => {
     console.log("(showMealsForDelivery) total meals: ", totalMeals);
@@ -578,6 +546,7 @@ const MealPlan = props => {
   }
 
   const displayMealInfo = (data) => {
+    console.log("(displayMealInfo) data: ", data);
     // console.log("(showMealsForDelivery) total meals: ", totalMeals);
     let mealsForDelivery = [];
     // for(var i = 0; i < totalMeals; i++) {
@@ -731,7 +700,7 @@ const MealPlan = props => {
     return (
       <div
         style={{
-          // border: 'solid',
+          border: 'solid',
           display: 'flex',
           marginBottom: '10px'
         }}
@@ -742,7 +711,7 @@ const MealPlan = props => {
           <div style={{display: 'inline-flex', width: '100%'}}>
             <div
               style={{
-                // border: 'inset',
+                border: 'inset',
                 width: '50%',
                 fontWeight: '600'
               }}
@@ -751,7 +720,7 @@ const MealPlan = props => {
             </div>
             <div
               style={{
-                // border: 'inset',
+                border: 'inset',
                 width: '50%',
                 textAlign: 'right',
                 fontWeight: '600'
@@ -801,14 +770,17 @@ const MealPlan = props => {
         historyTabs.push({
           date: sel.start_delivery_date,
           purchase_time: sel.payment_time_stamp,
+          show_dropdown: false,
           deliveries: []
         });
         sameDateIndex = historyTabs.findIndex(element => element.purchase_time === sel.payment_time_stamp);
-        historyTabs[sameDateIndex].deliveries.push(sel.meal_desc);
+        // historyTabs[sameDateIndex].deliveries.push(sel.meal_desc);
+        historyTabs[sameDateIndex].deliveries.push(sel);
         console.log("-- (1.2) new deliveries: ", historyTabs[sameDateIndex].deliveries);
       } else {
         console.log("-- (2.1) date found! adding delivery to tab...");
-        historyTabs[sameDateIndex].deliveries.push(sel.meal_desc);
+        // historyTabs[sameDateIndex].deliveries.push(sel.meal_desc);
+        historyTabs[sameDateIndex].deliveries.push(sel);
         console.log("-- (2.2) new deliveries: ", historyTabs[sameDateIndex].deliveries);
       }
       // historyTabs.push(
@@ -906,9 +878,105 @@ const MealPlan = props => {
     //     {historyTabs}
     //   </div>
     // );
+
+
+    // Process data into divs for rendering
+    console.log("#################### (3)");
+    let deliveryDropdowns = [];
+
+    historyTabs.forEach((cycle) => {
+      // let deliveriesForDropdown = [];
+      // cycle.deliveries.forEach((del) => {
+
+      // });
+      console.log("==============================");
+      console.log("cycle: ", cycle);
+      deliveryDropdowns.push(
+        <div 
+          key={cycle.date}
+          style={{marginTop: '50px', marginBottom: '50px'}}
+        >
+
+          <div style={{display: 'inline-flex', width: '100%'}}>
+            <div className={styles.orangeHeaderLeft}>
+              Next Billing Date
+            </div>
+            <div className={styles.orangeHeaderRight}>
+              {cycle.date}
+            </div>
+          </div>
+
+          <div 
+            onClick={() => {
+              // console.log("(showHistory) orange dropdown clicked for: ", sel.sel_menu_date);
+              console.log("(showHistory) orange dropdown clicked for: ", cycle.start_delivery_date);
+              // console.log("(showHistory) index 1: ", currentHistoryIndex);
+              // console.log("(showHistory) index 2: ", index);
+
+              let uniquePlanCopy = [...uniquePlans];
+
+              console.log("(showHistory) unique plan copy: ", uniquePlanCopy);
+
+              // uniquePlanCopy[currentHistoryIndex].history[index].display = !uniquePlanCopy[currentHistoryIndex].history[index].display;
+              // setUniquePlans(uniquePlanCopy);
+              // toggleDeliveryDisplay(sel.menu_date, currentPlan.purchase_id);
+
+              // let uniquePlanCopy = [...uniquePlans];
+
+              // console.log("(showHistory) unique plan copy: ", uniquePlanCopy);
+
+              // uniquePlanCopy[currentHistoryIndex].history[index].display = !uniquePlanCopy[currentHistoryIndex].history[index].display;
+
+              // console.log("(showHistory) curr: ", uniquePlanCopy[currentHistoryIndex].history[index]);
+              // console.log("(showHistory) display set to: ", uniquePlanCopy[currentHistoryIndex].history[index].display);
+
+              // setUniquePlans(uniquePlanCopy);
+
+              // toggleDeliveryDisplay(sel.menu_date, currentPlan.purchase_id);
+            }}
+            style={{display: 'inline-flex', width: '100%', cursor: 'pointer'}}
+          >
+            <div className={styles.orangeHeaderLeft}>
+              Meal Plan
+            </div>
+            <div className={styles.orangeHeaderRightArrow}>
+              {currentPlan.meals} Meals, {currentPlan.deliveries} Deliveries
+            </div>
+            <div 
+              style={{
+                width: '1%',
+                borderTop: 'solid',
+                borderWidth: '1px',
+                borderColor: '#f26522'
+              }} 
+            />
+            <div
+              style={{
+                width: '3%',
+                minWidth: '24px',
+                // border: 'solid',
+                // borderWidth: '1px',
+                borderTop: 'solid',
+                borderWidth: '1px',
+                borderColor: '#f26522',
+                paddingTop: '12px'
+              }}
+            >
+              {console.log("(showHistory) display? ", cycle.display)}
+              {/* {sel.display
+                ? <div className={styles.orangeArrowUp} /> 
+                : <div className={styles.orangeArrowDown} /> } */}
+            </div>
+          </div>
+        </div>
+      );
+    });
+
+    console.log("#################### (4)");
+
     return(
       <div>
-        {"history stuff"}
+        {deliveryDropdowns}
       </div>
     );
   }
@@ -1375,7 +1443,7 @@ const MealPlan = props => {
           {/* {currentPlan
             ? showHistory()
             : null} */}
-          {showHistory()}
+          {/* {showHistory()} */}
 
           {/* {console.log("(render) selection display: ", selectionDisplay)}
           {selectionDisplay} */}
