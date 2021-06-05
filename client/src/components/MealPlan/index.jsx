@@ -695,9 +695,16 @@ const MealPlan = props => {
                 border: 'dashed',
                 width: '100px',
                 height: '100px',
-                marginTop: '5px'
+                marginTop: '5px',
+                borderWidth: '2px',
+                // backgroundColor: 'whitesmoke',
+                fontSize: '50px',
+                paddingRight: '33px',
+                paddingTop: '10px'
               }}
-            />
+            >
+              ?
+            </div>
           </div>
         </div>
       );
@@ -711,7 +718,7 @@ const MealPlan = props => {
         style={{
           // border: 'solid',
           display: 'flex',
-          marginBottom: '10px'
+          // marginBottom: '10px'
         }}
       >
 
@@ -750,11 +757,96 @@ const MealPlan = props => {
   const showPastMeals = (data) => {
     console.log("(showPastMeals) data: ", data);
 
+    let uniqueDates = [];
+
     let mealsDisplay = [];
 
     data.deliveries.forEach((del) => {
       console.log("del: ", del);
-      mealsDisplay.push(
+      if(uniqueDates.includes(del.sel_menu_date)){
+        mealsDisplay.push(
+          <div
+            style={{
+              // border: 'solid',
+              display: 'flex'
+              // marginBottom: '10px'
+            }}
+          >
+  
+            <div style={{display: 'inline-block', width: '100%'}}>
+        
+              {/* <div style={{display: 'inline-flex', width: '100%'}}>
+                <div
+                  style={{
+                    // border: 'inset',
+                    width: '50%',
+                    fontWeight: '600'
+                  }}
+                >
+                  Meals Delivered
+                </div>
+                <div
+                  style={{
+                    // border: 'inset',
+                    width: '50%',
+                    textAlign: 'right',
+                    fontWeight: '600'
+                  }}
+                >
+                  {formatDate(del.sel_menu_date)}
+                </div>
+              </div> */}
+  
+              {displayMealInfo(del)}
+  
+            </div>
+  
+          </div>
+        );
+      } else {
+        uniqueDates.push(del.sel_menu_date);
+        mealsDisplay.push(
+          <div
+            style={{
+              // border: 'solid',
+              display: 'flex',
+              marginTop: '10px'
+              // marginBottom: '10px'
+            }}
+          >
+  
+            <div style={{display: 'inline-block', width: '100%'}}>
+        
+              <div style={{display: 'inline-flex', width: '100%'}}>
+                <div
+                  style={{
+                    // border: 'inset',
+                    width: '50%',
+                    fontWeight: '600'
+                  }}
+                >
+                  Meals Delivered
+                </div>
+                <div
+                  style={{
+                    // border: 'inset',
+                    width: '50%',
+                    textAlign: 'right',
+                    fontWeight: '600'
+                  }}
+                >
+                  {formatDate(del.sel_menu_date)}
+                </div>
+              </div>
+  
+              {displayMealInfo(del)}
+  
+            </div>
+  
+          </div>
+        );
+      }
+      /*mealsDisplay.push(
         <div
           style={{
             // border: 'solid',
@@ -792,7 +884,7 @@ const MealPlan = props => {
           </div>
 
         </div>
-      );
+      );*/
     });
 
     /*return (
