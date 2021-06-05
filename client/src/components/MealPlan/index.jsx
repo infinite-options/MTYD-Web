@@ -450,6 +450,63 @@ const MealPlan = props => {
 
   }, [subHistory]);
 
+  const formatDate = (rawDate) => {
+    // let sampleDate = "2021-04-27 00-19-03";
+    let dateElements = rawDate.split(' ');
+    console.log("date elements: ", dateElements);
+    let yyyy_mm_dd = dateElements[0].split('-');
+    console.log("yyyy_mm_dd: ", yyyy_mm_dd);
+
+    let month;
+
+    // Parse month
+    switch(yyyy_mm_dd[1]){
+      case "01":
+        month = "January";
+        break;
+      case "02":
+        month = "February";
+        break;
+      case "03":
+        month = "March";
+        break;
+      case "04":
+        month = "April";
+        break;
+      case "05":
+        month = "May";
+        break;
+      case "06":
+        month = "June";
+        break;
+      case "07":
+        month = "July";
+        break;
+      case "08":
+        month = "August";
+        break;
+      case "09":
+        month = "September";
+        break;
+      case "10":
+        month = "October";
+        break;
+      case "11":
+        month = "November";
+        break;
+      case "12":
+        month = "December";
+        break;
+      default:
+        month = "";
+    }
+
+    let dateString = month + " " + yyyy_mm_dd[2] + ", " + yyyy_mm_dd[0];
+    console.log("date string: ", dateString);
+
+    return dateString;
+  }
+
   /*const getDisplayStatus = (date, id) => {
     console.log("(getDisplayStatus) history dropdown statuses before: ", historyDropdowns);
 
@@ -601,7 +658,7 @@ const MealPlan = props => {
     } else {
       mealsForDelivery.push(
         <div style={{display: 'inline-flex', width: '100%', height: '110px'}}>
-          {/* <div
+          <div
             style={{
               // border: 'inset',
               width: '8%',
@@ -610,8 +667,8 @@ const MealPlan = props => {
               paddingTop: '15px'
             }}
           >
-            {"SURPRISE"}
-          </div> */}
+            {currentPlan.deliveries}
+          </div>
           <div
             style={{
               // border: 'inset',
@@ -620,7 +677,7 @@ const MealPlan = props => {
               paddingTop: '33px'
             }}
           >
-            {"SURPRISE"}
+            {"SURPRISES"}
           </div>
           <div
             style={{
@@ -640,9 +697,7 @@ const MealPlan = props => {
                 height: '100px',
                 marginTop: '5px'
               }}
-            >
-              {"SURPRISE"}
-            </div>
+            />
           </div>
         </div>
       );
@@ -702,7 +757,7 @@ const MealPlan = props => {
       mealsDisplay.push(
         <div
           style={{
-            border: 'solid',
+            // border: 'solid',
             display: 'flex',
             marginBottom: '10px'
           }}
@@ -713,7 +768,7 @@ const MealPlan = props => {
             <div style={{display: 'inline-flex', width: '100%'}}>
               <div
                 style={{
-                  border: 'inset',
+                  // border: 'inset',
                   width: '50%',
                   fontWeight: '600'
                 }}
@@ -722,13 +777,13 @@ const MealPlan = props => {
               </div>
               <div
                 style={{
-                  border: 'inset',
+                  // border: 'inset',
                   width: '50%',
                   textAlign: 'right',
                   fontWeight: '600'
                 }}
               >
-                {del.sel_menu_date}
+                {formatDate(del.sel_menu_date)}
               </div>
             </div>
 
@@ -815,7 +870,7 @@ const MealPlan = props => {
               Next Billing Date
             </div>
             <div className={styles.orangeHeaderRight}>
-              {sel.date}
+              {formatDate(sel.date)}
             </div>
           </div>
           <div 
