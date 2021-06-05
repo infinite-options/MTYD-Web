@@ -453,9 +453,9 @@ const MealPlan = props => {
   const formatDate = (rawDate) => {
     // let sampleDate = "2021-04-27 00-19-03";
     let dateElements = rawDate.split(' ');
-    console.log("date elements: ", dateElements);
+    // console.log("date elements: ", dateElements);
     let yyyy_mm_dd = dateElements[0].split('-');
-    console.log("yyyy_mm_dd: ", yyyy_mm_dd);
+    // console.log("yyyy_mm_dd: ", yyyy_mm_dd);
 
     let month;
 
@@ -502,7 +502,7 @@ const MealPlan = props => {
     }
 
     let dateString = month + " " + yyyy_mm_dd[2] + ", " + yyyy_mm_dd[0];
-    console.log("date string: ", dateString);
+    // console.log("date string: ", dateString);
 
     return dateString;
   }
@@ -677,7 +677,7 @@ const MealPlan = props => {
               paddingTop: '33px'
             }}
           >
-            {"SURPRISES"}
+            {"Surprises"}
           </div>
           <div
             style={{
@@ -810,7 +810,7 @@ const MealPlan = props => {
             style={{
               // border: 'solid',
               display: 'flex',
-              marginTop: '10px'
+              marginTop: '15px'
               // marginBottom: '10px'
             }}
           >
@@ -932,12 +932,12 @@ const MealPlan = props => {
   }
 
   const showHistory = () => {
-    console.log(" ");
-    console.log("(showHistory) current plan: ", currentPlan);
-    console.log("(showHistory) current plan -- id: ", currentPlan.purchase_id);
-    console.log("(showHistory) current plan -- time stamp: ", currentPlan.payment_time_stamp);
-    console.log("(showHistory) unique plans: ", uniquePlans);
-    console.log(" ");
+    // console.log(" ");
+    // console.log("(showHistory) current plan: ", currentPlan);
+    // console.log("(showHistory) current plan -- id: ", currentPlan.purchase_id);
+    // console.log("(showHistory) current plan -- time stamp: ", currentPlan.payment_time_stamp);
+    // console.log("(showHistory) unique plans: ", uniquePlans);
+    // console.log(" ");
 
     // Process data into divs for rendering
     console.log("############################## (1)");
@@ -967,54 +967,33 @@ const MealPlan = props => {
           </div>
           <div 
             onClick={() => {
-              // console.log("(showHistory) orange dropdown clicked for: ", sel.sel_menu_date);
-              console.log("(showHistory) orange dropdown clicked for: ", sel);
-              // console.log("(showHistory) index 1: ", currentHistoryIndex);
-              // console.log("(showHistory) index 2: ", index);
-
-              console.log("display status before: ", sel.showDropdown);
+              // console.log("(showHistory) orange dropdown clicked for: ", sel);
+              // console.log("display status before: ", sel.showDropdown);
 
               let uniquePlanCopy = [...uniquePlans];
 
-              console.log("(showHistory) unique plan copy: ", uniquePlanCopy);
+              // console.log("(showHistory) unique plan copy: ", uniquePlanCopy);
 
               let index1 = uniquePlans.findIndex((plan) => {
                 return plan.id === currentPlan.purchase_id;
               });
-              console.log("index 1: ", index1);
+              // console.log("index 1: ", index1);
 
               let index2 = uniquePlanCopy[index1].history.findIndex((tab) => {
-                console.log("tab date: ", tab.date);
-                console.log("sel date: ", sel.date);
+                // console.log("tab date: ", tab.date);
+                // console.log("sel date: ", sel.date);
                 return tab.date === sel.date;
               });
-              console.log("index 2: ", index2);
+              // console.log("index 2: ", index2);
 
-              console.log("stuff 1: ", uniquePlanCopy[index1]);
-              console.log("stuff 2: ", uniquePlanCopy[index1].history[index2]);
+              // console.log("stuff 1: ", uniquePlanCopy[index1]);
+              // console.log("stuff 2: ", uniquePlanCopy[index1].history[index2]);
 
               uniquePlanCopy[index1].history[index2].show_dropdown = !uniquePlanCopy[index1].history[index2].show_dropdown;
 
               setUniquePlans(uniquePlanCopy);
 
-              // uniquePlanCopy[currentHistoryIndex].history[index].display = !uniquePlanCopy[currentHistoryIndex].history[index].display;
-              // setUniquePlans(uniquePlanCopy);
-              // toggleDeliveryDisplay(sel.menu_date, currentPlan.purchase_id);
-
-              // let uniquePlanCopy = [...uniquePlans];
-
-              // console.log("(showHistory) unique plan copy: ", uniquePlanCopy);
-
-              // uniquePlanCopy[currentHistoryIndex].history[index].display = !uniquePlanCopy[currentHistoryIndex].history[index].display;
-
-              // console.log("(showHistory) curr: ", uniquePlanCopy[currentHistoryIndex].history[index]);
-              // console.log("(showHistory) display set to: ", uniquePlanCopy[currentHistoryIndex].history[index].display);
-
-              // setUniquePlans(uniquePlanCopy);
-
-              // toggleDeliveryDisplay(sel.menu_date, currentPlan.purchase_id);
-
-              console.log("display status after: ", sel.showDropdown);
+              // console.log("display status after: ", sel.showDropdown);
             }}
             style={{display: 'inline-flex', width: '100%', cursor: 'pointer'}}
           >
@@ -1044,14 +1023,14 @@ const MealPlan = props => {
                 paddingTop: '12px'
               }}
             >
-              {console.log("(showHistory) (1) show dropdown? ", sel.show_dropdown)}
+              {/* {console.log("(showHistory) (1) show dropdown? ", sel.show_dropdown)} */}
               {sel.show_dropdown
                 ? <div className={styles.orangeArrowUp} />
                 : <div className={styles.orangeArrowDown} />}
 
             </div>
           </div>
-          {console.log("(showHistory) (2) show dropdown? ", sel.show_dropdown)}
+          {/* {console.log("(showHistory) (2) show dropdown? ", sel.show_dropdown)} */}
           {sel.show_dropdown
             ? <>{showPastMeals(sel)}</>
             : null}
@@ -1661,7 +1640,7 @@ const MealPlan = props => {
             }
           </div>
 
-
+          {console.log("current plan (before bill date): ", currentPlan)}
           <div style={{marginTop: '50px', marginBottom: '50px', /*border: 'solid'*/}}>
             <div style={{display: 'inline-flex', width: '100%'}}>
               <div className={styles.orangeHeaderLeft}>
