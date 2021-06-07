@@ -20,7 +20,7 @@ export class MenuList extends Component {
     },
     showLogout : 'none',
     showSigninSignup : 'none',
-    heightOfBlock:'380px'
+    heightOfBlock:'330px'
 
   }
 
@@ -43,13 +43,13 @@ export class MenuList extends Component {
         this.setState({
           showLogout :'flex',
           showSigninSignup:'none',
-          heightOfBlock:'410px'
+          heightOfBlock:'360px'
         })
       }else{
         this.setState({
           showLogout :'none',
           showSigninSignup:'flex',
-          heightOfBlock:'450px'
+          heightOfBlock:'400px'
         })
       }
       
@@ -93,13 +93,13 @@ export class MenuList extends Component {
         this.setState({
           showLogout :'flex',
           showSigninSignup:'none',
-          heightOfBlock:'410px'
+          heightOfBlock:'360px'
         })
       }else{
         this.setState({
           showLogout :'none',
           showSigninSignup:'flex',
-          heightOfBlock:'450px'
+          heightOfBlock:'400px'
         })
       }
 
@@ -117,7 +117,7 @@ export class MenuList extends Component {
         },
         showLogout :'none',
         showSigninSignup:'none',
-        heightOfBlock:'380px'
+        heightOfBlock:'330px'
       })
     }
 
@@ -170,7 +170,7 @@ export class MenuList extends Component {
 
           <div
           style={{
-            marginTop:'150px',
+            marginTop:'100px',
           }}>
 
             <a href='/home'

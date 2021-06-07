@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import {Link} from "react-router-dom";
 import {WebNavBar} from "../NavBar";
 import SignUp from "./signUp"
-import {HomeLink, FootLink, AmbassadorLink, AddressLink,AddMeals} from "./homeButtons"
+import {HomeLink, FootLink, AmbassadorLink, AddressLink} from "./homeButtons"
 import Menu from "../Menu";
 import MenuCarousel from "./menuCarousel"
 import styles from "./home.module.css"
@@ -206,7 +206,6 @@ class Home extends Component {
       <div>
         <WebNavBar/>
       </div>
-      {/* <AddMeals /> */}
       <div
       style={{
         position:'absolute',

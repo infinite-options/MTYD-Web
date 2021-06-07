@@ -38,6 +38,7 @@ class MenuItemList extends Component {
       popUp: styles.popUpHide,
       popUpDisplay: false,
       popUpText: 'Hello',
+      popUpTitle: 'Hello',
       dateButtonList:[],
       surpriseSkipSave : [],
       unloginPopupShowPM:false,
@@ -70,17 +71,20 @@ class MenuItemList extends Component {
         popUpText = popUpText.concat('You will be charged for ' + this.state.addOnAmount + ' Add On items at a later date')
       }
       this.setState({
-        popUpText
+        popUpText,
+        popUpTitle:"SAVE"
       })
     } else if (option === "SURPRISE") {
-      let popUpText = 'You will be delivered ' + this.state.totalMeals + ' random meals this week.'
+      let popUpText = 'We’ll surprise you with some of our specials on this day!'
       this.setState({
-        popUpText
+        popUpText,
+        popUpTitle:"SURPRISE"
       })
     } else if (option === "SKIP") {
-      let popUpText = 'You will not be delivered meals for this week'
+      let popUpText = 'You won’t receive any meals this day. We will extend your subscription accordingly.'
       this.setState({
-        popUpText
+        popUpText,
+        popUpTitle:"SKIP"
       })
     }
 }
@@ -1456,12 +1460,11 @@ class MenuItemList extends Component {
         </div>
 
         <div className = {this.state.popUp}>
-              <div className = {styles.popUpContainer}>
-
-                <h6 style = {{margin: '20px 25px'}}>{this.state.popUpText}</h6>
-
-                <a className = {styles.popUpButton} onClick = {this.toggleDisplay}>OK</a>
-              </div>
+          <div className = {styles.popUpContainer}>
+            <h6 style = {{margin: '20px 25px', fontSize:'18px', textAlign:'center', fontWeight:'bold'}}>{this.state.popUpTitle}</h6>
+            <h6 style = {{margin: '20px 25px', fontSize:'18px', textAlign:'center'}}>{this.state.popUpText}</h6>
+            <a className = {styles.popUpButton} onClick = {this.toggleDisplay}>OK</a>
+          </div>
         </div>
         {this.state.unloginPopupShowPM?
       <SelectMealGuestPop closeFunction = {this.closepopPlusMinus}

@@ -1,0 +1,38 @@
+.poploginsignup{
+  position: absolute;
+  background-color: white;
+  z-index: 1;
+  right: 0%;
+  top: -800px;
+}
+
+.becomeAnAmbassadorPopup {
+  position: fixed;
+  /* background-color: white; */
+  z-index: 1;
+  width: 600px;
+  height: 600px;
+  left: 30%;
+  top: 20%;
+  bottom: 10px;
+  background-image: url('../../images/ambassadorNotLogin.png');
+  background-size:1600px 800px;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.becomeAnAmbassadorPopupSignin {
+  position: fixed;
+  z-index: 1;
+  width: 540px;
+  height: 666px;
+  left: 30%;
+  top: 20%;
+  bottom: 10px;
+  border: 2px solid #F26522; 
+  background-color: red;
+  background-image: url('../../images/ambassadorLogin.png');
+  background-size:540px 666px;
+  background-position: center;
+  background-repeat: no-repeat;
+}
