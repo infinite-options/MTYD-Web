@@ -43,6 +43,8 @@ const MealPlan = props => {
 
   const [buttonClicked, setButtonClicked] = useState(false);
 
+  const [billingInfo, setBillingInfo] = useState(null);
+
   const [subHistory, setSubHistory] = useState([]);
 
   const [uniquePlans, setUniquePlans] = useState(null);
@@ -86,6 +88,19 @@ const MealPlan = props => {
             console.log("(sh) res: ", res.data.result);
 
             setSubHistory(res.data.result);
+          })
+          .catch((err) => {
+            if(err.response) {
+              console.log(err.response);
+            }
+            console.log(err);
+          });
+
+        axios.get(API_URL + 'predict_next_billing_date/' + customerId)
+          .then((res) => {
+            console.log("(pnbd) res: ", res.data.result);
+
+            setBillingInfo(res.data.result);
           })
           .catch((err) => {
             if(err.response) {
@@ -295,7 +310,8 @@ const MealPlan = props => {
       <>
         <div
           style={{
-            height: '20px'
+            height: '20px',
+            zIndex: '1'
           }}
         />
         <div
@@ -767,14 +783,14 @@ const MealPlan = props => {
 
   const futureDate = (rawDate) => {
     let dateElements = rawDate.split(' ');
-    console.log("date elements: ", dateElements);
+    // console.log("date elements: ", dateElements);
 
-    let timestamp = new Date(dateElements[0]);
-    console.log("raw date: ", rawDate);
-    console.log("time stamp: ", timestamp);
-    console.log("unix time: ", Date.parse(dateElements[0]));
+    // let timestamp = new Date(dateElements[0]);
+    // console.log("raw date: ", rawDate);
+    // console.log("time stamp: ", timestamp);
+    // console.log("unix time: ", Date.parse(dateElements[0]));
 
-    console.log("date now: ", Date.now());
+    // console.log("date now: ", Date.now());
 
     if(Date.parse(dateElements[0]) > Date.now()) {
       return "Meals Delivered (Future)";
@@ -960,6 +976,16 @@ const MealPlan = props => {
     );
   }
 
+  const nextBillingDate = (id) => {
+    console.log("(nbd) id: ", id);
+    let billInfo = billingInfo.find((plan) => {
+      return plan.purchase_id === id;
+    });
+    console.log("(nbd) bill info: ", billInfo);
+    let nextBillDate = formatDate(billInfo.next_billing_date);
+    return nextBillDate;
+  }
+
   const showHistory = () => {
     // console.log(" ");
     // console.log("(showHistory) current plan: ", currentPlan);
@@ -988,7 +1014,7 @@ const MealPlan = props => {
         >
           <div style={{display: 'inline-flex', width: '100%'}}>
             <div className={styles.orangeHeaderLeft}>
-              Next Billing Date
+              Billing Date
             </div>
             <div className={styles.orangeHeaderRight}>
               {formatDate(sel.date)}
@@ -1591,7 +1617,7 @@ const MealPlan = props => {
 
       {/* {infoLoaded === false */}
       {/* {currentPlan === null || historyDropdowns === null */}
-      {currentPlan === null || uniquePlans === null
+      {currentPlan === null || uniquePlans === null || billingInfo === null
         ? (
             <div
               style={{
@@ -1618,7 +1644,7 @@ const MealPlan = props => {
               height: (
                 showDropdown
                   ? 60 + (props.subscribedPlans.length * 42)
-                  : 50
+                  : 60
               )
             }}
           >
@@ -1667,6 +1693,7 @@ const MealPlan = props => {
               ? dropdownButtons
               : null
             }
+
           </div>
 
           {console.log("current plan (before bill date): ", currentPlan)}
@@ -1676,7 +1703,7 @@ const MealPlan = props => {
                 Next Billing Date
               </div>
               <div className={styles.orangeHeaderRight}>
-                May 16, 2021
+                {nextBillingDate(currentPlan.purchase_id)}
               </div>
             </div>
 
@@ -1697,13 +1724,7 @@ const MealPlan = props => {
             </div>
           </div>
 
-          {/* {currentPlan
-            ? showHistory()
-            : null} */}
           {showHistory()}
-
-          {/* {console.log("(render) selection display: ", selectionDisplay)}
-          {selectionDisplay} */}
 
         </div>
       </div>
