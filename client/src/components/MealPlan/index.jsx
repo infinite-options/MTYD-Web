@@ -682,7 +682,7 @@ const MealPlan = props => {
           </div>
         </div>
       );
-    } else {
+    } else if (data.meal_desc === "SURPRISE") {
       mealsForDelivery.push(
         <div style={{display: 'inline-flex', width: '100%', height: '110px'}}>
           <div
@@ -735,7 +735,114 @@ const MealPlan = props => {
           </div>
         </div>
       );
+    } else if (data.meal_desc === "SKIP") {
+      mealsForDelivery.push(
+        <div style={{display: 'inline-flex', width: '100%', height: '110px'}}>
+          <div
+            style={{
+              // border: 'inset',
+              width: '8%',
+              fontSize: '40px',
+              fontWeight: '600',
+              paddingTop: '15px'
+            }}
+          >
+            0
+          </div>
+          <div
+            style={{
+              // border: 'inset',
+              width: '92%',
+              fontWeight: '600',
+              paddingTop: '33px'
+            }}
+          >
+            {"(Skip)"}
+          </div>
+          {/* <div
+            style={{
+              display: 'flex',
+              // border: 'inset',
+              width: '0%',
+              minWidth: '100px',
+              textAlign: 'right',
+              float: 'right',
+              fontWeight: '600'
+            }}
+          >
+            <div
+              style={{
+                border: 'dashed',
+                width: '100px',
+                height: '100px',
+                marginTop: '5px',
+                borderWidth: '2px',
+                // backgroundColor: 'whitesmoke',
+                fontSize: '50px',
+                paddingRight: '33px',
+                paddingTop: '10px'
+              }}
+            >
+              ?
+            </div>
+          </div> */}
+        </div>
+      );
     }
+    /*} else {
+      mealsForDelivery.push(
+        <div style={{display: 'inline-flex', width: '100%', height: '110px'}}>
+          <div
+            style={{
+              // border: 'inset',
+              width: '8%',
+              fontSize: '40px',
+              fontWeight: '600',
+              paddingTop: '15px'
+            }}
+          >
+            {currentPlan.meals}
+          </div>
+          <div
+            style={{
+              // border: 'inset',
+              width: '92%',
+              fontWeight: '600',
+              paddingTop: '33px'
+            }}
+          >
+            {"Surprises"}
+          </div>
+          <div
+            style={{
+              display: 'flex',
+              // border: 'inset',
+              width: '0%',
+              minWidth: '100px',
+              textAlign: 'right',
+              float: 'right',
+              fontWeight: '600'
+            }}
+          >
+            <div
+              style={{
+                border: 'dashed',
+                width: '100px',
+                height: '100px',
+                marginTop: '5px',
+                borderWidth: '2px',
+                // backgroundColor: 'whitesmoke',
+                fontSize: '50px',
+                paddingRight: '33px',
+                paddingTop: '10px'
+              }}
+            >
+              ?
+            </div>
+          </div>
+        </div>
+      );
+    }*/
     return mealsForDelivery;
   }
 
