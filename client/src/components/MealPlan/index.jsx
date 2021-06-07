@@ -451,9 +451,20 @@ const MealPlan = props => {
   }, [subHistory]);
 
   const formatDate = (rawDate) => {
+
+    // let timestamp = new Date(rawDate.substring);
+    // console.log("raw date: ", rawDate);
+    // console.log("time stamp: ", timestamp);
+
     // let sampleDate = "2021-04-27 00-19-03";
     let dateElements = rawDate.split(' ');
     // console.log("date elements: ", dateElements);
+
+    // let timestamp = new Date(dateElements[0]);
+    // console.log("raw date: ", rawDate);
+    // console.log("time stamp: ", timestamp);
+    // console.log("unix time: ", Date.parse(dateElements[0]));
+
     let yyyy_mm_dd = dateElements[0].split('-');
     // console.log("yyyy_mm_dd: ", yyyy_mm_dd);
 
@@ -667,7 +678,7 @@ const MealPlan = props => {
               paddingTop: '15px'
             }}
           >
-            {currentPlan.deliveries}
+            {currentPlan.meals}
           </div>
           <div
             style={{
@@ -753,6 +764,24 @@ const MealPlan = props => {
       </div>
     );
   }  
+
+  const futureDate = (rawDate) => {
+    let dateElements = rawDate.split(' ');
+    console.log("date elements: ", dateElements);
+
+    let timestamp = new Date(dateElements[0]);
+    console.log("raw date: ", rawDate);
+    console.log("time stamp: ", timestamp);
+    console.log("unix time: ", Date.parse(dateElements[0]));
+
+    console.log("date now: ", Date.now());
+
+    if(Date.parse(dateElements[0]) > Date.now()) {
+      return "Meals Delivered (Future)";
+    } else {
+      return "Meals Delivered";
+    }
+  }
   
   const showPastMeals = (data) => {
     console.log("(showPastMeals) data: ", data);
@@ -825,7 +854,7 @@ const MealPlan = props => {
                     fontWeight: '600'
                   }}
                 >
-                  Meals Delivered
+                  {futureDate(del.sel_menu_date)}
                 </div>
                 <div
                   style={{
