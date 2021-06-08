@@ -25,6 +25,7 @@ import {FootLink} from "../Home/homeButtons";
 import zIndex from '@material-ui/core/styles/zIndex';
 import { Ellipsis } from 'react-bootstrap/esm/PageItem';
 import { lightBlue } from '@material-ui/core/colors';
+import { parse } from '@fortawesome/fontawesome-svg-core';
 
 const MealPlan = props => {
 
@@ -888,7 +889,31 @@ const MealPlan = props => {
     );
   }  
 
-  const futureDate = (rawDate) => {
+  const isFutureCycle = (rawDate, billDate) => {
+
+    console.log("raw date: ", rawDate);
+    console.log("bill date: ", billDate);
+
+    let dateElements = rawDate.split(' ');
+    let billDateElements = billDate.split(' ');
+
+    console.log("date elements: ", dateElements);
+    console.log("bill date elements: ", billDateElements);
+
+    let parsedDate = Date.parse(dateElements[0]);
+    let parsedBillDate = Date.parse(billDateElements[0]);
+
+    console.log("parsed date: ", parsedDate);
+    console.log("parsed bill date: ", parsedBillDate);
+
+    if (parsedDate > parsedBillDate) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  const isFutureDate = (rawDate) => {
     let dateElements = rawDate.split(' ');
     // console.log("date elements: ", dateElements);
 
@@ -900,9 +925,9 @@ const MealPlan = props => {
     // console.log("date now: ", Date.now());
 
     if(Date.parse(dateElements[0]) > Date.now()) {
-      return "Meals Delivered (Future)";
+      return true;
     } else {
-      return "Meals Delivered";
+      return false;
     }
   }
   
@@ -915,6 +940,7 @@ const MealPlan = props => {
 
     data.deliveries.forEach((del) => {
       console.log("del: ", del);
+      if(!isFutureCycle(del.sel_menu_date, nextBillingDate(currentPlan.purchase_id))) {
       if(uniqueDates.includes(del.sel_menu_date)){
         mealsDisplay.push(
           <div
@@ -977,7 +1003,11 @@ const MealPlan = props => {
                     fontWeight: '600'
                   }}
                 >
-                  {futureDate(del.sel_menu_date)}
+                  {
+                    isFutureDate(del.sel_menu_date)
+                      ? "Meals Delivered (Future)"
+                      : "Meals Delivered"
+                  }
                 </div>
                 <div
                   style={{
@@ -997,6 +1027,7 @@ const MealPlan = props => {
   
           </div>
         );
+      }
       }
       /*mealsDisplay.push(
         <div
@@ -1089,8 +1120,9 @@ const MealPlan = props => {
       return plan.purchase_id === id;
     });
     console.log("(nbd) bill info: ", billInfo);
-    let nextBillDate = formatDate(billInfo.next_billing_date);
-    return nextBillDate;
+    // let nextBillDate = formatDate(billInfo.next_billing_date);
+    // return nextBillDate;
+    return billInfo.next_billing_date;
   }
 
   const showHistory = () => {
@@ -1810,7 +1842,7 @@ const MealPlan = props => {
                 Next Billing Date
               </div>
               <div className={styles.orangeHeaderRight}>
-                {nextBillingDate(currentPlan.purchase_id)}
+                {formatDate(nextBillingDate(currentPlan.purchase_id))}
               </div>
             </div>
 
