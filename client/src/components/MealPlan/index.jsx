@@ -1237,7 +1237,7 @@ const MealPlan = props => {
 
     return(
       <div>
-        {historyTabs}
+        {historyTabs.reverse()}
       </div>
     );
   }

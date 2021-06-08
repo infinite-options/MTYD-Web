@@ -95,10 +95,17 @@ class NavBar extends React.Component {
       profileRole: "",
       login_seen:false,
       signUpSeen:false,
-      width:window.innerWidth,
-      loginNameLogoutDisplay:'flex',
+      // width:window.innerWidth,
+      // loginNameLogoutDisplay:'flex',
+      windowHeight: undefined,
+      windowWidth: undefined
     };
   }
+
+  handleResize = () => this.setState({
+    windowHeight: window.innerHeight,
+    windowWidth: window.innerWidth
+  });
 
   togglePopLogin = () => {
 
@@ -136,11 +143,19 @@ class NavBar extends React.Component {
     });
   };
 
+  goToLink = (link) => {
+    this.props.history.push(link);
+  }
+
   componentDidMount() {
     //check for logged in
     let currentState;
     const customer_uid = Cookies.get("customer_uid");
     // console.log("props: ", this.props.history.location.pathname);
+
+    this.handleResize();
+    window.addEventListener('resize', this.handleResize);
+
     if (customer_uid) {
       this.setState({login: true});
       this.props.LoadUserInfo(customer_uid);
@@ -178,66 +193,220 @@ class NavBar extends React.Component {
         console.log(err);
       });    
       
-      window.addEventListener('resize', this.updateDimensions);
+      // window.addEventListener('resize', this.updateDimensions);
 
-      if(window.innerWidth<=800){
-        this.setState({
-          loginNameLogoutDisplay:'none'
-        })
-      }else{
-        this.setState({
-          loginNameLogoutDisplay:'flex'
-        })
-      } 
+      // if(window.innerWidth<=800){
+      //   this.setState({
+      //     loginNameLogoutDisplay:'none'
+      //   })
+      // }else{
+      //   this.setState({
+      //     loginNameLogoutDisplay:'flex'
+      //   })
+      // } 
   }
 
-  updateDimensions = () => {
-    if(window.innerWidth<=800){
-      this.setState({
-        loginNameLogoutDisplay:'none'
-      })
-    }else{
-      this.setState({
-        loginNameLogoutDisplay:'flex'
-      })
-    } 
-  }
+  // updateDimensions = () => {
+  //   if(window.innerWidth<=800){
+  //     this.setState({
+  //       loginNameLogoutDisplay:'none'
+  //     })
+  //   }else{
+  //     this.setState({
+  //       loginNameLogoutDisplay:'flex'
+  //     })
+  //   } 
+  // }
 
 
   render() {
 
     const nameLength = this.state.firstName.length*14+this.state.lastName.length*14+30;
-    const nameFormat = {
-      width: nameLength,
-      color:'white',
-      display:this.state.loginNameLogoutDisplay
-    }
+
+    // const nameFormat = {
+    //   width: nameLength,
+    //   color:'white',
+    //   display:this.state.loginNameLogoutDisplay
+    // }
+
     return (
       <div className={styles.navbar}>
+
+        {/* For debugging window size */}
+        <span 
+          style={{
+            zIndex: '101',
+            position: 'fixed',
+            backgroundColor: 'white',
+            border: 'solid',
+            borderWidth: '1px',
+            borderColor: 'red',
+            width: '150px',
+            top: '100px'
+          }}
+        >
+          Height: {this.state.windowHeight}px
+          <br />
+          Width: {this.state.windowWidth}px
+        </span>
 
         <NavMenu
           login = {this.state.login}
           LogoutFunction = {this.logOut}
           togglePopSignup = {this.togglePopSignup}
           togglePopLogin = {this.togglePopLogin}
-
         />
-        
-        <a href='/home' 
-        style={{
-          margin:0,
-          position:"absolute",
-          width: "160px", 
-          height:"80px",
-          top:"5px",
-          backgroundImage:`url(${whiteLogo})`,
-          backgroundSize:'cover',
-          backgroundPosition:'center',
-          left:'48%'
+
+        {/* <a 
+          href='/home' 
+          style={{
+            // margin:0,
+            // position:"absolute",
+            // width: "160px", 
+            // height:"80px",
+            // top:"5px",
+
+            backgroundImage:`url(${whiteLogo})`,
+            backgroundSize:'cover',
+            // backgroundPosition:'center',
+            // left:'48%',
+            // border: 'solid'
           }}>
-        </a>
+        </a> */}
+        <div
+          style={{
+            border: 'inset',
+            width: '40%',
+            minWidth: '200px',
+            display: 'flex',
+            justifyContent: 'center'
+          }}
+        >
+          <a 
+            href='/home' 
+            style={{
+              // margin:0,
+              // position:"absolute",
+              // width: "160px", 
+              // height:"80px",
+              // top:"5px",
+              // border: 'inset',
+              backgroundImage:`url(${whiteLogo})`,
+              backgroundSize:'cover',
+              // backgroundPosition:'center',
+              // left:'48%',
+              width: '160px',
+              height: '80px'
+            }}>
+          </a>
+        </div>
 
         {this.state.login ? (
+          <div
+            style={{
+              border: 'inset',
+              display: 'inline-flex',
+              height: '40px',
+              width: '30%',
+              minWidth: '200px'
+            }}
+          >
+
+            {/* <Link 
+              to='/meal-plan' 
+              className={styles.whiteBackBtn} 
+              // style={{
+              //   width: nameLength,
+              //   color:'white',
+              //   // display:this.state.loginNameLogoutDisplay
+              // }}
+            >
+                {this.state.firstName} {this.state.lastName}
+            </Link> */}
+            <div
+              // to='/meal-plan' 
+              onClick={() => {this.goToLink('/meal-plan')}}
+              className={styles.whiteBackBtn} 
+              // style={{
+              //   width: nameLength,
+              //   color:'white',
+              //   // display:this.state.loginNameLogoutDisplay
+              // }}
+            >
+                {this.state.firstName} {this.state.lastName}
+            </div>
+
+            <div className={styles.divider}/>
+
+            {/* <a
+              className={styles.whiteBackBtn}
+              onClick={this.logOut}
+              // style={{
+              //   // display: this.state.loginNameLogoutDisplay, 
+              //   alignItem: "center", 
+              //   color:'white'
+              // }}
+            >
+              {" "}
+              LOGOUT&nbsp;
+            </a> */}
+            <a
+              className={styles.whiteBackBtn}
+              onClick={this.logOut}
+              // style={{
+              //   // display: this.state.loginNameLogoutDisplay, 
+              //   alignItem: "center", 
+              //   color:'white'
+              // }}
+            >
+              {" "}
+              LOGOUT&nbsp;
+            </a>
+
+          </div>
+        ) : (
+          <div
+            style={{
+              border: 'inset'
+            }}
+          >
+
+            <div
+              style={{
+                height:'100%',
+                // display: this.state.loginNameLogoutDisplay
+              }}
+            >
+              <button 
+                onClick={this.togglePopSignup}
+                className={styles.signUpBtn}
+              >
+                Sign Up
+              </button>
+            </div>
+
+            {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
+
+            <div
+              style={{
+                height:'100%',
+                // display: this.state.loginNameLogoutDisplay
+              }}
+            >
+              <button 
+                onClick={this.togglePopLogin}
+                className={styles.signInBtn}
+              >
+                Login
+              </button>
+            </div>
+
+            {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
+
+          </div>
+        )}
+
+        {/* {this.state.login && this.state.profileRole === 'admin' ? (
           <>
             {(() => {
               if (this.state.profileRole === 'admin') {
@@ -256,38 +425,70 @@ class NavBar extends React.Component {
               }
             })()}
           </>
-        ):null}
-
-        <ul>
-          {this.state.login ? (
-          <>
-          <Link to='/meal-plan' 
-            className={styles.whiteBackBtn} 
-            style={nameFormat}
-          >
-            {/* {console.log(this.state)} */}
-              {this.state.firstName} {this.state.lastName}
-          </Link>
-
-          <div class={styles.divider}/>
-
-          <a
+        ) : null} */}
+        {/* {this.state.login && this.state.profileRole === 'admin' ? (
+          <a href='/admin'
+            style ={{
+              color:'white',
+              position:"absolute",
+              left:'150px'
+            }}
             className={styles.whiteBackBtn}
-            onClick={this.logOut}
-            style={{display: this.state.loginNameLogoutDisplay, alignItem: "center", color:'white'}}
           >
-            {" "}
-            LOGOUT&nbsp;
+            Admin
           </a>
-        </>
-          ) 
-          : 
-          (<>
-            <div
-              style={{
-                height:'100%',
-                display: this.state.loginNameLogoutDisplay
-              }}
+        ) : null} */}
+        {/* {this.state.login ? (
+          <a href='/admin'
+            style ={{
+              color:'white',
+              position:"absolute",
+              left:'150px'
+            }}
+            className={styles.whiteBackBtn}
+          >
+            Admin
+          </a>
+        ) : null} */}
+
+        {/* <ul>
+          {this.state.login ? (
+            <>
+
+              <Link 
+                to='/meal-plan' 
+                className={styles.whiteBackBtn} 
+                style={{
+                  width: nameLength,
+                  color:'white',
+                  // display:this.state.loginNameLogoutDisplay
+                }}
+              >
+                  {this.state.firstName} {this.state.lastName}
+              </Link>
+
+              <div className={styles.divider}/>
+
+              <a
+                className={styles.whiteBackBtn}
+                onClick={this.logOut}
+                style={{
+                  // display: this.state.loginNameLogoutDisplay, 
+                  alignItem: "center", 
+                  color:'white'
+                }}
+              >
+                {" "}
+                LOGOUT&nbsp;
+              </a>
+            </>
+          ) : (
+            <>
+              <div
+                style={{
+                  height:'100%',
+                  // display: this.state.loginNameLogoutDisplay
+                }}
               >
                 <button 
                   onClick={this.togglePopSignup}
@@ -295,29 +496,29 @@ class NavBar extends React.Component {
                 >
                   Sign Up
                 </button>
-            </div>
-            {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
+              </div>
+              {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
 
-            <div
-              style={{
-                height:'100%',
-                display: this.state.loginNameLogoutDisplay
-              }}
-            >
-              <button 
-                onClick={this.togglePopLogin}
-                className={styles.signInBtn}
+              <div
+                style={{
+                  height:'100%',
+                  // display: this.state.loginNameLogoutDisplay
+                }}
               >
-                Login
-              </button>
-            </div>
-            {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
-          </>)}
-        </ul>
+                <button 
+                  onClick={this.togglePopLogin}
+                  className={styles.signInBtn}
+                >
+                  Login
+                </button>
+              </div>
+              {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
+            </>
+          )}
+        </ul> */}
 
       </div>
-        );
-    // }
+    );
   }
 }
 

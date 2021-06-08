@@ -33,21 +33,29 @@ export class NavMenu extends Component {
   render() {
 
     return (
-      <div>
+      <div 
+        style={{
+          border: 'inset', 
+          width: '30%',
+          minWidth: '100px'
+        }}
+      >
         <div>
 
           {/* <span>Window size: {this.state.width} x {this.state.height}</span> */}
           <div
-          style={{
-            position:"absolute",
-            width:"60px",
-            height:"40px",
-            left:"60px",
-            top:"20px",
-            backgroundImage:`url(${hamburger})`,
-            backgroundSize:'cover',
-          }}
-          onClick={this.togglePopMenu}
+            style={{
+              // position:"absolute",
+              width:"60px",
+              height:"40px",
+              marginLeft: '30px',
+              // left:"60px",
+              // top:"20px",
+              backgroundImage:`url(${hamburger})`,
+              backgroundSize:'cover',
+              border: 'solid'
+            }}
+            onClick={this.togglePopMenu}
           >
           </div>
           {this.state.popSeen?
