@@ -26,7 +26,7 @@ export class MenuList extends Component {
 
   componentDidMount() {
     window.addEventListener('resize', this.updateDimensions);
-    if(window.innerWidth<=800){
+    if(window.innerWidth<=900){
       this.setState({
         crossFork:{
           width:'44px',
@@ -74,7 +74,7 @@ export class MenuList extends Component {
 
   updateDimensions = () => {
 
-    if(window.innerWidth<=800){
+    if(window.innerWidth<=900){
       this.setState({
         crossFork:{
           width:'44px',

@@ -242,7 +242,7 @@ class NavBar extends React.Component {
             borderWidth: '1px',
             borderColor: 'red',
             width: '150px',
-            top: '100px'
+            top: '500px'
           }}
         >
           Height: {this.state.windowHeight}px
@@ -280,6 +280,7 @@ class NavBar extends React.Component {
             minWidth: '200px',
             display: 'flex',
             justifyContent: 'center',
+            marginTop: '10px'
           }}
         >
           <a 
@@ -305,64 +306,51 @@ class NavBar extends React.Component {
           <div
             style={{
               border: 'inset',
-              display: 'inline-flex',
+              // display: 'inline-flex',
               height: '44px',
               width: '40%',
-              minWidth: '200px',
+              minWidth: '180px',
               position: 'relative'
             }}
           >
 
-            {/* <Link 
-              to='/meal-plan' 
-              className={styles.whiteBackBtn} 
-              // style={{
-              //   width: nameLength,
-              //   color:'white',
-              //   // display:this.state.loginNameLogoutDisplay
-              // }}
-            >
-                {this.state.firstName} {this.state.lastName}
-            </Link> */}
             <div
-              // to='/meal-plan' 
               onClick={() => {this.goToLink('/meal-plan')}}
-              className={styles.nameBtn} 
-              // style={{
-              //   width: nameLength,
-              //   color:'white',
-              //   // display:this.state.loginNameLogoutDisplay
-              // }}
+              className={
+                this.state.windowWidth > 900
+                  ? styles.nameBtn
+                  : styles.nameBtnNarrow
+              }
             >
                 {this.state.firstName} {this.state.lastName}
             </div>
 
-            <div className={styles.divider}/>
-
-            {/* <a
-              className={styles.whiteBackBtn}
+            {this.state.windowWidth > 900
+              ? (
+                  <div
+                    className={
+                      this.state.windowWidth > 900
+                        ? styles.logoutBtn
+                        : styles.logoutBtnNarrow
+                    }
+                    onClick={this.logOut}
+                  >
+                    {" "}
+                    LOGOUT&nbsp;
+                  </div>
+                )
+              : null}
+            {/* <div
+              className={
+                this.state.windowWidth > 900
+                  ? styles.logoutBtn
+                  : styles.logoutBtnNarrow
+              }
               onClick={this.logOut}
-              // style={{
-              //   // display: this.state.loginNameLogoutDisplay, 
-              //   alignItem: "center", 
-              //   color:'white'
-              // }}
             >
               {" "}
               LOGOUT&nbsp;
-            </a> */}
-            <div
-              className={styles.logoutBtn}
-              onClick={this.logOut}
-              // style={{
-              //   // display: this.state.loginNameLogoutDisplay, 
-              //   alignItem: "center", 
-              //   color:'white'
-              // }}
-            >
-              {" "}
-              LOGOUT&nbsp;
-            </div>
+            </div> */}
 
           </div>
         ) : (
@@ -375,7 +363,6 @@ class NavBar extends React.Component {
             <div
               style={{
                 height:'100%',
-                // display: this.state.loginNameLogoutDisplay
               }}
             >
               <button 
@@ -406,117 +393,6 @@ class NavBar extends React.Component {
 
           </div>
         )}
-
-        {/* {this.state.login && this.state.profileRole === 'admin' ? (
-          <>
-            {(() => {
-              if (this.state.profileRole === 'admin') {
-                return (
-                  <a href='/admin'
-                    style ={{
-                      color:'white',
-                      position:"absolute",
-                      left:'150px'
-                    }}
-                    className={styles.whiteBackBtn}
-                    >
-                    Admin
-                  </a>
-                );
-              }
-            })()}
-          </>
-        ) : null} */}
-        {/* {this.state.login && this.state.profileRole === 'admin' ? (
-          <a href='/admin'
-            style ={{
-              color:'white',
-              position:"absolute",
-              left:'150px'
-            }}
-            className={styles.whiteBackBtn}
-          >
-            Admin
-          </a>
-        ) : null} */}
-        {/* {this.state.login ? (
-          <a href='/admin'
-            style ={{
-              color:'white',
-              position:"absolute",
-              left:'150px'
-            }}
-            className={styles.whiteBackBtn}
-          >
-            Admin
-          </a>
-        ) : null} */}
-
-        {/* <ul>
-          {this.state.login ? (
-            <>
-
-              <Link 
-                to='/meal-plan' 
-                className={styles.whiteBackBtn} 
-                style={{
-                  width: nameLength,
-                  color:'white',
-                  // display:this.state.loginNameLogoutDisplay
-                }}
-              >
-                  {this.state.firstName} {this.state.lastName}
-              </Link>
-
-              <div className={styles.divider}/>
-
-              <a
-                className={styles.whiteBackBtn}
-                onClick={this.logOut}
-                style={{
-                  // display: this.state.loginNameLogoutDisplay, 
-                  alignItem: "center", 
-                  color:'white'
-                }}
-              >
-                {" "}
-                LOGOUT&nbsp;
-              </a>
-            </>
-          ) : (
-            <>
-              <div
-                style={{
-                  height:'100%',
-                  // display: this.state.loginNameLogoutDisplay
-                }}
-              >
-                <button 
-                  onClick={this.togglePopSignup}
-                  className={styles.signUpBtn}
-                >
-                  Sign Up
-                </button>
-              </div>
-              {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
-
-              <div
-                style={{
-                  height:'100%',
-                  // display: this.state.loginNameLogoutDisplay
-                }}
-              >
-                <button 
-                  onClick={this.togglePopLogin}
-                  className={styles.signInBtn}
-                >
-                  Login
-                </button>
-              </div>
-              {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
-            </>
-          )}
-        </ul> */}
 
       </div>
     );
