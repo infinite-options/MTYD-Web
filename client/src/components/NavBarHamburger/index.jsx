@@ -36,7 +36,7 @@ export class NavMenu extends Component {
       <div 
         style={{
           border: 'inset', 
-          width: '30%',
+          width: '40%',
           minWidth: '100px'
         }}
       >

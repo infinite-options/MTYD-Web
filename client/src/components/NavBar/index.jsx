@@ -276,10 +276,10 @@ class NavBar extends React.Component {
         <div
           style={{
             border: 'inset',
-            width: '40%',
+            width: '30%',
             minWidth: '200px',
             display: 'flex',
-            justifyContent: 'center'
+            justifyContent: 'center',
           }}
         >
           <a 
@@ -306,9 +306,10 @@ class NavBar extends React.Component {
             style={{
               border: 'inset',
               display: 'inline-flex',
-              height: '40px',
-              width: '30%',
-              minWidth: '200px'
+              height: '44px',
+              width: '40%',
+              minWidth: '200px',
+              position: 'relative'
             }}
           >
 
@@ -326,7 +327,7 @@ class NavBar extends React.Component {
             <div
               // to='/meal-plan' 
               onClick={() => {this.goToLink('/meal-plan')}}
-              className={styles.whiteBackBtn} 
+              className={styles.nameBtn} 
               // style={{
               //   width: nameLength,
               //   color:'white',
@@ -350,8 +351,8 @@ class NavBar extends React.Component {
               {" "}
               LOGOUT&nbsp;
             </a> */}
-            <a
-              className={styles.whiteBackBtn}
+            <div
+              className={styles.logoutBtn}
               onClick={this.logOut}
               // style={{
               //   // display: this.state.loginNameLogoutDisplay, 
@@ -361,7 +362,7 @@ class NavBar extends React.Component {
             >
               {" "}
               LOGOUT&nbsp;
-            </a>
+            </div>
 
           </div>
         ) : (
