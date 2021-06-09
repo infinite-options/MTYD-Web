@@ -169,6 +169,24 @@
   overflow: hidden;
 }  */
 
+/* .hamMenu {
+  width: 60px;
+  height: 40px;
+  margin-left: 30px;
+  background-image: url('../NavBarHamburger/hamburger.png');
+  background-size: cover;
+  cursor: pointer;
+} */
+/* .hamMenu:hover {
+  width: 60px;
+  height: 40px;
+  margin-left: 30px;
+  background-image: url('../NavBarHamburger/hamburger.png');
+  background-size: cover;
+  cursor: pointer;
+  border: dashed;
+} */
+
 .nameBtn {
   position: absolute;
   right: 150px;
@@ -189,6 +207,7 @@
   display: block;
   white-space: nowrap;
   overflow: hidden;
+  cursor: pointer;
 } 
 .nameBtnNarrow {
   position: absolute;
@@ -210,6 +229,7 @@
   display: block;
   white-space: nowrap;
   overflow: hidden;
+  cursor: pointer;
 } 
 
 .logoutBtn {
@@ -232,6 +252,7 @@
   display: block;
   white-space: nowrap;
   overflow: hidden;
+  cursor: pointer;
 } 
 .logoutBtnNarrow {
   position: absolute;
@@ -254,6 +275,7 @@
   display: block;
   white-space: nowrap;
   overflow: hidden;
+  cursor: pointer;
 } 
 
 .adminBtn2 {
@@ -276,6 +298,7 @@
   display: block;
   white-space: nowrap;
   overflow: hidden;
+  cursor: pointer;
 } 
 
 .showNameBtn {

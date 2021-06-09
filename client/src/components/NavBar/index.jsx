@@ -236,7 +236,7 @@ class NavBar extends React.Component {
       <div className={styles.navbar}>
 
         {/* For debugging window size */}
-        <span 
+        {/* <span 
           style={{
             zIndex: '101',
             position: 'fixed',
@@ -251,7 +251,7 @@ class NavBar extends React.Component {
           Height: {this.state.windowHeight}px
           <br />
           Width: {this.state.windowWidth}px
-        </span>
+        </span> */}
 
         <NavMenu
           login = {this.state.login}
@@ -273,7 +273,7 @@ class NavBar extends React.Component {
             ? (
                 <div
                   style={{
-                    border: 'inset',
+                    // border: 'inset',
                     width: '20%',
                     display: 'flex',
                     justifyContent: 'center'
@@ -292,7 +292,7 @@ class NavBar extends React.Component {
 
         <div
           style={{
-            border: 'inset',
+            // border: 'inset',
             width: '30%',
             minWidth: '200px',
             display: 'flex',
@@ -322,7 +322,7 @@ class NavBar extends React.Component {
         {this.state.login ? (
           <div
             style={{
-              border: 'inset',
+              // border: 'inset',
               // display: 'inline-flex',
               height: '44px',
               width: '40%',
@@ -383,7 +383,7 @@ class NavBar extends React.Component {
           // >
           <div
             style={{
-              border: 'inset',
+              // border: 'inset',
               // display: 'inline-flex',
               height: '44px',
               width: '40%',

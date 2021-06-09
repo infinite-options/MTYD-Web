@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import Menu from './menu'
 import hamburger from './hamburger.png'
+import { StylesProvider } from '@material-ui/styles';
+// import styles from "../NavBar/navBar.module.css";
 
 export class NavMenu extends Component {
 
@@ -40,12 +42,12 @@ export class NavMenu extends Component {
         style={
           this.props.isAdmin && this.state.width > 900
             ? {
-                border: 'inset',
+                // border: 'inset',
                 width: '20%',
                 // minWidth: '100px'
               }
             : {
-                border: 'inset',
+                // border: 'inset',
                 width: '40%',
                 // minWidth: '100px'
               }
@@ -64,8 +66,10 @@ export class NavMenu extends Component {
               // top:"20px",
               backgroundImage:`url(${hamburger})`,
               backgroundSize:'cover',
-              border: 'solid'
+              // border: 'solid',
+              cursor: 'pointer'
             }}
+            // className={styles.hamMenu}
             onClick={this.togglePopMenu}
           >
           </div>
