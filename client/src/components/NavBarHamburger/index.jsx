@@ -16,9 +16,8 @@ export class NavMenu extends Component {
     });
   };
 
-
-
   componentDidMount() {
+    console.log("navbar hamburgermenu props: ", this.props);
     window.addEventListener('resize', this.updateDimensions);
   }
   componentWillUnmount() {
@@ -29,29 +28,28 @@ export class NavMenu extends Component {
     this.setState({ width: window.innerWidth, height: window.innerHeight });
   };
 
-
   render() {
 
     return (
       <div 
-        style={{
-          border: 'inset', 
-          width: '40%',
-          minWidth: '100px'
-        }}
-        // style={
-        //   this.props.isAdmin
-        //     ? {
-        //         border: 'inset',
-        //         width: '20%',
-        //         // minWidth: '100px'
-        //       }
-        //     : {
-        //         border: 'inset',
-        //         width: '40%',
-        //         // minWidth: '100px'
-        //       }
-        // }
+        // style={{
+        //   border: 'inset', 
+        //   width: '40%',
+        //   minWidth: '100px'
+        // }}
+        style={
+          this.props.isAdmin
+            ? {
+                border: 'inset',
+                width: '20%',
+                // minWidth: '100px'
+              }
+            : {
+                border: 'inset',
+                width: '40%',
+                // minWidth: '100px'
+              }
+        }
       >
         <div>
 
@@ -78,6 +76,9 @@ export class NavMenu extends Component {
             LogoutFunction = {this.props.LogoutFunction}
             togglePopSignup = {this.props.togglePopSignup}
             togglePopLogin = {this.props.togglePopLogin}
+            firstName = {this.props.firstName}
+            lastName = {this.props.lastName}
+            isAdmin = {this.props.isAdmin}
           />:null}
         </div>
 

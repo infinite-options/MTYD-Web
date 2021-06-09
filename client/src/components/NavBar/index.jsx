@@ -182,6 +182,7 @@ class NavBar extends React.Component {
       .get(`${API_URL}Profile/${customer_uid}`)
       .then((response) => {
         const role = response.data.result[0].role.toLowerCase();
+        console.log("role: ", role);
         this.setState({profileRole: role});
         // console.log("Profile role: " + this.state.profileRole);
         // console.log(response)
@@ -257,15 +258,18 @@ class NavBar extends React.Component {
           LogoutFunction = {this.logOut}
           togglePopSignup = {this.togglePopSignup}
           togglePopLogin = {this.togglePopLogin}
-          // isAdmin = {
-          //   this.state.profileRole !== 'admin'
-          //     ? true
-          //     : false
-          // }
+          firstName = {this.state.firstName}
+          lastName = {this.state.lastName}
+          isAdmin = {
+            this.state.profileRole !== 'admin' && this.state.windowWidth > 900
+              ? true
+              : false
+          }
         />
 
+        {console.log("profile role: " + this.state.profileRole + "; window height: ", this.state.windowWidth)}
         {
-          this.state.profileRole !== 'admin' && this.state.windowHeight > 900
+          this.state.profileRole !== 'admin' && this.state.windowWidth > 900
             ? (
                 <div
                   style={{
@@ -283,7 +287,7 @@ class NavBar extends React.Component {
                   </div>
                 </div>
               )
-            : null
+            : <>{"THEFUCK"}</>
         }
 
         <div

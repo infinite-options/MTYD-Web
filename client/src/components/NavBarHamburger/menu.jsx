@@ -230,6 +230,18 @@ export class MenuList extends Component {
               Become an Ambassador
             </a>
 
+            <a href='/meal-plan'
+              style ={{
+                fontSize:"26px",
+                height:"20px",
+                color:'white',
+                display:this.state.showLogout
+              }}
+              // onClick = {this.props.LogoutFunction}
+              >
+              {this.props.firstName} {this.props.lastName}
+            </a>
+
             <a href='/home'
               style ={{
                 fontSize:"26px",
@@ -240,18 +252,6 @@ export class MenuList extends Component {
               onClick = {this.props.LogoutFunction}
               >
               Log out
-            </a>
-
-            <a href='/meal-plan'
-              style ={{
-                fontSize:"26px",
-                height:"20px",
-                color:'white',
-                display:this.state.showLogout
-              }}
-              onClick = {this.props.LogoutFunction}
-              >
-              Brandon Huss
             </a>
 
             <a
