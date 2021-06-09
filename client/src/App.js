@@ -1,15 +1,21 @@
 import React from "react";
 import {Provider} from "react-redux";
 import store from "./reducers/store";
+// import {
+//   BrowserRouter as Router,
+//   Route,
+//   // Route, Redirect,
+//   Switch
+// } from "react-router-dom";
+
 import {
-  BrowserRouter as Router,
+  Router,
   Route,
-  // Route, Redirect,
   Switch
 } from "react-router-dom";
 import AppliedRoute from "./components/AppliedRoute";
 
-import Landing from "./components/Landing";
+// import Landing from "./components/Landing";
 import SignUp from "./components/SignUp";
 import SocialSignUp from "./components/SocialSignUp";
 import ChoosePlan from "./components/ChoosePlan";
@@ -26,10 +32,11 @@ import Terms from "./components/Terms";
 import UpdatePlan from "./components/UpdatePlan";
 import ForgotPassword from "./components/RecoverPassword"
 import "./App.css";
-import AuthApi from "./components/AuthApi";
-import Cookies from "js-cookie";
+// import AuthApi from "./components/AuthApi";
+// import Cookies from "js-cookie";
 
-import createBrowserHistory from "history/createBrowserHistory";
+// import createBrowserHistory from "history/createBrowserHistory";
+import { createBrowserHistory } from "history";
 import Login from "./components/Login"
 
 import AdminNavBar from './components/Admin/AdminNavBar'
@@ -45,12 +52,14 @@ import AdminGoogleAnalytics from './components/Admin/GoogleAnalytics';
 import AdminNotfications from './components/Admin/Notifications';
 import AdminZones from './components/Admin/Zones';
 
-import MapTest from './components/MapTest';
+// import MapTest from './components/MapTest';
 import Congrats from "./components/Congrats";
 
 export const history = createBrowserHistory();
 
 function App() {
+
+  /*
   const [auth, setAuth] = React.useState(false);
   const readCookie = () => {
     const customer = Cookies.get("customer_uid");
@@ -63,6 +72,7 @@ function App() {
   React.useEffect(() => {
     readCookie();
   }, []);
+  */
 
   const adminNavBar = <AdminNavBar />;
     

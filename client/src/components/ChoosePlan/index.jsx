@@ -26,26 +26,27 @@ import {
 
 import axios from "axios";
 import {API_URL} from "../../reducers/constants";
-import {Link} from "react-router-dom";
+// import {Link} from "react-router-dom";
 import {withRouter} from "react-router";
 import styles from "./choosePlan.module.css";
-import menuStyles from "../Menu/menu.module.css";
-import {WebNavBar, BottomNavBar} from "../NavBar";
-import PaymentDetails from "../PaymentDetails";
-import Menu from "../Menu";
-import takeaway from "./static/take-away.svg";
-import chooseMeals from "./static/choose_meals.svg";
-import prepay from "./static/prepay.png";
-import delivery from "./static/delivery.png";
-import one from "./static/one.svg";
-import two from "./static/two.svg";
-import three from "./static/three.svg";
-import orangePlate from "./static/orange_plate.png";
-import yellowPlate from "./static/yellow_plate.png";
+// import menuStyles from "../Menu/menu.module.css";
+// import {WebNavBar, BottomNavBar} from "../NavBar";
+import {WebNavBar} from "../NavBar";
+// import PaymentDetails from "../PaymentDetails";
+// import Menu from "../Menu";
+// import takeaway from "./static/take-away.svg";
+// import chooseMeals from "./static/choose_meals.svg";
+// import prepay from "./static/prepay.png";
+// import delivery from "./static/delivery.png";
+// import one from "./static/one.svg";
+// import two from "./static/two.svg";
+// import three from "./static/three.svg";
+// import orangePlate from "./static/orange_plate.png";
+// import yellowPlate from "./static/yellow_plate.png";
 
-import paymentOption1 from "./Group 2029.svg";
-import paymentOption2 from "./Group 2016.svg";
-import paymentOption3 from "./Group 2030.svg";
+// import paymentOption1 from "./Group 2029.svg";
+// import paymentOption2 from "./Group 2016.svg";
+// import paymentOption3 from "./Group 2030.svg";
 
 import PopLogin from '../PopLogin';
 import Popsignup from '../PopSignup';
@@ -373,15 +374,18 @@ class ChoosePlan extends React.Component {
 
     // this.props.plans
     let mealPlans = this.props.plans;
+
     for (const [mealIndex, mealData] of Object.entries(mealPlans)) {
 
       singleMealData = mealData["1"];
       //console.log("data for single delivery of " + mealIndex + " meal plan: " + JSON.stringify(singleMealData));
 
+      // console.log("mealData: ", mealData);
+      // console.log("(key) mealIndex: " + mealIndex + " meals, " + singleMealData.num_deliveries + " deliveries");
       mealButtons.push(
-        <div className={styles.mealButtonWrapper}>
+        <div className={styles.mealButtonWrapper} key={mealIndex}>
         <button
-          key={mealIndex}
+          // key={mealIndex}
           className={
             this.props.meals === mealIndex
               ? selectedMealButton
@@ -406,6 +410,8 @@ class ChoosePlan extends React.Component {
         </div>
       );
     }
+    // console.log("mealButtons length: ", mealButtons.length);
+
     return mealButtons;
   };
 
@@ -437,6 +443,8 @@ class ChoosePlan extends React.Component {
           // console.log("discount UNDEFINED");
         }
           
+        // console.log("deliveryData: ", deliveryData);
+        // console.log("(key) deliveryIndex: " + deliveryIndex + " deliveries, " + deliveryData.num_items + " meals");
         paymentOptionButtons.push(
           <div className={styles.sameLine} key={deliveryIndex}>
             {(() => {
@@ -450,34 +458,34 @@ class ChoosePlan extends React.Component {
                 return (
                   <div style={{display: 'inline-block'}}>
                     <button
-                    disabled={active}
-                    className={
-                      (this.props.paymentOption === deliveryIndex
-                        ? selectedPaymentOption
-                        : deselectedPaymentOption) +
-                      " " + (active && styles.disabledBtn)
-                    }
-                    onClick={() => {
-                      this.props.choosePaymentOption(
-                        deliveryIndex,
-                        this.props.meals,
-                        tempPlan
-                      )
-                      // console.log("##### deliveryIndex: " + deliveryIndex);
-                      // console.log("##### meals: " + this.props.meals);
-                    }}
-                  >
-                    <span style={{fontSize: '35px'}}>
-                      {deliveryIndex}
-                    </span>
-                    <br></br>
-                    {(() => {
-                      if (typeof(discount) !== "undefined" && discount > 0) {
-                        return (
-                          <span>(Save {discount}%)</span>
-                        );
+                      disabled={active}
+                      className={
+                        (this.props.paymentOption === deliveryIndex
+                          ? selectedPaymentOption
+                          : deselectedPaymentOption) +
+                        " " + (active && styles.disabledBtn)
                       }
-                    })()}  
+                      onClick={() => {
+                        this.props.choosePaymentOption(
+                          deliveryIndex,
+                          this.props.meals,
+                          tempPlan
+                        )
+                        // console.log("##### deliveryIndex: " + deliveryIndex);
+                        // console.log("##### meals: " + this.props.meals);
+                      }}
+                    >
+                      <span style={{fontSize: '35px'}}>
+                        {deliveryIndex}
+                      </span>
+                      <br></br>
+                      {(() => {
+                        if (typeof(discount) !== "undefined" && discount > 0) {
+                          return (
+                            <span>(Save {discount}%)</span>
+                          );
+                        }
+                      })()}  
                     </button>
                     {(()=>{
                       if(deliveryIndex % this.state.numDeliveryDays === 0){
@@ -509,6 +517,8 @@ class ChoosePlan extends React.Component {
         );
       }
     }
+    // console.log("paymentOptionButtons length: ", paymentOptionButtons.length);
+
     return paymentOptionButtons;
   };
 
