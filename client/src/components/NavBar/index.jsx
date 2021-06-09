@@ -261,7 +261,7 @@ class NavBar extends React.Component {
           firstName = {this.state.firstName}
           lastName = {this.state.lastName}
           isAdmin = {
-            this.state.profileRole !== 'admin' && this.state.windowWidth > 900
+            this.state.profileRole === 'admin'
               ? true
               : false
           }
@@ -269,7 +269,7 @@ class NavBar extends React.Component {
 
         {console.log("profile role: " + this.state.profileRole + "; window height: ", this.state.windowWidth)}
         {
-          this.state.profileRole !== 'admin' && this.state.windowWidth > 900
+          this.state.profileRole === 'admin' && this.state.windowWidth > 900
             ? (
                 <div
                   style={{
@@ -287,7 +287,7 @@ class NavBar extends React.Component {
                   </div>
                 </div>
               )
-            : <>{"THEFUCK"}</>
+            : null
         }
 
         <div

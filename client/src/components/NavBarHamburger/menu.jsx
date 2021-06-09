@@ -42,15 +42,24 @@ export class MenuList extends Component {
           backgroundPosition:'center',
         }
       })
-      if(this.props.login == true){
+      if(this.props.login == true && this.props.isAdmin){
         this.setState({
-          showLogout :'flex',
+          showLogout:'flex',
+          showAdmin:'flex',
+          showSigninSignup:'none',
+          heightOfBlock:'430px'
+        })
+      } else if (this.props.login == true && !this.props.isAdmin) {
+        this.setState({
+          showLogout:'flex',
+          showAdmin: 'none',
           showSigninSignup:'none',
           heightOfBlock:'400px'
         })
       }else{
         this.setState({
-          showLogout :'none',
+          showLogout:'none',
+          showAdmin: 'none',
           showSigninSignup:'flex',
           heightOfBlock:'400px'
         })
@@ -69,6 +78,11 @@ export class MenuList extends Component {
           backgroundPosition:'center',
         }
       })
+      if (this.props.isAdmin) {
+        this.setState({
+          heightOfBlock: '360px'
+        });
+      }
     }
   }
   componentWillUnmount() {
@@ -92,36 +106,65 @@ export class MenuList extends Component {
         
       })
 
-      if (this.props.login == true) {
+      if (this.props.login == true && this.props.isAdmin) {
         this.setState({
           showLogout :'flex',
+          showAdmin: 'flex',
+          showSigninSignup:'none',
+          heightOfBlock:'430px'
+        })
+      } else if (this.props.login == true && !this.props.isAdmin) {
+        this.setState({
+          showLogout :'flex',
+          showAdmin: 'none',
           showSigninSignup:'none',
           heightOfBlock:'400px'
         })
       } else {
         this.setState({
           showLogout :'none',
+          showAdmin: 'none',
           showSigninSignup:'flex',
           heightOfBlock:'400px'
         })
       }
 
     } else {
-      this.setState({
-        crossFork:{
-          width:'44px',
-          height:'44px',
-          position:'absolute',
-          right:'100px',
-          top:'25px',
-          backgroundImage:`url(${forkClose})`,
-          backgroundSize:'cover',
-          backgroundPosition:'center',
-        },
-        showLogout :'none',
-        showSigninSignup:'none',
-        heightOfBlock:'330px'
-      })
+      if (this.props.isAdmin) {
+        this.setState({
+          crossFork:{
+            width:'44px',
+            height:'44px',
+            position:'absolute',
+            right:'100px',
+            top:'25px',
+            backgroundImage:`url(${forkClose})`,
+            backgroundSize:'cover',
+            backgroundPosition:'center',
+          },
+          showLogout :'none',
+          showAdmin: 'flex',
+          showSigninSignup:'none',
+          heightOfBlock:'360px'
+        })
+      } else {
+        this.setState({
+          crossFork:{
+            width:'44px',
+            height:'44px',
+            position:'absolute',
+            right:'100px',
+            top:'25px',
+            backgroundImage:`url(${forkClose})`,
+            backgroundSize:'cover',
+            backgroundPosition:'center',
+          },
+          showLogout :'none',
+          showAdmin: 'none',
+          showSigninSignup:'none',
+          heightOfBlock:'330px'
+        })
+      }
     }
 
     this.setState({ width: window.innerWidth, height: window.innerHeight });
@@ -240,6 +283,18 @@ export class MenuList extends Component {
               // onClick = {this.props.LogoutFunction}
               >
               {this.props.firstName} {this.props.lastName}
+            </a>
+
+            <a href='/admin'
+              style ={{
+                fontSize:"26px",
+                height:"20px",
+                color:'white',
+                display: this.state.showAdmin
+              }}
+              // onClick = {this.props.LogoutFunction}
+              >
+              Admin
             </a>
 
             <a href='/home'

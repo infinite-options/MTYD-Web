@@ -38,7 +38,7 @@ export class NavMenu extends Component {
         //   minWidth: '100px'
         // }}
         style={
-          this.props.isAdmin
+          this.props.isAdmin && this.state.width > 900
             ? {
                 border: 'inset',
                 width: '20%',
