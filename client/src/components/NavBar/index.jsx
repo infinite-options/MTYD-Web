@@ -221,7 +221,9 @@ class NavBar extends React.Component {
 
   render() {
 
-    const nameLength = this.state.firstName.length*14+this.state.lastName.length*14+30;
+    // const nameLength = this.state.firstName.length*14+this.state.lastName.length*14+30;
+    const nameLength = this.state.firstName.length*14+this.state.lastName.length*14 + 'px';
+    console.log("namelength: ", nameLength);
 
     // const nameFormat = {
     //   width: nameLength,
@@ -255,24 +257,35 @@ class NavBar extends React.Component {
           LogoutFunction = {this.logOut}
           togglePopSignup = {this.togglePopSignup}
           togglePopLogin = {this.togglePopLogin}
+          // isAdmin = {
+          //   this.state.profileRole !== 'admin'
+          //     ? true
+          //     : false
+          // }
         />
 
-        {/* <a 
-          href='/home' 
-          style={{
-            // margin:0,
-            // position:"absolute",
-            // width: "160px", 
-            // height:"80px",
-            // top:"5px",
+        {
+          this.state.profileRole !== 'admin' && this.state.windowHeight > 900
+            ? (
+                <div
+                  style={{
+                    border: 'inset',
+                    width: '20%',
+                    display: 'flex',
+                    justifyContent: 'center'
+                  }}
+                >
+                  <div
+                    onClick={() => {this.goToLink('/admin')}}
+                    className={styles.adminBtn2}
+                  >
+                    Admin
+                  </div>
+                </div>
+              )
+            : null
+        }
 
-            backgroundImage:`url(${whiteLogo})`,
-            backgroundSize:'cover',
-            // backgroundPosition:'center',
-            // left:'48%',
-            // border: 'solid'
-          }}>
-        </a> */}
         <div
           style={{
             border: 'inset',
@@ -309,21 +322,26 @@ class NavBar extends React.Component {
               // display: 'inline-flex',
               height: '44px',
               width: '40%',
-              minWidth: '180px',
+              // minWidth: '180px',
               position: 'relative'
             }}
           >
 
-            <div
-              onClick={() => {this.goToLink('/meal-plan')}}
-              className={
-                this.state.windowWidth > 900
-                  ? styles.nameBtn
-                  : styles.nameBtnNarrow
-              }
-            >
+            {this.state.windowWidth > 900 ? (
+              <div
+                onClick={() => {this.goToLink('/meal-plan')}}
+                className={
+                  this.state.windowWidth > 900
+                    ? styles.nameBtn
+                    : styles.nameBtnNarrow
+                }
+                style={{width: nameLength}}
+              >
                 {this.state.firstName} {this.state.lastName}
-            </div>
+              </div>
+            ) : (
+              null
+            )}
 
             {this.state.windowWidth > 900
               ? (
@@ -354,28 +372,36 @@ class NavBar extends React.Component {
 
           </div>
         ) : (
+          // <div
+          //   style={{
+          //     border: 'inset'
+          //   }}
+          // >
           <div
             style={{
-              border: 'inset'
+              border: 'inset',
+              // display: 'inline-flex',
+              height: '44px',
+              width: '40%',
+              // minWidth: '180px',
+              position: 'relative'
             }}
           >
 
-            <div
-              style={{
-                height:'100%',
-              }}
-            >
-              <button 
-                onClick={this.togglePopSignup}
-                className={styles.signUpBtn}
-              >
-                Sign Up
-              </button>
-            </div>
+            {this.state.windowWidth > 900
+              ? (
+                  <button 
+                    onClick={this.togglePopSignup}
+                    className={styles.nameBtn}
+                  >
+                    Sign Up
+                  </button>
+                )
+              : null}
 
             {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
 
-            <div
+            {/* <div
               style={{
                 height:'100%',
                 // display: this.state.loginNameLogoutDisplay
@@ -387,7 +413,18 @@ class NavBar extends React.Component {
               >
                 Login
               </button>
-            </div>
+            </div> */}
+            {this.state.windowWidth > 900
+              ? (
+                  <div 
+                    onClick={this.togglePopLogin}
+                    // className={styles.signInBtn}
+                    className={styles.logoutBtn}
+                  >
+                    Login
+                  </div>
+                )
+              : null}
 
             {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
 

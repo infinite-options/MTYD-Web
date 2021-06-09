@@ -19,12 +19,15 @@ export class MenuList extends Component {
       backgroundPosition:'center',
     },
     showLogout : 'none',
+    showName: 'none',
+    showAdmin: 'none',
     showSigninSignup : 'none',
     heightOfBlock:'330px'
 
   }
 
   componentDidMount() {
+    console.log("menu props: ", this.props);
     window.addEventListener('resize', this.updateDimensions);
     if(window.innerWidth<=900){
       this.setState({
@@ -43,7 +46,7 @@ export class MenuList extends Component {
         this.setState({
           showLogout :'flex',
           showSigninSignup:'none',
-          heightOfBlock:'360px'
+          heightOfBlock:'400px'
         })
       }else{
         this.setState({
@@ -74,7 +77,7 @@ export class MenuList extends Component {
 
   updateDimensions = () => {
 
-    if(window.innerWidth<=900){
+    if (window.innerWidth <= 900) {
       this.setState({
         crossFork:{
           width:'44px',
@@ -89,13 +92,13 @@ export class MenuList extends Component {
         
       })
 
-      if(this.props.login == true){
+      if (this.props.login == true) {
         this.setState({
           showLogout :'flex',
           showSigninSignup:'none',
-          heightOfBlock:'360px'
+          heightOfBlock:'400px'
         })
-      }else{
+      } else {
         this.setState({
           showLogout :'none',
           showSigninSignup:'flex',
@@ -103,7 +106,7 @@ export class MenuList extends Component {
         })
       }
 
-    }else{
+    } else {
       this.setState({
         crossFork:{
           width:'44px',
@@ -237,6 +240,18 @@ export class MenuList extends Component {
               onClick = {this.props.LogoutFunction}
               >
               Log out
+            </a>
+
+            <a href='/meal-plan'
+              style ={{
+                fontSize:"26px",
+                height:"20px",
+                color:'white',
+                display:this.state.showLogout
+              }}
+              onClick = {this.props.LogoutFunction}
+              >
+              Brandon Huss
             </a>
 
             <a

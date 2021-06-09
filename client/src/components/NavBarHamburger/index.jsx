@@ -39,6 +39,19 @@ export class NavMenu extends Component {
           width: '40%',
           minWidth: '100px'
         }}
+        // style={
+        //   this.props.isAdmin
+        //     ? {
+        //         border: 'inset',
+        //         width: '20%',
+        //         // minWidth: '100px'
+        //       }
+        //     : {
+        //         border: 'inset',
+        //         width: '40%',
+        //         // minWidth: '100px'
+        //       }
+        // }
       >
         <div>
 
