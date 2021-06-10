@@ -51,6 +51,7 @@ import AdminCustomers from './components/Admin/Customers';
 import AdminGoogleAnalytics from './components/Admin/GoogleAnalytics';
 import AdminNotfications from './components/Admin/Notifications';
 import AdminZones from './components/Admin/Zones';
+import AdminCustomerInfo from './components/Admin/CustomerInfo';
 
 // import MapTest from './components/MapTest';
 import Congrats from "./components/Congrats";
@@ -153,6 +154,10 @@ function App() {
             <Route exact path="/admin/zones">
               {adminNavBar}
               <AdminZones />
+            </Route>
+            <Route exact path="/admin/customer-info">
+              {adminNavBar}
+              <AdminCustomerInfo />
             </Route>
             <AppliedRoute path='*' component={NotFound} />
           </Switch>

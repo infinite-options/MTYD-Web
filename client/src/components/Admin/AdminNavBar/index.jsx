@@ -70,6 +70,12 @@ function NavBar() {
             </Nav.Link>
 
             <Nav.Link
+              href="/admin/customer-info"
+            >
+              Customer Info
+            </Nav.Link>
+
+            <Nav.Link
               href="/admin/google-analytics"
             >
               Google Analytics

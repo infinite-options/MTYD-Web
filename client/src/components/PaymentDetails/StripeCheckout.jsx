@@ -237,8 +237,7 @@ const StripeCheckout = (props) => {
                   tax: props.paymentSummary.taxAmount,
                   //subtotal: props.paymentSummary.subtotal,
                   subtotal: props.paymentSummary.mealSubPrice,
-                  amb: props.paymentSummary.ambassadorDiscount,
-                  pur_business_uid: 'WEB'
+                  amb: props.paymentSummary.ambassadorDiscount
                 },
                 (res) => {
                   // axios
