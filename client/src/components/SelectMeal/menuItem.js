@@ -176,6 +176,7 @@ class MenuItem extends React.Component {
         style={{
           backgroundColor:colorDict[menuitem.menu_meal_id]
         }}
+        indexTab="0"
       >
         {/* {
           console.log(menuitem)
@@ -197,7 +198,8 @@ class MenuItem extends React.Component {
 
 
           <Tooltip title={menuitem.meal_desc}>
-            <button className={styles.infoButton}>
+            <button className={styles.infoButton}
+            aria-label={"Click here for more info on " + menuitem.meal_name}>
               <img src={info}
                     style={{
                       height:30,
@@ -205,14 +207,16 @@ class MenuItem extends React.Component {
                       borderRadius: '0 0 0 100px',
                       marginRight:'7px',
                       marginBottom:'2px',
-                    }}
+                    }}  
               ></img>
             </button>
           </Tooltip>
-
+          
           <button 
           onClick={this.changeHeart}
           className={styles.heartButton}
+          
+          aria-label={"Click here to favorite " + menuitem.meal_name}
           >
             <img src={this.state.favList.includes(menuitem.meal_uid)?fullHeart:emptyHeart}
                   style={{
@@ -237,6 +241,7 @@ class MenuItem extends React.Component {
                 }}
                 className={styles.minusElements}
                 id = {String(menuitem.menu_meal_id+'-')}
+                aria-label={"Click here to remove one " + menuitem.meal_name + ". Current amount: " + dict[menuitem.menu_meal_id]}
               >
                 -
               </button>
@@ -266,6 +271,7 @@ class MenuItem extends React.Component {
                 }}
                 className={styles.plusElements}
                 id = {String(menuitem.menu_meal_id+'+')}
+                aria-label={"Click here to add one " + menuitem.meal_name + ". Current amount: " + dict[menuitem.menu_meal_id]}
               >
                 +
               </button> 

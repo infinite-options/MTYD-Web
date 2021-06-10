@@ -165,6 +165,7 @@ export class MenuList extends Component {
             backgroundPosition:'center',
           }}
           onClick={this.props.close}
+          aria-label="Click here to close the navigation menu"
           />
 
 
@@ -178,7 +179,8 @@ export class MenuList extends Component {
                 fontSize:"26px",
                 height:"20px",
                 color:'white'
-              }}>
+              }}
+              aria-label="Click here to go to the homepage">
               Home
             </a >
 
@@ -186,8 +188,9 @@ export class MenuList extends Component {
               style ={{
                 fontSize:"26px",
                 height:"20px",
-                color:'white'
-              }}>
+                color:'white' 
+              }}
+              aria-label="Click here to select your meal">
               Select Meals
             </a>
 
@@ -196,7 +199,8 @@ export class MenuList extends Component {
                 fontSize:"26px",
                 height:"20px",
                 color:'white'
-              }}>
+              }}
+              aria-label="Click here to change your meal plan">
               Change Meal Plans
             </a>
 
@@ -205,7 +209,8 @@ export class MenuList extends Component {
                 fontSize:"26px",
                 height:"20px",
                 color:'white'
-              }}>
+              }}
+              aria-label="Click here to add a subscription">
               Add Subscriptions
             </a >
 
@@ -214,7 +219,8 @@ export class MenuList extends Component {
                 fontSize:"26px",
                 height:"20px",
                 color:'white'
-              }}>
+              }}
+              aria-label="Click here to view your subscriptions">
               Subscription History
             </a>
 
@@ -223,7 +229,8 @@ export class MenuList extends Component {
                 fontSize:"26px",
                 height:"20px",
                 color:'white'
-              }}>
+              }}
+              aria-label="Click here to become an ambassador">
               Become an Ambassador
             </a>
 
@@ -235,6 +242,7 @@ export class MenuList extends Component {
                 display:this.state.showLogout
               }}
               onClick = {this.props.LogoutFunction}
+              aria-label="Click here to log out"
               >
               Log out
             </a>
@@ -247,6 +255,7 @@ export class MenuList extends Component {
                 display:this.state.showSigninSignup
               }}
               onClick = {this.showPopLogin}
+              aria-label="Click here to log in"
             >
               Sign In
             </a>
@@ -259,6 +268,7 @@ export class MenuList extends Component {
                 display:this.state.showSigninSignup
               }}
               onClick = {this.showPopSignup}
+              aria-label="Click here to sign up"
             >
               Sign up
             </a>

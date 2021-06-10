@@ -277,7 +277,7 @@ class Home extends Component {
             return (
 			        <div style = {{display: 'inline-flex', marginTop: '30px', justifyContent: 'center', alignSelf: 'center', width:'100%'}}>
                 <div className={styles.stepsContainer}>
-                  <img className = {styles.stepsImage} src = {exploreImg}></img>
+                  <img className = {styles.stepsImage} src = {exploreImg} ></img>
                   <div className = {styles.stepsHeaderForHowDoesSection} onClick={() => this.goToLink('select-meal')}>
                       <h6 className = {styles.stepsTextForExplore}><h6 className={styles.stepsNumber}>
                         1. Explore</h6><br/><br/>
@@ -328,7 +328,7 @@ class Home extends Component {
                         <br/><br/>
                         Heat, enjoy, and stay healthy!
                       </h6>
-                      <img className = {styles.stepsImageForEnjoy} src = {enjoyImg}></img>
+                      <img className = {styles.stepsImageForEnjoy} src = {enjoyImg} aria-label="Click to get started"></img>
                     </div>
                 </div>
               </div>			  
@@ -382,6 +382,7 @@ class Home extends Component {
                 backgroundSize:'cover',
                 backgroundPosition:'center',
               }}
+              aria-label="Click here to get started"
             >
             </a>
           </div>
@@ -422,10 +423,10 @@ class Home extends Component {
 
                 <div style = {{display: 'inline-block'}}>
                   <div style = {{display: 'flex', width: '100%', marginTop: '20px', justifyContent: 'center'}}>
-                    <img className = {styles.partnerImageNarrow} src = {ponoHawaiian}></img>
+                    <img className = {styles.partnerImageNarrow} src = {ponoHawaiian} aria-label="Pono Hawaiian"></img>
                   </div>
-                  <div style = {{display: 'flex', width: '100%', marginTop: '20px', justifyContent: 'center'}}>
-                    <img className = {styles.partnerImageNarrow} src = {nityaAyurveda}></img>
+                  <div style = {{display: 'flex', width: '100%', marginTop: '20px', justifyContent: 'center'}} role="img" aria-label="Nitya Ayurveda">
+                    <img className = {styles.partnerImageNarrow} src = {nityaAyurveda} aria-label= "Nitya Ayurveda"></img>
                   </div>
                 </div> 
               </>
@@ -481,7 +482,7 @@ class Home extends Component {
         })()}
         
 
-        <HomeLink text = {startServingNowImg} link = "/choose-plan" />			
+        <HomeLink text = {startServingNowImg} link = "/choose-plan" aria-label="Click here to start saving now"/>			
         <FootLink/>			
         
       {/*<span>

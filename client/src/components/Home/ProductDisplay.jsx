@@ -89,7 +89,7 @@ const ProductDisplay = () => {
 			  <Product
               img={product.meal_photo_URL}
               name={product.meal_name}	
-              key={product.menu_uid}			  
+              key={product.menu_uid}	  
 			  />
           );
         })}

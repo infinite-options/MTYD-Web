@@ -162,7 +162,7 @@ export class HomeMap extends Component {
           }}
         >
 
-          <div className="close" onClick={()=>{this.setState({hooray:false})}}/>
+          <button className="close" onClick={()=>{this.setState({hooray:false})}} aria-label="close popup"/>
 
           <div
            style={{
@@ -193,7 +193,7 @@ export class HomeMap extends Component {
             Looks like we deliver to your address. Click the button below to see the variety of meals we offer.
           </div>
 
-          <div
+          <button
            style={{
              position:'relative',
              top:'100px',
@@ -210,11 +210,12 @@ export class HomeMap extends Component {
            }}
 
            onClick={()=>{this.props.history.push('/select-meal')}}
+           aria-label="Click here to explore meals"
           >
               Explore Meals
-          </div>
+          </button>
 
-          <div
+          <button
            style={{
              position:'relative',
              top:'113px',
@@ -231,9 +232,10 @@ export class HomeMap extends Component {
            }}
 
            onClick={()=>{this.setState({signup:true,hooray:false}); console.log(this.state)}}
+           aria-label="Click here to sign up"
           >
               Sign up
-          </div>
+          </button>
         </div>:null}
 
         {this.state.stillGrowing?<div 
@@ -280,7 +282,7 @@ export class HomeMap extends Component {
           </div>
 
           <input
-            placeholder='Enter you email'
+            placeholder='Enter your email'
             style={{
               position:'relative',
               top:'140px',
@@ -354,7 +356,7 @@ export class HomeMap extends Component {
             borderRadius:'10px',
             backgroundColor:'#ff6505'
             }}
-
+            aria-label="Click here to view meals"
           >
             <a href='/select-meal'
             style={{
@@ -362,7 +364,7 @@ export class HomeMap extends Component {
               marginLeft:'95px',
               textAlign: 'center',
             }}
-            >View Meals</a>
+            tabIndex="-1">View Meals</a>
           </button>
         </div>
 

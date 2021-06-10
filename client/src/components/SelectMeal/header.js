@@ -113,6 +113,12 @@ class Header extends Component {
       }
 
       // console.log(classForbutton)
+      let ariaTag = ''
+      if(displayMessage != 'Suprise Me'){
+        ariaTag = "Click here to " + displayMessage
+      } else {
+        ariaTag = "Click here to be suprised"
+      }
 
       selections.push(
         <button
@@ -121,6 +127,7 @@ class Header extends Component {
           value={selectionOptions}
           className={classForbutton}
           onClick={e => this.props.makeSelection(e)}
+          aria-label = {ariaTag}
         >
           {displayMessage}
         </button>

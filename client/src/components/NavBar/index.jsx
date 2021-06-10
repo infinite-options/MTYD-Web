@@ -298,7 +298,8 @@ class NavBar extends React.Component {
               // left:'48%',
               width: '160px',
               height: '80px'
-            }}>
+            }}
+            aria-label="Click here to return to the homepage">
           </a>
         </div>
 
@@ -368,6 +369,7 @@ class NavBar extends React.Component {
               <button 
                 onClick={this.togglePopSignup}
                 className={styles.signUpBtn}
+                aria-label="Click here to sign up "
               >
                 Sign Up
               </button>
@@ -384,6 +386,7 @@ class NavBar extends React.Component {
               <button 
                 onClick={this.togglePopLogin}
                 className={styles.signInBtn}
+                aria-label="Click here to log in  "
               >
                 Login
               </button>

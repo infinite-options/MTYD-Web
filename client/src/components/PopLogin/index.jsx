@@ -45,7 +45,7 @@ export class PopLogin extends Component {
         className="pop_content"
       >
 
-          <div className="close" onClick={this.handleClick}/>
+          <button className="close" onClick={this.handleClick} aria-label="Click here to exit Login menu"/>
           <p style={{
             textAlign:'center',
             height: '28px',
@@ -99,6 +99,7 @@ export class PopLogin extends Component {
               this.props.changeEmail(e.target.value);
               console.log(e.target.value);
             }}
+            aria-label="Enter your username"
           />
             
 
@@ -113,6 +114,7 @@ export class PopLogin extends Component {
             onChange={e => {
               this.props.changePassword(e.target.value);
             }}
+            aria-label="Enter your password"
           />
 
 
@@ -127,7 +129,8 @@ export class PopLogin extends Component {
             paddingTop:0,
             marginTop:10,
             textDecoration:"underline"
-          }}>
+          }}
+          aria-label="Click here to reset your password">
             Forgot password?
           </p>
 
@@ -142,6 +145,7 @@ export class PopLogin extends Component {
               // console.log(this.props.email)
               // console.log(this.props.password)
             }}
+            aria-label="Click here to login"
           >
 
             <p
