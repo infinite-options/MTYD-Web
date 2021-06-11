@@ -71,6 +71,9 @@ export class NavMenu extends Component {
             }}
             // className={styles.hamMenu}
             onClick={this.togglePopMenu}
+            tabIndex="0"
+            aria-label="Click here to open navigation menu"
+            title="Click here to open navigation menu"
           >
           </div>
           {this.state.popSeen?

@@ -33,6 +33,8 @@ class HomeLink extends Component {
                 style = {{height:'68px', width:'432px', marginTop:'77.66px', marginLeft:'auto', marginRight:'auto',
                 backgroundImage: `url(${this.props.text})`
               }}
+              aria-label="Start saving now with Meals 4 Me"
+              title="Start saving now with Meals 4 Me"
             >
               
             </a>
@@ -88,7 +90,9 @@ class FootLink extends Component {
                 bottom:'0px',
                 left:'200px',
                 opacity:'0',
-              }}/>
+              }}
+              aria-label="Check us out on facebook"
+              title="Check us out on facebook"/>
 
               <a href='https://www.instagram.com/mealsfor.me/?hl=en' target="_blank"
               style={{
@@ -99,12 +103,15 @@ class FootLink extends Component {
                 bottom:'0px',
                 left:'260px',
                 opacity:'0',
-              }}/>
+              }}
+              aria-label="Check us out on Instagram"
+              title="Check us out on Instagram"/>
 
 
             </p>
             <div className = {styles.footerRight}>
-              <img onClick={() => this.togglePop()} style = {{width: '320px', height:'67px'}} src = {becomeAnAmbassadorImg} style = {{marginTop: '25px'}}/>			
+              <img onClick={() => this.togglePop()} style = {{width: '320px', height:'67px'}} src = {becomeAnAmbassadorImg} style = {{marginTop: '25px'}} 
+              aria-label="click here to become an ambassador" title="click here to become an ambassador" tabIndex="0"/>		
             </div>
 
 

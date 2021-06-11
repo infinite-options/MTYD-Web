@@ -49,6 +49,8 @@ const Menu = props => {
                       onChange={props.mealsOnChange}
                       className={styles.pickers}
                       id={styles.mealPlanPicker}
+                      aria-label={"Click here to select meals to edit"}
+                      title={"Click here to select meals to edit"}
                     >
                       {props.meals.map(mealItem => {
                         // let meal = JSON.parse(mealItem.items)[0];

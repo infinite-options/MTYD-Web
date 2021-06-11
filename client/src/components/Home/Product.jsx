@@ -21,6 +21,9 @@ const Product = (props) => {
             backgroundSize:'cover',
             backgroundPosition:'center',
           }}
+          tabIndex="0" 
+          aria-label={props.name}
+          title={props.name}
         /> 
         <Box
           width="204px"

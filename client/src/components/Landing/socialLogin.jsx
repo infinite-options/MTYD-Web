@@ -134,6 +134,8 @@ class SocialLogin extends Component {
                       className={styles.googleBtn}
                       onClick={renderProps.onClick}
                       disabled={renderProps.disabled}
+                      aria-label="Continue with google"
+                      title="Continue with google"
                     ></button>
                   )}
                   onSuccess={this.responseGoogle}
@@ -154,6 +156,10 @@ class SocialLogin extends Component {
                 backgroundSize:'cover',
                 backgroundPosition:'center',
               }}
+              //tabIndex="0"
+              //aria-label="Continue with Facebook"
+              title="Continue in with Facebook"
+
               >
                 <FacebookLogin
                   appId={process.env.REACT_APP_FACEBOOK_APP_ID}
@@ -181,6 +187,8 @@ class SocialLogin extends Component {
                     window.AppleID.auth.signIn();
                   }}
                   className={styles.appleLogin}
+                  aria-label="Continue with your Apple ID"     
+                  title="Continue with your Apple ID" 
                 >
                 </button>
               </div>
@@ -198,6 +206,8 @@ class SocialLogin extends Component {
                         style={{
                           marginLeft:'15px'
                         }}
+                        aria-label="Sign in with Google"
+                        title="Sign in with Google"
                       ></button>
                     )}
                     onSuccess={this.responseGoogle}
@@ -207,7 +217,7 @@ class SocialLogin extends Component {
                     cookiePolicy={"single_host_origin"}
                   />
                 </div>
-                <div>
+                <div tabIndex="-1" aria-label="Sign in with Facebook" title="Sign in with Facebook">
                   <FacebookLogin
                     appId={process.env.REACT_APP_FACEBOOK_APP_ID}
                     autoLoad={false}
@@ -215,6 +225,7 @@ class SocialLogin extends Component {
                     callback={this.responseFacebook}
                     cssClass={styles.fbLoginCircle}
                     textButton=''
+                    
                   />
                 </div>
 
@@ -227,6 +238,8 @@ class SocialLogin extends Component {
                     style={{
                       marginLeft:'15px'
                     }}
+                    aria-label="Sign in with Apple ID"
+                    title="Sign in with Apple ID"
                   >
                     <i
                       className='fa fa-apple'

@@ -246,6 +246,9 @@ const MealPlan = props => {
               overflow: 'hidden',
               cursor: 'pointer'
             }}
+            tabIndex="0"
+            aria-label={"Click to select the following meal: "+parsedPlan.meals +" Meals, "+parsedPlan.deliveries+" Deliveries : "+parsedPlan.id}
+            title={"Click to select the following meal: "+parsedPlan.meals +" Meals, "+parsedPlan.deliveries+" Deliveries : "+parsedPlan.id}
           >
             {parsedPlan.meals} Meals, {parsedPlan.deliveries} Deliveries : {parsedPlan.id}
           </div>
@@ -635,7 +638,9 @@ const MealPlan = props => {
     // for(var i = 0; i < totalMeals; i++) {
     if(data.meal_uid !== null){
       mealsForDelivery.push(
-        <div style={{display: 'inline-flex', width: '100%', height: '110px'}}>
+        <div style={{display: 'inline-flex', width: '100%', height: '110px'}} tabIndex="0" 
+        aria-label={formatDate(data.sel_menu_date) + ". "+ data.meal_qty+ " "+data.meal_name+"s"}
+        title={formatDate(data.sel_menu_date) + ". "+ data.meal_qty+ " "+data.meal_name+"s"}>
           <div
             style={{
               // border: 'inset',
@@ -685,7 +690,9 @@ const MealPlan = props => {
       );
     } else if (data.meal_desc === "SURPRISE") {
       mealsForDelivery.push(
-        <div style={{display: 'inline-flex', width: '100%', height: '110px'}}>
+        <div style={{display: 'inline-flex', width: '100%', height: '110px'}} tabIndex="0" 
+        aria-label={formatDate(data.sel_menu_date) + ". "+ currentPlan.meals+ "surprises"}
+        title={formatDate(data.sel_menu_date) + ". "+ currentPlan.meals+ "surprises"}>
           <div
             style={{
               // border: 'inset',
@@ -738,7 +745,9 @@ const MealPlan = props => {
       );
     } else if (data.meal_desc === "SKIP") {
       mealsForDelivery.push(
-        <div style={{display: 'inline-flex', width: '100%', height: '110px'}}>
+        <div style={{display: 'inline-flex', width: '100%', height: '110px'}} tabIndex="0" 
+        aria-label={formatDate(data.sel_menu_date) + ". skip"}
+        title={formatDate(data.sel_menu_date) + ". skip"}>
           <div
             style={{
               // border: 'inset',
@@ -1793,6 +1802,9 @@ const MealPlan = props => {
                 // console.log("set show dropdown menu to: ", !showDropdown);
                 toggleShowDropdown(!showDropdown);
               }}
+              tabIndex="0"
+              aria-label="Click here to choose the subscription you want to view"
+              title="Click here to choose the subscription you want to view"
             >
               <div 
                 style={{

@@ -717,7 +717,8 @@ class MenuItemList extends Component {
                 }}
                 key={this.state.myDate} value={this.state.myDate} 
                 onClick={this.filterDates} 
-                id={this.state.myDate} 
+                id={this.state.myDate}
+                tabIndex="-1" 
                 >
                   {moment(this.state.myDate.split(" ")[0]).format("ddd")}
                   <br/>{moment(this.state.myDate.split(" ")[0]).format("MMM") +" "+ moment(this.state.myDate.split(" ")[0]).format("D")}
@@ -734,7 +735,8 @@ class MenuItemList extends Component {
                 }}
                 key={this.state.myDate} value={this.state.myDate} 
                 onClick={this.filterDates} 
-                id={this.state.myDate} 
+                id={this.state.myDate}
+                tabIndex="-1"
                 >
                   {extraInfo}
                 </button>
@@ -831,7 +833,8 @@ class MenuItemList extends Component {
                   }}
                   key={this.state.myDate} value={this.state.myDate} 
                   onClick={this.filterDates} 
-                  id={this.state.myDate} 
+                  id={this.state.myDate}
+                  tabIndex="-1"
                   >
                   {moment(this.state.myDate.split(" ")[0]).format("ddd")}
                   <br/>{moment(this.state.myDate.split(" ")[0]).format("MMM") +" "+ moment(this.state.myDate.split(" ")[0]).format("D")}
@@ -848,7 +851,8 @@ class MenuItemList extends Component {
                 }}
                 key={this.state.myDate} value={this.state.myDate} 
                 onClick={this.filterDates} 
-                id={this.state.myDate} 
+                id={this.state.myDate}
+                tabIndex="-1" 
                 >
                   {extraInfo}
                 </button>
@@ -938,7 +942,8 @@ class MenuItemList extends Component {
                 
                 key={this.state.myDate} value={this.state.myDate} 
                 onClick={this.filterDates} 
-                id={this.state.myDate} 
+                id={this.state.myDate}
+                tabIndex="-1"
                 >
                   {moment(this.state.myDate.split(" ")[0]).format("ddd")}
                   <br/>{moment(this.state.myDate.split(" ")[0]).format("MMM") +" "+ moment(this.state.myDate.split(" ")[0]).format("D")}
@@ -956,7 +961,7 @@ class MenuItemList extends Component {
                 key={this.state.myDate} value={this.state.myDate} 
                 onClick={this.filterDates} 
                 id={this.state.myDate} 
-
+                tabIndex="-1"
                 >
                   {extraInfo}
                 </button>
@@ -1257,6 +1262,10 @@ class MenuItemList extends Component {
               id={date} 
               className={classStyle} 
               autoFocus={first==null}
+              aria-label={moment(date.split(" ")[0]).format("ddd") + " " + moment(date.split(" ")[0]).format("MMM") + " " +
+              moment(date.split(" ")[0]).format("D") + " " + extraInfo}
+              title={moment(date.split(" ")[0]).format("ddd") + " " + moment(date.split(" ")[0]).format("MMM") + " " +
+              moment(date.split(" ")[0]).format("D") + " " + extraInfo}
               >
                 
                 <button
@@ -1270,7 +1279,8 @@ class MenuItemList extends Component {
                 key={date} value={date} 
                 onClick={this.filterDates} 
                 id={date} 
-
+                tabIndex="-1"
+                aria-hidden="true"
                 >
                   {moment(date.split(" ")[0]).format("ddd")}
                   <br/>{moment(date.split(" ")[0]).format("MMM") +" "+ moment(date.split(" ")[0]).format("D")}
@@ -1287,7 +1297,9 @@ class MenuItemList extends Component {
                 }}
                 key={date} value={date} 
                 onClick={this.filterDates} 
-                id={date} 
+                id={date}
+                tabIndex="-1"
+                aria-hidden="true" 
                 >
                   {extraInfo}
                 </button>
@@ -1347,6 +1359,7 @@ class MenuItemList extends Component {
           onClick={this.filterDates} 
           id={date} className={styles.datebuttonSurprise} 
           autoFocus={first==null}
+          aria-label={date + "Suprise / No selection"}
           >
             <button
               style={{
@@ -1359,6 +1372,7 @@ class MenuItemList extends Component {
               key={date} value={date} 
               value={date} 
               onClick={this.filterDates}
+              tabIndex="-1"
               >
               {moment(date.split(" ")[0]).format("ddd")}
               <br/>{moment(date.split(" ")[0]).format("MMM") +" "+ moment(date.split(" ")[0]).format("D")}
@@ -1376,6 +1390,7 @@ class MenuItemList extends Component {
             key={date} value={date} 
             value={date} 
             onClick={this.filterDates}
+            tabIndex="-1"
             >
               Surprise / No selection
             </button>

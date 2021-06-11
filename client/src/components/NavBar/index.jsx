@@ -315,7 +315,9 @@ class NavBar extends React.Component {
               // left:'48%',
               width: '160px',
               height: '80px'
-            }}>
+            }}
+            aria-label="Click here to return to the homepage"
+            title="Click here to return to the homepage">
           </a>
         </div>
 
@@ -392,7 +394,7 @@ class NavBar extends React.Component {
             }}
           >
 
-            {this.state.windowWidth > 900
+            {/* {this.state.windowWidth > 900
               ? (
                   <button 
                     onClick={this.togglePopSignup}
@@ -401,7 +403,21 @@ class NavBar extends React.Component {
                     Sign Up
                   </button>
                 )
-              : null}
+              : null} */}
+            <div
+              style={{
+                height:'100%',
+              }}
+            >
+              <button 
+                onClick={this.togglePopSignup}
+                className={styles.signUpBtn}
+                aria-label="Click here to sign up"
+                title="Click here to sign up"
+              >
+                Sign Up
+              </button>
+            </div>
 
             {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
 
@@ -414,6 +430,8 @@ class NavBar extends React.Component {
               <button 
                 onClick={this.togglePopLogin}
                 className={styles.signInBtn}
+                aria-label="Click here to log in"
+                title="Click here to log in"
               >
                 Login
               </button>

@@ -229,6 +229,8 @@ export class MenuList extends Component {
             cursor: 'pointer'
           }}
           onClick={this.props.close}
+          aria-label="Click here to close the navigation menu"
+          title="Click here to close the navigation menu"
           />
 
 
@@ -242,7 +244,9 @@ export class MenuList extends Component {
                 fontSize:"26px",
                 height:"20px",
                 color:'white'
-              }}>
+              }}
+              aria-label="Click here to go to the homepage"
+              title="Click here to go to the homepage">
               Home
             </a >
 
@@ -250,8 +254,10 @@ export class MenuList extends Component {
               style ={{
                 fontSize:"26px",
                 height:"20px",
-                color:'white'
-              }}>
+                color:'white' 
+              }}
+              aria-label="Click here to select your meal"
+              title="Click here to select your meal">
               Select Meals
             </a>
 
@@ -260,7 +266,9 @@ export class MenuList extends Component {
                 fontSize:"26px",
                 height:"20px",
                 color:'white'
-              }}>
+              }}
+              aria-label="Click here to change your meal plan"
+              title="Click here to change your meal plan">
               Change Meal Plans
             </a>
 
@@ -269,7 +277,9 @@ export class MenuList extends Component {
                 fontSize:"26px",
                 height:"20px",
                 color:'white'
-              }}>
+              }}
+              aria-label="Click here to add a subscription"
+              title="Click here to add a subscription">
               Add Subscriptions
             </a >
 
@@ -278,7 +288,9 @@ export class MenuList extends Component {
                 fontSize:"26px",
                 height:"20px",
                 color:'white'
-              }}>
+              }}
+              aria-label="Click here to view your subscriptions"
+              title="Click here to view your subscriptions">
               Subscription History
             </a>
 
@@ -287,7 +299,9 @@ export class MenuList extends Component {
                 fontSize:"26px",
                 height:"20px",
                 color:'white'
-              }}>
+              }}
+              aria-label="Click here to become an ambassador"
+              title="Click here to become an ambassador">
               Become an Ambassador
             </a>
 
@@ -324,6 +338,8 @@ export class MenuList extends Component {
                 display:this.state.showLogout
               }}
               onClick = {this.props.LogoutFunction}
+              aria-label="Click here to log out"
+              title="Click here to log out"
               >
               Log out
             </a>
@@ -337,6 +353,8 @@ export class MenuList extends Component {
                 cursor: 'pointer'
               }}
               onClick = {this.showPopLogin}
+              aria-label="Click here to log in"
+              title="Click here to log in"
             >
               Sign In
             </a>
@@ -350,6 +368,8 @@ export class MenuList extends Component {
                 cursor: 'pointer'
               }}
               onClick = {this.showPopSignup}
+              aria-label="Click here to sign up"
+              title="Click here to sign up"
             >
               Sign up
             </a>
