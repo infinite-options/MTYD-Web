@@ -397,7 +397,8 @@ class ChoosePlan extends React.Component {
             // console.log("===== paymentOption: " + this.props.paymentOption);
             //console.log("===== plans: " + JSON.stringify(this.props.plans));
           }}
-          aria-label={"Click to select   " +mealIndex+ " meals per delivery for $" + singleMealData.item_price}
+          aria-label={"Click to select " +mealIndex+ " meals per delivery for $" + singleMealData.item_price}
+          title={"Click to select " +mealIndex+ " meals per delivery for $" + singleMealData.item_price}
         >
           {mealIndex}
         </button>
@@ -476,6 +477,7 @@ class ChoosePlan extends React.Component {
                       // console.log("##### meals: " + this.props.meals);
                     }}
                     aria-label={ariaTag}
+                    title={ariaTag}
                   >
                     <span style={{fontSize: '35px'}}>
                       {deliveryIndex}
@@ -737,6 +739,7 @@ class ChoosePlan extends React.Component {
                                           this.proceedToPayment()
                                         }}
                                         aria-label={ariaTag}
+                                        title={ariaTag}
                                       >
                                         PROCEED
                                       </button>
@@ -814,6 +817,7 @@ class ChoosePlan extends React.Component {
                                             this.proceedToPayment()
                                           }}
                                           aria-label={ariaTag}
+                                          title={ariaTag}
                                         >
                                           PROCEED
                                         </button>

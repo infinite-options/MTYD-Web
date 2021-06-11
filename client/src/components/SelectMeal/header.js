@@ -128,6 +128,7 @@ class Header extends Component {
           className={classForbutton}
           onClick={e => this.props.makeSelection(e)}
           aria-label = {ariaTag}
+          title={ariaTag}
         >
           {displayMessage}
         </button>

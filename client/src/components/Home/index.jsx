@@ -328,7 +328,7 @@ class Home extends Component {
                         <br/><br/>
                         Heat, enjoy, and stay healthy!
                       </h6>
-                      <img className = {styles.stepsImageForEnjoy} src = {enjoyImg} aria-label="Click to get started"></img>
+                      <img className = {styles.stepsImageForEnjoy} src = {enjoyImg} aria-label="Click to get started" title="Click to get started"></img>
                     </div>
                 </div>
               </div>			  
@@ -383,6 +383,7 @@ class Home extends Component {
                 backgroundPosition:'center',
               }}
               aria-label="Click here to get started"
+              title="Click here to get started"
             >
             </a>
           </div>
@@ -423,10 +424,10 @@ class Home extends Component {
 
                 <div style = {{display: 'inline-block'}}>
                   <div style = {{display: 'flex', width: '100%', marginTop: '20px', justifyContent: 'center'}}>
-                    <img className = {styles.partnerImageNarrow} src = {ponoHawaiian} aria-label="Pono Hawaiian"></img>
+                    <img className = {styles.partnerImageNarrow} src = {ponoHawaiian} aria-label="Pono Hawaiian" title="Pono Hawaiian"></img>
                   </div>
-                  <div style = {{display: 'flex', width: '100%', marginTop: '20px', justifyContent: 'center'}} role="img" aria-label="Nitya Ayurveda">
-                    <img className = {styles.partnerImageNarrow} src = {nityaAyurveda} aria-label= "Nitya Ayurveda"></img>
+                  <div style = {{display: 'flex', width: '100%', marginTop: '20px', justifyContent: 'center'}} role="img" aria-label="Nitya Ayurveda" title="Nitya Ayurveda">
+                    <img className = {styles.partnerImageNarrow} src = {nityaAyurveda} aria-label= "Nitya Ayurveda" title="Nitya Ayurveda"></img>
                   </div>
                 </div> 
               </>
@@ -482,7 +483,7 @@ class Home extends Component {
         })()}
         
 
-        <HomeLink text = {startServingNowImg} link = "/choose-plan" aria-label="Click here to start saving now"/>			
+        <HomeLink text = {startServingNowImg} link = "/choose-plan" />			
         <FootLink/>			
         
       {/*<span>

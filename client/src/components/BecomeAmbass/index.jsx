@@ -136,6 +136,7 @@ export class BecomeAmbass extends Component {
                 onClick={this.handleClick}
                 tabIndex="0"
                 aria-label="click here to close"
+                title="click here to close"
                 />
                 <div
                 style= 
@@ -156,6 +157,7 @@ export class BecomeAmbass extends Component {
                   onClick={() => this.togglePopLogin()}
                   tabIndex="0"
                   aria-label="Click here to log in"
+                  title="Click here to log in"
                 >
                   Login to become an ambassador
                   </div>
@@ -177,7 +179,8 @@ export class BecomeAmbass extends Component {
                 }} 
                 onClick={() => this.togglePopSignup()}
                 tabIndex="0"
-                aria-label="Click here to sign up for meals 4 me">
+                aria-label="Click here to sign up for meals 4 me"
+                title="Click here to sign up for meals 4 me">
                   Signup for MealsForMe    
                 </div>  
               </div>
@@ -203,6 +206,7 @@ export class BecomeAmbass extends Component {
               onClick={this.handleClick}
               tabIndex="0"
               aria-label="click here to close"
+              title="click here to close"
             />
 
             <div
@@ -254,6 +258,7 @@ export class BecomeAmbass extends Component {
               }} 
               onClick={()=>this.sendAmbassadorEmail()}
               aria-label="click here to register as an ambassador"
+              title="click here to register as an ambassador"
             >
             </button>
           </div>

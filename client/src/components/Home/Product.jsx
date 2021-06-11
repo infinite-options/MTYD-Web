@@ -23,6 +23,7 @@ const Product = (props) => {
           }}
           tabIndex="0" 
           aria-label={props.name}
+          title={props.name}
         /> 
         <Box
           width="204px"

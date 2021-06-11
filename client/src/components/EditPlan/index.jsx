@@ -1342,6 +1342,7 @@ class EditPlan extends React.Component {
           }}
           tabIndex="0"
           aria-label={"Click to select Purchase ID: " + sub.id + ", " + sub.meals + "Meals," +sub.deliveries + "Deliveries"}
+          title={"Click to select Purchase ID: " + sub.id + ", " + sub.meals + "Meals," +sub.deliveries + "Deliveries"}
         >
           <div className={styles.mealButtonEdit}>
             
@@ -1400,6 +1401,7 @@ class EditPlan extends React.Component {
                 }));
               }}
               aria-label="Enter your card number"
+              title="Enter your card number"
             />
             <input
               type='text'
@@ -1416,6 +1418,7 @@ class EditPlan extends React.Component {
                 }));
               }}
               aria-label="Enter your card expiration date"
+              title="Enter your card expiration date"
             />
             <input
               type='text'
@@ -1432,6 +1435,7 @@ class EditPlan extends React.Component {
                 }));
               }}
               aria-label="Enter your card's cvv"
+              title="Enter your card's cvv"
             />
             <input
               type='text'
@@ -1448,6 +1452,7 @@ class EditPlan extends React.Component {
                 }));
               }}
               aria-label="Enter your zip"
+              title="Enter your zip"
             />
           </div>
         </div>
@@ -1482,7 +1487,7 @@ class EditPlan extends React.Component {
               <div style={{paddingBottom: '10px'}}>
                 DELIVERIES  
               </div>
-              <button className={styles.deliveryButtonCurrent} aria-label={ariaTag}>
+              <button className={styles.deliveryButtonCurrent} aria-label={ariaTag} title={ariaTag}>
                 <span style={{fontSize: '35px'}}>
                   {this.state.currentPlan.deliveries}
                 </span>
@@ -1504,6 +1509,7 @@ class EditPlan extends React.Component {
                 }}
                 tabIndex="0"
                 aria-label="Click here to cancel this meal plan"
+                title="Click here to cancel this meal plan"
               />
             </div>
 
@@ -1621,7 +1627,7 @@ class EditPlan extends React.Component {
               <div style={{paddingBottom: '10px'}}>
                 DELIVERIES
               </div>
-              <button className={styles.deliveryButtonCurrent} aria-label={ariaTag}>
+              <button className={styles.deliveryButtonCurrent} aria-label={ariaTag} title={ariaTag}>
                 <span style={{fontSize: '35px'}}>
                   {this.state.currentPlan.deliveries}
                 </span>
@@ -1643,6 +1649,7 @@ class EditPlan extends React.Component {
                 }}
                 tabIndex="0"
                 aria-label="Click here to cancel this meal plan"
+                title="Click here to cancel this meal plan"
               />
             </div>
 
@@ -1880,6 +1887,7 @@ class EditPlan extends React.Component {
             this.changePlans(mealIndex, this.state.updatedPlan.deliveries);
           }}
           aria-label={"Click to switch to " +mealIndex+ " meals per delivery for $" + singleMealData.item_price}
+          title={"Click to switch to " +mealIndex+ " meals per delivery for $" + singleMealData.item_price}
         >
           {mealIndex}
         </button>
@@ -1937,6 +1945,7 @@ class EditPlan extends React.Component {
                 this.changePlans(this.state.updatedPlan.meals, deliveryIndex);
               }}
               aria-label={ariaTag}
+              title={ariaTag}
             >
             <span style={{fontSize: '35px'}}>
               {deliveryIndex}
@@ -2112,6 +2121,7 @@ class EditPlan extends React.Component {
                   }));
                 }}
                 aria-label="Confirm your first name"
+                title="Confirm your first name"
               />
 
               <input
@@ -2128,6 +2138,7 @@ class EditPlan extends React.Component {
                   }));
                 }}
                 aria-label="Confirm your last name"
+                title="Confirm your last name"
               />
             </div>
 
@@ -2137,6 +2148,7 @@ class EditPlan extends React.Component {
               className={styles.input}
               value={this.props.email}
               aria-label="Confirn your email"
+              title="Confirn your email"
             />
 
             <input
@@ -2153,6 +2165,7 @@ class EditPlan extends React.Component {
                 }));
               }}
               aria-label="Confirm your phone number"
+              title="Confirm your phone number"
             />
 
             <input
@@ -2161,6 +2174,7 @@ class EditPlan extends React.Component {
               className={styles.input}
               id="pac-input" name="pac-input"
               aria-label="Confirm your address"
+              title="Confirm your address"
             />
 
             <div style={{display: 'flex'}}>
@@ -2178,6 +2192,7 @@ class EditPlan extends React.Component {
                   }));
                 }}
                 aria-label="Confirm your unit"
+                title="Confirm your unit"
               />
 
               <input
@@ -2186,6 +2201,7 @@ class EditPlan extends React.Component {
                 id="locality" name="locality"
                 className={styles.inputContactRight}
                 aria-label="Confirm your city"
+                title="Confirm your city"
               />
             </div>
 
@@ -2196,6 +2212,7 @@ class EditPlan extends React.Component {
                 className={styles.inputContactLeft}
                 id="state" name="state"
                 aria-label="Confirm your state"
+                title="Confirm your state"
               />
               <input
                 type='text'
@@ -2203,6 +2220,7 @@ class EditPlan extends React.Component {
                 className={styles.inputContactRight}
                 id="postcode" name="postcode"
                 aria-label="Confirm your zip code"
+                title="Confirm your zip code"
               />
             </div>
 
@@ -2220,6 +2238,7 @@ class EditPlan extends React.Component {
                 }));
               }}
               aria-label="Confirm your delivery instructions"
+              title="Confirm your delivery instructions"
             />
 
             <div className = {styles.googleMap} id = "map"/>     
@@ -2230,6 +2249,7 @@ class EditPlan extends React.Component {
                 disabled={!this.state.subscriptionsLoaded}
                 onClick={()=>this.saveEdits()}
                 aria-label="Click to save delivery changes"
+                title="Click to save delivery changes"
               >
                     Save
               </button>
@@ -2452,13 +2472,17 @@ class EditPlan extends React.Component {
                   {(() => {
                       if (this.state.updatedPlan.payment_summary.driver_tip === "0.00") {
                         return (
-                          <button className={styles.tipButtonSelected} onClick={() => this.changeTip("0.00")} aria-label={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip}>
+                          <button className={styles.tipButtonSelected} onClick={() => this.changeTip("0.00")} 
+                          aria-label={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip} 
+                          title={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip}>
                             No Tip
                           </button>
                         );
                       } else {
                         return (
-                          <button className={styles.tipButton} onClick={() => this.changeTip("0.00")} aria-label={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip + ". Click here to remove tip."}>
+                          <button className={styles.tipButton} onClick={() => this.changeTip("0.00")} 
+                          aria-label={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip + ". Click here to remove tip."}
+                          title={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip + ". Click here to remove tip."}>
                             No Tip
                           </button>
                         );
@@ -2467,13 +2491,17 @@ class EditPlan extends React.Component {
                     {(() => {
                       if (this.state.updatedPlan.payment_summary.driver_tip === "2.00") {
                         return (
-                          <button className={styles.tipButtonSelected} onClick={() => this.changeTip("2.00")} aria-label={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip}>
+                          <button className={styles.tipButtonSelected} onClick={() => this.changeTip("2.00")} 
+                          aria-label={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip}
+                          title={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip}>
                             $2
                           </button>
                         );
                       } else {
                         return (
-                          <button className={styles.tipButton} onClick={() => this.changeTip("2.00")} aria-label={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip + ". Click here change tip to $2."}>
+                          <button className={styles.tipButton} onClick={() => this.changeTip("2.00")} 
+                          aria-label={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip + ". Click here change tip to $2."}
+                          title={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip + ". Click here to change tip to $2."}>
                             $2
                           </button>
                         );
@@ -2482,13 +2510,17 @@ class EditPlan extends React.Component {
                     {(() => {
                       if (this.state.updatedPlan.payment_summary.driver_tip === "3.00") {
                         return (
-                          <button className={styles.tipButtonSelected} onClick={() => this.changeTip("3.00")} aria-label={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip}>
+                          <button className={styles.tipButtonSelected} onClick={() => this.changeTip("3.00")} 
+                          aria-label={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip}
+                          title={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip}>
                             $3
                           </button>
                         );
                       } else {
                         return (
-                          <button className={styles.tipButton} onClick={() => this.changeTip("3.00")} aria-label={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip + ". Click here to change tip to $3."}>
+                          <button className={styles.tipButton} onClick={() => this.changeTip("3.00")} 
+                          aria-label={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip + ". Click here to change tip to $3."}
+                          title={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip + ". Click here to change tip to $3."}>
                             $3
                           </button>
                         );
@@ -2497,13 +2529,17 @@ class EditPlan extends React.Component {
                     {(() => {
                       if (this.state.updatedPlan.payment_summary.driver_tip === "5.00") {
                         return (
-                          <button className={styles.tipButtonSelected} onClick={() => this.changeTip("5.00")} aria-label={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip}>
+                          <button className={styles.tipButtonSelected} onClick={() => this.changeTip("5.00")} 
+                          aria-label={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip}
+                          title={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip}>
                             $5
                           </button>
                         );
                       } else {
                         return (
-                          <button className={styles.tipButton} onClick={() => this.changeTip("5.00")} aria-label={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip + ". Click here to change tip to $5."}>
+                          <button className={styles.tipButton} onClick={() => this.changeTip("5.00")} 
+                          aria-label={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip + ". Click here to change tip to $5."}
+                          title={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip + ". Click here to change tip to $5."}>
                             $5
                           </button>
                         );
@@ -2522,6 +2558,7 @@ class EditPlan extends React.Component {
                     });
                   }}
                   aria-label="Enter your ambassador code here"
+                  title="Enter your ambassador code here"
                 />
                 <button 
                   className={styles.codeButton}
@@ -2532,6 +2569,7 @@ class EditPlan extends React.Component {
                   }
                   onClick={() => this.applyAmbassadorCode()}
                   aria-label="Click here to verify your ambassador code"
+                  title="Click here to verify your ambassador code"
                 >
                   Verify
                 </button>
@@ -2593,6 +2631,7 @@ class EditPlan extends React.Component {
                 }
                 onClick={() => this.confirmChanges()}
                 aria-label={"Your new plan will cost " + this.state.updatedPlan.payment_summary.total + ". Click here to save your new delivery plan"}
+                title={"Your new plan will cost " + this.state.updatedPlan.payment_summary.total + ". Click here to save your new delivery plan"}
               >
                 Update Meal Plan
               </button>
@@ -2608,6 +2647,7 @@ class EditPlan extends React.Component {
                 }
                 onClick={() => this.discardChanges()}
                 aria-label={"Your new plan will cost " + this.state.updatedPlan.payment_summary.total + ". Click here to keep your previous meal plan"}
+                title={"Your new plan will cost " + this.state.updatedPlan.payment_summary.total + ". Click here to keep your previous meal plan"}
               >
                 Keep Existing Meal Plan
               </button>

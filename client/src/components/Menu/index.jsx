@@ -50,6 +50,7 @@ const Menu = props => {
                       className={styles.pickers}
                       id={styles.mealPlanPicker}
                       aria-label={"Click here to select meals to edit"}
+                      title={"Click here to select meals to edit"}
                     >
                       {props.meals.map(mealItem => {
                         // let meal = JSON.parse(mealItem.items)[0];
@@ -69,9 +70,6 @@ const Menu = props => {
                             value={mealItem.purchase_uid}
                             // modifiedValue={mealItem.purchase_id}
                             key={mealItem.purchase_uid}
-                            aria-label={parsedMeals + " Meals, " + 
-                            parsedDeliveries + " Deliveries. Order ID " + 
-                            parsedId}
                           >
                             {/* {mealName.toUpperCase()} */}
                             {

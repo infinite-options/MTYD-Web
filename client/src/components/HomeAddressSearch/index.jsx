@@ -162,7 +162,7 @@ export class HomeMap extends Component {
           }}
         >
 
-          <button className="close" onClick={()=>{this.setState({hooray:false})}} aria-label="close popup"/>
+          <button className="close" onClick={()=>{this.setState({hooray:false})}} aria-label="close popup" title="close popup"/>
 
           <div
            style={{
@@ -211,6 +211,7 @@ export class HomeMap extends Component {
 
            onClick={()=>{this.props.history.push('/select-meal')}}
            aria-label="Click here to explore meals"
+           title="Click here to explore meals"
           >
               Explore Meals
           </button>
@@ -233,6 +234,7 @@ export class HomeMap extends Component {
 
            onClick={()=>{this.setState({signup:true,hooray:false}); console.log(this.state)}}
            aria-label="Click here to sign up"
+           title="Click here to sign up"
           >
               Sign up
           </button>
@@ -357,6 +359,7 @@ export class HomeMap extends Component {
             backgroundColor:'#ff6505'
             }}
             aria-label="Click here to view meals"
+            title="Click here to view meals"
           >
             <a href='/select-meal'
             style={{
