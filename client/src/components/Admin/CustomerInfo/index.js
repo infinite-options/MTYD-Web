@@ -3,6 +3,7 @@ import axios from 'axios';
 import { API_URL } from '../../../reducers/constants';
 import { descendingComparator } from '../../../reducers/helperFuncs';
 import { withRouter } from "react-router";
+import styles from "./customerInfo.module.css";
 
 // For choosing which 
 const CUS_SEL_NONE  = -1;
@@ -17,6 +18,10 @@ function CustomerInfo() {
 
 	const [customerDropdown, setCustomerDropdown] = useState(CUS_SEL_NONE);
 	const [selectedCustomer, selectCustomer] = useState(null);
+	const [subscriptionsLoaded, setSubscriptionsLoaded] = useState(false);
+	const [subscriptionsList, setSubscriptionsList] = useState(null);
+	const [currentPlan, setCurrentPlan] = useState(null);
+	const [subHistory, setSubHistory] = useState([]);
 
 	useEffect(() => {
 		axios
@@ -66,8 +71,13 @@ function CustomerInfo() {
 	}, []);
 
 	useEffect(() => {
-		// console.log("dropdown menu set to: ", customerDropdown);
+		console.log("dropdown menu set to: ", customerDropdown);
 	}, [customerDropdown]);
+
+	// Set history tab
+	useEffect(() => {
+
+	}, [subHistory]);
 
 	const setCurrentCustomer = (cust) => {
 
@@ -79,6 +89,39 @@ function CustomerInfo() {
 			.get(API_URL + 'predict_next_billing_date/' + cust.customer_uid)
 			.then(res => {
 				console.log("(pnba) next meal info res: ", res);
+
+				// setSubscriptionsLoaded(true);
+				setSubscriptionsList(res.data.result);
+
+				// let fetchedSubscriptions = res.data.result;
+
+				// this.displayErrorModal('Success!', `
+				// 	OLD MEAL PLAN: ${this.state.currentPlan.meals} meals, ${this.state.currentPlan.deliveries} deliveries
+				// 	NEW MEAL PLAN: ${this.state.updatedPlan.meals} meals, ${this.state.updatedPlan.deliveries} deliveries
+				// `, 
+				// 	'OK', 'back'
+				// );
+
+				// console.log("subscriptions loaded? ", this.state.subscriptionsLoaded);
+				// console.log(this.state.defaultSet === false);
+				// console.log(this.state.refreshingPrice);
+				// console.log(this.activeChanges());
+
+				// this.loadSubscriptions(fetchedSubscriptions, this.state.discounts, UPDATED);
+			})
+			.catch(err => {
+				console.log(err);
+			});
+
+		axios
+			.get(API_URL + 'subscription_history/' + cust.customer_uid)
+			.then(res => {
+				console.log("(sh) sub history res: ", res);
+
+				setSubHistory(res.data.result);
+
+				// setSubscriptionsLoaded(true);
+				// setSubscriptionsList(res.data.result);
 
 				// let fetchedSubscriptions = res.data.result;
 
@@ -101,6 +144,7 @@ function CustomerInfo() {
 			});
 
 		selectCustomer(cust);
+		console.log("initial customer selected!");
 	}
 
 	const showCustomerIDs = () => {
@@ -205,15 +249,110 @@ function CustomerInfo() {
 		);
 	}
 
+	  // Display when initial information has not been loaded on first page render
+	const hideSubscribedMeals = (config) => {
+
+		// For select meal plan section
+		if(config === 'plan') {
+			return (
+				<div 
+					style={{
+						textAlign: 'center', 
+						paddingTop: '80px',
+						fontSize: '40px', 
+						fontWeight: 'bold',
+						width: '100%'
+					}}
+				>
+					Loading Subscriptions...
+				</div>
+			);
+
+		// For edit plan section
+		} else {
+			return (
+				<div 
+					style={{
+						textAlign: 'center', 
+						paddingTop: '70px',
+						fontSize: '40px', 
+						fontWeight: 'bold',
+						width: '100%',
+						marginBottom: '100px'
+					}}
+				>
+					Loading Subscriptions...
+				</div>
+			);
+		}
+	}
+
+	const showSubscribedMeals = () => {
+
+    let deselectedMealButton = styles.mealButton;
+    let selectedMealButton = styles.mealButton + " " + styles.mealButtonSelected;
+    let mealButtons = [];
+
+    subscriptionsList.forEach((sub) => {
+
+			console.log("sub: ", sub);
+      // console.log("curr id: ", this.state.currentPlan.id);
+      mealButtons.push(
+        <div
+          key={sub.id}
+          // className={
+          //   this.state.currentPlan.id === sub.id
+          //     ? selectedMealButton
+          //     : deselectedMealButton
+          // }
+					className={deselectedMealButton}
+          onClick={() => {
+
+					}}
+				>
+          {/* <div className={styles.mealButtonEdit}>
+            
+					</div> */}
+					<div className={styles.mealButtonSection}>
+						{sub.meals} Meals, {sub.deliveries} Deliveries
+					</div>
+					<div className={styles.mealButtonSection}>
+						{sub.purchase_uid}
+					</div>
+					<div className={styles.mealButtonSection}>
+						{sub.next_delivery}
+					</div>
+					<div className={styles.mealButtonSection}>
+						{sub.final_selection}
+					</div>
+					<div className={styles.mealButtonSection}>
+						{sub.next_billing_date}
+					</div>
+					<div className={styles.mealButtonSection}>
+						${sub.amount_due}
+					</div>
+				</div>
+			);
+		});
+
+		// return mealButtons;
+		return(
+      <div style={{width: '100%'}}>
+        {mealButtons}
+      </div>
+    );
+	}
+
   return (
-		<>
+		<div style={{backgroundColor: '#F26522'}}>
 			<div
 				style={{
-					borderBottom: 'solid',
-					borderWidth: '1px',
+					// borderBottom: 'solid',
+					// borderWidth: '1px',
 					display: 'flex',
-					height: '40px',
-					alignItems: 'center'
+					height: '80px',
+					alignItems: 'center',
+					backgroundColor: 'white'
 				}}
 			>
 				<div
@@ -227,23 +366,6 @@ function CustomerInfo() {
 					Customers
 				</div>
 
-				{/* <div
-					type='text'
-					style={{
-						border: 'solid',
-						borderWidth: '1px',
-						width: '16%',
-						marginLeft: '2%',
-						marginRight: '2%'
-					}}
-					onClick={() => {
-						customerDropdown === CUS_SEL_NONE
-							? setCustomerDropdown(CUS_SEL_ID)
-							: setCustomerDropdown(CUS_SEL_NONE)
-					}}
-				>
-					ID
-				</div> */}
 				{customerDropdown === CUS_SEL_ID ? (
 					<div
 						type='text'
@@ -378,54 +500,10 @@ function CustomerInfo() {
 						Email
 					</div>
 				)}
-
 			</div>
 
-			{/* {selectedCustomer === null ? (
-				<div
-					style={{
-						border: 'solid',
-						marginTop: '20px',
-						height: '50px',
-						zIndex: '1'
-					}}
-				>
-					Waiting for selection...
-				</div>
-			) : (
-				<div
-					style={{
-						border: 'solid',
-						marginTop: '20px',
-						height: '50px',
-						zIndex: '1'
-					}}
-				>
-					Current Customer: {selectedCustomer.customer_uid}
-				</div>
-			)} */}
-			{/* {selectedCustomer === null ? (
-				<div
-					style={{
-						border: 'solid',
-						marginTop: '20px',
-						height: '50px',
-						zIndex: '1'
-					}}
-				>
-					Waiting for selection...
-				</div>
-			) : ( */}
-
 			{console.log("Current customer info: ", selectedCustomer)}
-			<div
-				style={{
-					border: 'solid',
-					marginTop: '20px',
-					height: '300px',
-					zIndex: '1'
-				}}
-			>
+			<div className={styles.containerCustomer}>
 				{selectedCustomer === null ? (
 					<>{"Waiting for selection..."}</>
 				) : (
@@ -458,7 +536,7 @@ function CustomerInfo() {
 			</div>
 
 			{/* Meal Plans */}
-			<div
+			{/* <div
 				style={{
 					border: 'solid',
 					marginTop: '20px',
@@ -471,12 +549,53 @@ function CustomerInfo() {
 				) : (
 					<>
 						{"Meal Plans: "}
-						<br />
-					</>
-				)}
-			</div>
+						<br /> */}
+						<div className={styles.containerMeals}>
+							<div className={styles.boxScroll}>
+								<div className={styles.mealButtonHeader}>
+									{/* <div className={styles.mealButtonEdit}>
+										
+									</div> */}
+									<div className={styles.mealButtonSection} style={{fontWeight: 'bold', fontSize: '20px'}}>
+										Meal Plans
+									</div>
+									<div className={styles.mealButtonSection} style={{fontWeight: 'bold', fontSize: '20px'}}>
+										Purchase ID
+									</div>
+									<div className={styles.mealButtonSection} style={{fontWeight: 'bold', fontSize: '20px'}}>
+										Next Delivery Date
+									</div>
+									<div className={styles.mealButtonSection} style={{fontWeight: 'bold', fontSize: '20px'}}>
+										Next Delivery Status
+									</div>
+									<div className={styles.mealButtonSection} style={{fontWeight: 'bold', fontSize: '20px'}}>
+										Next Billing Date
+									</div>
+									<div className={styles.mealButtonSection} style={{fontWeight: 'bold', fontSize: '20px'}}>
+										Next Billing Amount
+									</div>
+								</div>
 
-		</>
+								{console.log("subscriptions loaded? ", subscriptionsLoaded)}
+								<div style={{display: 'flex'}}>
+									{subscriptionsList !== null
+										? showSubscribedMeals() 
+										: hideSubscribedMeals('plan')}
+								</div>
+
+							</div>
+        		</div>
+
+						<div className={styles.containerHistory}>
+						  {"HISTORY GOES HERE"}
+						</div>
+
+						<br />
+					{/* </>
+				)}
+			</div> */}
+
+		</div>
   )
 }
 

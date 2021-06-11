@@ -110,42 +110,62 @@ function NavBar(props) {
   return (
     <div
       style={{
-        border: 'solid',
+        // border: 'solid',
         backgroundColor: '#F8BB17',
         display: 'flex',
-        alignItems: 'center',
+        // alignItems: 'center',
         height: '80px'
       }}
     >
-      <a 
-        href='/home' 
+      <div
         style={{
-          // margin:0,
-          // position:"absolute",
-          // width: "160px", 
-          // height:"80px",
-          // top:"5px",
-          border: 'inset',
-          backgroundImage:`url(${whiteLogo})`,
-          backgroundSize:'cover',
-          // backgroundPosition:'center',
-          // left:'48%',
-          width: '12%',
-          marginLeft: '1%',
-          marginRight: '1%',
-          minWidth: '120px',
-          height: '60px'
-        }}>
-      </a>
-      <a href='/admin/edit-meal' className={styles.navLink3}>Meals & Plans</a>
-      <a href='/admin/edit-meal' className={styles.navLink4}>Plans & Coupons</a>
-      <a href='/admin/edit-meal' className={styles.navLink5}>Orders & Ingredients</a>
-      <a href='/admin/edit-meal' className={styles.navLink2}>Customers</a>
-      <a href='/admin/edit-meal' className={styles.navLink4}>Google Analytics</a>
-      <a href='/admin/edit-meal' className={styles.navLink3}>Notifications</a>
-      <a href='/admin/edit-meal' className={styles.navLink2}>Businesses</a>
-      <a href='/admin/edit-meal' className={styles.navLink1}>Zones</a>
-      <a href='/admin/edit-meal' className={styles.navLink1}>Profile</a>
+          // border: 'solid',
+          width: '200px'
+        }}
+      >
+        <a 
+          href='/home' 
+          style={{
+            // margin:0,
+            // position:"absolute",
+            // width: "160px", 
+            // height:"80px",
+            // top:"5px",
+            // border: 'inset',
+            backgroundImage:`url(${whiteLogo})`,
+            backgroundSize:'cover',
+            // backgroundPosition:'center',
+            // left:'48%',
+            // width: '12%',
+            // marginLeft: '1%',
+            // marginRight: '1%',
+            // minWidth: '120px',
+            marginTop: '10px',
+            marginLeft: '20px',
+            width: '140px',
+            height: '70px'
+          }}>
+        </a>
+      </div>
+      <div
+        style={{
+          // border: 'solid',
+          width: '90%',
+          display: 'flex',
+          alignItems: 'center',
+          height: '80px'
+        }}
+      >
+        <a href='/admin/edit-meal' className={styles.navLink3}>Meals & Plans</a>
+        <a href='/admin/edit-meal' className={styles.navLink4}>Plans & Coupons</a>
+        <a href='/admin/edit-meal' className={styles.navLink5}>Orders & Ingredients</a>
+        <a href='/admin/edit-meal' className={styles.navLink2}>Customers</a>
+        <a href='/admin/edit-meal' className={styles.navLink4}>Google Analytics</a>
+        <a href='/admin/edit-meal' className={styles.navLink3}>Notifications</a>
+        <a href='/admin/edit-meal' className={styles.navLink2}>Businesses</a>
+        <a href='/admin/edit-meal' className={styles.navLink1}>Zones</a>
+        <a href='/admin/edit-meal' className={styles.navLink1}>Profile</a>
+      </div>
     </div>
   );
 }

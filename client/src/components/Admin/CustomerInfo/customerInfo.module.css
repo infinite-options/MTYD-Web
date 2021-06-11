@@ -1,0 +1,118 @@
+.containerMeals {
+  text-align: center;
+  display: flex;
+  width: 96%;
+  /* border: solid; */
+  border-radius: 15px;
+  margin-top: 20px;
+  margin-left: 2%;
+  margin-right: 2%;
+  background-color: white;
+}
+
+.containerHistory {
+  text-align: center;
+  display: flex;
+  width: 96%;
+  /* border: solid; */
+  border-radius: 15px;
+  margin-top: 20px;
+  margin-left: 2%;
+  margin-right: 2%;
+  background-color: white;
+  height: 300px;
+  margin-bottom: 50px;
+}
+
+/* style={{
+  border: 'solid',
+  marginTop: '20px',
+  height: '300px',
+  zIndex: '1'
+}} */
+.containerCustomer {
+  /* text-align: center;
+  display: flex; */
+  width: 96%;
+  height: 300px;
+  z-index: 1;
+  /* border: solid; */
+  border-radius: 15px;
+  margin-top: 20px;
+  margin-left: 2%;
+  margin-right: 2%;
+  background-color: white;
+}
+
+.boxScroll {
+  /* margin-left: 4%; */
+  text-align: center;
+  overflow-y: auto;
+  /* width: 92%; */
+  width: 100%;
+  flex: inline-block;
+  height: 300px;
+}
+
+.mealButton {
+  border-bottom: 2px solid #ffba00;
+  background-color: #ffffff;
+  border-radius: 0px;
+  padding: 0 0 0 0;
+  width: 100%;
+  font-size: 20px;
+  outline: 0;
+  height: 50px;
+  background-size: 100%;
+  cursor: pointer;
+}
+
+/* .mealButtonSelected {
+  background-color: #ffba00;
+  outline: 0;
+}
+.mealButtonSelected:hover {
+  background-color: #ffba00;
+  outline: 0;
+} */
+
+.mealButtonHeader {
+  height: 50px;
+  border-bottom: 2px solid #ffba00;
+}
+
+.mealButtonEdit {
+  width: 4%;
+  height: 100%;
+  float: left;
+  padding-top: 8px;
+  text-overflow: ellipsis;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  border: dashed;
+}
+
+.mealButtonPlan {
+  width: 16%;
+  height: 100%;
+  float: left;
+  padding-top: 8px;
+  text-overflow: ellipsis;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  border: solid;
+}
+
+.mealButtonSection {
+  width: 16%;
+  height: 100%;
+  float: left;
+  padding-top: 8px;
+  text-overflow: ellipsis;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  border: solid;
+}
