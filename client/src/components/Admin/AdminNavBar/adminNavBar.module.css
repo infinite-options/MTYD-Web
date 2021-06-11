@@ -1,0 +1,50 @@
+.navLink1 {
+  color: white;
+  border: solid;
+  border-color: red;
+  border-width: 1px;
+  /* width: 9%;
+  margin-right: 1%; */
+  width: 6%;
+  /* text-align: center; */
+}
+.navLink2 {
+  color: white;
+  border: solid;
+  border-color: blue;
+  border-width: 1px;
+  /* width: 9%;
+  margin-right: 1%; */
+  width: 8%;
+  /* text-align: center; */
+}
+.navLink3 {
+  color: white;
+  border: solid;
+  border-color: white;
+  border-width: 1px;
+  /* width: 9%;
+  margin-right: 1%; */
+  width: 10%;
+  /* text-align: center; */
+}
+.navLink4 {
+  color: white;
+  border: solid;
+  border-color: cyan;
+  border-width: 1px;
+  /* width: 9%;
+  margin-right: 1%; */
+  width: 12%;
+  /* text-align: center; */
+}
+.navLink5 {
+  color: white;
+  border: solid;
+  border-color: orchid;
+  border-width: 1px;
+  /* width: 9%;
+  margin-right: 1%; */
+  width: 14%;
+  /* text-align: center; */
+}
