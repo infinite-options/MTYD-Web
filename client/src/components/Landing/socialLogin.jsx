@@ -156,7 +156,7 @@ class SocialLogin extends Component {
                 backgroundPosition:'center',
               }}
               tabIndex="0"
-              aria-label="Sign in with Facebook "
+              aria-label="Continue in with Facebook "
               >
                 <FacebookLogin
                   appId={process.env.REACT_APP_FACEBOOK_APP_ID}

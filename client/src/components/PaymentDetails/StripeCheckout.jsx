@@ -310,6 +310,7 @@ const StripeCheckout = (props) => {
         onChange={e => {
           changeCardholderName(e.target.value);
         }}
+        aria-label="Enter the name of the cardholder"
       />
 
       <div className={styles.label}>
@@ -324,6 +325,7 @@ const StripeCheckout = (props) => {
         className={styles.orangeBtn2}
         disabled={(props.fetchingFees || loadingState || props.recalculatingPrice)}
         onClick={() => pay()}
+        aria-label={"Click to complete your payment"}
       >
         Complete Payment
       </button>

@@ -1119,6 +1119,7 @@ class PaymentDetails extends React.Component {
                     firstName: e.target.value
                   });
                 }}
+                aria-label="Enter your first name"
               />
 
               <input
@@ -1131,6 +1132,7 @@ class PaymentDetails extends React.Component {
                     lastName: e.target.value
                   });
                 }}
+                aria-label="Enter your last name"
               />
             </div>
 
@@ -1147,6 +1149,7 @@ class PaymentDetails extends React.Component {
                         email: e.target.value
                       })
                     }}
+                    aria-label="Enter your email"
                   />
                 );
               } else {
@@ -1159,6 +1162,7 @@ class PaymentDetails extends React.Component {
                     onChange={e => {
                 
                     }}
+                    aria-label="Enter your email"
                   />
                 );
               }
@@ -1174,6 +1178,7 @@ class PaymentDetails extends React.Component {
                   phone: e.target.value
                 });
               }}
+              aria-label="Enter your phone number"
             />
 
             {/* <input
@@ -1225,6 +1230,7 @@ class PaymentDetails extends React.Component {
               placeholder={"Address 1"}
               className={styles.input}
               id="pac-input" name="pac-input"
+              aria-label="Enter your address"
             />
 
               {/* <input
@@ -1246,6 +1252,7 @@ class PaymentDetails extends React.Component {
                     unit: e.target.value
                   });
                 }}
+                aria-label="Enter your unit number. optional"
               />
               
               <input
@@ -1253,6 +1260,7 @@ class PaymentDetails extends React.Component {
                 placeholder={'City'}
                 id="locality" name="locality"
                 className={styles.inputContactRight}
+                aria-label="Enter your city"
               />
             </div>
 
@@ -1262,12 +1270,14 @@ class PaymentDetails extends React.Component {
                 placeholder={'State'}
                 className={styles.inputContactLeft}
                 id="state" name="state"
+                aria-label="Enter your state"
               />
               <input
                 type='text'
                 placeholder={'Zip Code'}
                 className={styles.inputContactRight}
                 id="postcode" name="postcode"
+                aria-label="Enter your zipcode"
               />
             </div> 
 
@@ -1281,6 +1291,7 @@ class PaymentDetails extends React.Component {
                   instructions: e.target.value
                 });
               }}
+              aria-label="Enter delivery instructions"
             />
 
             <div className = {styles.googleMap} id = "map"/>     
@@ -1290,6 +1301,7 @@ class PaymentDetails extends React.Component {
                 className={styles.orangeBtn}
                 disabled={this.state.loadingMap || this.state.fetchingFees}
                 onClick={()=>this.proceedToPayment()}
+                aria-label="Click here to save your delivery information and proceed"
               >
                 Save and Proceed
               </button> 
@@ -1462,13 +1474,13 @@ class PaymentDetails extends React.Component {
                     {(() => {
                         if (this.state.paymentSummary.tip === "0.00") {
                           return (
-                            <button className={styles.tipButtonSelected} onClick={() => this.changeTip("0.00")}>
+                            <button className={styles.tipButtonSelected} onClick={() => this.changeTip("0.00")} aria-label={"Current tip is: $" + this.state.paymentSummary.tip}>
                               No Tip
                             </button>
                           );
                         } else {
                           return (
-                            <button className={styles.tipButton} onClick={() => this.changeTip("0.00")}>
+                            <button className={styles.tipButton} onClick={() => this.changeTip("0.00")} aria-label={"Current tip is: $" + this.state.paymentSummary.tip + ". Click here to remove tip."}>
                               No Tip
                             </button>
                           );
@@ -1477,13 +1489,13 @@ class PaymentDetails extends React.Component {
                       {(() => {
                         if (this.state.paymentSummary.tip === "2.00") {
                           return (
-                            <button className={styles.tipButtonSelected2} onClick={() => this.changeTip("2.00")}>
+                            <button className={styles.tipButtonSelected2} onClick={() => this.changeTip("2.00")} aria-label={"Current tip is: $" + this.state.paymentSummary.tip}>
                               $2
                             </button>
                           );
                         } else {
                           return (
-                            <button className={styles.tipButton2} onClick={() => this.changeTip("2.00")}>
+                            <button className={styles.tipButton2} onClick={() => this.changeTip("2.00")} aria-label={"Current tip is: $" + this.state.paymentSummary.tip + ". Click here to change tip to $2."}>
                               $2
                             </button>
                           );
@@ -1492,13 +1504,13 @@ class PaymentDetails extends React.Component {
                       {(() => {
                         if (this.state.paymentSummary.tip === "3.00") {
                           return (
-                            <button className={styles.tipButtonSelected2} onClick={() => this.changeTip("3.00")}>
+                            <button className={styles.tipButtonSelected2} onClick={() => this.changeTip("3.00")} aria-label={"Current tip is: $" + this.state.paymentSummary.tip}>
                               $3
                             </button>
                           );
                         } else {
                           return (
-                            <button className={styles.tipButton2} onClick={() => this.changeTip("3.00")}>
+                            <button className={styles.tipButton2} onClick={() => this.changeTip("3.00")} aria-label={"Current tip is: $" + this.state.paymentSummary.tip + ". Click here to change tip to $3."}>
                               $3
                             </button>
                           );
@@ -1507,13 +1519,13 @@ class PaymentDetails extends React.Component {
                       {(() => {
                         if (this.state.paymentSummary.tip === "5.00") {
                           return (
-                            <button className={styles.tipButtonSelected2} onClick={() => this.changeTip("5.00")}>
+                            <button className={styles.tipButtonSelected2} onClick={() => this.changeTip("5.00")} aria-label={"Current tip is: $" + this.state.paymentSummary.tip}>
                               $5
                             </button>
                           );
                         } else {
                           return (
-                            <button className={styles.tipButton2} onClick={() => this.changeTip("5.00")}>
+                            <button className={styles.tipButton2} onClick={() => this.changeTip("5.00")}aria-label={"Current tip is: $" + this.state.paymentSummary.tip + ". Click here to change tip to $5."}>
                               $5
                             </button>
                           );
@@ -1531,6 +1543,7 @@ class PaymentDetails extends React.Component {
                         ambassadorCode: e.target.value
                       });
                     }}
+                    aria-label="Enter your ambassador code"
                   />
                   <button 
                     className={styles.codeButton}
@@ -1539,6 +1552,7 @@ class PaymentDetails extends React.Component {
                       parseFloat(this.state.paymentSummary.ambassadorDiscount) > 0
                     }
                     onClick={() => this.applyAmbassadorCode()}
+                    aria-label="Click to verify your ambassador code"
                   >
                     Verify
                   </button>

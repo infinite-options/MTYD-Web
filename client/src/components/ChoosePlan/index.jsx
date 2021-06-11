@@ -397,6 +397,7 @@ class ChoosePlan extends React.Component {
             // console.log("===== paymentOption: " + this.props.paymentOption);
             //console.log("===== plans: " + JSON.stringify(this.props.plans));
           }}
+          aria-label={"Click to select   " +mealIndex+ " meals per delivery for $" + singleMealData.item_price}
         >
           {mealIndex}
         </button>
@@ -436,7 +437,15 @@ class ChoosePlan extends React.Component {
         } catch(e) {
           // console.log("discount UNDEFINED");
         }
-          
+        
+        let ariaTag = ""
+
+        if (deliveryIndex == 1) {
+          ariaTag = "click here to switch to " + deliveryIndex + " delivery"
+        } else {
+          ariaTag = "click here to switch to " + deliveryIndex + " deliveries and save " +discount+"%"
+        }
+
         paymentOptionButtons.push(
           <div className={styles.sameLine} key={deliveryIndex}>
             {(() => {
@@ -466,6 +475,7 @@ class ChoosePlan extends React.Component {
                       // console.log("##### deliveryIndex: " + deliveryIndex);
                       // console.log("##### meals: " + this.props.meals);
                     }}
+                    aria-label={ariaTag}
                   >
                     <span style={{fontSize: '35px'}}>
                       {deliveryIndex}
@@ -632,6 +642,7 @@ class ChoosePlan extends React.Component {
                   {(() => {
                     if (JSON.stringify(this.props.selectedPlan) !== '{}') 
                     {
+                      let ariaTag ="Your current plan includes " + this.props.selectedPlan.num_items + " meals for $" + this.calculateTotal() + ". That's only $" +this.calculateDeal()+" per freshly cooked meal."
                       return (
                         // <div>
                         <div 
@@ -725,6 +736,7 @@ class ChoosePlan extends React.Component {
                                         onClick={() => {
                                           this.proceedToPayment()
                                         }}
+                                        aria-label={ariaTag}
                                       >
                                         PROCEED
                                       </button>
@@ -801,6 +813,7 @@ class ChoosePlan extends React.Component {
                                           onClick={() => {
                                             this.proceedToPayment()
                                           }}
+                                          aria-label={ariaTag}
                                         >
                                           PROCEED
                                         </button>
