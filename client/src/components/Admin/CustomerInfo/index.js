@@ -21,7 +21,7 @@ function CustomerInfo() {
 	const [subscriptionsLoaded, setSubscriptionsLoaded] = useState(false);
 	const [subscriptionsList, setSubscriptionsList] = useState(null);
 	const [currentPlan, setCurrentPlan] = useState(null);
-	const [subHistory, setSubHistory] = useState([]);
+	const [subHistory, setSubHistory] = useState(null);
 
 	useEffect(() => {
 		axios
@@ -76,6 +76,57 @@ function CustomerInfo() {
 
 	// Set history tab
 	useEffect(() => {
+		console.log("(rerender) setting history tab...");
+
+		let tempDropdownButtons = [];
+    let uniquePlansFetched = 0;
+    let defaultSub = false;
+    let tempUniquePlans = [];
+    let dropdownIndex = 0;
+
+		if(subHistory !== null){
+			subHistory.forEach((sub) => {
+
+				let elIndex = tempUniquePlans.findIndex(element => element.id === sub.purchase_id);
+
+				console.log(' ');
+				console.log('(1) ==============================');
+				console.log("sub: ", sub);
+
+				if (elIndex === -1) {
+
+					console.log("-- (1.1) UNIQUE PLAN FOUND: ", sub.purchase_id);
+	
+					let tempUniquePlan = {
+						id: sub.purchase_id,
+						history: []
+					};
+	
+					console.log("-- (1.2) plan to be pushed: ", tempUniquePlan);
+	
+					tempUniquePlans.push(tempUniquePlan);
+	
+					elIndex = tempUniquePlans.findIndex(element => element.id === sub.purchase_id);
+
+					console.log("-- (1.3) element index: ", elIndex);
+					console.log("-- (1.4) adding to plan: ", sub);
+					
+					let historyTab = {
+						date: sub.payment_time_stamp,
+						show_dropdown: false,
+						deliveries: []
+					};
+					tempUniquePlans[elIndex].history.push(historyTab);
+					tempUniquePlans[elIndex].history[0].deliveries.push(sub);
+
+					uniquePlansFetched++;
+
+				}
+			});
+
+			console.log("final unique plans: ", tempUniquePlans);
+
+		}
 
 	}, [subHistory]);
 
@@ -85,6 +136,7 @@ function CustomerInfo() {
 
 		// Get additional customer info
 		/* AXIOS CALL HERE */
+		console.log("(scc) calling predict_next_billing_date on ", cust.customer_uid);
 		axios
 			.get(API_URL + 'predict_next_billing_date/' + cust.customer_uid)
 			.then(res => {
@@ -113,6 +165,7 @@ function CustomerInfo() {
 				console.log(err);
 			});
 
+		console.log("(scc) calling subscription_history on ", cust.customer_uid);
 		axios
 			.get(API_URL + 'subscription_history/' + cust.customer_uid)
 			.then(res => {
@@ -313,10 +366,10 @@ function CustomerInfo() {
           {/* <div className={styles.mealButtonEdit}>
             
 					</div> */}
-					<div className={styles.mealButtonSection}>
+					<div className={styles.mealButtonSection2}>
 						{sub.meals} Meals, {sub.deliveries} Deliveries
 					</div>
-					<div className={styles.mealButtonSection}>
+					<div className={styles.mealButtonSection2}>
 						{sub.purchase_uid}
 					</div>
 					<div className={styles.mealButtonSection}>
@@ -556,10 +609,10 @@ function CustomerInfo() {
 									{/* <div className={styles.mealButtonEdit}>
 										
 									</div> */}
-									<div className={styles.mealButtonSection} style={{fontWeight: 'bold', fontSize: '20px'}}>
+									<div className={styles.mealButtonSection2} style={{fontWeight: 'bold', fontSize: '20px'}}>
 										Meal Plans
 									</div>
-									<div className={styles.mealButtonSection} style={{fontWeight: 'bold', fontSize: '20px'}}>
+									<div className={styles.mealButtonSection2} style={{fontWeight: 'bold', fontSize: '20px'}}>
 										Purchase ID
 									</div>
 									<div className={styles.mealButtonSection} style={{fontWeight: 'bold', fontSize: '20px'}}>

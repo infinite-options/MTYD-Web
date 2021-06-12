@@ -134,38 +134,22 @@ const MealPlan = props => {
     console.log("(init) subscribed plans length: ", props.subscribedPlans.length);
 
     let tempDropdownButtons = [];
-    // let plansFetched = 0;
     let uniquePlansFetched = 0;
-
-    // let dropdownStatusArray = [];
-
-    // let tempSubbedPlans = [];
-    // var defaultSub = null;
     let defaultSub = false;
-
     let tempUniquePlans = [];
-
     let dropdownIndex = 0;
 
     subHistory.forEach((sub) => {
-      // console.log(' ');
-      // console.log("(init) sub: ", sub);
-      // console.log("(init) current plan: ", currentPlan);
-      
-      // let el = tempUniquePlans.find(element => element.id === sub.purchase_id);
+
       let elIndex = tempUniquePlans.findIndex(element => element.id === sub.purchase_id);
 
       console.log(' ');
       console.log('(1) ==============================');
       console.log("sub: ", sub);
-      // console.log("el: ", el);
-      // console.log("el index: ", elIndex);
 
-      // if (typeof(el) === 'undefined') {
       if (elIndex === -1) {
 
         console.log("-- (1.1) UNIQUE PLAN FOUND: ", sub.purchase_id);
-        // console.log("-- element: ", el);
 
         let tempUniquePlan = {
           id: sub.purchase_id,
@@ -181,7 +165,6 @@ const MealPlan = props => {
         console.log("-- (1.3) element index: ", elIndex);
         console.log("-- (1.4) adding to plan: ", sub);
         
-        // tempUniquePlans[elIndex].history.push(sub);
         let historyTab = {
           date: sub.payment_time_stamp,
           show_dropdown: false,
@@ -190,28 +173,19 @@ const MealPlan = props => {
         tempUniquePlans[elIndex].history.push(historyTab);
         tempUniquePlans[elIndex].history[0].deliveries.push(sub);
 
-        // console.log("-- new unique plan array: ", JSON.parse(JSON.stringify(tempUniquePlans)));
-
         uniquePlansFetched++;
 
         // Parse meals, deliveries, and id for each plan
         let parsedItems = JSON.parse(sub.items)[0];
-        // console.log("(parse) parsedItems: ", parsedItems);
-
         let parsedMeals = parsedItems.name.substring(
           0,
           parsedItems.name.indexOf(" ")
         );
-        // console.log("(parse) parsedMeals ", parsedMeals);
-
         let parsedDeliveries = parsedItems.qty;
-        // console.log("(parse) parsedDeliveries: ", parsedDeliveries);
-
         let parsedId = sub.purchase_id.substring(
           sub.purchase_id.indexOf("-")+1,
           sub.purchase_id.length
         );
-
         let parsedPlan = {...sub}
 
         parsedPlan['meals'] = parsedMeals;
@@ -257,8 +231,6 @@ const MealPlan = props => {
         dropdownIndex++;
 
       } else {
-        // sub.display = false;
-        // console.log("-- (2.1) adding to plan: ", sub);
         console.log("-- (2.1) data before: ", JSON.parse(JSON.stringify(tempUniquePlans[elIndex].history)));
         let dateIndex = tempUniquePlans[elIndex].history.findIndex(
           element => element.date === sub.payment_time_stamp
@@ -291,9 +263,6 @@ const MealPlan = props => {
     console.log("(init) final temp unique plans: ", tempUniquePlans);
 
     setUniquePlans(tempUniquePlans);
-
-    // setCurrentPlan(defaultSub);
-    // setDropdownButtons(tempDropdownButtons);
 
     let dropdownTopMargin = [
       <div
