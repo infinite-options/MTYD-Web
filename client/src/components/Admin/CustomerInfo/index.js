@@ -22,6 +22,7 @@ function CustomerInfo() {
 	const [subscriptionsList, setSubscriptionsList] = useState(null);
 	const [currentPlan, setCurrentPlan] = useState(null);
 	const [subHistory, setSubHistory] = useState(null);
+	const [uniquePlans, setUniquePlans] = useState(null);
 
 	useEffect(() => {
 		axios
@@ -89,31 +90,33 @@ function CustomerInfo() {
 
 				let elIndex = tempUniquePlans.findIndex(element => element.id === sub.purchase_id);
 
-				console.log(' ');
-				console.log('(1) ==============================');
-				console.log("sub: ", sub);
+				// console.log(' ');
+				// console.log('(1) ==============================');
+				// console.log("sub: ", sub);
 
 				if (elIndex === -1) {
 
-					console.log("-- (1.1) UNIQUE PLAN FOUND: ", sub.purchase_id);
+					// console.log("-- (1.1) UNIQUE PLAN FOUND: ", sub.purchase_id);
 	
 					let tempUniquePlan = {
-						id: sub.purchase_id,
+						id: sub.purchase_uid,
+						// payment_id: sub.payment_id,
 						history: []
 					};
 	
-					console.log("-- (1.2) plan to be pushed: ", tempUniquePlan);
+					// console.log("-- (1.2) plan to be pushed: ", tempUniquePlan);
 	
 					tempUniquePlans.push(tempUniquePlan);
 	
-					elIndex = tempUniquePlans.findIndex(element => element.id === sub.purchase_id);
+					elIndex = tempUniquePlans.findIndex(element => element.id === sub.purchase_uid);
 
-					console.log("-- (1.3) element index: ", elIndex);
-					console.log("-- (1.4) adding to plan: ", sub);
+					// console.log("-- (1.3) element index: ", elIndex);
+					// console.log("-- (1.4) adding to plan: ", sub);
 					
 					let historyTab = {
 						date: sub.payment_time_stamp,
 						show_dropdown: false,
+						payment_id: sub.payment_id,
 						deliveries: []
 					};
 					tempUniquePlans[elIndex].history.push(historyTab);
@@ -121,10 +124,38 @@ function CustomerInfo() {
 
 					uniquePlansFetched++;
 
+				} else {
+					// console.log("-- (2.1) data before: ", JSON.parse(JSON.stringify(tempUniquePlans[elIndex].history)));
+					let dateIndex = tempUniquePlans[elIndex].history.findIndex(
+						element => element.date === sub.payment_time_stamp
+					);
+					// console.log("-- (2.2) date index: ", dateIndex);
+					if(dateIndex === -1) {
+						// console.log("---- (2A) deliveries for date not found; creating new tab...");
+						let historyTab = {
+							date: sub.payment_time_stamp,
+							show_dropdown: false,
+							payment_id: sub.payment_id,
+							deliveries: []
+						};
+						tempUniquePlans[elIndex].history.push(historyTab);
+						// console.log("----      history length: ", tempUniquePlans[elIndex].history.length);
+						tempUniquePlans[elIndex].history[(tempUniquePlans[elIndex].history.length)-1].deliveries.push(sub);
+					} else {
+						// console.log("---- (2B) deliveries for date found at " + dateIndex + "! adding to tab...");
+						tempUniquePlans[elIndex].history[dateIndex].deliveries.push(sub);
+					}
+					// console.log("-- (2.3) data after: ", JSON.parse(JSON.stringify(tempUniquePlans[elIndex].history)));
+	
 				}
+	
+				// console.log("-- new unique plan array: ", JSON.parse(JSON.stringify(tempUniquePlans)));
+				// console.log('(2) ==============================');
 			});
 
 			console.log("final unique plans: ", tempUniquePlans);
+
+			setUniquePlans(tempUniquePlans);
 
 		}
 
@@ -348,19 +379,26 @@ function CustomerInfo() {
 
     subscriptionsList.forEach((sub) => {
 
-			console.log("sub: ", sub);
+			// console.log("sub: ", sub);
       // console.log("curr id: ", this.state.currentPlan.id);
       mealButtons.push(
         <div
-          key={sub.id}
+          key={sub.purchase_uid}
           // className={
           //   this.state.currentPlan.id === sub.id
           //     ? selectedMealButton
           //     : deselectedMealButton
           // }
-					className={deselectedMealButton}
+					// className={deselectedMealButton}
+					className={
+            currentPlan !== null && currentPlan.purchase_uid === sub.purchase_uid
+              ? selectedMealButton
+              : deselectedMealButton
+          }
           onClick={() => {
-
+						console.log("meal plan id clicked: ", sub.purchase_uid);
+						console.log("meal plan data clicked: ", sub);
+						setCurrentPlan(sub);
 					}}
 				>
           {/* <div className={styles.mealButtonEdit}>
@@ -392,6 +430,90 @@ function CustomerInfo() {
 		return(
       <div style={{width: '100%'}}>
         {mealButtons}
+      </div>
+    );
+	}
+
+	const showHistory = () => {
+
+		console.log("(showHistory) uniquePlans: ", uniquePlans);
+		console.log("(showHistory) currentPlan: ", currentPlan);
+		let planHistory = uniquePlans.find((plan) => {
+      return plan.id === currentPlan.purchase_uid;
+    });
+
+    console.log("plan history: ", planHistory);
+		console.log("plan history 2: ", planHistory.history);
+
+		let historyTabs = [];
+
+    planHistory.history.forEach((sel) => {
+      historyTabs.push(
+        <div    
+          key={sel.date}
+          style={{marginTop: '50px', marginBottom: '50px'}}
+        >
+          <div style={{display: 'inline-flex', width: '100%'}}>
+            <div className={styles.orangeHeaderLeft}>
+              Billing Date
+            </div>
+            <div className={styles.orangeHeaderRight}>
+              {/* {formatDate(sel.date)} */}
+							{sel.payment_id}
+            </div>
+          </div>
+					<div 
+            style={{display: 'inline-flex', width: '100%', cursor: 'pointer'}}
+          >
+						<div className={styles.orangeHeaderLeft}>
+              Meal Plan
+            </div>
+            <div className={styles.orangeHeaderRightArrow}>
+              {currentPlan.meals} Meals, {currentPlan.deliveries} Deliveries
+            </div>
+            <div 
+              style={{
+                width: '1%',
+                borderTop: 'solid',
+                borderWidth: '1px',
+                borderColor: '#f26522'
+              }} 
+            />
+            <div
+              style={{
+                width: '3%',
+                minWidth: '24px',
+                // border: 'solid',
+                // borderWidth: '1px',
+                borderTop: 'solid',
+                borderWidth: '1px',
+                borderColor: '#f26522',
+                paddingTop: '12px'
+              }}
+            >
+              {/* {console.log("(showHistory) (1) show dropdown? ", sel.show_dropdown)} */}
+              {sel.show_dropdown
+                ? <div className={styles.orangeArrowUp} />
+                : <div className={styles.orangeArrowDown} />}
+
+            </div>
+          </div>
+					{/* {console.log("(showHistory) (2) show dropdown? ", sel.show_dropdown)} */}
+          {/* {sel.show_dropdown
+            ? <>{showPastMeals(sel)}</>
+            : null} */}
+        </div>
+			);
+		});
+
+		// return (
+		// 	<div>
+		// 		{currentPlan.purchase_uid}
+		// 	</div>
+		// );
+		return(
+      <div>
+        {historyTabs.reverse()}
       </div>
     );
 	}
@@ -640,7 +762,11 @@ function CustomerInfo() {
         		</div>
 
 						<div className={styles.containerHistory}>
-						  {"HISTORY GOES HERE"}
+							{uniquePlans === null || currentPlan === null ? (
+								<>{"Waiting for selection..."}</>
+							) : (
+								<>{showHistory()}</>
+							)}
 						</div>
 
 						<br />
