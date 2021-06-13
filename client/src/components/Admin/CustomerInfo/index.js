@@ -215,6 +215,30 @@ function CustomerInfo() {
     return dateString;
   }
 
+	const parseID = (sub) => {
+		console.log("parseID sub: ", sub);
+		let parsedId = sub.purchase_uid.substring(
+			sub.purchase_id.indexOf("-")+1,
+			sub.purchase_id.length
+		);
+		return parsedId;
+	}
+
+	const parseMeals = (sub) => {
+		let parsedItems = JSON.parse(sub.items)[0];
+		let parsedMeals = parsedItems.name.substring(
+			0,
+			parsedItems.name.indexOf(" ")
+		);
+		return parsedMeals;
+	}
+
+	const parseDeliveries = (sub) => {
+		let parsedItems = JSON.parse(sub.items)[0];
+		let parsedDeliveries = parsedItems.qty;
+		return parsedDeliveries;
+	}
+
 	const setCurrentCustomer = (cust) => {
 
 		console.log("set current customer: ", cust.customer_uid);
@@ -458,11 +482,12 @@ function CustomerInfo() {
           {/* <div className={styles.mealButtonEdit}>
             
 					</div> */}
-					<div className={styles.mealButtonSection2}>
-						{sub.meals} Meals, {sub.deliveries} Deliveries
+					<div className={styles.mealButtonSection3}>
+						{/* {sub.meals} Meals, {sub.deliveries} Deliveries */}
+						{parseMeals(sub)} Meals, {parseDeliveries(sub)} Deliveries
 					</div>
 					<div className={styles.mealButtonSection2}>
-						{sub.purchase_uid}
+						{parseID(sub)}
 					</div>
 					<div className={styles.mealButtonSection}>
 						{formatDate(sub.next_delivery)}
