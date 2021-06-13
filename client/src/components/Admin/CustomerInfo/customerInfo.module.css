@@ -1,6 +1,42 @@
-.containerMeals {
-  text-align: center;
+.sectionHeader {
+  font-weight: 700;
+  font-size: 22px;
+  padding-left: 30px;
+  /* border: solid; */
+  height: 80px;
   display: flex;
+  align-items: center;
+}
+
+.customerFilter {
+  border: solid;
+  border-width: 2px;
+  width: 20%;
+  height: 36px;
+  /* margin-left: %; */
+  margin-right: 2%;
+  z-index: 2;
+  cursor: pointer;
+  color: #F26522;
+  padding-left: 1%;
+  font-weight: 600;
+  font-size: 18px;
+  border-radius: 10px;
+  min-width: 110px;
+  /* display: inline-block; */
+  /* display: flex; */
+  align-items: center;
+  text-overflow: ellipsis;
+  padding-top: 3px;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.containerMeals {
+  /* text-align: center; */
+  /* display: inline-block; */
+  /* display: flex; */
   width: 96%;
   /* border: solid; */
   border-radius: 15px;
@@ -11,8 +47,8 @@
 }
 
 .containerHistory {
-  text-align: center;
-  display: flex;
+  /* text-align: center;
+  display: flex; */
   width: 96%;
   /* border: solid; */
   border-radius: 15px;
@@ -20,7 +56,7 @@
   margin-left: 2%;
   margin-right: 2%;
   background-color: white;
-  height: 300px;
+  min-height: 300px;
   margin-bottom: 50px;
 }
 
@@ -127,4 +163,70 @@
   white-space: nowrap;
   overflow: hidden;
   /* border: solid; */
+}
+
+.orangeHeaderLeft {
+  border-top: solid;
+  color: #f26522;
+  border-width: 1px;
+  font-size: 20px;
+  padding-top: 4px;
+  padding-left: 4px;
+  width: 50%;
+  height: 40px;
+  text-overflow: ellipsis;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.orangeHeaderRight {
+  border-top: solid;
+  color: #f26522;
+  border-width: 1px;
+  font-size: 20px;
+  padding-top: 4px;
+  padding-right: 4px;
+  width: 50%;
+  height: 40px;
+  text-align: right;
+  text-overflow: ellipsis;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.orangeHeaderRightArrow {
+  border-top: solid;
+  /* border: solid; */
+  color: #f26522;
+  border-width: 1px;
+  font-size: 20px;
+  padding-top: 4px;
+  padding-right: 4px;
+  /* width: 50%; */
+  width: 46%;
+  height: 40px;
+  text-align: right;
+  text-overflow: ellipsis;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.orangeHeaderRightUL {
+  border-top: solid;
+  color: #f26522;
+  border-width: 1px;
+  font-size: 20px;
+  padding-top: 4px;
+  padding-right: 4px;
+  width: 50%;
+  height: 40px;
+  text-align: right;
+  text-decoration: underline;
+  text-overflow: ellipsis;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
 }

@@ -161,6 +161,60 @@ function CustomerInfo() {
 
 	}, [subHistory]);
 
+	const formatDate = (rawDate) => {
+
+    let dateElements = rawDate.split(' ');
+    let yyyy_mm_dd = dateElements[0].split('-');
+    let month;
+
+    // Parse month
+    switch(yyyy_mm_dd[1]){
+      case "01":
+        month = "January";
+        break;
+      case "02":
+        month = "February";
+        break;
+      case "03":
+        month = "March";
+        break;
+      case "04":
+        month = "April";
+        break;
+      case "05":
+        month = "May";
+        break;
+      case "06":
+        month = "June";
+        break;
+      case "07":
+        month = "July";
+        break;
+      case "08":
+        month = "August";
+        break;
+      case "09":
+        month = "September";
+        break;
+      case "10":
+        month = "October";
+        break;
+      case "11":
+        month = "November";
+        break;
+      case "12":
+        month = "December";
+        break;
+      default:
+        month = "";
+    }
+
+    let dateString = month + " " + yyyy_mm_dd[2] + ", " + yyyy_mm_dd[0];
+    // console.log("date string: ", dateString);
+
+    return dateString;
+  }
+
 	const setCurrentCustomer = (cust) => {
 
 		console.log("set current customer: ", cust.customer_uid);
@@ -411,13 +465,13 @@ function CustomerInfo() {
 						{sub.purchase_uid}
 					</div>
 					<div className={styles.mealButtonSection}>
-						{sub.next_delivery}
+						{formatDate(sub.next_delivery)}
 					</div>
 					<div className={styles.mealButtonSection}>
 						{sub.final_selection}
 					</div>
 					<div className={styles.mealButtonSection}>
-						{sub.next_billing_date}
+						{formatDate(sub.next_billing_date)}
 					</div>
 					<div className={styles.mealButtonSection}>
 						${sub.amount_due}
@@ -532,10 +586,13 @@ function CustomerInfo() {
 			>
 				<div
 					style={{
-						width: '10%',
+						// width: '10%',
 						marginLeft: '2%',
 						marginRight: '2%',
-						minWidth: '100px'
+						minWidth: '100px',
+						color: '#F26522',
+						fontWeight: '600',
+						fontSize: '18px'
 					}}
 				>
 					Customers
@@ -568,21 +625,23 @@ function CustomerInfo() {
 				) : (
 					<div
 						type='text'
-						style={{
-							border: 'solid',
-							borderWidth: '1px',
-							width: '16%',
-							marginLeft: '2%',
-							marginRight: '2%',
-							cursor: 'pointer'
-						}}
+						// style={{
+						// 	border: 'solid',
+						// 	borderWidth: '1px',
+						// 	width: '16%',
+						// 	marginLeft: '2%',
+						// 	marginRight: '2%',
+						// 	cursor: 'pointer',
+						// 	color: '#F26522'
+						// }}
+						className={styles.customerFilter}
 						onClick={() => {
 							customerDropdown === CUS_SEL_NONE
 								? setCustomerDropdown(CUS_SEL_ID)
 								: setCustomerDropdown(CUS_SEL_NONE)
 						}}
 					>
-						ID
+						Search by Customer ID
 					</div>
 				)}
 
@@ -613,21 +672,23 @@ function CustomerInfo() {
 				) : (
 					<div
 						type='text'
-						style={{
-							border: 'solid',
-							borderWidth: '1px',
-							width: '16%',
-							marginLeft: '2%',
-							marginRight: '2%',
-							cursor: 'pointer'
-						}}
+						// style={{
+						// 	border: 'solid',
+						// 	borderWidth: '1px',
+						// 	width: '16%',
+						// 	marginLeft: '2%',
+						// 	marginRight: '2%',
+						// 	cursor: 'pointer',
+						// 	color: '#F26522'
+						// }}
+						className={styles.customerFilter}
 						onClick={() => {
 							customerDropdown === CUS_SEL_NONE
 								? setCustomerDropdown(CUS_SEL_NAME)
 								: setCustomerDropdown(CUS_SEL_NONE)
 						}}
 					>
-						Name
+						Search by Name
 					</div>
 				)}
 
@@ -643,9 +704,6 @@ function CustomerInfo() {
 							marginRight: '2%',
 							zIndex: '2',
 							cursor: 'pointer'
-							// position: 'relative',
-							// display: 'flex',
-							// alignItems: 'flex-start'
 						}}
 						onClick={() => {
 							customerDropdown === CUS_SEL_NONE
@@ -658,21 +716,24 @@ function CustomerInfo() {
 				) : (
 					<div
 						type='text'
-						style={{
-							border: 'solid',
-							borderWidth: '1px',
-							width: '16%',
-							marginLeft: '2%',
-							marginRight: '2%',
-							cursor: 'pointer'
-						}}
+						// style={{
+						// 	border: 'solid',
+						// 	borderWidth: '1px',
+						// 	width: '16%',
+						// 	marginLeft: '2%',
+						// 	marginRight: '2%',
+						// 	cursor: 'pointer',
+						// 	color: '#F26522',
+						// 	height: 
+						// }}
+						className={styles.customerFilter}
 						onClick={() => {
 							customerDropdown === CUS_SEL_NONE
 								? setCustomerDropdown(CUS_SEL_EMAIL)
 								: setCustomerDropdown(CUS_SEL_NONE)
 						}}
 					>
-						Email
+						Search by Email
 					</div>
 				)}
 			</div>
@@ -726,11 +787,11 @@ function CustomerInfo() {
 						{"Meal Plans: "}
 						<br /> */}
 						<div className={styles.containerMeals}>
+							<div className={styles.sectionHeader}>
+								All Meal Plans
+							</div>
 							<div className={styles.boxScroll}>
 								<div className={styles.mealButtonHeader}>
-									{/* <div className={styles.mealButtonEdit}>
-										
-									</div> */}
 									<div className={styles.mealButtonSection2} style={{fontWeight: 'bold', fontSize: '20px'}}>
 										Meal Plans
 									</div>
@@ -762,10 +823,27 @@ function CustomerInfo() {
         		</div>
 
 						<div className={styles.containerHistory}>
+							<div className={styles.sectionHeader}>
+								Meal Plan History
+							</div>
 							{uniquePlans === null || currentPlan === null ? (
-								<>{"Waiting for selection..."}</>
+								<div
+									style={{
+										border: 'solid',
+										width: '100%'
+									}}
+								>
+									{"Waiting for selection..."}
+								</div>
 							) : (
-								<>{showHistory()}</>
+								<div
+									style={{
+										border: 'solid',
+										width: '100%'
+									}}
+								>
+									{showHistory()}
+								</div>
 							)}
 						</div>
 
