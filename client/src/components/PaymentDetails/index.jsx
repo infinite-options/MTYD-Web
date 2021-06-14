@@ -93,6 +93,7 @@ class PaymentDetails extends React.Component {
       recalculatingPrice: false,
       stripePromise: null,
       createGuestErrorCode: -1,
+      termsAccepted: true,
       windowHeight: undefined,
       windowWidth: undefined
     };
@@ -1613,7 +1614,17 @@ class PaymentDetails extends React.Component {
                       <h6 className={styles.sectionHeaderRight2}>Complete Payment</h6>
                     </div>
                         
-                    <div style={{width: '84%', textAlign: 'left'}}>
+                    {/* <div style={{width: '84%', textAlign: 'left'}}> */}
+                    <div
+                      style={{
+                        width: '84%', 
+                        // textAlign: 'left', 
+                        // border: 'dashed',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        // marginLeft: '8%'
+                      }}
+                    >
                       <div style={{display: 'flex'}}>
                           <div className = {styles.buttonContainer}>
                             <StripeElement
@@ -1676,12 +1687,14 @@ class PaymentDetails extends React.Component {
                   <div 
                     style={{
                       width: '84%', 
-                      textAlign: 'left', 
+                      // textAlign: 'left', 
                       // border: 'dashed',
+                      display: 'flex',
+                      justifyContent: 'center',
                       marginLeft: '8%'
                     }}
                   >
-                    <div style={{display: 'flex'}}>
+                    {/* <div style={{display: 'flex'}}> */}
                         <div className = {styles.buttonContainer}>
                           <StripeElement
                             stripePromise={this.state.stripePromise}
@@ -1698,7 +1711,7 @@ class PaymentDetails extends React.Component {
                             fetchingFees={this.state.fetchingFees}
                           />
                         </div>
-                    </div>
+                    {/* </div> */}
                   </div>
                 </div>)
               : null

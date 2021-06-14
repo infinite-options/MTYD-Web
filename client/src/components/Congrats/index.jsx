@@ -88,59 +88,74 @@ export class Congrats extends Component {
   }
 
   render() {
+    console.log("(render) props: ", this.props);
     return (
       <div>
         <WebNavBar 
           poplogin = {this.togglePopLogin}
           popSignup = {this.togglePopSignup}
         />
+
         {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
         {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
-		<div class = {styles.howDoesContainer}>
-        <div class = {styles.howDoesText}>
-        <p style = {{marginLeft: '-90px', display:'inline', color: 'black'}}>Congratulations</p>
-		</div> </div>
+
+        <div className = {styles.howDoesContainer}>
+          <div className = {styles.howDoesText}>
+            <p style = {{marginLeft: '-90px', display:'inline', color: 'black'}}>Congratulations</p>
+          </div>
+        </div>
+
 		{/*Change the following to medium later on, using bold for testing*/}
 		<div style = {{marginTop:'80px', marginLeft: '120px', marginBottom:'0px'}}>
-		<p style = {{font: 'SF Pro', fontWeight: 'medium', fontSize: '24px' ,color:'black', textAlign:'left'}}>Your first delivery will arrive on:</p>
-		<p style = {{marginTop:'-20px', marginLeft: '40px', font: 'SF Pro', fontWeight: 'bold', fontSize: '24px' ,color:'black', textAlign:'left'}}>March 8 between 4-6pm</p>
-        {/*Change the following to medium later on, using bold for testing*/}
-		<br/>
-        <p style = {{marginLeft: '80px', font: 'SF Pro', fontWeight:'medium', fontSize: '24px'}}>To your address:<br/></p>
 
-		{/* <p 
-      style = {{
-        marginTop:'-20px', 
-        font: 'SF Pro',
-        fontWeight: 'bold', 
-        fontSize: '24px', 
-        color:'black', 
-        marginLeft:'80px'
-      }}
-    >
-      {this.state.user_address}
-    </p> */}
+	    <p style = {{font: 'SF Pro', fontWeight: 'medium', fontSize: '24px' ,color:'black', textAlign:'left'}}>
+        Your first delivery will arrive on:
+      </p>
+		  <p style = {{marginTop:'-20px', marginLeft: '40px', font: 'SF Pro', fontWeight: 'bold', fontSize: '24px' ,color:'black', textAlign:'left'}}>
+        March 8 between 4-6pm
+      </p>
+      
+      {/*Change the following to medium later on, using bold for testing*/}
+		  <br/>
+        
+      <p style = {{marginLeft: '80px', font: 'SF Pro', fontWeight:'medium', fontSize: '24px'}}>
+        To your address:
+        <br/>
+      </p>
 
-    <p 
-      style = {{
-        marginTop:'-20px', 
-        font: 'SF Pro',
-        fontWeight: 'bold', 
-        fontSize: '24px', 
-        color:'black', 
-        marginLeft:'80px'
-      }}
-    >
-      {
-        this.props.location.delivery_address + ", "
-      }
-      <br />
-      {
-        this.props.location.delivery_city + ", " +
-        this.props.location.delivery_state + ", " +
-        this.props.location.delivery_zip
-      }
-    </p>
+      {/* <p 
+        style = {{
+          marginTop:'-20px', 
+          font: 'SF Pro',
+          fontWeight: 'bold', 
+          fontSize: '24px', 
+          color:'black', 
+          marginLeft:'80px'
+        }}
+      >
+        {this.state.user_address}
+      </p> */}
+
+      <p 
+        style = {{
+          marginTop:'-20px', 
+          font: 'SF Pro',
+          fontWeight: 'bold', 
+          fontSize: '24px', 
+          color:'black', 
+          marginLeft:'80px'
+        }}
+      >
+        {
+          this.props.location.delivery_address + ", "
+        }
+        <br />
+        {
+          this.props.location.delivery_city + ", " +
+          this.props.location.delivery_state + ", " +
+          this.props.location.delivery_zip
+        }
+      </p>
 
         </div>
        {(() => {

@@ -112,12 +112,20 @@ const StripeCheckout = (props) => {
   const [cardholderName, setCardholderName] = useState(null);
   const [loadingState, changeLoadingState] = useState(false);
 
+  const [termsAccepted, checkTerms] = useState(false);
+
   var orderData = {
     currency: "usd"
   };
 
   const changeCardholderName = (name) => {
     setCardholderName(name);
+  }
+
+  // Change state of new credit card checkbox (not currently used)
+  const handleCheck = (cb) => {
+    console.log("clicked checkbox: ", cb);
+    checkTerms(!termsAccepted);
   }
 
   var pay = async function() {
@@ -322,15 +330,35 @@ const StripeCheckout = (props) => {
         />
       </div>
 
+      <div className={styles.checkboxContainer}>
+        <input
+          className={styles.checkbox}
+          type="checkbox"
+          checked={termsAccepted}
+          onChange={handleCheck}
+        />
+        <label className={styles.checkboxLabel}>
+          I've read and accept the terms and conditions
+        </label>
+      </div>
+
       <button 
         className={styles.orangeBtn2}
-        disabled={(props.fetchingFees || loadingState || props.recalculatingPrice)}
+        disabled={(props.fetchingFees || loadingState || props.recalculatingPrice || !termsAccepted)}
         onClick={() => pay()}
         aria-label={"Click to complete your payment"}
         title={"Click to complete your payment"}
       >
         Complete Payment
       </button>
+
+      <div>
+        Your plan will automatically renew after 
+        you've received your chosen number of deliveries. 
+        Your subscription will renew at the price of $--.-- 
+        unless you cancel before ------- 
+        the day before your next delivery.
+      </div>
     </>
   );
 }
