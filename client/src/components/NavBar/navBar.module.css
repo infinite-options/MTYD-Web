@@ -205,8 +205,8 @@
   text-overflow: ellipsis;
   /* display: block;
   white-space: nowrap;
-  overflow: hidden;
-  cursor: pointer; */
+  overflow: hidden; */
+  cursor: pointer;
 } 
 
 .signUpBtn {
@@ -227,8 +227,8 @@
   text-overflow: ellipsis;
   /* display: block;
   white-space: nowrap;
-  overflow: hidden;
-  cursor: pointer; */
+  overflow: hidden; */
+  cursor: pointer;
 } 
 
 .nameBtn {
@@ -245,12 +245,12 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 2px solid white;
+  /* border: 2px solid white; */
   color: white;
   text-overflow: ellipsis;
-  display: block;
+  /* display: block;
   white-space: nowrap;
-  overflow: hidden;
+  overflow: hidden; */
   cursor: pointer;
 } 
 .nameBtnNarrow {
@@ -292,9 +292,9 @@
   border: 2px solid white;
   color: white;
   text-overflow: ellipsis;
-  display: block;
+  /* display: block;
   white-space: nowrap;
-  overflow: hidden;
+  overflow: hidden; */
   cursor: pointer;
 }
 .logoutBtnNarrow {
@@ -315,9 +315,9 @@
   border: 2px solid white;
   color: white;
   text-overflow: ellipsis;
-  display: block;
+  /* display: block;
   white-space: nowrap;
-  overflow: hidden;
+  overflow: hidden; */
   cursor: pointer;
 } 
 

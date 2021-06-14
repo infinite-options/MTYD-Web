@@ -341,7 +341,7 @@ export class MenuList extends Component {
               aria-label="Click here to log out"
               title="Click here to log out"
               >
-              Log out
+              Logout
             </a>
 
             <a

@@ -261,22 +261,46 @@ class NavBar extends React.Component {
           firstName = {this.state.firstName}
           lastName = {this.state.lastName}
           isAdmin = {
-            this.state.profileRole === 'admin'
+            this.state.profileRole !== 'admin'
               ? true
               : false
           }
         />
 
-        {console.log("profile role: " + this.state.profileRole + "; window height: ", this.state.windowWidth)}
+        {/* {console.log("profile role: " + this.state.profileRole + "; window height: ", this.state.windowWidth)}
         {
-          this.state.profileRole === 'admin' && this.state.windowWidth > 900
+          this.state.profileRole !== 'admin' && this.state.windowWidth > 900
             ? (
                 <div
                   style={{
-                    // border: 'inset',
+                    border: 'inset',
                     width: '20%',
                     display: 'flex',
                     justifyContent: 'center'
+                  }}
+                >
+                  <div
+                    onClick={() => {this.goToLink('/admin')}}
+                    className={styles.adminBtn2}
+                  >
+                    Admin
+                  </div>
+                </div>
+              )
+            : null
+        } */}
+        {console.log("profile role: " + this.state.profileRole + "; window height: ", this.state.windowWidth)}
+        {
+          this.state.profileRole !== 'admin' && this.state.windowWidth > 900
+            ? (
+                <div
+                  style={{
+                    border: 'inset',
+                    // width: '20%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    position: 'absolute',
+                    left: '120px'
                   }}
                 >
                   <div
@@ -292,7 +316,7 @@ class NavBar extends React.Component {
 
         <div
           style={{
-            // border: 'inset',
+            border: 'inset',
             width: '30%',
             minWidth: '200px',
             display: 'flex',
@@ -324,7 +348,7 @@ class NavBar extends React.Component {
         {this.state.login ? (
           <div
             style={{
-              // border: 'inset',
+              border: 'inset',
               // display: 'inline-flex',
               height: '44px',
               width: '40%',
@@ -336,12 +360,8 @@ class NavBar extends React.Component {
             {this.state.windowWidth > 900 ? (
               <div
                 onClick={() => {this.goToLink('/meal-plan')}}
-                className={
-                  this.state.windowWidth > 900
-                    ? styles.nameBtn
-                    : styles.nameBtnNarrow
-                }
-                style={{width: nameLength}}
+                className={styles.nameBtn}
+                // style={{width: nameLength}}
               >
                 {this.state.firstName} {this.state.lastName}
               </div>
@@ -352,15 +372,10 @@ class NavBar extends React.Component {
             {this.state.windowWidth > 900
               ? (
                   <div
-                    className={
-                      this.state.windowWidth > 900
-                        ? styles.logoutBtn
-                        : styles.logoutBtnNarrow
-                    }
+                    className={styles.logoutBtn}
                     onClick={this.logOut}
                   >
-                    {" "}
-                    LOGOUT&nbsp;
+                    Logout
                   </div>
                 )
               : null}

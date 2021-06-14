@@ -42,12 +42,12 @@ export class NavMenu extends Component {
         style={
           this.props.isAdmin && this.state.width > 900
             ? {
-                // border: 'inset',
-                width: '20%',
+                border: 'inset',
+                width: '40%',
                 // minWidth: '100px'
               }
             : {
-                // border: 'inset',
+                border: 'dashed',
                 width: '40%',
                 // minWidth: '100px'
               }
