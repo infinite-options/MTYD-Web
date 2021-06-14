@@ -404,7 +404,7 @@ class NavBar extends React.Component {
                   </button>
                 )
               : null} */}
-            <div
+            {/* <div
               style={{
                 height:'100%',
               }}
@@ -417,7 +417,19 @@ class NavBar extends React.Component {
               >
                 Sign Up
               </button>
-            </div>
+            </div> */}
+            {this.state.windowWidth > 900
+              ? (
+                  <button 
+                    onClick={this.togglePopSignup}
+                    className={styles.nameBtn}
+                    aria-label="Click here to sign up"
+                    title="Click here to sign up"
+                  >
+                    Sign Up
+                  </button>
+                )
+              : null}
 
             {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
 
@@ -442,6 +454,8 @@ class NavBar extends React.Component {
                     onClick={this.togglePopLogin}
                     // className={styles.signInBtn}
                     className={styles.logoutBtn}
+                    aria-label="Click here to log in"
+                    title="Click here to log in"
                   >
                     Login
                   </div>

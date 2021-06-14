@@ -178,6 +178,52 @@
   /* border: solid; */
 }
 
+.orangeHeaderCycle {
+  /* border-top: solid; */
+  display: flex;
+  /* flex-direction: column; */
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  color: #f26522;
+  font-size: 14px;
+  font-weight: 600;
+  /* padding-top: 4px;
+  padding-left: 4px; */
+  width: 9%;
+  height: 40px;
+  /* text-overflow: ellipsis;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden; */
+  border: solid;
+  border-width: 1px;
+  height: 70px;
+}
+
+.orangeHeaderSection {
+  /* border-top: solid; */
+  display: flex;
+  /* flex-direction: column; */
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  color: #f26522;
+  font-size: 14px;
+  font-weight: 600;
+  /* padding-top: 4px;
+  padding-left: 4px; */
+  width: 7%;
+  height: 40px;
+  /* text-overflow: ellipsis;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden; */
+  border: solid;
+  border-width: 1px;
+  height: 70px;
+}
+
 .orangeHeaderLeft {
   border-top: solid;
   color: #f26522;

@@ -532,12 +532,12 @@ function CustomerInfo() {
           key={sel.date}
           style={{marginTop: '50px', marginBottom: '50px'}}
         >
-          <div style={{display: 'inline-flex', width: '100%'}}>
+
+          {/*<div style={{display: 'inline-flex', width: '100%'}}>
             <div className={styles.orangeHeaderLeft}>
               Billing Date
             </div>
             <div className={styles.orangeHeaderRight}>
-              {/* {formatDate(sel.date)} */}
 							{sel.payment_id}
             </div>
           </div>
@@ -570,17 +570,35 @@ function CustomerInfo() {
                 paddingTop: '12px'
               }}
             >
-              {/* {console.log("(showHistory) (1) show dropdown? ", sel.show_dropdown)} */}
               {sel.show_dropdown
                 ? <div className={styles.orangeArrowUp} />
                 : <div className={styles.orangeArrowDown} />}
-
             </div>
-          </div>
-					{/* {console.log("(showHistory) (2) show dropdown? ", sel.show_dropdown)} */}
-          {/* {sel.show_dropdown
-            ? <>{showPastMeals(sel)}</>
-            : null} */}
+          </div>*/}
+					{/* <div style={{display: 'inline-flex', width: '100%'}}>
+						<div className={styles.orangeHeaderSection}>
+              Billing Date
+            </div>
+						<div className={styles.orangeHeaderSection}>
+              Payment ID
+            </div>
+						<div className={styles.orangeHeaderSection}>
+              Payment Time Stamp
+            </div>
+						<div className={styles.orangeHeaderSection}>
+              Billing Date
+            </div>
+						<div className={styles.orangeHeaderSection}>
+              Billing Date
+            </div>
+						<div className={styles.orangeHeaderSection}>
+              Billing Date
+            </div>
+						<div className={styles.orangeHeaderSection}>
+              Billing Date
+            </div>
+					</div> */}
+
         </div>
 			);
 		});
@@ -848,13 +866,60 @@ function CustomerInfo() {
         		</div>
 
 						<div className={styles.containerHistory}>
+
 							<div className={styles.sectionHeader}>
 								Meal Plan History
 							</div>
+
+							<div style={{display: 'inline-flex', width: '100%'}}>
+								<div className={styles.orangeHeaderCycle}>
+									Billing Date
+								</div>
+								<div className={styles.orangeHeaderSection}>
+									Payment ID
+								</div>
+								<div className={styles.orangeHeaderSection}>
+									Payment Time Stamp
+								</div>
+								<div className={styles.orangeHeaderSection}>
+									Payment Type
+								</div>
+								<div className={styles.orangeHeaderSection}>
+									Addon
+								</div>
+								<div className={styles.orangeHeaderSection}>
+									Subtotal
+								</div>
+								<div className={styles.orangeHeaderSection}>
+									Discount
+								</div>
+								<div className={styles.orangeHeaderSection}>
+									Service Fee
+								</div>
+								<div className={styles.orangeHeaderSection}>
+									Delivery Fee
+								</div>
+								<div className={styles.orangeHeaderSection}>
+									Driver Tip
+								</div>
+								<div className={styles.orangeHeaderSection}>
+									Taxes
+								</div>
+								<div className={styles.orangeHeaderSection}>
+									Ambassador Code
+								</div>
+								<div className={styles.orangeHeaderSection}>
+									Amount Paid
+								</div>
+								<div className={styles.orangeHeaderSection}>
+									Amount Due
+								</div>
+							</div>
+
 							{uniquePlans === null || currentPlan === null ? (
 								<div
 									style={{
-										border: 'solid',
+										// border: 'solid',
 										width: '100%'
 									}}
 								>
@@ -863,7 +928,7 @@ function CustomerInfo() {
 							) : (
 								<div
 									style={{
-										border: 'solid',
+										// border: 'solid',
 										width: '100%'
 									}}
 								>
