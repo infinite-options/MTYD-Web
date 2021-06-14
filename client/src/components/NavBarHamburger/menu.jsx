@@ -92,8 +92,8 @@ export class MenuList extends Component {
     } else if (this.props.isAdmin) {
       console.log("cp");
       this.setState({
-        heightOfBlock: '360px',
-        showAdmin: 'flex'
+        heightOfBlock: '330px',
+        // showAdmin: 'flex'
       });
     }
   }
@@ -145,7 +145,7 @@ export class MenuList extends Component {
       }
 
     } else {
-      if (this.props.isAdmin) {
+      /*if (this.props.isAdmin) {
         console.log("narrow 1");
         this.setState({
           // crossFork:{
@@ -181,7 +181,24 @@ export class MenuList extends Component {
           showSigninSignup: 'none',
           heightOfBlock: '330px'
         })
-      }
+      }*/
+      console.log("narrow new");
+        this.setState({
+          // crossFork:{
+          //   width:'44px',
+          //   height:'44px',
+          //   position:'absolute',
+          //   right:'100px',
+          //   top:'25px',
+          //   backgroundImage:`url(${forkClose})`,
+          //   backgroundSize:'cover',
+          //   backgroundPosition:'center',
+          // },
+          showLogout: 'none',
+          showAdmin: 'none',
+          showSigninSignup: 'none',
+          heightOfBlock: '330px'
+        })
     }
 
     this.setState({ width: window.innerWidth, height: window.innerHeight });
