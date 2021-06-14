@@ -99,7 +99,7 @@
   margin-top: 20px;
 } 
 
-.signUpBtn {
+/* .signUpBtn {
   height: 50% !important;
   width: 110px;
   border-radius: 30px;
@@ -115,7 +115,7 @@
   box-shadow: none;
   padding: 0;
   margin-top: 20px;
-} 
+}  */
 /* .signUpBtn:focus{
   height: 50% !important;
   width: 110px;
@@ -187,6 +187,50 @@
   border: dashed;
 } */
 
+.loginBtn {
+  position: absolute;
+  right: 20px;
+  height: 40px;
+  width: 110px;
+  border-radius: 15px;
+  font-size: 18px;
+  font-weight: 500;
+  text-align: center;
+  background-color: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid white;
+  color: white;
+  text-overflow: ellipsis;
+  /* display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  cursor: pointer; */
+} 
+
+.signUpBtn {
+  position: absolute;
+  right: 150px;
+  height: 40px;
+  width: 110px;
+  border-radius: 15px;
+  font-size: 18px;
+  font-weight: 500;
+  text-align: center;
+  background-color: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid white;
+  color: white;
+  text-overflow: ellipsis;
+  /* display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  cursor: pointer; */
+} 
+
 .nameBtn {
   position: absolute;
   right: 150px;
@@ -241,7 +285,6 @@
   font-size: 18px;
   font-weight: 500;
   text-align: center;
-  /* padding-top: 4px; */
   background-color: none;
   display: flex;
   justify-content: center;
@@ -253,7 +296,7 @@
   white-space: nowrap;
   overflow: hidden;
   cursor: pointer;
-} 
+}
 .logoutBtnNarrow {
   position: absolute;
   right: 20px;
