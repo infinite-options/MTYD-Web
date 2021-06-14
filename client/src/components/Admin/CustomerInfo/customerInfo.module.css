@@ -295,12 +295,16 @@
   width: 70px;
   height: 70px;
   color: white;
-  font-size: 30px;
+  font-size: 40px;
   font-weight: bold;
   background-color: lightgray;
   display: flex;
   justify-content: center;
   align-items: center;
   border-radius: 50%;
+  /* border: solid;
+  border-color: black;
+  border-width: 1px; */
   margin-right: 10px;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
 }

@@ -25,6 +25,26 @@ function CustomerInfo() {
 	const [subHistory, setSubHistory] = useState(null);
 	const [uniquePlans, setUniquePlans] = useState(null);
 
+	const [dimensions, setDimensions] = useState({ 
+    height: window.innerHeight,
+    width: window.innerWidth
+  });
+
+	useEffect(() => {
+    function handleResize() {
+			setDimensions({
+        height: window.innerHeight,
+        width: window.innerWidth
+      });
+		}
+
+    window.addEventListener('resize', handleResize);
+
+		return _ => {
+      window.removeEventListener('resize', handleResize);
+		}
+  });
+
 	useEffect(() => {
 		axios
       .get(`${API_URL}customer_infos`)
@@ -78,7 +98,7 @@ function CustomerInfo() {
 
 	// Set history tab
 	useEffect(() => {
-		console.log("(rerender) setting history tab...");
+		console.log("(rerender) setting history tab for: ", selectedCustomer);
 
 		let tempDropdownButtons = [];
     let uniquePlansFetched = 0;
@@ -243,6 +263,7 @@ function CustomerInfo() {
 	const setCurrentCustomer = (cust) => {
 
 		console.log("set current customer: ", cust.customer_uid);
+		setCurrentPlan(null);
 
 		// Get additional customer info
 		/* AXIOS CALL HERE */
@@ -516,6 +537,7 @@ function CustomerInfo() {
 
 	const showHistory = () => {
 
+		console.log("(showHistory) current customer: ", selectedCustomer);
 		console.log("(showHistory) uniquePlans: ", uniquePlans);
 		console.log("(showHistory) currentPlan: ", currentPlan);
 		let planHistory = uniquePlans.find((plan) => {
@@ -618,7 +640,41 @@ function CustomerInfo() {
 
   return (
 		<div style={{backgroundColor: '#F26522'}}>
+
+			{/* For debugging window size */}
+			<span 
+				style={{
+					zIndex: '101',
+					position: 'fixed',
+					backgroundColor: 'white',
+					border: 'solid',
+					borderWidth: '1px',
+					borderColor: 'red',
+					width: '150px'
+				}}
+			>
+				Height: {dimensions.height}px
+				<br />
+				Width: {dimensions.width}px
+			</span>
+
+			<span 
+				style={{
+					zIndex: '101',
+					position: 'fixed',
+					top: '250px',
+					backgroundColor: 'white',
+					border: 'solid',
+					borderWidth: '1px',
+					borderColor: 'blue',
+					width: '200px'
+				}}
+			>
+				cust info width: {document.getElementById("custInfo").offsetWidth}
+			</span>
+
 			<AdminNavBar currentPage={'customer-info'}/>
+
 			<div
 				style={{
 					// borderBottom: 'solid',
@@ -822,8 +878,8 @@ function CustomerInfo() {
 						{selectedCustomer.customer_phone} */}
 						<div
 							style={{
-								// border: 'solid',
-								// borderColor: 'red',
+								border: 'solid',
+								borderColor: 'red',
 								marginLeft: '50px',
 								marginRight: '50px',
 								display: 'inline-flex',
@@ -862,7 +918,7 @@ function CustomerInfo() {
 									>
 										{
 											selectedCustomer.customer_first_name + " " + 
-											selectedCustomer.customer_last_name
+											selectedCustomer.customer_last_name + "aefsefsefsegsrg"
 										}
 									</div>
 									<div
@@ -917,6 +973,7 @@ function CustomerInfo() {
 							} */}
 						</div>
 						<div
+							id={"custInfo"}
 							style={{
 								border: 'solid',
 								borderColor: 'blue',
@@ -926,6 +983,7 @@ function CustomerInfo() {
 								height: '100%'
 							}}
 						>
+
 							<div 
 								style={{
 									// border: 'inset', 
@@ -958,51 +1016,136 @@ function CustomerInfo() {
 							>
 								$95.90
 							</div>
+
 							<div 
 								style={{
-									border: 'inset', 
-									position: 'absolute',
-									right: '200px',
-									width: '200px'
-									// width: '25%'
-								}}
-							>
-								Thing 2
-							</div>
-							<div 
-								style={{
-									border: 'inset', 
+									// border: 'inset', 
 									position: 'absolute',
 									right: '200px',
 									width: '200px',
-									top: '50px'
+									display: 'flex',
+									justifyContent: 'center',
+									top: '15px',
+									height: '30px',
+									color: '#f26522',
+									fontWeight: '500'
 									// width: '25%'
 								}}
 							>
-								Thing 2.2
+								Active Subscriptions
 							</div>
 							<div 
 								style={{
-									border: 'inset', 
+									// border: 'inset', 
+									position: 'absolute',
+									right: '200px',
+									width: '200px',
+									display: 'flex',
+									justifyContent: 'center',
+									top: '45px',
+									fontSize: '24px'
+									// width: '25%'
+								}}
+							>
+								3
+							</div>
+
+							<div 
+								style={{
+									// border: 'inset', 
 									position: 'absolute',
 									right: '400px',
-									width: '200px'
+									width: '200px',
+									display: 'flex',
+									justifyContent: 'center',
+									top: '15px',
+									height: '30px',
+									color: '#f26522',
+									fontWeight: '500'
 									// width: '25%'
 								}}
 							>
-								Thing 3
+								Delivery Info
 							</div>
 							<div 
 								style={{
-									border: 'inset', 
+									// border: 'inset', 
 									position: 'absolute',
-									right: '600px',
-									width: '200px'
+									right: '400px',
+									width: '200px',
+									display: 'flex',
+									justifyContent: 'center',
+									top: '45px',
+									fontSize: '15px'
 									// width: '25%'
 								}}
 							>
-								Thing 4
+								6123 Corte De La Reina
 							</div>
+							<div 
+								style={{
+									// border: 'inset', 
+									position: 'absolute',
+									right: '400px',
+									width: '200px',
+									display: 'flex',
+									justifyContent: 'center',
+									top: '64px',
+									fontSize: '15px'
+									// width: '25%'
+								}}
+							>
+								San Jose, CA, 91109
+							</div>
+
+							<div 
+								style={{
+									// border: 'inset', 
+									position: 'absolute',
+									right: '600px',
+									width: '200px',
+									display: 'flex',
+									justifyContent: 'center',
+									top: '15px',
+									height: '30px',
+									color: '#f26522',
+									fontWeight: '500'
+									// width: '25%'
+								}}
+							>
+								Contact Info
+							</div>
+							<div 
+								style={{
+									// border: 'inset', 
+									position: 'absolute',
+									right: '600px',
+									width: '200px',
+									display: 'flex',
+									justifyContent: 'center',
+									top: '45px',
+									fontSize: '15px'
+									// width: '25%'
+								}}
+							>
+								pmarathay@gmail.com
+							</div>
+							<div 
+								style={{
+									// border: 'inset', 
+									position: 'absolute',
+									right: '600px',
+									width: '200px',
+									display: 'flex',
+									justifyContent: 'center',
+									top: '64px',
+									fontSize: '15px'
+									// width: '25%'
+								}}
+							>
+								(686) 908-9080
+							</div>
+
 						</div>
 					</div>
 				)}
