@@ -658,7 +658,7 @@ function CustomerInfo() {
 				Width: {dimensions.width}px
 			</span>
 
-			<span 
+			{/* <span 
 				style={{
 					zIndex: '101',
 					position: 'fixed',
@@ -671,7 +671,7 @@ function CustomerInfo() {
 				}}
 			>
 				cust info width: {document.getElementById("custInfo").offsetWidth}
-			</span>
+			</span> */}
 
 			<AdminNavBar currentPage={'customer-info'}/>
 
@@ -918,7 +918,7 @@ function CustomerInfo() {
 									>
 										{
 											selectedCustomer.customer_first_name + " " + 
-											selectedCustomer.customer_last_name + "aefsefsefsegsrg"
+											selectedCustomer.customer_last_name
 										}
 									</div>
 									<div
@@ -984,167 +984,335 @@ function CustomerInfo() {
 							}}
 						>
 
-							<div 
-								style={{
-									// border: 'inset', 
-									position: 'absolute',
-									right: '0',
-									width: '200px',
-									display: 'flex',
-									justifyContent: 'center',
-									top: '15px',
-									height: '30px',
-									color: '#f26522',
-									fontWeight: '500'
-									// width: '25%'
-								}}
-							>
-								Total Revenue
-							</div>
-							<div 
-								style={{
-									// border: 'inset', 
-									position: 'absolute',
-									right: '0',
-									width: '200px',
-									display: 'flex',
-									justifyContent: 'center',
-									top: '45px',
-									fontSize: '24px'
-									// width: '25%'
-								}}
-							>
-								$95.90
-							</div>
+							{document.getElementById("custInfo").offsetWidth > 800 ? (
+								<>
+									<div 
+										style={{
+											// border: 'inset', 
+											position: 'absolute',
+											right: '0',
+											width: '200px',
+											display: 'flex',
+											justifyContent: 'center',
+											top: '15px',
+											height: '30px',
+											color: '#f26522',
+											fontWeight: '500'
+											// width: '25%'
+										}}
+									>
+										Total Revenue
+									</div>
+									<div 
+										style={{
+											// border: 'inset', 
+											position: 'absolute',
+											right: '0',
+											width: '200px',
+											display: 'flex',
+											justifyContent: 'center',
+											top: '45px',
+											fontSize: '24px'
+											// width: '25%'
+										}}
+									>
+										$95.90
+									</div>
 
-							<div 
-								style={{
-									// border: 'inset', 
-									position: 'absolute',
-									right: '200px',
-									width: '200px',
-									display: 'flex',
-									justifyContent: 'center',
-									top: '15px',
-									height: '30px',
-									color: '#f26522',
-									fontWeight: '500'
-									// width: '25%'
-								}}
-							>
-								Active Subscriptions
-							</div>
-							<div 
-								style={{
-									// border: 'inset', 
-									position: 'absolute',
-									right: '200px',
-									width: '200px',
-									display: 'flex',
-									justifyContent: 'center',
-									top: '45px',
-									fontSize: '24px'
-									// width: '25%'
-								}}
-							>
-								3
-							</div>
+									<div 
+										style={{
+											// border: 'inset', 
+											position: 'absolute',
+											right: '200px',
+											width: '200px',
+											display: 'flex',
+											justifyContent: 'center',
+											top: '15px',
+											height: '30px',
+											color: '#f26522',
+											fontWeight: '500'
+											// width: '25%'
+										}}
+									>
+										Active Subscriptions
+									</div>
+									<div 
+										style={{
+											// border: 'inset', 
+											position: 'absolute',
+											right: '200px',
+											width: '200px',
+											display: 'flex',
+											justifyContent: 'center',
+											top: '45px',
+											fontSize: '24px'
+											// width: '25%'
+										}}
+									>
+										3
+									</div>
 
-							<div 
-								style={{
-									// border: 'inset', 
-									position: 'absolute',
-									right: '400px',
-									width: '200px',
-									display: 'flex',
-									justifyContent: 'center',
-									top: '15px',
-									height: '30px',
-									color: '#f26522',
-									fontWeight: '500'
-									// width: '25%'
-								}}
-							>
-								Delivery Info
-							</div>
-							<div 
-								style={{
-									// border: 'inset', 
-									position: 'absolute',
-									right: '400px',
-									width: '200px',
-									display: 'flex',
-									justifyContent: 'center',
-									top: '45px',
-									fontSize: '15px'
-									// width: '25%'
-								}}
-							>
-								6123 Corte De La Reina
-							</div>
-							<div 
-								style={{
-									// border: 'inset', 
-									position: 'absolute',
-									right: '400px',
-									width: '200px',
-									display: 'flex',
-									justifyContent: 'center',
-									top: '64px',
-									fontSize: '15px'
-									// width: '25%'
-								}}
-							>
-								San Jose, CA, 91109
-							</div>
+									<div 
+										style={{
+											// border: 'inset', 
+											position: 'absolute',
+											right: '400px',
+											width: '200px',
+											display: 'flex',
+											justifyContent: 'center',
+											top: '15px',
+											height: '30px',
+											color: '#f26522',
+											fontWeight: '500'
+											// width: '25%'
+										}}
+									>
+										Delivery Info
+									</div>
+									<div 
+										style={{
+											// border: 'inset', 
+											position: 'absolute',
+											right: '400px',
+											width: '200px',
+											display: 'flex',
+											justifyContent: 'center',
+											top: '45px',
+											fontSize: '15px'
+											// width: '25%'
+										}}
+									>
+										6123 Corte De La Reina
+									</div>
+									<div 
+										style={{
+											// border: 'inset', 
+											position: 'absolute',
+											right: '400px',
+											width: '200px',
+											display: 'flex',
+											justifyContent: 'center',
+											top: '64px',
+											fontSize: '15px'
+											// width: '25%'
+										}}
+									>
+										San Jose, CA, 91109
+									</div>
 
-							<div 
-								style={{
-									// border: 'inset', 
-									position: 'absolute',
-									right: '600px',
-									width: '200px',
-									display: 'flex',
-									justifyContent: 'center',
-									top: '15px',
-									height: '30px',
-									color: '#f26522',
-									fontWeight: '500'
-									// width: '25%'
-								}}
-							>
-								Contact Info
-							</div>
-							<div 
-								style={{
-									// border: 'inset', 
-									position: 'absolute',
-									right: '600px',
-									width: '200px',
-									display: 'flex',
-									justifyContent: 'center',
-									top: '45px',
-									fontSize: '15px'
-									// width: '25%'
-								}}
-							>
-								pmarathay@gmail.com
-							</div>
-							<div 
-								style={{
-									// border: 'inset', 
-									position: 'absolute',
-									right: '600px',
-									width: '200px',
-									display: 'flex',
-									justifyContent: 'center',
-									top: '64px',
-									fontSize: '15px'
-									// width: '25%'
-								}}
-							>
-								(686) 908-9080
-							</div>
+									<div 
+										style={{
+											// border: 'inset', 
+											position: 'absolute',
+											right: '600px',
+											width: '200px',
+											display: 'flex',
+											justifyContent: 'center',
+											top: '15px',
+											height: '30px',
+											color: '#f26522',
+											fontWeight: '500'
+											// width: '25%'
+										}}
+									>
+										Contact Info
+									</div>
+									<div 
+										style={{
+											// border: 'inset', 
+											position: 'absolute',
+											right: '600px',
+											width: '200px',
+											display: 'flex',
+											justifyContent: 'center',
+											top: '45px',
+											fontSize: '15px'
+											// width: '25%'
+										}}
+									>
+										pmarathay@gmail.com
+									</div>
+									<div 
+										style={{
+											// border: 'inset', 
+											position: 'absolute',
+											right: '600px',
+											width: '200px',
+											display: 'flex',
+											justifyContent: 'center',
+											top: '64px',
+											fontSize: '15px'
+											// width: '25%'
+										}}
+									>
+										(686) 908-9080
+									</div>
+										</>
+									) : (
+										<div>NARROW VIEW</div>
+									)}
+
+									{/*<div 
+										style={{
+											// border: 'inset', 
+											position: 'absolute',
+											right: '0',
+											width: '200px',
+											display: 'flex',
+											justifyContent: 'center',
+											top: '15px',
+											height: '30px',
+											color: '#f26522',
+											fontWeight: '500'
+											// width: '25%'
+										}}
+									>
+										Total Revenue
+									</div>
+									<div 
+										style={{
+											// border: 'inset', 
+											position: 'absolute',
+											right: '0',
+											width: '200px',
+											display: 'flex',
+											justifyContent: 'center',
+											top: '45px',
+											fontSize: '24px'
+											// width: '25%'
+										}}
+									>
+										$95.90
+									</div>
+
+									<div 
+										style={{
+											// border: 'inset', 
+											position: 'absolute',
+											right: '200px',
+											width: '200px',
+											display: 'flex',
+											justifyContent: 'center',
+											top: '15px',
+											height: '30px',
+											color: '#f26522',
+											fontWeight: '500'
+											// width: '25%'
+										}}
+									>
+										Active Subscriptions
+									</div>
+									<div 
+										style={{
+											// border: 'inset', 
+											position: 'absolute',
+											right: '200px',
+											width: '200px',
+											display: 'flex',
+											justifyContent: 'center',
+											top: '45px',
+											fontSize: '24px'
+											// width: '25%'
+										}}
+									>
+										3
+									</div>
+
+									<div 
+										style={{
+											// border: 'inset', 
+											position: 'absolute',
+											right: '400px',
+											width: '200px',
+											display: 'flex',
+											justifyContent: 'center',
+											top: '15px',
+											height: '30px',
+											color: '#f26522',
+											fontWeight: '500'
+											// width: '25%'
+										}}
+									>
+										Delivery Info
+									</div>
+									<div 
+										style={{
+											// border: 'inset', 
+											position: 'absolute',
+											right: '400px',
+											width: '200px',
+											display: 'flex',
+											justifyContent: 'center',
+											top: '45px',
+											fontSize: '15px'
+											// width: '25%'
+										}}
+									>
+										6123 Corte De La Reina
+									</div>
+									<div 
+										style={{
+											// border: 'inset', 
+											position: 'absolute',
+											right: '400px',
+											width: '200px',
+											display: 'flex',
+											justifyContent: 'center',
+											top: '64px',
+											fontSize: '15px'
+											// width: '25%'
+										}}
+									>
+										San Jose, CA, 91109
+									</div>
+
+									<div 
+										style={{
+											// border: 'inset', 
+											position: 'absolute',
+											right: '600px',
+											width: '200px',
+											display: 'flex',
+											justifyContent: 'center',
+											top: '15px',
+											height: '30px',
+											color: '#f26522',
+											fontWeight: '500'
+											// width: '25%'
+										}}
+									>
+										Contact Info
+									</div>
+									<div 
+										style={{
+											// border: 'inset', 
+											position: 'absolute',
+											right: '600px',
+											width: '200px',
+											display: 'flex',
+											justifyContent: 'center',
+											top: '45px',
+											fontSize: '15px'
+											// width: '25%'
+										}}
+									>
+										pmarathay@gmail.com
+									</div>
+									<div 
+										style={{
+											// border: 'inset', 
+											position: 'absolute',
+											right: '600px',
+											width: '200px',
+											display: 'flex',
+											justifyContent: 'center',
+											top: '64px',
+											fontSize: '15px'
+											// width: '25%'
+										}}
+									>
+										(686) 908-9080
+									</div>*/}
 
 						</div>
 					</div>
