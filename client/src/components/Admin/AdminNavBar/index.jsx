@@ -142,7 +142,7 @@ function NavBar(props) {
     >
 
       {/* For debugging window size */}
-			<span 
+			{/* <span 
 				style={{
 					zIndex: '101',
 					position: 'fixed',
@@ -157,7 +157,7 @@ function NavBar(props) {
 				Height: {dimensions.height}px
 				<br />
 				Width: {dimensions.width}px
-			</span>
+			</span> */}
 
       <div
         style={{
@@ -196,7 +196,14 @@ function NavBar(props) {
             border: 'solid',
             width: '90%',
             display: 'flex',
+            textAlign: 'center',
+            justifyContent: 'center',
             alignItems: 'center',
+            // display: flex;
+            // /* flex-direction: column; */
+            // text-align: center;
+            // justify-content: center;
+            // align-items: center;
             height: '80px'
           }}
         >

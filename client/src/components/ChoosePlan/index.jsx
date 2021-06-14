@@ -547,7 +547,12 @@ class ChoosePlan extends React.Component {
   calculateDeal = () => {
     let total = parseFloat(this.calculateTotal());
 
-    let deal = (total/this.props.selectedPlan.num_items).toFixed(2);
+    let deal = (
+      total / (
+        this.props.selectedPlan.num_items *
+        this.props.selectedPlan.num_deliveries
+      )
+    ).toFixed(2);
 
     return deal;
   };
@@ -723,7 +728,10 @@ class ChoosePlan extends React.Component {
 
                                       {/* <div style={{display: 'inline-flex'}}> */}
                                         <div className={styles.priceFormula}>
-                                          {this.props.selectedPlan.num_items}
+                                          {
+                                            this.props.selectedPlan.num_items *
+                                            this.props.selectedPlan.num_deliveries
+                                          }
                                         </div>
 
                                         <div className={styles.priceFormula2narrow}>
@@ -804,7 +812,10 @@ class ChoosePlan extends React.Component {
 
                                         <div style={{display: 'inline-flex'}}>
                                           <div className={styles.priceFormula}>
-                                            {this.props.selectedPlan.num_items}
+                                            {
+                                              this.props.selectedPlan.num_items *
+                                              this.props.selectedPlan.num_deliveries
+                                            }
                                           </div>
 
                                           <div className={styles.priceFormula2}>
