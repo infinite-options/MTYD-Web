@@ -791,7 +791,7 @@ function CustomerInfo() {
 					<div
 						style={{
 							display: 'flex',
-							border: 'dashed',
+							// border: 'dashed',
 							height: '100%',
 							justifyContent: 'center',
 							alignItems: 'center'
@@ -822,8 +822,8 @@ function CustomerInfo() {
 						{selectedCustomer.customer_phone} */}
 						<div
 							style={{
-								border: 'solid',
-								borderColor: 'red',
+								// border: 'solid',
+								// borderColor: 'red',
 								marginLeft: '50px',
 								marginRight: '50px',
 								display: 'inline-flex',
@@ -840,21 +840,24 @@ function CustomerInfo() {
 							</div>
 							<div
 								style={{
-									border: 'solid',
+									// border: 'solid',
 									display: 'inline-block'
 								}}
 							>
 								<div
 									style={{
-										border: 'inset',
+										// border: 'inset',
 										display: 'inline-flex',
 										width: '100%'
 									}}
 								>
 									<div
 										style={{
-											border: 'solid',
-											color: 'green'
+											// border: 'solid',
+											// color: 'green'
+											fontWeight: '600',
+											fontSize: '18px',
+											marginRight: '15px'
 										}}
 									>
 										{
@@ -864,7 +867,7 @@ function CustomerInfo() {
 									</div>
 									<div
 										style={{
-											border: 'solid',
+											// border: 'solid',
 											color: 'green'
 										}}
 									>
@@ -874,22 +877,34 @@ function CustomerInfo() {
 								<br />
 								<div
 									style={{
-										border: 'inset',
+										// border: 'inset',
 										display: 'inline-flex'
 									}}
 								>
 									<div
 										style={{
-											border: 'solid',
-											color: 'green'
+											// border: 'solid',
+											// color: 'green'
+											color: '#f26522',
+											textDecoration: 'underline',
+											marginRight: '15px',
+											fontWeight: '500',
+											fontSize: '14px',
+											cursor: 'pointer'
 										}}
 									>
 										Send Message
 									</div>
 									<div
 										style={{
-											border: 'solid',
-											color: 'green'
+											// border: 'solid',
+											// color: 'green'
+											color: '#f26522',
+											textDecoration: 'underline',
+											// marginRight: '15px',
+											fontWeight: '500',
+											fontSize: '14px',
+											cursor: 'pointer'
 										}}
 									>
 										Issue Coupon
@@ -913,14 +928,35 @@ function CustomerInfo() {
 						>
 							<div 
 								style={{
-									border: 'inset', 
+									// border: 'inset', 
 									position: 'absolute',
 									right: '0',
-									width: '200px'
+									width: '200px',
+									display: 'flex',
+									justifyContent: 'center',
+									top: '15px',
+									height: '30px',
+									color: '#f26522',
+									fontWeight: '500'
 									// width: '25%'
 								}}
 							>
-								Thing 1
+								Total Revenue
+							</div>
+							<div 
+								style={{
+									// border: 'inset', 
+									position: 'absolute',
+									right: '0',
+									width: '200px',
+									display: 'flex',
+									justifyContent: 'center',
+									top: '45px',
+									fontSize: '24px'
+									// width: '25%'
+								}}
+							>
+								$95.90
 							</div>
 							<div 
 								style={{
@@ -932,6 +968,18 @@ function CustomerInfo() {
 								}}
 							>
 								Thing 2
+							</div>
+							<div 
+								style={{
+									border: 'inset', 
+									position: 'absolute',
+									right: '200px',
+									width: '200px',
+									top: '50px'
+									// width: '25%'
+								}}
+							>
+								Thing 2.2
 							</div>
 							<div 
 								style={{
