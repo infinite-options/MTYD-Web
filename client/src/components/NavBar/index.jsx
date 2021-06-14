@@ -267,35 +267,13 @@ class NavBar extends React.Component {
           }
         />
 
-        {/* {console.log("profile role: " + this.state.profileRole + "; window height: ", this.state.windowWidth)}
-        {
-          this.state.profileRole !== 'admin' && this.state.windowWidth > 900
-            ? (
-                <div
-                  style={{
-                    border: 'inset',
-                    width: '20%',
-                    display: 'flex',
-                    justifyContent: 'center'
-                  }}
-                >
-                  <div
-                    onClick={() => {this.goToLink('/admin')}}
-                    className={styles.adminBtn2}
-                  >
-                    Admin
-                  </div>
-                </div>
-              )
-            : null
-        } */}
         {console.log("profile role: " + this.state.profileRole + "; window height: ", this.state.windowWidth)}
         {
           this.state.profileRole === 'admin' && this.state.windowWidth > 900
             ? (
                 <div
                   style={{
-                    border: 'inset',
+                    // border: 'inset',
                     // width: '20%',
                     display: 'flex',
                     justifyContent: 'center',
@@ -316,7 +294,7 @@ class NavBar extends React.Component {
 
         <div
           style={{
-            border: 'inset',
+            // border: 'inset',
             width: '30%',
             minWidth: '200px',
             display: 'flex',
@@ -348,7 +326,7 @@ class NavBar extends React.Component {
         {this.state.login ? (
           <div
             style={{
-              border: 'inset',
+              // border: 'inset',
               // display: 'inline-flex',
               height: '44px',
               width: '40%',
@@ -379,17 +357,6 @@ class NavBar extends React.Component {
                   </div>
                 )
               : null}
-            {/* <div
-              className={
-                this.state.windowWidth > 900
-                  ? styles.logoutBtn
-                  : styles.logoutBtnNarrow
-              }
-              onClick={this.logOut}
-            >
-              {" "}
-              LOGOUT&nbsp;
-            </div> */}
 
           </div>
         ) : (

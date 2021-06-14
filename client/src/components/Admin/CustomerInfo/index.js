@@ -4,6 +4,7 @@ import { API_URL } from '../../../reducers/constants';
 import { descendingComparator } from '../../../reducers/helperFuncs';
 import { withRouter } from "react-router";
 import styles from "./customerInfo.module.css";
+import AdminNavBar from '../AdminNavBar'
 
 // For choosing which 
 const CUS_SEL_NONE  = -1;
@@ -617,6 +618,7 @@ function CustomerInfo() {
 
   return (
 		<div style={{backgroundColor: '#F26522'}}>
+			<AdminNavBar currentPage={'customer-info'}/>
 			<div
 				style={{
 					// borderBottom: 'solid',
@@ -786,8 +788,16 @@ function CustomerInfo() {
 				{selectedCustomer === null ? (
 					<>{"Waiting for selection..."}</>
 				) : (
-					<>
-						{"Current Customer: " + selectedCustomer.customer_uid}
+					<div
+						style={{
+							display: 'flex',
+							border: 'dashed',
+							height: '100%',
+							justifyContent: 'center',
+							alignItems: 'center'
+						}}
+					>
+						{/* {"Current Customer: " + selectedCustomer.customer_uid}
 						<br />
 						<br />
 						{
@@ -809,8 +819,144 @@ function CustomerInfo() {
 						<br />
 						{selectedCustomer.customer_email}
 						<br />
-						{selectedCustomer.customer_phone}
-					</>
+						{selectedCustomer.customer_phone} */}
+						<div
+							style={{
+								border: 'solid',
+								borderColor: 'red',
+								marginLeft: '50px',
+								marginRight: '50px',
+								display: 'inline-flex',
+								alignItems: 'center',
+								height: '80px'
+								// width: '40%',
+								// minWidth: '300px'
+							}}
+						>
+							<div
+								className={styles.avatar}
+							>
+								?
+							</div>
+							<div
+								style={{
+									border: 'solid',
+									display: 'inline-block'
+								}}
+							>
+								<div
+									style={{
+										border: 'inset',
+										display: 'inline-flex',
+										width: '100%'
+									}}
+								>
+									<div
+										style={{
+											border: 'solid',
+											color: 'green'
+										}}
+									>
+										{
+											selectedCustomer.customer_first_name + " " + 
+											selectedCustomer.customer_last_name
+										}
+									</div>
+									<div
+										style={{
+											border: 'solid',
+											color: 'green'
+										}}
+									>
+										Arrow
+									</div>
+								</div>
+								<br />
+								<div
+									style={{
+										border: 'inset',
+										display: 'inline-flex'
+									}}
+								>
+									<div
+										style={{
+											border: 'solid',
+											color: 'green'
+										}}
+									>
+										Send Message
+									</div>
+									<div
+										style={{
+											border: 'solid',
+											color: 'green'
+										}}
+									>
+										Issue Coupon
+									</div>
+								</div>
+							</div>
+							{/* {
+								selectedCustomer.customer_first_name + " " + 
+								selectedCustomer.customer_last_name
+							} */}
+						</div>
+						<div
+							style={{
+								border: 'solid',
+								borderColor: 'blue',
+								flexGrow: '1',
+								display: 'inline-flex',
+								position: 'relative',
+								height: '100%'
+							}}
+						>
+							<div 
+								style={{
+									border: 'inset', 
+									position: 'absolute',
+									right: '0',
+									width: '200px'
+									// width: '25%'
+								}}
+							>
+								Thing 1
+							</div>
+							<div 
+								style={{
+									border: 'inset', 
+									position: 'absolute',
+									right: '200px',
+									width: '200px'
+									// width: '25%'
+								}}
+							>
+								Thing 2
+							</div>
+							<div 
+								style={{
+									border: 'inset', 
+									position: 'absolute',
+									right: '400px',
+									width: '200px'
+									// width: '25%'
+								}}
+							>
+								Thing 3
+							</div>
+							<div 
+								style={{
+									border: 'inset', 
+									position: 'absolute',
+									right: '600px',
+									width: '200px'
+									// width: '25%'
+								}}
+							>
+								Thing 4
+							</div>
+						</div>
+					</div>
 				)}
 			</div>
 

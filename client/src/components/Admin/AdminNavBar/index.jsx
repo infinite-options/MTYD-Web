@@ -4,6 +4,7 @@ import {connect} from "react-redux";
 import {withRouter} from "react-router-dom";
 import { useHistory } from "react-router";
 import styles from "./adminNavBar.module.css";
+// import hamburger from './hamburger.png'
 
 function NavBar(props) {
   // const history = useHistory();
@@ -159,7 +160,17 @@ function NavBar(props) {
         <a href='/admin/edit-meal' className={styles.navLink3}>Meals & Plans</a>
         <a href='/admin/plans-coupons' className={styles.navLink4}>Plans & Coupons</a>
         <a href='/admin/orer-ingredients' className={styles.navLink5}>Orders & Ingredients</a>
-        <a href='/admin/customer-info' className={styles.navLink2}>Customers</a>
+        <a 
+          href='/admin/customer-info' 
+          className={styles.navLink2}
+          style={
+            props.currentPage === 'customer-info'
+              ? {color: 'black'}
+              : {}
+          }
+        >
+          Customers
+        </a>
         <a href='/admin/customers' className={styles.navLink4}>Google Analytics</a>
         <a href='/admin/edit-meal' className={styles.navLink3}>Notifications</a>
         <a href='/admin/edit-meal' className={styles.navLink2}>Businesses</a>

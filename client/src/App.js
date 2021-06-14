@@ -156,7 +156,7 @@ function App() {
               <AdminZones />
             </Route>
             <Route exact path="/admin/customer-info">
-              {adminNavBar}
+              {/* {adminNavBar} */}
               <AdminCustomerInfo />
             </Route>
             <AppliedRoute path='*' component={NotFound} />

@@ -34,24 +34,6 @@ export class NavMenu extends Component {
 
     return (
       <div 
-        // style={{
-        //   border: 'inset', 
-        //   width: '40%',
-        //   minWidth: '100px'
-        // }}
-        // style={
-        //   this.props.isAdmin && this.state.width > 900
-        //     ? {
-        //         border: 'inset',
-        //         width: '40%',
-        //         // minWidth: '100px'
-        //       }
-        //     : {
-        //         border: 'dashed',
-        //         width: '40%',
-        //         // minWidth: '100px'
-        //       }
-        // }
         style={{width: '40%'}}
       >
         <div>
