@@ -91,6 +91,28 @@ class SocialLogin extends Component {
           console.log("Facebook Login failed");
         }
       };
+
+      responseApple = response => {
+        console.log(response);
+        if (response.email) {
+          console.log("Apple Login successful");
+          let email = response.email;
+          let accessToken = response.accessToken;
+          let refreshToken = response.id;
+          this.props.socialLoginAttempt(
+            email,
+            accessToken,
+            refreshToken,
+            "APPLE",
+            this.successLogin,
+            this.socialSignUp
+          );
+        } else {
+          // Apple Login unsuccessful
+          console.log("Apple Login failed");
+        }
+      }
+
       showError = err => {
         console.log("this is error in show err: ", err);
         return (
@@ -112,6 +134,7 @@ class SocialLogin extends Component {
       };
 
     render() { 
+        let data = null
         return ( 
 
           !this.state.verticalFormat?
@@ -184,9 +207,12 @@ class SocialLogin extends Component {
               >
                 <button
                   onClick={() => {
-                    window.AppleID.auth.signIn();
+                    console.log("pressed apple login button")
+                    const data = window.AppleID.auth.signIn();
+                    console.log(data)
                   }}
                   className={styles.appleLogin}
+                  //callback={this.responseApple}
                   aria-label="Continue with your Apple ID"     
                   title="Continue with your Apple ID" 
                 >
@@ -228,11 +254,17 @@ class SocialLogin extends Component {
                     
                   />
                 </div>
-
+                
                 <div>
                   <button
                     onClick={() => {
-                      window.AppleID.auth.signIn();
+                      try{
+                        console.log("pressed apple login button")
+                        const data = window.AppleID.auth.signIn();
+                        console.log(data)
+                      } catch (error) {
+                        console.log(data)
+                      };
                     }}
                     className={styles.appleLoginCircle}
                     style={{

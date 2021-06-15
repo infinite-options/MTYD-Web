@@ -115,11 +115,11 @@ class Header extends Component {
       // console.log(classForbutton)
       let ariaTag = ''
       if(displayMessage != 'Suprise Me'){
-        ariaTag = "Click here to " + displayMessage + " on " + moment(this.props.myDate.split(" ")[0]).format("ddd") + " " + moment(this.props.myDate.split(" ")[0]).format("MMM") + " " +
-        moment(this.props.myDate.split(" ")[0]).format("D")
+        //ariaTag = "Click here to " + displayMessage + " on " //+ moment(this.props.myDate.split(" ")[0]).format("ddd") + " " + moment(this.props.myDate.split(" ")[0]).format("MMM") + " " + moment(this.props.myDate.split(" ")[0]).format("D")
+        ariaTag = "Click here to select " + displayMessage
       } else {
-        ariaTag = "Click here to be suprised on " + moment(this.props.myDate.split(" ")[0]).format("ddd") + " " + moment(this.props.myDate.split(" ")[0]).format("MMM") + " " +
-        moment(this.props.myDate.split(" ")[0]).format("D")
+        //ariaTag = "Click here to be suprised on " //+ moment(this.props.myDate.split(" ")[0]).format("ddd") + " " + moment(this.props.myDate.split(" ")[0]).format("MMM") + " " + moment(this.props.myDate.split(" ")[0]).format("D")
+        ariaTag = "Click here to select " + displayMessage
       }
 
       selections.push(
@@ -130,7 +130,7 @@ class Header extends Component {
           className={classForbutton}
           onClick={e => this.props.makeSelection(e)}
           aria-label = {ariaTag}
-          title={ariaTag}
+          title = {ariaTag}
         >
           {displayMessage}
         </button>

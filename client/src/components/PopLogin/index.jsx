@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component, useState } from 'react'
 import PropTypes from 'prop-types'
 import styles from "./popLogin.css"
 import SocialLogin from "../Landing/socialLogin"
@@ -6,6 +6,8 @@ import {
   loginAttempt,
   changeEmail,
   changePassword,
+  errMessage,
+  getErrMessage
 } from "../../reducers/actions/loginActions";
 import { Route , withRouter} from 'react-router-dom';
 import closeIcon from '../../images/closeIcon.png'
@@ -13,6 +15,7 @@ import closeIcon from '../../images/closeIcon.png'
 
 import {connect} from "react-redux";
 import { Grid, Paper, Button, Typography, Box } from '@material-ui/core';
+import { text } from '@fortawesome/fontawesome-svg-core';
 
 
 export class PopLogin extends Component {
@@ -20,6 +23,11 @@ export class PopLogin extends Component {
   constructor(){
     super();
   }
+
+  errVal=''
+  attemptLogin=false
+  attemptShow=true
+  attemptReload=false  
 
   handleClick = () => {
     this.props.toggle();
@@ -40,6 +48,12 @@ export class PopLogin extends Component {
   }; 
 
   render() {
+    //this.errVal=''
+    this.attemptLogin=true
+    this.getError()
+    this.showError()
+    this.attemptReload=false
+    //this.handleReload()
     return (
       <div          
         className="pop_content"
@@ -140,13 +154,17 @@ export class PopLogin extends Component {
           <button
             className='signInBtn'
             onClick={() => {
-              this.props.loginAttempt(
+              /*this.props.loginAttempt(
                 this.props.email,
                 this.props.password,
                 this.successLogin
               );
-              // console.log(this.props.email)
-              // console.log(this.props.password)
+              this.errVal=getErrMessage()
+              this.forceUpdate();*/
+              this.attemptLogin = true
+              this.getError()
+              this.forceUpdate()
+              console.log("Login clicked, attemptLogin = " + this.attemptLogin)
             }}
             aria-label="Click here to login"
             title="Click here to login"
@@ -162,9 +180,61 @@ export class PopLogin extends Component {
               Login
             </p>
           </button>
-
+          {/*this.getError()*/}
+          {this.showError()}
+          {this.handleReload()}
       </div>
     )
+  }
+
+  getError = () => {
+    console.log("attemptLogin = " + this.attemptLogin)
+    if (this.attemptLogin==true){ 
+      this.props.loginAttempt( 
+        this.props.email,
+        this.props.password,
+        this.successLogin
+      );
+      //this.errVal=getErrMessage()
+      this.attemptLogin=false
+      this.attemptShow=true
+    }
+    return null;
+  }
+
+  showError = () => {
+    console.log("attemptShow = " + this.attemptShow)
+    /*if (this.attemptLogin==true){
+      this.props.loginAttempt(
+        this.props.email,
+        this.props.password,
+        this.successLogin
+      );
+      this.errVal=getErrMessage()
+      this.attemptLogin=false
+      this.attemptReload=true
+    }*/
+    if (this.attemptShow==true){
+      this.errVal=getErrMessage()
+      console.log("Set error text to: "+ this.errVal)
+      this.attemptShow=false
+      this.attemptReload=true
+    }
+    
+    if (this.errVal == '') {
+      return null;
+    }
+    return <Typography style={{ color: 'red', textAlign:'center' }}>{this.errVal}</Typography>;
+  }
+
+  handleReload = () => {
+    console.log("attemptReload = " + this.attemptReload)
+    if (this.attemptReload == true){
+      this.forceUpdate()
+      //this.forceUpdate()
+    }
+    this.attemptReload=false
+    return null;
   }
 }
 

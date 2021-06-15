@@ -221,11 +221,13 @@ class Login extends React.Component {
               <button
                 className={styles.button}
                 onClick={() => {
-                  this.props.loginAttempt(
+                  //console.log(this.successLogin)
+                  let a = this.props.loginAttempt(
                     this.props.email,
                     this.props.password,
                     this.successLogin
                   );
+                  console.log("test2")
                 }}
               >
                 LOGIN
@@ -269,7 +271,7 @@ class Login extends React.Component {
               <div className={"row " + styles.centerBtn}>
                 <p>EXPLORE WITHOUT LOGIN</p>
                 <Link style = {{textDecoration: 'none'}} to = '/select-meal'>
-                  <button style = {{color: 'white'}}> START >></button>
+                  <button style = {{color: 'white'}}> START </button>
                 </Link>
               </div>
             </div>
@@ -322,7 +324,7 @@ class Login extends React.Component {
                 <div className={"row " + styles.centerBtn}>
                   <p>EXPLORE WITHOUT LOGIN</p>
                   <Link to = '/select-meal'>
-                    <button> START >></button>
+                    <button> START </button>
                   </Link>
                 </div>
               </div>
