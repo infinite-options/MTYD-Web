@@ -359,6 +359,7 @@ export const initAppleSignUp = (newId, callback) => dispatch => {
       let newUserInfo = res.data.result[0];
       let email = newUserInfo.customer_email;
       let refreshToken = newUserInfo.user_refresh_token;
+      console.log("at initAppleSignUp: "+newUserInfo+", "+email+", "+refreshToken)
       dispatch({
         type: START_APPLE_SIGNUP,
         payload: {

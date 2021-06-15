@@ -206,6 +206,7 @@ class SocialSignUp extends React.Component {
     // if (!this.state.mounted) {
     //   return null;
     // }
+    console.log("email: "+ this.props.email+", refresh token: " + this.props.refreshToken)
     if (this.props.email === "" || this.props.refreshToken === "") {
       this.props.history.push("sign-up");
     }

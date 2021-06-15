@@ -17,6 +17,7 @@ import socialG from "../../images/socialGoogle.png"
 import socialF from "../../images/socialFb.png"
 import socialA from "../../images/socialApple.png"
 
+export var responseData = null
 
 class SocialLogin extends Component {
 
@@ -45,6 +46,7 @@ class SocialLogin extends Component {
         clientId: process.env.REACT_APP_APPLE_CLIENT_ID,
         scope: "email",
         redirectURI: process.env.REACT_APP_APPLE_REDIRECT_URI
+        //redirectURI: ""
       });
   }
 
@@ -92,7 +94,7 @@ class SocialLogin extends Component {
         }
       };
 
-      responseApple = response => {
+      /*responseApple = response => {
         console.log(response);
         if (response.email) {
           console.log("Apple Login successful");
@@ -111,7 +113,7 @@ class SocialLogin extends Component {
           // Apple Login unsuccessful
           console.log("Apple Login failed");
         }
-      }
+      }*/
 
       showError = err => {
         console.log("this is error in show err: ", err);
@@ -292,6 +294,8 @@ class SocialLogin extends Component {
          );
     }
 }
+
+
 
 SocialLogin.propTypes = {
     // bypassLogin: PropTypes.func.isRequired,
