@@ -480,6 +480,7 @@ class PaymentDetails extends React.Component {
             console.log("Categorical Options response: ", response);
 
             if(response.data.result.length !== 0) {
+              console.log("valid zone!");
 
               console.log("cat options for: ", document.getElementById("pac-input").value);
               this.setState(prevState => ({
@@ -506,6 +507,8 @@ class PaymentDetails extends React.Component {
               //console.log("catOptions taxAmount: " + this.state.paymentSummary.taxAmount);
               //console.log("catOptions new payment summary: ", this.state.paymentSummary);
             } else {
+              console.log("invalid zone!");
+
               this.setState(prevState => ({
                 recalculatingPrice: true,
                 paymentSummary: {
@@ -515,7 +518,7 @@ class PaymentDetails extends React.Component {
                   deliveryFee: "0.00",
                   taxAmount: "0.00"
                 },
-                fetchingFees: false
+                // fetchingFees: false
               }), () => {
                 this.setTotal();
                 console.log("(2) catOptions taxAmount: " + this.state.paymentSummary.taxAmount);
@@ -679,52 +682,6 @@ class PaymentDetails extends React.Component {
 
   });
 
-    /*axios
-      .post(API_URL + 'brandAmbassador/generate_coupon',
-        {
-          code: this.state.ambassadorCode,
-          // cust_email: this.state.email
-          info: this.props.email,
-          isGuest: false
-        }
-      )
-      .then(res => {
-        // let items = res.data
-        console.log("ambassador code response: ", res);
-
-        //if(typeof(items) === "string") {
-        if (res.data.code !== 200) {
-
-          console.log("Invalid code");
-
-          this.displayError(AMBASSADOR_ERROR, res.data.message);
-
-        } else {
-          
-          console.log("Valid code");
-
-          // items = items.result[0];
-
-          console.log("result: ", res.data);
-
-          // this.setState(prevState => ({
-          //   recalculatingPrice: true,
-          //   paymentSummary: {
-          //     ...prevState.paymentSummary,
-          //     ambassadorDiscount: (
-          //       items.discount_amount +
-          //       items.discount_shipping
-          //     ).toFixed(2)
-          //   }
-          // }), () => {
-          //   this.setTotal();
-          // });
-
-        }
-      })
-      .catch(err => {
-        console.log("Ambassador code error: ", err);
-      });*/
   }
 
   displayError = (type, message) => {
@@ -795,8 +752,100 @@ class PaymentDetails extends React.Component {
 
   }
 
+  validateAddress() {
+    console.log("(validateAddress) before FAC");
+
+    this.setState(prevState => ({
+      fetchingFees: true
+    }), () => {
+
+      fetchAddressCoordinates(
+        document.getElementById("pac-input").value,
+        document.getElementById("locality").value,
+        document.getElementById("state").value,
+        document.getElementById("postcode").value,
+        (coords) => {
+
+          console.log("Fetched coordinates: " + JSON.stringify(coords));
+          this.setState({
+            latitude: coords.latitude,
+            longitude: coords.longitude,
+            loadingMap: false
+          });
+
+          console.log("Calling categorical options...");
+          axios
+            .get(`${API_URL}categoricalOptions/${coords.longitude},${coords.latitude}`)
+            .then((response) => {
+              console.log("Categorical Options response: ", response);
+
+              if(response.data.result.length !== 0) {
+                console.log("(VA) valid zone!");
+
+                console.log("cat options for: ", document.getElementById("pac-input").value);
+                this.setState(prevState => ({
+                  recalculatingPrice: true,
+                  paymentSummary: {
+                    ...prevState.paymentSummary,
+                    taxRate: response.data.result[1].tax_rate,
+                    serviceFee: response.data.result[1].service_fee.toFixed(2),
+                    deliveryFee: response.data.result[1].delivery_fee.toFixed(2),
+                    taxAmount: (
+                      this.props.selectedPlan.item_price *
+                      this.props.selectedPlan.num_deliveries *
+                      (1-(this.props.selectedPlan.delivery_discount*0.01)) *
+                      response.data.result[1].tax_rate * 0.01
+                    ).toFixed(2)
+                  }
+                }), () => {
+                  this.setTotal();
+                  console.log("(VA) proceeding to payment...");
+                });
+
+              } else {
+                console.log("(VA) invalid zone!");
+
+                this.setState(prevState => ({
+                  recalculatingPrice: true,
+                  paymentSummary: {
+                    ...prevState.paymentSummary,
+                    taxRate: 0,
+                    serviceFee: "0.00",
+                    deliveryFee: "0.00",
+                    taxAmount: "0.00"
+                  }
+                }), () => {
+                  this.setTotal();
+                  console.log("(2) catOptions taxAmount: " + this.state.paymentSummary.taxAmount);
+                  console.log("(2) catOptions new payment summary: ", this.state.paymentSummary);
+                });
+
+              }
+            })
+            .catch((err) => {
+              if (err.response) {
+                console.log(err.response);
+              }
+              console.log(err);
+            });
+        }
+      );
+
+    });
+
+    console.log("(validateAddress) after FAC");
+  }
+
+  // proceedToPayment() {
+  //   let validAddress = this.saveDeliveryDetails();
+
+  //   if(validAddress === false){
+  //     console.log("invalid address; do not proceed to payment");
+  //     return;
+  //   }
   proceedToPayment() {
-    this.saveDeliveryDetails();
+
+    console.log("valid address; proceeding to payment...");
 
     if(this.state.customerUid === "GUEST"){
       console.log("Before createGuestAccount");
@@ -853,7 +902,9 @@ class PaymentDetails extends React.Component {
 
       axios.get("https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/stripe_key/M4METEST")
         .then(result=>{
-          let stripePromise = loadStripe(result.data.publicKey);
+          console.log("(m4metest) key: ", result.data.publicKey);
+          let stripePromise = loadStripe(result.data.publicKey);;
+          console.log("(m4metest) stripe promise: ", stripePromise);
           this.setState({
             stripePromise: stripePromise
           });
@@ -872,7 +923,9 @@ class PaymentDetails extends React.Component {
       
       axios.get("https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/stripe_key/LIVE")
         .then(result=>{
+          console.log("(live) key: ", result.data.publicKey);
           let stripePromise = loadStripe(result.data.publicKey);
+          console.log("(live) stripe promise: ", stripePromise);
           this.setState({
             stripePromise: stripePromise
           });
@@ -1312,7 +1365,8 @@ class PaymentDetails extends React.Component {
               <button 
                 className={styles.orangeBtn}
                 disabled={this.state.loadingMap || this.state.fetchingFees}
-                onClick={()=>this.proceedToPayment()}
+                // onClick={()=>this.proceedToPayment()}
+                onClick={()=>this.validateAddress()}
                 aria-label="Click here to save your delivery information and proceed"
                 title="Click here to save your delivery information and proceed"
               >
