@@ -62,14 +62,22 @@ class SocialSignUp extends React.Component {
 
   componentDidMount() {
     let queryString = this.props.location.search;
+    console.log("(SSU) queryString: ", queryString);
+
     let urlParams = new URLSearchParams(queryString);
+    console.log("(SSU) urlParams: ", urlParams);
+
     if (urlParams.has("id")) {
+      console.log("(SSU) before initAppleSignup");
+
       this.props.initAppleSignUp(urlParams.get("id"), () => {
         this.setState({
           mounted: true
         });
       });
     } else {
+      console.log("(SSU) NOT initAppleSignup");
+
       this.setState({
         mounted: true
       });
@@ -203,12 +211,12 @@ class SocialSignUp extends React.Component {
   };
 
   render() {
-    // if (!this.state.mounted) {
-    //   return null;
-    // }
-    if (this.props.email === "" || this.props.refreshToken === "") {
-      this.props.history.push("sign-up");
+    if (!this.state.mounted) {
+      return null;
     }
+    // if (this.props.email === "" || this.props.refreshToken === "") {
+    //   this.props.history.push("sign-up");
+    // }
     return (
       <div className={styles.root}>
         <WebNavBar />

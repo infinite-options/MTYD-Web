@@ -41,6 +41,7 @@ const DATA_ERROR = 0;
 const CHECKOUT_ERROR = 1;
 const AMBASSADOR_ERROR = 2;
 const EMAIL_ERROR = 3;
+const ADDRESS_ERROR = 4;
 
 class PaymentDetails extends React.Component {
   constructor() {
@@ -805,20 +806,27 @@ class PaymentDetails extends React.Component {
               } else {
                 console.log("(VA) invalid zone!");
 
-                this.setState(prevState => ({
-                  recalculatingPrice: true,
-                  paymentSummary: {
-                    ...prevState.paymentSummary,
-                    taxRate: 0,
-                    serviceFee: "0.00",
-                    deliveryFee: "0.00",
-                    taxAmount: "0.00"
-                  }
-                }), () => {
-                  this.setTotal();
-                  console.log("(2) catOptions taxAmount: " + this.state.paymentSummary.taxAmount);
-                  console.log("(2) catOptions new payment summary: ", this.state.paymentSummary);
+                this.displayError(ADDRESS_ERROR, `
+                  Sorry, it looks like we don't deliver to your neighborhood yet. 
+                  Enter your email address and we will let you know as soon as
+                  we come to your neighborhood.
+                `);
+
+                this.setState({
+                  fetchingFees: false
                 });
+                // this.setState(prevState => ({
+                //   recalculatingPrice: true,
+                //   paymentSummary: {
+                //     ...prevState.paymentSummary,
+                //     taxRate: 0,
+                //     serviceFee: "0.00",
+                //     deliveryFee: "0.00",
+                //     taxAmount: "0.00"
+                //   }
+                // }), () => {
+                //   this.setTotal();
+                // });
 
               }
             })
@@ -1076,6 +1084,57 @@ class PaymentDetails extends React.Component {
                         }}
                       >
                         Choose a Plan
+                      </button>
+
+                    </div>
+                  </div>
+                </div>
+
+              </>
+            );
+          } else if (this.state.errorType === ADDRESS_ERROR) {
+            return (
+              <>
+                <div className = {this.state.errorModal}>
+                  <div className  = {styles.errorModalContainer}>
+
+                    <div className={styles.errorContainer}>    
+
+                      <h6 style = {{margin: '5px', fontWeight: 'bold', fontSize: '25px'}}>Still Growing...</h6>
+
+                      <div style = {{display: 'block', width: '300px', margin: '20px auto 0px'}}>
+                        {this.state.errorMessage}
+                      </div> 
+
+                      <br />
+
+                      <input
+                        placeholder='Enter your email'
+                        style={{
+                          // position:'relative',
+                          // top:'140px',
+                          // left:'17px',
+                          // display: 
+                          width:'300px',
+                          height:'40px',
+                          fontSize:'18px',
+                          textAlign:'center',
+                          border:'2px solid #F26522',
+                          color:'black',
+                          // paddingTop:'10px',
+                          borderRadius:'10px',
+                          outline:'none'
+                        }}
+                      >    
+                      </input>
+
+                      <button 
+                        className={styles.errorBtn}
+                        onClick = {() => {
+                          this.displayError(CLOSED, '');
+                        }}
+                      >
+                        OK
                       </button>
 
                     </div>
