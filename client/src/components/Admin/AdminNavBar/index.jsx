@@ -193,11 +193,11 @@ function NavBar(props) {
       {dimensions.width > 1000 ? (
         <div
           style={{
-            border: 'solid',
+            // border: 'solid',
             width: '90%',
             display: 'flex',
-            textAlign: 'center',
-            justifyContent: 'center',
+            // textAlign: 'center',
+            // justifyContent: 'center',
             alignItems: 'center',
             // display: flex;
             // /* flex-direction: column; */

@@ -24,6 +24,7 @@ import { API_URL } from '../../reducers/constants';
 
 import checkoutItems from '../../utils/CheckoutItems';
 import createGuestAccount from '../../utils/CreateGuestAccount';
+import { textSpanIsEmpty } from 'typescript';
 
 const appColors = {
   primary: '#e88330',
@@ -104,6 +105,8 @@ const useOptions = () => {
 };
 
 const StripeCheckout = (props) => {
+  console.log("StripeCheckout props: ", props);
+
   const elements = useElements();
   const stripe = useStripe();
   const options = useOptions();
@@ -330,8 +333,9 @@ const StripeCheckout = (props) => {
         />
       </div>
 
+      <div style={{display: 'flex'}}>
       <div className={styles.checkboxContainer}>
-        <input
+        {/* <input
           className={styles.checkbox}
           type="checkbox"
           checked={termsAccepted}
@@ -339,7 +343,36 @@ const StripeCheckout = (props) => {
         />
         <label className={styles.checkboxLabel}>
           I've read and accept the terms and conditions
-        </label>
+        </label> */}
+        <div
+          style={{
+            // border: 'dashed',
+            width: '50px',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center'
+          }}
+        >
+          <input
+            className={styles.checkbox}
+            type="checkbox"
+            checked={termsAccepted}
+            onChange={handleCheck}
+          />
+        </div>
+        <span
+          style={{
+            // border: 'inset',
+            // width: 'fit-content'
+            // width: '50px'
+            // flexGrow: '1'
+            display: 'flex',
+            whiteSpace: 'nowrap'
+          }}
+        >
+          I've read and accept the&nbsp;<a href='/terms-and-conditions'>Terms and Conditions</a>
+        </span>
+      </div>
       </div>
 
       <button 
@@ -352,11 +385,18 @@ const StripeCheckout = (props) => {
         Complete Payment
       </button>
 
-      <div>
+      <div
+        style={{
+          // border: 'solid',
+          textAlign: 'left',
+          marginBottom: '50px'
+        }}
+      >
         Your plan will automatically renew after 
         you've received your chosen number of deliveries. 
-        Your subscription will renew at the price of $--.-- 
-        unless you cancel before ------- 
+        Your subscription will renew at the price of 
+        ${props.paymentSummary.total + " "}
+        unless you cancel before <strong>4PM PST </strong>
         the day before your next delivery.
       </div>
     </>
