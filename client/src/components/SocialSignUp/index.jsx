@@ -203,12 +203,12 @@ class SocialSignUp extends React.Component {
   };
 
   render() {
-    // if (!this.state.mounted) {
-    //   return null;
-    // }
-    if (this.props.email === "" || this.props.refreshToken === "") {
-      this.props.history.push("sign-up");
+    if (!this.state.mounted) {
+      return null;
     }
+    // if (this.props.email === "" || this.props.refreshToken === "") {
+    //   this.props.history.push("sign-up");
+    // }
     return (
       <div className={styles.root}>
         <WebNavBar />
