@@ -1,4 +1,4 @@
-import React, {Fragment} from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import {connect} from "react-redux";
 import {
@@ -16,13 +16,6 @@ import {
 import {withRouter} from "react-router";
 import styles from "../SignUp/signup.module.css";
 import {WebNavBar} from "../NavBar";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {
-  faBars,
-  faBell,
-  faShareAlt,
-  faSearch
-} from "@fortawesome/free-solid-svg-icons";
 
 import axios from 'axios';
 

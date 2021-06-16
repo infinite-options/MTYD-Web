@@ -1,4 +1,4 @@
-import React, {useEffect, useState, Fragment} from 'react';
+import {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
 import {
   fetchProfileInformation,
@@ -15,17 +15,10 @@ import {withRouter} from 'react-router';
 import {fetchOrderHistory} from '../../reducers/actions/profileActions';
 import {WebNavBar} from '../NavBar';
 import styles from './mealplan.module.css';
-import orangeUp from "./static/orange_arrow_up.png";
-import orangeDown from "./static/orange_arrow_down.png";
-import whiteDown from "./static/white_arrow_down.png";
 import axios from 'axios';
 import { API_URL } from '../../reducers/constants';
 
 import {FootLink} from "../Home/homeButtons";
-import zIndex from '@material-ui/core/styles/zIndex';
-import { Ellipsis } from 'react-bootstrap/esm/PageItem';
-import { lightBlue } from '@material-ui/core/colors';
-import { parse } from '@fortawesome/fontawesome-svg-core';
 
 const MealPlan = props => {
 

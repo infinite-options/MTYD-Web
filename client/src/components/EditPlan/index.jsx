@@ -11,11 +11,10 @@ import {
 
 import axios from "axios";
 import {API_URL} from "../../reducers/constants";
-import {Link} from "react-router-dom";
 import {withRouter} from "react-router";
 import styles from "./editPlan.module.css";
-import {WebNavBar, BottomNavBar} from "../NavBar";
-import {HomeLink, FootLink, AmbassadorLink, AddressLink} from "../Home/homeButtons";
+import {WebNavBar} from "../NavBar";
+import {FootLink} from "../Home/homeButtons";
 
 import fetchDiscounts from '../../utils/FetchDiscounts';
 import fetchAddressCoordinates from '../../utils/FetchAddressCoordinates';

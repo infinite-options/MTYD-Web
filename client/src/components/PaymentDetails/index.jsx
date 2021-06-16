@@ -458,6 +458,7 @@ class PaymentDetails extends React.Component {
       instructions: this.state.instructions
     });
 
+    /*
     console.log("(3) Saving delivery details");
 
     fetchAddressCoordinates(
@@ -535,9 +536,8 @@ class PaymentDetails extends React.Component {
             console.log(err);
           });
       }
-    );
+    );*/
 
-    //console.log("delivery props: " + JSON.stringify(this.props));
   }
     
   savePaymentDetails() {
@@ -757,7 +757,8 @@ class PaymentDetails extends React.Component {
     console.log("(validateAddress) before FAC");
 
     this.setState(prevState => ({
-      fetchingFees: true
+      fetchingFees: true,
+      showPaymentInfo: false
     }), () => {
 
       fetchAddressCoordinates(
@@ -801,6 +802,7 @@ class PaymentDetails extends React.Component {
                 }), () => {
                   this.setTotal();
                   console.log("(VA) proceeding to payment...");
+                  this.proceedToPayment();
                 });
 
               } else {
@@ -844,17 +846,16 @@ class PaymentDetails extends React.Component {
     console.log("(validateAddress) after FAC");
   }
 
-  // proceedToPayment() {
-  //   let validAddress = this.saveDeliveryDetails();
-
-  //   if(validAddress === false){
-  //     console.log("invalid address; do not proceed to payment");
-  //     return;
-  //   }
   proceedToPayment() {
+    console.log("in proceedToPayment...");
 
-    console.log("valid address; proceeding to payment...");
+    // Save delivery details (address, contact info, etc.)
+    this.saveDeliveryDetails();
 
+    let remoteDataFetched = 0;
+
+    // Show payment info
+    // If guest, create guest account
     if(this.state.customerUid === "GUEST"){
       console.log("Before createGuestAccount");
       createGuestAccount(
@@ -894,6 +895,14 @@ class PaymentDetails extends React.Component {
           } else {
             this.displayError(EMAIL_ERROR, response.message);
           }
+
+          remoteDataFetched++;
+          if(remoteDataFetched === 2){
+            this.setState({
+              fetchingFees: false
+            });
+          }
+
         }
       );
 
@@ -901,8 +910,17 @@ class PaymentDetails extends React.Component {
       this.setState({
         showPaymentInfo: true
       });
+
+      remoteDataFetched++;
+      if(remoteDataFetched === 2){
+        this.setState({
+          fetchingFees: false
+        });
+      }
+
     }
 
+    // Fetch either test or live Stripe key
     if(this.state.instructions === 'M4METEST'){
 
       // Fetch public key
@@ -916,6 +934,14 @@ class PaymentDetails extends React.Component {
           this.setState({
             stripePromise: stripePromise
           });
+
+          remoteDataFetched++;
+          if(remoteDataFetched === 2){
+            this.setState({
+              fetchingFees: false
+            });
+          }
+
         })
         .catch(err => {
           console.log(err);
@@ -937,6 +963,14 @@ class PaymentDetails extends React.Component {
           this.setState({
             stripePromise: stripePromise
           });
+
+          remoteDataFetched++;
+          if(remoteDataFetched === 2){
+            this.setState({
+              fetchingFees: false
+            });
+          }
+
         })
         .catch(err => {
           console.log(err);
@@ -946,6 +980,8 @@ class PaymentDetails extends React.Component {
         });
 
     }
+
+
   }
 
   render() {
