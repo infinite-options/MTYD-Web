@@ -71,7 +71,7 @@ class SocialSignUp extends React.Component {
       });
     } else {
       this.setState({
-        mounted: true
+        mounted: true // always true?
       });
     }
 
@@ -203,13 +203,13 @@ class SocialSignUp extends React.Component {
   };
 
   render() {
-    // if (!this.state.mounted) {
-    //   return null;
-    // }
-    console.log("email: "+ this.props.email+", refresh token: " + this.props.refreshToken)
-    if (this.props.email === "" || this.props.refreshToken === "") {
-      this.props.history.push("sign-up");
+    if (!this.state.mounted) {
+      return null;
     }
+    // console.log("email: "+ this.props.email+", refresh token: " + this.props.refreshToken)
+    // if (this.props.email === "" || this.props.refreshToken === "") {
+    //   this.props.history.push("sign-up");
+    //}
     return (
       <div className={styles.root}>
         <WebNavBar />

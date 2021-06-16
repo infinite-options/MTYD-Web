@@ -94,27 +94,6 @@ class SocialLogin extends Component {
         }
       };
 
-      /*responseApple = response => {
-        console.log(response);
-        if (response.email) {
-          console.log("Apple Login successful");
-          let email = response.email;
-          let accessToken = response.accessToken;
-          let refreshToken = response.id;
-          this.props.socialLoginAttempt(
-            email,
-            accessToken,
-            refreshToken,
-            "APPLE",
-            this.successLogin,
-            this.socialSignUp
-          );
-        } else {
-          // Apple Login unsuccessful
-          console.log("Apple Login failed");
-        }
-      }*/
-
       showError = err => {
         console.log("this is error in show err: ", err);
         return (
