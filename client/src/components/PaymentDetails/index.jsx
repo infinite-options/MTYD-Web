@@ -93,6 +93,7 @@ class PaymentDetails extends React.Component {
       loadingMap: true,
       recalculatingPrice: false,
       stripePromise: null,
+      stripeKey: null,
       createGuestErrorCode: -1,
       termsAccepted: true,
       windowHeight: undefined,
@@ -606,6 +607,16 @@ class PaymentDetails extends React.Component {
     console.log("\npop up error toggled to " + type + "\n\n");
   }
 
+  refreshStripe() {
+    console.log("refreshing stripe...");
+    let stripePromise = loadStripe(this.state.stripeKey);
+    console.log("(refreshStripe) stripe promise: ", stripePromise);
+    this.setState({
+      stripePromise: stripePromise,
+      fetchingFees: false
+    });
+  }
+
   setPaymentType(type) {
     this.setState({
       paymentType: type
@@ -834,6 +845,7 @@ class PaymentDetails extends React.Component {
           let stripePromise = loadStripe(result.data.publicKey);;
           console.log("(m4metest) stripe promise: ", stripePromise);
           this.setState({
+            stripeKey: result.data.publicKey,
             stripePromise: stripePromise
           });
 
@@ -863,6 +875,7 @@ class PaymentDetails extends React.Component {
           let stripePromise = loadStripe(result.data.publicKey);
           console.log("(live) stripe promise: ", stripePromise);
           this.setState({
+            stripeKey: result.data.publicKey,
             stripePromise: stripePromise
           });
 
@@ -968,10 +981,7 @@ class PaymentDetails extends React.Component {
 
               </>
             );
-          } else if (
-            this.state.errorType === AMBASSADOR_ERROR || 
-            this.state.errorType === CHECKOUT_ERROR
-          ) {
+          } else if (this.state.errorType === AMBASSADOR_ERROR) {
             return (
               <>
                 <div className = {this.state.errorModal}>
@@ -991,6 +1001,41 @@ class PaymentDetails extends React.Component {
                         className={styles.errorBtn}
                         onClick = {() => {
                           this.displayError(CLOSED, '');
+                        }}
+                      >
+                        OK
+                      </button>
+
+                    </div>
+                  </div>
+                </div>
+
+              </>
+            );
+          } else if (this.state.errorType === CHECKOUT_ERROR) {
+            return (
+              <>
+                <div className = {this.state.errorModal}>
+                  <div className  = {styles.errorModalContainer}>
+
+                    <div className={styles.errorContainer}>    
+
+                      <h6 style = {{margin: '5px', fontWeight: 'bold', fontSize: '25px'}}>Hmm..</h6>
+
+                      <div style = {{display: 'block', width: '300px', margin: '20px auto 0px'}}>
+                        {this.state.errorMessage}
+                      </div> 
+
+                      <br />
+
+                      <button 
+                        className={styles.errorBtn}
+                        onClick = {() => {
+                          // this.refreshStripe();
+                          this.displayError(CLOSED, '');
+                          // this.setState({
+                          //   fetchingFees: false
+                          // });
                         }}
                       >
                         OK
@@ -1764,6 +1809,7 @@ class PaymentDetails extends React.Component {
                             customerUid={this.state.customerUid}
                             phone={this.state.phone}
                             fetchingFees={this.state.fetchingFees}
+                            displayError={this.displayError}
                           />
                         </div>
                     {/* </div> */}

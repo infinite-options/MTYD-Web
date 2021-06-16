@@ -1149,7 +1149,7 @@ class EditPlan extends React.Component {
         purchase_uid: this.state.updatedPlan.raw_data.purchase_uid
       })
       .then((response) => {
-        console.log("cancel_purchase response: " + JSON.stringify(response));
+        console.log("cancel_purchase response: ", response);
         console.log("cancel_purchase customerUid: " + this.state.customerUid);
 
         // axios.get(API_URL + 'next_meal_info/' + this.state.customerUid)

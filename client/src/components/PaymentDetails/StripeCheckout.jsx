@@ -19,6 +19,8 @@ import { API_URL } from '../../reducers/constants';
 
 import checkoutItems from '../../utils/CheckoutItems';
 
+const CHECKOUT_ERROR = 1;
+
 const appColors = {
   primary: '#e88330',
   secondary: '#397d87',
@@ -181,102 +183,132 @@ const StripeCheckout = (props) => {
 
         console.log("createPaymentMethod res: ", res);
 
+        if(res.hasOwnProperty('error')){
+          console.log("createPaymentMethod error: ", res.error);
 
+          props.displayError(
+            CHECKOUT_ERROR, ('CHECKOUT ERROR: ' + res.error.message)
+          );
 
-        console.log("calling confirmedCardPayment...");
+          changeLoadingState(false);
 
-        try{
-          
-          const confirmedCardPayment = stripe.confirmCardPayment(clientSecret, {
-            payment_method: res.paymentMethod.id, setup_future_usage: 'off_session'
-          })
-          .then(function(result) {
-            console.log("confirmedCardPayment result: ", result);
+        } else {
 
-            const items = [{
-              qty: props.selectedPlan.num_deliveries.toString(),
-              name: props.selectedPlan.item_name,
-              price: props.selectedPlan.item_price.toString(),
-              item_uid: props.selectedPlan.item_uid,
-              itm_business_uid: props.selectedPlan.itm_business_uid
-            }];
+          console.log("calling confirmedCardPayment...");
 
-            console.log("customerUid before checkout: ", props.customerUid);
+          try{
+            
+            const confirmedCardPayment = stripe.confirmCardPayment(clientSecret, {
+              // payment_method: res.paymentMethod.id, setup_future_usage: 'off_session'
+              payment_method: 'testid', setup_future_usage: 'off_session'
+            })
+            .then(function(result) {
+              console.log("confirmedCardPayment result: ", result);
 
-            // if(props.customerUid !== 'GUEST') {
-              console.log("STRIPE CHECKOUT (1) -- not a guest");
-              console.log("STRIPE CHECKOUT (1) -- amount_due: " + props.paymentSummary.total);
+              if(res.hasOwnProperty('error')){
+                console.log("confirmedCardPayment error: ", res.error);
       
-              checkoutItems(
-                {
-                  customer_uid: props.customerUid,
-                  business_uid: 'WEB',
-                  items,
-                  salt: "",
-                  order_instructions: 'fast',
-                  delivery_instructions: props.deliveryInstructions,
-                  delivery_first_name: props.firstName,
-                  delivery_last_name: props.lastName,
-                  delivery_phone: props.phone,
-                  delivery_email: props.email,
-                  delivery_address: props.address.street,
-                  delivery_unit: props.unit,
-                  delivery_city: props.city,
-                  delivery_state: props.state,
-                  delivery_zip: props.zip,
-                  delivery_latitude: props.latitude,
-                  delivery_longitude: props.longitude,
-                  purchase_notes: 'purchase_notes',
-                  amount_due: props.paymentSummary.total,
-                  amount_discount: props.paymentSummary.discountAmount,
-                  amount_paid: '0.00',
-                  cc_num: 'NULL',
-                  cc_exp_year: 'NULL',
-                  cc_exp_month: 'NULL',
-                  cc_cvv: 'NULL',
-                  cc_zip: 'NULL',
-                  charge_id: result.paymentIntent.id,
-                  payment_type: 'STRIPE',
-                  service_fee: props.paymentSummary.serviceFee,
-                  delivery_fee: props.paymentSummary.deliveryFee,
-                  tip: props.paymentSummary.tip,
-                  tax: props.paymentSummary.taxAmount,
-                  subtotal: props.paymentSummary.mealSubPrice,
-                  amb: props.paymentSummary.ambassadorDiscount
-                },
-                (res) => {
+                props.displayError(
+                  CHECKOUT_ERROR, ('CHECKOUT ERROR: ' + res.error.message)
+                );
+      
+                changeLoadingState(false);
 
-                  console.log("(SC) checkout items response: ", res);
+              } else {
 
-                  history.push({
-                    pathname: '/congrats',
+                const items = [{
+                  qty: props.selectedPlan.num_deliveries.toString(),
+                  name: props.selectedPlan.item_name,
+                  price: props.selectedPlan.item_price.toString(),
+                  item_uid: props.selectedPlan.item_uid,
+                  itm_business_uid: props.selectedPlan.itm_business_uid
+                }];
+
+                console.log("customerUid before checkout: ", props.customerUid);
+
+                // if(props.customerUid !== 'GUEST') {
+                console.log("STRIPE CHECKOUT (1) -- not a guest");
+                console.log("STRIPE CHECKOUT (1) -- amount_due: " + props.paymentSummary.total);
+        
+                checkoutItems(
+                  {
+                    customer_uid: props.customerUid,
+                    business_uid: 'WEB',
+                    items,
+                    salt: "",
+                    order_instructions: 'fast',
+                    delivery_instructions: props.deliveryInstructions,
+                    delivery_first_name: props.firstName,
+                    delivery_last_name: props.lastName,
+                    delivery_phone: props.phone,
+                    delivery_email: props.email,
                     delivery_address: props.address.street,
+                    delivery_unit: props.unit,
                     delivery_city: props.city,
                     delivery_state: props.state,
                     delivery_zip: props.zip,
-                    delivery_date: res.data['start delievery date']
-                  });
+                    delivery_latitude: props.latitude,
+                    delivery_longitude: props.longitude,
+                    purchase_notes: 'purchase_notes',
+                    amount_due: props.paymentSummary.total,
+                    amount_discount: props.paymentSummary.discountAmount,
+                    amount_paid: '0.00',
+                    cc_num: 'NULL',
+                    cc_exp_year: 'NULL',
+                    cc_exp_month: 'NULL',
+                    cc_cvv: 'NULL',
+                    cc_zip: 'NULL',
+                    charge_id: result.paymentIntent.id,
+                    payment_type: 'STRIPE',
+                    service_fee: props.paymentSummary.serviceFee,
+                    delivery_fee: props.paymentSummary.deliveryFee,
+                    tip: props.paymentSummary.tip,
+                    tax: props.paymentSummary.taxAmount,
+                    subtotal: props.paymentSummary.mealSubPrice,
+                    amb: props.paymentSummary.ambassadorDiscount
+                  },
+                  (res) => {
 
-                }
+                    console.log("(SC) checkout items response: ", res);
+
+                    history.push({
+                      pathname: '/congrats',
+                      delivery_address: props.address.street,
+                      delivery_city: props.city,
+                      delivery_state: props.state,
+                      delivery_zip: props.zip,
+                      delivery_date: res.data['start delievery date']
+                    });
+
+                  }
+                );
+
+              }
+
+            })
+            .catch(err => {
+              console.log("confirmedCardPayment error: ", err);
+
+              props.displayError(
+                CHECKOUT_ERROR, ('CHECKOUT ERROR: ' + err)
               );
 
-          })
-          .catch(err => {
-            console.log(err);
+              if (err.response) {
+                console.log("error: " + JSON.stringify(err.response));
+              }
+              changeLoadingState(false);
+            });
+
+          } catch (e) {
+            console.log("error trying to pay: ", e);
 
             props.displayError(
-              1, 'Checkout Error'
+              CHECKOUT_ERROR, ('CHECKOUT ERROR: ' + e)
             );
 
-            if (err.response) {
-              console.log("error: " + JSON.stringify(err.response));
-            }
             changeLoadingState(false);
-          });
+          }
 
-        } catch (e) {
-          console.log("error trying to pay: ", e);
-          changeLoadingState(false);
         }
 
       });
