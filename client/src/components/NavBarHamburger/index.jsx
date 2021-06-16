@@ -1,8 +1,6 @@
-import React, { Component } from 'react'
+import { Component } from 'react'
 import Menu from './menu'
 import hamburger from './hamburger.png'
-import { StylesProvider } from '@material-ui/styles';
-// import styles from "../NavBar/navBar.module.css";
 
 export class NavMenu extends Component {
 

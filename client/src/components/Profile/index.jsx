@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import {connect} from "react-redux";
 import {withRouter} from "react-router";
 import {WebNavBar} from "../NavBar";
-import {API_URL} from "../../reducers/constants";
 import Menu from "../Menu";
 import {
   resetProfile,
@@ -16,18 +15,7 @@ import {
 import {resetSubscription} from "../../reducers/actions/subscriptionActions";
 import {resetLogin} from "../../reducers/actions/loginActions";
 
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {
-  faBars,
-  faBell,
-  faPen,
-  faShareAlt,
-  faSearch,
-  faSignOutAlt
-} from "@fortawesome/free-solid-svg-icons";
-import axios from 'axios'
 import Alert from '../Alert'
-import {setAlert} from "../../reducers/actions/alertActions"
 import styles from "./profile.module.css";
 import ChangePassword from "../ChangePassword"
 

@@ -1,13 +1,8 @@
-import React, { useMemo, useContext, useState, useEffect, createContext } from 'react';
+import React, { useMemo, useContext, useState, useEffect } from 'react';
 import { useElements, useStripe, CardElement } from '@stripe/react-stripe-js';
 import axios from 'axios';
-import Stripe from 'stripe';
-//Stripe = require("https://js.stripe.com/v3/");
-import { loadStripe } from "@stripe/stripe-js";
 import { useHistory } from "react-router";
 
-import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
 import withStyles from '@material-ui/styles/withStyles';
 import TextField from '@material-ui/core/TextField';
 
@@ -23,8 +18,6 @@ import {
 import { API_URL } from '../../reducers/constants';
 
 import checkoutItems from '../../utils/CheckoutItems';
-import createGuestAccount from '../../utils/CreateGuestAccount';
-import { textSpanIsEmpty } from 'typescript';
 
 const appColors = {
   primary: '#e88330',
@@ -186,7 +179,9 @@ const StripeCheckout = (props) => {
       })
       .then(function(res) {
 
-        console.log("createPaymentMethod res: " + JSON.stringify(res));
+        console.log("createPaymentMethod res: ", res);
+
+
 
         console.log("calling confirmedCardPayment...");
 
@@ -196,7 +191,7 @@ const StripeCheckout = (props) => {
             payment_method: res.paymentMethod.id, setup_future_usage: 'off_session'
           })
           .then(function(result) {
-            console.log("confirmedCardPayment result: " + JSON.stringify(result));
+            console.log("confirmedCardPayment result: ", result);
 
             const items = [{
               qty: props.selectedPlan.num_deliveries.toString(),
@@ -246,46 +241,33 @@ const StripeCheckout = (props) => {
                   delivery_fee: props.paymentSummary.deliveryFee,
                   tip: props.paymentSummary.tip,
                   tax: props.paymentSummary.taxAmount,
-                  //subtotal: props.paymentSummary.subtotal,
                   subtotal: props.paymentSummary.mealSubPrice,
                   amb: props.paymentSummary.ambassadorDiscount
                 },
                 (res) => {
-                  // axios
-                  //   .post(API_URL + 'add_surprise/' + res.data.purchase_id)
-                  //   .then((res2) => {
-                  //     console.log("add_suprise res: ", res2);
-                  //     changeLoadingState(false);
-                  //   })
-                  //   .catch(err => {
-                  //     console.log(err);
-                  //     if (err.response) {
-                  //       console.log("add_suprise error: " + JSON.stringify(err.response));
-                  //     }
-                  //     changeLoadingState(false);
-                  //   });
 
-                  //history.push("/congrats")
+                  console.log("(SC) checkout items response: ", res);
+
                   history.push({
                     pathname: '/congrats',
                     delivery_address: props.address.street,
                     delivery_city: props.city,
                     delivery_state: props.state,
-                    delivery_zip: props.zip
+                    delivery_zip: props.zip,
+                    delivery_date: res.data['start delievery date']
                   });
 
-                  //https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/add_surprise/400-000002
                 }
               );
-
-            // } else {
-            //   console.log("STRIPE CHECKOUT (3) -- error; wrong data");
-            //   changeLoadingState(false);
-            // }
 
           })
           .catch(err => {
             console.log(err);
+
+            props.displayError(
+              1, 'Checkout Error'
+            );
+
             if (err.response) {
               console.log("error: " + JSON.stringify(err.response));
             }

@@ -370,24 +370,6 @@ class PaymentDetails extends React.Component {
 
     }
       
-    // this.setState({
-    //   street: this.props.address.street,
-    //   city: this.props.address.city,
-    //   state: this.props.address.state,
-    //   addressZip: this.props.address.zip,
-    //   unit: this.props.address.unit,
-    //   instructions: this.props.instructions,
-    //   firstName: this.props.addressInfo.firstName,
-    //   lastName: this.props.addressInfo.lastName,
-    //   email: this.props.email,
-    //   phone: this.props.addressInfo.phoneNumber,
-    //   name: this.props.creditCard.name,
-    //   number: this.props.creditCard.number,
-    //   cvv: this.props.creditCard.cvv,
-    //   month: this.props.creditCard.month,
-    //   year: this.props.creditCard.year,
-    //   cardZip: this.props.creditCard.zip
-    // });
   }
     
   changeTip(newTip) {
@@ -457,86 +439,6 @@ class PaymentDetails extends React.Component {
       unit: this.state.unit,
       instructions: this.state.instructions
     });
-
-    /*
-    console.log("(3) Saving delivery details");
-
-    fetchAddressCoordinates(
-      document.getElementById("pac-input").value,
-      document.getElementById("locality").value,
-      document.getElementById("state").value,
-      document.getElementById("postcode").value,
-      (coords) => {
-
-        console.log("Fetched coordinates: " + JSON.stringify(coords));
-        this.setState({
-          latitude: coords.latitude,
-          longitude: coords.longitude,
-          loadingMap: false
-        });
-
-        console.log("Calling categorical options...");
-        axios
-          .get(`${API_URL}categoricalOptions/${coords.longitude},${coords.latitude}`)
-          .then((response) => {
-            console.log("Categorical Options response: ", response);
-
-            if(response.data.result.length !== 0) {
-              console.log("valid zone!");
-
-              console.log("cat options for: ", document.getElementById("pac-input").value);
-              this.setState(prevState => ({
-                recalculatingPrice: true,
-                paymentSummary: {
-                  ...prevState.paymentSummary,
-                  taxRate: response.data.result[1].tax_rate,
-                  serviceFee: response.data.result[1].service_fee.toFixed(2),
-                  deliveryFee: response.data.result[1].delivery_fee.toFixed(2),
-                  taxAmount: (
-                    this.props.selectedPlan.item_price *
-                    this.props.selectedPlan.num_deliveries *
-                    (1-(this.props.selectedPlan.delivery_discount*0.01)) *
-                    response.data.result[1].tax_rate * 0.01
-                  ).toFixed(2)
-                },
-                fetchingFees: false
-              }), () => {
-                this.setTotal();
-                console.log("(1) catOptions taxAmount: " + this.state.paymentSummary.taxAmount);
-                console.log("(1) catOptions new payment summary: ", this.state.paymentSummary);
-              });
-              //this.setTotal();
-              //console.log("catOptions taxAmount: " + this.state.paymentSummary.taxAmount);
-              //console.log("catOptions new payment summary: ", this.state.paymentSummary);
-            } else {
-              console.log("invalid zone!");
-
-              this.setState(prevState => ({
-                recalculatingPrice: true,
-                paymentSummary: {
-                  ...prevState.paymentSummary,
-                  taxRate: 0,
-                  serviceFee: "0.00",
-                  deliveryFee: "0.00",
-                  taxAmount: "0.00"
-                },
-                // fetchingFees: false
-              }), () => {
-                this.setTotal();
-                console.log("(2) catOptions taxAmount: " + this.state.paymentSummary.taxAmount);
-                console.log("(2) catOptions new payment summary: ", this.state.paymentSummary);
-              });
-              //this.setTotal();
-            }
-          })
-          .catch((err) => {
-            if (err.response) {
-              console.log(err.response);
-            }
-            console.log(err);
-          });
-      }
-    );*/
 
   }
     
@@ -1066,7 +968,10 @@ class PaymentDetails extends React.Component {
 
               </>
             );
-          } else if (this.state.errorType === AMBASSADOR_ERROR) {
+          } else if (
+            this.state.errorType === AMBASSADOR_ERROR || 
+            this.state.errorType === CHECKOUT_ERROR
+          ) {
             return (
               <>
                 <div className = {this.state.errorModal}>
@@ -1789,6 +1694,7 @@ class PaymentDetails extends React.Component {
                               customerUid={this.state.customerUid}
                               phone={this.state.phone}
                               fetchingFees={this.state.fetchingFees}
+                              displayError={this.displayError}
                             />
                           </div>
                       </div>

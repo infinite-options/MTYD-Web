@@ -1,12 +1,5 @@
-import React from "react";
 import {Provider} from "react-redux";
 import store from "./reducers/store";
-// import {
-//   BrowserRouter as Router,
-//   Route,
-//   // Route, Redirect,
-//   Switch
-// } from "react-router-dom";
 
 import {
   Router,
@@ -15,7 +8,6 @@ import {
 } from "react-router-dom";
 import AppliedRoute from "./components/AppliedRoute";
 
-// import Landing from "./components/Landing";
 import SignUp from "./components/SignUp";
 import SocialSignUp from "./components/SocialSignUp";
 import ChoosePlan from "./components/ChoosePlan";
@@ -32,10 +24,7 @@ import Terms from "./components/Terms";
 import UpdatePlan from "./components/UpdatePlan";
 import ForgotPassword from "./components/RecoverPassword"
 import "./App.css";
-// import AuthApi from "./components/AuthApi";
-// import Cookies from "js-cookie";
 
-// import createBrowserHistory from "history/createBrowserHistory";
 import { createBrowserHistory } from "history";
 import Login from "./components/Login"
 

@@ -1,6 +1,4 @@
 import axios from 'axios';
-import fetchAddressCoordinates from './FetchAddressCoordinates';
-import hashPassword from './HashPassword';
 
 //TODO: Use the point field
 export default async function checkoutItems(data, _callback) {
