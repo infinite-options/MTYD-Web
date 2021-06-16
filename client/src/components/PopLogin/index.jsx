@@ -22,12 +22,28 @@ export class PopLogin extends Component {
 
   constructor(){
     super();
+    // this.state = {
+    //   showErrorModal: false,
+    //   errorModal: null,
+    //   errorMessage: '',
+    //   errorLink: '',
+    //   errorLinkText: '',
+    //   errorHeader: ''
+    // }
   }
 
   errVal=''
   attemptLogin=false
   attemptShow=true
-  attemptReload=false  
+  attemptReload=false
+  showErrorModal = false
+  errorModal = null
+  errorMessage = ''
+  errorLink = ''
+  errorLinkText = ''
+  errorHeader = ''
+  loginClicked = false
+
 
   handleClick = () => {
     this.props.toggle();
@@ -51,6 +67,7 @@ export class PopLogin extends Component {
     //this.errVal=''
     this.attemptLogin=true
     this.getError()
+    //this.attemptShow=true
     this.showError()
     this.attemptReload=false
     //this.handleReload()
@@ -111,7 +128,8 @@ export class PopLogin extends Component {
             className="loginSectionItem"
             onChange={e => {
               this.props.changeEmail(e.target.value);
-              console.log(e.target.value);
+              this.loginClicked = false;
+              //console.log(e.target.value);
             }}
             aria-label="Enter your username"
             title="Enter your username"
@@ -128,6 +146,7 @@ export class PopLogin extends Component {
             value={this.props.password}
             onChange={e => {
               this.props.changePassword(e.target.value);
+              this.loginClicked = false;
             }}
             aria-label="Enter your password"
             title="Enter your password"
@@ -154,17 +173,11 @@ export class PopLogin extends Component {
           <button
             className='signInBtn'
             onClick={() => {
-              /*this.props.loginAttempt(
-                this.props.email,
-                this.props.password,
-                this.successLogin
-              );
-              this.errVal=getErrMessage()
-              this.forceUpdate();*/
               this.attemptLogin = true
               this.getError()
               this.forceUpdate()
               console.log("Login clicked, attemptLogin = " + this.attemptLogin)
+              this.loginClicked = true
             }}
             aria-label="Click here to login"
             title="Click here to login"
@@ -182,9 +195,74 @@ export class PopLogin extends Component {
           </button>
           {/*this.getError()*/}
           {this.showError()}
+          
+
+          {(() => {
+            if (this.showErrorModal === true && this.loginClicked==true) {
+              return (
+                <>
+                  <div className = {this.errorModal}>
+                    <div className  = {styles.errorModalContainer}>
+
+                      <div className={styles.errorContainer}>
+                        <div className={styles.errorHeader}>
+                          {this.errorHeader}
+                        </div>
+
+                        <div className={styles.errorText}>
+                          {this.errorMessage}
+                        </div>
+
+                        <br />
+
+                        <button 
+                          className={styles.chargeBtn}
+                          onClick = {() => {
+                            if(this.errorLink === 'back'){
+                              this.displayErrorModal();
+                            } else {
+                              this.props.history.push(this.errorLink);
+                            }
+                          }}
+                        >
+                          {this.errorLinkText}
+                        </button>
+                      </div> 
+                    </div>
+                  </div>
+                </>
+              );
+            }
+          })()}
+
           {this.handleReload()}
+
       </div>
     )
+  }
+
+  displayErrorModal = (header, message, linkText, link) => {
+    if(this.showErrorModal === false) {
+      
+      this.errorModal= styles.errorModalPopUpShow
+      this.showErrorModal= true
+      this.errorMessage= message
+      this.errorLinkText= linkText
+      this.errorLink= link
+      this.errorHeader= header
+      
+      console.log("\nerror pop up toggled to true");
+    }else{
+      
+      this.errorModal= styles.errorModalPopUpHide
+      this.showErrorModal= false
+      this.errorMessage= message
+      this.errorLinkText= linkText
+      this.errorLink= link
+      this.errorHeader= header
+      
+      console.log("\nerror pop up toggled to false");
+    }
   }
 
   getError = () => {
@@ -195,27 +273,20 @@ export class PopLogin extends Component {
         this.props.password,
         this.successLogin
       );
-      //this.errVal=getErrMessage()
       this.attemptLogin=false
       this.attemptShow=true
+      //this.errVal=getErrMessage()
+      
+      console.log("error modal :" + this.errorMessage)
     }
     return null;
   }
 
   showError = () => {
     console.log("attemptShow = " + this.attemptShow)
-    /*if (this.attemptLogin==true){
-      this.props.loginAttempt(
-        this.props.email,
-        this.props.password,
-        this.successLogin
-      );
-      this.errVal=getErrMessage()
-      this.attemptLogin=false
-      this.attemptReload=true
-    }*/
     if (this.attemptShow==true){
       this.errVal=getErrMessage()
+      this.displayErrorModal("Hmm...", this.errVal, "Okay", "home")
       console.log("Set error text to: "+ this.errVal)
       this.attemptShow=false
       this.attemptReload=true
@@ -224,14 +295,20 @@ export class PopLogin extends Component {
     if (this.errVal == '') {
       return null;
     }
-    return <Typography style={{ color: 'red', textAlign:'center' }}>{this.errVal}</Typography>;
+    if (this.loginClicked == true){
+      return <Typography style={{ color: 'red', textAlign:'center' }}>{this.errVal}</Typography>;
+    }
+
+    return null
+    // return {
+
+    // }
   }
 
   handleReload = () => {
     console.log("attemptReload = " + this.attemptReload)
     if (this.attemptReload == true){
       this.forceUpdate()
-      //this.forceUpdate()
     }
     this.attemptReload=false
     return null;

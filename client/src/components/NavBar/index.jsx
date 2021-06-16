@@ -352,6 +352,9 @@ class NavBar extends React.Component {
                   <div
                     className={styles.logoutBtn}
                     onClick={this.logOut}
+                    tabIndex="0"
+                    aria-label="Click here to logout"
+                    title="Click here to logout"
                   >
                     Logout
                   </div>
