@@ -199,8 +199,8 @@ const StripeCheckout = (props) => {
           try{
             
             const confirmedCardPayment = stripe.confirmCardPayment(clientSecret, {
-              // payment_method: res.paymentMethod.id, setup_future_usage: 'off_session'
-              payment_method: 'testid', setup_future_usage: 'off_session'
+              payment_method: res.paymentMethod.id, setup_future_usage: 'off_session'
+              // payment_method: 'testid', setup_future_usage: 'off_session'
             })
             .then(function(result) {
               console.log("confirmedCardPayment result: ", result);
@@ -267,18 +267,25 @@ const StripeCheckout = (props) => {
                     subtotal: props.paymentSummary.mealSubPrice,
                     amb: props.paymentSummary.ambassadorDiscount
                   },
-                  (res) => {
+                  (res, checkout_success) => {
 
                     console.log("(SC) checkout items response: ", res);
 
-                    history.push({
-                      pathname: '/congrats',
-                      delivery_address: props.address.street,
-                      delivery_city: props.city,
-                      delivery_state: props.state,
-                      delivery_zip: props.zip,
-                      delivery_date: res.data['start delievery date']
-                    });
+                    if(!checkout_success) {
+                      props.displayError(
+                        CHECKOUT_ERROR, ('CHECKOUT ERROR: ' + res)
+                      );
+                      changeLoadingState(false);
+                    } else {
+                      history.push({
+                        pathname: '/congrats',
+                        delivery_address: props.address.street,
+                        delivery_city: props.city,
+                        delivery_state: props.state,
+                        delivery_zip: props.zip,
+                        delivery_date: res.data['start delievery date']
+                      });
+                    }
 
                   }
                 );
@@ -311,6 +318,15 @@ const StripeCheckout = (props) => {
 
         }
 
+      })
+      .catch(err => {
+        console.log("error trying to pay: ", err);
+
+        props.displayError(
+          CHECKOUT_ERROR, ('CHECKOUT ERROR: ' + err)
+        );
+
+        changeLoadingState(false);
       });
 
     })
@@ -318,6 +334,11 @@ const StripeCheckout = (props) => {
       console.log(err);
       if (err.response) {
         console.log("error: " + JSON.stringify(err.response));
+
+        props.displayError(
+          CHECKOUT_ERROR, ('CHECKOUT ERROR: ' + err)
+        );
+
         changeLoadingState(false);
       }
     });
