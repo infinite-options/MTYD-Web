@@ -316,7 +316,9 @@ export class PopLogin extends Component {
                         <br />
                         {(() => {
                           console.log("sometext"+this.errorLink)
+                          console.log("errorLink: " + this.errorLink)
                           if (this.errorLink === 'google') {
+                            console.log("in google check")
                             return (
                               <GoogleLogin
                                 clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
@@ -362,6 +364,7 @@ export class PopLogin extends Component {
                             )
                           }
                           if (this.errorLink === 'facebook') {
+                            console.log("in fb check")
                             return (
                               <div
                                 style={{
@@ -391,6 +394,7 @@ export class PopLogin extends Component {
                             )
                           }
                           if (this.errorLink === 'apple') {
+                            console.log("in apple check")
                             return (
                               <div
                             >
@@ -421,7 +425,9 @@ export class PopLogin extends Component {
                               </button>
                             </div>
                             )
-                          } else {
+                          } 
+                          if (this.errorLink === '' || this.errorLink=== 'back') {
+                            console.log("in else check")
                             return (
                               <button 
                               className={styles.chargeBtn}
@@ -517,12 +523,6 @@ export class PopLogin extends Component {
     let errorLink = ''
     if (this.attemptShow==true){
       this.errVal=getErrMessage()
-      // if (this.errVal == "Email doesn't exists") {
-      //   errorHead = 'Hmm...'
-      //   errorString = "Something doesn't match, please make sure you've entered your email address and password correctly."
-      //   errorButton = 'Okay'
-      //   errorLink = 'back'
-      // }
       if (this.errVal == "Social Signup exists. Use 'GOOGLE' ") {
         errorHead = 'Social sign up exists'
         errorString = "We have found this account with a different social login. Please click below to continue."
@@ -540,7 +540,8 @@ export class PopLogin extends Component {
         errorString = "We have found this account with a different social login. Please click below to continue."
         errorButton = 'Apple button placeholder'
         errorLink = 'apple'
-      } else {
+      } 
+      if (this.errVal == "" || this.errVal == "Email doesn't exists") {
         errorHead = 'Hmm...'
         errorString = "Something doesn't match, please make sure you've entered your email address and password correctly."
         errorButton = 'Okay'
