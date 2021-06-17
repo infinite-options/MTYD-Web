@@ -162,7 +162,7 @@ class NavBar extends React.Component {
       store.subscribe(() => {
         let userInfo = store.getState().login.userInfo;
         if (userInfo && userInfo.customerId !== "") {
-          if (userInfo.firstName == '' || userInfo.lastName == ''){
+          if (userInfo.firstName == '' || userInfo.lastName == ''){ // check for each name
             this.setState({
               firstName: "Guest",
               lastName: "User"
