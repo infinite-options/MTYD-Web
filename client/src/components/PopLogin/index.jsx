@@ -7,15 +7,23 @@ import {
   changeEmail,
   changePassword,
   errMessage,
-  getErrMessage
+  getErrMessage,
+  socialLoginAttempt
 } from "../../reducers/actions/loginActions";
+
 import { Route , withRouter} from 'react-router-dom';
 import closeIcon from '../../images/closeIcon.png'
+import GoogleLogin from "react-google-login";
+import FacebookLogin from "react-facebook-login";
 
 
 import {connect} from "react-redux";
 import { Grid, Paper, Button, Typography, Box } from '@material-ui/core';
 import { text } from '@fortawesome/fontawesome-svg-core';
+
+import socialG from "../../images/socialGoogle.png"
+import socialF from "../../images/socialFb.png"
+import socialA from "../../images/socialApple.png"
 
 
 export class PopLogin extends Component {
@@ -44,6 +52,58 @@ export class PopLogin extends Component {
   errorHeader = ''
   loginClicked = false
 
+  componentDidMount() {
+    window.AppleID.auth.init({
+      clientId: process.env.REACT_APP_APPLE_CLIENT_ID,
+      scope: "email",
+      redirectURI: process.env.REACT_APP_APPLE_REDIRECT_URI
+      //redirectURI: ""
+    });
+  }
+
+  responseGoogle = response => {
+    console.log(response);
+    if (response.profileObj) {
+      // Google Login successful, try to login to MTYD
+      console.log("Google login successful");
+      let email = response.profileObj.email;
+      let accessToken = response.accessToken;
+      let refreshToken = response.googleId;
+      // console.log(email,accessToken,refreshToken)
+      this.props.socialLoginAttempt(
+        email,
+        accessToken,
+        refreshToken,
+        "GOOGLE",
+        this.successLogin,
+        this.socialSignUp
+      );
+    } else {
+      // Google Login unsuccessful
+      console.log("Google Login failed");
+    }
+  };
+
+  responseFacebook = response => {
+    console.log(response);
+    if (response.email) {
+      console.log("Facebook Login successful");
+      let email = response.email;
+      let accessToken = response.accessToken;
+      let refreshToken = response.id;
+      this.props.socialLoginAttempt(
+        email,
+        accessToken,
+        refreshToken,
+        "FACEBOOK",
+        this.successLogin,
+        this.socialSignUp
+      );
+    } else {
+      // Facebook Login unsuccessful
+      console.log("Facebook Login failed");
+    }
+  };
 
   handleClick = () => {
     this.props.toggle();
@@ -59,7 +119,7 @@ export class PopLogin extends Component {
   }
 
   successLogin = page => {
-    console.log(page)
+    //console.log(page)
     this.props.history.push(`/${page}`);
   }; 
 
@@ -70,6 +130,7 @@ export class PopLogin extends Component {
     //this.attemptShow=true
     this.showError()
     this.attemptReload=false
+    console.log(this.errorLink + ":)")
     //this.handleReload()
     return (
       <div          
@@ -176,7 +237,7 @@ export class PopLogin extends Component {
               this.attemptLogin = true
               this.getError()
               this.forceUpdate()
-              console.log("Login clicked, attemptLogin = " + this.attemptLogin)
+              //console.log("Login clicked, attemptLogin = " + this.attemptLogin)
               this.loginClicked = true
             }}
             aria-label="Click here to login"
@@ -198,45 +259,215 @@ export class PopLogin extends Component {
           
 
           {(() => {
+            let defaultHeight = '350px'
+            if (this.errorHeader != 'Hmm...') {
+              let defaultHeight = '530px'
+            }
             if (this.showErrorModal === true && this.loginClicked==true) {
               return (
-                <>
-                  <div className = {this.errorModal}>
-                    <div className  = {styles.errorModalContainer}>
+                <div>
+                  <div className = {this.errorModal} style = {{marginTop: '-541px'}}>
+                    <div className  = {styles.errorModalContainer} style = {{
+                      position: 'relative',
+                      //justify-self: 'center',
+                      justifySelf: 'center',
+                      //align-self: 'center',
+                      alignSelf: 'center',
+                      display: 'block',
+                      border:'solid',
+                      borderColor: '#ff6505',
+                      backgroundColor: 'white',
+                      height: {defaultHeight},
+                      width: '450px',
+                      marginRight: 'auto',
+                      //marginBottom: '0px',
+                      marginLeft: 'auto',
+                      zIndex: '2'
+                    }}>
 
-                      <div className={styles.errorContainer}>
-                        <div className={styles.errorHeader}>
+                      <div className={styles.errorContainer} style = {{
+                        
+                        display: 'block',
+                        width: '370px',
+                        /*margin: 80px auto 0px;*/
+                        //margin: '0px auto' '0px',
+                        marginTop: '0px',
+                        marginRight: 'auto',
+                        marginBottom: '0px',
+                        marginLeft: 'auto',
+                        textAlign: 'center'
+                      }}>
+                        <div className={styles.errorHeader} style = {{
+                          fontSize: '40px',
+                          fontWeight: 'bold',
+                          paddingTop: '5px',
+                          paddingLeft: '20px',
+                          marginTop: '50px'
+                        }}>
                           {this.errorHeader}
                         </div>
 
-                        <div className={styles.errorText}>
+                        <div className={styles.errorText} style = {{
+                          fontSize: '20px',
+                          paddingTop: '20px'
+                        }}>
                           {this.errorMessage}
                         </div>
-
                         <br />
+                        {(() => {
+                          console.log("sometext"+this.errorLink)
+                          if (this.errorLink === 'back') {
+                            return (
+                              <button 
+                              className={styles.chargeBtn}
+                              onClick = {() => {
+                                if(this.errorLink === 'back'){
+                                  this.displayErrorModal();
+                                  this.loginClicked = false
+                                  this.showErrorModal=false
+                                  this.forceUpdate()
+                                } else {
+                                  this.props.history.push(this.errorLink);
+                                }
+                              }}
+                              style = {{
+                                textAlign: 'center',
+                                justifyContent: 'center',
+                                padding: '5px',
+                                /*color: black !important;*/
+                                color: '#ffffff',
+                                fontSize: '16px',
+                                /*border: 1px solid rgb(187, 174, 174);*/
+                                borderRadius: '10px',
+                                borderWidth: '0',
+                                minWidth: '100px',
+                                backgroundColor: '#ff6505',
+                                marginTop: '10px',
+                                marginBottom: '25px',
+                                width: '90%',
+                                height: '50px'
+                              }}
+                            >
+                              {this.errorLinkText}
+                            </button>
+                            )
+                          }
+                          if (this.errorLink === 'google') {
+                            return (
+                              <GoogleLogin
+                                clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
+                                render={renderProps => (
+                                  <button
+                                  className={styles.googleBtnCircle}
+                                  onClick={renderProps.onClick}
+                                  // onClick = {() => {
+                                  //   renderProps.onClick;
+                                  //   if(this.errorLink === 'google'){
+                                  //     this.displayErrorModal();
+                                  //     this.loginClicked = false
+                                  //     this.showErrorModal=false
+                                  //     this.forceUpdate()
+                                  //   } else {
+                                  //     this.props.history.push(this.errorLink);
+                                  //   }
+                                  // }}
+                                  disabled={renderProps.disabled}
+                                  style={{
+                                    borderRadius: '10px',
+                                    borderWidth: '0',
+                                    minWidth: '100px',
+                                    backgroundColor: '#ff6505',
+                                    marginTop: '10px',
+                                    marginBottom: '25px',
+                                    width: '90%',
+                                    height: '50px',
+                                    backgroundImage:`url(${socialG})`,
+                                    backgroundSize:'cover',
+                                    backgroundPosition:'center',
+                                  }}
+                                  aria-label="Continue in with Google"
+                                  title="Continue in with Google"
+                                  ></button>
+                                  )}
+                                onSuccess={this.responseGoogle}
+                                onFailure={this.responseGoogle}
+                                isSignedIn={false}
+                                disabled={false}
+                                cookiePolicy={"single_host_origin"}
+                              />
+                            )
+                          }
+                          if (this.errorLink === 'facebook') {
+                            return (
+                              <div
+                                style={{
+                                  borderRadius: '10px',
+                                  borderWidth: '0',
+                                  minWidth: '100px',
+                                  backgroundColor: '#ff6505',
+                                  marginTop: '10px',
+                                  marginBottom: '25px',
+                                  width: '90%',
+                                  height: '50px',
+                                  backgroundImage:`url(${socialF})`,
+                                  backgroundSize:'cover',
+                                  backgroundPosition:'center',
+                                }}
+                                title="Continue in with Facebook"
+                              >
+                              <FacebookLogin
+                                appId={process.env.REACT_APP_FACEBOOK_APP_ID}
+                                autoLoad={false}
+                                fields={"name,email,picture"}
+                                callback={this.responseFacebook}
+                                cssClass={styles.fbLogin}
+                                textButton=''
+                              />
+                              </div>
+                            )
+                          }
+                          if (this.errorLink === 'apple') {
+                            return (
+                              <div
+                            >
+                              <button
+                                onClick={() => {
+                                  console.log("pressed apple login button")
+                                  const data = window.AppleID.auth.signIn();
+                                  console.log(data)
+                                }}
+                                style={{
+                                  borderRadius: '10px',
+                                  borderWidth: '0',
+                                  minWidth: '100px',
+                                  backgroundColor: '#ff6505',
+                                  marginTop: '10px',
+                                  marginBottom: '25px',
+                                  width: '90%',
+                                  height: '50px',
+                                  backgroundImage:`url(${socialA})`,
+                                  backgroundSize:'cover',
+                                  backgroundPosition:'center',
+                                }}
+                                className={styles.appleLogin}
+                                //callback={this.responseApple}
+                                aria-label="Continue with your Apple ID"     
+                                title="Continue with your Apple ID" 
+                              >
+                              </button>
+                            </div>
+                            )
+                          }
 
-                        <button 
-                          className={styles.chargeBtn}
-                          onClick = {() => {
-                            if(this.errorLink === 'back'){
-                              this.displayErrorModal();
-                            } else {
-                              this.props.history.push(this.errorLink);
-                            }
-                          }}
-                        >
-                          {this.errorLinkText}
-                        </button>
+                        })()}
                       </div> 
                     </div>
                   </div>
-                </>
+                </div>
               );
             }
           })()}
-
           {this.handleReload()}
-
       </div>
     )
   }
@@ -266,7 +497,7 @@ export class PopLogin extends Component {
   }
 
   getError = () => {
-    console.log("attemptLogin = " + this.attemptLogin)
+    //console.log("attemptLogin = " + this.attemptLogin)
     if (this.attemptLogin==true){ 
       this.props.loginAttempt( 
         this.props.email,
@@ -277,27 +508,55 @@ export class PopLogin extends Component {
       this.attemptShow=true
       //this.errVal=getErrMessage()
       
-      console.log("error modal :" + this.errorMessage)
+      //console.log("error modal :" + this.errorMessage)
     }
     return null;
   }
 
   showError = () => {
-    console.log("attemptShow = " + this.attemptShow)
+    //console.log("attemptShow = " + this.attemptShow)
+    let errorHead = ''
+    let errorString = ''
+    let errorButton = ''
+    let errorLink = ''
     if (this.attemptShow==true){
       this.errVal=getErrMessage()
-      this.displayErrorModal("Hmm...", this.errVal, "Okay", "home")
-      console.log("Set error text to: "+ this.errVal)
+      if (this.errVal == "Email doesn't exists") {
+        errorHead = 'Hmm...'
+        errorString = "Something doesn't match, please make sure you've entered your email address and password correctly."
+        errorButton = 'Okay'
+        errorLink = 'back'
+      }
+      if (this.errVal == "Social Signup exists. Use 'GOOGLE' ") {
+        errorHead = 'Social sign up exists'
+        errorString = "We have found this account with a different social login. Please click below to continue."
+        errorButton = 'Google button placeholder'
+        errorLink = 'google'
+      }
+      if (this.errVal == "Social Signup exists. Use 'FACEBOOK' ") {
+        errorHead = 'Social sign up exists'
+        errorString = "We have found this account with a different social login. Please click below to continue."
+        errorButton = 'Facebook button placeholder'
+        errorLink = 'facebook'
+      }
+      if (this.errVal == "Social Signup exists. Use 'APPLE' ") {
+        errorHead = 'Social sign up exists'
+        errorString = "We have found this account with a different social login. Please click below to continue."
+        errorButton = 'Apple button placeholder'
+        errorLink = 'apple'
+      }
+      this.displayErrorModal(errorHead, errorString, errorButton, errorLink)
+      //console.log("Set error text to: "+ this.errVal)
       this.attemptShow=false
       this.attemptReload=true
     }
     
-    if (this.errVal == '') {
-      return null;
-    }
-    if (this.loginClicked == true){
-      return <Typography style={{ color: 'red', textAlign:'center' }}>{this.errVal}</Typography>;
-    }
+    // if (this.errVal == '') {
+    //   return null;
+    // }
+    // if (this.loginClicked == true){
+    //   return <Typography style={{ color: 'red', textAlign:'center' }}>{this.errVal}</Typography>;
+    // }
 
     return null
     // return {
@@ -306,7 +565,7 @@ export class PopLogin extends Component {
   }
 
   handleReload = () => {
-    console.log("attemptReload = " + this.attemptReload)
+    //console.log("attemptReload = " + this.attemptReload)
     if (this.attemptReload == true){
       this.forceUpdate()
     }
@@ -326,6 +585,7 @@ const functionList = {
   changeEmail,
   changePassword,
   loginAttempt,
+  socialLoginAttempt
 };
 
 export default connect(mapStateToProps, functionList) (withRouter(PopLogin));

@@ -172,20 +172,24 @@ class SignUp extends React.Component {
                 <button
                   className={styles.button + " ml-3"}
                   onClick={() => {
-                    this.props.submitPasswordSignUp(
-                      this.props.email,
-                      this.props.password,
-                      this.props.passwordConfirm,
-                      this.props.firstName,
-                      this.props.lastName,
-                      this.props.phone,
-                      this.props.street,
-                      this.props.unit,
-                      this.props.city,
-                      this.props.state,
-                      this.props.zip,
-                      this.signUpSuccess
+                    if(this.props.firstName == '' || this.props.lastName == ''){
+                      alert('first name and last name is required')
+                    } else {
+                      this.props.submitPasswordSignUp(
+                        this.props.email,
+                        this.props.password,
+                        this.props.passwordConfirm,
+                        this.props.firstName,
+                        this.props.lastName,
+                        this.props.phone,
+                        this.props.street,
+                        this.props.unit,
+                        this.props.city,
+                        this.props.state,
+                        this.props.zip,
+                        this.signUpSuccess
                     );
+                    }
                   }}
                 >
                   SIGN UP
