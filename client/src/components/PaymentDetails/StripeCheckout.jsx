@@ -1,13 +1,8 @@
-import React, { useMemo, useContext, useState, useEffect, createContext } from 'react';
+import React, { useMemo, useContext, useState, useEffect } from 'react';
 import { useElements, useStripe, CardElement } from '@stripe/react-stripe-js';
 import axios from 'axios';
-import Stripe from 'stripe';
-//Stripe = require("https://js.stripe.com/v3/");
-import { loadStripe } from "@stripe/stripe-js";
 import { useHistory } from "react-router";
 
-import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
 import withStyles from '@material-ui/styles/withStyles';
 import TextField from '@material-ui/core/TextField';
 
@@ -23,7 +18,8 @@ import {
 import { API_URL } from '../../reducers/constants';
 
 import checkoutItems from '../../utils/CheckoutItems';
-import createGuestAccount from '../../utils/CreateGuestAccount';
+
+const CHECKOUT_ERROR = 1;
 
 const appColors = {
   primary: '#e88330',
@@ -104,6 +100,8 @@ const useOptions = () => {
 };
 
 const StripeCheckout = (props) => {
+  console.log("StripeCheckout props: ", props);
+
   const elements = useElements();
   const stripe = useStripe();
   const options = useOptions();
@@ -112,12 +110,20 @@ const StripeCheckout = (props) => {
   const [cardholderName, setCardholderName] = useState(null);
   const [loadingState, changeLoadingState] = useState(false);
 
+  const [termsAccepted, checkTerms] = useState(false);
+
   var orderData = {
     currency: "usd"
   };
 
   const changeCardholderName = (name) => {
     setCardholderName(name);
+  }
+
+  // Change state of new credit card checkbox (not currently used)
+  const handleCheck = (cb) => {
+    console.log("clicked checkbox: ", cb);
+    checkTerms(!termsAccepted);
   }
 
   var pay = async function() {
@@ -175,117 +181,152 @@ const StripeCheckout = (props) => {
       })
       .then(function(res) {
 
-        console.log("createPaymentMethod res: " + JSON.stringify(res));
+        console.log("createPaymentMethod res: ", res);
 
-        console.log("calling confirmedCardPayment...");
+        if(res.hasOwnProperty('error')){
+          console.log("createPaymentMethod error: ", res.error);
 
-        try{
-          
-          const confirmedCardPayment = stripe.confirmCardPayment(clientSecret, {
-            payment_method: res.paymentMethod.id, setup_future_usage: 'off_session'
-          })
-          .then(function(result) {
-            console.log("confirmedCardPayment result: " + JSON.stringify(result));
+          props.displayError(
+            CHECKOUT_ERROR, ('CHECKOUT ERROR: ' + res.error.message)
+          );
 
-            const items = [{
-              qty: props.selectedPlan.num_deliveries.toString(),
-              name: props.selectedPlan.item_name,
-              price: props.selectedPlan.item_price.toString(),
-              item_uid: props.selectedPlan.item_uid,
-              itm_business_uid: props.selectedPlan.itm_business_uid
-            }];
+          changeLoadingState(false);
 
-            console.log("customerUid before checkout: ", props.customerUid);
+        } else {
 
-            // if(props.customerUid !== 'GUEST') {
-              console.log("STRIPE CHECKOUT (1) -- not a guest");
-              console.log("STRIPE CHECKOUT (1) -- amount_due: " + props.paymentSummary.total);
+          console.log("calling confirmedCardPayment...");
+
+          try{
+            
+            const confirmedCardPayment = stripe.confirmCardPayment(clientSecret, {
+              payment_method: res.paymentMethod.id, setup_future_usage: 'off_session'
+              // payment_method: 'testid', setup_future_usage: 'off_session'
+            })
+            .then(function(result) {
+              console.log("confirmedCardPayment result: ", result);
+
+              if(res.hasOwnProperty('error')){
+                console.log("confirmedCardPayment error: ", res.error);
       
-              checkoutItems(
-                {
-                  customer_uid: props.customerUid,
-                  business_uid: 'WEB',
-                  items,
-                  salt: "",
-                  order_instructions: 'fast',
-                  delivery_instructions: props.deliveryInstructions,
-                  delivery_first_name: props.firstName,
-                  delivery_last_name: props.lastName,
-                  delivery_phone: props.phone,
-                  delivery_email: props.email,
-                  delivery_address: props.address.street,
-                  delivery_unit: props.unit,
-                  delivery_city: props.city,
-                  delivery_state: props.state,
-                  delivery_zip: props.zip,
-                  delivery_latitude: props.latitude,
-                  delivery_longitude: props.longitude,
-                  purchase_notes: 'purchase_notes',
-                  amount_due: props.paymentSummary.total,
-                  amount_discount: props.paymentSummary.discountAmount,
-                  amount_paid: '0.00',
-                  cc_num: 'NULL',
-                  cc_exp_year: 'NULL',
-                  cc_exp_month: 'NULL',
-                  cc_cvv: 'NULL',
-                  cc_zip: 'NULL',
-                  charge_id: result.paymentIntent.id,
-                  payment_type: 'STRIPE',
-                  service_fee: props.paymentSummary.serviceFee,
-                  delivery_fee: props.paymentSummary.deliveryFee,
-                  tip: props.paymentSummary.tip,
-                  tax: props.paymentSummary.taxAmount,
-                  //subtotal: props.paymentSummary.subtotal,
-                  subtotal: props.paymentSummary.mealSubPrice,
-                  amb: props.paymentSummary.ambassadorDiscount
-                },
-                (res) => {
-                  // axios
-                  //   .post(API_URL + 'add_surprise/' + res.data.purchase_id)
-                  //   .then((res2) => {
-                  //     console.log("add_suprise res: ", res2);
-                  //     changeLoadingState(false);
-                  //   })
-                  //   .catch(err => {
-                  //     console.log(err);
-                  //     if (err.response) {
-                  //       console.log("add_suprise error: " + JSON.stringify(err.response));
-                  //     }
-                  //     changeLoadingState(false);
-                  //   });
+                props.displayError(
+                  CHECKOUT_ERROR, ('CHECKOUT ERROR: ' + res.error.message)
+                );
+      
+                changeLoadingState(false);
 
-                  //history.push("/congrats")
-                  history.push({
-                    pathname: '/congrats',
+              } else {
+
+                const items = [{
+                  qty: props.selectedPlan.num_deliveries.toString(),
+                  name: props.selectedPlan.item_name,
+                  price: props.selectedPlan.item_price.toString(),
+                  item_uid: props.selectedPlan.item_uid,
+                  itm_business_uid: props.selectedPlan.itm_business_uid
+                }];
+
+                console.log("customerUid before checkout: ", props.customerUid);
+
+                // if(props.customerUid !== 'GUEST') {
+                console.log("STRIPE CHECKOUT (1) -- not a guest");
+                console.log("STRIPE CHECKOUT (1) -- amount_due: " + props.paymentSummary.total);
+        
+                checkoutItems(
+                  {
+                    customer_uid: props.customerUid,
+                    business_uid: 'WEB',
+                    items,
+                    salt: "",
+                    order_instructions: 'fast',
+                    delivery_instructions: props.deliveryInstructions,
+                    delivery_first_name: props.firstName,
+                    delivery_last_name: props.lastName,
+                    delivery_phone: props.phone,
+                    delivery_email: props.email,
                     delivery_address: props.address.street,
+                    delivery_unit: props.unit,
                     delivery_city: props.city,
                     delivery_state: props.state,
-                    delivery_zip: props.zip
-                  });
+                    delivery_zip: props.zip,
+                    delivery_latitude: props.latitude,
+                    delivery_longitude: props.longitude,
+                    purchase_notes: 'purchase_notes',
+                    amount_due: props.paymentSummary.total,
+                    amount_discount: props.paymentSummary.discountAmount,
+                    amount_paid: '0.00',
+                    cc_num: 'NULL',
+                    cc_exp_year: 'NULL',
+                    cc_exp_month: 'NULL',
+                    cc_cvv: 'NULL',
+                    cc_zip: 'NULL',
+                    charge_id: result.paymentIntent.id,
+                    payment_type: 'STRIPE',
+                    service_fee: props.paymentSummary.serviceFee,
+                    delivery_fee: props.paymentSummary.deliveryFee,
+                    tip: props.paymentSummary.tip,
+                    tax: props.paymentSummary.taxAmount,
+                    subtotal: props.paymentSummary.mealSubPrice,
+                    amb: props.paymentSummary.ambassadorDiscount
+                  },
+                  (res, checkout_success) => {
 
-                  //https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/add_surprise/400-000002
-                }
+                    console.log("(SC) checkout items response: ", res);
+
+                    if(!checkout_success) {
+                      props.displayError(
+                        CHECKOUT_ERROR, ('CHECKOUT ERROR: ' + res)
+                      );
+                      changeLoadingState(false);
+                    } else {
+                      history.push({
+                        pathname: '/congrats',
+                        delivery_address: props.address.street,
+                        delivery_city: props.city,
+                        delivery_state: props.state,
+                        delivery_zip: props.zip,
+                        delivery_date: res.data['start delievery date']
+                      });
+                    }
+
+                  }
+                );
+
+              }
+
+            })
+            .catch(err => {
+              console.log("confirmedCardPayment error: ", err);
+
+              props.displayError(
+                CHECKOUT_ERROR, ('CHECKOUT ERROR: ' + err)
               );
 
-            // } else {
-            //   console.log("STRIPE CHECKOUT (3) -- error; wrong data");
-            //   changeLoadingState(false);
-            // }
+              if (err.response) {
+                console.log("error: " + JSON.stringify(err.response));
+              }
+              changeLoadingState(false);
+            });
 
-          })
-          .catch(err => {
-            console.log(err);
-            if (err.response) {
-              console.log("error: " + JSON.stringify(err.response));
-            }
+          } catch (e) {
+            console.log("error trying to pay: ", e);
+
+            props.displayError(
+              CHECKOUT_ERROR, ('CHECKOUT ERROR: ' + e)
+            );
+
             changeLoadingState(false);
-          });
+          }
 
-        } catch (e) {
-          console.log("error trying to pay: ", e);
-          changeLoadingState(false);
         }
 
+      })
+      .catch(err => {
+        console.log("error trying to pay: ", err);
+
+        props.displayError(
+          CHECKOUT_ERROR, ('CHECKOUT ERROR: ' + err)
+        );
+
+        changeLoadingState(false);
       });
 
     })
@@ -293,6 +334,11 @@ const StripeCheckout = (props) => {
       console.log(err);
       if (err.response) {
         console.log("error: " + JSON.stringify(err.response));
+
+        props.displayError(
+          CHECKOUT_ERROR, ('CHECKOUT ERROR: ' + err)
+        );
+
         changeLoadingState(false);
       }
     });
@@ -310,6 +356,8 @@ const StripeCheckout = (props) => {
         onChange={e => {
           changeCardholderName(e.target.value);
         }}
+        aria-label="Enter the name of the cardholder"
+        title="Enter the name of the cardholder"
       />
 
       <div className={styles.label}>
@@ -320,13 +368,72 @@ const StripeCheckout = (props) => {
         />
       </div>
 
+      <div style={{display: 'flex'}}>
+      <div className={styles.checkboxContainer}>
+        {/* <input
+          className={styles.checkbox}
+          type="checkbox"
+          checked={termsAccepted}
+          onChange={handleCheck}
+        />
+        <label className={styles.checkboxLabel}>
+          I've read and accept the terms and conditions
+        </label> */}
+        <div
+          style={{
+            // border: 'dashed',
+            width: '50px',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center'
+          }}
+        >
+          <input
+            className={styles.checkbox}
+            type="checkbox"
+            checked={termsAccepted}
+            onChange={handleCheck}
+          />
+        </div>
+        <span
+          style={{
+            // border: 'inset',
+            // width: 'fit-content'
+            // width: '50px'
+            // flexGrow: '1'
+            display: 'flex',
+            whiteSpace: 'nowrap'
+          }}
+        >
+          I've read and accept the&nbsp;<a href='/terms-and-conditions'>Terms and Conditions</a>
+        </span>
+      </div>
+      </div>
+
       <button 
         className={styles.orangeBtn2}
-        disabled={(props.fetchingFees || loadingState || props.recalculatingPrice)}
+        disabled={(props.fetchingFees || loadingState || props.recalculatingPrice || !termsAccepted)}
         onClick={() => pay()}
+        aria-label={"Click to complete your payment"}
+        title={"Click to complete your payment"}
       >
         Complete Payment
       </button>
+
+      <div
+        style={{
+          // border: 'solid',
+          textAlign: 'left',
+          marginBottom: '50px'
+        }}
+      >
+        Your plan will automatically renew after 
+        you've received your chosen number of deliveries. 
+        Your subscription will renew at the price of 
+        ${props.paymentSummary.total + " "}
+        unless you cancel before <strong>4PM PST </strong>
+        the day before your next delivery.
+      </div>
     </>
   );
 }

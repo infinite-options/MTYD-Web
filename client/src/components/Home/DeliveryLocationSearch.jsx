@@ -128,6 +128,7 @@ const DeliveryLocationSearch = (props) => {
                 <LocationOnIcon color="secondary" 
                   aria-hidden="false"
                   aria-label = 'Enter delivery location'
+                  title = 'Enter delivery location'
                 />
               </InputAdornment>
             ),

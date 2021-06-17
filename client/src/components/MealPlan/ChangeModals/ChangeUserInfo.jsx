@@ -159,6 +159,8 @@ const ChangeUserInfo = props => {
                 value={number}
                 name='cc_num'
                 onChange={handleChangeInput}
+                aria-label="Enter your card number"
+                title="Enter your card number"
               />
             </div>
             <div className={"row " + modalStyle.sameLine2Input}>
@@ -168,6 +170,8 @@ const ChangeUserInfo = props => {
                 value={cvv}
                 name='cc_cvv'
                 onChange={handleChangeInput}
+                aria-label="Enter your card's CVV/CVC"
+                title="Enter your card's CVV/CVC"
               />
               <input
                 type='text'
@@ -175,6 +179,8 @@ const ChangeUserInfo = props => {
                 value={cc_zip}
                 name='cc_zip'
                 onChange={handleChangeInput}
+                aria-label="Enter your card zip code"
+                title="Enter your card zip code"
               />
             </div>
 
@@ -185,6 +191,8 @@ const ChangeUserInfo = props => {
                 value={month}
                 name='month'
                 onChange={handleChangeInput}
+                aria-label="Enter the month your card expires"
+                title="Enter the month your card expires"
               />
               <input
                 type='text'
@@ -192,6 +200,8 @@ const ChangeUserInfo = props => {
                 value={year}
                 name='year'
                 onChange={handleChangeInput}
+                aria-label="Enter the year your card expires"
+                title="Enter the year your card expires"
               />
             </div>
           </div>

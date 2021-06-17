@@ -95,10 +95,17 @@ class NavBar extends React.Component {
       profileRole: "",
       login_seen:false,
       signUpSeen:false,
-      width:window.innerWidth,
-      loginNameLogoutDisplay:'flex',
+      // width:window.innerWidth,
+      // loginNameLogoutDisplay:'flex',
+      windowHeight: undefined,
+      windowWidth: undefined
     };
   }
+
+  handleResize = () => this.setState({
+    windowHeight: window.innerHeight,
+    windowWidth: window.innerWidth
+  });
 
   togglePopLogin = () => {
 
@@ -136,11 +143,19 @@ class NavBar extends React.Component {
     });
   };
 
+  goToLink = (link) => {
+    this.props.history.push(link);
+  }
+
   componentDidMount() {
     //check for logged in
     let currentState;
     const customer_uid = Cookies.get("customer_uid");
     // console.log("props: ", this.props.history.location.pathname);
+
+    this.handleResize();
+    window.addEventListener('resize', this.handleResize);
+
     if (customer_uid) {
       this.setState({login: true});
       this.props.LoadUserInfo(customer_uid);
@@ -167,6 +182,7 @@ class NavBar extends React.Component {
       .get(`${API_URL}Profile/${customer_uid}`)
       .then((response) => {
         const role = response.data.result[0].role.toLowerCase();
+        console.log("role: ", role);
         this.setState({profileRole: role});
         // console.log("Profile role: " + this.state.profileRole);
         // console.log(response)
@@ -178,146 +194,263 @@ class NavBar extends React.Component {
         console.log(err);
       });    
       
-      window.addEventListener('resize', this.updateDimensions);
+      // window.addEventListener('resize', this.updateDimensions);
 
-      if(window.innerWidth<=800){
-        this.setState({
-          loginNameLogoutDisplay:'none'
-        })
-      }else{
-        this.setState({
-          loginNameLogoutDisplay:'flex'
-        })
-      } 
+      // if(window.innerWidth<=800){
+      //   this.setState({
+      //     loginNameLogoutDisplay:'none'
+      //   })
+      // }else{
+      //   this.setState({
+      //     loginNameLogoutDisplay:'flex'
+      //   })
+      // } 
   }
 
-  updateDimensions = () => {
-    if(window.innerWidth<=800){
-      this.setState({
-        loginNameLogoutDisplay:'none'
-      })
-    }else{
-      this.setState({
-        loginNameLogoutDisplay:'flex'
-      })
-    } 
-  }
+  // updateDimensions = () => {
+  //   if(window.innerWidth<=800){
+  //     this.setState({
+  //       loginNameLogoutDisplay:'none'
+  //     })
+  //   }else{
+  //     this.setState({
+  //       loginNameLogoutDisplay:'flex'
+  //     })
+  //   } 
+  // }
 
 
   render() {
 
-    const nameLength = this.state.firstName.length*14+this.state.lastName.length*14+30;
-    const nameFormat = {
-      width: nameLength,
-      color:'white',
-      display:this.state.loginNameLogoutDisplay
-    }
+    // const nameLength = this.state.firstName.length*14+this.state.lastName.length*14+30;
+    const nameLength = this.state.firstName.length*14+this.state.lastName.length*14 + 'px';
+    console.log("namelength: ", nameLength);
+
+    // const nameFormat = {
+    //   width: nameLength,
+    //   color:'white',
+    //   display:this.state.loginNameLogoutDisplay
+    // }
+
     return (
       <div className={styles.navbar}>
+
+        {/* For debugging window size */}
+        {/* <span 
+          style={{
+            zIndex: '101',
+            position: 'fixed',
+            backgroundColor: 'white',
+            border: 'solid',
+            borderWidth: '1px',
+            borderColor: 'red',
+            width: '150px',
+            top: '500px'
+          }}
+        >
+          Height: {this.state.windowHeight}px
+          <br />
+          Width: {this.state.windowWidth}px
+        </span> */}
 
         <NavMenu
           login = {this.state.login}
           LogoutFunction = {this.logOut}
           togglePopSignup = {this.togglePopSignup}
           togglePopLogin = {this.togglePopLogin}
-
+          firstName = {this.state.firstName}
+          lastName = {this.state.lastName}
+          isAdmin = {
+            this.state.profileRole === 'admin'
+              ? true
+              : false
+          }
         />
-        
-        <a href='/home' 
-        style={{
-          margin:0,
-          position:"absolute",
-          width: "160px", 
-          height:"80px",
-          top:"5px",
-          backgroundImage:`url(${whiteLogo})`,
-          backgroundSize:'cover',
-          backgroundPosition:'center',
-          left:'48%'
-          }}>
-        </a>
+
+        {console.log("profile role: " + this.state.profileRole + "; window height: ", this.state.windowWidth)}
+        {
+          this.state.profileRole === 'admin' && this.state.windowWidth > 900
+            ? (
+                <div
+                  style={{
+                    // border: 'inset',
+                    // width: '20%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    position: 'absolute',
+                    left: '120px'
+                  }}
+                >
+                  <div
+                    onClick={() => {this.goToLink('/admin')}}
+                    className={styles.adminBtn2}
+                  >
+                    Admin
+                  </div>
+                </div>
+              )
+            : null
+        }
+
+        <div
+          style={{
+            // border: 'inset',
+            width: '30%',
+            minWidth: '200px',
+            display: 'flex',
+            justifyContent: 'center',
+            marginTop: '10px'
+          }}
+        >
+          <a 
+            href='/home' 
+            style={{
+              // margin:0,
+              // position:"absolute",
+              // width: "160px", 
+              // height:"80px",
+              // top:"5px",
+              // border: 'inset',
+              backgroundImage:`url(${whiteLogo})`,
+              backgroundSize:'cover',
+              // backgroundPosition:'center',
+              // left:'48%',
+              width: '160px',
+              height: '80px'
+            }}
+            aria-label="Click here to return to the homepage"
+            title="Click here to return to the homepage">
+          </a>
+        </div>
 
         {this.state.login ? (
-          <>
-            {(() => {
-              if (this.state.profileRole === 'admin') {
-                return (
-                  <a href='/admin'
-                    style ={{
-                      color:'white',
-                      position:"absolute",
-                      left:'150px'
-                    }}
-                    className={styles.whiteBackBtn}
-                    >
-                    Admin
-                  </a>
-                );
-              }
-            })()}
-          </>
-        ):null}
-
-        <ul>
-          {this.state.login ? (
-          <>
-          <Link to='/meal-plan' 
-            className={styles.whiteBackBtn} 
-            style={nameFormat}
+          <div
+            style={{
+              // border: 'inset',
+              // display: 'inline-flex',
+              height: '44px',
+              width: '40%',
+              // minWidth: '180px',
+              position: 'relative'
+            }}
           >
-            {/* {console.log(this.state)} */}
-              {this.state.firstName} {this.state.lastName}
-          </Link>
 
-          <div class={styles.divider}/>
+            {this.state.windowWidth > 900 ? (
+              <div
+                onClick={() => {this.goToLink('/meal-plan')}}
+                className={styles.nameBtn}
+                // style={{width: nameLength}}
+              >
+                {this.state.firstName} {this.state.lastName}
+              </div>
+            ) : (
+              null
+            )}
 
-          <a
-            className={styles.whiteBackBtn}
-            onClick={this.logOut}
-            style={{display: this.state.loginNameLogoutDisplay, alignItem: "center", color:'white'}}
+            {this.state.windowWidth > 900
+              ? (
+                  <div
+                    className={styles.logoutBtn}
+                    onClick={this.logOut}
+                  >
+                    Logout
+                  </div>
+                )
+              : null}
+
+          </div>
+        ) : (
+          // <div
+          //   style={{
+          //     border: 'inset'
+          //   }}
+          // >
+          <div
+            style={{
+              // border: 'inset',
+              // display: 'inline-flex',
+              height: '44px',
+              width: '40%',
+              // minWidth: '180px',
+              position: 'relative'
+            }}
           >
-            {" "}
-            LOGOUT&nbsp;
-          </a>
-        </>
-          ) 
-          : 
-          (<>
-            <div
+
+            {/* {this.state.windowWidth > 900
+              ? (
+                  <button 
+                    onClick={this.togglePopSignup}
+                    className={styles.nameBtn}
+                  >
+                    Sign Up
+                  </button>
+                )
+              : null} */}
+            {/* <div
               style={{
                 height:'100%',
-                display: this.state.loginNameLogoutDisplay
               }}
+            >
+              <button 
+                onClick={this.togglePopSignup}
+                className={styles.signUpBtn}
+                aria-label="Click here to sign up"
+                title="Click here to sign up"
               >
-                <button 
-                  onClick={this.togglePopSignup}
-                  className={styles.signUpBtn}
-                >
-                  Sign Up
-                </button>
-            </div>
+                Sign Up
+              </button>
+            </div> */}
+            {this.state.windowWidth > 900
+              ? (
+                  <div
+                    onClick={this.togglePopSignup}
+                    className={styles.signUpBtn}
+                    aria-label="Click here to sign up"
+                    title="Click here to sign up"
+                  >
+                    Sign Up
+                  </div>
+                )
+              : null}
+
             {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
 
-            <div
+            {/* <div
               style={{
                 height:'100%',
-                display: this.state.loginNameLogoutDisplay
+                // display: this.state.loginNameLogoutDisplay
               }}
             >
               <button 
                 onClick={this.togglePopLogin}
                 className={styles.signInBtn}
+                aria-label="Click here to log in"
+                title="Click here to log in"
               >
                 Login
               </button>
-            </div>
+            </div> */}
+            {this.state.windowWidth > 900
+              ? (
+                  <div 
+                    onClick={this.togglePopLogin}
+                    // className={styles.signInBtn}
+                    className={styles.loginBtn}
+                    aria-label="Click here to log in"
+                    title="Click here to log in"
+                  >
+                    Login
+                  </div>
+                )
+              : null}
+
             {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
-          </>)}
-        </ul>
+
+          </div>
+        )}
 
       </div>
-        );
-    // }
+    );
   }
 }
 

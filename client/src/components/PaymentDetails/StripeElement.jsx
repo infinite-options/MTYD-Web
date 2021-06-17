@@ -4,6 +4,7 @@ import StripeCheckout from './StripeCheckout';
 export default function StripeElement(props) {
 
   console.log("stripePromise: " + JSON.stringify(props.stripePromise));
+  console.log("stripeElement props: ", props);
 
   return (
     <Elements stripe={props.stripePromise}>
@@ -19,7 +20,16 @@ export default function StripeElement(props) {
         customerUid={props.customerUid}
         cardInfo={props.cardInfo}
         fetchingFees={props.fetchingFees}
+        displayError={props.displayError}
       />
+      {/* <button
+        style={{border: 'solid'}}
+        onClick={()=>{
+          props.displayError(1, 'Testing error function in props');
+        }}
+      >
+        press me
+      </button> */}
     </Elements>
   );
 }

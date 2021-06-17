@@ -7,65 +7,94 @@ export class MenuList extends Component {
   state = {
     width:window.innerWidth,
     height:window.innerHeight,
-    crossFork : 
-    {           
-      width:'44px',
-      height:'44px',
-      position:'absolute',
-      right:'100px',
-      top:'25px',
-      backgroundImage:`url(${forkClose})`,
-      backgroundSize:'cover',
-      backgroundPosition:'center',
-    },
+    // crossFork : 
+    // {           
+    //   width:'44px',
+    //   height:'44px',
+    //   position:'absolute',
+    //   right:'100px',
+    //   top:'25px',
+    //   backgroundImage:`url(${forkClose})`,
+    //   backgroundSize:'cover',
+    //   backgroundPosition:'center',
+    // },
     showLogout : 'none',
+    showName: 'none',
+    showAdmin: 'none',
     showSigninSignup : 'none',
     heightOfBlock:'330px'
 
   }
 
   componentDidMount() {
+    console.log("menu props: ", this.props);
     window.addEventListener('resize', this.updateDimensions);
-    if(window.innerWidth<=800){
-      this.setState({
-        crossFork:{
-          width:'44px',
-          height:'44px',
-          position:'absolute',
-          left:'50px',
-          top:'25px',
-          backgroundImage:`url(${forkClose})`,
-          backgroundSize:'cover',
-          backgroundPosition:'center',
-        }
-      })
-      if(this.props.login == true){
+    if(window.innerWidth<=900){
+
+      // this.setState({
+      //   crossFork:{
+      //     width:'44px',
+      //     height:'44px',
+      //     position:'absolute',
+      //     left:'50px',
+      //     top:'25px',
+      //     backgroundImage:`url(${forkClose})`,
+      //     backgroundSize:'cover',
+      //     backgroundPosition:'center',
+      //   }
+      // })
+
+      if(this.props.login == true && this.props.isAdmin){
+        console.log("(mount) 1");
         this.setState({
-          showLogout :'flex',
+          showLogout:'flex',
+          showAdmin:'flex',
           showSigninSignup:'none',
-          heightOfBlock:'360px'
+          heightOfBlock:'430px'
+        })
+      } else if (this.props.login == true && !this.props.isAdmin) {
+        console.log("(mount) 2");
+        this.setState({
+          showLogout:'flex',
+          showAdmin: 'none',
+          showSigninSignup:'none',
+          heightOfBlock:'400px'
         })
       }else{
+        console.log("(mount) 3");
         this.setState({
-          showLogout :'none',
+          showLogout:'none',
+          showAdmin: 'none',
           showSigninSignup:'flex',
           heightOfBlock:'400px'
         })
       }
       
-    }else{
+    // }else{
+    //   this.setState({
+    //     crossFork:{
+    //       width:'44px',
+    //       height:'44px',
+    //       position:'absolute',
+    //       right:'100px',
+    //       top:'25px',
+    //       backgroundImage:`url(${forkClose})`,
+    //       backgroundSize:'cover',
+    //       backgroundPosition:'center',
+    //     }
+    //   })
+    //   if (this.props.isAdmin) {
+    //     this.setState({
+    //       heightOfBlock: '360px'
+    //     });
+    //   }
+    // }
+    } else if (this.props.isAdmin) {
+      console.log("cp");
       this.setState({
-        crossFork:{
-          width:'44px',
-          height:'44px',
-          position:'absolute',
-          right:'100px',
-          top:'25px',
-          backgroundImage:`url(${forkClose})`,
-          backgroundSize:'cover',
-          backgroundPosition:'center',
-        }
-      })
+        heightOfBlock: '330px',
+        // showAdmin: 'flex'
+      });
     }
   }
   componentWillUnmount() {
@@ -74,51 +103,102 @@ export class MenuList extends Component {
 
   updateDimensions = () => {
 
-    if(window.innerWidth<=800){
-      this.setState({
-        crossFork:{
-          width:'44px',
-          height:'44px',
-          position:'absolute',
-          left:'50px',
-          top:'25px',
-          backgroundImage:`url(${forkClose})`,
-          backgroundSize:'cover',
-          backgroundPosition:'center',
-        }
-        
-      })
+    if (window.innerWidth <= 900) {
 
-      if(this.props.login == true){
+      // this.setState({
+      //   crossFork:{
+      //     width:'44px',
+      //     height:'44px',
+      //     position:'absolute',
+      //     left:'50px',
+      //     top:'25px',
+      //     backgroundImage:`url(${forkClose})`,
+      //     backgroundSize:'cover',
+      //     backgroundPosition:'center',
+      //   }
+      // })
+
+      if (this.props.login == true && this.props.isAdmin) {
+        console.log("(UD) 1");
         this.setState({
           showLogout :'flex',
+          showAdmin: 'flex',
           showSigninSignup:'none',
-          heightOfBlock:'360px'
+          heightOfBlock:'430px'
         })
-      }else{
+      } else if (this.props.login == true && !this.props.isAdmin) {
+        console.log("(UD) 2");
+        this.setState({
+          showLogout :'flex',
+          showAdmin: 'none',
+          showSigninSignup:'none',
+          heightOfBlock:'400px'
+        })
+      } else {
+        console.log("(UD) 3");
         this.setState({
           showLogout :'none',
+          showAdmin: 'none',
           showSigninSignup:'flex',
           heightOfBlock:'400px'
         })
       }
 
-    }else{
-      this.setState({
-        crossFork:{
-          width:'44px',
-          height:'44px',
-          position:'absolute',
-          right:'100px',
-          top:'25px',
-          backgroundImage:`url(${forkClose})`,
-          backgroundSize:'cover',
-          backgroundPosition:'center',
-        },
-        showLogout :'none',
-        showSigninSignup:'none',
-        heightOfBlock:'330px'
-      })
+    } else {
+      /*if (this.props.isAdmin) {
+        console.log("narrow 1");
+        this.setState({
+          // crossFork:{
+          //   width:'44px',
+          //   height:'44px',
+          //   position:'absolute',
+          //   right:'100px',
+          //   top:'25px',
+          //   backgroundImage:`url(${forkClose})`,
+          //   backgroundSize:'cover',
+          //   backgroundPosition:'center',
+          // },
+          showLogout: 'none',
+          showAdmin: 'flex',
+          showSigninSignup: 'none',
+          heightOfBlock: '360px'
+        })
+      } else {
+        console.log("narrow 2");
+        this.setState({
+          // crossFork:{
+          //   width:'44px',
+          //   height:'44px',
+          //   position:'absolute',
+          //   right:'100px',
+          //   top:'25px',
+          //   backgroundImage:`url(${forkClose})`,
+          //   backgroundSize:'cover',
+          //   backgroundPosition:'center',
+          // },
+          showLogout: 'none',
+          showAdmin: 'none',
+          showSigninSignup: 'none',
+          heightOfBlock: '330px'
+        })
+      }*/
+      console.log("narrow new");
+        this.setState({
+          // crossFork:{
+          //   width:'44px',
+          //   height:'44px',
+          //   position:'absolute',
+          //   right:'100px',
+          //   top:'25px',
+          //   backgroundImage:`url(${forkClose})`,
+          //   backgroundSize:'cover',
+          //   backgroundPosition:'center',
+          // },
+          showLogout: 'none',
+          showAdmin: 'none',
+          showSigninSignup: 'none',
+          heightOfBlock: '330px'
+        })
     }
 
     this.setState({ width: window.innerWidth, height: window.innerHeight });
@@ -163,8 +243,11 @@ export class MenuList extends Component {
             backgroundImage:`url(${forkClose})`,
             backgroundSize:'cover',
             backgroundPosition:'center',
+            cursor: 'pointer'
           }}
           onClick={this.props.close}
+          aria-label="Click here to close the navigation menu"
+          title="Click here to close the navigation menu"
           />
 
 
@@ -178,7 +261,9 @@ export class MenuList extends Component {
                 fontSize:"26px",
                 height:"20px",
                 color:'white'
-              }}>
+              }}
+              aria-label="Click here to go to the homepage"
+              title="Click here to go to the homepage">
               Home
             </a >
 
@@ -186,8 +271,10 @@ export class MenuList extends Component {
               style ={{
                 fontSize:"26px",
                 height:"20px",
-                color:'white'
-              }}>
+                color:'white' 
+              }}
+              aria-label="Click here to select your meal"
+              title="Click here to select your meal">
               Select Meals
             </a>
 
@@ -196,7 +283,9 @@ export class MenuList extends Component {
                 fontSize:"26px",
                 height:"20px",
                 color:'white'
-              }}>
+              }}
+              aria-label="Click here to change your meal plan"
+              title="Click here to change your meal plan">
               Change Meal Plans
             </a>
 
@@ -205,7 +294,9 @@ export class MenuList extends Component {
                 fontSize:"26px",
                 height:"20px",
                 color:'white'
-              }}>
+              }}
+              aria-label="Click here to add a subscription"
+              title="Click here to add a subscription">
               Add Subscriptions
             </a >
 
@@ -214,7 +305,9 @@ export class MenuList extends Component {
                 fontSize:"26px",
                 height:"20px",
                 color:'white'
-              }}>
+              }}
+              aria-label="Click here to view your subscriptions"
+              title="Click here to view your subscriptions">
               Subscription History
             </a>
 
@@ -223,8 +316,35 @@ export class MenuList extends Component {
                 fontSize:"26px",
                 height:"20px",
                 color:'white'
-              }}>
+              }}
+              aria-label="Click here to become an ambassador"
+              title="Click here to become an ambassador">
               Become an Ambassador
+            </a>
+
+            <a href='/meal-plan'
+              style ={{
+                fontSize:"26px",
+                height:"20px",
+                color:'white',
+                display:this.state.showLogout
+              }}
+              // onClick = {this.props.LogoutFunction}
+              >
+              {this.props.firstName} {this.props.lastName}
+            </a>
+
+            {console.log("showAdmin? ", this.state.showAdmin)}
+            <a href='/admin'
+              style ={{
+                fontSize:"26px",
+                height:"20px",
+                color:'white',
+                display: this.state.showAdmin
+              }}
+              // onClick = {this.props.LogoutFunction}
+              >
+              Admin
             </a>
 
             <a href='/home'
@@ -235,8 +355,10 @@ export class MenuList extends Component {
                 display:this.state.showLogout
               }}
               onClick = {this.props.LogoutFunction}
+              aria-label="Click here to log out"
+              title="Click here to log out"
               >
-              Log out
+              Logout
             </a>
 
             <a
@@ -244,9 +366,12 @@ export class MenuList extends Component {
                 fontSize:"26px",
                 height:"20px",
                 color:'white',
-                display:this.state.showSigninSignup
+                display:this.state.showSigninSignup,
+                cursor: 'pointer'
               }}
               onClick = {this.showPopLogin}
+              aria-label="Click here to log in"
+              title="Click here to log in"
             >
               Sign In
             </a>
@@ -256,9 +381,12 @@ export class MenuList extends Component {
                 fontSize:"26px",
                 height:"20px",
                 color:'white',
-                display:this.state.showSigninSignup
+                display:this.state.showSigninSignup,
+                cursor: 'pointer'
               }}
               onClick = {this.showPopSignup}
+              aria-label="Click here to sign up"
+              title="Click here to sign up"
             >
               Sign up
             </a>

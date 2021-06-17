@@ -9,20 +9,38 @@
 .navbar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  /* justify-content: space-between; */
   position: relative;
   z-index: 100;
   width: 100%;
   height: 80px;
-  margin: auto;
-  padding: 0px 30px;
+  /* margin: auto; */
+  /* padding: 0px 30px; */
   opacity: 1;
-
+  /* border: dashed; */
   border-bottom-left-radius: 30px;
   border-bottom-right-radius: 30px;
   background-color: #F26522;
   /* box-shadow: 0px 5px #d6d1d1; */
 }
+.navbarNarrow {
+  display: flex;
+  align-items: center;
+  /* justify-content: space-between; */
+  position: relative;
+  z-index: 100;
+  width: 100%;
+  height: 120px;
+  /* margin: auto; */
+  /* padding: 0px 30px; */
+  opacity: 1;
+  /* border: dashed; */
+  border-bottom-left-radius: 30px;
+  border-bottom-right-radius: 30px;
+  background-color: #F26522;
+  /* box-shadow: 0px 5px #d6d1d1; */
+}
+
 .navbar ul {
   display: flex;
   list-style: none;
@@ -81,7 +99,7 @@
   margin-top: 20px;
 } 
 
-.signUpBtn {
+/* .signUpBtn {
   height: 50% !important;
   width: 110px;
   border-radius: 30px;
@@ -97,7 +115,7 @@
   box-shadow: none;
   padding: 0;
   margin-top: 20px;
-} 
+}  */
 /* .signUpBtn:focus{
   height: 50% !important;
   width: 110px;
@@ -125,7 +143,7 @@
 }  */
 
 
-.whiteBackBtn {
+/* .whiteBackBtn {
   height: 50% !important;
   width: 110px;
   border-radius: 30px;
@@ -133,6 +151,197 @@
   justify-content: center;
   border:2px solid white;
   color: white;
+}  */
+
+/* .whiteBackBtn {
+  height: 40px;
+  width: 110px;
+  border-radius: 30px;
+  background-color: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid white;
+  color: white;
+  text-overflow: ellipsis;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+}  */
+
+/* .hamMenu {
+  width: 60px;
+  height: 40px;
+  margin-left: 30px;
+  background-image: url('../NavBarHamburger/hamburger.png');
+  background-size: cover;
+  cursor: pointer;
+} */
+/* .hamMenu:hover {
+  width: 60px;
+  height: 40px;
+  margin-left: 30px;
+  background-image: url('../NavBarHamburger/hamburger.png');
+  background-size: cover;
+  cursor: pointer;
+  border: dashed;
+} */
+
+.loginBtn {
+  position: absolute;
+  right: 20px;
+  height: 40px;
+  width: 110px;
+  border-radius: 15px;
+  font-size: 18px;
+  font-weight: 500;
+  text-align: center;
+  background-color: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid white;
+  color: white;
+  text-overflow: ellipsis;
+  /* display: block;
+  white-space: nowrap;
+  overflow: hidden; */
+  cursor: pointer;
+} 
+
+.signUpBtn {
+  position: absolute;
+  right: 150px;
+  height: 40px;
+  width: 110px;
+  border-radius: 15px;
+  font-size: 18px;
+  font-weight: 500;
+  text-align: center;
+  background-color: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid white;
+  color: white;
+  text-overflow: ellipsis;
+  /* display: block;
+  white-space: nowrap;
+  overflow: hidden; */
+  cursor: pointer;
+} 
+
+.nameBtn {
+  position: absolute;
+  right: 150px;
+  height: 40px;
+  /* width: 150px; */
+  border-radius: 15px;
+  font-size: 18px;
+  font-weight: 500;
+  text-align: center;
+  /* padding-top: 0px; */
+  background-color: #F26522;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* border: 2px solid white; */
+  color: white;
+  text-overflow: ellipsis;
+  /* display: block;
+  white-space: nowrap;
+  overflow: hidden; */
+  cursor: pointer;
+} 
+.nameBtnNarrow {
+  position: absolute;
+  right: 20px;
+  height: 40px;
+  /* width: 150px; */
+  border-radius: 15px;
+  font-size: 18px;
+  font-weight: 500;
+  text-align: center;
+  /* padding-top: 4px; */
+  background-color: #F26522;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid white;
+  color: white;
+  text-overflow: ellipsis;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  cursor: pointer;
+} 
+
+.logoutBtn {
+  position: absolute;
+  right: 20px;
+  height: 40px;
+  width: 110px;
+  border-radius: 15px;
+  font-size: 18px;
+  font-weight: 500;
+  text-align: center;
+  background-color: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid white;
+  color: white;
+  text-overflow: ellipsis;
+  /* display: block;
+  white-space: nowrap;
+  overflow: hidden; */
+  cursor: pointer;
+}
+.logoutBtnNarrow {
+  position: absolute;
+  right: 20px;
+  top: 0;
+  height: 30px;
+  width: 150px;
+  border-radius: 15px;
+  font-size: 18px;
+  font-weight: 500;
+  text-align: center;
+  /* padding-top: 4px; */
+  background-color: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid white;
+  color: white;
+  text-overflow: ellipsis;
+  /* display: block;
+  white-space: nowrap;
+  overflow: hidden; */
+  cursor: pointer;
+} 
+
+.adminBtn2 {
+  /* position: absolute;
+  right: 150px; */
+  height: 40px;
+  width: 100px;
+  border-radius: 15px;
+  font-size: 18px;
+  font-weight: 500;
+  text-align: center;
+  padding-top: 4px;
+  background-color: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid white;
+  color: white;
+  text-overflow: ellipsis;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  cursor: pointer;
 } 
 
 .showNameBtn {
@@ -147,11 +356,11 @@
   border: 0;
 } 
 
-.divider{
+/* .divider{
   width:10px;
   height:auto;
   display:inline-block;
-}
+} */
 
 .adminBtn {
   height: 50% !important;

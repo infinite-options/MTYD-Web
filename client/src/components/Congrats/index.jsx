@@ -87,60 +87,131 @@ export class Congrats extends Component {
     
   }
 
+  formatDate = (rawDate) => {
+
+    console.log("(congrats) rawDate: ", rawDate);
+
+    let dateElements = rawDate.split(' ');
+    let yyyy_mm_dd = dateElements[0].split('-');
+    let month;
+
+    // Parse month
+    switch(yyyy_mm_dd[1]){
+      case "01":
+        month = "January";
+        break;
+      case "02":
+        month = "February";
+        break;
+      case "03":
+        month = "March";
+        break;
+      case "04":
+        month = "April";
+        break;
+      case "05":
+        month = "May";
+        break;
+      case "06":
+        month = "June";
+        break;
+      case "07":
+        month = "July";
+        break;
+      case "08":
+        month = "August";
+        break;
+      case "09":
+        month = "September";
+        break;
+      case "10":
+        month = "October";
+        break;
+      case "11":
+        month = "November";
+        break;
+      case "12":
+        month = "December";
+        break;
+      default:
+        month = "";
+    }
+
+    let dateString = month + " " + yyyy_mm_dd[2]
+    // console.log("date string: ", dateString);
+
+    return dateString;
+  }
+
   render() {
+    console.log("(render) props: ", this.props);
     return (
       <div>
         <WebNavBar 
           poplogin = {this.togglePopLogin}
           popSignup = {this.togglePopSignup}
         />
+
         {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
         {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
-		<div class = {styles.howDoesContainer}>
-        <div class = {styles.howDoesText}>
-        <p style = {{marginLeft: '-90px', display:'inline', color: 'black'}}>Congratulations</p>
-		</div> </div>
+
+        <div className = {styles.howDoesContainer}>
+          <div className = {styles.howDoesText}>
+            <p style = {{marginLeft: '-90px', display:'inline', color: 'black'}}>Congratulations</p>
+          </div>
+        </div>
+
 		{/*Change the following to medium later on, using bold for testing*/}
 		<div style = {{marginTop:'80px', marginLeft: '120px', marginBottom:'0px'}}>
-		<p style = {{font: 'SF Pro', fontWeight: 'medium', fontSize: '24px' ,color:'black', textAlign:'left'}}>Your first delivery will arrive on:</p>
-		<p style = {{marginTop:'-20px', marginLeft: '40px', font: 'SF Pro', fontWeight: 'bold', fontSize: '24px' ,color:'black', textAlign:'left'}}>March 8 between 4-6pm</p>
-        {/*Change the following to medium later on, using bold for testing*/}
-		<br/>
-        <p style = {{marginLeft: '80px', font: 'SF Pro', fontWeight:'medium', fontSize: '24px'}}>To your address:<br/></p>
 
-		{/* <p 
-      style = {{
-        marginTop:'-20px', 
-        font: 'SF Pro',
-        fontWeight: 'bold', 
-        fontSize: '24px', 
-        color:'black', 
-        marginLeft:'80px'
-      }}
-    >
-      {this.state.user_address}
-    </p> */}
+	    <p style = {{font: 'SF Pro', fontWeight: 'medium', fontSize: '24px' ,color:'black', textAlign:'left'}}>
+        Your first delivery will arrive on:
+      </p>
+		  <p style = {{marginTop:'-20px', marginLeft: '40px', font: 'SF Pro', fontWeight: 'bold', fontSize: '24px' ,color:'black', textAlign:'left'}}>
+        {this.formatDate(this.props.location.delivery_date)} between 4-6pm
+      </p>
+      
+      {/*Change the following to medium later on, using bold for testing*/}
+		  <br/>
+        
+      <p style = {{marginLeft: '80px', font: 'SF Pro', fontWeight:'medium', fontSize: '24px'}}>
+        To your address:
+        <br/>
+      </p>
 
-    <p 
-      style = {{
-        marginTop:'-20px', 
-        font: 'SF Pro',
-        fontWeight: 'bold', 
-        fontSize: '24px', 
-        color:'black', 
-        marginLeft:'80px'
-      }}
-    >
-      {
-        this.props.location.delivery_address + ", "
-      }
-      <br />
-      {
-        this.props.location.delivery_city + ", " +
-        this.props.location.delivery_state + ", " +
-        this.props.location.delivery_zip
-      }
-    </p>
+      {/* <p 
+        style = {{
+          marginTop:'-20px', 
+          font: 'SF Pro',
+          fontWeight: 'bold', 
+          fontSize: '24px', 
+          color:'black', 
+          marginLeft:'80px'
+        }}
+      >
+        {this.state.user_address}
+      </p> */}
+
+      <p 
+        style = {{
+          marginTop:'-20px', 
+          font: 'SF Pro',
+          fontWeight: 'bold', 
+          fontSize: '24px', 
+          color:'black', 
+          marginLeft:'80px'
+        }}
+      >
+        {
+          this.props.location.delivery_address + ", "
+        }
+        <br />
+        {
+          this.props.location.delivery_city + ", " +
+          this.props.location.delivery_state + ", " +
+          this.props.location.delivery_zip
+        }
+      </p>
 
         </div>
        {(() => {

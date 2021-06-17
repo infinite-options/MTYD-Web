@@ -217,7 +217,8 @@ export class PopSignup extends Component {
       <div
         className="model_content"
       >
-        <div className="close" onClick={this.handleClick}/>
+        <button className="close" onClick={this.handleClick} aria-label="Click here to exit sign up menu"
+        title="Click here to exit sign up menu"/>
         <div
         style={{
           marginTop:'59px',
@@ -268,6 +269,8 @@ export class PopSignup extends Component {
               onChange={e => {
                 this.props.changeNewFirstName(e.target.value);
               }}
+              aria-label="Input first name"
+              title="Input first name"
             >
             </input>
 
@@ -282,6 +285,8 @@ export class PopSignup extends Component {
               onChange={e => {
                 this.props.changeNewLastName(e.target.value);
               }}
+              aria-label="Input last name"
+              title="Input last name"
             >
             </input>
           </div>
@@ -295,6 +300,8 @@ export class PopSignup extends Component {
             onChange={e => {
               this.props.changeNewEmail(e.target.value);
             }}
+            aria-label="Input email address"
+            title="Input email address"
           >
           </input>
 
@@ -306,6 +313,8 @@ export class PopSignup extends Component {
             onChange={e => {
               this.props.changeNewPassword(e.target.value);
             }}
+            aria-label="Enter password you want to use"
+            title="Enter password you want to use"
           >
           </input>
 
@@ -316,7 +325,10 @@ export class PopSignup extends Component {
             value={this.props.passwordConfirm}
             onChange={e => {
               this.props.changeNewPasswordConfirm(e.target.value);
-            }}>
+            }}
+            aria-label="Confirn your password"
+            title="Confirn your password"
+            >
           </input>
 
           <input 
@@ -325,7 +337,10 @@ export class PopSignup extends Component {
             value={this.props.phone}
             onChange={e => {
               this.props.changeNewPasswordConfirm(e.target.value);
-            }}>
+            }}
+            aria-label="Enter your phone number"
+            title="Enter your phone number"
+            >
           </input>
 
           <input 
@@ -335,6 +350,8 @@ export class PopSignup extends Component {
             name="ship-address"
 
             placeholder={this.state.street_address==''? 'Street Address':this.state.street_address}
+            aria-label="Enter your street address"
+            title="Enter your street address"
           />
 
           <input 
@@ -348,6 +365,8 @@ export class PopSignup extends Component {
             onChange={e => {
               this.props.changeNewUnit(e.target.value);
             }}
+            aria-label="Enter your unit number. optional"
+            title="Enter your unit number. optional"
           />
 
           <input             
@@ -359,6 +378,8 @@ export class PopSignup extends Component {
             placeholder='City'
             id="locality" name="locality"
             value = {this.state.city}
+            aria-label="Enter your city"
+            title="Enter your city"
             />
 
 
@@ -372,6 +393,8 @@ export class PopSignup extends Component {
             placeholder='State'
             id="state" name="state"
             value = {this.state.state}
+            aria-label="Enter your state"
+            title="Enter your state"
             />
 
 
@@ -384,7 +407,8 @@ export class PopSignup extends Component {
               placeholder='Zip'
               id="postcode" name="postcode"
               value = {this.state.zip_code}
-
+              aria-label="Enter your zip code"
+              title="Enter your zip code"
             />
         </div>
 
@@ -409,7 +433,9 @@ export class PopSignup extends Component {
             textAlign:'center',
             marginTop:8,
             fontWeight:500,
-          }}>
+          }}
+          aria-label="Click here to sign up"
+          title="Click here to sign up">
             Sign up
           </p>
           

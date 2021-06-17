@@ -41,6 +41,7 @@ const DATA_ERROR = 0;
 const CHECKOUT_ERROR = 1;
 const AMBASSADOR_ERROR = 2;
 const EMAIL_ERROR = 3;
+const ADDRESS_ERROR = 4;
 
 class PaymentDetails extends React.Component {
   constructor() {
@@ -92,7 +93,9 @@ class PaymentDetails extends React.Component {
       loadingMap: true,
       recalculatingPrice: false,
       stripePromise: null,
+      stripeKey: null,
       createGuestErrorCode: -1,
+      termsAccepted: true,
       windowHeight: undefined,
       windowWidth: undefined
     };
@@ -368,24 +371,6 @@ class PaymentDetails extends React.Component {
 
     }
       
-    // this.setState({
-    //   street: this.props.address.street,
-    //   city: this.props.address.city,
-    //   state: this.props.address.state,
-    //   addressZip: this.props.address.zip,
-    //   unit: this.props.address.unit,
-    //   instructions: this.props.instructions,
-    //   firstName: this.props.addressInfo.firstName,
-    //   lastName: this.props.addressInfo.lastName,
-    //   email: this.props.email,
-    //   phone: this.props.addressInfo.phoneNumber,
-    //   name: this.props.creditCard.name,
-    //   number: this.props.creditCard.number,
-    //   cvv: this.props.creditCard.cvv,
-    //   month: this.props.creditCard.month,
-    //   year: this.props.creditCard.year,
-    //   cardZip: this.props.creditCard.zip
-    // });
   }
     
   changeTip(newTip) {
@@ -456,83 +441,6 @@ class PaymentDetails extends React.Component {
       instructions: this.state.instructions
     });
 
-    console.log("(3) Saving delivery details");
-
-    fetchAddressCoordinates(
-      document.getElementById("pac-input").value,
-      document.getElementById("locality").value,
-      document.getElementById("state").value,
-      document.getElementById("postcode").value,
-      (coords) => {
-
-        console.log("Fetched coordinates: " + JSON.stringify(coords));
-        this.setState({
-          latitude: coords.latitude,
-          longitude: coords.longitude,
-          loadingMap: false
-        });
-
-        console.log("Calling categorical options...");
-        axios
-          .get(`${API_URL}categoricalOptions/${coords.longitude},${coords.latitude}`)
-          .then((response) => {
-            console.log("Categorical Options response: ", response);
-
-            if(response.data.result.length !== 0) {
-
-              console.log("cat options for: ", document.getElementById("pac-input").value);
-              this.setState(prevState => ({
-                recalculatingPrice: true,
-                paymentSummary: {
-                  ...prevState.paymentSummary,
-                  taxRate: response.data.result[1].tax_rate,
-                  serviceFee: response.data.result[1].service_fee.toFixed(2),
-                  deliveryFee: response.data.result[1].delivery_fee.toFixed(2),
-                  taxAmount: (
-                    this.props.selectedPlan.item_price *
-                    this.props.selectedPlan.num_deliveries *
-                    (1-(this.props.selectedPlan.delivery_discount*0.01)) *
-                    response.data.result[1].tax_rate * 0.01
-                  ).toFixed(2)
-                },
-                fetchingFees: false
-              }), () => {
-                this.setTotal();
-                console.log("(1) catOptions taxAmount: " + this.state.paymentSummary.taxAmount);
-                console.log("(1) catOptions new payment summary: ", this.state.paymentSummary);
-              });
-              //this.setTotal();
-              //console.log("catOptions taxAmount: " + this.state.paymentSummary.taxAmount);
-              //console.log("catOptions new payment summary: ", this.state.paymentSummary);
-            } else {
-              this.setState(prevState => ({
-                recalculatingPrice: true,
-                paymentSummary: {
-                  ...prevState.paymentSummary,
-                  taxRate: 0,
-                  serviceFee: "0.00",
-                  deliveryFee: "0.00",
-                  taxAmount: "0.00"
-                },
-                fetchingFees: false
-              }), () => {
-                this.setTotal();
-                console.log("(2) catOptions taxAmount: " + this.state.paymentSummary.taxAmount);
-                console.log("(2) catOptions new payment summary: ", this.state.paymentSummary);
-              });
-              //this.setTotal();
-            }
-          })
-          .catch((err) => {
-            if (err.response) {
-              console.log(err.response);
-            }
-            console.log(err);
-          });
-      }
-    );
-
-    //console.log("delivery props: " + JSON.stringify(this.props));
   }
     
   savePaymentDetails() {
@@ -678,52 +586,6 @@ class PaymentDetails extends React.Component {
 
   });
 
-    /*axios
-      .post(API_URL + 'brandAmbassador/generate_coupon',
-        {
-          code: this.state.ambassadorCode,
-          // cust_email: this.state.email
-          info: this.props.email,
-          isGuest: false
-        }
-      )
-      .then(res => {
-        // let items = res.data
-        console.log("ambassador code response: ", res);
-
-        //if(typeof(items) === "string") {
-        if (res.data.code !== 200) {
-
-          console.log("Invalid code");
-
-          this.displayError(AMBASSADOR_ERROR, res.data.message);
-
-        } else {
-          
-          console.log("Valid code");
-
-          // items = items.result[0];
-
-          console.log("result: ", res.data);
-
-          // this.setState(prevState => ({
-          //   recalculatingPrice: true,
-          //   paymentSummary: {
-          //     ...prevState.paymentSummary,
-          //     ambassadorDiscount: (
-          //       items.discount_amount +
-          //       items.discount_shipping
-          //     ).toFixed(2)
-          //   }
-          // }), () => {
-          //   this.setTotal();
-          // });
-
-        }
-      })
-      .catch(err => {
-        console.log("Ambassador code error: ", err);
-      });*/
   }
 
   displayError = (type, message) => {
@@ -743,6 +605,16 @@ class PaymentDetails extends React.Component {
     }
 
     console.log("\npop up error toggled to " + type + "\n\n");
+  }
+
+  refreshStripe() {
+    console.log("refreshing stripe...");
+    let stripePromise = loadStripe(this.state.stripeKey);
+    console.log("(refreshStripe) stripe promise: ", stripePromise);
+    this.setState({
+      stripePromise: stripePromise,
+      fetchingFees: false
+    });
   }
 
   setPaymentType(type) {
@@ -794,9 +666,109 @@ class PaymentDetails extends React.Component {
 
   }
 
+  validateAddress() {
+    console.log("(validateAddress) before FAC");
+
+    this.setState(prevState => ({
+      fetchingFees: true,
+      showPaymentInfo: false
+    }), () => {
+
+      fetchAddressCoordinates(
+        document.getElementById("pac-input").value,
+        document.getElementById("locality").value,
+        document.getElementById("state").value,
+        document.getElementById("postcode").value,
+        (coords) => {
+
+          console.log("Fetched coordinates: " + JSON.stringify(coords));
+          this.setState({
+            latitude: coords.latitude,
+            longitude: coords.longitude,
+            loadingMap: false
+          });
+
+          console.log("Calling categorical options...");
+          axios
+            .get(`${API_URL}categoricalOptions/${coords.longitude},${coords.latitude}`)
+            .then((response) => {
+              console.log("Categorical Options response: ", response);
+
+              if(response.data.result.length !== 0) {
+                console.log("(VA) valid zone!");
+
+                console.log("cat options for: ", document.getElementById("pac-input").value);
+                this.setState(prevState => ({
+                  recalculatingPrice: true,
+                  paymentSummary: {
+                    ...prevState.paymentSummary,
+                    taxRate: response.data.result[1].tax_rate,
+                    serviceFee: response.data.result[1].service_fee.toFixed(2),
+                    deliveryFee: response.data.result[1].delivery_fee.toFixed(2),
+                    taxAmount: (
+                      this.props.selectedPlan.item_price *
+                      this.props.selectedPlan.num_deliveries *
+                      (1-(this.props.selectedPlan.delivery_discount*0.01)) *
+                      response.data.result[1].tax_rate * 0.01
+                    ).toFixed(2)
+                  }
+                }), () => {
+                  this.setTotal();
+                  console.log("(VA) proceeding to payment...");
+                  this.proceedToPayment();
+                });
+
+              } else {
+                console.log("(VA) invalid zone!");
+
+                this.displayError(ADDRESS_ERROR, `
+                  Sorry, it looks like we don't deliver to your neighborhood yet. 
+                  Enter your email address and we will let you know as soon as
+                  we come to your neighborhood.
+                `);
+
+                this.setState({
+                  fetchingFees: false
+                });
+                // this.setState(prevState => ({
+                //   recalculatingPrice: true,
+                //   paymentSummary: {
+                //     ...prevState.paymentSummary,
+                //     taxRate: 0,
+                //     serviceFee: "0.00",
+                //     deliveryFee: "0.00",
+                //     taxAmount: "0.00"
+                //   }
+                // }), () => {
+                //   this.setTotal();
+                // });
+
+              }
+            })
+            .catch((err) => {
+              if (err.response) {
+                console.log(err.response);
+              }
+              console.log(err);
+            });
+        }
+      );
+
+    });
+
+    console.log("(validateAddress) after FAC");
+  }
+
   proceedToPayment() {
+    console.log("in proceedToPayment...");
+
+    // Save delivery details (address, contact info, etc.)
     this.saveDeliveryDetails();
 
+    let remoteDataFetched = 0;
+
+    // Show payment info
+    // If guest, create guest account
     if(this.state.customerUid === "GUEST"){
       console.log("Before createGuestAccount");
       createGuestAccount(
@@ -836,6 +808,14 @@ class PaymentDetails extends React.Component {
           } else {
             this.displayError(EMAIL_ERROR, response.message);
           }
+
+          remoteDataFetched++;
+          if(remoteDataFetched === 2){
+            this.setState({
+              fetchingFees: false
+            });
+          }
+
         }
       );
 
@@ -843,8 +823,17 @@ class PaymentDetails extends React.Component {
       this.setState({
         showPaymentInfo: true
       });
+
+      remoteDataFetched++;
+      if(remoteDataFetched === 2){
+        this.setState({
+          fetchingFees: false
+        });
+      }
+
     }
 
+    // Fetch either test or live Stripe key
     if(this.state.instructions === 'M4METEST'){
 
       // Fetch public key
@@ -852,10 +841,21 @@ class PaymentDetails extends React.Component {
 
       axios.get("https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/stripe_key/M4METEST")
         .then(result=>{
-          let stripePromise = loadStripe(result.data.publicKey);
+          console.log("(m4metest) key: ", result.data.publicKey);
+          let stripePromise = loadStripe(result.data.publicKey);;
+          console.log("(m4metest) stripe promise: ", stripePromise);
           this.setState({
+            stripeKey: result.data.publicKey,
             stripePromise: stripePromise
           });
+
+          remoteDataFetched++;
+          if(remoteDataFetched === 2){
+            this.setState({
+              fetchingFees: false
+            });
+          }
+
         })
         .catch(err => {
           console.log(err);
@@ -871,10 +871,21 @@ class PaymentDetails extends React.Component {
       
       axios.get("https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/stripe_key/LIVE")
         .then(result=>{
+          console.log("(live) key: ", result.data.publicKey);
           let stripePromise = loadStripe(result.data.publicKey);
+          console.log("(live) stripe promise: ", stripePromise);
           this.setState({
+            stripeKey: result.data.publicKey,
             stripePromise: stripePromise
           });
+
+          remoteDataFetched++;
+          if(remoteDataFetched === 2){
+            this.setState({
+              fetchingFees: false
+            });
+          }
+
         })
         .catch(err => {
           console.log(err);
@@ -884,6 +895,8 @@ class PaymentDetails extends React.Component {
         });
 
     }
+
+
   }
 
   render() {
@@ -999,6 +1012,41 @@ class PaymentDetails extends React.Component {
 
               </>
             );
+          } else if (this.state.errorType === CHECKOUT_ERROR) {
+            return (
+              <>
+                <div className = {this.state.errorModal}>
+                  <div className  = {styles.errorModalContainer}>
+
+                    <div className={styles.errorContainer}>    
+
+                      <h6 style = {{margin: '5px', fontWeight: 'bold', fontSize: '25px'}}>Hmm..</h6>
+
+                      <div style = {{display: 'block', width: '300px', margin: '20px auto 0px'}}>
+                        {this.state.errorMessage}
+                      </div> 
+
+                      <br />
+
+                      <button 
+                        className={styles.errorBtn}
+                        onClick = {() => {
+                          // this.refreshStripe();
+                          this.displayError(CLOSED, '');
+                          // this.setState({
+                          //   fetchingFees: false
+                          // });
+                        }}
+                      >
+                        OK
+                      </button>
+
+                    </div>
+                  </div>
+                </div>
+
+              </>
+            );
           } else if (this.state.errorType === DATA_ERROR) {
             return (
               <>
@@ -1022,6 +1070,57 @@ class PaymentDetails extends React.Component {
                         }}
                       >
                         Choose a Plan
+                      </button>
+
+                    </div>
+                  </div>
+                </div>
+
+              </>
+            );
+          } else if (this.state.errorType === ADDRESS_ERROR) {
+            return (
+              <>
+                <div className = {this.state.errorModal}>
+                  <div className  = {styles.errorModalContainer}>
+
+                    <div className={styles.errorContainer}>    
+
+                      <h6 style = {{margin: '5px', fontWeight: 'bold', fontSize: '25px'}}>Still Growing...</h6>
+
+                      <div style = {{display: 'block', width: '300px', margin: '20px auto 0px'}}>
+                        {this.state.errorMessage}
+                      </div> 
+
+                      <br />
+
+                      <input
+                        placeholder='Enter your email'
+                        style={{
+                          // position:'relative',
+                          // top:'140px',
+                          // left:'17px',
+                          // display: 
+                          width:'300px',
+                          height:'40px',
+                          fontSize:'18px',
+                          textAlign:'center',
+                          border:'2px solid #F26522',
+                          color:'black',
+                          // paddingTop:'10px',
+                          borderRadius:'10px',
+                          outline:'none'
+                        }}
+                      >    
+                      </input>
+
+                      <button 
+                        className={styles.errorBtn}
+                        onClick = {() => {
+                          this.displayError(CLOSED, '');
+                        }}
+                      >
+                        OK
                       </button>
 
                     </div>
@@ -1119,6 +1218,8 @@ class PaymentDetails extends React.Component {
                     firstName: e.target.value
                   });
                 }}
+                aria-label="Enter your first name"
+                aria-label="Enter your first name"
               />
 
               <input
@@ -1131,6 +1232,8 @@ class PaymentDetails extends React.Component {
                     lastName: e.target.value
                   });
                 }}
+                aria-label="Enter your last name"
+                aria-label="Enter your last name"
               />
             </div>
 
@@ -1147,6 +1250,8 @@ class PaymentDetails extends React.Component {
                         email: e.target.value
                       })
                     }}
+                    aria-label="Enter your email"
+                    title="Enter your email"
                   />
                 );
               } else {
@@ -1159,6 +1264,8 @@ class PaymentDetails extends React.Component {
                     onChange={e => {
                 
                     }}
+                    aria-label="Enter your email"
+                    title="Enter your email"
                   />
                 );
               }
@@ -1174,6 +1281,8 @@ class PaymentDetails extends React.Component {
                   phone: e.target.value
                 });
               }}
+              aria-label="Enter your phone number"
+              title="Enter your phone number"
             />
 
             {/* <input
@@ -1225,6 +1334,8 @@ class PaymentDetails extends React.Component {
               placeholder={"Address 1"}
               className={styles.input}
               id="pac-input" name="pac-input"
+              aria-label="Enter your address"
+              title="Enter your address"
             />
 
               {/* <input
@@ -1246,6 +1357,8 @@ class PaymentDetails extends React.Component {
                     unit: e.target.value
                   });
                 }}
+                aria-label="Enter your unit number. optional"
+                title="Enter your unit number. optional"
               />
               
               <input
@@ -1253,6 +1366,8 @@ class PaymentDetails extends React.Component {
                 placeholder={'City'}
                 id="locality" name="locality"
                 className={styles.inputContactRight}
+                aria-label="Enter your city"
+                title="Enter your city"
               />
             </div>
 
@@ -1262,12 +1377,16 @@ class PaymentDetails extends React.Component {
                 placeholder={'State'}
                 className={styles.inputContactLeft}
                 id="state" name="state"
+                aria-label="Enter your state"
+                title="Enter your state"
               />
               <input
                 type='text'
                 placeholder={'Zip Code'}
                 className={styles.inputContactRight}
                 id="postcode" name="postcode"
+                aria-label="Enter your zipcode"
+                title="Enter your zipcode"
               />
             </div> 
 
@@ -1281,6 +1400,8 @@ class PaymentDetails extends React.Component {
                   instructions: e.target.value
                 });
               }}
+              aria-label="Enter delivery instructions"
+              title="Enter delivery instructions"
             />
 
             <div className = {styles.googleMap} id = "map"/>     
@@ -1289,7 +1410,10 @@ class PaymentDetails extends React.Component {
               <button 
                 className={styles.orangeBtn}
                 disabled={this.state.loadingMap || this.state.fetchingFees}
-                onClick={()=>this.proceedToPayment()}
+                // onClick={()=>this.proceedToPayment()}
+                onClick={()=>this.validateAddress()}
+                aria-label="Click here to save your delivery information and proceed"
+                title="Click here to save your delivery information and proceed"
               >
                 Save and Proceed
               </button> 
@@ -1462,13 +1586,17 @@ class PaymentDetails extends React.Component {
                     {(() => {
                         if (this.state.paymentSummary.tip === "0.00") {
                           return (
-                            <button className={styles.tipButtonSelected} onClick={() => this.changeTip("0.00")}>
+                            <button className={styles.tipButtonSelected} onClick={() => this.changeTip("0.00")} 
+                            aria-label={"Current tip is: $" + this.state.paymentSummary.tip}
+                            title={"Current tip is: $" + this.state.paymentSummary.tip}>
                               No Tip
                             </button>
                           );
                         } else {
                           return (
-                            <button className={styles.tipButton} onClick={() => this.changeTip("0.00")}>
+                            <button className={styles.tipButton} onClick={() => this.changeTip("0.00")} 
+                            aria-label={"Current tip is: $" + this.state.paymentSummary.tip + ". Click here to remove tip."}
+                            title={"Current tip is: $" + this.state.paymentSummary.tip + ". Click here to remove tip."}>
                               No Tip
                             </button>
                           );
@@ -1477,13 +1605,17 @@ class PaymentDetails extends React.Component {
                       {(() => {
                         if (this.state.paymentSummary.tip === "2.00") {
                           return (
-                            <button className={styles.tipButtonSelected2} onClick={() => this.changeTip("2.00")}>
+                            <button className={styles.tipButtonSelected2} onClick={() => this.changeTip("2.00")} 
+                            aria-label={"Current tip is: $" + this.state.paymentSummary.tip}
+                            title={"Current tip is: $" + this.state.paymentSummary.tip}>
                               $2
                             </button>
                           );
                         } else {
                           return (
-                            <button className={styles.tipButton2} onClick={() => this.changeTip("2.00")}>
+                            <button className={styles.tipButton2} onClick={() => this.changeTip("2.00")} 
+                            aria-label={"Current tip is: $" + this.state.paymentSummary.tip + ". Click here to change tip to $2."}
+                            title={"Current tip is: $" + this.state.paymentSummary.tip + ". Click here to change tip to $2."}>
                               $2
                             </button>
                           );
@@ -1492,13 +1624,17 @@ class PaymentDetails extends React.Component {
                       {(() => {
                         if (this.state.paymentSummary.tip === "3.00") {
                           return (
-                            <button className={styles.tipButtonSelected2} onClick={() => this.changeTip("3.00")}>
+                            <button className={styles.tipButtonSelected2} onClick={() => this.changeTip("3.00")} 
+                            aria-label={"Current tip is: $" + this.state.paymentSummary.tip}
+                            title={"Current tip is: $" + this.state.paymentSummary.tip}>
                               $3
                             </button>
                           );
                         } else {
                           return (
-                            <button className={styles.tipButton2} onClick={() => this.changeTip("3.00")}>
+                            <button className={styles.tipButton2} onClick={() => this.changeTip("3.00")} 
+                            aria-label={"Current tip is: $" + this.state.paymentSummary.tip + ". Click here to change tip to $3."}
+                            title={"Current tip is: $" + this.state.paymentSummary.tip + ". Click here to change tip to $3."}>
                               $3
                             </button>
                           );
@@ -1507,13 +1643,17 @@ class PaymentDetails extends React.Component {
                       {(() => {
                         if (this.state.paymentSummary.tip === "5.00") {
                           return (
-                            <button className={styles.tipButtonSelected2} onClick={() => this.changeTip("5.00")}>
+                            <button className={styles.tipButtonSelected2} onClick={() => this.changeTip("5.00")} 
+                            aria-label={"Current tip is: $" + this.state.paymentSummary.tip}
+                            title={"Current tip is: $" + this.state.paymentSummary.tip}>
                               $5
                             </button>
                           );
                         } else {
                           return (
-                            <button className={styles.tipButton2} onClick={() => this.changeTip("5.00")}>
+                            <button className={styles.tipButton2} onClick={() => this.changeTip("5.00")}
+                            aria-label={"Current tip is: $" + this.state.paymentSummary.tip + ". Click here to change tip to $5."}
+                            title={"Current tip is: $" + this.state.paymentSummary.tip + ". Click here to change tip to $5."}>
                               $5
                             </button>
                           );
@@ -1531,6 +1671,8 @@ class PaymentDetails extends React.Component {
                         ambassadorCode: e.target.value
                       });
                     }}
+                    aria-label="Enter your ambassador code"
+                    title="Enter your ambassador code"
                   />
                   <button 
                     className={styles.codeButton}
@@ -1539,6 +1681,8 @@ class PaymentDetails extends React.Component {
                       parseFloat(this.state.paymentSummary.ambassadorDiscount) > 0
                     }
                     onClick={() => this.applyAmbassadorCode()}
+                    aria-label="Click to verify your ambassador code"
+                    title="Click to verify your ambassador code"
                   >
                     Verify
                   </button>
@@ -1569,7 +1713,17 @@ class PaymentDetails extends React.Component {
                       <h6 className={styles.sectionHeaderRight2}>Complete Payment</h6>
                     </div>
                         
-                    <div style={{width: '84%', textAlign: 'left'}}>
+                    {/* <div style={{width: '84%', textAlign: 'left'}}> */}
+                    <div
+                      style={{
+                        width: '84%', 
+                        // textAlign: 'left', 
+                        // border: 'dashed',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        // marginLeft: '8%'
+                      }}
+                    >
                       <div style={{display: 'flex'}}>
                           <div className = {styles.buttonContainer}>
                             <StripeElement
@@ -1585,6 +1739,7 @@ class PaymentDetails extends React.Component {
                               customerUid={this.state.customerUid}
                               phone={this.state.phone}
                               fetchingFees={this.state.fetchingFees}
+                              displayError={this.displayError}
                             />
                           </div>
                       </div>
@@ -1632,12 +1787,14 @@ class PaymentDetails extends React.Component {
                   <div 
                     style={{
                       width: '84%', 
-                      textAlign: 'left', 
+                      // textAlign: 'left', 
                       // border: 'dashed',
+                      display: 'flex',
+                      justifyContent: 'center',
                       marginLeft: '8%'
                     }}
                   >
-                    <div style={{display: 'flex'}}>
+                    {/* <div style={{display: 'flex'}}> */}
                         <div className = {styles.buttonContainer}>
                           <StripeElement
                             stripePromise={this.state.stripePromise}
@@ -1652,9 +1809,10 @@ class PaymentDetails extends React.Component {
                             customerUid={this.state.customerUid}
                             phone={this.state.phone}
                             fetchingFees={this.state.fetchingFees}
+                            displayError={this.displayError}
                           />
                         </div>
-                    </div>
+                    {/* </div> */}
                   </div>
                 </div>)
               : null

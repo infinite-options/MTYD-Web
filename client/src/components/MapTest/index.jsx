@@ -78,7 +78,7 @@ export class MapTest extends Component {
     return (
       <div>
         <div id="pac-container">
-          <input id="pac-input" type="text" placeholder="Enter a location" />
+          <input id="pac-input" type="text" placeholder="Enter a location" aria-label="enter a location" title="enter a location"/>
         </div>
         <div style={{ width: 1800, height: 900 }} id="map" />
 

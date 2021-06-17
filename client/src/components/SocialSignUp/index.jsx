@@ -1,4 +1,4 @@
-import React, {Fragment} from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import {connect} from "react-redux";
 import {
@@ -16,13 +16,6 @@ import {
 import {withRouter} from "react-router";
 import styles from "../SignUp/signup.module.css";
 import {WebNavBar} from "../NavBar";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {
-  faBars,
-  faBell,
-  faShareAlt,
-  faSearch
-} from "@fortawesome/free-solid-svg-icons";
 
 import axios from 'axios';
 
@@ -62,14 +55,22 @@ class SocialSignUp extends React.Component {
 
   componentDidMount() {
     let queryString = this.props.location.search;
+    console.log("(SSU) queryString: ", queryString);
+
     let urlParams = new URLSearchParams(queryString);
+    console.log("(SSU) urlParams: ", urlParams);
+
     if (urlParams.has("id")) {
+      console.log("(SSU) before initAppleSignup");
+
       this.props.initAppleSignUp(urlParams.get("id"), () => {
         this.setState({
           mounted: true
         });
       });
     } else {
+      console.log("(SSU) NOT initAppleSignup");
+
       this.setState({
         mounted: true
       });
