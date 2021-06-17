@@ -179,9 +179,19 @@ export class PopSignup extends Component {
 
   wrapperFunction=()=>{
     console.log(this.state)
+    let nameCheck = false
+    let emailCheck = false
     if(this.props.firstName == '' || this.props.lastName == ''){
       alert('first name and last name is required')
     } else {
+      nameCheck = true
+    }
+    if(this.props.email == ''){
+      alert('email is required')
+    } else {
+      emailCheck = true
+    }
+    if(nameCheck == true && emailCheck == true){
       this.props.submitPasswordSignUp(
         this.props.email,
         this.props.password,
