@@ -172,8 +172,7 @@ class SocialSignUp extends React.Component {
 
     if(this.props.firstName==''||this.props.lastName==''){
       alert('first name and last name is required')
-    }
-    else{
+    }else{
         this.props.submitSocialSignUp(
         this.props.AppleSignUp,
         this.props.customerId,

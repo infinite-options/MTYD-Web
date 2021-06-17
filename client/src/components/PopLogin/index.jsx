@@ -316,42 +316,6 @@ export class PopLogin extends Component {
                         <br />
                         {(() => {
                           console.log("sometext"+this.errorLink)
-                          if (this.errorLink === 'back') {
-                            return (
-                              <button 
-                              className={styles.chargeBtn}
-                              onClick = {() => {
-                                if(this.errorLink === 'back'){
-                                  this.displayErrorModal();
-                                  this.loginClicked = false
-                                  this.showErrorModal=false
-                                  this.forceUpdate()
-                                } else {
-                                  this.props.history.push(this.errorLink);
-                                }
-                              }}
-                              style = {{
-                                textAlign: 'center',
-                                justifyContent: 'center',
-                                padding: '5px',
-                                /*color: black !important;*/
-                                color: '#ffffff',
-                                fontSize: '16px',
-                                /*border: 1px solid rgb(187, 174, 174);*/
-                                borderRadius: '10px',
-                                borderWidth: '0',
-                                minWidth: '100px',
-                                backgroundColor: '#ff6505',
-                                marginTop: '10px',
-                                marginBottom: '25px',
-                                width: '90%',
-                                height: '50px'
-                              }}
-                            >
-                              {this.errorLinkText}
-                            </button>
-                            )
-                          }
                           if (this.errorLink === 'google') {
                             return (
                               <GoogleLogin
@@ -457,8 +421,38 @@ export class PopLogin extends Component {
                               </button>
                             </div>
                             )
+                          } else {
+                            return (
+                              <button 
+                              className={styles.chargeBtn}
+                              onClick = {() => {
+                                this.displayErrorModal();
+                                this.loginClicked = false
+                                this.showErrorModal=false
+                                this.forceUpdate()
+                              }}
+                              style = {{
+                                textAlign: 'center',
+                                justifyContent: 'center',
+                                padding: '5px',
+                                /*color: black !important;*/
+                                color: '#ffffff',
+                                fontSize: '16px',
+                                /*border: 1px solid rgb(187, 174, 174);*/
+                                borderRadius: '10px',
+                                borderWidth: '0',
+                                minWidth: '100px',
+                                backgroundColor: '#ff6505',
+                                marginTop: '10px',
+                                marginBottom: '25px',
+                                width: '90%',
+                                height: '50px'
+                              }}
+                            >
+                              {this.errorLinkText}
+                            </button>
+                            )
                           }
-
                         })()}
                       </div> 
                     </div>
@@ -498,12 +492,14 @@ export class PopLogin extends Component {
 
   getError = () => {
     //console.log("attemptLogin = " + this.attemptLogin)
-    if (this.attemptLogin==true){ 
-      this.props.loginAttempt( 
-        this.props.email,
-        this.props.password,
-        this.successLogin
-      );
+    if (this.attemptLogin==true){
+      if (this.props.email!=''){ 
+        this.props.loginAttempt( 
+          this.props.email,
+          this.props.password,
+          this.successLogin
+        );
+      }
       this.attemptLogin=false
       this.attemptShow=true
       //this.errVal=getErrMessage()

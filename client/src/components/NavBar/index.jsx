@@ -163,7 +163,11 @@ class NavBar extends React.Component {
         let userInfo = store.getState().login.userInfo;
         if (userInfo && userInfo.customerId !== "") {
           if (userInfo.firstName == '' || userInfo.lastName == ''){
-            let iconName = 'N/A'
+            this.setState({
+              firstName: "Guest",
+              lastName: "User"
+            })
+            let iconName = 'GU'
           } else {let iconName = (
             userInfo.firstName.charAt(0) + userInfo.lastName.charAt(0)).toUpperCase();
           }
