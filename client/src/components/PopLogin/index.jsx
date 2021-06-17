@@ -517,12 +517,12 @@ export class PopLogin extends Component {
     let errorLink = ''
     if (this.attemptShow==true){
       this.errVal=getErrMessage()
-      if (this.errVal == "Email doesn't exists") {
-        errorHead = 'Hmm...'
-        errorString = "Something doesn't match, please make sure you've entered your email address and password correctly."
-        errorButton = 'Okay'
-        errorLink = 'back'
-      }
+      // if (this.errVal == "Email doesn't exists") {
+      //   errorHead = 'Hmm...'
+      //   errorString = "Something doesn't match, please make sure you've entered your email address and password correctly."
+      //   errorButton = 'Okay'
+      //   errorLink = 'back'
+      // }
       if (this.errVal == "Social Signup exists. Use 'GOOGLE' ") {
         errorHead = 'Social sign up exists'
         errorString = "We have found this account with a different social login. Please click below to continue."
@@ -540,6 +540,11 @@ export class PopLogin extends Component {
         errorString = "We have found this account with a different social login. Please click below to continue."
         errorButton = 'Apple button placeholder'
         errorLink = 'apple'
+      } else {
+        errorHead = 'Hmm...'
+        errorString = "Something doesn't match, please make sure you've entered your email address and password correctly."
+        errorButton = 'Okay'
+        errorLink = 'back'
       }
       this.displayErrorModal(errorHead, errorString, errorButton, errorLink)
       //console.log("Set error text to: "+ this.errVal)
