@@ -35,6 +35,7 @@ class MenuItemList extends Component {
       addOnItems: [],
       addOnAmount: 0,
       meals: [],
+      meals_nbd: [],
       totalCount: 0,
       selectValue: "SURPRISE",
       saveButton: false,
@@ -55,7 +56,72 @@ class MenuItemList extends Component {
     };
   }
 
+  formatDate = (rawDate) => {
+
+    let dateElements = rawDate.split(' ');
+    let yyyy_mm_dd = dateElements[0].split('-');
+    let month;
+
+    // Parse month
+    switch(yyyy_mm_dd[1]){
+      case "01":
+        month = "January";
+        break;
+      case "02":
+        month = "February";
+        break;
+      case "03":
+        month = "March";
+        break;
+      case "04":
+        month = "April";
+        break;
+      case "05":
+        month = "May";
+        break;
+      case "06":
+        month = "June";
+        break;
+      case "07":
+        month = "July";
+        break;
+      case "08":
+        month = "August";
+        break;
+      case "09":
+        month = "September";
+        break;
+      case "10":
+        month = "October";
+        break;
+      case "11":
+        month = "November";
+        break;
+      case "12":
+        month = "December";
+        break;
+      default:
+        month = "";
+    }
+
+    let dateString = month + " " + yyyy_mm_dd[2] + ", " + yyyy_mm_dd[0];
+    // console.log("date string: ", dateString);
+
+    return dateString;
+  }
+
   toggleDisplay = (option) => {
+    console.log("in toggleDisplay");
+    console.log("(toggleDisplay) props: ", this.props);
+    console.log("(toggleDisplay) current meal: ", this.state.purchaseID);
+
+    let currMealInfo = this.state.meals_nbd.find(element => 
+      element.purchase_uid === this.state.purchaseID
+    );
+
+    console.log("(toggleDisplay) curr meal info: ", currMealInfo);
+    console.log("(toggleDisplay) charge date: ", currMealInfo.next_billing_date);
+
     if(this.state.popUpDisplay === false) {
        this.setState({
            popUp: styles.popUpShow,
@@ -70,7 +136,7 @@ class MenuItemList extends Component {
     if(option === "SAVE") {
       let popUpText = 'You have saved your meals for this week. '
       if (this.state.addOnAmount > 0) {
-        popUpText = popUpText.concat('You will be charged for ' + this.state.addOnAmount + ' Add On items at a later date')
+        popUpText = popUpText.concat('You will be charged for ' + this.state.addOnAmount + ' Add On items on ' + this.formatDate(currMealInfo.next_billing_date));
       }
       this.setState({
         popUpText,
@@ -116,6 +182,43 @@ class MenuItemList extends Component {
       })
       .catch(error => {
         console.error(error);
+      });
+
+    //predict_next_billing_date/
+    // axios.get(`${API_URL}customer_lplp?customer_uid=${customer_uid}`)
+    //   .then(response => response.json())
+    //   .then(json => {
+    //     let meals = [...json.result];
+    //     console.log("loadMealPlans: ", meals)
+    //     this.setState({
+    //       meals: meals,
+    //       purchaseID: meals[0].purchase_id,
+    //       totalMeals: parseInt(meals[0].items.substr(23, 2))
+    //     });
+    //   })
+    //   .catch(error => {
+    //     console.error(error);
+    //   });
+
+    axios.get(`${API_URL}predict_next_billing_date/${customer_uid}`)
+      .then(res => {
+        console.log("(MIL -- PNBD) res: ", res);
+        this.setState({
+          meals_nbd: res.data.result
+        });
+        // let meals = [...json.result];
+        // console.log("loadMealPlans: ", meals)
+        // this.setState({
+        //   meals: meals,
+        //   purchaseID: meals[0].purchase_id,
+        //   totalMeals: parseInt(meals[0].items.substr(23, 2))
+        // });
+      })
+      .catch(err => {
+        console.log(err);
+        if(err.response) {
+          console.log(err.response);
+        }
       });
   };
 
@@ -1476,6 +1579,7 @@ class MenuItemList extends Component {
           dates={uniqueDates}
           filterDates={this.filterDates}
           meals={this.state.meals}
+          meals_nbd={this.state.meals_nbd}
           mealsOnChange={this.mealsOnChange}
           totalCount={this.state.totalCount}
           totalMeals={this.state.totalMeals}
