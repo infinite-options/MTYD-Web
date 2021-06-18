@@ -150,6 +150,14 @@ class MenuItem extends React.Component {
     }
   }
 
+  flipCard = (index) => {
+    let flipsCopy = [...this.state.flipStatusArray];
+    flipsCopy[index] = !flipsCopy[index];
+    this.setState({
+      flipStatusArray: flipsCopy
+    });
+  }
+
   menuItemFilter = () => {
 
     // console.log("MIF called");
@@ -206,20 +214,40 @@ class MenuItem extends React.Component {
           }}
         >
 
-          {console.log("meal photo url: ", menuitem.meal_photo_URL)}
-          <div
-            style={{
-              backgroundImage: `url(${menuitem.meal_photo_URL})`,
-              backgroundSize: "cover",
-              backgroundPosition:'center',
-              border: 'dashed'
-              // backgroundColor:"black"
-            }}
-            className={styles.menuItem}
-          >
-            {/* <div className={styles.menuElements} id={styles.eyeBtn}></div> */}
+          {/* {console.log("meal photo url: ", menuitem.meal_photo_URL)} */}
 
-            {/* <Tooltip title={menuitem.meal_desc}>
+          <ReactCardFlip isFlipped={this.state.flipStatusArray[index]} flipDirection="horizontal">
+            <div
+              style={{
+                backgroundImage: `url(${menuitem.meal_photo_URL})`,
+                backgroundSize: "cover",
+                backgroundPosition:'center',
+                // border: 'dashed'
+                // backgroundColor:"black"
+              }}
+              className={styles.menuItem}
+            >
+              {/* <div className={styles.menuElements} id={styles.eyeBtn}></div> */}
+
+              {/* <Tooltip title={menuitem.meal_desc}>
+                <button 
+                  className={styles.infoButton}
+                  aria-label={"Click here for more info on " + menuitem.meal_name}
+                  title={"Click here for more info on " + menuitem.meal_name}
+                >
+                  <img 
+                    src={info}
+                    style={{
+                      height:30,
+                      width:30,
+                      borderRadius: '0 0 0 100px',
+                      marginRight:'7px',
+                      marginBottom:'2px',
+                    }}  
+                  />
+                </button>
+              </Tooltip> */}
+
               <button 
                 className={styles.infoButton}
                 aria-label={"Click here for more info on " + menuitem.meal_name}
@@ -234,99 +262,50 @@ class MenuItem extends React.Component {
                     marginRight:'7px',
                     marginBottom:'2px',
                   }}  
+                  onClick={() => {
+                    this.flipCard(index)
+                  }}
                 />
               </button>
-            </Tooltip> */}
-
-            <button 
-              className={styles.infoButton}
-              aria-label={"Click here for more info on " + menuitem.meal_name}
-              title={"Click here for more info on " + menuitem.meal_name}
-            >
-              <img 
-                src={info}
-                style={{
-                  height:30,
-                  width:30,
-                  borderRadius: '0 0 0 100px',
-                  marginRight:'7px',
-                  marginBottom:'2px',
-                }}  
-              />
-            </button>
             
-            <button 
-              onClick={this.changeHeart}
-              className={styles.heartButton}
-              aria-label={"Click here to favorite " + menuitem.meal_name}
-              title={"Click here to favorite " + menuitem.meal_name}
-            >
-              <img 
-                src={this.state.favList.includes(menuitem.meal_uid) 
-                  ? fullHeart
-                  : emptyHeart}
-                style={{
-                  height:30,
-                  width:30,
-                  borderRadius: '0 0 100px 0',
-                  marginRight:'7px',
-                  marginBottom:'2px',
-                }}
-                id = {menuitem.meal_uid}
-              />
-            </button>
-
-              <Fragment>
-                <button
-                  onClick={() => this.props.removeFromCart(menuitem)}
+              <button 
+                onClick={this.changeHeart}
+                className={styles.heartButton}
+                aria-label={"Click here to favorite " + menuitem.meal_name}
+                title={"Click here to favorite " + menuitem.meal_name}
+              >
+                <img 
+                  src={this.state.favList.includes(menuitem.meal_uid) 
+                    ? fullHeart
+                    : emptyHeart}
                   style={{
-                    width: '60px',
-                    height: '42px',
-                    top:'223px',
-                    backgroundColor:'rgb(0, 0, 0,0)'
+                    height:30,
+                    width:30,
+                    borderRadius: '0 0 100px 0',
+                    marginRight:'7px',
+                    marginBottom:'2px',
                   }}
-                  className={styles.minusElements}
-                  id = {String(menuitem.menu_meal_id+'-')}
-                  aria-label={"Click here to remove one " + menuitem.meal_name + ". Current amount: " + dict[menuitem.menu_meal_id]}
-                  title={"Click here to remove one " + menuitem.meal_name + ". Current amount: " + dict[menuitem.menu_meal_id]}
-                >
-                  -
-                </button>
+                  id = {menuitem.meal_uid}
+                />
+              </button>
 
-                <div 
-                  key = {index}
-                  style={{
-                    width: '64px',
-                    height: '42px',
-                    top:'223px',
-                    right:'59.5px',
-                    backgroundColor:'rgb(0, 0, 0,0)'
-                  }}
-                  className={styles.numElements}
-                  id = {String(menuitem.menu_meal_id+'num')}
-                >
-                  {dict[menuitem.menu_meal_id]}
-                </div>
+                <Fragment>
+                  <button
+                    onClick={() => this.props.removeFromCart(menuitem)}
+                    style={{
+                      width: '60px',
+                      height: '42px',
+                      top:'223px',
+                      backgroundColor:'rgb(0, 0, 0,0)'
+                    }}
+                    className={styles.minusElements}
+                    id = {String(menuitem.menu_meal_id+'-')}
+                    aria-label={"Click here to remove one " + menuitem.meal_name + ". Current amount: " + dict[menuitem.menu_meal_id]}
+                    title={"Click here to remove one " + menuitem.meal_name + ". Current amount: " + dict[menuitem.menu_meal_id]}
+                  >
+                    -
+                  </button>
 
-                <button
-                  onClick={() => this.props.addToCart(menuitem)}
-                  style={{
-                    width: '60px',
-                    height: '42px',
-                    top:'223px',
-                    left:'124px',
-                    backgroundColor:'rgb(0, 0, 0,0)'
-                  }}
-                  className={styles.plusElements}
-                  id = {String(menuitem.menu_meal_id+'+')}
-                  aria-label={"Click here to add one " + menuitem.meal_name + ". Current amount: " + dict[menuitem.menu_meal_id]}
-                  title={"Click here to add one " + menuitem.meal_name + ". Current amount: " + dict[menuitem.menu_meal_id]}
-                >
-                  +
-                </button> 
-
-
-                {cartItems.length == 0 &&
                   <div 
                     key = {index}
                     style={{
@@ -334,17 +313,176 @@ class MenuItem extends React.Component {
                       height: '42px',
                       top:'223px',
                       right:'59.5px',
+                      backgroundColor:'rgb(0, 0, 0,0)'
                     }}
                     className={styles.numElements}
-                    id={styles.mealCounter}
+                    id = {String(menuitem.menu_meal_id+'num')}
                   >
-                    {0}
+                    {dict[menuitem.menu_meal_id]}
                   </div>
-                }
 
-              </Fragment>
-            ) 
-          </div>
+                  <button
+                    onClick={() => this.props.addToCart(menuitem)}
+                    style={{
+                      width: '60px',
+                      height: '42px',
+                      top:'223px',
+                      left:'124px',
+                      backgroundColor:'rgb(0, 0, 0,0)'
+                    }}
+                    className={styles.plusElements}
+                    id = {String(menuitem.menu_meal_id+'+')}
+                    aria-label={"Click here to add one " + menuitem.meal_name + ". Current amount: " + dict[menuitem.menu_meal_id]}
+                    title={"Click here to add one " + menuitem.meal_name + ". Current amount: " + dict[menuitem.menu_meal_id]}
+                  >
+                    +
+                  </button> 
+
+
+                  {cartItems.length == 0 &&
+                    <div 
+                      key = {index}
+                      style={{
+                        width: '64px',
+                        height: '42px',
+                        top:'223px',
+                        right:'59.5px',
+                      }}
+                      className={styles.numElements}
+                      id={styles.mealCounter}
+                    >
+                      {0}
+                    </div>
+                  }
+
+                </Fragment>
+              ) 
+            </div>
+
+            <div
+              style={{
+                backgroundImage: `url(${menuitem.meal_photo_URL})`,
+                backgroundSize: "cover",
+                backgroundPosition:'center',
+                // border: 'dashed'
+                // backgroundColor:"black"
+              }}
+              className={styles.menuItem}
+            >
+
+              <button 
+                className={styles.infoButton}
+                aria-label={"Click here for more info on " + menuitem.meal_name}
+                title={"Click here for more info on " + menuitem.meal_name}
+              >
+                <img 
+                  src={info}
+                  style={{
+                    height:30,
+                    width:30,
+                    borderRadius: '0 0 0 100px',
+                    marginRight:'7px',
+                    marginBottom:'2px',
+                  }}  
+                  onClick={() => {
+                    this.flipCard(index)
+                  }}
+                />
+              </button>
+            
+              <button 
+                onClick={this.changeHeart}
+                className={styles.heartButton}
+                aria-label={"Click here to favorite " + menuitem.meal_name}
+                title={"Click here to favorite " + menuitem.meal_name}
+              >
+                <img 
+                  src={this.state.favList.includes(menuitem.meal_uid) 
+                    ? fullHeart
+                    : emptyHeart}
+                  style={{
+                    height:30,
+                    width:30,
+                    borderRadius: '0 0 100px 0',
+                    marginRight:'7px',
+                    marginBottom:'2px',
+                  }}
+                  id = {menuitem.meal_uid}
+                />
+              </button>
+
+                <Fragment>
+                  <button
+                    onClick={() => this.props.removeFromCart(menuitem)}
+                    style={{
+                      width: '60px',
+                      height: '42px',
+                      top:'223px',
+                      backgroundColor:'rgb(0, 0, 0,0)'
+                    }}
+                    className={styles.minusElements}
+                    id = {String(menuitem.menu_meal_id+'-')}
+                    aria-label={"Click here to remove one " + menuitem.meal_name + ". Current amount: " + dict[menuitem.menu_meal_id]}
+                    title={"Click here to remove one " + menuitem.meal_name + ". Current amount: " + dict[menuitem.menu_meal_id]}
+                  >
+                    -
+                  </button>
+
+                  <div 
+                    key = {index}
+                    style={{
+                      width: '64px',
+                      height: '42px',
+                      top:'223px',
+                      right:'59.5px',
+                      backgroundColor:'rgb(0, 0, 0,0)'
+                    }}
+                    className={styles.numElements}
+                    id = {String(menuitem.menu_meal_id+'num')}
+                  >
+                    {dict[menuitem.menu_meal_id]}
+                  </div>
+
+                  <button
+                    onClick={() => this.props.addToCart(menuitem)}
+                    style={{
+                      width: '60px',
+                      height: '42px',
+                      top:'223px',
+                      left:'124px',
+                      backgroundColor:'rgb(0, 0, 0,0)'
+                    }}
+                    className={styles.plusElements}
+                    id = {String(menuitem.menu_meal_id+'+')}
+                    aria-label={"Click here to add one " + menuitem.meal_name + ". Current amount: " + dict[menuitem.menu_meal_id]}
+                    title={"Click here to add one " + menuitem.meal_name + ". Current amount: " + dict[menuitem.menu_meal_id]}
+                  >
+                    +
+                  </button> 
+
+
+                  {cartItems.length == 0 &&
+                    <div 
+                      key = {index}
+                      style={{
+                        width: '64px',
+                        height: '42px',
+                        top:'223px',
+                        right:'59.5px',
+                      }}
+                      className={styles.numElements}
+                      id={styles.mealCounter}
+                    >
+                      {0}
+                    </div>
+                  }
+
+                </Fragment>
+              ) 
+            </div>
+
+          </ReactCardFlip>
+
           <p 
             id={styles.menuItemTitle}
             style = {{
