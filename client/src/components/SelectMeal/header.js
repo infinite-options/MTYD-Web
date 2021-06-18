@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import MealIndicator from "./MealIndicator";
 import styles from "./selectmeal.module.css";
 import menuStyles from "../Menu/menu.module.css";
-import {WebNavBar} from "../NavBar";
+// import {WebNavBar} from "../NavBar";
 import MenuBar from "../Menu";
 import {connect} from "react-redux";
 import Moment from 'react-moment';
@@ -191,17 +191,18 @@ class Header extends Component {
     return (
       <>
 
-        <WebNavBar/>
+        {/* <WebNavBar/> */}
 
         {/* <SelectMealGuestPop message = 'message here'/> */}
 
 
-        <MenuBar show={true} 
-        message={message} 
-        login = {login} 
-        subscribedPlans = {this.props.subscribedPlans} 
-        mealsOnChange={this.props.mealsOnChange}
-        meals={meals}
+        <MenuBar 
+          show={true} 
+          message={message} 
+          login = {login} 
+          subscribedPlans = {this.props.subscribedPlans} 
+          mealsOnChange={this.props.mealsOnChange}
+          meals={meals}
         />  
 
         <div class={styles.divider}/>
@@ -212,10 +213,19 @@ class Header extends Component {
           display:'flex',
           height:'170px',
           marginLeft:'198px',
-          marginRight:'200px'
+          marginRight:'200px',
+          borderRight: 'solid',
+          borderLeft: 'solid',
+          borderColor: '#F0F0F0',
+          // border: 'solid',
         }}
         >
           {this.props.dateButtonArray}
+          {/* {this.props.dateButtonArray.length > 0 ? (
+            this.props.dateButtonArray
+          ) : (
+            <>Loading dates...</>
+          )} */}
         </div>
           
 

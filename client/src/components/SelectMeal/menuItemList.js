@@ -22,6 +22,9 @@ import {UnloginSkip} from "../SelectMealGuestPop/UnloginSkip"
 import PopLogin from "../PopLogin";
 import Popsignup, { PopSignup } from '../PopSignup';
 
+import {WebNavBar} from "../NavBar";
+// import orangePlate from "./static/orange_plate.png";
+import m4me_logo from '../../images/LOGO_NoBG_MealsForMe.png';
 
 class MenuItemList extends Component {
   constructor(props) {
@@ -39,11 +42,10 @@ class MenuItemList extends Component {
       popUpDisplay: false,
       popUpText: 'Hello',
       popUpTitle: 'Hello',
-      dateButtonList:[],
+      dateButtonList: null,
       surpriseSkipSave : [],
       unloginPopupShowPM:false,
       currentSelectedDate:'',
-
       unloginPopupSave:false,
       unloginPopupSurprise:false,
       unloginPopupSkip:false,
@@ -742,7 +744,9 @@ class MenuItemList extends Component {
                 </button>
         </button>
       )
-      this.setState({dateButtonList:this.state.dateButtonList.map((info)=>info.key===this.state.myDate?tempNewButton:info)})
+      this.setState({
+        dateButtonList: this.state.dateButtonList.map((info)=>info.key===this.state.myDate?tempNewButton:info)
+      })
       if (this.state.myDate !== "") {
         const supriseData = [
           {
@@ -861,7 +865,9 @@ class MenuItemList extends Component {
       )
   
   
-      this.setState({dateButtonList:this.state.dateButtonList.map((info)=>info.key===this.state.myDate?tempNewButton:info)})
+      this.setState({
+        dateButtonList: this.state.dateButtonList.map((info)=>info.key===this.state.myDate?tempNewButton:info)
+      })
       const skipData = [
         {
           qty: "",
@@ -971,7 +977,9 @@ class MenuItemList extends Component {
       )
   
   
-      this.setState({dateButtonList:this.state.dateButtonList.map((info)=>info.key===this.state.myDate?tempNewButton:info)})
+      this.setState({
+        dateButtonList: this.state.dateButtonList.map((info)=>info.key===this.state.myDate?tempNewButton:info)
+      })
 
       const myarr = [];
       this.state.cartItems.map(meal => {
@@ -1313,7 +1321,7 @@ class MenuItemList extends Component {
           // console.log("buttonList: ", buttonList)
 
           this.setState({
-            dateButtonList:buttonList
+            dateButtonList: buttonList
           })
 
           return buttonList;
@@ -1401,7 +1409,7 @@ class MenuItemList extends Component {
         lessThanTen++;
       }
       this.setState({
-        dateButtonList:buttonList
+        dateButtonList: buttonList
       })
     }
     else{
@@ -1417,7 +1425,51 @@ class MenuItemList extends Component {
 
     // console.log(this.state.surpriseSkipSave)
     return (
-      <div className={styles.mealMenuWrapper}>
+      <>
+        <WebNavBar />
+
+        {/* Loading Screen */}
+        {this.state.dateButtonList !== null ? (
+          null
+        ) : (
+          <div
+            style={{
+              color: 'red',
+              zIndex: '99',
+              height: '100vh',
+              width: '100vw',
+              // height: '50vh',
+              // width: '50vw',
+              // border: 'inset',
+              position: 'fixed',
+              top: '0',
+              backgroundColor: '#F7F4E5',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}
+          >
+            <img src={m4me_logo} />
+          </div>
+        )}
+        {/* <div
+          style={{
+            color: 'red',
+            zIndex: '99',
+            height: '95vh',
+            width: '95vw',
+            // border: 'inset',
+            position: 'fixed',
+            top: '0',
+            backgroundColor: '#F7F4E5',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center'
+          }}
+        >
+          <img src={m4me_logo} />
+        </div> */}
+
         <Header
           data={this.state.data}
           dates={uniqueDates}
@@ -1443,34 +1495,36 @@ class MenuItemList extends Component {
         />
 
         <div style = {{overflow: 'visible', height: '100vh'}}>
-            <div className={styles.menuItemsWrapper}>
-              <MenuItem
-                addToCart={this.addToCart}
-                removeFromCart={this.removeFromCart}
-                data={this.state.data}
-                myDate={this.state.myDate}
-                cartItems={this.state.cartItems}
-                mealSelected={this.state.mealSelected}
-                purchaseID={this.state.purchaseID}
-                show={this.props.subscribedPlans.length}
-                addon = {false}
-                customer_uid = {Cookies.get("customer_uid")}
-              />
-          
-            </div>
+
+          <div className={styles.menuItemsWrapper}>
+            <MenuItem
+              addToCart={this.addToCart}
+              removeFromCart={this.removeFromCart}
+              data={this.state.data}
+              myDate={this.state.myDate}
+              cartItems={this.state.cartItems}
+              mealSelected={this.state.mealSelected}
+              purchaseID={this.state.purchaseID}
+              show={this.props.subscribedPlans.length}
+              addon = {false}
+              customer_uid = {Cookies.get("customer_uid")}
+            />
+          </div>
+
           <h6 style = {{padding: '10px 90px', fontSize: '30px', fontWeight: 'bold', color: '#FF9400'}}>Add Ons</h6>
+
           <div className = {styles.menuItemsWrapper}>
             <MenuItem
-                  addToCart={this.addAddOn}
-                  removeFromCart={this.removeAddOn}
-                  data={this.state.data}
-                  myDate={this.state.myDate}
-                  cartItems={this.state.addOnItems}
-                  mealSelected={this.state.mealSelected}
-                  purchaseID={this.state.purchaseID}
-                  show={this.props.subscribedPlans.length}
-                  addon = {true}
-                />
+              addToCart={this.addAddOn}
+              removeFromCart={this.removeAddOn}
+              data={this.state.data}
+              myDate={this.state.myDate}
+              cartItems={this.state.addOnItems}
+              mealSelected={this.state.mealSelected}
+              purchaseID={this.state.purchaseID}
+              show={this.props.subscribedPlans.length}
+              addon = {true}
+            />
           </div>
         </div>
 
@@ -1481,23 +1535,48 @@ class MenuItemList extends Component {
             <a className = {styles.popUpButton} onClick = {this.toggleDisplay}>OK</a>
           </div>
         </div>
-        {this.state.unloginPopupShowPM?
-      <SelectMealGuestPop closeFunction = {this.closepopPlusMinus}
-      login = {this.togglePopLogin} signup = {this.togglePopSignup}
-      />:null}
 
-      {this.state.unloginPopupSave?<UnloginSave closeFunction = {this.closepopSave} 
-      login = {this.togglePopLogin} signup = {this.togglePopSignup}
-      />:null}
-      {this.state.unloginPopupSurprise?<UnloginSurprise closeFunction = {this.closepopSurprise}
-      login = {this.togglePopLogin} signup = {this.togglePopSignup}
-      />:null}
-      {this.state.unloginPopupSkip?<UnloginSkip closeFunction = {this.closepopSkip}
-      login = {this.togglePopLogin} signup = {this.togglePopSignup}
-      />:null}
-      {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
-      {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
-      </div>
+        {this.state.unloginPopupShowPM ?
+          <SelectMealGuestPop 
+            closeFunction = {this.closepopPlusMinus}
+            login = {this.togglePopLogin} 
+            signup = {this.togglePopSignup}
+          />
+        : null}
+
+        {this.state.unloginPopupSave ?
+          <UnloginSave 
+            closeFunction = {this.closepopSave} 
+            login = {this.togglePopLogin} 
+            signup = {this.togglePopSignup}
+          />
+        : null}
+
+        {this.state.unloginPopupSurprise ?
+          <UnloginSurprise 
+            closeFunction = {this.closepopSurprise}
+            login = {this.togglePopLogin} 
+            signup = {this.togglePopSignup}
+          />
+        : null}
+
+        {this.state.unloginPopupSkip ?
+          <UnloginSkip 
+            closeFunction = {this.closepopSkip}
+            login = {this.togglePopLogin} 
+            signup = {this.togglePopSignup}
+          />
+        : null}
+
+        {this.state.login_seen ? 
+          <PopLogin toggle={this.togglePopLogin} /> 
+        : null}
+
+        {this.state.signUpSeen ? 
+          <Popsignup toggle={this.togglePopSignup} /> 
+        : null}
+
+      </>
     );
   }
 }

@@ -6,6 +6,7 @@ import fullHeart from  './images/fullHeart.svg'
 import info from  './images/info.svg'
 import {API_URL} from "../../reducers/constants";
 import axios from "axios";
+import ReactCardFlip from 'react-card-flip';
 
 class MenuItem extends React.Component {
 
