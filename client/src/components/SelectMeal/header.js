@@ -201,6 +201,7 @@ class Header extends Component {
         login = {login} 
         subscribedPlans = {this.props.subscribedPlans} 
         mealsOnChange={this.props.mealsOnChange}
+        mealsOnClick={this.props.mealsOnClick}
         meals={meals}
         />  
 
