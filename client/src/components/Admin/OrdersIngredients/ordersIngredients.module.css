@@ -1,0 +1,24 @@
+.root {
+  background-color: #f26522;
+  width: 100vw;
+  height: 93vh;
+  padding: 25px;
+}
+
+.container {
+  height: 100%;
+}
+
+.section {
+  background-color: white;
+  border-radius: 15px;
+}
+
+.row1 {
+  height: 15%;
+}
+
+.row2 {
+  margin-top: 10px;
+  height: 85%;
+}
