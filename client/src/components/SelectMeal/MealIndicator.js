@@ -73,13 +73,12 @@ class MealIndicator extends Component {
         </h4>
 
         <div
-        style={{
-          position:'absolute',
-          display:"flex",
-          right:'200px',
-          border: 'dashed'
-        }}
-
+          style={{
+            position:'absolute',
+            display:"flex",
+            right:'200px',
+            // border: 'dashed'
+          }}
         >
           {myarr}
         </div>

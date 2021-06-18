@@ -7,13 +7,15 @@ import info from  './images/info.svg'
 import {API_URL} from "../../reducers/constants";
 import axios from "axios";
 import ReactCardFlip from 'react-card-flip';
+import { forEachTrailingCommentRange } from "typescript";
 
 class MenuItem extends React.Component {
 
   constructor(props){
     super();
     this.state={
-      favList:[],
+      favList: [],
+      flipStatusArray: []
     }
     this.changeHeart = this.changeHeart.bind(this)
   }
@@ -122,6 +124,23 @@ class MenuItem extends React.Component {
 
 
   componentDidMount(){
+    // console.log("(menuItem) props data: ", this.props.data);
+
+    let filteredData = this.props.data.filter(
+      date => date.menu_date === this.props.myDate
+    );
+
+    console.log("filtered data length: ", filteredData.length);
+
+    let flips = [];
+    for(var i = 0; i<filteredData.length; i++){
+      flips.push(false);
+    }
+
+    this.setState({
+      flipStatusArray: flips
+    });
+
     if(this.props.customer_uid==null){
       // console.log("user not login")
     }
@@ -133,13 +152,17 @@ class MenuItem extends React.Component {
 
   menuItemFilter = () => {
 
+    // console.log("MIF called");
+
     const {cartItems, show} = this.props;
 
     // console.log(cartItems)
     let x = this.props.data.filter(
       date => date.menu_date === this.props.myDate
     );
-    let menuHTML
+
+    // let menuHTML
+    let menuHTML = [];
 
     if (this.props.addon === false) {
       x = x.filter(item => item.meal_cat !== 'Add-On')
@@ -168,148 +191,178 @@ class MenuItem extends React.Component {
     // console.log(dict)
 
 
-    menuHTML = x.map((menuitem, index) => (
-      
-      <div
-        key={index}
-        className={styles.menuitemIndividual}
-        id = {menuitem.menu_meal_id}
-        style={{
-          backgroundColor:colorDict[menuitem.menu_meal_id]
-        }}
-      >
-        {/* {
-          console.log(menuitem)
-        } */}
+    // menuHTML = x.map((menuitem, index) => (
+    x.forEach((menuitem, index) => {
 
-        {console.log("meal photo url: ", menuitem.meal_photo_URL)}
+
+
+      menuHTML.push(
         <div
+          key={index}
+          className={styles.menuitemIndividual}
+          id = {menuitem.menu_meal_id}
           style={{
-            backgroundImage: `url(${menuitem.meal_photo_URL})`,
-            backgroundSize: "cover",
-            backgroundPosition:'center'
-            
-            // backgroundColor:"black"
-            
+            backgroundColor:colorDict[menuitem.menu_meal_id]
           }}
-          className={styles.menuItem}
         >
-          {/* <div className={styles.menuElements} id={styles.eyeBtn}></div> */}
 
-
-          <Tooltip title={menuitem.meal_desc}>
-            <button className={styles.infoButton}
-            aria-label={"Click here for more info on " + menuitem.meal_name}
-            title={"Click here for more info on " + menuitem.meal_name}>
-              <img src={info}
-                    style={{
-                      height:30,
-                      width:30,
-                      borderRadius: '0 0 0 100px',
-                      marginRight:'7px',
-                      marginBottom:'2px',
-                    }}  
-              ></img>
-            </button>
-          </Tooltip>
-          
-          <button 
-          onClick={this.changeHeart}
-          className={styles.heartButton}
-          
-          aria-label={"Click here to favorite " + menuitem.meal_name}
-          title={"Click here to favorite " + menuitem.meal_name}
+          {console.log("meal photo url: ", menuitem.meal_photo_URL)}
+          <div
+            style={{
+              backgroundImage: `url(${menuitem.meal_photo_URL})`,
+              backgroundSize: "cover",
+              backgroundPosition:'center',
+              border: 'dashed'
+              // backgroundColor:"black"
+            }}
+            className={styles.menuItem}
           >
-            <img src={this.state.favList.includes(menuitem.meal_uid)?fullHeart:emptyHeart}
+            {/* <div className={styles.menuElements} id={styles.eyeBtn}></div> */}
+
+            {/* <Tooltip title={menuitem.meal_desc}>
+              <button 
+                className={styles.infoButton}
+                aria-label={"Click here for more info on " + menuitem.meal_name}
+                title={"Click here for more info on " + menuitem.meal_name}
+              >
+                <img 
+                  src={info}
                   style={{
                     height:30,
                     width:30,
-                    borderRadius: '0 0 100px 0',
+                    borderRadius: '0 0 0 100px',
                     marginRight:'7px',
                     marginBottom:'2px',
-                  }}
-                  id = {menuitem.meal_uid}
-            ></img>
-          </button>
-
-            <Fragment>
-              <button
-                onClick={() => this.props.removeFromCart(menuitem)}
-                style={{
-                  width: '60px',
-                  height: '42px',
-                  top:'223px',
-                  backgroundColor:'rgb(0, 0, 0,0)'
-                }}
-                className={styles.minusElements}
-                id = {String(menuitem.menu_meal_id+'-')}
-                aria-label={"Click here to remove one " + menuitem.meal_name + ". Current amount: " + dict[menuitem.menu_meal_id]}
-                title={"Click here to remove one " + menuitem.meal_name + ". Current amount: " + dict[menuitem.menu_meal_id]}
-              >
-                -
+                  }}  
+                />
               </button>
+            </Tooltip> */}
 
-              <div key = {index}
+            <button 
+              className={styles.infoButton}
+              aria-label={"Click here for more info on " + menuitem.meal_name}
+              title={"Click here for more info on " + menuitem.meal_name}
+            >
+              <img 
+                src={info}
                 style={{
-                  width: '64px',
-                  height: '42px',
-                  top:'223px',
-                  right:'59.5px',
-                  backgroundColor:'rgb(0, 0, 0,0)'
+                  height:30,
+                  width:30,
+                  borderRadius: '0 0 0 100px',
+                  marginRight:'7px',
+                  marginBottom:'2px',
+                }}  
+              />
+            </button>
+            
+            <button 
+              onClick={this.changeHeart}
+              className={styles.heartButton}
+              aria-label={"Click here to favorite " + menuitem.meal_name}
+              title={"Click here to favorite " + menuitem.meal_name}
+            >
+              <img 
+                src={this.state.favList.includes(menuitem.meal_uid) 
+                  ? fullHeart
+                  : emptyHeart}
+                style={{
+                  height:30,
+                  width:30,
+                  borderRadius: '0 0 100px 0',
+                  marginRight:'7px',
+                  marginBottom:'2px',
                 }}
+                id = {menuitem.meal_uid}
+              />
+            </button>
+
+              <Fragment>
+                <button
+                  onClick={() => this.props.removeFromCart(menuitem)}
+                  style={{
+                    width: '60px',
+                    height: '42px',
+                    top:'223px',
+                    backgroundColor:'rgb(0, 0, 0,0)'
+                  }}
+                  className={styles.minusElements}
+                  id = {String(menuitem.menu_meal_id+'-')}
+                  aria-label={"Click here to remove one " + menuitem.meal_name + ". Current amount: " + dict[menuitem.menu_meal_id]}
+                  title={"Click here to remove one " + menuitem.meal_name + ". Current amount: " + dict[menuitem.menu_meal_id]}
+                >
+                  -
+                </button>
+
+                <div 
+                  key = {index}
+                  style={{
+                    width: '64px',
+                    height: '42px',
+                    top:'223px',
+                    right:'59.5px',
+                    backgroundColor:'rgb(0, 0, 0,0)'
+                  }}
                   className={styles.numElements}
                   id = {String(menuitem.menu_meal_id+'num')}
                 >
                   {dict[menuitem.menu_meal_id]}
-              </div>
-
-              <button
-                onClick={() => this.props.addToCart(menuitem)}
-                style={{
-                  width: '60px',
-                  height: '42px',
-                  top:'223px',
-                  left:'124px',
-                  backgroundColor:'rgb(0, 0, 0,0)'
-                }}
-                className={styles.plusElements}
-                id = {String(menuitem.menu_meal_id+'+')}
-                aria-label={"Click here to add one " + menuitem.meal_name + ". Current amount: " + dict[menuitem.menu_meal_id]}
-                title={"Click here to add one " + menuitem.meal_name + ". Current amount: " + dict[menuitem.menu_meal_id]}
-              >
-                +
-              </button> 
-
-
-              {cartItems.length == 0 &&
-                <div key = {index}
-                style={{
-                  width: '64px',
-                  height: '42px',
-                  top:'223px',
-                  right:'59.5px',
-                }}
-                  className={styles.numElements}
-                  id={styles.mealCounter}
-                >
-                  {0}
                 </div>
-              }
 
-            </Fragment>
-          ) 
-        </div>
-        <p id={styles.menuItemTitle}
-        style = {{
-          display:'inline-block',
-          overflow:'hidden',
-          whiteSpace:'nowrap'
-          }}>
+                <button
+                  onClick={() => this.props.addToCart(menuitem)}
+                  style={{
+                    width: '60px',
+                    height: '42px',
+                    top:'223px',
+                    left:'124px',
+                    backgroundColor:'rgb(0, 0, 0,0)'
+                  }}
+                  className={styles.plusElements}
+                  id = {String(menuitem.menu_meal_id+'+')}
+                  aria-label={"Click here to add one " + menuitem.meal_name + ". Current amount: " + dict[menuitem.menu_meal_id]}
+                  title={"Click here to add one " + menuitem.meal_name + ". Current amount: " + dict[menuitem.menu_meal_id]}
+                >
+                  +
+                </button> 
+
+
+                {cartItems.length == 0 &&
+                  <div 
+                    key = {index}
+                    style={{
+                      width: '64px',
+                      height: '42px',
+                      top:'223px',
+                      right:'59.5px',
+                    }}
+                    className={styles.numElements}
+                    id={styles.mealCounter}
+                  >
+                    {0}
+                  </div>
+                }
+
+              </Fragment>
+            ) 
+          </div>
+          <p 
+            id={styles.menuItemTitle}
+            style = {{
+              display:'inline-block',
+              overflow:'hidden',
+              whiteSpace:'nowrap'
+            }}
+          >
             {menuitem.meal_name}
-            <br/>cal:{menuitem.meal_calories}
+            <br/>
+            cal: {" " + menuitem.meal_calories}
           </p>
-      </div>
-    ))
+        </div>
+      );
+
+    });
+
+    // console.log();
 
     return menuHTML
 
