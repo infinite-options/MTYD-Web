@@ -162,16 +162,19 @@ class NavBar extends React.Component {
       store.subscribe(() => {
         let userInfo = store.getState().login.userInfo;
         if (userInfo && userInfo.customerId !== "") {
-          if (userInfo.firstName == '' || userInfo.lastName == ''){ // check for each name
+          if (userInfo.firstName == ''){ // check for first name
             this.setState({
-              firstName: "Guest",
-              lastName: "User"
+              firstName: "No Name"
             })
-            let iconName = 'GU'
-          } else {let iconName = (
-            userInfo.firstName.charAt(0) + userInfo.lastName.charAt(0)).toUpperCase();
+          } 
+          if (userInfo.lastName == ''){ // check for last name
+            this.setState({
+              lastName: "No Name"
+            })
           }
-          let iconName = 'N/A'
+          
+          let iconName = (userInfo.firstName.charAt(0) + userInfo.lastName.charAt(0)).toUpperCase();
+          
           this.setState(state => ({
             ...state,
             ...userInfo,

@@ -192,6 +192,25 @@ class SocialSignUp extends React.Component {
       );
     }
 
+    // The following code allows you to create null social media accounts for testing
+
+    // this.props.submitSocialSignUp(
+    //       this.props.AppleSignUp,
+    //       this.props.customerId,
+    //       this.props.email,
+    //       this.props.platform,
+    //       this.props.accessToken,
+    //       this.props.refreshToken,
+    //       this.props.firstName,
+    //       this.props.lastName,
+    //       this.props.phone,
+    //       this.state.street_address,
+    //       this.props.unit,
+    //       this.state.city,
+    //       this.state.state,
+    //       this.state.zip_code,
+    //       this.signUpSuccess
+    //     );
 
 
 
