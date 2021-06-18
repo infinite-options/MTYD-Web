@@ -91,25 +91,22 @@ class Header extends Component {
 
       let displayMessage = '';
 
-      if(selectionOptions=="SAVE"){
+      if (selectionOptions=="SAVE") {
         displayMessage = "Save Meals"
-      }
-      else if(selectionOptions == 'SURPRISE'){
+      } else if (selectionOptions == 'SURPRISE') {
         displayMessage = 'Surprise Me';
-      }
-      else{
+      } else {
         displayMessage = 'Skip this day';
       }
 
       let classForbutton = ''
-      if(this.props.customer_uid==null){
+      if (this.props.customer_uid==null) {
         classForbutton = styles.selectionStyles 
-      }
-      else{
+      } else {
         classForbutton=this.props.selectValue === "" ||
         this.props.selectValue !== selectionOptions
-          ? styles.selectionStyles: 
-          styles.selectionStyles && styles.selectedDays
+          ? styles.selectionStyles
+          : styles.selectionStyles && styles.selectedDays
       }
 
       // console.log(classForbutton)
@@ -141,6 +138,7 @@ class Header extends Component {
 
 
   render() {
+    console.log("header props: ", this.props);
     const {meals, totalCount, totalMeals} = this.props;
     let mealsCount = parseInt(totalMeals);
 
@@ -208,17 +206,17 @@ class Header extends Component {
         <div class={styles.divider}/>
 
         <div
-        style={{
-          overflowX:'auto',
-          display:'flex',
-          height:'170px',
-          marginLeft:'198px',
-          marginRight:'200px',
-          borderRight: 'solid',
-          borderLeft: 'solid',
-          borderColor: '#F0F0F0',
-          // border: 'solid',
-        }}
+          style={{
+            overflowX:'auto',
+            display:'flex',
+            height:'170px',
+            marginLeft:'198px',
+            marginRight:'200px',
+            borderRight: 'solid',
+            borderLeft: 'solid',
+            borderColor: '#F0F0F0',
+            // border: 'solid',
+          }}
         >
           {this.props.dateButtonArray}
           {/* {this.props.dateButtonArray.length > 0 ? (

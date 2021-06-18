@@ -107,7 +107,7 @@ class MenuItemList extends Component {
       .then(response => response.json())
       .then(json => {
         let meals = [...json.result];
-        console.log(meals)
+        console.log("loadMealPlans: ", meals)
         this.setState({
           meals: meals,
           purchaseID: meals[0].purchase_id,
@@ -256,17 +256,17 @@ class MenuItemList extends Component {
       });
   };
 
-  closepopPlusMinus = ()=>{
+  closepopPlusMinus = () => {
     this.setState({unloginPopupShowPM:false})
   }
 
-  closepopSave = ()=>{
+  closepopSave = () => {
     this.setState({unloginPopupSave:false})
   }
-  closepopSurprise = ()=>{
+  closepopSurprise = () => {
     this.setState({unloginPopupSurprise:false})
   }
-  closepopSkip = ()=>{
+  closepopSkip = () => {
     this.setState({unloginPopupSkip:false})
   }
 
@@ -674,7 +674,7 @@ class MenuItemList extends Component {
     });
   };
 
-  makeSelection = e => {
+  makeSelection = (e) => {
 
     const customer_uid = Cookies.get("customer_uid");
 
@@ -1111,8 +1111,9 @@ class MenuItemList extends Component {
   }
 
   removeFromCart = (menuitem) => {
-    var elementBig = document. getElementById(menuitem.menu_meal_id);
-    var elementNum = document. getElementById(menuitem.menu_meal_id+'num');
+    console.log("RFC menuitem: ", menuitem);
+    var elementBig = document.getElementById(menuitem.menu_meal_id);
+    var elementNum = document.getElementById(menuitem.menu_meal_id+'num');
 
     if((elementNum.textContent)>1){
       // elementBig.style.backgroundColor = '#F8BB17'
