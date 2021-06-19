@@ -493,6 +493,7 @@ class EditPlan extends React.Component {
     }
 
     subscriptions.forEach((sub, index) => {
+      console.log("(loadSubscriptions) sub: ", sub);
 
       let subscription = {};
 
@@ -1245,8 +1246,8 @@ class EditPlan extends React.Component {
 
     this.state.subscriptionsList.forEach((sub) => {
 
-      console.log("sub id: ", sub.id);
-      console.log("curr id: ", this.state.currentPlan.id);
+      // console.log("sub id: ", sub.id);
+      // console.log("curr id: ", this.state.currentPlan.id);
       mealButtons.push(
         <div
           key={sub.id}

@@ -842,7 +842,7 @@ function CustomerInfo() {
 			{console.log("Current customer info: ", selectedCustomer)}
 			<div className={styles.containerCustomer}>
 				{selectedCustomer === null ? (
-					<>{"Waiting for selection..."}</>
+					<div id={"custInfo"}>{"Waiting for selection..."}</div>
 				) : (
 					<div
 						style={{

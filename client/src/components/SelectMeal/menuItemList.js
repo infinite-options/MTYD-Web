@@ -52,7 +52,7 @@ class MenuItemList extends Component {
       unloginPopupSkip:false,
       login_seen:false,
       signUpSeen:false,
-
+      mealsLoaded: false
     };
   }
 
@@ -121,6 +121,7 @@ class MenuItemList extends Component {
 
     console.log("(toggleDisplay) curr meal info: ", currMealInfo);
     console.log("(toggleDisplay) charge date: ", currMealInfo.next_billing_date);
+    console.log("(toggleDisplay) my date: ", this.state.myDate);
 
     if(this.state.popUpDisplay === false) {
        this.setState({
@@ -167,8 +168,12 @@ class MenuItemList extends Component {
     }
   }
 
+
   loadMealPlans = () => {
+    let remoteDataFetched = 0;
+
     const customer_uid = Cookies.get("customer_uid");
+
     fetch(`${API_URL}customer_lplp?customer_uid=${customer_uid}`)
       .then(response => response.json())
       .then(json => {
@@ -178,10 +183,23 @@ class MenuItemList extends Component {
           meals: meals,
           purchaseID: meals[0].purchase_id,
           totalMeals: parseInt(meals[0].items.substr(23, 2))
+        }, () => {
+          remoteDataFetched++;
+          if(remoteDataFetched === 2){
+            this.setState({
+              mealsLoaded: true
+            });
+          }
         });
       })
       .catch(error => {
         console.error(error);
+        remoteDataFetched++;
+        if(remoteDataFetched === 2){
+          this.setState({
+            mealsLoaded: true
+          });
+        }
       });
 
     //predict_next_billing_date/
@@ -205,19 +223,25 @@ class MenuItemList extends Component {
         console.log("(MIL -- PNBD) res: ", res);
         this.setState({
           meals_nbd: res.data.result
+        }, () => {
+          remoteDataFetched++;
+          if(remoteDataFetched === 2){
+            this.setState({
+              mealsLoaded: true
+            });
+          }
         });
-        // let meals = [...json.result];
-        // console.log("loadMealPlans: ", meals)
-        // this.setState({
-        //   meals: meals,
-        //   purchaseID: meals[0].purchase_id,
-        //   totalMeals: parseInt(meals[0].items.substr(23, 2))
-        // });
       })
       .catch(err => {
         console.log(err);
         if(err.response) {
           console.log(err.response);
+        }
+        remoteDataFetched++;
+        if(remoteDataFetched === 2){
+          this.setState({
+            mealsLoaded: true
+          });
         }
       });
   };
@@ -799,7 +823,7 @@ class MenuItemList extends Component {
     let buttonStyle = ''
     let extraInfo = ''
 
-    console.log(this.state.myDate);
+    console.log("(makeSelection) date: ", this.state.myDate);
 
     if (e.target.value === "SURPRISE") {
       buttonStyle = styles.datebuttonSurprise;
@@ -826,7 +850,8 @@ class MenuItemList extends Component {
                 tabIndex="-1" 
                 >
                   {moment(this.state.myDate.split(" ")[0]).format("ddd")}
-                  <br/>{moment(this.state.myDate.split(" ")[0]).format("MMM") +" "+ moment(this.state.myDate.split(" ")[0]).format("D")}
+                  <br/>
+                  {moment(this.state.myDate.split(" ")[0]).format("MMM") +" "+ moment(this.state.myDate.split(" ")[0]).format("D")}
                 </button>
 
                 <button
@@ -948,18 +973,18 @@ class MenuItemList extends Component {
                 </button>
 
                 <button
-                style={{
-                  width:"122px",
-                  height:"48px",
-                  marginTop:"15px",
-                  fontSize:"15px",
-                  backgroundColor:'rgba(0, 0, 0, 0)',
-                  border:'none'
-                }}
-                key={this.state.myDate} value={this.state.myDate} 
-                onClick={this.filterDates} 
-                id={this.state.myDate}
-                tabIndex="-1" 
+                  style={{
+                    width:"122px",
+                    height:"48px",
+                    marginTop:"15px",
+                    fontSize:"15px",
+                    backgroundColor:'rgba(0, 0, 0, 0)',
+                    border:'none'
+                  }}
+                  key={this.state.myDate} value={this.state.myDate} 
+                  onClick={this.filterDates} 
+                  id={this.state.myDate}
+                  tabIndex="-1" 
                 >
                   {extraInfo}
                 </button>
@@ -1029,7 +1054,9 @@ class MenuItemList extends Component {
         addOnItems: [],
         addOnAmount: 0,
       });
+
     } else {
+
       buttonStyle = styles.datebuttonSave;
       extraInfo = 'Saved'
       let tempNewButton = (
@@ -1533,7 +1560,10 @@ class MenuItemList extends Component {
         <WebNavBar />
 
         {/* Loading Screen */}
-        {this.state.dateButtonList !== null ? (
+        {(
+          this.state.dateButtonList !== null &&
+          this.state.mealsLoaded
+        )? (
           null
         ) : (
           <div
