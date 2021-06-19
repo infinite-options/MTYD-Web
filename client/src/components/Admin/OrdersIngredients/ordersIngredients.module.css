@@ -1,0 +1,51 @@
+.root {
+  background-color: #f26522;
+  width: 100vw;
+  height: 93vh;
+  padding: 25px;
+}
+
+.container {
+  height: 100%;
+}
+
+.section {
+  background-color: white;
+  border-radius: 15px;
+}
+
+.row1 {
+  height: 15%;
+}
+
+.row2 {
+  margin-top: 10px;
+  height: 85%;
+}
+
+.restaurantSelector {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.form {
+  margin-left: 20%;
+}
+
+.restaurantLinks {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  color: #f26522;
+  font-size: 11px;
+}
+
+.datebutton {
+  width: 122px;
+  height: 48px;
+  font-size: 15px;
+  background-color: #f8bb17;
+  border: none;
+}
