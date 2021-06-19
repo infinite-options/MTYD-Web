@@ -269,6 +269,7 @@ function OrdersIngredients({ history, ...props }) {
     const curOrders = state.ordersData.filter(
       (order) => order.d_menu_date === date
     );
+    console.log(curOrders);
     return curOrders;
   };
 
@@ -276,6 +277,7 @@ function OrdersIngredients({ history, ...props }) {
     const curIngredients = state.ingredientsData.filter(
       (ingredient) => ingredient.d_menu_date === date
     );
+    console.log(curIngredients);
     return curIngredients;
   };
 
@@ -283,6 +285,7 @@ function OrdersIngredients({ history, ...props }) {
     const curCustomers = state.customersData.filter(
       (customer) => customer.d_menu_date === date
     );
+    console.log(curCustomers);
     return curCustomers;
   };
 
@@ -454,8 +457,19 @@ function OrdersIngredients({ history, ...props }) {
       </Breadcrumb> */}
       <Container fluid className={styles.container}>
         <Row className={[styles.section, styles.row1].join(" ")}>
-          <Col>Restaurant Selector</Col>
-          <Col>Date Selector</Col>
+          <Col md="auto" className={styles.restaurantSelector}>
+            <div>Image</div>
+            <div>
+              Selector
+              <div className={styles.restaurantLinks}>
+                <a>Send Message</a>
+                <a>Issue Coupon</a>
+              </div>
+            </div>
+          </Col>
+          <Col>
+            <button className={styles.datebutton}>Date Button</button>
+          </Col>
           <Col>Contact Info</Col>
           <Col>No. Of Meals</Col>
           <Col>Total Revenue</Col>

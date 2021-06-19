@@ -22,3 +22,30 @@
   margin-top: 10px;
   height: 85%;
 }
+
+.restaurantSelector {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.form {
+  margin-left: 20%;
+}
+
+.restaurantLinks {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  color: #f26522;
+  font-size: 11px;
+}
+
+.datebutton {
+  width: 122px;
+  height: 48px;
+  font-size: 15px;
+  background-color: #f8bb17;
+  border: none;
+}
