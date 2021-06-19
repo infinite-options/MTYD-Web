@@ -22,6 +22,9 @@ import {UnloginSkip} from "../SelectMealGuestPop/UnloginSkip"
 import PopLogin from "../PopLogin";
 import Popsignup, { PopSignup } from '../PopSignup';
 
+import {WebNavBar} from "../NavBar";
+// import orangePlate from "./static/orange_plate.png";
+import m4me_logo from '../../images/LOGO_NoBG_MealsForMe.png';
 
 class MenuItemList extends Component {
   constructor(props) {
@@ -32,6 +35,7 @@ class MenuItemList extends Component {
       addOnItems: [],
       addOnAmount: 0,
       meals: [],
+      meals_nbd: [],
       totalCount: 0,
       selectValue: "SURPRISE",
       saveButton: false,
@@ -39,21 +43,86 @@ class MenuItemList extends Component {
       popUpDisplay: false,
       popUpText: 'Hello',
       popUpTitle: 'Hello',
-      dateButtonList:[],
+      dateButtonList: null,
       surpriseSkipSave : [],
       unloginPopupShowPM:false,
       currentSelectedDate:'',
-
       unloginPopupSave:false,
       unloginPopupSurprise:false,
       unloginPopupSkip:false,
       login_seen:false,
       signUpSeen:false,
-
+      mealsLoaded: false
     };
   }
 
+  formatDate = (rawDate) => {
+
+    let dateElements = rawDate.split(' ');
+    let yyyy_mm_dd = dateElements[0].split('-');
+    let month;
+
+    // Parse month
+    switch(yyyy_mm_dd[1]){
+      case "01":
+        month = "January";
+        break;
+      case "02":
+        month = "February";
+        break;
+      case "03":
+        month = "March";
+        break;
+      case "04":
+        month = "April";
+        break;
+      case "05":
+        month = "May";
+        break;
+      case "06":
+        month = "June";
+        break;
+      case "07":
+        month = "July";
+        break;
+      case "08":
+        month = "August";
+        break;
+      case "09":
+        month = "September";
+        break;
+      case "10":
+        month = "October";
+        break;
+      case "11":
+        month = "November";
+        break;
+      case "12":
+        month = "December";
+        break;
+      default:
+        month = "";
+    }
+
+    let dateString = month + " " + yyyy_mm_dd[2] + ", " + yyyy_mm_dd[0];
+    // console.log("date string: ", dateString);
+
+    return dateString;
+  }
+
   toggleDisplay = (option) => {
+    console.log("in toggleDisplay");
+    console.log("(toggleDisplay) props: ", this.props);
+    console.log("(toggleDisplay) current meal: ", this.state.purchaseID);
+
+    let currMealInfo = this.state.meals_nbd.find(element => 
+      element.purchase_uid === this.state.purchaseID
+    );
+
+    console.log("(toggleDisplay) curr meal info: ", currMealInfo);
+    console.log("(toggleDisplay) charge date: ", currMealInfo.next_billing_date);
+    console.log("(toggleDisplay) my date: ", this.state.myDate);
+
     if(this.state.popUpDisplay === false) {
        this.setState({
            popUp: styles.popUpShow,
@@ -68,7 +137,7 @@ class MenuItemList extends Component {
     if(option === "SAVE") {
       let popUpText = 'You have saved your meals for this week. '
       if (this.state.addOnAmount > 0) {
-        popUpText = popUpText.concat('You will be charged for ' + this.state.addOnAmount + ' Add On items at a later date')
+        popUpText = popUpText.concat('You will be charged for ' + this.state.addOnAmount + ' Add On items on ' + this.formatDate(currMealInfo.next_billing_date));
       }
       this.setState({
         popUpText,
@@ -99,21 +168,81 @@ class MenuItemList extends Component {
     }
   }
 
+
   loadMealPlans = () => {
+    let remoteDataFetched = 0;
+
     const customer_uid = Cookies.get("customer_uid");
+
     fetch(`${API_URL}customer_lplp?customer_uid=${customer_uid}`)
       .then(response => response.json())
       .then(json => {
         let meals = [...json.result];
-        console.log(meals)
+        console.log("loadMealPlans: ", meals)
         this.setState({
           meals: meals,
           purchaseID: meals[0].purchase_id,
           totalMeals: parseInt(meals[0].items.substr(23, 2))
+        }, () => {
+          remoteDataFetched++;
+          if(remoteDataFetched === 2){
+            this.setState({
+              mealsLoaded: true
+            });
+          }
         });
       })
       .catch(error => {
         console.error(error);
+        remoteDataFetched++;
+        if(remoteDataFetched === 2){
+          this.setState({
+            mealsLoaded: true
+          });
+        }
+      });
+
+    //predict_next_billing_date/
+    // axios.get(`${API_URL}customer_lplp?customer_uid=${customer_uid}`)
+    //   .then(response => response.json())
+    //   .then(json => {
+    //     let meals = [...json.result];
+    //     console.log("loadMealPlans: ", meals)
+    //     this.setState({
+    //       meals: meals,
+    //       purchaseID: meals[0].purchase_id,
+    //       totalMeals: parseInt(meals[0].items.substr(23, 2))
+    //     });
+    //   })
+    //   .catch(error => {
+    //     console.error(error);
+    //   });
+
+    axios.get(`${API_URL}predict_next_billing_date/${customer_uid}`)
+      .then(res => {
+        console.log("(MIL -- PNBD) res: ", res);
+        this.setState({
+          meals_nbd: res.data.result
+        }, () => {
+          remoteDataFetched++;
+          if(remoteDataFetched === 2){
+            this.setState({
+              mealsLoaded: true
+            });
+          }
+        });
+      })
+      .catch(err => {
+        console.log(err);
+        if(err.response) {
+          console.log(err.response);
+        }
+        remoteDataFetched++;
+        if(remoteDataFetched === 2){
+          this.setState({
+            mealsLoaded: true
+          });
+        }
       });
   };
 
@@ -254,17 +383,17 @@ class MenuItemList extends Component {
       });
   };
 
-  closepopPlusMinus = ()=>{
+  closepopPlusMinus = () => {
     this.setState({unloginPopupShowPM:false})
   }
 
-  closepopSave = ()=>{
+  closepopSave = () => {
     this.setState({unloginPopupSave:false})
   }
-  closepopSurprise = ()=>{
+  closepopSurprise = () => {
     this.setState({unloginPopupSurprise:false})
   }
-  closepopSkip = ()=>{
+  closepopSkip = () => {
     this.setState({unloginPopupSkip:false})
   }
 
@@ -672,7 +801,7 @@ class MenuItemList extends Component {
     });
   };
 
-  makeSelection = e => {
+  makeSelection = (e) => {
 
     const customer_uid = Cookies.get("customer_uid");
 
@@ -694,7 +823,7 @@ class MenuItemList extends Component {
     let buttonStyle = ''
     let extraInfo = ''
 
-    console.log(this.state.myDate);
+    console.log("(makeSelection) date: ", this.state.myDate);
 
     if (e.target.value === "SURPRISE") {
       buttonStyle = styles.datebuttonSurprise;
@@ -721,7 +850,8 @@ class MenuItemList extends Component {
                 tabIndex="-1" 
                 >
                   {moment(this.state.myDate.split(" ")[0]).format("ddd")}
-                  <br/>{moment(this.state.myDate.split(" ")[0]).format("MMM") +" "+ moment(this.state.myDate.split(" ")[0]).format("D")}
+                  <br/>
+                  {moment(this.state.myDate.split(" ")[0]).format("MMM") +" "+ moment(this.state.myDate.split(" ")[0]).format("D")}
                 </button>
 
                 <button
@@ -742,7 +872,9 @@ class MenuItemList extends Component {
                 </button>
         </button>
       )
-      this.setState({dateButtonList:this.state.dateButtonList.map((info)=>info.key===this.state.myDate?tempNewButton:info)})
+      this.setState({
+        dateButtonList: this.state.dateButtonList.map((info)=>info.key===this.state.myDate?tempNewButton:info)
+      })
       if (this.state.myDate !== "") {
         const supriseData = [
           {
@@ -841,18 +973,18 @@ class MenuItemList extends Component {
                 </button>
 
                 <button
-                style={{
-                  width:"122px",
-                  height:"48px",
-                  marginTop:"15px",
-                  fontSize:"15px",
-                  backgroundColor:'rgba(0, 0, 0, 0)',
-                  border:'none'
-                }}
-                key={this.state.myDate} value={this.state.myDate} 
-                onClick={this.filterDates} 
-                id={this.state.myDate}
-                tabIndex="-1" 
+                  style={{
+                    width:"122px",
+                    height:"48px",
+                    marginTop:"15px",
+                    fontSize:"15px",
+                    backgroundColor:'rgba(0, 0, 0, 0)',
+                    border:'none'
+                  }}
+                  key={this.state.myDate} value={this.state.myDate} 
+                  onClick={this.filterDates} 
+                  id={this.state.myDate}
+                  tabIndex="-1" 
                 >
                   {extraInfo}
                 </button>
@@ -861,7 +993,9 @@ class MenuItemList extends Component {
       )
   
   
-      this.setState({dateButtonList:this.state.dateButtonList.map((info)=>info.key===this.state.myDate?tempNewButton:info)})
+      this.setState({
+        dateButtonList: this.state.dateButtonList.map((info)=>info.key===this.state.myDate?tempNewButton:info)
+      })
       const skipData = [
         {
           qty: "",
@@ -920,7 +1054,9 @@ class MenuItemList extends Component {
         addOnItems: [],
         addOnAmount: 0,
       });
+
     } else {
+
       buttonStyle = styles.datebuttonSave;
       extraInfo = 'Saved'
       let tempNewButton = (
@@ -971,7 +1107,9 @@ class MenuItemList extends Component {
       )
   
   
-      this.setState({dateButtonList:this.state.dateButtonList.map((info)=>info.key===this.state.myDate?tempNewButton:info)})
+      this.setState({
+        dateButtonList: this.state.dateButtonList.map((info)=>info.key===this.state.myDate?tempNewButton:info)
+      })
 
       const myarr = [];
       this.state.cartItems.map(meal => {
@@ -1103,8 +1241,9 @@ class MenuItemList extends Component {
   }
 
   removeFromCart = (menuitem) => {
-    var elementBig = document. getElementById(menuitem.menu_meal_id);
-    var elementNum = document. getElementById(menuitem.menu_meal_id+'num');
+    console.log("RFC menuitem: ", menuitem);
+    var elementBig = document.getElementById(menuitem.menu_meal_id);
+    var elementNum = document.getElementById(menuitem.menu_meal_id+'num');
 
     if((elementNum.textContent)>1){
       // elementBig.style.backgroundColor = '#F8BB17'
@@ -1313,7 +1452,7 @@ class MenuItemList extends Component {
           // console.log("buttonList: ", buttonList)
 
           this.setState({
-            dateButtonList:buttonList
+            dateButtonList: buttonList
           })
 
           return buttonList;
@@ -1401,7 +1540,7 @@ class MenuItemList extends Component {
         lessThanTen++;
       }
       this.setState({
-        dateButtonList:buttonList
+        dateButtonList: buttonList
       })
     }
     else{
@@ -1417,12 +1556,60 @@ class MenuItemList extends Component {
 
     // console.log(this.state.surpriseSkipSave)
     return (
-      <div className={styles.mealMenuWrapper}>
+      <>
+        <WebNavBar />
+
+        {/* Loading Screen */}
+        {(
+          this.state.dateButtonList !== null &&
+          this.state.mealsLoaded
+        )? (
+          null
+        ) : (
+          <div
+            style={{
+              color: 'red',
+              zIndex: '99',
+              height: '100vh',
+              width: '100vw',
+              // height: '50vh',
+              // width: '50vw',
+              // border: 'inset',
+              position: 'fixed',
+              top: '0',
+              backgroundColor: '#F7F4E5',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}
+          >
+            <img src={m4me_logo} />
+          </div>
+        )}
+        {/* <div
+          style={{
+            color: 'red',
+            zIndex: '99',
+            height: '95vh',
+            width: '95vw',
+            // border: 'inset',
+            position: 'fixed',
+            top: '0',
+            backgroundColor: '#F7F4E5',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center'
+          }}
+        >
+          <img src={m4me_logo} />
+        </div> */}
+
         <Header
           data={this.state.data}
           dates={uniqueDates}
           filterDates={this.filterDates}
           meals={this.state.meals}
+          meals_nbd={this.state.meals_nbd}
           mealsOnChange={this.mealsOnChange}
           totalCount={this.state.totalCount}
           totalMeals={this.state.totalMeals}
@@ -1443,34 +1630,36 @@ class MenuItemList extends Component {
         />
 
         <div style = {{overflow: 'visible', height: '100vh'}}>
-            <div className={styles.menuItemsWrapper}>
-              <MenuItem
-                addToCart={this.addToCart}
-                removeFromCart={this.removeFromCart}
-                data={this.state.data}
-                myDate={this.state.myDate}
-                cartItems={this.state.cartItems}
-                mealSelected={this.state.mealSelected}
-                purchaseID={this.state.purchaseID}
-                show={this.props.subscribedPlans.length}
-                addon = {false}
-                customer_uid = {Cookies.get("customer_uid")}
-              />
-          
-            </div>
+
+          <div className={styles.menuItemsWrapper}>
+            <MenuItem
+              addToCart={this.addToCart}
+              removeFromCart={this.removeFromCart}
+              data={this.state.data}
+              myDate={this.state.myDate}
+              cartItems={this.state.cartItems}
+              mealSelected={this.state.mealSelected}
+              purchaseID={this.state.purchaseID}
+              show={this.props.subscribedPlans.length}
+              addon = {false}
+              customer_uid = {Cookies.get("customer_uid")}
+            />
+          </div>
+
           <h6 style = {{padding: '10px 90px', fontSize: '30px', fontWeight: 'bold', color: '#FF9400'}}>Add Ons</h6>
+
           <div className = {styles.menuItemsWrapper}>
             <MenuItem
-                  addToCart={this.addAddOn}
-                  removeFromCart={this.removeAddOn}
-                  data={this.state.data}
-                  myDate={this.state.myDate}
-                  cartItems={this.state.addOnItems}
-                  mealSelected={this.state.mealSelected}
-                  purchaseID={this.state.purchaseID}
-                  show={this.props.subscribedPlans.length}
-                  addon = {true}
-                />
+              addToCart={this.addAddOn}
+              removeFromCart={this.removeAddOn}
+              data={this.state.data}
+              myDate={this.state.myDate}
+              cartItems={this.state.addOnItems}
+              mealSelected={this.state.mealSelected}
+              purchaseID={this.state.purchaseID}
+              show={this.props.subscribedPlans.length}
+              addon = {true}
+            />
           </div>
         </div>
 
@@ -1481,23 +1670,48 @@ class MenuItemList extends Component {
             <a className = {styles.popUpButton} onClick = {this.toggleDisplay}>OK</a>
           </div>
         </div>
-        {this.state.unloginPopupShowPM?
-      <SelectMealGuestPop closeFunction = {this.closepopPlusMinus}
-      login = {this.togglePopLogin} signup = {this.togglePopSignup}
-      />:null}
 
-      {this.state.unloginPopupSave?<UnloginSave closeFunction = {this.closepopSave} 
-      login = {this.togglePopLogin} signup = {this.togglePopSignup}
-      />:null}
-      {this.state.unloginPopupSurprise?<UnloginSurprise closeFunction = {this.closepopSurprise}
-      login = {this.togglePopLogin} signup = {this.togglePopSignup}
-      />:null}
-      {this.state.unloginPopupSkip?<UnloginSkip closeFunction = {this.closepopSkip}
-      login = {this.togglePopLogin} signup = {this.togglePopSignup}
-      />:null}
-      {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
-      {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
-      </div>
+        {this.state.unloginPopupShowPM ?
+          <SelectMealGuestPop 
+            closeFunction = {this.closepopPlusMinus}
+            login = {this.togglePopLogin} 
+            signup = {this.togglePopSignup}
+          />
+        : null}
+
+        {this.state.unloginPopupSave ?
+          <UnloginSave 
+            closeFunction = {this.closepopSave} 
+            login = {this.togglePopLogin} 
+            signup = {this.togglePopSignup}
+          />
+        : null}
+
+        {this.state.unloginPopupSurprise ?
+          <UnloginSurprise 
+            closeFunction = {this.closepopSurprise}
+            login = {this.togglePopLogin} 
+            signup = {this.togglePopSignup}
+          />
+        : null}
+
+        {this.state.unloginPopupSkip ?
+          <UnloginSkip 
+            closeFunction = {this.closepopSkip}
+            login = {this.togglePopLogin} 
+            signup = {this.togglePopSignup}
+          />
+        : null}
+
+        {this.state.login_seen ? 
+          <PopLogin toggle={this.togglePopLogin} /> 
+        : null}
+
+        {this.state.signUpSeen ? 
+          <Popsignup toggle={this.togglePopSignup} /> 
+        : null}
+
+      </>
     );
   }
 }

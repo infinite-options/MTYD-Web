@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import MealIndicator from "./MealIndicator";
 import styles from "./selectmeal.module.css";
 import menuStyles from "../Menu/menu.module.css";
-import {WebNavBar} from "../NavBar";
+// import {WebNavBar} from "../NavBar";
 import MenuBar from "../Menu";
 import {connect} from "react-redux";
 import Moment from 'react-moment';
@@ -91,25 +91,22 @@ class Header extends Component {
 
       let displayMessage = '';
 
-      if(selectionOptions=="SAVE"){
+      if (selectionOptions=="SAVE") {
         displayMessage = "Save Meals"
-      }
-      else if(selectionOptions == 'SURPRISE'){
+      } else if (selectionOptions == 'SURPRISE') {
         displayMessage = 'Surprise Me';
-      }
-      else{
+      } else {
         displayMessage = 'Skip this day';
       }
 
       let classForbutton = ''
-      if(this.props.customer_uid==null){
+      if (this.props.customer_uid==null) {
         classForbutton = styles.selectionStyles 
-      }
-      else{
+      } else {
         classForbutton=this.props.selectValue === "" ||
         this.props.selectValue !== selectionOptions
-          ? styles.selectionStyles: 
-          styles.selectionStyles && styles.selectedDays
+          ? styles.selectionStyles
+          : styles.selectionStyles && styles.selectedDays
       }
 
       // console.log(classForbutton)
@@ -141,6 +138,7 @@ class Header extends Component {
 
 
   render() {
+    console.log("header props: ", this.props);
     const {meals, totalCount, totalMeals} = this.props;
     let mealsCount = parseInt(totalMeals);
 
@@ -191,31 +189,41 @@ class Header extends Component {
     return (
       <>
 
-        <WebNavBar/>
+        {/* <WebNavBar/> */}
 
         {/* <SelectMealGuestPop message = 'message here'/> */}
 
 
-        <MenuBar show={true} 
-        message={message} 
-        login = {login} 
-        subscribedPlans = {this.props.subscribedPlans} 
-        mealsOnChange={this.props.mealsOnChange}
-        meals={meals}
+        <MenuBar 
+          show={true} 
+          message={message} 
+          login = {login} 
+          subscribedPlans = {this.props.subscribedPlans} 
+          mealsOnChange={this.props.mealsOnChange}
+          meals={meals}
         />  
 
         <div class={styles.divider}/>
 
         <div
-        style={{
-          overflowX:'auto',
-          display:'flex',
-          height:'170px',
-          marginLeft:'198px',
-          marginRight:'200px'
-        }}
+          style={{
+            overflowX:'auto',
+            display:'flex',
+            height:'170px',
+            marginLeft:'198px',
+            marginRight:'200px',
+            borderRight: 'solid',
+            borderLeft: 'solid',
+            borderColor: '#F0F0F0',
+            // border: 'solid',
+          }}
         >
           {this.props.dateButtonArray}
+          {/* {this.props.dateButtonArray.length > 0 ? (
+            this.props.dateButtonArray
+          ) : (
+            <>Loading dates...</>
+          )} */}
         </div>
           
 
