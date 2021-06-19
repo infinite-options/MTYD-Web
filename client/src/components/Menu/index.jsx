@@ -29,6 +29,13 @@ const Menu = props => {
 
   let tempDropdownButtons = []
 
+  const setDefaultCurrentPlan = () => {
+    if (currentPlan == null && props.subscribedPlans.length > 0) {
+      setCurrentPlan(props.subscribedPlans[0])
+    }
+    return null
+  }
+
   const generateDropdownButtons = () => {
     
     tempDropdownButtons = []
@@ -69,9 +76,9 @@ const Menu = props => {
             {JSON.parse(props.subscribedPlans[index].items)[0].name[0]} Meals, {JSON.parse(props.subscribedPlans[index].items)[0].qty} Deliveries : {props.subscribedPlans[index].purchase_uid.substring(props.subscribedPlans[index].purchase_uid.indexOf("-")+1,props.subscribedPlans[index].purchase_uid.length)}
           </div>
       )
-      if (currentPlan === null) {
-        setCurrentPlan(props.subscribedPlans[0])
-      }
+      // if (currentPlan === null) {
+      //   setCurrentPlan(props.subscribedPlans[0])
+      // }
     }
     let dropdownTopMargin = [
       <div
@@ -134,7 +141,7 @@ const Menu = props => {
     // <div className={props.show ? styles.menu : styles.menu1}>
     
     <div className={ styles.menu }>
-
+        {setDefaultCurrentPlan()}
         {(!props.login)?
           <div>
             {props.show && props.message}
@@ -190,7 +197,7 @@ const Menu = props => {
                   >
                     {
                       currentPlan === null
-                        ? "Choose the plan to edit"
+                        ? "Wait..."
                         : (
                           JSON.parse(currentPlan.items)[0].name[0] + " Meals, " +
                           JSON.parse(currentPlan.items)[0].qty + " Deliveries : " +
