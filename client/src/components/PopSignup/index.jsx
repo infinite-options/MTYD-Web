@@ -179,33 +179,46 @@ export class PopSignup extends Component {
 
   wrapperFunction=()=>{
     console.log(this.state)
-    this.props.submitPasswordSignUp(
-      this.props.email,
-      this.props.password,
-      this.props.passwordConfirm,
-      this.props.firstName,
-      this.props.lastName,
-      this.props.phone,
-      this.state.street_address,
-      this.props.unit,
-      this.state.city,
-      this.state.state,
-      this.state.zip_code,
-    );
-    let temppd= this.props.password
-    let tempem = this.props.email
-
-    console.log('finish signup function');
-
-    this.sleep(1000).then(()=>{
-      this.props.loginAttempt(
-        tempem,
-        temppd,
-        this.successLogin
+    let nameCheck = false
+    let emailCheck = false
+    if(this.props.firstName == '' || this.props.lastName == ''){
+      alert('first name and last name is required')
+    } else {
+      nameCheck = true
+    }
+    if(this.props.email == ''){
+      alert('email is required')
+    } else {
+      emailCheck = true
+    }
+    if(nameCheck == true && emailCheck == true){
+      this.props.submitPasswordSignUp(
+        this.props.email,
+        this.props.password,
+        this.props.passwordConfirm,
+        this.props.firstName,
+        this.props.lastName,
+        this.props.phone,
+        this.state.street_address,
+        this.props.unit,
+        this.state.city,
+        this.state.state,
+        this.state.zip_code,
       );
-      console.log('finish login function')
-    })
+      let temppd= this.props.password
+      let tempem = this.props.email
 
+      console.log('finish signup function');
+
+      this.sleep(1000).then(()=>{
+        this.props.loginAttempt(
+          tempem,
+          temppd,
+          this.successLogin
+        );
+        console.log('finish login function')
+      })
+    }
   }
 
 

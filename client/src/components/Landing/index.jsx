@@ -211,6 +211,7 @@ class Landing extends React.Component {
                     this.props.password,
                     this.successLogin
                   );
+                  console.log("2")
                 }}
               >
                 LOGIN

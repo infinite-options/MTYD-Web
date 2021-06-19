@@ -35,6 +35,8 @@ import pathFromSelectMealsToEnjoy from "../../images/Path 51.svg"
 import startServingNowImg from "../../images/Group 182.png"
 import pathFromPurchaseToChoose from "../../images/Path 50.svg"
 import howDoesImage from "../../images/howDoesImage.png"
+import howItWorksDiagram from "./images/howitworksdiagram.png"
+import mobileGraphic from "./images/mobilegraphic.png"
 import axios from 'axios';
 import ProductDisplay from './ProductDisplay';
 import HomeMap from "../HomeAddressSearch";
@@ -273,10 +275,14 @@ class Home extends Component {
 
         </div>
         {(() => {
-          if (this.state.windowWidth >= 800) {
+          if (this.state.windowWidth >= 900) {
             return (
+              
 			        <div style = {{display: 'inline-flex', marginTop: '30px', justifyContent: 'center', alignSelf: 'center', width:'100%'}}>
-                <div className={styles.stepsContainer}>
+                <div style = {{width: '100%', display: 'flex', flexDirection: 'row'}}>
+                  <img src = {howItWorksDiagram} width = "100%" float = "left"></img>
+                </div>
+                {/* <div className={styles.stepsContainer}>
                   <img className = {styles.stepsImage} src = {exploreImg} ></img>
                   <div className = {styles.stepsHeaderForHowDoesSection} onClick={() => this.goToLink('select-meal')}>
                       <h6 className = {styles.stepsTextForExplore}><h6 className={styles.stepsNumber}>
@@ -330,13 +336,17 @@ class Home extends Component {
                       </h6>
                       <img className = {styles.stepsImageForEnjoy} src = {enjoyImg} aria-label="Click to get started" title="Click to get started"></img>
                     </div>
-                </div>
+                </div> */}
               </div>			  
             );
           } else {
             return (
+              
               <div style = {{display: 'inline-block', width: '100%', marginTop: '30px'}}>
-                <div className = {styles.stepsHeader} onClick={() => this.goToLink('select-meal')}>
+                <div style = {{width: '100%', display: 'flex', flexDirection: 'row'}}>
+                  <img src = {mobileGraphic} width = "100%" float = "left"></img>
+                </div>
+                {/* <div className = {styles.stepsHeader} onClick={() => this.goToLink('select-meal')}>
                   <img className = {styles.stepsImage} src = {exploreImg}></img>
                   <div style = {{justifyContent: 'center', display: 'inline-flex'}}>
                   <view className={styles.stepsNumber}>1</view>
@@ -367,7 +377,7 @@ class Home extends Component {
                     <h6 className = {styles.stepsTitle}>Enjoy</h6>
                   </div>
                   <h6 className = {styles.stepsTextNarrow}>Heat, enjoy, and stay healthy!</h6>
-                </div>
+                </div> */}
               </div>
             );
           }

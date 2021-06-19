@@ -197,6 +197,8 @@ const MealPlan = props => {
             onClick={() => {
               console.log("pressed: ", sub.purchase_id);
               setCurrentPlan(parsedPlan);
+              console.log("Parsed Plan")
+              console.log(parsedPlan)
               toggleShowDropdown(false);
             }}
             style={{
