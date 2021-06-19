@@ -459,6 +459,72 @@ export class PopLogin extends Component {
                             </button>
                             )
                           }
+                          if (this.errorLink=== 'sign-up') {
+                            console.log("email-check")
+                            return (
+                              <div>
+                                <button 
+                                  className={styles.chargeBtn}
+                                  onClick = {() => {
+                                  this.displayErrorModal();
+                                  this.loginClicked = false
+                                  this.showErrorModal=false
+                                  this.forceUpdate()
+                                }}
+                                style = {{
+                                  textAlign: 'center',
+                                  justifyContent: 'center',
+                                  padding: '5px',
+                                  /*color: black !important;*/
+                                  color: '#ffffff',
+                                  fontSize: '16px',
+                                  /*border: 1px solid rgb(187, 174, 174);*/
+                                  borderRadius: '10px',
+                                  borderWidth: '0',
+                                  minWidth: '100px',
+                                  backgroundColor: '#ff6505',
+                                  marginTop: '10px',
+                                  marginBottom: '25px',
+                                  width: '90%',
+                                  height: '50px'
+                                }}
+                              >
+                                Try again with different email
+                              </button>
+                                Don't have an account?
+                              <button 
+                              className={styles.chargeBtn}
+                              onClick = {() => {
+                                this.displayErrorModal();
+                                this.loginClicked = false
+                                this.showErrorModal=false
+                                this.props.history.push("/sign-up")
+                                //this.forceUpdate()
+                              }}
+                              style = {{
+                                textAlign: 'center',
+                                justifyContent: 'center',
+                                padding: '5px',
+                                /*color: black !important;*/
+                                color: '#ffffff',
+                                fontSize: '16px',
+                                /*border: 1px solid rgb(187, 174, 174);*/
+                                borderRadius: '10px',
+                                borderWidth: '0',
+                                minWidth: '100px',
+                                backgroundColor: '#ff6505',
+                                marginTop: '10px',
+                                marginBottom: '25px',
+                                width: '90%',
+                                height: '50px'
+                              }}
+                            >
+                              {this.errorLinkText}
+                            </button>
+                            
+                            </div>
+                            )
+                          }
                         })()}
                       </div> 
                     </div>
@@ -541,11 +607,17 @@ export class PopLogin extends Component {
         errorButton = 'Apple button placeholder'
         errorLink = 'apple'
       } 
-      if (this.errVal == "" || this.errVal == "Email doesn't exists") {
+      if (this.errVal == "" || this.errVal == "Wrong password") {
         errorHead = 'Hmm...'
         errorString = "Something doesn't match, please make sure you've entered your email address and password correctly."
         errorButton = 'Okay'
         errorLink = 'back'
+      }
+      if (this.errVal == "" || this.errVal == "Email doesn't exists") {
+        errorHead = 'Account Not Found'
+        errorString = "Sorry, we don't recognize this email."
+        errorButton = 'Sign up'
+        errorLink = 'sign-up'
       }
       this.displayErrorModal(errorHead, errorString, errorButton, errorLink)
       //console.log("Set error text to: "+ this.errVal)
