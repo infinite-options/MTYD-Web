@@ -996,7 +996,8 @@ function CustomerInfo() {
 											selectedCustomer.customer_last_name
 										}
 									</div>
-									<div
+
+									{/* <div
 										onClick={() => {setCustomerDropdown(!customerDropdown)}}
 										style={{
 											// border: 'solid',
@@ -1005,48 +1006,21 @@ function CustomerInfo() {
 										}}
 									>
 										Arrow
-										{/* style={{
-              color: 'red',
-              zIndex: '99',
-              height: '100vh',
-              width: '100vw',
-              // height: '50vh',
-              // width: '50vw',
-              // border: 'inset',
-              position: 'fixed',
-              top: '0',
-              backgroundColor: '#F7F4E5',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center'
-            }} */}
-										{/* {customerDropdown ? (<div
-											type='text'
-											style={{
-												// border: 'solid',
-												// borderWidth: '1px',
-												// width: '16%',
-												// height: '30px',
-												// marginLeft: '2%',
-												// marginRight: '2%',
-												position: 'fixed',
-												zIndex: '4',
-												// cursor: 'pointer'
-												border: 'solid',
-												borderWidth: '1px',
-												width: '100px',
-												backgroundColor: 'red'
-											
-											}}
-											// onClick={() => {
-											// 	customerDropdown === CUS_SEL_NONE
-											// 		? setCustomerDropdown(CUS_SEL_EMAIL)
-											// 		: setCustomerDropdown(CUS_SEL_NONE)
-											// }}
-										>
-											STUFF
-										</div>) : (null)} */}
-									</div>
+									</div> */}
+									<div
+										onClick={() => {setCustomerDropdown(!customerDropdown)}}
+										style={{
+											// border: 'solid',
+											// color: 'green',
+											// position: 'relative',
+										}}
+										className={customerDropdown ? (
+											styles.orangeArrowUp
+										) : (
+											styles.orangeArrowDown
+										)}
+									/>
+
 								</div>
 								<br />
 								<div

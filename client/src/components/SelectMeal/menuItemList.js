@@ -35,7 +35,7 @@ class MenuItemList extends Component {
       addOnItems: [],
       addOnAmount: 0,
       meals: [],
-      meals_nbd: [],
+      // meals_nbd: [],
       totalCount: 0,
       selectValue: "SURPRISE",
       saveButton: false,
@@ -55,6 +55,30 @@ class MenuItemList extends Component {
       mealsLoaded: false
     };
   }
+
+  // const isFutureCycle = (rawDate, billDate) => {
+
+  //   console.log("raw date: ", rawDate);
+  //   console.log("bill date: ", billDate);
+
+  //   let dateElements = rawDate.split(' ');
+  //   let billDateElements = billDate.split(' ');
+
+  //   console.log("date elements: ", dateElements);
+  //   console.log("bill date elements: ", billDateElements);
+
+  //   let parsedDate = Date.parse(dateElements[0]);
+  //   let parsedBillDate = Date.parse(billDateElements[0]);
+
+  //   console.log("parsed date: ", parsedDate);
+  //   console.log("parsed bill date: ", parsedBillDate);
+
+  //   if (parsedDate > parsedBillDate) {
+  //     return true;
+  //   } else {
+  //     return false;
+  //   }
+  // }
 
   formatDate = (rawDate) => {
 
@@ -104,10 +128,50 @@ class MenuItemList extends Component {
         month = "";
     }
 
-    let dateString = month + " " + yyyy_mm_dd[2] + ", " + yyyy_mm_dd[0];
-    // console.log("date string: ", dateString);
+    let day = yyyy_mm_dd[2];
+
+    if(day.substring(0,1) === '0'){
+      day = day.substring(1,2);
+    }
+
+    let dateString = month + " " + day + ", " + yyyy_mm_dd[0];
 
     return dateString;
+  }
+
+  dayBefore = (rawDate) => {
+
+    console.log("(dayBefore) raw date: ", rawDate);
+
+    let dateElements = rawDate.split(' ');
+
+    let parsedDate = Date.parse(dateElements[0]);
+
+    let newDate = new Date(parsedDate - 24*60*60*1000);
+
+    console.log("newDate: ", newDate);
+
+    console.log("stringified date: ", JSON.stringify(newDate));
+
+    let splitDate = JSON.stringify(newDate).split('\"');
+
+    console.log("splitDate: ", splitDate);
+
+    let splitDate2 = splitDate[1].split('T');
+
+    console.log("splitDate2: ", splitDate2);
+
+    // let formattedDate = splitDate[1] + ' ' + splitDate[2];
+    // let formattedDate = this.formatDate(splitDate2[0]);
+
+    let splitDate3 = splitDate2[0].split('-');
+
+    console.log("splitDate3: ", splitDate3);
+
+    // moment(this.state.myDate.split(" ")[0]).format("ddd")
+
+    return this.formatDate(splitDate2[0]);
+    // return formattedDate;
   }
 
   toggleDisplay = (option) => {
@@ -115,12 +179,12 @@ class MenuItemList extends Component {
     console.log("(toggleDisplay) props: ", this.props);
     console.log("(toggleDisplay) current meal: ", this.state.purchaseID);
 
-    let currMealInfo = this.state.meals_nbd.find(element => 
-      element.purchase_uid === this.state.purchaseID
-    );
+    // let currMealInfo = this.state.meals_nbd.find(element => 
+    //   element.purchase_uid === this.state.purchaseID
+    // );
 
-    console.log("(toggleDisplay) curr meal info: ", currMealInfo);
-    console.log("(toggleDisplay) charge date: ", currMealInfo.next_billing_date);
+    // console.log("(toggleDisplay) curr meal info: ", currMealInfo);
+    // console.log("(toggleDisplay) charge date: ", currMealInfo.next_billing_date);
     console.log("(toggleDisplay) my date: ", this.state.myDate);
 
     if(this.state.popUpDisplay === false) {
@@ -137,7 +201,8 @@ class MenuItemList extends Component {
     if(option === "SAVE") {
       let popUpText = 'You have saved your meals for this week. '
       if (this.state.addOnAmount > 0) {
-        popUpText = popUpText.concat('You will be charged for ' + this.state.addOnAmount + ' Add On items on ' + this.formatDate(currMealInfo.next_billing_date));
+        // popUpText = popUpText.concat('You will be charged for ' + this.state.addOnAmount + ' Add On items on ' + this.formatDate(currMealInfo.next_billing_date));
+        popUpText = popUpText.concat('You will be charged for ' + this.state.addOnAmount + ' Add On items on ' + this.dayBefore(this.state.myDate));
       }
       this.setState({
         popUpText,
@@ -170,7 +235,7 @@ class MenuItemList extends Component {
 
 
   loadMealPlans = () => {
-    let remoteDataFetched = 0;
+    // let remoteDataFetched = 0;
 
     const customer_uid = Cookies.get("customer_uid");
 
@@ -178,72 +243,66 @@ class MenuItemList extends Component {
       .then(response => response.json())
       .then(json => {
         let meals = [...json.result];
-        console.log("loadMealPlans: ", meals)
+        console.log("loadMealPlans: ", meals);
+
+        // this.setState({
+        //   meals: meals,
+        //   purchaseID: meals[0].purchase_id,
+        //   totalMeals: parseInt(meals[0].items.substr(23, 2))
+        // }, () => {
+        //   remoteDataFetched++;
+        //   if(remoteDataFetched === 2){
+        //     this.setState({
+        //       mealsLoaded: true
+        //     });
+        //   }
+        // });
         this.setState({
           meals: meals,
           purchaseID: meals[0].purchase_id,
-          totalMeals: parseInt(meals[0].items.substr(23, 2))
-        }, () => {
-          remoteDataFetched++;
-          if(remoteDataFetched === 2){
-            this.setState({
-              mealsLoaded: true
-            });
-          }
+          totalMeals: parseInt(meals[0].items.substr(23, 2)),
+          mealsLoaded: true
         });
+
       })
       .catch(error => {
         console.error(error);
-        remoteDataFetched++;
-        if(remoteDataFetched === 2){
-          this.setState({
-            mealsLoaded: true
-          });
-        }
+
+        // remoteDataFetched++;
+        // if(remoteDataFetched === 2){
+        //   this.setState({
+        //     mealsLoaded: true
+        //   });
+        // }
+
       });
 
-    //predict_next_billing_date/
-    // axios.get(`${API_URL}customer_lplp?customer_uid=${customer_uid}`)
-    //   .then(response => response.json())
-    //   .then(json => {
-    //     let meals = [...json.result];
-    //     console.log("loadMealPlans: ", meals)
+    // axios.get(`${API_URL}predict_next_billing_date/${customer_uid}`)
+    //   .then(res => {
+    //     console.log("(MIL -- PNBD) res: ", res);
     //     this.setState({
-    //       meals: meals,
-    //       purchaseID: meals[0].purchase_id,
-    //       totalMeals: parseInt(meals[0].items.substr(23, 2))
+    //       meals_nbd: res.data.result
+    //     }, () => {
+    //       remoteDataFetched++;
+    //       if(remoteDataFetched === 2){
+    //         this.setState({
+    //           mealsLoaded: true
+    //         });
+    //       }
     //     });
     //   })
-    //   .catch(error => {
-    //     console.error(error);
+    //   .catch(err => {
+    //     console.log(err);
+    //     if(err.response) {
+    //       console.log(err.response);
+    //     }
+    //     remoteDataFetched++;
+    //     if(remoteDataFetched === 2){
+    //       this.setState({
+    //         mealsLoaded: true
+    //       });
+    //     }
     //   });
-
-    axios.get(`${API_URL}predict_next_billing_date/${customer_uid}`)
-      .then(res => {
-        console.log("(MIL -- PNBD) res: ", res);
-        this.setState({
-          meals_nbd: res.data.result
-        }, () => {
-          remoteDataFetched++;
-          if(remoteDataFetched === 2){
-            this.setState({
-              mealsLoaded: true
-            });
-          }
-        });
-      })
-      .catch(err => {
-        console.log(err);
-        if(err.response) {
-          console.log(err.response);
-        }
-        remoteDataFetched++;
-        if(remoteDataFetched === 2){
-          this.setState({
-            mealsLoaded: true
-          });
-        }
-      });
   };
 
   loadMenuItems = () => {
@@ -634,6 +693,8 @@ class MenuItemList extends Component {
     let delivery_Day = "";
     let myCounter = 0;
     let addOnCount = 0;
+
+    // NEEDS BUGFIXING: sometimes throws an error when mealSelected undefined on mount
     let pulledSelection = this.state.mealSelected.filter(
       item =>
         item.sel_purchase_id === this.state.purchaseID &&
@@ -1609,7 +1670,7 @@ class MenuItemList extends Component {
           dates={uniqueDates}
           filterDates={this.filterDates}
           meals={this.state.meals}
-          meals_nbd={this.state.meals_nbd}
+          // meals_nbd={this.state.meals_nbd}
           mealsOnChange={this.mealsOnChange}
           totalCount={this.state.totalCount}
           totalMeals={this.state.totalMeals}
