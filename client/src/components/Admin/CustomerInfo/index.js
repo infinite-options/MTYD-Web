@@ -539,53 +539,60 @@ function CustomerInfo() {
         <div    
           key={sel.date}
           style={{
-						marginTop: '50px', 
+						// marginTop: '50px', 
 						marginBottom: '50px',
 						// border: 'dashed',
 						display: 'flex'
 					}}
         >
-					<div className={styles.orangeHeaderCycle}>
-						--
+					<div className={styles.historyCycles}>
+						<div 
+							// style={{width: '100%', border: 'solid'}}
+						>
+						Next Billing Date
+						</div>
+						<div>
+						Deliveries
+						</div>
 					</div>
-					<div className={styles.orangeHeaderSection}>
+					<div className={styles.historySection}>
 						{sel.payment_id}
 					</div>
-					<div className={styles.orangeHeaderSection}>
+					<div className={styles.historySection}>
 						{sel.payment_info.payment_time_stamp}
 					</div>
-					<div className={styles.orangeHeaderSection}>
+					<div className={styles.historySection}>
 						{sel.payment_info.payment_type}
 					</div>
-					<div className={styles.orangeHeaderSection}>
+					<div className={styles.historySection}>
 						--
 					</div>
-					<div className={styles.orangeHeaderSection}>
-						{sel.payment_info.subtotal}
+					<div className={styles.historySection}>
+						${sel.payment_info.subtotal.toFixed(2)}
 					</div>
-					<div className={styles.orangeHeaderSection}>
-						{sel.payment_info.amount_discount}
+					<div className={styles.historySection}>
+						${sel.payment_info.amount_discount.toFixed(2)}
 					</div>
-					<div className={styles.orangeHeaderSection}>
-						{sel.payment_info.service_fee}
+					<div className={styles.historySection}>
+						${sel.payment_info.service_fee.toFixed(2)}
 					</div>
-					<div className={styles.orangeHeaderSection}>
-						{sel.payment_info.delivery_fee}
+					<div className={styles.historySection}>
+						${sel.payment_info.delivery_fee.toFixed(2)}
 					</div>
-					<div className={styles.orangeHeaderSection}>
-						{sel.payment_info.driver_tip}
+					<div className={styles.historySection}>
+						${sel.payment_info.driver_tip.toFixed(2)}
 					</div>
-					<div className={styles.orangeHeaderSection}>
-						{sel.payment_info.taxes}
+					<div className={styles.historySection}>
+						${sel.payment_info.taxes.toFixed(2)}
 					</div>
-					<div className={styles.orangeHeaderSection}>
-						{sel.payment_info.ambassador_code}
+					<div className={styles.historySection}>
+						${sel.payment_info.ambassador_code.toFixed(2)}
 					</div>
-					<div className={styles.orangeHeaderSection}>
-						{sel.payment_info.amount_paid}
+					<div className={styles.historySection}>
+						${sel.payment_info.amount_paid.toFixed(2)}
 					</div>
-					<div className={styles.orangeHeaderSection}>
-						{sel.payment_info.amount_due}
+					<div className={styles.historySection}>
+						${sel.payment_info.amount_due.toFixed(2)}
 					</div>
 
           {/*<div style={{display: 'inline-flex', width: '100%'}}>

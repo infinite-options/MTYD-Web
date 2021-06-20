@@ -197,7 +197,7 @@
   display: block;
   white-space: nowrap;
   overflow: hidden; */
-  border: solid;
+  /* border: solid; */
   border-width: 1px;
   height: 70px;
 }
@@ -220,7 +220,56 @@
   display: block;
   white-space: nowrap;
   overflow: hidden; */
-  border: solid;
+  /* border: solid;
+  border-width: 1px; */
+  height: 70px;
+}
+
+.historySection {
+  /* border-top: solid; */
+  display: flex;
+  /* flex-direction: column; */
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  /* color: #f26522; */
+  font-size: 14px;
+  font-weight: 600;
+  /* padding-top: 4px;
+  padding-left: 4px; */
+  width: 7%;
+  height: 40px;
+  /* text-overflow: ellipsis;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden; */
+  border-top: solid;
+  border-color: #f26522;
+  border-width: 1px;
+  height: 70px;
+}
+
+.historyCycles {
+  /* border-top: solid; */
+  /* display: 'none'; */
+  /* display: flex;
+  text-align: center;
+  justify-content: center;
+  align-items: center; */
+  
+  color: #f26522;
+  font-size: 14px;
+  font-weight: 600;
+  /* padding-top: 4px;
+  padding-left: 4px; */
+  width: 9%;
+  height: 40px;
+  /* text-overflow: ellipsis;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden; */
+  border-top: solid;
+  /* border-color: #f26522; */
   border-width: 1px;
   height: 70px;
 }
