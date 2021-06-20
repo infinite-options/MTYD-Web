@@ -3,6 +3,7 @@ import {withRouter} from "react-router";
 import axios from 'axios';
 import { API_URL } from '../../../reducers/constants';
 import Breadcrumb from 'react-bootstrap/Breadcrumb';
+import AdminNavBar from '../AdminNavBar'
 
 function Home({history, ...props}) {
   const [mounted, setMounted] = useState(false);
@@ -48,6 +49,7 @@ function Home({history, ...props}) {
 
   return (
     <div>
+      <AdminNavBar/>
       <Breadcrumb>
         <Breadcrumb.Item active> Admin Site </Breadcrumb.Item>
       </Breadcrumb>

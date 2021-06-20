@@ -209,21 +209,29 @@ function NavBar(props) {
         >
           <a href='/admin/edit-meal' className={styles.navLink3}>Meals & Plans</a>
           <a href='/admin/plans-coupons' className={styles.navLink4}>Plans & Coupons</a>
-          <a href='/admin/orer-ingredients' className={styles.navLink5}>Orders & Ingredients</a>
+          <a 
+            href='/admin/order-ingredients' 
+            className={styles.navLink5}
+            style={props.currentPage === 'order-ingredients' ? {color: 'black'} : {}}
+          > 
+            Orders & Ingredients 
+          </a>
           <a 
             href='/admin/customer-info' 
             className={styles.navLink2}
-            style={
-              props.currentPage === 'customer-info'
-                ? {color: 'black'}
-                : {}
-            }
+            style={props.currentPage === 'customer-info' ? {color: 'black'} : {}}
           >
             Customers
           </a>
           <a href='/admin/customers' className={styles.navLink4}>Google Analytics</a>
           <a href='/admin/edit-meal' className={styles.navLink3}>Notifications</a>
-          <a href='/admin/edit-meal' className={styles.navLink2}>Businesses</a>
+          <a 
+            href='/admin/edit-meal' 
+            className={styles.navLink2}
+            style={props.currentPage === 'edit-meal' ? {color: 'black'} : {}}
+          >
+            Businesses
+          </a>
           <a href='/admin/edit-meal' className={styles.navLink1}>Zones</a>
           <a href='/admin/edit-meal' className={styles.navLink1}>Profile</a>
         </div>

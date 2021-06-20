@@ -23,6 +23,7 @@ function CustomerInfo() {
 	const [subscriptionsList, setSubscriptionsList] = useState(null);
 	const [currentPlan, setCurrentPlan] = useState(null);
 	const [subHistory, setSubHistory] = useState(null);
+	const [LPLP, setLPLP] = useState(null);
 	const [uniquePlans, setUniquePlans] = useState(null);
 
 	const [dimensions, setDimensions] = useState({ 
@@ -106,7 +107,11 @@ function CustomerInfo() {
     let tempUniquePlans = [];
     let dropdownIndex = 0;
 
-		if(subHistory !== null){
+		if(subHistory !== null && LPLP !== null){
+			console.log("meal data initialized!");
+
+			console.log("LPLP info: ", LPLP);
+
 			subHistory.forEach((sub) => {
 
 				let elIndex = tempUniquePlans.findIndex(element => element.id === sub.purchase_id);
@@ -133,11 +138,16 @@ function CustomerInfo() {
 
 					// console.log("-- (1.3) element index: ", elIndex);
 					// console.log("-- (1.4) adding to plan: ", sub);
+
+					let lplp_info = LPLP.find(element => element.purchase_id === sub.purchase_id);
+
+					console.log("adding LPLP info: ", lplp_info);
 					
 					let historyTab = {
 						date: sub.payment_time_stamp,
 						show_dropdown: false,
 						payment_id: sub.payment_id,
+						payment_info: lplp_info,
 						deliveries: []
 					};
 					tempUniquePlans[elIndex].history.push(historyTab);
@@ -180,7 +190,7 @@ function CustomerInfo() {
 
 		}
 
-	}, [subHistory]);
+	}, [subHistory, LPLP]);
 
 	const formatDate = (rawDate) => {
 
@@ -237,7 +247,7 @@ function CustomerInfo() {
   }
 
 	const parseID = (sub) => {
-		console.log("parseID sub: ", sub);
+		// console.log("parseID sub: ", sub);
 		let parsedId = sub.purchase_uid.substring(
 			sub.purchase_id.indexOf("-")+1,
 			sub.purchase_id.length
@@ -272,25 +282,7 @@ function CustomerInfo() {
 			.get(API_URL + 'predict_next_billing_date/' + cust.customer_uid)
 			.then(res => {
 				console.log("(pnba) next meal info res: ", res);
-
-				// setSubscriptionsLoaded(true);
 				setSubscriptionsList(res.data.result);
-
-				// let fetchedSubscriptions = res.data.result;
-
-				// this.displayErrorModal('Success!', `
-				// 	OLD MEAL PLAN: ${this.state.currentPlan.meals} meals, ${this.state.currentPlan.deliveries} deliveries
-				// 	NEW MEAL PLAN: ${this.state.updatedPlan.meals} meals, ${this.state.updatedPlan.deliveries} deliveries
-				// `, 
-				// 	'OK', 'back'
-				// );
-
-				// console.log("subscriptions loaded? ", this.state.subscriptionsLoaded);
-				// console.log(this.state.defaultSet === false);
-				// console.log(this.state.refreshingPrice);
-				// console.log(this.activeChanges());
-
-				// this.loadSubscriptions(fetchedSubscriptions, this.state.discounts, UPDATED);
 			})
 			.catch(err => {
 				console.log(err);
@@ -301,27 +293,18 @@ function CustomerInfo() {
 			.get(API_URL + 'subscription_history/' + cust.customer_uid)
 			.then(res => {
 				console.log("(sh) sub history res: ", res);
-
 				setSubHistory(res.data.result);
+			})
+			.catch(err => {
+				console.log(err);
+			});
 
-				// setSubscriptionsLoaded(true);
-				// setSubscriptionsList(res.data.result);
-
-				// let fetchedSubscriptions = res.data.result;
-
-				// this.displayErrorModal('Success!', `
-				// 	OLD MEAL PLAN: ${this.state.currentPlan.meals} meals, ${this.state.currentPlan.deliveries} deliveries
-				// 	NEW MEAL PLAN: ${this.state.updatedPlan.meals} meals, ${this.state.updatedPlan.deliveries} deliveries
-				// `, 
-				// 	'OK', 'back'
-				// );
-
-				// console.log("subscriptions loaded? ", this.state.subscriptionsLoaded);
-				// console.log(this.state.defaultSet === false);
-				// console.log(this.state.refreshingPrice);
-				// console.log(this.activeChanges());
-
-				// this.loadSubscriptions(fetchedSubscriptions, this.state.discounts, UPDATED);
+		console.log("(scc) calling customer_lplp on ", cust.customer_uid);
+		axios
+			.get(API_URL + 'customer_lplp?customer_uid=' + cust.customer_uid)
+			.then(res => {
+				console.log("(lplp) res: ", res);
+				setLPLP(res.data.result);
 			})
 			.catch(err => {
 				console.log(err);
@@ -550,11 +533,60 @@ function CustomerInfo() {
 		let historyTabs = [];
 
     planHistory.history.forEach((sel) => {
+			console.log("(showHistory) sel: ", sel);
+
       historyTabs.push(
         <div    
           key={sel.date}
-          style={{marginTop: '50px', marginBottom: '50px'}}
+          style={{
+						marginTop: '50px', 
+						marginBottom: '50px',
+						// border: 'dashed',
+						display: 'flex'
+					}}
         >
+					<div className={styles.orangeHeaderCycle}>
+						--
+					</div>
+					<div className={styles.orangeHeaderSection}>
+						{sel.payment_id}
+					</div>
+					<div className={styles.orangeHeaderSection}>
+						{sel.payment_info.payment_time_stamp}
+					</div>
+					<div className={styles.orangeHeaderSection}>
+						{sel.payment_info.payment_type}
+					</div>
+					<div className={styles.orangeHeaderSection}>
+						--
+					</div>
+					<div className={styles.orangeHeaderSection}>
+						{sel.payment_info.subtotal}
+					</div>
+					<div className={styles.orangeHeaderSection}>
+						{sel.payment_info.amount_discount}
+					</div>
+					<div className={styles.orangeHeaderSection}>
+						{sel.payment_info.service_fee}
+					</div>
+					<div className={styles.orangeHeaderSection}>
+						{sel.payment_info.delivery_fee}
+					</div>
+					<div className={styles.orangeHeaderSection}>
+						{sel.payment_info.driver_tip}
+					</div>
+					<div className={styles.orangeHeaderSection}>
+						{sel.payment_info.taxes}
+					</div>
+					<div className={styles.orangeHeaderSection}>
+						{sel.payment_info.ambassador_code}
+					</div>
+					<div className={styles.orangeHeaderSection}>
+						{sel.payment_info.amount_paid}
+					</div>
+					<div className={styles.orangeHeaderSection}>
+						{sel.payment_info.amount_due}
+					</div>
 
           {/*<div style={{display: 'inline-flex', width: '100%'}}>
             <div className={styles.orangeHeaderLeft}>

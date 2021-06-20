@@ -101,47 +101,47 @@ function App() {
             {/* <AppliedRoute exact path='/test' component={MapTest} /> */}
 
             <Route exact path="/admin">
-              {adminNavBar}
+              {/* {adminNavBar} */}
               <AdminHome />
             </Route>
             <Route exact path="/admin/create-menu">
-              {adminNavBar}
+              {/* {adminNavBar} */}
               <AdminCreateMenu />
             </Route>
             <Route exact path="/admin/edit-meal">
-              {adminNavBar}
+              {/* {adminNavBar} */}
               <AdminEditMeal />
             </Route>
             <Route exact path="/admin/create-meal">
-              {adminNavBar}
+              {/* {adminNavBar} */}
               <AdminCreateMeal />
             </Route>
             <Route exact path="/admin/edit-meal-recipe">
-              {adminNavBar}
+              {/* {adminNavBar} */}
               <AdminEditMealRecipe />
             </Route>
             <Route exact path="/admin/plans-coupons">
-              {adminNavBar}
+              {/* {adminNavBar} */}
               <AdminPlansCoupons />
             </Route>
             <Route exact path="/admin/order-ingredients">
-              {adminNavBar}
+              {/* {adminNavBar} */}
               <AdminOrderIngredients />
             </Route>
             <Route exact path="/admin/customers">
-              {adminNavBar}
+              {/* {adminNavBar} */}
               <AdminCustomers />
             </Route>
             <Route exact path="/admin/google-analytics">
-              {adminNavBar}
+              {/* {adminNavBar} */}
               <AdminGoogleAnalytics />
             </Route>
             <Route exact path="/admin/notifications">
-              {adminNavBar}
+              {/* {adminNavBar} */}
               <AdminNotfications />
             </Route>
             <Route exact path="/admin/zones">
-              {adminNavBar}
+              {/* {adminNavBar} */}
               <AdminZones />
             </Route>
             <Route exact path="/admin/customer-info">
