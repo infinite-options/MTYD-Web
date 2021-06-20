@@ -5,6 +5,8 @@ import { descendingComparator } from '../../../reducers/helperFuncs';
 import { withRouter } from "react-router";
 import styles from "./customerInfo.module.css";
 import AdminNavBar from '../AdminNavBar'
+import zIndex from '@material-ui/core/styles/zIndex';
+import orangeArrowUp from '../../../images/orange_arrow_up.png';
 
 // For choosing which 
 const CUS_SEL_NONE  = -1;
@@ -17,7 +19,8 @@ function CustomerInfo() {
 	const [ customersById	   , setCustomersById	   ] = useState(null);
 	const [ customersByEmail , setCustomersByEmail ] = useState(null);
 
-	const [customerDropdown, setCustomerDropdown] = useState(CUS_SEL_NONE);
+	// const [customerDropdown, setCustomerDropdown] = useState(CUS_SEL_NONE);
+	const [customerDropdown, setCustomerDropdown] = useState(false);
 	const [selectedCustomer, selectCustomer] = useState(null);
 	const [subscriptionsLoaded, setSubscriptionsLoaded] = useState(false);
 	const [subscriptionsList, setSubscriptionsList] = useState(null);
@@ -25,6 +28,15 @@ function CustomerInfo() {
 	const [subHistory, setSubHistory] = useState(null);
 	const [LPLP, setLPLP] = useState(null);
 	const [uniquePlans, setUniquePlans] = useState(null);
+
+	// payment id width
+	// const [paymentID_width, resize_paymentID] = useState(() => {
+	// 	return document.getElementById('payment-id').offsetWidth;
+	// });
+
+	// useEffect(() => {
+	// 	resize_paymentID
+	// }, []);
 
 	const [dimensions, setDimensions] = useState({ 
     height: window.innerHeight,
@@ -555,7 +567,17 @@ function CustomerInfo() {
 						Deliveries
 						</div>
 					</div>
-					<div className={styles.historySection}>
+					{/* <div className={styles.historySection}>
+						{sel.payment_id}
+					</div>
+					getElementById('div_register').style.width='500px'; */}
+					<div 
+						className={styles.historySection}
+						// style={{
+						// 	width: document.getElementById('payment-id').offsetWidth,
+						// 	border: 'solid'
+						// }}
+					>
 						{sel.payment_id}
 					</div>
 					<div className={styles.historySection}>
@@ -923,7 +945,8 @@ function CustomerInfo() {
 								marginRight: '50px',
 								display: 'inline-flex',
 								alignItems: 'center',
-								height: '80px'
+								height: '80px',
+								// zIndex: '2'
 								// width: '40%',
 								// minWidth: '300px'
 							}}
@@ -961,12 +984,55 @@ function CustomerInfo() {
 										}
 									</div>
 									<div
+										onClick={() => {setCustomerDropdown(!customerDropdown)}}
 										style={{
 											// border: 'solid',
-											color: 'green'
+											color: 'green',
+											// position: 'relative',
 										}}
 									>
 										Arrow
+										{/* style={{
+              color: 'red',
+              zIndex: '99',
+              height: '100vh',
+              width: '100vw',
+              // height: '50vh',
+              // width: '50vw',
+              // border: 'inset',
+              position: 'fixed',
+              top: '0',
+              backgroundColor: '#F7F4E5',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center'
+            }} */}
+										{/* {customerDropdown ? (<div
+											type='text'
+											style={{
+												// border: 'solid',
+												// borderWidth: '1px',
+												// width: '16%',
+												// height: '30px',
+												// marginLeft: '2%',
+												// marginRight: '2%',
+												position: 'fixed',
+												zIndex: '4',
+												// cursor: 'pointer'
+												border: 'solid',
+												borderWidth: '1px',
+												width: '100px',
+												backgroundColor: 'red'
+											
+											}}
+											// onClick={() => {
+											// 	customerDropdown === CUS_SEL_NONE
+											// 		? setCustomerDropdown(CUS_SEL_EMAIL)
+											// 		: setCustomerDropdown(CUS_SEL_NONE)
+											// }}
+										>
+											STUFF
+										</div>) : (null)} */}
 									</div>
 								</div>
 								<br />
@@ -1358,6 +1424,33 @@ function CustomerInfo() {
 				)}
 			</div>
 
+			{customerDropdown ? (<div
+											type='text'
+											style={{
+												// border: 'solid',
+												// borderWidth: '1px',
+												// width: '16%',
+												// height: '30px',
+												// marginLeft: '2%',
+												// marginRight: '2%',
+												position: 'fixed',
+												zIndex: '4',
+												// cursor: 'pointer'
+												border: 'solid',
+												borderWidth: '1px',
+												width: '100px',
+												backgroundColor: 'red'
+											
+											}}
+											// onClick={() => {
+											// 	customerDropdown === CUS_SEL_NONE
+											// 		? setCustomerDropdown(CUS_SEL_EMAIL)
+											// 		: setCustomerDropdown(CUS_SEL_NONE)
+											// }}
+										>
+											STUFF
+										</div>) : (null)}
+
 			{/* Meal Plans */}
 			{/* <div
 				style={{
@@ -1419,7 +1512,9 @@ function CustomerInfo() {
 								<div className={styles.orangeHeaderCycle}>
 									Billing Date
 								</div>
-								<div className={styles.orangeHeaderSection}>
+								<div 
+									id={'payment-id'}
+									className={styles.orangeHeaderSection}>
 									Payment ID
 								</div>
 								<div className={styles.orangeHeaderSection}>
@@ -1464,7 +1559,7 @@ function CustomerInfo() {
 								<div
 									style={{
 										// border: 'solid',
-										width: '100%'
+										width: '100%',
 									}}
 								>
 									{"Waiting for selection..."}

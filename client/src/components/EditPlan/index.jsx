@@ -157,6 +157,8 @@ class EditPlan extends React.Component {
       errorLink: '',
       errorLinkText: '',
       errorHeader: '',
+      showConfirmModal: false,
+      confirmModal: null,
       processingChanges: false,
       windowHeight: undefined,
       windowWidth: undefined,
@@ -223,12 +225,48 @@ class EditPlan extends React.Component {
       this.setState({
         errorModal: styles.errorModalPopUpHide,
         showErrorModal: false,
-        errorMessage: message,
-        errorLinkText: linkText,
-        errorLink: link,
-        errorHeader: header
+        // errorMessage: message,
+        // errorLinkText: linkText,
+        // errorLink: link,
+        // errorHeader: header
       });
       console.log("\nerror pop up toggled to false");
+    }
+  }
+
+  // displayError = (type, message) => {
+
+  //   if(type === CLOSED) {
+  //     this.setState({
+  //       errorModal: styles.errorModalPopUpHide,
+  //       errorType: type,
+  //       errorMessage: ''
+  //     });
+  //   } else {
+  //     this.setState({
+  //       errorModal: styles.errorModalPopUpShow,
+  //       errorType: type,
+  //       errorMessage: message
+  //     });
+  //   }
+
+  //   console.log("\npop up error toggled to " + type + "\n\n");
+  // }
+
+  // Confirm box for cancellations
+  displayConfirmation = () => {
+    if (this.state.showConfirmModal === false) {
+      this.setState({
+        showConfirmModal: true,
+        confirmModal: styles.errorModalPopUpShow
+      });
+      console.log("\nconfirm pop up toggled to true");
+    } else {
+      this.setState({
+        showConfirmModal: false,
+        confirmModal: styles.errorModalPopUpHide
+      });
+      console.log("\nconfirm pop up toggled to false");
     }
   }
 
@@ -784,6 +822,7 @@ class EditPlan extends React.Component {
     }
   }
 
+  // Make sure plans have been fetched
   componentDidUpdate(prevProps, prevState) {
     if (
       prevProps.plans !== this.props.plans &&
@@ -1137,6 +1176,11 @@ class EditPlan extends React.Component {
         'Go Home', '/home'
       );
     }
+  }
+
+  confirmDelete = () => {
+    console.log("in confirm delete");
+    this.displayConfirmation();
   }
 
   deletePurchase = () => {
@@ -1505,7 +1549,8 @@ class EditPlan extends React.Component {
               <div 
                 className={styles.iconTrash}
                 onClick={() => {
-                  this.deletePurchase();
+                  // this.deletePurchase();
+                  this.confirmDelete();
                 }}
                 tabIndex="0"
                 aria-label="Click here to cancel this meal plan"
@@ -1645,7 +1690,8 @@ class EditPlan extends React.Component {
               <div 
                 className={styles.iconTrash}
                 onClick={() => {
-                  this.deletePurchase();
+                  // this.deletePurchase();
+                  this.confirmDelete();
                 }}
                 tabIndex="0"
                 aria-label="Click here to cancel this meal plan"
@@ -2688,6 +2734,78 @@ class EditPlan extends React.Component {
                         >
                           {this.state.errorLinkText}
                         </button>
+                      </div> 
+                    </div>
+                  </div>
+                </>
+              );
+            }
+          })()} 
+
+          {(() => {
+            if (this.state.showConfirmModal === true) {
+              return (
+                <>
+                  <div className = {this.state.confirmModal}>
+                    <div className  = {styles.confirmModalContainer}>
+
+                      <div className={styles.confirmContainer}>
+                        <div className={styles.confirmHeader}>
+                          Confirm Cancellation
+                        </div>
+
+                        <div className={styles.errorText}>
+                          Are you sure you want to delete 
+                          <br/>
+                          the following meal plan:
+                          <br/>
+                          <strong>
+                            {" "+this.state.currentPlan.meals} meals, 
+                            {" "+this.state.currentPlan.deliveries} deliveries 
+                            {" "}(ID: {this.state.currentPlan.id})
+                          </strong>
+                          ?
+                        </div>
+
+                        <br />
+
+                        <div
+                          style={{
+                            // border: 'solid',
+                            display: 'flex',
+                            justifyContent: 'center'
+                          }}
+                        >
+                          <button 
+                            className={styles.confirmBtn}
+                            onClick = {() => {
+                              // if(this.state.errorLink === 'back'){
+                              //   this.displayConfirmation();
+                              // } else {
+                              //   this.props.history.push(this.state.errorLink);
+                              // }
+                              this.displayConfirmation();
+                              this.deletePurchase();
+                            }}
+                          >
+                            Yes
+                          </button>
+
+                          <button 
+                            className={styles.confirmBtn}
+                            onClick = {() => {
+                              // if(this.state.errorLink === 'back'){
+                              //   this.displayConfirmation();
+                              // } else {
+                              //   this.props.history.push(this.state.errorLink);
+                              // }
+                              this.displayConfirmation();
+                            }}
+                          >
+                            No
+                          </button>
+                        </div>
+                        
                       </div> 
                     </div>
                   </div>

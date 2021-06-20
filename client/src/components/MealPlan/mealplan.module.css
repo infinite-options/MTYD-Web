@@ -327,21 +327,24 @@
 } */
 
 .orangeArrowUp {
-  background-image: url('./static/orange_arrow_up.png');
+  /* background-image: url('./static/orange_arrow_up.png'); */
+  background-image: url('../../images/orange_arrow_up.png');
   background-size: 100%;
   width: 12px;
   height: 11px;
 }
 
 .orangeArrowDown {
-  background-image: url('./static/orange_arrow_down.png');
+  /* background-image: url('./static/orange_arrow_down.png'); */
+  background-image: url('../../images/orange_arrow_down.png');
   background-size: 100%;
   width: 12px;
   height: 11px;
 }
 
 .whiteArrowDown {
-  background-image: url('./static/white_arrow_down.png');
+  /* background-image: url('./static/white_arrow_down.png'); */
+  background-image: url('../../images/white_arrow_down.png');
   background-size: 100%;
   width: 24px;
   height: 16px;
