@@ -20,6 +20,8 @@ import { API_URL } from '../../reducers/constants';
 
 import {FootLink} from "../Home/homeButtons";
 
+import m4me_logo from '../../images/LOGO_NoBG_MealsForMe.png';
+
 const MealPlan = props => {
 
   const [customerId, setCustomerId] = useState(null);
@@ -1548,16 +1550,35 @@ const MealPlan = props => {
       {/* {currentPlan === null || historyDropdowns === null */}
       {currentPlan === null || uniquePlans === null || billingInfo === null
         ? (
+            // <div
+            //   style={{
+            //     fontSize: '40px',
+            //     fontWeight: 'bold',
+            //     marginLeft: '8%',
+            //     marginBottom: '100px',
+            //     marginRight: '8%'
+            //   }}
+            // >
+            //   LOADING YOUR SUBSCRIPTION HISTORY...
+            // </div>
             <div
               style={{
-                fontSize: '40px',
-                fontWeight: 'bold',
-                marginLeft: '8%',
-                marginBottom: '100px',
-                marginRight: '8%'
+                color: 'red',
+                zIndex: '99',
+                height: '100vh',
+                width: '100vw',
+                // height: '50vh',
+                // width: '50vw',
+                // border: 'inset',
+                position: 'fixed',
+                top: '0',
+                backgroundColor: '#F7F4E5',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center'
               }}
             >
-              LOADING YOUR SUBSCRIPTION HISTORY...
+              <img src={m4me_logo} />
             </div>
           )
         : (<>

@@ -22,6 +22,8 @@ import fetchAddressCoordinates from '../../utils/FetchAddressCoordinates';
 import PopLogin from '../PopLogin';
 import Popsignup from '../PopSignup';
 
+import m4me_logo from '../../images/LOGO_NoBG_MealsForMe.png';
+
 const google = window.google;
 
 var map;
@@ -159,9 +161,13 @@ class EditPlan extends React.Component {
       errorHeader: '',
       showConfirmModal: false,
       confirmModal: null,
+      deletingPurchase: false,
+      deleteSuccess: null,
       processingChanges: false,
       windowHeight: undefined,
       windowWidth: undefined,
+      refundAmount: 0,
+      refundError: 'Error attempting to refund subscription'
       // narrowView: true
     };
 
@@ -1187,36 +1193,59 @@ class EditPlan extends React.Component {
 
     console.log("plan to cancel: ", this.state.updatedPlan);
 
-    axios
-      .put(`${API_URL}cancel_purchase`,{
-        //purchase_uid: this.state.updatedPlan.raw_data.purchase_uid,
-        //purchase_uid: this.state.updatedPlan.raw_data.purchase_uid
-        purchase_uid: this.state.updatedPlan.raw_data.purchase_uid
-      })
-      .then((response) => {
-        console.log("cancel_purchase response: ", response);
-        console.log("cancel_purchase customerUid: " + this.state.customerUid);
+    this.setState({
+      refundAmount: this.state.currentPlan.payment_summary.total
+    }, () => {
 
-        // axios.get(API_URL + 'next_meal_info/' + this.state.customerUid)
-        axios.get(API_URL + 'predict_next_billing_date/' + this.state.customerUid)
-          .then(res => {
-            console.log("(after deletion) next meal info res: ", res);
+      axios
+        .put(`${API_URL}cancel_purchase`,{
+          //purchase_uid: this.state.updatedPlan.raw_data.purchase_uid,
+          //purchase_uid: this.state.updatedPlan.raw_data.purchase_uid
+          purchase_uid: this.state.updatedPlan.raw_data.purchase_uid
+        })
+        .then((response) => {
+          console.log("cancel_purchase response: ", response);
+          console.log("cancel_purchase customerUid: " + this.state.customerUid);
 
-            let fetchedSubscriptions = res.data.result;
+          // axios.get(API_URL + 'next_meal_info/' + this.state.customerUid)
+          axios.get(API_URL + 'predict_next_billing_date/' + this.state.customerUid)
+            .then(res => {
+              console.log("(after deletion) next meal info res: ", res);
 
-            this.loadSubscriptions(fetchedSubscriptions, this.state.discounts, DEFAULT);
-          })
-          .catch(err => {
-            console.log(err);
+              let fetchedSubscriptions = res.data.result;
+
+              this.setState({
+                deletingPurchase: false,
+                deleteSuccess: true
+              });
+
+              this.loadSubscriptions(fetchedSubscriptions, this.state.discounts, DEFAULT);
+            })
+            .catch(err => {
+              console.log("refund error: ", err);
+              this.setState({
+                deletingPurchase: false,
+                deleteSuccess: false,
+                refundError: (err.response.data.message && typeof(err.response.data.message) === 'string' ? err.response.data.message : 'Error attempting to refund subscription')
+              });
+              console.log(err);
+            });
+
+        })
+        .catch((err) => {
+          console.log("refund error: ", err);
+          this.setState({
+            deletingPurchase: false,
+            deleteSuccess: false,
+            refundError: (err.response.data.message && typeof(err.response.data.message) === 'string' ? err.response.data.message : 'Error attempting to refund subscription')
           });
+          if(err.response) {
+            console.log(err.response);
+          }
+          console.log(err);
+        });
 
-      })
-      .catch((err) => {
-        if(err.response) {
-          console.log(err.response);
-        }
-        console.log(err);
-      });
+    });
   }
 
   setDeliveryInfo(plan) {
@@ -2076,7 +2105,27 @@ class EditPlan extends React.Component {
               {this.state.subscriptionsLoaded === true &&
                typeof(this.props.plans) !== 'undefined'
                 ? this.showSubscribedMeals() 
-                : this.hideSubscribedMeals('plan')}
+                : <div
+                    style={{
+                      color: 'red',
+                      zIndex: '99',
+                      height: '100vh',
+                      width: '100vw',
+                      // height: '50vh',
+                      // width: '50vw',
+                      // border: 'inset',
+                      position: 'fixed',
+                      top: '0',
+                      backgroundColor: '#F7F4E5',
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center'
+                    }}
+                  >
+                    <img src={m4me_logo} />
+                  </div>
+                  // : this.hideSubscribedMeals('plan')}
+              }
             </div>
           </div>
 
@@ -2089,7 +2138,27 @@ class EditPlan extends React.Component {
         <div className={styles.containerSplit}>
           {this.state.subscriptionsLoaded === true
             ? this.showPlanDetails(this.state.windowWidth) 
-            : this.hideSubscribedMeals('delivery_details')}
+            : <div
+                style={{
+                  color: 'red',
+                  zIndex: '99',
+                  height: '100vh',  
+                  width: '100vw',
+                  // height: '50vh',
+                  // width: '50vw',
+                  // border: 'inset',
+                  position: 'fixed',
+                  top: '0',
+                  backgroundColor: '#F7F4E5',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }}
+              >
+                <img src={m4me_logo} />
+              </div>
+              // : this.hideSubscribedMeals('delivery_details')}
+          }
         </div>
 
       {/* {narrowView ? ( */}
@@ -2746,7 +2815,7 @@ class EditPlan extends React.Component {
             if (this.state.showConfirmModal === true) {
               return (
                 <>
-                  <div className = {this.state.confirmModal}>
+                  <div className = {styles.errorModalPopUpShow}>
                     <div className  = {styles.confirmModalContainer}>
 
                       <div className={styles.confirmContainer}>
@@ -2779,13 +2848,14 @@ class EditPlan extends React.Component {
                           <button 
                             className={styles.confirmBtn}
                             onClick = {() => {
-                              // if(this.state.errorLink === 'back'){
-                              //   this.displayConfirmation();
-                              // } else {
-                              //   this.props.history.push(this.state.errorLink);
-                              // }
-                              this.displayConfirmation();
-                              this.deletePurchase();
+                              console.log("deleting purchase...");
+                              this.setState({
+                                deletingPurchase: true,
+                                showConfirmModal: false
+                                // confirmModal: styles.errorModalPopUpHide
+                              }, () => {
+                                this.deletePurchase();
+                              });
                             }}
                           >
                             Yes
@@ -2794,17 +2864,148 @@ class EditPlan extends React.Component {
                           <button 
                             className={styles.confirmBtn}
                             onClick = {() => {
-                              // if(this.state.errorLink === 'back'){
-                              //   this.displayConfirmation();
-                              // } else {
-                              //   this.props.history.push(this.state.errorLink);
-                              // }
                               this.displayConfirmation();
                             }}
                           >
                             No
                           </button>
                         </div>
+                        
+                      </div> 
+                    </div>
+                  </div>
+                </>
+              );
+            }
+          })()} 
+
+{/* <div className = {styles.errorModalPopUpShow}>
+                    <div className  = {styles.confirmModalContainer}>
+
+                      <div className={styles.deletingContainer}>
+                        <div className={styles.deletingHeader}>
+                          Deleting Purchase
+                        </div>
+
+                        <div className={styles.errorText}>
+                          Please wait...
+                        </div>
+                        
+                      </div> 
+                    </div>
+                  </div> */}
+
+          {(() => {
+            if (this.state.deletingPurchase === true) {
+              return (
+                <>
+                  <div className = {styles.errorModalPopUpShow}>
+                    <div className  = {styles.confirmModalContainer}>
+
+                      <div className={styles.deletingContainer}>
+                        <div className={styles.deletingHeader}>
+                          Deleting Purchase
+                        </div>
+
+                        <div className={styles.errorText}>
+                          Please wait...
+                        </div>
+                        
+                      </div> 
+                    </div>
+                  </div>
+                </>
+              );
+            }
+          })()} 
+
+          {/* <div className = {styles.errorModalPopUpShow}>
+            <div className  = {styles.confirmModalContainer}>
+
+              <div className={styles.confirmContainer}>
+                <div className={styles.cancelledHeader}>
+                  Cancellation Error
+                </div>
+
+                <div className={styles.errorText}>
+                  {this.state.refundError}
+                </div>
+
+                <button 
+                  className={styles.cancelledBtn}
+                  onClick = {() => {
+                    this.setState({
+                      deletingSuccess: null,
+                      confirmModal: styles.errorModalPopUpHide
+                    });
+                  }}
+                >
+                  OK
+                </button>
+                
+              </div> 
+            </div>
+          </div> */}
+
+          {(() => {
+            if (this.state.deleteSuccess === true) {
+              return (
+                <>
+                  <div className = {styles.errorModalPopUpShow}>
+                    <div className  = {styles.confirmModalContainer}>
+
+                      <div className={styles.confirmContainer}>
+                        <div className={styles.cancelledHeader}>
+                          Cancellation Success!
+                        </div>
+
+                        <div className={styles.errorText}>
+                          You have been refunded ${this.state.refundAmount}.
+                        </div>
+
+                        <button 
+                          className={styles.cancelledBtn}
+                          onClick = {() => {
+                            this.setState({
+                              deleteSuccess: null,
+                              confirmModal: styles.errorModalPopUpHide
+                            });
+                          }}
+                        >
+                          OK
+                        </button>
+                        
+                      </div> 
+                    </div>
+                  </div>
+                </>
+              );
+            } else if (this.state.deleteSuccess === false) {
+              return (
+                <>
+                  <div className = {styles.errorModalPopUpShow}>
+                    <div className  = {styles.confirmModalContainer}>
+
+                      <div className={styles.confirmContainer}>
+                        <div className={styles.cancelledHeader}>
+                          Cancellation Error
+                        </div>
+
+                        <div className={styles.errorText}>
+                          {this.state.refundError}
+                        </div>
+
+                        <button 
+                          className={styles.cancelledBtn}
+                          onClick = {() => {
+                            this.setState({
+                              deleteSuccess: null,
+                              confirmModal: styles.errorModalPopUpHide
+                            });
+                          }}
+                        >
+                          OK
+                        </button>
                         
                       </div> 
                     </div>
