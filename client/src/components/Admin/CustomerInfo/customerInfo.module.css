@@ -44,6 +44,7 @@
   margin-left: 2%;
   margin-right: 2%;
   background-color: white;
+  z-index: -500;
 }
 
 .containerHistory {

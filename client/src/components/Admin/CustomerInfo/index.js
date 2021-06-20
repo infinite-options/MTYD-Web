@@ -8,6 +8,8 @@ import AdminNavBar from '../AdminNavBar'
 import zIndex from '@material-ui/core/styles/zIndex';
 import orangeArrowUp from '../../../images/orange_arrow_up.png';
 
+import m4me_logo from '../../../images/LOGO_NoBG_MealsForMe.png';
+
 // For choosing which 
 const CUS_SEL_NONE  = -1;
 const CUS_SEL_NAME  =  0;
@@ -16,11 +18,11 @@ const CUS_SEL_EMAIL =  2;
 
 function CustomerInfo() {
 	const [ customersByName  , setCustomersByName  ] = useState(null);
-	const [ customersById	   , setCustomersById	   ] = useState(null);
+	const [ customersById	   , setCustomersById	   ] = useState([]);
 	const [ customersByEmail , setCustomersByEmail ] = useState(null);
 
 	// const [customerDropdown, setCustomerDropdown] = useState(CUS_SEL_NONE);
-	const [customerDropdown, setCustomerDropdown] = useState(false);
+	const [customerDropdown, setCustomerDropdown] = useState(CUS_SEL_ID);
 	const [selectedCustomer, selectCustomer] = useState(null);
 	const [subscriptionsLoaded, setSubscriptionsLoaded] = useState(false);
 	const [subscriptionsList, setSubscriptionsList] = useState(null);
@@ -28,6 +30,8 @@ function CustomerInfo() {
 	const [subHistory, setSubHistory] = useState(null);
 	const [LPLP, setLPLP] = useState(null);
 	const [uniquePlans, setUniquePlans] = useState(null);
+
+	const [initialCustomer, setInitialCustomer] = useState(false);
 
 	// payment id width
 	// const [paymentID_width, resize_paymentID] = useState(() => {
@@ -132,6 +136,8 @@ function CustomerInfo() {
 				// console.log('(1) ==============================');
 				// console.log("sub: ", sub);
 
+				let lplp_info = LPLP.find(element => element.purchase_id === sub.purchase_id);
+
 				if (elIndex === -1) {
 
 					// console.log("-- (1.1) UNIQUE PLAN FOUND: ", sub.purchase_id);
@@ -151,7 +157,7 @@ function CustomerInfo() {
 					// console.log("-- (1.3) element index: ", elIndex);
 					// console.log("-- (1.4) adding to plan: ", sub);
 
-					let lplp_info = LPLP.find(element => element.purchase_id === sub.purchase_id);
+					// let lplp_info = LPLP.find(element => element.purchase_id === sub.purchase_id);
 
 					console.log("adding LPLP info: ", lplp_info);
 					
@@ -179,6 +185,7 @@ function CustomerInfo() {
 							date: sub.payment_time_stamp,
 							show_dropdown: false,
 							payment_id: sub.payment_id,
+							payment_info: lplp_info,
 							deliveries: []
 						};
 						tempUniquePlans[elIndex].history.push(historyTab);
@@ -335,13 +342,15 @@ function CustomerInfo() {
 				<div
 				  key={cust.customer_uid}
 					style={{
+						color: 'blue',
 						border: 'solid',
 						borderColor: 'red',
 						borderWidth: '1px',
 						backgroundColor: 'yellow',
+						position: 'relative',
 						width: '120px',
 						height: '30px',
-						zIndex: '3'
+						zIndex: '30'
 					}}
 					onClick={() => {
 						console.log("clicked: ", cust.customer_uid);
@@ -354,9 +363,13 @@ function CustomerInfo() {
 		});
 
 		return (
-			<>
+			<div
+				style={{
+					zIndex: '20'
+				}}
+			>
 				{sortedCustomerButtons}
-			</>
+			</div>
 		);
 	}
 
@@ -736,7 +749,7 @@ function CustomerInfo() {
 
 			<AdminNavBar currentPage={'customer-info'}/>
 
-			<div
+			{/* <div
 				style={{
 					// borderBottom: 'solid',
 					// borderWidth: '1px',
@@ -770,7 +783,7 @@ function CustomerInfo() {
 							height: '30px',
 							marginLeft: '2%',
 							marginRight: '2%',
-							zIndex: '2',
+							zIndex: '0',
 							cursor: 'pointer'
 							// position: 'relative',
 							// display: 'flex',
@@ -898,7 +911,7 @@ function CustomerInfo() {
 						Search by Email
 					</div>
 				)}
-			</div>
+			</div> */}
 
 			{console.log("Current customer info: ", selectedCustomer)}
 			<div className={styles.containerCustomer}>
@@ -1424,32 +1437,121 @@ function CustomerInfo() {
 				)}
 			</div>
 
+			{/* {customerDropdown ? (<div
+				type='text'
+				style={{
+					// border: 'solid',
+					// borderWidth: '1px',
+					// width: '16%',
+					// height: '30px',
+					// marginLeft: '2%',
+					// marginRight: '2%',
+					position: 'fixed',
+					zIndex: '4',
+					// cursor: 'pointer'
+					border: 'solid',
+					borderWidth: '1px',
+					width: '100px',
+					backgroundColor: 'red'
+				
+				}}
+				// onClick={() => {
+				// 	customerDropdown === CUS_SEL_NONE
+				// 		? setCustomerDropdown(CUS_SEL_EMAIL)
+				// 		: setCustomerDropdown(CUS_SEL_NONE)
+				// }}
+			>
+				STUFF
+			</div>) : (null)} */}
+
+			{/* showCustomerNames() */}
+			{/* <div
+						type='text'
+						style={{
+							border: 'solid',
+							borderWidth: '1px',
+							width: '16%',
+							height: '30px',
+							marginLeft: '2%',
+							marginRight: '2%',
+							zIndex: '2',
+							cursor: 'pointer'
+							// position: 'relative',
+							// display: 'flex',
+							// alignItems: 'flex-start'
+						}}
+						onClick={() => {
+							customerDropdown === CUS_SEL_NONE
+								? setCustomerDropdown(CUS_SEL_ID)
+								: setCustomerDropdown(CUS_SEL_NONE)
+						}}
+					>
+						{showCustomerIDs()}
+					</div> */}
+			{/* {customerDropdown ? (<div
+				type='text'
+				style={{
+					// border: 'solid',
+					// borderWidth: '1px',
+					// width: '16%',
+					// height: '30px',
+					// marginLeft: '2%',
+					// marginRight: '2%',
+					position: 'fixed',
+					zIndex: '4',
+					// cursor: 'pointer'
+					border: 'solid',
+					borderWidth: '1px',
+					width: '100px',
+					height: '40px',
+					backgroundColor: 'red'
+				
+				}}
+				// onClick={() => {
+				// 	customerDropdown === CUS_SEL_NONE
+				// 		? setCustomerDropdown(CUS_SEL_EMAIL)
+				// 		: setCustomerDropdown(CUS_SEL_NONE)
+				// }}
+			>
+				{showCustomerIDs}
+			</div>) : (null)} */}
+			{/* {customerDropdown ? (<div
+				type='text'
+				style={{
+					border: 'solid',
+					borderWidth: '1px',
+					width: '16%',
+					height: '30px',
+					marginLeft: '2%',
+					marginRight: '2%',
+					zIndex: '10',
+					cursor: 'pointer'
+					// position: 'relative',
+					// display: 'flex',
+					// alignItems: 'flex-start'
+				}}
+			>
+				{showCustomerIDs()}
+			</div>) : (null)} */}
 			{customerDropdown ? (<div
-											type='text'
-											style={{
-												// border: 'solid',
-												// borderWidth: '1px',
-												// width: '16%',
-												// height: '30px',
-												// marginLeft: '2%',
-												// marginRight: '2%',
-												position: 'fixed',
-												zIndex: '4',
-												// cursor: 'pointer'
-												border: 'solid',
-												borderWidth: '1px',
-												width: '100px',
-												backgroundColor: 'red'
-											
-											}}
-											// onClick={() => {
-											// 	customerDropdown === CUS_SEL_NONE
-											// 		? setCustomerDropdown(CUS_SEL_EMAIL)
-											// 		: setCustomerDropdown(CUS_SEL_NONE)
-											// }}
-										>
-											STUFF
-										</div>) : (null)}
+				type='text'
+				style={{
+					// border: 'solid',
+					// borderWidth: '1px',
+					// width: '16%',
+					// height: '30px',
+					marginLeft: '2%',
+					marginRight: '2%',
+					zIndex: '10',
+					cursor: 'pointer',
+					position: 'absolute'
+					// position: 'relative',
+					// display: 'flex',
+					// alignItems: 'flex-start'
+				}}
+			>
+				{showCustomerIDs()}
+			</div>) : (null)}
 
 			{/* Meal Plans */}
 			{/* <div
