@@ -23,7 +23,7 @@ const FILTER_ADDRESS = 2;
 
 function CustomerInfo() {
 	const [ customersByName  , setCustomersByName  ] = useState(null);
-	const [ customersById	   , setCustomersById	   ] = useState([]);
+	const [ customersById	   , setCustomersById	   ] = useState(null);
 	const [ customersByEmail , setCustomersByEmail ] = useState(null);
 
 	// const [customerDropdown, setCustomerDropdown] = useState(CUS_SEL_NONE);
@@ -344,39 +344,24 @@ function CustomerInfo() {
 		console.log("initial customer selected!");
 	}
 
+	const filterCustomers = () => {
+
+	}
+
 	const showCustomerIDs = () => {
 		let sortedCustomerButtons = [];
+
+		// console.log("(SCI) filter by: ", activeSearchFilter);
+		console.log("(SCI) name filter: ", nameInput);
+		console.log("(SCI) address filter: ", addressInput);
+		console.log("(SCI) id filter: ", idInput);
 
 		// if(activeSearchFilter === ){}
 
 		customersById.forEach((cust) => {
 			// console.log("customer: ", cust);
 
-			if (activeSearchFilter === FILTER_ID && cust.customer_uid.includes(idInput)) {
-				console.log("filtering by ID");
-				sortedCustomerButtons.push(
-					<div
-						key={cust.customer_uid}
-						style={{
-							color: 'blue',
-							border: 'solid',
-							borderColor: 'red',
-							borderWidth: '1px',
-							backgroundColor: 'yellow',
-							position: 'relative',
-							width: '120px',
-							height: '30px',
-							zIndex: '30'
-						}}
-						onClick={() => {
-							console.log("clicked: ", cust.customer_uid);
-							setCurrentCustomer(cust);
-						}}
-					>
-						{cust.customer_uid}
-					</div>
-				);
-			} else {
+			if(cust.customer_uid.includes(idInput)) {
 				console.log("NOT filtering by ID");
 				sortedCustomerButtons.push(
 					<div
@@ -791,169 +776,30 @@ function CustomerInfo() {
 
 			<AdminNavBar currentPage={'customer-info'}/>
 
-			{/* <div
-				style={{
-					// borderBottom: 'solid',
-					// borderWidth: '1px',
-					display: 'flex',
-					height: '80px',
-					alignItems: 'center',
-					backgroundColor: 'white'
-				}}
-			>
+			{customersById === null ? (
 				<div
 					style={{
-						// width: '10%',
-						marginLeft: '2%',
-						marginRight: '2%',
-						minWidth: '100px',
-						color: '#F26522',
-						fontWeight: '600',
-						fontSize: '18px'
+						color: 'red',
+						zIndex: '99',
+						height: '100vh',
+						width: '100vw',
+						// height: '50vh',
+						// width: '50vw',
+						// border: 'inset',
+						position: 'fixed',
+						top: '0',
+						left: '0',
+						backgroundColor: '#F7F4E5',
+						display: 'flex',
+						justifyContent: 'center',
+						alignItems: 'center'
 					}}
 				>
-					Customers
+					<img src={m4me_logo} />
 				</div>
-
-				{customerDropdown === CUS_SEL_ID ? (
-					<div
-						type='text'
-						style={{
-							border: 'solid',
-							borderWidth: '1px',
-							width: '16%',
-							height: '30px',
-							marginLeft: '2%',
-							marginRight: '2%',
-							zIndex: '0',
-							cursor: 'pointer'
-							// position: 'relative',
-							// display: 'flex',
-							// alignItems: 'flex-start'
-						}}
-						onClick={() => {
-							customerDropdown === CUS_SEL_NONE
-								? setCustomerDropdown(CUS_SEL_ID)
-								: setCustomerDropdown(CUS_SEL_NONE)
-						}}
-					>
-						{showCustomerIDs()}
-					</div>
-				) : (
-					<div
-						type='text'
-						// style={{
-						// 	border: 'solid',
-						// 	borderWidth: '1px',
-						// 	width: '16%',
-						// 	marginLeft: '2%',
-						// 	marginRight: '2%',
-						// 	cursor: 'pointer',
-						// 	color: '#F26522'
-						// }}
-						className={styles.customerFilter}
-						onClick={() => {
-							customerDropdown === CUS_SEL_NONE
-								? setCustomerDropdown(CUS_SEL_ID)
-								: setCustomerDropdown(CUS_SEL_NONE)
-						}}
-					>
-						Search by Customer ID
-					</div>
-				)}
-
-				{customerDropdown === CUS_SEL_NAME ? (
-					<div
-						type='text'
-						style={{
-							border: 'solid',
-							borderWidth: '1px',
-							width: '16%',
-							height: '30px',
-							marginLeft: '2%',
-							marginRight: '2%',
-							zIndex: '2',
-							cursor: 'pointer'
-							// position: 'relative',
-							// display: 'flex',
-							// alignItems: 'flex-start'
-						}}
-						onClick={() => {
-							customerDropdown === CUS_SEL_NONE
-								? setCustomerDropdown(CUS_SEL_NAME)
-								: setCustomerDropdown(CUS_SEL_NONE)
-						}}
-					>
-						{showCustomerNames()}
-					</div>
-				) : (
-					<div
-						type='text'
-						// style={{
-						// 	border: 'solid',
-						// 	borderWidth: '1px',
-						// 	width: '16%',
-						// 	marginLeft: '2%',
-						// 	marginRight: '2%',
-						// 	cursor: 'pointer',
-						// 	color: '#F26522'
-						// }}
-						className={styles.customerFilter}
-						onClick={() => {
-							customerDropdown === CUS_SEL_NONE
-								? setCustomerDropdown(CUS_SEL_NAME)
-								: setCustomerDropdown(CUS_SEL_NONE)
-						}}
-					>
-						Search by Name
-					</div>
-				)}
-
-				{customerDropdown === CUS_SEL_EMAIL ? (
-					<div
-						type='text'
-						style={{
-							border: 'solid',
-							borderWidth: '1px',
-							width: '16%',
-							height: '30px',
-							marginLeft: '2%',
-							marginRight: '2%',
-							zIndex: '2',
-							cursor: 'pointer'
-						}}
-						onClick={() => {
-							customerDropdown === CUS_SEL_NONE
-								? setCustomerDropdown(CUS_SEL_EMAIL)
-								: setCustomerDropdown(CUS_SEL_NONE)
-						}}
-					>
-						{showCustomerEmails()}
-					</div>
-				) : (
-					<div
-						type='text'
-						// style={{
-						// 	border: 'solid',
-						// 	borderWidth: '1px',
-						// 	width: '16%',
-						// 	marginLeft: '2%',
-						// 	marginRight: '2%',
-						// 	cursor: 'pointer',
-						// 	color: '#F26522',
-						// 	height: 
-						// }}
-						className={styles.customerFilter}
-						onClick={() => {
-							customerDropdown === CUS_SEL_NONE
-								? setCustomerDropdown(CUS_SEL_EMAIL)
-								: setCustomerDropdown(CUS_SEL_NONE)
-						}}
-					>
-						Search by Email
-					</div>
-				)}
-			</div> */}
+			) : (
+				null
+			)}
 
 			{console.log("Current customer info: ", selectedCustomer)}
 			<div className={styles.containerCustomer}>
@@ -969,29 +815,6 @@ function CustomerInfo() {
 							alignItems: 'center'
 						}}
 					>
-						{/* {"Current Customer: " + selectedCustomer.customer_uid}
-						<br />
-						<br />
-						{
-							selectedCustomer.customer_first_name + " " + 
-							selectedCustomer.customer_last_name
-						}
-						<br />
-						<br />
-						{"Delivery Info: "}
-						<br />
-						{selectedCustomer.customer_address}
-						<br />
-						{selectedCustomer.customer_city}
-						<br />
-						{selectedCustomer.customer_zip}
-						<br />
-						<br />
-						{"Contact Info: "}
-						<br />
-						{selectedCustomer.customer_email}
-						<br />
-						{selectedCustomer.customer_phone} */}
 						<div
 							style={{
 								border: 'solid',
@@ -1039,16 +862,6 @@ function CustomerInfo() {
 										}
 									</div>
 
-									{/* <div
-										onClick={() => {setCustomerDropdown(!customerDropdown)}}
-										style={{
-											// border: 'solid',
-											color: 'green',
-											// position: 'relative',
-										}}
-									>
-										Arrow
-									</div> */}
 									<div
 										onClick={() => {setCustomerDropdown(!customerDropdown)}}
 										style={{
@@ -1286,349 +1099,71 @@ function CustomerInfo() {
 										<div>NARROW VIEW</div>
 									)}
 
-									{/*<div 
-										style={{
-											// border: 'inset', 
-											position: 'absolute',
-											right: '0',
-											width: '200px',
-											display: 'flex',
-											justifyContent: 'center',
-											top: '15px',
-											height: '30px',
-											color: '#f26522',
-											fontWeight: '500'
-											// width: '25%'
-										}}
-									>
-										Total Revenue
-									</div>
-									<div 
-										style={{
-											// border: 'inset', 
-											position: 'absolute',
-											right: '0',
-											width: '200px',
-											display: 'flex',
-											justifyContent: 'center',
-											top: '45px',
-											fontSize: '24px'
-											// width: '25%'
-										}}
-									>
-										$95.90
-									</div>
-
-									<div 
-										style={{
-											// border: 'inset', 
-											position: 'absolute',
-											right: '200px',
-											width: '200px',
-											display: 'flex',
-											justifyContent: 'center',
-											top: '15px',
-											height: '30px',
-											color: '#f26522',
-											fontWeight: '500'
-											// width: '25%'
-										}}
-									>
-										Active Subscriptions
-									</div>
-									<div 
-										style={{
-											// border: 'inset', 
-											position: 'absolute',
-											right: '200px',
-											width: '200px',
-											display: 'flex',
-											justifyContent: 'center',
-											top: '45px',
-											fontSize: '24px'
-											// width: '25%'
-										}}
-									>
-										3
-									</div>
-
-									<div 
-										style={{
-											// border: 'inset', 
-											position: 'absolute',
-											right: '400px',
-											width: '200px',
-											display: 'flex',
-											justifyContent: 'center',
-											top: '15px',
-											height: '30px',
-											color: '#f26522',
-											fontWeight: '500'
-											// width: '25%'
-										}}
-									>
-										Delivery Info
-									</div>
-									<div 
-										style={{
-											// border: 'inset', 
-											position: 'absolute',
-											right: '400px',
-											width: '200px',
-											display: 'flex',
-											justifyContent: 'center',
-											top: '45px',
-											fontSize: '15px'
-											// width: '25%'
-										}}
-									>
-										6123 Corte De La Reina
-									</div>
-									<div 
-										style={{
-											// border: 'inset', 
-											position: 'absolute',
-											right: '400px',
-											width: '200px',
-											display: 'flex',
-											justifyContent: 'center',
-											top: '64px',
-											fontSize: '15px'
-											// width: '25%'
-										}}
-									>
-										San Jose, CA, 91109
-									</div>
-
-									<div 
-										style={{
-											// border: 'inset', 
-											position: 'absolute',
-											right: '600px',
-											width: '200px',
-											display: 'flex',
-											justifyContent: 'center',
-											top: '15px',
-											height: '30px',
-											color: '#f26522',
-											fontWeight: '500'
-											// width: '25%'
-										}}
-									>
-										Contact Info
-									</div>
-									<div 
-										style={{
-											// border: 'inset', 
-											position: 'absolute',
-											right: '600px',
-											width: '200px',
-											display: 'flex',
-											justifyContent: 'center',
-											top: '45px',
-											fontSize: '15px'
-											// width: '25%'
-										}}
-									>
-										pmarathay@gmail.com
-									</div>
-									<div 
-										style={{
-											// border: 'inset', 
-											position: 'absolute',
-											right: '600px',
-											width: '200px',
-											display: 'flex',
-											justifyContent: 'center',
-											top: '64px',
-											fontSize: '15px'
-											// width: '25%'
-										}}
-									>
-										(686) 908-9080
-									</div>*/}
-
 						</div>
 					</div>
 				)}
 			</div>
 
-			{/* {customerDropdown ? (<div
-				type='text'
-				style={{
-					// border: 'solid',
-					// borderWidth: '1px',
-					// width: '16%',
-					// height: '30px',
-					// marginLeft: '2%',
-					// marginRight: '2%',
-					position: 'fixed',
-					zIndex: '4',
-					// cursor: 'pointer'
-					border: 'solid',
-					borderWidth: '1px',
-					width: '100px',
-					backgroundColor: 'red'
-				
-				}}
-				// onClick={() => {
-				// 	customerDropdown === CUS_SEL_NONE
-				// 		? setCustomerDropdown(CUS_SEL_EMAIL)
-				// 		: setCustomerDropdown(CUS_SEL_NONE)
-				// }}
-			>
-				STUFF
-			</div>) : (null)} */}
-
-			{/* showCustomerNames() */}
-			{/* <div
-						type='text'
-						style={{
-							border: 'solid',
-							borderWidth: '1px',
-							width: '16%',
-							height: '30px',
-							marginLeft: '2%',
-							marginRight: '2%',
-							zIndex: '2',
-							cursor: 'pointer'
-							// position: 'relative',
-							// display: 'flex',
-							// alignItems: 'flex-start'
-						}}
-						onClick={() => {
-							customerDropdown === CUS_SEL_NONE
-								? setCustomerDropdown(CUS_SEL_ID)
-								: setCustomerDropdown(CUS_SEL_NONE)
-						}}
-					>
-						{showCustomerIDs()}
-					</div> */}
-			{/* {customerDropdown ? (<div
-				type='text'
-				style={{
-					// border: 'solid',
-					// borderWidth: '1px',
-					// width: '16%',
-					// height: '30px',
-					// marginLeft: '2%',
-					// marginRight: '2%',
-					position: 'fixed',
-					zIndex: '4',
-					// cursor: 'pointer'
-					border: 'solid',
-					borderWidth: '1px',
-					width: '100px',
-					height: '40px',
-					backgroundColor: 'red'
-				
-				}}
-				// onClick={() => {
-				// 	customerDropdown === CUS_SEL_NONE
-				// 		? setCustomerDropdown(CUS_SEL_EMAIL)
-				// 		: setCustomerDropdown(CUS_SEL_NONE)
-				// }}
-			>
-				{showCustomerIDs}
-			</div>) : (null)} */}
-			{/* {customerDropdown ? (<div
-				type='text'
-				style={{
-					border: 'solid',
-					borderWidth: '1px',
-					width: '16%',
-					height: '30px',
-					marginLeft: '2%',
-					marginRight: '2%',
-					zIndex: '10',
-					cursor: 'pointer'
-					// position: 'relative',
-					// display: 'flex',
-					// alignItems: 'flex-start'
-				}}
-			>
-				{showCustomerIDs()}
-			</div>) : (null)} */}
-			{customerDropdown ? (<div
-				type='text'
-				style={{
-					border: 'solid',
-					borderWidth: '1px',
-					borderRadius: '15px',
-					// width: '16%',
-					// height: '30px',
-					marginTop: '5px',
-					marginLeft: '2%',
-					marginRight: '2%',
-					zIndex: '10',
-					cursor: 'pointer',
-					position: 'absolute',
-					backgroundColor: '#FFF7E0',
-					width: '96%',
-					// height: '500px'
-					// position: 'relative',
-					// display: 'flex',
-					// alignItems: 'flex-start'
-				}}
-			>
+			{customersById !== null && customerDropdown ? (
 				<div
+					type='text'
 					style={{
-						border: 'dashed',
-						height: '100px',
-						width: '100%',
-						display: 'flex'
+						border: 'solid',
+						borderWidth: '1px',
+						borderRadius: '15px',
+						marginTop: '5px',
+						marginLeft: '2%',
+						marginRight: '2%',
+						zIndex: '10',
+						cursor: 'pointer',
+						position: 'absolute',
+						backgroundColor: '#FFF7E0',
+						width: '96%',
 					}}
 				>
-
-					{/* 
+					<div
+						style={{
+							border: 'dashed',
+							height: '100px',
+							width: '100%',
+							display: 'flex'
+						}}
+					>
 						<input
 							type='text'
-							placeholder='First Name'
-							className={styles.inputContactLeft}
-							value={this.state.firstName}
+							placeholder='Name'
+							className={styles.customerFilter}
+							value={nameInput}
 							onChange={e => {
-								this.setState({
-									firstName: e.target.value
-								});
+								// setSearchFilter(FILTER_NAME);
+								inputName(e.target.value)
 							}}
-							aria-label="Enter your first name"
-							aria-label="Enter your first name"
-						/> 
-					*/}
-					<input
-						type='text'
-						placeholder='Name'
-						className={styles.customerFilter}
-						value={nameInput}
-						onChange={e => {
-							setSearchFilter(FILTER_NAME);
-							inputName(e.target.value)
-						}}
-					/>
-					<input
-						type='text'
-						placeholder='Address'
-						className={styles.customerFilter}
-						value={addressInput}
-						onChange={e => {
-							setSearchFilter(FILTER_ADDRESS);
-							inputAddress(e.target.value)
-						}}
-					/>
-					<input
-						type='text'
-						placeholder='Purchase ID'
-						className={styles.customerFilter}
-						value={idInput}
-						onChange={e => {
-							setSearchFilter(FILTER_ID);
-							inputId(e.target.value)
-						}}
-					/>
-
+						/>
+						<input
+							type='text'
+							placeholder='Address'
+							className={styles.customerFilter}
+							value={addressInput}
+							onChange={e => {
+								// setSearchFilter(FILTER_ADDRESS);
+								inputAddress(e.target.value)
+							}}
+						/>
+						<input
+							type='text'
+							placeholder='Purchase ID'
+							className={styles.customerFilter}
+							value={idInput}
+							onChange={e => {
+								inputId(e.target.value);
+							}}
+						/>
+					</div>
+					{showCustomerIDs()}
 				</div>
-				{showCustomerIDs()}
-			</div>) : (null)}
+			) : (
+				null
+			)}
 
 			{/* Meal Plans */}
 			{/* <div

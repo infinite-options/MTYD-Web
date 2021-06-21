@@ -137,7 +137,9 @@ function NavBar(props) {
         backgroundColor: '#F8BB17',
         display: 'flex',
         // alignItems: 'center',
-        height: '80px'
+        height: '80px',
+        position: 'relative',
+        zIndex: '100'
       }}
     >
 
