@@ -16,13 +16,19 @@ const CUS_SEL_NAME  =  0;
 const CUS_SEL_ID    =  1;
 const CUS_SEL_EMAIL =  2;
 
+const FILTER_NONE = -1;
+const FILTER_ID = 0;
+const FILTER_NAME = 1;
+const FILTER_ADDRESS = 2;
+
 function CustomerInfo() {
 	const [ customersByName  , setCustomersByName  ] = useState(null);
 	const [ customersById	   , setCustomersById	   ] = useState([]);
 	const [ customersByEmail , setCustomersByEmail ] = useState(null);
 
 	// const [customerDropdown, setCustomerDropdown] = useState(CUS_SEL_NONE);
-	const [customerDropdown, setCustomerDropdown] = useState(CUS_SEL_ID);
+	// const [customerDropdown, setCustomerDropdown] = useState(CUS_SEL_ID);
+	const [customerDropdown, setCustomerDropdown] = useState(true);
 	const [selectedCustomer, selectCustomer] = useState(null);
 	const [subscriptionsLoaded, setSubscriptionsLoaded] = useState(false);
 	const [subscriptionsList, setSubscriptionsList] = useState(null);
@@ -30,6 +36,11 @@ function CustomerInfo() {
 	const [subHistory, setSubHistory] = useState(null);
 	const [LPLP, setLPLP] = useState(null);
 	const [uniquePlans, setUniquePlans] = useState(null);
+
+	const [nameInput, inputName] = useState('');
+	const [idInput, inputId] = useState('');
+	const [addressInput, inputAddress] = useState('');
+	const [activeSearchFilter, setSearchFilter] = useState(FILTER_NONE);
 
 	const [initialCustomer, setInitialCustomer] = useState(false);
 
@@ -336,30 +347,61 @@ function CustomerInfo() {
 	const showCustomerIDs = () => {
 		let sortedCustomerButtons = [];
 
+		// if(activeSearchFilter === ){}
+
 		customersById.forEach((cust) => {
 			// console.log("customer: ", cust);
-			sortedCustomerButtons.push(
-				<div
-				  key={cust.customer_uid}
-					style={{
-						color: 'blue',
-						border: 'solid',
-						borderColor: 'red',
-						borderWidth: '1px',
-						backgroundColor: 'yellow',
-						position: 'relative',
-						width: '120px',
-						height: '30px',
-						zIndex: '30'
-					}}
-					onClick={() => {
-						console.log("clicked: ", cust.customer_uid);
-						setCurrentCustomer(cust);
-					}}
-				>
-					{cust.customer_uid}
-				</div>
-			);
+
+			if (activeSearchFilter === FILTER_ID && cust.customer_uid.includes(idInput)) {
+				console.log("filtering by ID");
+				sortedCustomerButtons.push(
+					<div
+						key={cust.customer_uid}
+						style={{
+							color: 'blue',
+							border: 'solid',
+							borderColor: 'red',
+							borderWidth: '1px',
+							backgroundColor: 'yellow',
+							position: 'relative',
+							width: '120px',
+							height: '30px',
+							zIndex: '30'
+						}}
+						onClick={() => {
+							console.log("clicked: ", cust.customer_uid);
+							setCurrentCustomer(cust);
+						}}
+					>
+						{cust.customer_uid}
+					</div>
+				);
+			} else {
+				console.log("NOT filtering by ID");
+				sortedCustomerButtons.push(
+					<div
+						key={cust.customer_uid}
+						style={{
+							color: 'blue',
+							border: 'solid',
+							borderColor: 'red',
+							borderWidth: '1px',
+							backgroundColor: 'yellow',
+							position: 'relative',
+							width: '120px',
+							height: '30px',
+							zIndex: '30'
+						}}
+						onClick={() => {
+							console.log("clicked: ", cust.customer_uid);
+							setCurrentCustomer(cust);
+						}}
+					>
+						{cust.customer_uid}
+					</div>
+				);
+			}
+
 		});
 
 		return (
@@ -1510,20 +1552,81 @@ function CustomerInfo() {
 			{customerDropdown ? (<div
 				type='text'
 				style={{
-					// border: 'solid',
-					// borderWidth: '1px',
+					border: 'solid',
+					borderWidth: '1px',
+					borderRadius: '15px',
 					// width: '16%',
 					// height: '30px',
+					marginTop: '5px',
 					marginLeft: '2%',
 					marginRight: '2%',
 					zIndex: '10',
 					cursor: 'pointer',
-					position: 'absolute'
+					position: 'absolute',
+					backgroundColor: '#FFF7E0',
+					width: '96%',
+					// height: '500px'
 					// position: 'relative',
 					// display: 'flex',
 					// alignItems: 'flex-start'
 				}}
 			>
+				<div
+					style={{
+						border: 'dashed',
+						height: '100px',
+						width: '100%',
+						display: 'flex'
+					}}
+				>
+
+					{/* 
+						<input
+							type='text'
+							placeholder='First Name'
+							className={styles.inputContactLeft}
+							value={this.state.firstName}
+							onChange={e => {
+								this.setState({
+									firstName: e.target.value
+								});
+							}}
+							aria-label="Enter your first name"
+							aria-label="Enter your first name"
+						/> 
+					*/}
+					<input
+						type='text'
+						placeholder='Name'
+						className={styles.customerFilter}
+						value={nameInput}
+						onChange={e => {
+							setSearchFilter(FILTER_NAME);
+							inputName(e.target.value)
+						}}
+					/>
+					<input
+						type='text'
+						placeholder='Address'
+						className={styles.customerFilter}
+						value={addressInput}
+						onChange={e => {
+							setSearchFilter(FILTER_ADDRESS);
+							inputAddress(e.target.value)
+						}}
+					/>
+					<input
+						type='text'
+						placeholder='Purchase ID'
+						className={styles.customerFilter}
+						value={idInput}
+						onChange={e => {
+							setSearchFilter(FILTER_ID);
+							inputId(e.target.value)
+						}}
+					/>
+
+				</div>
 				{showCustomerIDs()}
 			</div>) : (null)}
 
