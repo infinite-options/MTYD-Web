@@ -1604,7 +1604,7 @@ const MealPlan = props => {
                 {/* [placeholder default meal plan] */}
                 {
                   currentPlan === null
-                    ? "wait..."
+                    ? "No Active Plans"
                     : (
                         currentPlan.meals + " Meals, " +
                         currentPlan.deliveries + " Deliveries : " +
@@ -1619,7 +1619,12 @@ const MealPlan = props => {
                   marginRight: '5%'
                 }}
               >
-                <div className={styles.whiteArrowDown} /> 
+                {
+                  currentPlan === null
+                    ? null
+                    : <div className={styles.whiteArrowDown} /> 
+                }
+                {/* <div className={styles.whiteArrowDown} />  */}
               </div>
             </div>
 
@@ -1648,7 +1653,7 @@ const MealPlan = props => {
               <div className={styles.orangeHeaderRightUL}>
                 {
                   currentPlan === null
-                    ? "wait..."
+                    ? "No Active Plans"
                     : (
                       currentPlan.meals + " Meals, " +
                       currentPlan.deliveries + " Deliveries"

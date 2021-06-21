@@ -197,7 +197,7 @@ const Menu = props => {
                   >
                     {
                       currentPlan === null
-                        ? "Wait..."
+                        ? "No Active Plans"
                         : (
                           JSON.parse(currentPlan.items)[0].name[0] + " Meals, " +
                           JSON.parse(currentPlan.items)[0].qty + " Deliveries : " +
@@ -212,7 +212,12 @@ const Menu = props => {
                       marginRight: '5%'
                     }}
                   >
-                    <div className={styles.whiteArrowDown} />
+                    {
+                      currentPlan === null
+                        ? null
+                        : <div className={styles.whiteArrowDown} /> 
+                    }
+                    {/* <div className={styles.whiteArrowDown} /> */}
                   </div>
                 </div>
                 {showDropdown

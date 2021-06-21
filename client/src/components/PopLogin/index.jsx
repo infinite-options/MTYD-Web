@@ -613,7 +613,7 @@ export class PopLogin extends Component {
         errorButton = 'Okay'
         errorLink = 'back'
       }
-      if (this.errVal == "" || this.errVal == "Email doesn't exists") {
+      if (this.errVal == "Email doesn't exists") {
         errorHead = 'Account Not Found'
         errorString = "Sorry, we don't recognize this email."
         errorButton = 'Sign up'

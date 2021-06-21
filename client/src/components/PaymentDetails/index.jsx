@@ -1336,6 +1336,13 @@ class PaymentDetails extends React.Component {
               id="pac-input" name="pac-input"
               aria-label="Enter your address"
               title="Enter your address"
+              autoComplete="chrome-off"
+              // onChange={e =>{
+              //   console.log("Address :"+e.target.value)
+              //   this.setState({
+              //     street: e.target.value
+              //   });
+              // }}
             />
 
               {/* <input
@@ -1368,6 +1375,13 @@ class PaymentDetails extends React.Component {
                 className={styles.inputContactRight}
                 aria-label="Enter your city"
                 title="Enter your city"
+                //autoComplete="chrome-off"
+                // onChange={e =>{
+                //   console.log("City: "+e.target.value)
+                //   this.setState({
+                //     city: e.target.value
+                //   });
+                // }}
               />
             </div>
 
@@ -1379,6 +1393,13 @@ class PaymentDetails extends React.Component {
                 id="state" name="state"
                 aria-label="Enter your state"
                 title="Enter your state"
+                //autoComplete="chrome-off"
+                // onChange={e =>{
+                //   console.log("State: "+e.target.value)
+                //   this.setState({
+                //     state: e.target.value
+                //   });
+                // }}
               />
               <input
                 type='text'
@@ -1387,6 +1408,13 @@ class PaymentDetails extends React.Component {
                 id="postcode" name="postcode"
                 aria-label="Enter your zipcode"
                 title="Enter your zipcode"
+                //autoComplete="chrome-off"
+                // onChange={e =>{
+                //   console.log("Zip: "+e.target.value)
+                //   this.setState({
+                //     addressZip: e.target.value
+                //   });
+                // }}
               />
             </div> 
 
