@@ -28,6 +28,8 @@ function CustomerInfo() {
 
 	// const [customerDropdown, setCustomerDropdown] = useState(CUS_SEL_NONE);
 	// const [customerDropdown, setCustomerDropdown] = useState(CUS_SEL_ID);
+	// const [mounted, mount] = useState(false);
+
 	const [customerDropdown, setCustomerDropdown] = useState(true);
 	const [selectedCustomer, selectCustomer] = useState(null);
 	const [subscriptionsLoaded, setSubscriptionsLoaded] = useState(false);
@@ -134,7 +136,7 @@ function CustomerInfo() {
     let tempUniquePlans = [];
     let dropdownIndex = 0;
 
-		if(subHistory !== null && LPLP !== null){
+		if(subHistory !== null && LPLP !== null && typeof(LPLP) !== 'undefined'){
 			console.log("meal data initialized!");
 
 			console.log("LPLP info: ", LPLP);
@@ -363,6 +365,17 @@ function CustomerInfo() {
 
 			if(cust.customer_uid.includes(idInput)) {
 				console.log("NOT filtering by ID");
+
+				// let buttonColor = 'yellow';
+				let buttonColor = (
+					selectedCustomer !== null &&
+					selectedCustomer.customer_uid === cust.customer_uid 
+				? (
+					'cyan'
+				) : (
+					'yellow'
+				));
+
 				sortedCustomerButtons.push(
 					<div
 						key={cust.customer_uid}
@@ -371,14 +384,19 @@ function CustomerInfo() {
 							border: 'solid',
 							borderColor: 'red',
 							borderWidth: '1px',
-							backgroundColor: 'yellow',
+							backgroundColor: buttonColor,
 							position: 'relative',
-							width: '120px',
+							// width: '120px',
+							width: '96%',
+							marginLeft: '2%',
+							marginRight: '2%',
 							height: '30px',
-							zIndex: '30'
+							zIndex: '30',
+							cursor: 'pointer'
 						}}
 						onClick={() => {
-							console.log("clicked: ", cust.customer_uid);
+							// console.log("(SCI) previous selected customer: ", selectedCustomer);
+							console.log("(SCI) clicked: ", cust.customer_uid);
 							setCurrentCustomer(cust);
 						}}
 					>
@@ -392,7 +410,9 @@ function CustomerInfo() {
 		return (
 			<div
 				style={{
-					zIndex: '20'
+					zIndex: '20',
+					// border: 'dashed',
+					marginBottom: '30px'
 				}}
 			>
 				{sortedCustomerButtons}
@@ -418,6 +438,7 @@ function CustomerInfo() {
 						zIndex: '3'
 					}}
 					onClick={() => {
+						console.log("previous selected customer: ", selectedCustomer);
 						console.log("clicked: ", cust.customer_uid);
 						setCurrentCustomer(cust);
 					}}
@@ -1115,7 +1136,7 @@ function CustomerInfo() {
 						marginLeft: '2%',
 						marginRight: '2%',
 						zIndex: '10',
-						cursor: 'pointer',
+						// cursor: 'pointer',
 						position: 'absolute',
 						backgroundColor: '#FFF7E0',
 						width: '96%',
