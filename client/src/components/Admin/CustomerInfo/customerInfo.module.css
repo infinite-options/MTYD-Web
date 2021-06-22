@@ -11,7 +11,7 @@
 .customerFilter {
   border: solid;
   border-width: 2px;
-  width: 20%;
+  width: 25%;
   height: 36px;
   /* margin-left: %; */
   margin-right: 2%;
@@ -238,9 +238,10 @@
   font-weight: 600;
   width: 7%;
   height: 40px;
-  border-top: solid;
+  /* border-top: solid;
   border-color: #f26522;
-  border-width: 1px;
+  border-width: 1px; */
+  border: solid;
   height: 70px;
 }
 /* .historySection {
@@ -258,28 +259,20 @@
 } */
 
 .historyCycles {
-  /* border-top: solid; */
-  /* display: 'none'; */
-  /* display: flex;
-  text-align: center;
-  justify-content: center;
-  align-items: center; */
-  
   color: #f26522;
   font-size: 14px;
   font-weight: 600;
-  /* padding-top: 4px;
-  padding-left: 4px; */
-  width: 9%;
+  width: 7%;
   height: 40px;
-  /* text-overflow: ellipsis;
-  display: block;
-  white-space: nowrap;
-  overflow: hidden; */
-  border-top: solid;
-  /* border-color: #f26522; */
-  border-width: 1px;
+  /* border-top: solid;
+  border-width: 1px; */
+  border: solid;
   height: 70px;
+}
+
+.arrowCell {
+  width: 2%;
+  border: dashed;
 }
 
 .orangeHeaderLeft {

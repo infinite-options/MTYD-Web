@@ -6,20 +6,23 @@ import { withRouter } from "react-router";
 import styles from "./customerInfo.module.css";
 import AdminNavBar from '../AdminNavBar'
 import zIndex from '@material-ui/core/styles/zIndex';
-import orangeArrowUp from '../../../images/orange_arrow_up.png';
 
 import m4me_logo from '../../../images/LOGO_NoBG_MealsForMe.png';
 
-// For choosing which 
-const CUS_SEL_NONE  = -1;
-const CUS_SEL_NAME  =  0;
-const CUS_SEL_ID    =  1;
-const CUS_SEL_EMAIL =  2;
+// For choosing sorting arrow to display
+const ARROW_ID = 0;
+const ARROW_NAME = 1;
+const ARROW_ADDRESS = 2;
 
-const FILTER_NONE = -1;
-const FILTER_ID = 0;
-const FILTER_NAME = 1;
-const FILTER_ADDRESS = 2;
+// For choosing sorting mode
+const SORT_ID = 3;
+const SORT_ID_REVERSE = 4;
+const SORT_NAME = 5;
+const SORT_NAME_REVERSE = 6;
+const SORT_ADDRESS = 7;
+const SORT_ADDRESS_REVERSE = 8;
+const SORT_EMAIL = 9;
+const SORT_EMAIL_REVERSE = 10;
 
 const CELL = {
 	id_width: '10%',
@@ -40,10 +43,6 @@ function CustomerInfo() {
 	const [ customersById	   , setCustomersById	   ] = useState(null);
 	const [ customersByEmail , setCustomersByEmail ] = useState(null);
 
-	// const [customerDropdown, setCustomerDropdown] = useState(CUS_SEL_NONE);
-	// const [customerDropdown, setCustomerDropdown] = useState(CUS_SEL_ID);
-	// const [mounted, mount] = useState(false);
-
 	const [customerDropdown, setCustomerDropdown] = useState(true);
 	const [selectedCustomer, selectCustomer] = useState(null);
 	const [subscriptionsLoaded, setSubscriptionsLoaded] = useState(false);
@@ -52,22 +51,14 @@ function CustomerInfo() {
 	const [subHistory, setSubHistory] = useState(null);
 	const [LPLP, setLPLP] = useState(null);
 	const [uniquePlans, setUniquePlans] = useState(null);
+	const [billingInfo, setBillingInfo] = useState(null);
 
 	const [nameInput, inputName] = useState('');
 	const [idInput, inputId] = useState('');
 	const [addressInput, inputAddress] = useState('');
-	const [activeSearchFilter, setSearchFilter] = useState(FILTER_NONE);
+	const [sortMode, setSortMode] = useState(SORT_ID);
 
 	const [initialCustomer, setInitialCustomer] = useState(false);
-
-	// payment id width
-	// const [paymentID_width, resize_paymentID] = useState(() => {
-	// 	return document.getElementById('payment-id').offsetWidth;
-	// });
-
-	// useEffect(() => {
-	// 	resize_paymentID
-	// }, []);
 
 	const [dimensions, setDimensions] = useState({ 
     height: window.innerHeight,
@@ -371,19 +362,46 @@ function CustomerInfo() {
 		console.log("initial customer selected!");
 	}
 
-	const makeSpacesNonbreaking = (str) => {
-		let splitStr = str.split(' ');
+	const sortCustomers = () => {
+		let sortedCustomers = []; 
+
+		if(sortMode === SORT_ID) {
+			sortedCustomers = customersById;
+		} else if (sortMode === SORT_ID_REVERSE) {
+			sortedCustomers = [...customersById];
+			sortedCustomers.reverse();
+
+		} else if (sortMode === SORT_NAME) {
+			sortedCustomers = customersByName;
+		} else if (sortMode === SORT_NAME_REVERSE) {
+			sortedCustomers = [...customersByName];
+			sortedCustomers.reverse();
+
+		} else if (sortMode === SORT_ADDRESS) {
+			sortedCustomers = customersByEmail;
+		} else if (sortMode === SORT_ADDRESS_REVERSE) {
+			sortedCustomers = [...customersByEmail]
+			sortedCustomers.reverse();
+		}
+
+		return sortedCustomers;
 	}
 
 	const filterCustomers = () => {
 		let sortedCustomerButtons = [];
 
-		console.log("(FC) name filter: ", nameInput);
-		console.log("(FC) address filter: ", addressInput);
-		console.log("(FC) id filter: ", idInput);
+		// console.log("(FC) name filter: ", nameInput);
+		// console.log("(FC) address filter: ", addressInput);
+		// console.log("(FC) id filter: ", idInput);
 
-		customersById.forEach((cust) => {
-			console.log("(FC) customer: ", cust);
+		let sortedCustomers = sortCustomers();
+
+		console.log("(FC) sorted customers: ", sortedCustomers);
+
+		sortedCustomers.forEach((cust) => {
+			console.log("(FC) customer id: ", cust.customer_uid);
+			console.log("(FC) customer name: ", cust.customer_first_name);
+			console.log("(FC) customer address: ", cust.customer_address);
 
 			// Parse address filter
 			let address;
@@ -407,50 +425,45 @@ function CustomerInfo() {
 				fullname = cust.customer_first_name + ' ' + cust.customer_last_name;
 			}
 
+			// Is zip code showing up?
+			let zipcode;
+			if(
+				isInvalid(cust.customer_zip)
+			){
+				zipcode = '--';
+			} else {
+				zipcode = cust.customer_zip;
+			}
+
+			// Is phone showing up?
+			let phone;
+			if(
+				isInvalid(cust.customer_phone_num)
+			){
+				phone = '--';
+			} else {
+				phone = cust.customer_phone_num;
+			}
+
 			// Only show customers that satisfy filter
 			if(
 				cust.customer_uid.includes(idInput.toUpperCase()) && 
 				address.toUpperCase().includes(addressInput.toUpperCase()) && 
 				fullname.toUpperCase().includes(nameInput.toUpperCase())
 			) {
-				console.log("NOT filtering by ID");
 
-				// let buttonColor = 'yellow';
 				let buttonColor = (
 					selectedCustomer !== null &&
 					selectedCustomer.customer_uid === cust.customer_uid 
-				? (
-					'cyan'
-				) : (
-					'yellow'
-				));
-
-				// <div
-				// 	key={cust.customer_uid}
-				// 	style={{
-				// 		display: 'flex',
-				// 		justifyContent: 'center',
-				// 		alignItems: 'center',
-				// 		justifyContent: 'center',
-				// 		position: 'relative',
-				// 		height: '50px',
-				// 		zIndex: '30',
-				// 		cursor: 'pointer'
-				// 	}}
-				// 	onClick={() => {
-				// 		console.log("(FC) clicked: ", cust.customer_uid);
-				// 		setCurrentCustomer(cust);
-				// 	}}
-				// >
-
-				console.log("PUSH!!!");
+				? ('#F8BB17') : ('#FFF7E0'));
 
 				sortedCustomerButtons.push(
 					<div
 						key={cust.customer_uid}
 						className={styles.filterRow}
+						style={{backgroundColor: buttonColor}}
 						onClick={() => {
-							console.log("(FC) clicked: ", cust.customer_uid);
+							// console.log("(FC) clicked: ", cust.customer_uid);
 							setCurrentCustomer(cust);
 						}}
 					>
@@ -494,7 +507,8 @@ function CustomerInfo() {
 						>
 							<div className={styles.cellInnerWrapper}>
 								<span className={styles.cellContent}>
-									[last order]
+									{/* [last order] */}
+									--
 								</span>
 							</div>
 						</div>
@@ -505,7 +519,8 @@ function CustomerInfo() {
 						>
 							<div className={styles.cellInnerWrapper}>
 								<span className={styles.cellContent}>
-									[customer since]
+									{/* [customer since] */}
+									--
 								</span>
 							</div>
 						</div>
@@ -527,7 +542,8 @@ function CustomerInfo() {
 						>
 							<div className={styles.cellInnerWrapper}>
 								<span className={styles.cellContent}>
-									[zone]
+									{/* [zone] */}
+									--
 								</span>
 							</div>
 						</div>
@@ -538,7 +554,7 @@ function CustomerInfo() {
 						>
 							<div className={styles.cellInnerWrapper}>
 								<span className={styles.cellContent}>
-									{cust.customer_zip}
+									{zipcode}
 								</span>
 							</div>
 						</div>
@@ -549,7 +565,7 @@ function CustomerInfo() {
 						>
 							<div className={styles.cellInnerWrapper}>
 								<span className={styles.cellContent}>
-									{cust.customer_phone_num}
+									{phone}
 								</span>
 							</div>
 						</div>
@@ -564,14 +580,15 @@ function CustomerInfo() {
 			<div
 				style={{
 					zIndex: '20',
-					border: 'solid',
+					// border: 'solid',
 					marginBottom: '30px',
 					marginLeft: '2%',
 					width: '96%',
 					height: '100%',
 					// height: '300px',
 					// overflow: 'auto'
-					overflowY: 'scroll'
+					overflowY: 'scroll',
+					borderBottom: 'solid'
 				}}
 			>
 				{sortedCustomerButtons}
@@ -579,76 +596,7 @@ function CustomerInfo() {
 		);
 	}
 
-	const showCustomerNames = () => {
-		let sortedCustomerButtons = [];
-
-		customersByName.forEach((cust) => {
-			// console.log("customer: ", cust);
-			sortedCustomerButtons.push(
-				<div
-				  key={cust.customer_uid}
-					style={{
-						border: 'solid',
-						borderColor: 'red',
-						borderWidth: '1px',
-						backgroundColor: 'yellow',
-						width: '120px',
-						height: '30px',
-						zIndex: '3'
-					}}
-					onClick={() => {
-						console.log("previous selected customer: ", selectedCustomer);
-						console.log("clicked: ", cust.customer_uid);
-						setCurrentCustomer(cust);
-					}}
-				>
-					{cust.customer_first_name}
-				</div>
-			);
-		});
-
-		return (
-			<>
-				{sortedCustomerButtons}
-			</>
-		);
-	}
-
-	const showCustomerEmails = () => {
-		let sortedCustomerButtons = [];
-
-		customersByEmail.forEach((cust) => {
-			// console.log("customer: ", cust);
-			sortedCustomerButtons.push(
-				<div
-				  key={cust.customer_uid}
-					style={{
-						border: 'solid',
-						borderColor: 'red',
-						borderWidth: '1px',
-						backgroundColor: 'yellow',
-						width: '240px',
-						height: '30px',
-						zIndex: '3'
-					}}
-					onClick={() => {
-						console.log("clicked: ", cust.customer_uid);
-						setCurrentCustomer(cust);
-					}}
-				>
-					{cust.customer_email}
-				</div>
-			);
-		});
-
-		return (
-			<>
-				{sortedCustomerButtons}
-			</>
-		);
-	}
-
-	  // Display when initial information has not been loaded on first page render
+	// Display when initial information has not been loaded on first page render
 	const hideSubscribedMeals = (config) => {
 
 		// For select meal plan section
@@ -764,170 +712,404 @@ function CustomerInfo() {
     );
 	}
 
+	const displayMealInfo = (data) => {
+    console.log("(displayMealInfo) data: ", data);
+    // console.log("(showMealsForDelivery) total meals: ", totalMeals);
+
+    let mealsForDelivery = [];
+
+    if(data.meal_uid !== null){
+      mealsForDelivery.push(
+        <div style={{display: 'inline-flex', width: '100%', height: '110px'}} tabIndex="0" 
+        aria-label={formatDate(data.sel_menu_date) + ". "+ data.meal_qty+ " "+data.meal_name+"s"}
+        title={formatDate(data.sel_menu_date) + ". "+ data.meal_qty+ " "+data.meal_name+"s"}>
+          <div
+            style={{
+              // border: 'inset',
+              width: '8%',
+              fontSize: '40px',
+              fontWeight: '600',
+              paddingTop: '15px'
+            }}
+          >
+            {data.meal_qty}
+          </div>
+          <div
+            style={{
+              // border: 'inset',
+              width: '92%',
+              fontWeight: '600',
+              paddingTop: '33px'
+            }}
+          >
+            {data.meal_name}
+          </div>
+          <div
+            style={{
+              display: 'flex',
+              // border: 'inset',
+              width: '0%',
+              minWidth: '100px',
+              textAlign: 'right',
+              float: 'right',
+              fontWeight: '600'
+            }}
+          >
+            <div
+              style={{
+                // border: 'dashed',
+                width: '100px',
+                height: '100px',
+                marginTop: '5px',
+                backgroundImage: `url(${data.meal_photo_URL})`,
+                backgroundSize: 'cover'
+              }}
+            >
+              {/* {data.meal_photo_URL} */}
+            </div>
+          </div>
+        </div>
+      );
+    } else if (data.meal_desc === "SURPRISE") {
+      mealsForDelivery.push(
+        <div style={{display: 'inline-flex', width: '100%', height: '110px'}} tabIndex="0" 
+        aria-label={formatDate(data.sel_menu_date) + ". "+ currentPlan.meals+ "surprises"}
+        title={formatDate(data.sel_menu_date) + ". "+ currentPlan.meals+ "surprises"}>
+          <div
+            style={{
+              // border: 'inset',
+              width: '8%',
+              fontSize: '40px',
+              fontWeight: '600',
+              paddingTop: '15px'
+            }}
+          >
+            {currentPlan.meals}
+          </div>
+          <div
+            style={{
+              // border: 'inset',
+              width: '92%',
+              fontWeight: '600',
+              paddingTop: '33px'
+            }}
+          >
+            {"Surprises"}
+          </div>
+          <div
+            style={{
+              display: 'flex',
+              // border: 'inset',
+              width: '0%',
+              minWidth: '100px',
+              textAlign: 'right',
+              float: 'right',
+              fontWeight: '600'
+            }}
+          >
+            <div
+              style={{
+                border: 'dashed',
+                width: '100px',
+                height: '100px',
+                marginTop: '5px',
+                borderWidth: '2px',
+                // backgroundColor: 'whitesmoke',
+                fontSize: '50px',
+                paddingRight: '33px',
+                paddingTop: '10px'
+              }}
+            >
+              ?
+            </div>
+          </div>
+        </div>
+      );
+    } else if (data.meal_desc === "SKIP") {
+      mealsForDelivery.push(
+        <div style={{display: 'inline-flex', width: '100%', height: '110px'}} tabIndex="0" 
+        aria-label={formatDate(data.sel_menu_date) + ". skip"}
+        title={formatDate(data.sel_menu_date) + ". skip"}>
+          <div
+            style={{
+              // border: 'inset',
+              width: '8%',
+              fontSize: '40px',
+              fontWeight: '600',
+              paddingTop: '15px'
+            }}
+          >
+            0
+          </div>
+          <div
+            style={{
+              // border: 'inset',
+              width: '92%',
+              fontWeight: '600',
+              paddingTop: '33px'
+            }}
+          >
+            {"(Skip)"}
+          </div>
+        </div>
+      );
+    }
+
+    return mealsForDelivery;
+  }
+
+	// const nextBillingDate = (id) => {
+  //   console.log("(nbd) id: ", id);
+  //   let billInfo = billingInfo.find((plan) => {
+  //     return plan.purchase_id === id;
+  //   });
+  //   console.log("(nbd) bill info: ", billInfo);
+  //   // let nextBillDate = formatDate(billInfo.next_billing_date);
+  //   // return nextBillDate;
+  //   return billInfo.next_billing_date;
+  // }
+	const nextBillingDate = (id) => {
+    return "01-01-2025"
+  }
+
+	const isFutureCycle = (rawDate, billDate) => {
+
+    // console.log("raw date: ", rawDate);
+    // console.log("bill date: ", billDate);
+
+    let dateElements = rawDate.split(' ');
+    let billDateElements = billDate.split(' ');
+
+    // console.log("date elements: ", dateElements);
+    // console.log("bill date elements: ", billDateElements);
+
+    let parsedDate = Date.parse(dateElements[0]);
+    let parsedBillDate = Date.parse(billDateElements[0]);
+
+    // console.log("parsed date: ", parsedDate);
+    // console.log("parsed bill date: ", parsedBillDate);
+
+    if (parsedDate > parsedBillDate) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  const isFutureDate = (rawDate) => {
+    let dateElements = rawDate.split(' ');
+
+    if(Date.parse(dateElements[0]) > Date.now()) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+	const showPastMeals = (data) => {
+    console.log("(showPastMeals) data: ", data);
+
+    let uniqueDates = [];
+
+    let mealsDisplay = [];
+
+    data.deliveries.forEach((del) => {
+      console.log("del: ", del);
+      if(!isFutureCycle(del.sel_menu_date, nextBillingDate(currentPlan.purchase_id))) {
+				if(uniqueDates.includes(del.sel_menu_date)){
+					mealsDisplay.push(
+						<div
+							style={{
+								// border: 'solid',
+								display: 'flex'
+								// marginBottom: '10px'
+							}}
+						>
+  
+							<div style={{display: 'inline-block', width: '100%'}}>
+								{displayMealInfo(del)}
+							</div>
+		
+						</div>
+					);
+				} else {
+					uniqueDates.push(del.sel_menu_date);
+					mealsDisplay.push(
+						<div
+							style={{
+								// border: 'solid',
+								display: 'flex',
+								marginTop: '15px'
+								// marginBottom: '10px'
+							}}
+						>
+		
+							<div style={{display: 'inline-block', width: '100%'}}>
+					
+								<div style={{display: 'inline-flex', width: '100%'}}>
+									<div
+										style={{
+											// border: 'inset',
+											width: '50%',
+											fontWeight: '600'
+										}}
+									>
+										{
+											isFutureDate(del.sel_menu_date)
+												? "Meals Delivered (Future)"
+												: "Meals Delivered"
+										}
+									</div>
+									<div
+										style={{
+											// border: 'inset',
+											width: '50%',
+											textAlign: 'right',
+											fontWeight: '600'
+										}}
+									>
+										{formatDate(del.sel_menu_date)}
+									</div>
+								</div>
+		
+								{displayMealInfo(del)}
+		
+							</div>
+		
+						</div>
+					);
+				}
+      }
+    });
+
+    return (
+      <div>{mealsDisplay}</div>
+    );
+  }
+
 	const showHistory = () => {
 
-		console.log("(showHistory) current customer: ", selectedCustomer);
-		console.log("(showHistory) uniquePlans: ", uniquePlans);
-		console.log("(showHistory) currentPlan: ", currentPlan);
+		// console.log("(showHistory) current customer: ", selectedCustomer);
+		// console.log("(showHistory) uniquePlans: ", uniquePlans);
+		// console.log("(showHistory) currentPlan: ", currentPlan);
 		let planHistory = uniquePlans.find((plan) => {
       return plan.id === currentPlan.purchase_uid;
     });
 
-    console.log("plan history: ", planHistory);
-		console.log("plan history 2: ", planHistory.history);
+    // console.log("plan history: ", planHistory);
+		// console.log("plan history 2: ", planHistory.history);
 
 		let historyTabs = [];
 
     planHistory.history.forEach((sel) => {
-			console.log("(showHistory) sel: ", sel);
+			// console.log("(showHistory) sel: ", sel);
 
       historyTabs.push(
-        <div    
-          key={sel.date}
-          style={{
-						// marginTop: '50px', 
-						marginBottom: '50px',
-						// border: 'dashed',
-						display: 'flex'
-					}}
-        >
-					<div className={styles.historyCycles}>
-						<div 
-							// style={{width: '100%', border: 'solid'}}
-						>
-						Next Billing Date
-						</div>
-						<div>
-						Deliveries
-						</div>
-					</div>
-					{/* <div className={styles.historySection}>
-						{sel.payment_id}
-					</div>
-					getElementById('div_register').style.width='500px'; */}
-					<div 
-						className={styles.historySection}
-						// style={{
-						// 	width: document.getElementById('payment-id').offsetWidth,
-						// 	border: 'solid'
-						// }}
+				<div>
+
+					<div    
+						key={sel.date}
+						style={{
+							// border: 'dashed',
+							display: 'flex'
+						}}
 					>
-						{sel.payment_id}
-					</div>
-					<div className={styles.historySection}>
-						{sel.payment_info.payment_time_stamp}
-					</div>
-					<div className={styles.historySection}>
-						{sel.payment_info.payment_type}
-					</div>
-					<div className={styles.historySection}>
-						--
-					</div>
-					<div className={styles.historySection}>
-						${sel.payment_info.subtotal.toFixed(2)}
-					</div>
-					<div className={styles.historySection}>
-						${sel.payment_info.amount_discount.toFixed(2)}
-					</div>
-					<div className={styles.historySection}>
-						${sel.payment_info.service_fee.toFixed(2)}
-					</div>
-					<div className={styles.historySection}>
-						${sel.payment_info.delivery_fee.toFixed(2)}
-					</div>
-					<div className={styles.historySection}>
-						${sel.payment_info.driver_tip.toFixed(2)}
-					</div>
-					<div className={styles.historySection}>
-						${sel.payment_info.taxes.toFixed(2)}
-					</div>
-					<div className={styles.historySection}>
-						${sel.payment_info.ambassador_code.toFixed(2)}
-					</div>
-					<div className={styles.historySection}>
-						${sel.payment_info.amount_paid.toFixed(2)}
-					</div>
-					<div className={styles.historySection}>
-						${sel.payment_info.amount_due.toFixed(2)}
-					</div>
+						<div className={styles.historyCycles}>
+							Billing Date
+						</div>
+						<div className={styles.arrowCell}>
+							<div
+								className={sel.show_dropdown
+									? styles.orangeArrowUp
+									: styles.orangeArrowDown}
+								onClick={() => {
+									let uniquePlanCopy = [...uniquePlans];
 
-          {/*<div style={{display: 'inline-flex', width: '100%'}}>
-            <div className={styles.orangeHeaderLeft}>
-              Billing Date
-            </div>
-            <div className={styles.orangeHeaderRight}>
+									// console.log("(showHistory) unique plan copy: ", uniquePlanCopy);
+									console.log("(showHistory) current plan: ", currentPlan);
+
+									let index1 = uniquePlans.findIndex((plan) => {
+										return plan.id === currentPlan.purchase_id;
+									});
+
+									console.log("(showHistory) index 1: ", index1);
+
+									let index2 = uniquePlanCopy[index1].history.findIndex((tab) => {
+										// console.log("tab date: ", tab.date);
+										// console.log("sel date: ", sel.date);
+										return tab.date === sel.date;
+									});
+
+									console.log("(showHistory) index 2: ", index2);
+
+									uniquePlanCopy[index1].history[index2].show_dropdown = !uniquePlanCopy[index1].history[index2].show_dropdown;
+
+									setUniquePlans(uniquePlanCopy);
+								}}
+							/>
+						</div>
+						<div 
+							className={styles.historySection}
+						>
 							{sel.payment_id}
-            </div>
-          </div>
-					<div 
-            style={{display: 'inline-flex', width: '100%', cursor: 'pointer'}}
-          >
-						<div className={styles.orangeHeaderLeft}>
-              Meal Plan
-            </div>
-            <div className={styles.orangeHeaderRightArrow}>
-              {currentPlan.meals} Meals, {currentPlan.deliveries} Deliveries
-            </div>
-            <div 
-              style={{
-                width: '1%',
-                borderTop: 'solid',
-                borderWidth: '1px',
-                borderColor: '#f26522'
-              }} 
-            />
-            <div
-              style={{
-                width: '3%',
-                minWidth: '24px',
-                // border: 'solid',
-                // borderWidth: '1px',
-                borderTop: 'solid',
-                borderWidth: '1px',
-                borderColor: '#f26522',
-                paddingTop: '12px'
-              }}
-            >
-              {sel.show_dropdown
-                ? <div className={styles.orangeArrowUp} />
-                : <div className={styles.orangeArrowDown} />}
-            </div>
-          </div>*/}
-					{/* <div style={{display: 'inline-flex', width: '100%'}}>
-						<div className={styles.orangeHeaderSection}>
-              Billing Date
-            </div>
-						<div className={styles.orangeHeaderSection}>
-              Payment ID
-            </div>
-						<div className={styles.orangeHeaderSection}>
-              Payment Time Stamp
-            </div>
-						<div className={styles.orangeHeaderSection}>
-              Billing Date
-            </div>
-						<div className={styles.orangeHeaderSection}>
-              Billing Date
-            </div>
-						<div className={styles.orangeHeaderSection}>
-              Billing Date
-            </div>
-						<div className={styles.orangeHeaderSection}>
-              Billing Date
-            </div>
-					</div> */}
+						</div>
+						<div className={styles.historySection}>
+							{sel.payment_info.payment_time_stamp}
+						</div>
+						<div className={styles.historySection}>
+							{sel.payment_info.payment_type}
+						</div>
+						<div className={styles.historySection}>
+							--
+						</div>
+						<div className={styles.historySection}>
+							${sel.payment_info.subtotal.toFixed(2)}
+						</div>
+						<div className={styles.historySection}>
+							${sel.payment_info.amount_discount.toFixed(2)}
+						</div>
+						<div className={styles.historySection}>
+							${sel.payment_info.service_fee.toFixed(2)}
+						</div>
+						<div className={styles.historySection}>
+							${sel.payment_info.delivery_fee.toFixed(2)}
+						</div>
+						<div className={styles.historySection}>
+							${sel.payment_info.driver_tip.toFixed(2)}
+						</div>
+						<div className={styles.historySection}>
+							${sel.payment_info.taxes.toFixed(2)}
+						</div>
+						<div className={styles.historySection}>
+							${sel.payment_info.ambassador_code.toFixed(2)}
+						</div>
+						<div className={styles.historySection}>
+							${sel.payment_info.amount_paid.toFixed(2)}
+						</div>
+						<div className={styles.historySection}>
+							${sel.payment_info.amount_due.toFixed(2)}
+						</div>
+					</div>
 
-        </div>
+					{/* {sel.show_dropdown
+						? <>STUFF GOES HERE</>
+						: null} */}
+					{sel.show_dropdown
+            ? <>{showPastMeals(sel)}</>
+            : null}
+
+				</div>
 			);
 		});
 
-		// return (
-		// 	<div>
-		// 		{currentPlan.purchase_uid}
-		// 	</div>
-		// );
 		return(
-      <div>
+      <div
+				style={{
+					border: 'solid',
+					// marginBottom: '50px'
+					// paddingBottom: '50px'
+				}}
+			>
         {historyTabs.reverse()}
       </div>
     );
@@ -1069,11 +1251,6 @@ function CustomerInfo() {
 
 									<div
 										onClick={() => {setCustomerDropdown(!customerDropdown)}}
-										style={{
-											// border: 'solid',
-											// color: 'green',
-											// position: 'relative',
-										}}
 										className={customerDropdown ? (
 											styles.orangeArrowUp
 										) : (
@@ -1173,7 +1350,6 @@ function CustomerInfo() {
 
 									<div 
 										style={{
-											// border: 'inset', 
 											position: 'absolute',
 											right: '200px',
 											width: '200px',
@@ -1183,14 +1359,12 @@ function CustomerInfo() {
 											height: '30px',
 											color: '#f26522',
 											fontWeight: '500'
-											// width: '25%'
 										}}
 									>
 										Active Subscriptions
 									</div>
 									<div 
 										style={{
-											// border: 'inset', 
 											position: 'absolute',
 											right: '200px',
 											width: '200px',
@@ -1198,7 +1372,6 @@ function CustomerInfo() {
 											justifyContent: 'center',
 											top: '45px',
 											fontSize: '24px'
-											// width: '25%'
 										}}
 									>
 										{countActiveSubs()}
@@ -1206,7 +1379,6 @@ function CustomerInfo() {
 
 									<div 
 										style={{
-											// border: 'inset', 
 											position: 'absolute',
 											right: '400px',
 											width: '200px',
@@ -1216,14 +1388,12 @@ function CustomerInfo() {
 											height: '30px',
 											color: '#f26522',
 											fontWeight: '500'
-											// width: '25%'
 										}}
 									>
 										Delivery Info
 									</div>
 									<div 
 										style={{
-											// border: 'inset', 
 											position: 'absolute',
 											right: '400px',
 											width: '200px',
@@ -1231,17 +1401,8 @@ function CustomerInfo() {
 											justifyContent: 'center',
 											top: '45px',
 											fontSize: '15px'
-											// width: '25%'
 										}}
 									>
-										{/* {(
-											selectedCustomer.customer_address === null ||
-											selectedCustomer.customer_address === ''
-										) ? (
-											'[NULL]'
-										) : (
-											selectedCustomer.customer_address
-										)} */}
 										{isInvalid(selectedCustomer.customer_address) ? (
 											ERR_VAL
 										) : (
@@ -1250,7 +1411,6 @@ function CustomerInfo() {
 									</div>
 									<div 
 										style={{
-											// border: 'inset', 
 											position: 'absolute',
 											right: '400px',
 											width: '200px',
@@ -1258,17 +1418,8 @@ function CustomerInfo() {
 											justifyContent: 'center',
 											top: '64px',
 											fontSize: '15px'
-											// width: '25%'
 										}}
 									>
-										{/* {(
-											selectedCustomer.customer_city === null ||
-											selectedCustomer.customer_city === ''
-										) ? (
-											<>&nbsp;<strong style={{color: 'red'}}>ERROR</strong></>
-										) : (
-											selectedCustomer.customer_city
-										)} */}
 										{isInvalid(selectedCustomer.customer_city) ? (
 											ERR_VAL
 										) : (
@@ -1284,7 +1435,6 @@ function CustomerInfo() {
 
 									<div 
 										style={{
-											// border: 'inset', 
 											position: 'absolute',
 											right: '600px',
 											width: '200px',
@@ -1294,14 +1444,12 @@ function CustomerInfo() {
 											height: '30px',
 											color: '#f26522',
 											fontWeight: '500'
-											// width: '25%'
 										}}
 									>
 										Contact Info
 									</div>
 									<div 
 										style={{
-											// border: 'inset', 
 											position: 'absolute',
 											right: '600px',
 											width: '200px',
@@ -1309,14 +1457,12 @@ function CustomerInfo() {
 											justifyContent: 'center',
 											top: '45px',
 											fontSize: '15px'
-											// width: '25%'
 										}}
 									>
 										{selectedCustomer.customer_email}
 									</div>
 									<div 
 										style={{
-											// border: 'inset', 
 											position: 'absolute',
 											right: '600px',
 											width: '200px',
@@ -1324,10 +1470,8 @@ function CustomerInfo() {
 											justifyContent: 'center',
 											top: '64px',
 											fontSize: '15px'
-											// width: '25%'
 										}}
 									>
-										{/* (686) 908-9080 */}
 										{selectedCustomer.customer_phone_num}
 									</div>
 										</>
@@ -1362,11 +1506,13 @@ function CustomerInfo() {
 						style={{
 							// border: 'dashed',
 							height: '60px',
-							width: '100%',
-							display: 'flex'
+							width: '96%',
+							display: 'flex',
+							alignItems: 'center',
+							marginLeft: '2%'
 						}}
 					>
-						Search by
+						<strong>Search by</strong>
 						<input
 							type='text'
 							placeholder='Name'
@@ -1374,7 +1520,6 @@ function CustomerInfo() {
 							style={{marginLeft: '2%'}}
 							value={nameInput}
 							onChange={e => {
-								// setSearchFilter(FILTER_NAME);
 								inputName(e.target.value)
 							}}
 						/>
@@ -1384,7 +1529,6 @@ function CustomerInfo() {
 							className={styles.customerFilter}
 							value={addressInput}
 							onChange={e => {
-								// setSearchFilter(FILTER_ADDRESS);
 								inputAddress(e.target.value)
 							}}
 						/>
@@ -1402,218 +1546,158 @@ function CustomerInfo() {
 					<div
 						style={{
 							display: 'flex',
-							border: 'dashed',
+							// border: 'dashed',
 							height: '60px',
 							marginLeft: '2%',
 							marginRight: '2%',
-							paddingRight: '15px'
+							paddingRight: '15px',
+							borderBottom: 'solid'
 						}}
 					>
 
-						{/* <div
-							style={{
-								border: 'solid',
-								width: '10%',
-								height: '100%',
-								minWidth: '110px',
-								display: 'flex',
-								justifyContent: 'center',
-								alignItems: 'center',
-							}}
-						>
-							Customer ID
-						</div> */}
 						<div
 							className={styles.cellOuterWrapper}
-							style={{width: CELL.id_width}}
-						>
+							style={{
+								width: CELL.id_width,
+								cursor: 'pointer'
+							}}
+							onClick={() => {
+								if (sortMode === SORT_ID) {
+									setSortMode(SORT_ID_REVERSE);
+								} else { 
+									setSortMode(SORT_ID);
+								}
+							}}>
 							<div className={styles.cellInnerWrapper}>
 								<span className={styles.cellContent}>
-									Customer ID
+									<strong>Customer ID</strong>
+								</span>
+								{sortMode === SORT_ID || sortMode === SORT_ID_REVERSE ? (
+									<div
+										className={sortMode === SORT_ID ? (
+											styles.orangeArrowDown
+										) : (
+											styles.orangeArrowUp
+										)}
+									/> 
+								) : (null)}
+							</div>
+						</div>
+
+						<div
+							className={styles.cellOuterWrapper}
+							style={{
+								width: CELL.name_width,
+								cursor: 'pointer'
+							}}
+							onClick={() => {
+								if (sortMode === SORT_NAME) {
+									setSortMode(SORT_NAME_REVERSE);
+								} else { 
+									setSortMode(SORT_NAME);
+								}
+							}}>
+							<div className={styles.cellInnerWrapper}>
+								<span className={styles.cellContent}>
+									<strong>Name</strong>
+								</span>
+								{sortMode === SORT_NAME || sortMode === SORT_NAME_REVERSE ? (
+									<div
+										className={sortMode === SORT_NAME ? (
+											styles.orangeArrowDown
+										) : (
+											styles.orangeArrowUp
+										)}
+									/> 
+								) : (null)}
+							</div>
+						</div>
+
+						<div
+							className={styles.cellOuterWrapper}
+							style={{width: CELL.email_width}}>
+							<div className={styles.cellInnerWrapper}>
+								<span className={styles.cellContent}>
+									<strong>Email</strong>
 								</span>
 							</div>
 						</div>
 
-						{/* <div
-							style={{
-								border: 'solid',
-								width: '14%',
-								height: '100%',
-								display: 'flex',
-								justifyContent: 'center',
-								alignItems: 'center',
-							}}
-						>
-							Name
-						</div> */}
 						<div
 							className={styles.cellOuterWrapper}
-							style={{width: CELL.name_width}}
-						>
+							style={{width: CELL.last_order_width}}>
 							<div className={styles.cellInnerWrapper}>
 								<span className={styles.cellContent}>
-									Name
+									<strong>Last Order (Date)</strong>
 								</span>
 							</div>
 						</div>
 
-						{/* <div
-							style={{
-								border: 'solid',
-								width: '14%',
-								height: '100%',
-								display: 'flex',
-								justifyContent: 'center',
-								alignItems: 'center',
-							}}
-						>
-							Email
-						</div> */}
 						<div
 							className={styles.cellOuterWrapper}
-							style={{width: CELL.email_width}}
-						>
+							style={{width: CELL.cust_since_width}}>
 							<div className={styles.cellInnerWrapper}>
 								<span className={styles.cellContent}>
-									Email
+									<strong>Customer Since</strong>
 								</span>
 							</div>
 						</div>
 
-						{/* <div
-							style={{
-								border: 'solid',
-								width: '10%',
-								height: '100%',
-								display: 'flex',
-								justifyContent: 'center',
-								alignItems: 'center',
-							}}
-						>
-							Last Order (Date)
-						</div> */}
 						<div
 							className={styles.cellOuterWrapper}
-							style={{width: CELL.last_order_width}}
-						>
+							style={{
+								width: CELL.name_width,
+								cursor: 'pointer'
+							}}
+							onClick={() => {
+								if (sortMode === SORT_ADDRESS) {
+									setSortMode(SORT_ADDRESS_REVERSE);
+								} else { 
+									setSortMode(SORT_ADDRESS);
+								}
+							}}>
 							<div className={styles.cellInnerWrapper}>
 								<span className={styles.cellContent}>
-									Last Order (Date)
+									<strong>Address</strong>
+								</span>
+								{sortMode === SORT_ADDRESS || sortMode === SORT_ADDRESS_REVERSE ? (
+									<div
+										className={sortMode === SORT_ADDRESS ? (
+											styles.orangeArrowDown
+										) : (
+											styles.orangeArrowUp
+										)}
+									/> 
+								) : (null)}
+							</div>
+						</div>
+
+						<div
+							className={styles.cellOuterWrapper}
+							style={{width: CELL.zone_width}}>
+							<div className={styles.cellInnerWrapper}>
+								<span className={styles.cellContent}>
+									<strong>Delivery Zone</strong>
 								</span>
 							</div>
 						</div>
 
-						{/* <div
-							style={{
-								border: 'solid',
-								width: '10%',
-								height: '100%',
-								display: 'flex',
-								justifyContent: 'center',
-								alignItems: 'center',
-							}}
-						>
-							Customer Since
-						</div> */}
 						<div
 							className={styles.cellOuterWrapper}
-							style={{width: CELL.cust_since_width}}
-						>
+							style={{width: CELL.last_order_width}}>
 							<div className={styles.cellInnerWrapper}>
 								<span className={styles.cellContent}>
-									Customer Since
+									<strong>Zip Code</strong>
 								</span>
 							</div>
 						</div>
 
-						{/* <div
-							style={{
-								border: 'solid',
-								width: '16%',
-								height: '100%',
-								display: 'flex',
-								justifyContent: 'center',
-								alignItems: 'center',
-							}}
-						>
-							Address
-						</div> */}
 						<div
 							className={styles.cellOuterWrapper}
-							style={{width: CELL.address_width}}
-						>
+							style={{width: CELL.phone_width}}>
 							<div className={styles.cellInnerWrapper}>
 								<span className={styles.cellContent}>
-									Address
-								</span>
-							</div>
-						</div>
-
-						{/* <div
-							style={{
-								border: 'solid',
-								width: '10%',
-								height: '100%',
-								display: 'flex',
-								justifyContent: 'center',
-								alignItems: 'center',
-							}}
-						>
-							Delivery Zone
-						</div> */}
-						<div
-							className={styles.cellOuterWrapper}
-							style={{width: CELL.zone_width}}
-						>
-							<div className={styles.cellInnerWrapper}>
-								<span className={styles.cellContent}>
-									Delivery Zone
-								</span>
-							</div>
-						</div>
-
-						{/* <div
-							style={{
-								border: 'solid',
-								width: '6%',
-								height: '100%',
-								display: 'flex',
-								justifyContent: 'center',
-								alignItems: 'center',
-							}}
-						>
-							Zip Code
-						</div> */}
-						<div
-							className={styles.cellOuterWrapper}
-							style={{width: CELL.last_order_width}}
-						>
-							<div className={styles.cellInnerWrapper}>
-								<span className={styles.cellContent}>
-									Zip Code
-								</span>
-							</div>
-						</div>
-
-						{/* <div
-							style={{
-								border: 'solid',
-								width: '10%',
-								height: '100%',
-								display: 'flex',
-								justifyContent: 'center',
-								alignItems: 'center',
-							}}
-						>
-							Phone Number
-						</div> */}
-						<div
-							className={styles.cellOuterWrapper}
-							style={{width: CELL.phone_width}}
-						>
-							<div className={styles.cellInnerWrapper}>
-								<span className={styles.cellContent}>
-									Phone Number
+									<strong>Phone Number</strong>
 								</span>
 							</div>
 						</div>
@@ -1623,8 +1707,6 @@ function CustomerInfo() {
 					<div
 						style={{
 							height: '540px',
-							// height: '300px'
-							// overflow: 'auto',
 							// border: 'dashed'
 						}}
 					>
@@ -1779,7 +1861,7 @@ function CustomerInfo() {
 
 							<div style={{display: 'inline-flex', width: '100%'}}>
 								<div className={styles.orangeHeaderCycle}>
-									Billing Date
+									Billing Cycle
 								</div>
 								<div 
 									id={'payment-id'}
