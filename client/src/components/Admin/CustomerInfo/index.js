@@ -60,6 +60,8 @@ function CustomerInfo() {
 
 	const [initialCustomer, setInitialCustomer] = useState(false);
 
+	const [initialHeader, setInitialHeader] = useState(false);
+
 	const [dimensions, setDimensions] = useState({ 
     height: window.innerHeight,
     width: window.innerWidth
@@ -1180,8 +1182,28 @@ function CustomerInfo() {
 			{console.log("Current customer info: ", selectedCustomer)}
 			<div className={styles.containerCustomer}>
 				{selectedCustomer === null ? (
-					<div id={"custInfo"}>{"Waiting for selection..."}</div>
+					<div 
+						// id={"custInfo"}
+						style={{
+							display: 'flex',
+							height: '100%',
+							fontSize: '30px',
+							fontWeight: 'bold',
+							justifyContent: 'center',
+							alignItems: 'center',
+							alignText: 'center',
+							paddingRight: '20px',
+							paddingLeft: '20px',
+							border: 'solid',
+							borderColor: 'orchid'
+						}}
+					>
+						Select a customer to display their information.
+					</div>
 				) : (
+
+					document.getElementById("custInfo") === null ||
+					document.getElementById("custInfo").offsetWidth > 800 ? (
 					<div
 						style={{
 							display: 'flex',
@@ -1191,10 +1213,11 @@ function CustomerInfo() {
 							alignItems: 'center'
 						}}
 					>
+						{/* {console.log("(1) width: ", document.getElementById("custInfo").offsetWidth)} */}
 						<div
 							style={{
 								border: 'solid',
-								borderColor: 'red',
+								borderColor: 'green',
 								marginLeft: '50px',
 								marginRight: '50px',
 								display: 'inline-flex',
@@ -1312,8 +1335,8 @@ function CustomerInfo() {
 								height: '100%'
 							}}
 						>
-
-							{document.getElementById("custInfo").offsetWidth > 800 ? (
+							{/* {document.getElementById("custInfo").offsetWidth > 800 ? ( */}
+							{document.getElementById("custInfo") !== null ? (
 								<>
 									<div 
 										style={{
@@ -1474,13 +1497,163 @@ function CustomerInfo() {
 									>
 										{selectedCustomer.customer_phone_num}
 									</div>
-										</>
-									) : (
-										<div>NARROW VIEW</div>
-									)}
+								</>
+							) : (
+								<div>
+									NOTHING
+								</div>
+							)}
 
 						</div>
 					</div>
+					) : (
+
+						<>
+						{/* {initialHeader === false ? setInitialHeader(true) : null} */}
+						<div
+							style={{
+								display: 'flex',
+								// border: 'dashed',
+								height: '100%',
+								justifyContent: 'center',
+								alignItems: 'center'
+							}}
+						>
+							<div
+								style={{
+									border: 'solid',
+									borderColor: 'red',
+									marginLeft: '50px',
+									marginRight: '50px',
+									display: 'inline-flex',
+									alignItems: 'center',
+									height: '80px',
+									// zIndex: '2'
+									// width: '40%',
+									// minWidth: '300px'
+								}}
+							>
+								<div
+									className={styles.avatar}
+								>
+									?
+								</div>
+								<div
+									style={{
+										// border: 'solid',
+										display: 'inline-block'
+									}}
+								>
+									<div
+										style={{
+											// border: 'inset',
+											display: 'inline-flex',
+											width: '100%'
+										}}
+									>
+										<div
+											style={{
+												// border: 'solid',
+												// color: 'green'
+												fontWeight: '600',
+												fontSize: '18px',
+												marginRight: '15px'
+											}}
+										>
+											{/* {
+												selectedCustomer.customer_first_name + " " + 
+												selectedCustomer.customer_last_name
+											} */}
+											{isInvalid(selectedCustomer.customer_first_name) ? (
+												ERR_VAL
+											) : (
+												selectedCustomer.customer_first_name
+											)}
+											&nbsp;
+											{isInvalid(selectedCustomer.customer_last_name) ? (
+												ERR_VAL
+											) : (
+												selectedCustomer.customer_last_name
+											)}
+										</div>
+
+										<div
+											onClick={() => {setCustomerDropdown(!customerDropdown)}}
+											className={customerDropdown ? (
+												styles.orangeArrowUp
+											) : (
+												styles.orangeArrowDown
+											)}
+										/>
+
+									</div>
+									<br />
+									<div
+										style={{
+											// border: 'inset',
+											display: 'inline-flex'
+										}}
+									>
+										<div
+											style={{
+												// border: 'solid',
+												// color: 'green'
+												color: '#f26522',
+												textDecoration: 'underline',
+												marginRight: '15px',
+												fontWeight: '500',
+												fontSize: '14px',
+												cursor: 'pointer'
+											}}
+										>
+											Send Message
+										</div>
+										<div
+											style={{
+												// border: 'solid',
+												// color: 'green'
+												color: '#f26522',
+												textDecoration: 'underline',
+												// marginRight: '15px',
+												fontWeight: '500',
+												fontSize: '14px',
+												cursor: 'pointer'
+											}}
+										>
+											Issue Coupon
+										</div>
+									</div>
+								</div>
+								{/* {
+									selectedCustomer.customer_first_name + " " + 
+									selectedCustomer.customer_last_name
+								} */}
+							</div>
+							<div
+								id={"custInfo"}
+								style={{
+									border: 'solid',
+									borderColor: 'cyan',
+									flexGrow: '1',
+									display: 'inline-flex',
+									position: 'relative',
+									height: '100%'
+								}}
+							/>
+						</div>
+
+						<div
+							style={{
+								border: 'solid'
+							}}
+						>
+							NARROW VIEW
+						</div>
+
+
+						</>
+					)
+					
 				)}
 			</div>
 
@@ -1575,9 +1748,9 @@ function CustomerInfo() {
 								{sortMode === SORT_ID || sortMode === SORT_ID_REVERSE ? (
 									<div
 										className={sortMode === SORT_ID ? (
-											styles.orangeArrowDown
+											styles.sortingArrowDown
 										) : (
-											styles.orangeArrowUp
+											styles.sortingArrowUp
 										)}
 									/> 
 								) : (null)}
@@ -1604,9 +1777,9 @@ function CustomerInfo() {
 								{sortMode === SORT_NAME || sortMode === SORT_NAME_REVERSE ? (
 									<div
 										className={sortMode === SORT_NAME ? (
-											styles.orangeArrowDown
+											styles.sortingArrowDown
 										) : (
-											styles.orangeArrowUp
+											styles.sortingArrowUp
 										)}
 									/> 
 								) : (null)}
