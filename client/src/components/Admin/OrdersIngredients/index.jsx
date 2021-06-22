@@ -38,6 +38,7 @@ const initialState = {
     field: "",
     direction: "",
   },
+  businessData: [],
 };
 
 function reducer(state, action) {
@@ -110,6 +111,11 @@ function reducer(state, action) {
           field: action.payload.field,
           direction: action.payload.direction,
         },
+      };
+    case "FETCH_BUSINESSES":
+      return {
+        ...state,
+        businessData: action.payload,
       };
     default:
       return state;
@@ -310,6 +316,27 @@ function OrdersIngredients({ history, ...props }) {
     return curCustomers;
   };
 
+  // Fetch Businesses
+
+  useEffect(() => {
+    axios
+      .get(`${API_URL}all_businesses`)
+      .then((response) => {
+        const businessesApi = response.data.result;
+        dispatch({ type: "FETCH_BUSINESSES", payload: businessesApi });
+      })
+      .catch((err) => {
+        if (err.response) {
+          // eslint-disable-next-line no-console
+          console.log(err.response);
+        }
+        // eslint-disable-next-line no-console
+        console.log(err);
+      });
+  }, []);
+
+  console.log(state.businessData);
+
   // Fetch orders
   useEffect(() => {
     axios
@@ -486,7 +513,18 @@ function OrdersIngredients({ history, ...props }) {
                 <div className={styles.dropdownArrow}>
                   <select className={styles.dropdown}>
                     <option>All Orders</option>
-                    <option>Pono Hawaiian Grill</option>
+                    {state.businessData.map((business) => {
+                      if (business) {
+                        return (
+                          <option
+                            key={business.business_uid}
+                            value={business.business_uid}
+                          >
+                            {business.business_name}
+                          </option>
+                        );
+                      }
+                    })}
                   </select>
                 </div>
               </form>
@@ -514,6 +552,9 @@ function OrdersIngredients({ history, ...props }) {
                     ].join(" ")}
                     key={date.value}
                     value={date.value}
+                    onClick={(event) => {
+                      changeDate(event.target.value);
+                    }}
                   >
                     {dayName} <br /> {day}
                   </button>
