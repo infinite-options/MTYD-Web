@@ -1,10 +1,13 @@
-import { useEffect, useReducer } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 import axios from 'axios';
 import { API_URL } from '../../../reducers/constants';
 import {
   Breadcrumb, Container, Row, Col, Form, Button
 } from 'react-bootstrap';
 import {withRouter} from "react-router";
+import AdminNavBar from '../AdminNavBar';
+import styles from "./editMeal.module.css";
+import { act } from 'react-dom/test-utils';
 
 const initialState = {
   mounted: false,
@@ -54,8 +57,16 @@ function reducer (state, action) {
   }
 }
 
+var allMeals = []
+var mealsGenerated = false
+var allBusinesses = []
+var idsGenerated = false
+
 function EditMeal({history, ...props}) {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const [showDropdown, toggleShowDropdown] = useState(false);
+  const [activeBusiness, setActiveBusiness] = useState("")
+  const [showDetails, toggleDetails] = useState(false)
 
   // Check for log in
   useEffect(() => {
@@ -103,6 +114,7 @@ function EditMeal({history, ...props}) {
 
   // Fetch meals
   useEffect(() => {
+    console.log("in useEffect")
     axios
       .get(`${API_URL}meals`)
       .then((response) => {
@@ -131,6 +143,9 @@ function EditMeal({history, ...props}) {
             return (idA < idB) ? -1 : 1;
           });
           dispatch({ type: 'FETCH_MEALS', payload: mealApiResult });
+          //console.log(mealApiResult)
+          allMeals = mealApiResult
+          console.log(allMeals)
         }
       })
       .catch((err) => {
@@ -141,6 +156,8 @@ function EditMeal({history, ...props}) {
         // eslint-disable-next-line no-console
         console.log(err);
       });
+    // console.log("Meals")
+    // console.log(state.mealData)
   }, []);
 
   const editMeal = (property, value) => {
@@ -185,13 +202,321 @@ function EditMeal({history, ...props}) {
       });
   }
 
+  const generateMealsUI = () => {
+    console.log("Generating meals")
+    console.log(allMeals.length)
+    let tempArray = []
+    for (let i = 0; i < allMeals.length; i++) {
+      let index = i
+      
+      if (allMeals[index].meal_business == activeBusiness){    
+        tempArray.push(
+          <div width = "100%" key = {allMeals[index].meal_uid}>
+            <tr>
+              <th style={{marginLeft: "30px", textAlign:"center", display:"inline-block", overflow:"hidden", whiteSpace: "nowrap", textOverflow: "ellipsis"}} width="101px" height="45">
+                {allMeals[index].meal_name}
+              </th>
+              <th style={{marginLeft: "27px", textAlign:"center", display:"inline-block"}} width="60px">
+                <img src={allMeals[index].meal_photo_URL} height="45" width="45"></img>
+              </th>
+              <th style={{marginLeft: "27px", textAlign:"center", display:"inline-block", overflow:"hidden", whiteSpace: "nowrap", textOverflow: "ellipsis"}} width = "142px" height="45">{allMeals[index].meal_desc}</th>
+              <th style={{marginLeft: "27px", textAlign:"center", display:"inline-block"}} width = "122px" height="45">{allMeals[index].meal_category}</th>
+              <th style={{marginLeft: "27px", textAlign:"center", display:"inline-block", overflow:"hidden", whiteSpace: "nowrap", textOverflow: "ellipsis"}} width = "80px" height="45">{allMeals[index].meal_hint}</th>
+              <th style={{marginLeft: "27px", textAlign:"center", display:"inline-block"}} width = "69px" height="45">{allMeals[index].meal_calories} Cal</th>
+              <th style={{marginLeft: "27px", textAlign:"center", display:"inline-block"}} width = "60px" height="45">{allMeals[index].meal_protein}g</th>            
+              <th style={{marginLeft: "27px", textAlign:"center", display:"inline-block"}} width = "50px" height="45">{allMeals[index].meal_carbs}g</th>
+              <th style={{marginLeft: "27px", textAlign:"center", display:"inline-block"}} width = "43px" height="45">{allMeals[index].meal_fiber}g</th>
+              <th style={{marginLeft: "27px", textAlign:"center", display:"inline-block"}} width = "50px" height="45">{allMeals[index].meal_sugar}g</th>
+              <th style={{marginLeft: "27px", textAlign:"center", display:"inline-block"}} width = "35px" height="45">{allMeals[index].meal_fat}%</th>
+              <th style={{marginLeft: "27px", textAlign:"center", display:"inline-block"}} width = "28px" height="45">{allMeals[index].meal_sat}%</th>
+              <th style={{marginLeft: "27px", textAlign:"center", display:"inline-block"}} width = "54px" height="45">Status</th>
+              <th style={{marginLeft: "27px", textAlign:"center", display:"inline-block"}} height="45">
+                <div className={styles.saveIcon}></div>
+                <div className={styles.deleteIcon}></div>
+              </th>
+            </tr>
+            <div width="100%" style={{backgroundColor: "#F8BB17", display: "block", minHeight: "2px", marginTop: "25px", marginBottom: "25px"}}></div>
+          </div>
+        )
+      }
+    }
+    console.log("Done generating meals")
+    return tempArray
+  }
+
+  const generateMealsList = () => {
+    if (mealsGenerated == false) {
+    axios
+      .get(`${API_URL}meals`)
+      .then((response) => {
+        if(response.status === 200) {
+          const mealApiResult = response.data.result;
+          // Convert property values to string and nulls to empty string
+          for(let index = 0; index < mealApiResult.length; index++) {
+            for (const property in mealApiResult[index]) {
+                const value = mealApiResult[index][property];
+                mealApiResult[index][property] = value ? value.toString() : '';
+              } 
+          }
+          // Sort by meal name
+          mealApiResult.sort((mealA, mealB) => {
+            const mealNameA = mealA.meal_name;
+            const mealNameB = mealB.meal_name;
+            if(mealNameA < mealNameB) {
+              return -1;
+            }
+            if(mealNameA > mealNameB) {
+              return 1;
+            }
+            // Use Id if same name; should not happen
+            const idA = mealA.meal_uid;
+            const idB = mealB.meal_uid;
+            return (idA < idB) ? -1 : 1;
+          });
+          dispatch({ type: 'FETCH_MEALS', payload: mealApiResult });
+          //console.log(mealApiResult)
+          allMeals = mealApiResult
+          console.log(allMeals)
+        }
+      })
+      .catch((err) => {
+        if (err.response) {
+          // eslint-disable-next-line no-console
+          console.log(err.response);
+        }
+        // eslint-disable-next-line no-console
+        console.log(err);
+      });
+    // console.log("Meals")
+    // console.log(state.mealData)
+    mealsGenerated = true
+  }
+    return null
+  }
+
+  const generateBusinessIDs = () => {
+    if (idsGenerated == false && mealsGenerated == true) {
+      console.log("length check")
+      console.log(allMeals.length)
+      for (let i = 0; i < allMeals.length; i++) {
+        let temp = allMeals[i].meal_business
+        console.log(temp)
+        if (allBusinesses.indexOf(temp) < 0) {
+          allBusinesses.push(temp)
+        }
+      }
+    }
+    console.log(allBusinesses)
+    //setActiveBusiness(allBusinesses[1])
+    return null
+  }
+
+  const generateDropdownButtons = () => {
+    let tempDropdownButtons = []
+    for (let i = 0; i < allBusinesses.length; i++) {
+      let index = i
+      tempDropdownButtons.push(
+        <div
+          key={allBusinesses[index]}
+          onClick={() => {
+            setActiveBusiness(allBusinesses[index])
+            console.log("active business = " + activeBusiness)
+            toggleShowDropdown(false)
+          }}
+          style={{
+            borderRadius: '10px',
+            backgroundColor: 'white',
+            height: '32px',
+            width: '96%',
+            paddingLeft: '10px',
+            marginLeft: '2%',
+            marginTop: '10px',
+            textOverflow: 'ellipsis',
+            display: 'block',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            cursor: 'pointer'
+          }}
+        >{allBusinesses[index]}</div>
+      )
+    }
+    let dropdownTopMargin = [
+      <div
+        key={'space'}
+        style={{
+          height: '25px',
+          backgroundColor: '#f26522',
+        }}
+      />
+    ]
+    console.log(tempDropdownButtons.length)
+    return dropdownTopMargin.concat(tempDropdownButtons)
+  }
+
+  const getDropdownButtons = () => {
+    return (
+      <>
+        <div
+          style={{
+            height: '20px',
+            zIndex: '1'
+          }}
+        />
+        <div
+          style={{
+            backgroundColor: '#f26522',
+            width: '40%',
+            minWidth: '300px',
+            height: 40 + (allBusinesses.length * 42),
+            position: 'absolute',
+            zIndex: '1',
+            boxShadow: '0px 5px 10px gray',
+            borderRadius: '15px'
+          }}
+        >
+          {generateDropdownButtons()}
+          
+        </div>
+      </>
+    )
+  }
+
   if (!state.mounted) {
     return null;
   }
 
   return (
-    <div>
-      <Breadcrumb>
+    <div style={{backgroundColor: '#F26522'}}>
+
+      {/*NEW CODE*/}
+
+      {generateMealsList()}
+      {generateBusinessIDs()}
+      {/* {getDropdownButtons()} */}
+
+      <AdminNavBar currentPage={'edit-meal'}/>
+
+      <div className={styles.containerCustomer}>
+        <img alt="profile image" height="90" width="90" style={{marginTop: '15px', marginLeft: '15px'}}></img>
+        <div
+          style={{
+          position:"absolute",
+          top:'145px',
+          left:'166px',
+          height: (
+          showDropdown
+            ? 60 + (allBusinesses.length *42)
+            : 60
+          )
+          }}
+        >
+          <div
+            className={styles.dropdownSelection}
+            onClick={() => {
+              toggleShowDropdown(!showDropdown)
+              console.log("clicked")
+            }}
+          >
+            <div
+              style={{
+                width: '80%',
+                marginLeft: '5%',
+                textOverflow: 'ellipsis',
+                display: 'block',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden'
+              }}
+            >
+              {
+                activeBusiness === null
+                  ? "No Active Businesses"
+                  : activeBusiness
+              }
+            </div>
+            <div
+              style={{
+                width: '10%',
+                minWidth: '24px',
+                marginRight: '5%'
+              }}
+            >
+              {
+                activeBusiness === null
+                  ? null
+                  : <div className={styles.whiteArrowDown} /> 
+              }
+              {/* <div className={styles.whiteArrowDown} /> */}
+            </div>  
+          </div>
+          {showDropdown
+            ? getDropdownButtons()
+            : null
+          }
+        </div>
+        <div style={{
+          position:"absolute",
+          top:'185px',
+          left:'176px',
+          color: "#F26522",
+          textDecoration: "underline"
+          }}
+        >
+          Edit Details
+        </div>
+        <div style={{
+          position:"absolute",
+          top:'185px',
+          left:'296px',
+          color: "#F26522",
+          textDecoration: "underline"
+          }}
+        >
+          Send Message
+        </div>
+      
+      </div>
+
+      
+
+      <div className={styles.containerMeals}>
+        <div className={styles.sectionHeader} style={{display: "inline"}}>
+					Meals Offered
+				</div>
+
+        <div style={{fontSize: "32px", display: "inline", marginLeft: "15px"}}>+</div>
+
+        <table width="100%">
+          <tr>
+            <th style={{color: '#F26522', marginLeft: "30px", textAlign:"center", display:"inline-block", fontSize:"18px"}} width = "101px">Meal Name</th>
+            <th style={{color: '#F26522', marginLeft: "27px", textAlign:"center", display:"inline-block"}} width = "60px">Picture</th>
+            <th style={{color: '#F26522', marginLeft: "27px", textAlign:"center", display:"inline-block"}} width = "142px">Meal Description</th>
+            <th style={{color: '#F26522', marginLeft: "27px", textAlign:"center", display:"inline-block"}} width = "122px">Meal Category</th>
+            <th style={{color: '#F26522', marginLeft: "27px", textAlign:"center", display:"inline-block"}} width = "80px">Meal Hint</th>
+            <th style={{color: '#F26522', marginLeft: "27px", textAlign:"center", display:"inline-block"}} width = "69px">Calories</th>
+            <th style={{color: '#F26522', marginLeft: "27px", textAlign:"center", display:"inline-block"}} width = "60px">Protein</th>
+            <th style={{color: '#F26522', marginLeft: "27px", textAlign:"center", display:"inline-block"}} width = "50px">Carbs</th>
+            <th style={{color: '#F26522', marginLeft: "27px", textAlign:"center", display:"inline-block"}} width = "43px">Fiber</th>
+            <th style={{color: '#F26522', marginLeft: "27px", textAlign:"center", display:"inline-block"}} width = "50px">Sugar</th>
+            <th style={{color: '#F26522', marginLeft: "27px", textAlign:"center", display:"inline-block"}} width = "35px">Fats</th>
+            <th style={{color: '#F26522', marginLeft: "27px", textAlign:"center", display:"inline-block"}} width = "28px">Sat</th>
+            <th style={{color: '#F26522', marginLeft: "27px", textAlign:"center", display:"inline-block"}} width = "54px">Status</th>
+            {/* <th style={{color: '#F26522', paddingLeft: "67px", textAlign:"center", display:"inline-block"}} ></th> */}
+          </tr>
+        </table>
+
+        {generateMealsUI()}    
+
+      </div>
+
+      <br />
+
+      {console.log()}
+
+      {/*NEW CODE*/}
+
+      {/*OLD CODE*/}
+
+      {/* <Breadcrumb>
         <Breadcrumb.Item href="/"> Admin Site </Breadcrumb.Item>
         <Breadcrumb.Item active> Edit Meals </Breadcrumb.Item>
       </Breadcrumb>
@@ -442,7 +767,10 @@ function EditMeal({history, ...props}) {
             </Form>
           </Col>
         </Row>
-      </Container>
+      </Container> */}
+
+      {/*OLD CODE*/}
+
     </div>
   )
 }
