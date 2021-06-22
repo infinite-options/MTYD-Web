@@ -13,6 +13,7 @@ import {
 } from "@material-ui/core";
 import { withRouter } from "react-router";
 import styles from "./ordersIngredients.module.css";
+import { collapseTextChangeRangesAcrossMultipleVersions } from "typescript";
 
 const initialState = {
   mounted: false,
@@ -233,14 +234,20 @@ function OrdersIngredients({ history, ...props }) {
   var currDay = now.substring(8, 10);
   var currYear = now.substring(11, 15);
 
+  // currDay = 22;
+
+  // assign value to current month
   for (let i = 0, l = monthDict.length; i < l; i++) {
     if (currMonth === monthDict[i].key) {
       currMonthVal = monthDict[i].value;
     }
   }
 
+  // remove futureDays?
   var futureDaysList = [];
   var futureDaysListValues = [];
+
+  let closestDateIndex = 0;
 
   for (let i = 0, l = orderDates.length; i < l; i++) {
     var date = orderDates[i].value;
@@ -251,16 +258,30 @@ function OrdersIngredients({ history, ...props }) {
 
     if (currYear <= year) {
       if (currMonthVal < month) {
+        if (!closestDateIndex) {
+          closestDateIndex = i;
+        }
         futureDaysListValues.push(orderDates[i].value);
         futureDaysList.push(dateDisplay);
       } else if (currMonthVal == month) {
         if (currDay <= day) {
+          if (!closestDateIndex) {
+            closestDateIndex = i;
+          }
           futureDaysListValues.push(orderDates[i].value);
           futureDaysList.push(dateDisplay);
         }
       }
     }
   }
+
+  const getDateButtonRange = (startDateIndex) => {
+    let dateRange = [];
+    for (let i = startDateIndex; i <= startDateIndex + 5; i++) {
+      dateRange.push(orderDates[i]);
+    }
+    return dateRange;
+  };
 
   var closestToCurrDay = futureDaysList[0];
   var closestToCurrDayVal = futureDaysListValues[0];
@@ -449,6 +470,7 @@ function OrdersIngredients({ history, ...props }) {
     state.sortedIngredientsData = sortedIngredients;
     state.sortedCustomersData = sortedCustomers;
   }
+
   return (
     <div className={styles.root}>
       {/* <Breadcrumb>
@@ -458,21 +480,86 @@ function OrdersIngredients({ history, ...props }) {
       <Container fluid className={styles.container}>
         <Row className={[styles.section, styles.row1].join(" ")}>
           <Col md="auto" className={styles.restaurantSelector}>
-            <div>Image</div>
-            <div>
-              Selector
+            <div className={styles.restaurantImg}>Image</div>
+            <div style={{ marginLeft: "10px" }}>
+              <form>
+                <div className={styles.dropdownArrow}>
+                  <select className={styles.dropdown}>
+                    <option>All Orders</option>
+                    <option>Pono Hawaiian Grill</option>
+                  </select>
+                </div>
+              </form>
               <div className={styles.restaurantLinks}>
                 <a>Send Message</a>
                 <a>Issue Coupon</a>
               </div>
             </div>
           </Col>
-          <Col>
-            <button className={styles.datebutton}>Date Button</button>
+          <Col className={styles.dateSelector}>
+            {
+              ((console.log("dates:"), console.log(orderDates)),
+              console.log("now: " + now.substring(0, 15)))
+            }
+            <button className={styles.dateLeft}></button>
+            {getDateButtonRange(closestDateIndex).map((date) => {
+              if (date) {
+                const dayName = date.display.substring(0, 3);
+                const day = date.display.substring(4, 10);
+                return (
+                  <button
+                    className={[
+                      styles.datebutton,
+                      styles.datebuttonNotSelected,
+                    ].join(" ")}
+                    key={date.value}
+                    value={date.value}
+                  >
+                    {dayName} <br /> {day}
+                  </button>
+                );
+              }
+            })}
+
+            <button className={styles.dateRight}></button>
           </Col>
-          <Col>Contact Info</Col>
-          <Col>No. Of Meals</Col>
-          <Col>Total Revenue</Col>
+          <Col
+            md="auto"
+            style={{
+              paddingTop: "10px",
+              textAlign: "center",
+            }}
+          >
+            <div style={{ marginBottom: "10px", color: "#f26522" }}>
+              Contact Info
+            </div>
+            <div>pmarathay@gmail.com</div>
+            <div>(686) 908-9080</div>
+          </Col>
+          <Col
+            md="auto"
+            style={{
+              paddingTop: "10px",
+              textAlign: "center",
+            }}
+          >
+            <div style={{ marginBottom: "10px", color: "#f26522" }}>
+              No. of Meals
+            </div>
+            <div>5</div>
+          </Col>
+          <Col
+            md="auto"
+            style={{
+              paddingTop: "10px",
+              textAlign: "center",
+            }}
+          >
+            <div style={{ marginBottom: "10px", color: "#f26522" }}>
+              Total Revenue
+            </div>
+            <div>$95.90</div>
+          </Col>
         </Row>
         <Row className={styles.row2}>
           <Col className={styles.section} style={{ marginRight: 10 }}>
