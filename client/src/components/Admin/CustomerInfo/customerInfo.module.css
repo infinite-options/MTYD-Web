@@ -385,3 +385,42 @@
   margin-top: 5px;
   cursor: pointer;
 }
+
+.filterRow {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  height: 50px;
+  z-index: 30;
+  cursor: pointer;
+}
+
+.cellOuterWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* border: dashed; */
+  /* width: 10%; */
+}
+
+.cellInnerWrapper {
+  align-self: flex-start;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 5px 10px;
+  /* border: 1px solid black;
+  border-radius: 5px;
+  background-color: white; */
+  height: 50px;
+}
+
+.cellContent {
+ 	white-space: nowrap;
+ 	text-overflow: ellipsis;
+ 	overflow: hidden;
+}

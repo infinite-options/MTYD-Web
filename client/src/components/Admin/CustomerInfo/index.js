@@ -21,6 +21,18 @@ const FILTER_ID = 0;
 const FILTER_NAME = 1;
 const FILTER_ADDRESS = 2;
 
+const CELL = {
+	id_width: '10%',
+	name_width: '12%',
+	email_width: '12%',
+	last_order_width: '10%',
+	cust_since_width: '10%',
+	address_width: '12%',
+	zone_width: '12%',
+	zip_width: '10%',
+	phone_width: '12%'
+}
+
 const ERR_VAL = <>&nbsp;<strong style={{color: 'red'}}>[NULL]</strong></>;
 
 function CustomerInfo() {
@@ -413,314 +425,136 @@ function CustomerInfo() {
 					'yellow'
 				));
 
+				// <div
+				// 	key={cust.customer_uid}
+				// 	style={{
+				// 		display: 'flex',
+				// 		justifyContent: 'center',
+				// 		alignItems: 'center',
+				// 		justifyContent: 'center',
+				// 		position: 'relative',
+				// 		height: '50px',
+				// 		zIndex: '30',
+				// 		cursor: 'pointer'
+				// 	}}
+				// 	onClick={() => {
+				// 		console.log("(FC) clicked: ", cust.customer_uid);
+				// 		setCurrentCustomer(cust);
+				// 	}}
+				// >
+
+				console.log("PUSH!!!");
+
 				sortedCustomerButtons.push(
-					<>
 					<div
 						key={cust.customer_uid}
-						style={{
-
-							display: 'flex',
-							justifyContent: 'center',
-							alignItems: 'center',
-							justifyContent: 'center',
-
-							position: 'relative',
-
-							height: '50px',
-							zIndex: '30',
-							cursor: 'pointer'
-						}}
+						className={styles.filterRow}
 						onClick={() => {
-							// console.log("(SCI) previous selected customer: ", selectedCustomer);
 							console.log("(FC) clicked: ", cust.customer_uid);
 							setCurrentCustomer(cust);
 						}}
 					>
-						{/* [{cust.customer_uid}] --- [{cust.customer_first_name} --- {cust.customer_last_name}] --- [{cust.customer_address} --- {cust.customer_city} --- {cust.customer_zip}] */}
-						<div
-							style={{
-								border: 'solid',
-								borderColor: 'blue',
-								backgroundColor: '#FFF7E0',
-								width: '10%',
-								minWidth: '110px',
-								height: '100%',
-							}}
-						>
-							{cust.customer_uid}
-						</div>
-						<div
-							style={{
-								// display: 'flex',
-								// justifyContent: 'center',
-								// alignItems: 'center',
-								// borderWidth: '1px',
-								// alignText: 'center'
 
-								border: 'solid',
-								borderColor: 'blue',
-								backgroundColor: '#FFF7E0',
-								width: '14%',
-								height: '100%',
-								// display: 'flex',
-								// alignItems: 'center',
-								// justifyContent: 'center',
-							
-								textOverflow: 'ellipsis',
-								whiteSpace: 'nowrap',
-								overflow: 'hidden'
-							}}
-						>
-							{/* {fullname} */}
-							<span
-								style={{
-									// textOverflow: 'ellipsis',
-									// display: 'block',
-									// whiteSpace: 'hidden',
-									// overflow: 'hidden',
-									// border: 'solid',
-									// height: '30px',
-									// width: '100%'
-									flexShrink: '0'
-								}}
-							>
-								{fullname}
-							</span>
-						</div>
 						<div
-							style={{
-								// display: 'flex',
-								// justifyContent: 'center',
-								// alignItems: 'center',
-								border: 'solid',
-								borderColor: 'blue',
-								// borderWidth: '1px',
-								backgroundColor: '#FFF7E0',
-								width: '14%',
-								height: '100%',
-
-								// display: 'flex',
-								// alignItems: 'center',
-								// justifyContent: 'center',
-								// alignText: 'center'
-								textOverflow: 'ellipsis',
-								whiteSpace: 'nowrap',
-								overflow: 'hidden'
-							}}
+							className={styles.cellOuterWrapper}
+							style={{width: CELL.id_width}}
 						>
-							{/* <div
-								style={{
-									textOverflow: 'ellipsis',
-									display: 'block',
-									whiteSpace: 'hidden',
-									overflow: 'hidden',
-									width: '100%'
-									// border: 'solid'
-								}}
-							>
-								{cust.customer_email}
-							</div> */}
-							<div
-								style={{
-									display: 'flex',
-									alignItems: 'center',
-									justifyContent: 'center',
-									width: '100%'
-								}}
-							>
-							<span
-								style={{
-									flexShrink: '0'
-								}}
-							>
-								{cust.customer_email}
-							</span>
+							<div className={styles.cellInnerWrapper}>
+								<span className={styles.cellContent}>
+									{cust.customer_uid}
+								</span>
 							</div>
 						</div>
-						{/* <div
-							style={{
-								// display: 'flex',
-								// justifyContent: 'center',
-								// alignItems: 'center',
-								border: 'solid',
-								borderColor: 'blue',
-								// borderWidth: '1px',
-								backgroundColor: '#FFF7E0',
-								width: '10%',
-								height: '100%',
-								display: 'flex',
-								alignItems: 'center',
-								justifyContent: 'center',
-								// alignText: 'center'
-							}}
-						>
-							[last order]
-						</div> */}
-						{/* <div
-							style={{
-								// display: 'flex',
-								// justifyContent: 'center',
-								// alignItems: 'center',
-								border: 'solid',
-								borderColor: 'blue',
-								// borderWidth: '1px',
-								backgroundColor: '#FFF7E0',
-								width: '10%',
-								height: '100%',
-								display: 'flex',
-								alignItems: 'center',
-								justifyContent: 'center',
-								// alignText: 'center'
-							}}
-						>
-							[customer since]
-						</div> */}
-						{/* <div
-							style={{
-								// display: 'flex',
-								// justifyContent: 'center',
-								// alignItems: 'center',
-								border: 'solid',
-								borderColor: 'blue',
-								// borderWidth: '1px',
-								backgroundColor: '#FFF7E0',
-								width: '16%',
-								height: '100%',
-								display: 'flex',
-								alignItems: 'center',
-								justifyContent: 'center',
-								alignText: 'center'
-							}}
-						>
-							{address}
-						</div> */}
-						{/* <div
-							style={{
-								// display: 'flex',
-								// justifyContent: 'center',
-								// alignItems: 'center',
-								border: 'solid',
-								borderColor: 'blue',
-								// borderWidth: '1px',
-								backgroundColor: '#FFF7E0',
-								width: '10%',
-								height: '100%',
-								display: 'flex',
-								alignItems: 'center',
-								justifyContent: 'center',
-								// alignText: 'center'
-							}}
-						>
-							[delivery zone]
-						</div> */}
-						{/* <div
-							style={{
-								// display: 'flex',
-								// justifyContent: 'center',
-								// alignItems: 'center',
-								border: 'solid',
-								borderColor: 'blue',
-								// borderWidth: '1px',
-								backgroundColor: '#FFF7E0',
-								width: '6%',
-								height: '100%',
-								display: 'flex',
-								alignItems: 'center',
-								justifyContent: 'center',
-								// alignText: 'center'
-							}}
-						>
-							{cust.customer_zip}
-						</div> */}
-						{/* <div
-							style={{
-								// display: 'flex',
-								// justifyContent: 'center',
-								// alignItems: 'center',
-								border: 'solid',
-								borderColor: 'blue',
-								// borderWidth: '1px',
-								backgroundColor: '#FFF7E0',
-								width: '10%',
-								height: '100%',
-								display: 'flex',
-								alignItems: 'center',
-								justifyContent: 'center',
-								// alignText: 'center'
-							}}
-						>
-							{cust.customer_phone_num}
-						</div> */}
-					</div>
-					<div
-						style={{
-							display: 'flex',
-							border: 'solid'
-						}}
-					>
+
 						<div
-							style={{
-								alignSelf: 'flex-start',
-								maxWidth: '100%',
-								overflow: 'hidden',
-								display: 'flex',
-								alignItems: 'center',
-								justifyContent: 'center',
-								boxSizing: 'border-box',
-								padding: '5px 10px',
-								border: '1px solid black',
-								borderRadius: '5px',
-								marginBottom: '10px',
-								backgroundColor: 'white',
-								height: '50px'
-							}}
+							className={styles.cellOuterWrapper}
+							style={{width: CELL.name_width}}
 						>
-							<span
-								style={{
-									whiteSpace: 'nowrap',
-									textOverflow: 'ellipsis',
-									overflow: 'hidden'
-								}}
-							>
-								Stuff
-							</span>
+							<div className={styles.cellInnerWrapper}>
+								<span className={styles.cellContent}>
+									{fullname}
+								</span>
+							</div>
 						</div>
-					</div>
-					<div
-						style={{
-							display: 'flex',
-							border: 'solid'
-						}}
-					>
+
 						<div
-							style={{
-								alignSelf: 'flex-start',
-								maxWidth: '100%',
-								overflow: 'hidden',
-								display: 'flex',
-								alignItems: 'center',
-								justifyContent: 'center',
-								boxSizing: 'border-box',
-								padding: '5px 10px',
-								border: '1px solid black',
-								borderRadius: '5px',
-								marginBottom: '10px',
-								backgroundColor: 'white',
-								height: '50px'
-							}}
+							className={styles.cellOuterWrapper}
+							style={{width: CELL.email_width}}
 						>
-							<span
-								style={{
-									whiteSpace: 'nowrap',
-									textOverflow: 'ellipsis',
-									overflow: 'hidden'
-								}}
-							>
-								Stuff2
-							</span>
+							<div className={styles.cellInnerWrapper}>
+								<span className={styles.cellContent}>
+									{cust.customer_email}
+								</span>
+							</div>
 						</div>
+
+						<div
+							className={styles.cellOuterWrapper}
+							style={{width: CELL.last_order_width}}
+						>
+							<div className={styles.cellInnerWrapper}>
+								<span className={styles.cellContent}>
+									[last order]
+								</span>
+							</div>
+						</div>
+
+						<div
+							className={styles.cellOuterWrapper}
+							style={{width: CELL.cust_since_width}}
+						>
+							<div className={styles.cellInnerWrapper}>
+								<span className={styles.cellContent}>
+									[customer since]
+								</span>
+							</div>
+						</div>
+
+						<div
+							className={styles.cellOuterWrapper}
+							style={{width: CELL.address_width}}
+						>
+							<div className={styles.cellInnerWrapper}>
+								<span className={styles.cellContent}>
+									{address}
+								</span>
+							</div>
+						</div>
+
+						<div
+							className={styles.cellOuterWrapper}
+							style={{width: CELL.zone_width}}
+						>
+							<div className={styles.cellInnerWrapper}>
+								<span className={styles.cellContent}>
+									[zone]
+								</span>
+							</div>
+						</div>
+
+						<div
+							className={styles.cellOuterWrapper}
+							style={{width: CELL.zip_width}}
+						>
+							<div className={styles.cellInnerWrapper}>
+								<span className={styles.cellContent}>
+									{cust.customer_zip}
+								</span>
+							</div>
+						</div>
+
+						<div
+							className={styles.cellOuterWrapper}
+							style={{width: CELL.phone_width}}
+						>
+							<div className={styles.cellInnerWrapper}>
+								<span className={styles.cellContent}>
+									{cust.customer_phone_num}
+								</span>
+							</div>
+						</div>
+
 					</div>
-					</>
 				);
 			}
 
@@ -735,6 +569,7 @@ function CustomerInfo() {
 					marginLeft: '2%',
 					width: '96%',
 					height: '100%',
+					// height: '300px',
 					// overflow: 'auto'
 					overflowY: 'scroll'
 				}}
@@ -1574,7 +1409,8 @@ function CustomerInfo() {
 							paddingRight: '15px'
 						}}
 					>
-						<div
+
+						{/* <div
 							style={{
 								border: 'solid',
 								width: '10%',
@@ -1586,8 +1422,19 @@ function CustomerInfo() {
 							}}
 						>
 							Customer ID
-						</div>
+						</div> */}
 						<div
+							className={styles.cellOuterWrapper}
+							style={{width: CELL.id_width}}
+						>
+							<div className={styles.cellInnerWrapper}>
+								<span className={styles.cellContent}>
+									Customer ID
+								</span>
+							</div>
+						</div>
+
+						{/* <div
 							style={{
 								border: 'solid',
 								width: '14%',
@@ -1598,8 +1445,19 @@ function CustomerInfo() {
 							}}
 						>
 							Name
-						</div>
+						</div> */}
 						<div
+							className={styles.cellOuterWrapper}
+							style={{width: CELL.name_width}}
+						>
+							<div className={styles.cellInnerWrapper}>
+								<span className={styles.cellContent}>
+									Name
+								</span>
+							</div>
+						</div>
+
+						{/* <div
 							style={{
 								border: 'solid',
 								width: '14%',
@@ -1610,8 +1468,19 @@ function CustomerInfo() {
 							}}
 						>
 							Email
-						</div>
+						</div> */}
 						<div
+							className={styles.cellOuterWrapper}
+							style={{width: CELL.email_width}}
+						>
+							<div className={styles.cellInnerWrapper}>
+								<span className={styles.cellContent}>
+									Email
+								</span>
+							</div>
+						</div>
+
+						{/* <div
 							style={{
 								border: 'solid',
 								width: '10%',
@@ -1622,8 +1491,19 @@ function CustomerInfo() {
 							}}
 						>
 							Last Order (Date)
-						</div>
+						</div> */}
 						<div
+							className={styles.cellOuterWrapper}
+							style={{width: CELL.last_order_width}}
+						>
+							<div className={styles.cellInnerWrapper}>
+								<span className={styles.cellContent}>
+									Last Order (Date)
+								</span>
+							</div>
+						</div>
+
+						{/* <div
 							style={{
 								border: 'solid',
 								width: '10%',
@@ -1634,8 +1514,19 @@ function CustomerInfo() {
 							}}
 						>
 							Customer Since
-						</div>
+						</div> */}
 						<div
+							className={styles.cellOuterWrapper}
+							style={{width: CELL.cust_since_width}}
+						>
+							<div className={styles.cellInnerWrapper}>
+								<span className={styles.cellContent}>
+									Customer Since
+								</span>
+							</div>
+						</div>
+
+						{/* <div
 							style={{
 								border: 'solid',
 								width: '16%',
@@ -1646,8 +1537,19 @@ function CustomerInfo() {
 							}}
 						>
 							Address
-						</div>
+						</div> */}
 						<div
+							className={styles.cellOuterWrapper}
+							style={{width: CELL.address_width}}
+						>
+							<div className={styles.cellInnerWrapper}>
+								<span className={styles.cellContent}>
+									Address
+								</span>
+							</div>
+						</div>
+
+						{/* <div
 							style={{
 								border: 'solid',
 								width: '10%',
@@ -1658,8 +1560,19 @@ function CustomerInfo() {
 							}}
 						>
 							Delivery Zone
-						</div>
+						</div> */}
 						<div
+							className={styles.cellOuterWrapper}
+							style={{width: CELL.zone_width}}
+						>
+							<div className={styles.cellInnerWrapper}>
+								<span className={styles.cellContent}>
+									Delivery Zone
+								</span>
+							</div>
+						</div>
+
+						{/* <div
 							style={{
 								border: 'solid',
 								width: '6%',
@@ -1670,8 +1583,19 @@ function CustomerInfo() {
 							}}
 						>
 							Zip Code
-						</div>
+						</div> */}
 						<div
+							className={styles.cellOuterWrapper}
+							style={{width: CELL.last_order_width}}
+						>
+							<div className={styles.cellInnerWrapper}>
+								<span className={styles.cellContent}>
+									Zip Code
+								</span>
+							</div>
+						</div>
+
+						{/* <div
 							style={{
 								border: 'solid',
 								width: '10%',
@@ -1682,21 +1606,32 @@ function CustomerInfo() {
 							}}
 						>
 							Phone Number
+						</div> */}
+						<div
+							className={styles.cellOuterWrapper}
+							style={{width: CELL.phone_width}}
+						>
+							<div className={styles.cellInnerWrapper}>
+								<span className={styles.cellContent}>
+									Phone Number
+								</span>
+							</div>
 						</div>
+
 					</div>
 
-					{/* <div
+					<div
 						style={{
-							// height: '540px',
-							height: '300px'
+							height: '540px',
+							// height: '300px'
 							// overflow: 'auto',
 							// border: 'dashed'
 						}}
 					>
 						{filterCustomers()}
-					</div> */}
+					</div>
 
-					<div
+					{/* <div
 						style={{
 							display: 'inline-flex',
 							width: '100%',
@@ -1778,7 +1713,7 @@ function CustomerInfo() {
 							</span>
 						</div>
 					</div>
-					</div>
+					</div> */}
 
 				</div>
 			) : (
