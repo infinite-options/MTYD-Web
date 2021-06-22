@@ -39,6 +39,8 @@ const initialState = {
     direction: "",
   },
   businessData: [],
+  mealData: [],
+  mealDates: [],
 };
 
 function reducer(state, action) {
@@ -117,6 +119,16 @@ function reducer(state, action) {
         ...state,
         businessData: action.payload,
       };
+    case "FETCH_MEALS":
+      return {
+        ...state,
+        mealData: action.payload,
+      };
+    case "FETCH_MEAL_DATES":
+      return {
+        ...state,
+        mealDates: action.payload,
+      };
     default:
       return state;
   }
@@ -161,10 +173,84 @@ function OrdersIngredients({ history, ...props }) {
     }
   }, [history]);
 
+  // Fetch Businesses
+  useEffect(() => {
+    axios
+      .get(`${API_URL}all_businesses`)
+      .then((response) => {
+        const businessesApi = response.data.result;
+        dispatch({ type: "FETCH_BUSINESSES", payload: businessesApi });
+      })
+      .catch((err) => {
+        if (err.response) {
+          // eslint-disable-next-line no-console
+          console.log(err.response);
+        }
+        // eslint-disable-next-line no-console
+        console.log(err);
+      });
+  }, []);
+
+  // Fetch Businesses
+  useEffect(() => {
+    axios
+      .get(`${API_URL}all_menu_dates`)
+      .then((response) => {
+        const datesApi = response.data.result;
+        dispatch({ type: "FETCH_MEAL_DATES", payload: datesApi });
+      })
+      .catch((err) => {
+        if (err.response) {
+          // eslint-disable-next-line no-console
+          console.log(err.response);
+        }
+        // eslint-disable-next-line no-console
+        console.log(err);
+      });
+  }, []);
+
+  // Fetch Meals
+  useEffect(() => {
+    axios
+      .get(`${API_URL}Meal_Detail/2021-06-21+00:00:00`)
+      .then((response) => {
+        const MealsApi = response.data.result.result;
+        dispatch({ type: "FETCH_MEALS", payload: MealsApi });
+      })
+      .catch((err) => {
+        if (err.response) {
+          // eslint-disable-next-line no-console
+          console.log(err.response);
+        }
+        // eslint-disable-next-line no-console
+        console.log(err);
+      });
+  }, []);
+
+  // Fetch Ingredients
+  useEffect(() => {
+    axios
+      .get(`${API_URL}ingredients_need`)
+      .then((response) => {
+        const ingredientsApi = response.data.result;
+        dispatch({ type: "FETCH_INGREDIENTS", payload: ingredientsApi });
+      })
+      .catch((err) => {
+        if (err.response) {
+          // eslint-disable-next-line no-console
+          console.log(err.response);
+        }
+        // eslint-disable-next-line no-console
+        console.log(err);
+      });
+  }, []);
+
   const orderDates = useMemo(() => {
-    const orderDates = state.ordersData.map(
-      (orderItem) => orderItem.d_menu_date
-    );
+    console.log("dates from state");
+    console.log(state.mealDates);
+    const orderDates = state.mealDates.map((menuDate) => menuDate.menu_date);
+    console.log("MealDates");
+    console.log(orderDates);
     const orderDatesUnique = orderDates.filter(
       (elt, index) => orderDates.indexOf(elt) === index
     );
@@ -240,8 +326,6 @@ function OrdersIngredients({ history, ...props }) {
   var currDay = now.substring(8, 10);
   var currYear = now.substring(11, 15);
 
-  // currDay = 22;
-
   // assign value to current month
   for (let i = 0, l = monthDict.length; i < l; i++) {
     if (currMonth === monthDict[i].key) {
@@ -296,7 +380,6 @@ function OrdersIngredients({ history, ...props }) {
     const curOrders = state.ordersData.filter(
       (order) => order.d_menu_date === date
     );
-    console.log(curOrders);
     return curOrders;
   };
 
@@ -304,7 +387,6 @@ function OrdersIngredients({ history, ...props }) {
     const curIngredients = state.ingredientsData.filter(
       (ingredient) => ingredient.d_menu_date === date
     );
-    console.log(curIngredients);
     return curIngredients;
   };
 
@@ -312,31 +394,10 @@ function OrdersIngredients({ history, ...props }) {
     const curCustomers = state.customersData.filter(
       (customer) => customer.d_menu_date === date
     );
-    console.log(curCustomers);
     return curCustomers;
   };
 
-  // Fetch Businesses
-
-  useEffect(() => {
-    axios
-      .get(`${API_URL}all_businesses`)
-      .then((response) => {
-        const businessesApi = response.data.result;
-        dispatch({ type: "FETCH_BUSINESSES", payload: businessesApi });
-      })
-      .catch((err) => {
-        if (err.response) {
-          // eslint-disable-next-line no-console
-          console.log(err.response);
-        }
-        // eslint-disable-next-line no-console
-        console.log(err);
-      });
-  }, []);
-
-  console.log(state.businessData);
-
+  ////// DEPRECATED API CALLS //////
   // Fetch orders
   useEffect(() => {
     axios
@@ -344,24 +405,6 @@ function OrdersIngredients({ history, ...props }) {
       .then((response) => {
         const ordersApi = response.data.result;
         dispatch({ type: "FETCH_ORDERS", payload: ordersApi });
-      })
-      .catch((err) => {
-        if (err.response) {
-          // eslint-disable-next-line no-console
-          console.log(err.response);
-        }
-        // eslint-disable-next-line no-console
-        console.log(err);
-      });
-  }, []);
-
-  // Fetch Ingredients
-  useEffect(() => {
-    axios
-      .get(`${API_URL}ingredients_need`)
-      .then((response) => {
-        const ingredientsApi = response.data.result;
-        dispatch({ type: "FETCH_INGREDIENTS", payload: ingredientsApi });
       })
       .catch((err) => {
         if (err.response) {
@@ -390,6 +433,8 @@ function OrdersIngredients({ history, ...props }) {
         console.log(err);
       });
   }, []);
+
+  ////// END DEPRECATED API CALLS //////
 
   const changeSortOrder = (field) => {
     const isAsc =
