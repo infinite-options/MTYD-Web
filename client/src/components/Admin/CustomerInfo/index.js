@@ -21,6 +21,8 @@ const FILTER_ID = 0;
 const FILTER_NAME = 1;
 const FILTER_ADDRESS = 2;
 
+const ERR_VAL = <>&nbsp;<strong style={{color: 'red'}}>[NULL]</strong></>;
+
 function CustomerInfo() {
 	const [ customersByName  , setCustomersByName  ] = useState(null);
 	const [ customersById	   , setCustomersById	   ] = useState(null);
@@ -224,6 +226,17 @@ function CustomerInfo() {
 
 	}, [subHistory, LPLP]);
 
+	const isInvalid = (val) => {
+		if(
+			val === null ||
+			val === '' ||
+			typeof(val) === 'undefined'
+		) {
+			return true;
+		}
+		return false;
+	}
+
 	const formatDate = (rawDate) => {
 
     let dateElements = rawDate.split(' ');
@@ -346,24 +359,48 @@ function CustomerInfo() {
 		console.log("initial customer selected!");
 	}
 
-	const filterCustomers = () => {
-
+	const makeSpacesNonbreaking = (str) => {
+		let splitStr = str.split(' ');
 	}
 
-	const showCustomerIDs = () => {
+	const filterCustomers = () => {
 		let sortedCustomerButtons = [];
 
-		// console.log("(SCI) filter by: ", activeSearchFilter);
-		console.log("(SCI) name filter: ", nameInput);
-		console.log("(SCI) address filter: ", addressInput);
-		console.log("(SCI) id filter: ", idInput);
-
-		// if(activeSearchFilter === ){}
+		console.log("(FC) name filter: ", nameInput);
+		console.log("(FC) address filter: ", addressInput);
+		console.log("(FC) id filter: ", idInput);
 
 		customersById.forEach((cust) => {
-			// console.log("customer: ", cust);
+			console.log("(FC) customer: ", cust);
 
-			if(cust.customer_uid.includes(idInput)) {
+			// Parse address filter
+			let address;
+			if(
+				isInvalid(cust.customer_address) || 
+				isInvalid(cust.customer_city)
+			){
+				address = '--';
+			} else {
+				address = cust.customer_address + ', ' + cust.customer_city + ', CA';
+			}
+
+			// Parse name filter
+			let fullname;
+			if(
+				isInvalid(cust.customer_first_name) || 
+				isInvalid(cust.customer_last_name)
+			){
+				fullname = '--';
+			} else {
+				fullname = cust.customer_first_name + ' ' + cust.customer_last_name;
+			}
+
+			// Only show customers that satisfy filter
+			if(
+				cust.customer_uid.includes(idInput.toUpperCase()) && 
+				address.toUpperCase().includes(addressInput.toUpperCase()) && 
+				fullname.toUpperCase().includes(nameInput.toUpperCase())
+			) {
 				console.log("NOT filtering by ID");
 
 				// let buttonColor = 'yellow';
@@ -377,31 +414,313 @@ function CustomerInfo() {
 				));
 
 				sortedCustomerButtons.push(
+					<>
 					<div
 						key={cust.customer_uid}
 						style={{
-							color: 'blue',
-							border: 'solid',
-							borderColor: 'red',
-							borderWidth: '1px',
-							backgroundColor: buttonColor,
+
+							display: 'flex',
+							justifyContent: 'center',
+							alignItems: 'center',
+							justifyContent: 'center',
+
 							position: 'relative',
-							// width: '120px',
-							width: '96%',
-							marginLeft: '2%',
-							marginRight: '2%',
-							height: '30px',
+
+							height: '50px',
 							zIndex: '30',
 							cursor: 'pointer'
 						}}
 						onClick={() => {
 							// console.log("(SCI) previous selected customer: ", selectedCustomer);
-							console.log("(SCI) clicked: ", cust.customer_uid);
+							console.log("(FC) clicked: ", cust.customer_uid);
 							setCurrentCustomer(cust);
 						}}
 					>
-						{cust.customer_uid}
+						{/* [{cust.customer_uid}] --- [{cust.customer_first_name} --- {cust.customer_last_name}] --- [{cust.customer_address} --- {cust.customer_city} --- {cust.customer_zip}] */}
+						<div
+							style={{
+								border: 'solid',
+								borderColor: 'blue',
+								backgroundColor: '#FFF7E0',
+								width: '10%',
+								minWidth: '110px',
+								height: '100%',
+							}}
+						>
+							{cust.customer_uid}
+						</div>
+						<div
+							style={{
+								// display: 'flex',
+								// justifyContent: 'center',
+								// alignItems: 'center',
+								// borderWidth: '1px',
+								// alignText: 'center'
+
+								border: 'solid',
+								borderColor: 'blue',
+								backgroundColor: '#FFF7E0',
+								width: '14%',
+								height: '100%',
+								// display: 'flex',
+								// alignItems: 'center',
+								// justifyContent: 'center',
+							
+								textOverflow: 'ellipsis',
+								whiteSpace: 'nowrap',
+								overflow: 'hidden'
+							}}
+						>
+							{/* {fullname} */}
+							<span
+								style={{
+									// textOverflow: 'ellipsis',
+									// display: 'block',
+									// whiteSpace: 'hidden',
+									// overflow: 'hidden',
+									// border: 'solid',
+									// height: '30px',
+									// width: '100%'
+									flexShrink: '0'
+								}}
+							>
+								{fullname}
+							</span>
+						</div>
+						<div
+							style={{
+								// display: 'flex',
+								// justifyContent: 'center',
+								// alignItems: 'center',
+								border: 'solid',
+								borderColor: 'blue',
+								// borderWidth: '1px',
+								backgroundColor: '#FFF7E0',
+								width: '14%',
+								height: '100%',
+
+								// display: 'flex',
+								// alignItems: 'center',
+								// justifyContent: 'center',
+								// alignText: 'center'
+								textOverflow: 'ellipsis',
+								whiteSpace: 'nowrap',
+								overflow: 'hidden'
+							}}
+						>
+							{/* <div
+								style={{
+									textOverflow: 'ellipsis',
+									display: 'block',
+									whiteSpace: 'hidden',
+									overflow: 'hidden',
+									width: '100%'
+									// border: 'solid'
+								}}
+							>
+								{cust.customer_email}
+							</div> */}
+							<div
+								style={{
+									display: 'flex',
+									alignItems: 'center',
+									justifyContent: 'center',
+									width: '100%'
+								}}
+							>
+							<span
+								style={{
+									flexShrink: '0'
+								}}
+							>
+								{cust.customer_email}
+							</span>
+							</div>
+						</div>
+						{/* <div
+							style={{
+								// display: 'flex',
+								// justifyContent: 'center',
+								// alignItems: 'center',
+								border: 'solid',
+								borderColor: 'blue',
+								// borderWidth: '1px',
+								backgroundColor: '#FFF7E0',
+								width: '10%',
+								height: '100%',
+								display: 'flex',
+								alignItems: 'center',
+								justifyContent: 'center',
+								// alignText: 'center'
+							}}
+						>
+							[last order]
+						</div> */}
+						{/* <div
+							style={{
+								// display: 'flex',
+								// justifyContent: 'center',
+								// alignItems: 'center',
+								border: 'solid',
+								borderColor: 'blue',
+								// borderWidth: '1px',
+								backgroundColor: '#FFF7E0',
+								width: '10%',
+								height: '100%',
+								display: 'flex',
+								alignItems: 'center',
+								justifyContent: 'center',
+								// alignText: 'center'
+							}}
+						>
+							[customer since]
+						</div> */}
+						{/* <div
+							style={{
+								// display: 'flex',
+								// justifyContent: 'center',
+								// alignItems: 'center',
+								border: 'solid',
+								borderColor: 'blue',
+								// borderWidth: '1px',
+								backgroundColor: '#FFF7E0',
+								width: '16%',
+								height: '100%',
+								display: 'flex',
+								alignItems: 'center',
+								justifyContent: 'center',
+								alignText: 'center'
+							}}
+						>
+							{address}
+						</div> */}
+						{/* <div
+							style={{
+								// display: 'flex',
+								// justifyContent: 'center',
+								// alignItems: 'center',
+								border: 'solid',
+								borderColor: 'blue',
+								// borderWidth: '1px',
+								backgroundColor: '#FFF7E0',
+								width: '10%',
+								height: '100%',
+								display: 'flex',
+								alignItems: 'center',
+								justifyContent: 'center',
+								// alignText: 'center'
+							}}
+						>
+							[delivery zone]
+						</div> */}
+						{/* <div
+							style={{
+								// display: 'flex',
+								// justifyContent: 'center',
+								// alignItems: 'center',
+								border: 'solid',
+								borderColor: 'blue',
+								// borderWidth: '1px',
+								backgroundColor: '#FFF7E0',
+								width: '6%',
+								height: '100%',
+								display: 'flex',
+								alignItems: 'center',
+								justifyContent: 'center',
+								// alignText: 'center'
+							}}
+						>
+							{cust.customer_zip}
+						</div> */}
+						{/* <div
+							style={{
+								// display: 'flex',
+								// justifyContent: 'center',
+								// alignItems: 'center',
+								border: 'solid',
+								borderColor: 'blue',
+								// borderWidth: '1px',
+								backgroundColor: '#FFF7E0',
+								width: '10%',
+								height: '100%',
+								display: 'flex',
+								alignItems: 'center',
+								justifyContent: 'center',
+								// alignText: 'center'
+							}}
+						>
+							{cust.customer_phone_num}
+						</div> */}
 					</div>
+					<div
+						style={{
+							display: 'flex',
+							border: 'solid'
+						}}
+					>
+						<div
+							style={{
+								alignSelf: 'flex-start',
+								maxWidth: '100%',
+								overflow: 'hidden',
+								display: 'flex',
+								alignItems: 'center',
+								justifyContent: 'center',
+								boxSizing: 'border-box',
+								padding: '5px 10px',
+								border: '1px solid black',
+								borderRadius: '5px',
+								marginBottom: '10px',
+								backgroundColor: 'white',
+								height: '50px'
+							}}
+						>
+							<span
+								style={{
+									whiteSpace: 'nowrap',
+									textOverflow: 'ellipsis',
+									overflow: 'hidden'
+								}}
+							>
+								Stuff
+							</span>
+						</div>
+					</div>
+					<div
+						style={{
+							display: 'flex',
+							border: 'solid'
+						}}
+					>
+						<div
+							style={{
+								alignSelf: 'flex-start',
+								maxWidth: '100%',
+								overflow: 'hidden',
+								display: 'flex',
+								alignItems: 'center',
+								justifyContent: 'center',
+								boxSizing: 'border-box',
+								padding: '5px 10px',
+								border: '1px solid black',
+								borderRadius: '5px',
+								marginBottom: '10px',
+								backgroundColor: 'white',
+								height: '50px'
+							}}
+						>
+							<span
+								style={{
+									whiteSpace: 'nowrap',
+									textOverflow: 'ellipsis',
+									overflow: 'hidden'
+								}}
+							>
+								Stuff2
+							</span>
+						</div>
+					</div>
+					</>
 				);
 			}
 
@@ -411,8 +730,13 @@ function CustomerInfo() {
 			<div
 				style={{
 					zIndex: '20',
-					// border: 'dashed',
-					marginBottom: '30px'
+					border: 'solid',
+					marginBottom: '30px',
+					marginLeft: '2%',
+					width: '96%',
+					height: '100%',
+					// overflow: 'auto'
+					overflowY: 'scroll'
 				}}
 			>
 				{sortedCustomerButtons}
@@ -524,6 +848,20 @@ function CustomerInfo() {
 					Loading Subscriptions...
 				</div>
 			);
+		}
+	}
+
+	const countActiveSubs = () => {
+		let count = 0;
+		if(subscriptionsList !== null) {
+			subscriptionsList.forEach((sub) => {
+				if(sub.final_selection !== 'CANCELLED') {
+					count++;
+				}
+			});
+			return count;
+		} else {
+			return 0;
 		}
 	}
 
@@ -877,10 +1215,21 @@ function CustomerInfo() {
 											marginRight: '15px'
 										}}
 									>
-										{
+										{/* {
 											selectedCustomer.customer_first_name + " " + 
 											selectedCustomer.customer_last_name
-										}
+										} */}
+										{isInvalid(selectedCustomer.customer_first_name) ? (
+											ERR_VAL
+										) : (
+											selectedCustomer.customer_first_name
+										)}
+										&nbsp;
+										{isInvalid(selectedCustomer.customer_last_name) ? (
+											ERR_VAL
+										) : (
+											selectedCustomer.customer_last_name
+										)}
 									</div>
 
 									<div
@@ -1017,7 +1366,7 @@ function CustomerInfo() {
 											// width: '25%'
 										}}
 									>
-										3
+										{countActiveSubs()}
 									</div>
 
 									<div 
@@ -1050,7 +1399,19 @@ function CustomerInfo() {
 											// width: '25%'
 										}}
 									>
-										6123 Corte De La Reina
+										{/* {(
+											selectedCustomer.customer_address === null ||
+											selectedCustomer.customer_address === ''
+										) ? (
+											'[NULL]'
+										) : (
+											selectedCustomer.customer_address
+										)} */}
+										{isInvalid(selectedCustomer.customer_address) ? (
+											ERR_VAL
+										) : (
+											selectedCustomer.customer_address
+										)}
 									</div>
 									<div 
 										style={{
@@ -1065,7 +1426,25 @@ function CustomerInfo() {
 											// width: '25%'
 										}}
 									>
-										San Jose, CA, 91109
+										{/* {(
+											selectedCustomer.customer_city === null ||
+											selectedCustomer.customer_city === ''
+										) ? (
+											<>&nbsp;<strong style={{color: 'red'}}>ERROR</strong></>
+										) : (
+											selectedCustomer.customer_city
+										)} */}
+										{isInvalid(selectedCustomer.customer_city) ? (
+											ERR_VAL
+										) : (
+											selectedCustomer.customer_city
+										)}
+										{", CA, "}
+										{isInvalid(selectedCustomer.customer_zip) ? (
+											ERR_VAL
+										) : (
+											selectedCustomer.customer_zip
+										)}
 									</div>
 
 									<div 
@@ -1098,7 +1477,7 @@ function CustomerInfo() {
 											// width: '25%'
 										}}
 									>
-										pmarathay@gmail.com
+										{selectedCustomer.customer_email}
 									</div>
 									<div 
 										style={{
@@ -1113,7 +1492,8 @@ function CustomerInfo() {
 											// width: '25%'
 										}}
 									>
-										(686) 908-9080
+										{/* (686) 908-9080 */}
+										{selectedCustomer.customer_phone_num}
 									</div>
 										</>
 									) : (
@@ -1129,10 +1509,10 @@ function CustomerInfo() {
 				<div
 					type='text'
 					style={{
-						border: 'solid',
-						borderWidth: '1px',
+						// border: 'solid',
+						// borderWidth: '1px',
 						borderRadius: '15px',
-						marginTop: '5px',
+						marginTop: '20px',
 						marginLeft: '2%',
 						marginRight: '2%',
 						zIndex: '10',
@@ -1140,20 +1520,23 @@ function CustomerInfo() {
 						position: 'absolute',
 						backgroundColor: '#FFF7E0',
 						width: '96%',
+						height: '700px'
 					}}
 				>
 					<div
 						style={{
-							border: 'dashed',
-							height: '100px',
+							// border: 'dashed',
+							height: '60px',
 							width: '100%',
 							display: 'flex'
 						}}
 					>
+						Search by
 						<input
 							type='text'
 							placeholder='Name'
 							className={styles.customerFilter}
+							style={{marginLeft: '2%'}}
 							value={nameInput}
 							onChange={e => {
 								// setSearchFilter(FILTER_NAME);
@@ -1180,7 +1563,223 @@ function CustomerInfo() {
 							}}
 						/>
 					</div>
-					{showCustomerIDs()}
+
+					<div
+						style={{
+							display: 'flex',
+							border: 'dashed',
+							height: '60px',
+							marginLeft: '2%',
+							marginRight: '2%',
+							paddingRight: '15px'
+						}}
+					>
+						<div
+							style={{
+								border: 'solid',
+								width: '10%',
+								height: '100%',
+								minWidth: '110px',
+								display: 'flex',
+								justifyContent: 'center',
+								alignItems: 'center',
+							}}
+						>
+							Customer ID
+						</div>
+						<div
+							style={{
+								border: 'solid',
+								width: '14%',
+								height: '100%',
+								display: 'flex',
+								justifyContent: 'center',
+								alignItems: 'center',
+							}}
+						>
+							Name
+						</div>
+						<div
+							style={{
+								border: 'solid',
+								width: '14%',
+								height: '100%',
+								display: 'flex',
+								justifyContent: 'center',
+								alignItems: 'center',
+							}}
+						>
+							Email
+						</div>
+						<div
+							style={{
+								border: 'solid',
+								width: '10%',
+								height: '100%',
+								display: 'flex',
+								justifyContent: 'center',
+								alignItems: 'center',
+							}}
+						>
+							Last Order (Date)
+						</div>
+						<div
+							style={{
+								border: 'solid',
+								width: '10%',
+								height: '100%',
+								display: 'flex',
+								justifyContent: 'center',
+								alignItems: 'center',
+							}}
+						>
+							Customer Since
+						</div>
+						<div
+							style={{
+								border: 'solid',
+								width: '16%',
+								height: '100%',
+								display: 'flex',
+								justifyContent: 'center',
+								alignItems: 'center',
+							}}
+						>
+							Address
+						</div>
+						<div
+							style={{
+								border: 'solid',
+								width: '10%',
+								height: '100%',
+								display: 'flex',
+								justifyContent: 'center',
+								alignItems: 'center',
+							}}
+						>
+							Delivery Zone
+						</div>
+						<div
+							style={{
+								border: 'solid',
+								width: '6%',
+								height: '100%',
+								display: 'flex',
+								justifyContent: 'center',
+								alignItems: 'center',
+							}}
+						>
+							Zip Code
+						</div>
+						<div
+							style={{
+								border: 'solid',
+								width: '10%',
+								height: '100%',
+								display: 'flex',
+								justifyContent: 'center',
+								alignItems: 'center',
+							}}
+						>
+							Phone Number
+						</div>
+					</div>
+
+					{/* <div
+						style={{
+							// height: '540px',
+							height: '300px'
+							// overflow: 'auto',
+							// border: 'dashed'
+						}}
+					>
+						{filterCustomers()}
+					</div> */}
+
+					<div
+						style={{
+							display: 'inline-flex',
+							width: '100%',
+							border: 'inset'
+						}}
+					>
+					<div
+						style={{
+							display: 'flex',
+							alignItems: 'center',
+							justifyContent: 'center',
+							border: 'dashed',
+							width: '20%'
+						}}
+					>
+						<div
+							style={{
+								alignSelf: 'flex-start',
+								// maxWidth: '100%',
+								overflow: 'hidden',
+								display: 'flex',
+								alignItems: 'center',
+								justifyContent: 'center',
+								boxSizing: 'border-box',
+								padding: '5px 10px',
+								border: '1px solid black',
+								borderRadius: '5px',
+								// marginBottom: '10px',
+								backgroundColor: 'white',
+								height: '50px'
+							}}
+						>
+							<span
+								style={{
+									whiteSpace: 'nowrap',
+									textOverflow: 'ellipsis',
+									overflow: 'hidden',
+									// width: '500px'
+								}}
+							>
+								Stuff 1
+							</span>
+						</div>
+					</div>
+					<div
+						style={{
+							display: 'flex',
+							alignItems: 'center',
+							justifyContent: 'center',
+							border: 'dashed',
+							width: '20%'
+						}}
+					>
+						<div
+							style={{
+								alignSelf: 'flex-start',
+								// maxWidth: '100%',
+								overflow: 'hidden',
+								display: 'flex',
+								alignItems: 'center',
+								justifyContent: 'center',
+								boxSizing: 'border-box',
+								padding: '5px 10px',
+								border: '1px solid black',
+								borderRadius: '5px',
+								// marginBottom: '10px',
+								backgroundColor: 'white',
+								height: '50px'
+							}}
+						>
+							<span
+								style={{
+									whiteSpace: 'nowrap',
+									textOverflow: 'ellipsis',
+									overflow: 'hidden'
+								}}
+							>
+								Stuff 2
+							</span>
+						</div>
+					</div>
+					</div>
+
 				</div>
 			) : (
 				null

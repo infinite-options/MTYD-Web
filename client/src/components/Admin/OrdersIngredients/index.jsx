@@ -313,6 +313,7 @@ function OrdersIngredients({history, ...props}) {
   useEffect(() => {
     axios.get(`${API_URL}orders_by_customers`)
          .then((response) => {
+           console.log("orders_by_customers: ", response);
            const customersApi = response.data.result;
            dispatch({ type: 'FETCH_CUSTOMERS', payload: customersApi})
          })
