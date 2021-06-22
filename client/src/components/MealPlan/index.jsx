@@ -82,18 +82,6 @@ const MealPlan = props => {
             console.log("(sh) res: ", res.data.result);
 
             setSubHistory(res.data.result);
-          })
-          .catch((err) => {
-            if(err.response) {
-              console.log(err.response);
-            }
-            console.log(err);
-          });
-
-        axios.get(API_URL + 'predict_next_billing_date/' + customerId)
-          .then((res) => {
-            console.log("(pnbd) res: ", res.data.result);
-
             setBillingInfo(res.data.result);
           })
           .catch((err) => {
@@ -102,6 +90,19 @@ const MealPlan = props => {
             }
             console.log(err);
           });
+
+        // axios.get(API_URL + 'predict_next_billing_date/' + customerId)
+        //   .then((res) => {
+        //     console.log("(pnbd) res: ", res.data.result);
+
+        //     setBillingInfo(res.data.result);
+        //   })
+        //   .catch((err) => {
+        //     if(err.response) {
+        //       console.log(err.response);
+        //     }
+        //     console.log(err);
+        //   });
         
       } catch (err) {
         console.log(err);
