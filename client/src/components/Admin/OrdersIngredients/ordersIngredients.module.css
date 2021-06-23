@@ -108,3 +108,8 @@
 .dateRight:before {
   content: url("./static/dateRightArrow.svg");
 }
+
+.mealImg {
+  height: 40px;
+  width: 40px;
+}

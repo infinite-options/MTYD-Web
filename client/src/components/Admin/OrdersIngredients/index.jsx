@@ -39,7 +39,6 @@ const initialState = {
     direction: "",
   },
   businessData: [],
-  mealData: [],
   mealDates: [],
 };
 
@@ -118,11 +117,6 @@ function reducer(state, action) {
       return {
         ...state,
         businessData: action.payload,
-      };
-    case "FETCH_MEALS":
-      return {
-        ...state,
-        mealData: action.payload,
       };
     case "FETCH_MEAL_DATES":
       return {
@@ -214,8 +208,8 @@ function OrdersIngredients({ history, ...props }) {
     axios
       .get(`${API_URL}Meal_Detail/2021-06-21+00:00:00`)
       .then((response) => {
-        const MealsApi = response.data.result.result;
-        dispatch({ type: "FETCH_MEALS", payload: MealsApi });
+        const ordersApi = response.data.result.result;
+        dispatch({ type: "FETCH_ORDERS", payload: ordersApi });
       })
       .catch((err) => {
         if (err.response) {
@@ -376,6 +370,7 @@ function OrdersIngredients({ history, ...props }) {
   var closestToCurrDay = futureDaysList[0];
   var closestToCurrDayVal = futureDaysListValues[0];
 
+  // DEPRECATED
   const getOrderData = (date) => {
     const curOrders = state.ordersData.filter(
       (order) => order.d_menu_date === date
@@ -390,6 +385,7 @@ function OrdersIngredients({ history, ...props }) {
     return curIngredients;
   };
 
+  // DEPCRECATED
   const getCustomerData = (date) => {
     const curCustomers = state.customersData.filter(
       (customer) => customer.d_menu_date === date
@@ -543,6 +539,16 @@ function OrdersIngredients({ history, ...props }) {
     state.sortedCustomersData = sortedCustomers;
   }
 
+  const filterBusiness = (event) => {
+    console.log("New Business: " + event.target.value);
+  };
+
+  const handleDateButtonClick = (event) => {
+    const newDate = event.target.value;
+    console.log("New Date: " + newDate);
+    changeDate(newDate);
+  };
+
   return (
     <div className={styles.root}>
       {/* <Breadcrumb>
@@ -556,8 +562,8 @@ function OrdersIngredients({ history, ...props }) {
             <div style={{ marginLeft: "10px" }}>
               <form>
                 <div className={styles.dropdownArrow}>
-                  <select className={styles.dropdown}>
-                    <option>All Orders</option>
+                  <select className={styles.dropdown} onChange={filterBusiness}>
+                    <option key={0}>All Orders</option>
                     {state.businessData.map((business) => {
                       if (business) {
                         return (
@@ -597,9 +603,7 @@ function OrdersIngredients({ history, ...props }) {
                     ].join(" ")}
                     key={date.value}
                     value={date.value}
-                    onClick={(event) => {
-                      changeDate(event.target.value);
-                    }}
+                    onClick={handleDateButtonClick}
                   >
                     {dayName} <br /> {day}
                   </button>
@@ -648,13 +652,58 @@ function OrdersIngredients({ history, ...props }) {
           </Col>
         </Row>
         <Row className={styles.row2}>
-          <Col className={styles.section} style={{ marginRight: 10 }}>
-            Upcoming Meal Orders
+          <Col xs={5} className={styles.section} style={{ marginRight: 10 }}>
+            Upcoming Meal Orders And Revenue
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Qty.</TableCell>
+                  <TableCell>Meal Orders</TableCell>
+                  <TableCell>Meal Pictures</TableCell>
+                  <TableCell>Meal Cost</TableCell>
+                  <TableCell>Total Cost</TableCell>
+                  <TableCell>Additional Revenue</TableCell>
+                </TableRow>
+              </TableHead>
+            </Table>
           </Col>
-          <Col className={styles.section} style={{ marginRight: 10 }}>
-            Upcoming Revenue
+          <Col xs={4} className={styles.section} style={{ marginRight: 10 }}>
+            Revenue
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Restaurant Name</TableCell>
+                  <TableCell>Total Cost</TableCell>
+                  <TableCell>Additional Revenue</TableCell>
+                  <TableCell>Total Revenue</TableCell>
+                  <TableCell>M4Me Profits</TableCell>
+                </TableRow>
+              </TableHead>
+            </Table>
           </Col>
-          <Col className={styles.section}>Ingredients</Col>
+          <Col className={styles.section}>
+            Ingredients
+            <Table>
+              <TableHead>
+                <TableCell>Ingredient Name</TableCell>
+                <TableCell>Quantity</TableCell>
+                <TableCell>Unit</TableCell>
+              </TableHead>
+              <TableBody>
+                {getIngredientsData("2021-06-23 00-00-00").map((ingredient) => {
+                  if (ingredient.ingredient_desc) {
+                    return (
+                      <TableRow>
+                        <TableCell>{ingredient.ingredient_desc}</TableCell>
+                        <TableCell>{ingredient.qty_needed}</TableCell>
+                        <TableCell>{ingredient.units}</TableCell>
+                      </TableRow>
+                    );
+                  }
+                })}
+              </TableBody>
+            </Table>
+          </Col>
         </Row>
 
         {/* <Row>
