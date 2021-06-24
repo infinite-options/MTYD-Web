@@ -11,6 +11,7 @@
   display: flex;
   text-align: center;
   justify-content: center;
+  padding-right: 20px;
 }
 .navLink2 {
   color: white;
@@ -25,6 +26,7 @@
   display: flex;
   text-align: center;
   justify-content: center;
+  padding-right: 20px;
 }
 .navLink3 {
   color: white;
@@ -39,6 +41,7 @@
   display: flex;
   text-align: center;
   justify-content: center;
+  padding-right: 20px;
 }
 .navLink4 {
   color: white;
@@ -53,6 +56,7 @@
   display: flex;
   text-align: center;
   justify-content: center;
+  padding-right: 20px;
 }
 .navLink5 {
   color: white;
@@ -67,4 +71,26 @@
   display: flex;
   text-align: center;
   justify-content: center;
+  padding-right: 20px;
+}
+
+.navLinkDD {
+  color: white;
+  padding-left: 30px;
+  font-size: 26px;
+  /* font-weight: 600; */
+  /* style ={{
+    fontSize:"26px",
+    height:"20px",
+    color:'white'
+  }} */
+}
+
+.dropdownLink {
+  /* border: dashed; */
+  height: 40px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  /* color: white; */
 }

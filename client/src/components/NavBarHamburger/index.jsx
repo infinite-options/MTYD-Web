@@ -1,6 +1,6 @@
 import { Component } from 'react'
 import Menu from './menu'
-import hamburger from './hamburger.png'
+import hamburger from '../../images/hamburger.png'
 
 export class NavMenu extends Component {
 

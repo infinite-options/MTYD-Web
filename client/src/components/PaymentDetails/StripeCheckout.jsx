@@ -216,6 +216,18 @@ const StripeCheckout = (props) => {
 
               } else {
 
+                console.log("retrieving info for id: ", result.paymentIntent.id);
+
+                // console.log("stripe: ", stripe);
+                // console.log("stripe.charges: ", stripe.charges);
+                // console.log("stripe.paymentIntents: ", stripe.paymentIntents);
+
+                // const charge = stripe.paymentIntents.retrieve(
+                //   result.paymentIntent.id
+                // );
+
+                // console.log("retrieve charge result: ", charge);
+
                 const items = [{
                   qty: props.selectedPlan.num_deliveries.toString(),
                   name: props.selectedPlan.item_name,
