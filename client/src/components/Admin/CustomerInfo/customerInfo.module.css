@@ -126,6 +126,9 @@
 .mealButtonHeader {
   height: 50px;
   border-bottom: 2px solid #ffba00;
+  /* border: dashed; */
+  margin-right: 15px;
+  text-align: center;
 }
 
 .mealButtonEdit {
@@ -157,13 +160,13 @@
   height: 100%;
   float: left;
   padding-top: 8px;
+  /* padding: 0 0 0 0; */
   text-overflow: ellipsis;
   display: block;
   white-space: nowrap;
   overflow: hidden;
   /* border: solid; */
 }
-
 .mealButtonSection2 {
   width: 18%;
   height: 100%;
@@ -175,7 +178,6 @@
   overflow: hidden;
   /* border: solid; */
 }
-
 .mealButtonSection3 {
   width: 18%;
   height: 100%;
@@ -190,52 +192,127 @@
 }
 
 .orangeHeaderCycle {
-  /* border-top: solid; */
   display: flex;
-  /* flex-direction: column; */
   text-align: center;
   justify-content: center;
   align-items: center;
   color: #f26522;
   font-size: 14px;
   font-weight: 600;
-  /* padding-top: 4px;
-  padding-left: 4px; */
   width: 9%;
   height: 40px;
-  /* text-overflow: ellipsis;
-  display: block;
-  white-space: nowrap;
-  overflow: hidden; */
-  /* border: solid; */
   border-width: 1px;
   height: 70px;
 }
 
 .orangeHeaderSection {
-  /* border-top: solid; */
   display: flex;
-  /* flex-direction: column; */
   text-align: center;
   justify-content: center;
   align-items: center;
   color: #f26522;
   font-size: 14px;
   font-weight: 600;
-  /* padding-top: 4px;
-  padding-left: 4px; */
   width: 7%;
   height: 40px;
-  /* text-overflow: ellipsis;
-  display: block;
-  white-space: nowrap;
-  overflow: hidden; */
-  /* border: solid; */
   border-width: 1px;
   height: 70px;
+  /* border: solid; */
+}
 
-  /* resize: horizontal;
-  overflow: auto; */
+.planCellOuterWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* border: dashed; */
+  width: 7%;
+  height: 70px;
+  /* width: 10%; */
+}
+.planCellOuterWrapper2 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* border: inset; */
+  width: 9%;
+  height: 70px;
+  /* width: 10%; */
+}
+.planCellInnerWrapper {
+  align-self: flex-start;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  /* top right bottom left */
+  padding: 5px 5px;    
+  /* border: solid;
+  border-color: red; */
+  /* border: 1px solid black;
+  border-radius: 5px;
+  background-color: white; */
+  height: 100%;
+}
+/* .cellContent {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+} */
+/* .orangeCellContent {
+  color: #f26522;
+  font-size: 14px;
+  font-weight: 600;
+  height: 100%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+} */
+.orangeCellContent {
+  text-align: center;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  color: #f26522;
+  font-size: 14px;
+  font-weight: 600;
+  width: 100%;
+  border-width: 1px;
+}
+
+.histCellOuterWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* border: dashed; */
+  border-top: solid;
+  border-color: #f26522;
+  border-width: 1px;
+  width: 7%;
+  height: 70px;
+}
+
+.histCellInnerWrapper {
+  align-self: flex-start;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 5px 5px;    
+  height: 100%;
+}
+.historyCellContent {
+  text-align: center;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  font-size: 14px;
+  font-weight: 600;
+  /* border: solid; */
+  /* border-top: solid;
+  border-color: #f26522;
+  border-width: 1px; */
+  /* height: 70px; */
+  width: 100%;
 }
 
 .historySection {
@@ -250,9 +327,22 @@
   border-top: solid;
   border-color: #f26522;
   border-width: 1px;
-  /* border: solid; */
   height: 70px;
 }
+/* .historySection {
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 600;
+  width: 7%;
+  height: 40px;
+  border-top: solid;
+  border-color: #f26522;
+  border-width: 1px;
+  height: 70px;
+} */
 /* .historySection {
   display: flex;
   text-align: center;
@@ -432,6 +522,28 @@
   cursor: pointer;
 }
 
+.historyArrowUp {
+  /* background-image: url('./static/orange_arrow_up.png'); */
+  background-image: url('../../../images/orange_arrow_up.png');
+  background-size: 100%;
+  width: 12px;
+  height: 11px;
+  min-width: 12px;
+  min-height: 11px;
+  cursor: pointer;
+}
+
+.historyArrowDown {
+  /* background-image: url('./static/orange_arrow_down.png'); */
+  background-image: url('../../../images/orange_arrow_down.png');
+  background-size: 100%;
+  width: 12px;
+  height: 11px;
+  min-width: 12px;
+  min-height: 11px;
+  cursor: pointer;
+}
+
 .filterRow {
   display: flex;
   justify-content: center;
@@ -442,7 +554,7 @@
   z-index: 30;
   cursor: pointer;
   border: solid;
-  border-width: 1px;
+  border-width: 2px;
   border-color: #FFF7E0;
   border-radius: 10px;
 }
@@ -457,9 +569,10 @@
   cursor: pointer;
   /* font-weight: bold; */
   border: solid;
-  border-width: 1px;
+  border-width: 2px;
   /* border-radius: 10px; */
-  border-color: #F8BB17;
+  /* border-color: #F8BB17; */
+  border-color: #f26522;
 }
 
 .cellOuterWrapper {
@@ -491,7 +604,9 @@
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
-  padding: 5px 10px;
+  padding: 5px 5px;
+  /* border: solid;
+  border-color: red; */
   /* border: 1px solid black;
   border-radius: 5px;
   background-color: white; */

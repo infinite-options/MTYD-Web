@@ -1252,14 +1252,26 @@ function CustomerInfo() {
 							display: 'flex'
 						}}
 					>
-						<div className={styles.historyCycles}>
+
+						{/* <div className={styles.historyCycles}>
 							Billing Date
-						</div>
+						</div> */}
+            <div className={styles.histCellOuterWrapper}>
+              <div className={styles.histCellInnerWrapper}>
+                <span 
+                  className={styles.historyCellContent}
+                  style={{color: '#f26522'}}
+                >
+                  Billing Date
+                </span>
+              </div>
+            </div>
+
 						<div className={styles.arrowCell}>
 							<div
 								className={sel.show_dropdown
-									? styles.orangeArrowUp
-									: styles.orangeArrowDown}
+									? styles.historyArrowUp
+									: styles.historyArrowDown}
 								onClick={() => {
 									let uniquePlanCopy = [...uniquePlans];
 
@@ -1286,56 +1298,144 @@ function CustomerInfo() {
 								}}
 							/>
 						</div>
-						<div 
-							className={styles.historySection}
-						>
+
+						{/* <div className={styles.historySection}>
 							{sel.payment_id}
-						</div>
-						<div className={styles.historySection}>
-							{/* {sel.payment_info.payment_time_stamp} */}
+						</div> */}
+            <div className={styles.histCellOuterWrapper}>
+              <div className={styles.histCellInnerWrapper}>
+                <span className={styles.historyCellContent}>
+                  {sel.payment_id}
+                </span>
+              </div>
+            </div>
+
+						{/* <div className={styles.historySection}>
               {sel.deliveries[0].payment_time_stamp}
-						</div>
-						<div className={styles.historySection}>
-							{/* {sel.payment_info.payment_type} */}
+						</div> */}
+            <div className={styles.histCellOuterWrapper}>
+              <div className={styles.histCellInnerWrapper}>
+                <span className={styles.historyCellContent}>
+                  {sel.deliveries[0].payment_time_stamp}
+                </span>
+              </div>
+            </div>
+
+						{/* <div className={styles.historySection}>
               {sel.deliveries[0].payment_type}
-						</div>
-						<div className={styles.historySection}>
+						</div> */}
+            <div className={styles.histCellOuterWrapper}>
+              <div className={styles.histCellInnerWrapper}>
+                <span className={styles.historyCellContent}>
+                  {/* {sel.deliveries[0].payment_type} */}
+                  --
+                </span>
+              </div>
+            </div>
+
+						{/* <div className={styles.historySection}>
 							--
-						</div>
-						<div className={styles.historySection}>
-							{/* ${sel.payment_info.subtotal.toFixed(2)} */}
+						</div> */}
+            <div className={styles.histCellOuterWrapper}>
+              <div className={styles.histCellInnerWrapper}>
+                <span className={styles.historyCellContent}>
+                  --
+                </span>
+              </div>
+            </div>
+
+						{/* <div className={styles.historySection}>
               ${sel.deliveries[0].subtotal.toFixed(2)}
-						</div>
-						<div className={styles.historySection}>
-							{/* ${sel.payment_info.amount_discount.toFixed(2)} */}
+						</div> */}
+            <div className={styles.histCellOuterWrapper}>
+              <div className={styles.histCellInnerWrapper}>
+                <span className={styles.historyCellContent}>
+                  ${sel.deliveries[0].subtotal.toFixed(2)}
+                </span>
+              </div>
+            </div>
+
+						{/* <div className={styles.historySection}>
               ${sel.deliveries[0].amount_discount.toFixed(2)}
-						</div>
-						<div className={styles.historySection}>
+						</div> */}
+            <div className={styles.histCellOuterWrapper}>
+              <div className={styles.histCellInnerWrapper}>
+                <span className={styles.historyCellContent}>
+                  ${sel.deliveries[0].amount_discount.toFixed(2)}
+                </span>
+              </div>
+            </div>
+
+						{/* <div className={styles.historySection}>
 							${sel.deliveries[0].service_fee.toFixed(2)}
-						</div>
-						<div className={styles.historySection}>
+						</div> */}
+            <div className={styles.histCellOuterWrapper}>
+              <div className={styles.histCellInnerWrapper}>
+                <span className={styles.historyCellContent}>
+                  ${sel.deliveries[0].service_fee.toFixed(2)}
+                </span>
+              </div>
+            </div>
+
+						{/* <div className={styles.historySection}>
 							${sel.deliveries[0].delivery_fee.toFixed(2)}
-						</div>
-						<div className={styles.historySection}>
+						</div> */}
+            <div className={styles.histCellOuterWrapper}>
+              <div className={styles.histCellInnerWrapper}>
+                <span className={styles.historyCellContent}>
+                  ${sel.deliveries[0].delivery_fee.toFixed(2)}
+                </span>
+              </div>
+            </div>
+
+						{/* <div className={styles.historySection}>
 							${sel.deliveries[0].driver_tip.toFixed(2)}
-						</div>
-						<div className={styles.historySection}>
+						</div> */}
+            <div className={styles.histCellOuterWrapper}>
+              <div className={styles.histCellInnerWrapper}>
+                <span className={styles.historyCellContent}>
+                  ${sel.deliveries[0].driver_tip.toFixed(2)}
+                </span>
+              </div>
+            </div>
+
+						{/* <div className={styles.historySection}>
 							${sel.deliveries[0].taxes.toFixed(2)}
-						</div>
-						<div className={styles.historySection}>
-							{/* ${sel.payment_info.ambassador_code.toFixed(2)} */}
-						</div>
-						<div className={styles.historySection}>
-							{/* ${sel.payment_info.amount_paid.toFixed(2)} */}
-						</div>
-						<div className={styles.historySection}>
-							{/* ${sel.payment_info.amount_due.toFixed(2)} */}
-						</div>
+						</div> */}
+            <div className={styles.histCellOuterWrapper}>
+              <div className={styles.histCellInnerWrapper}>
+                <span className={styles.historyCellContent}>
+                  ${sel.deliveries[0].taxes.toFixed(2)}
+                </span>
+              </div>
+            </div>
+
+            <div className={styles.histCellOuterWrapper}>
+              <div className={styles.histCellInnerWrapper}>
+                <span className={styles.historyCellContent}>
+                  ${sel.deliveries[0].ambassador_code.toFixed(2)}
+                </span>
+              </div>
+            </div>
+
+            <div className={styles.histCellOuterWrapper}>
+              <div className={styles.histCellInnerWrapper}>
+                <span className={styles.historyCellContent}>
+                ${sel.deliveries[0].amount_paid.toFixed(2)}
+                </span>
+              </div>
+            </div>
+
+            <div className={styles.histCellOuterWrapper}>
+              <div className={styles.histCellInnerWrapper}>
+                <span className={styles.historyCellContent}>
+                ${sel.deliveries[0].amount_due.toFixed(2)}
+                </span>
+              </div>
+            </div>
+
 					</div>
 
-					{/* {sel.show_dropdown
-						? <>STUFF GOES HERE</>
-						: null} */}
 					{sel.show_dropdown
             ? <>{showPastMeals(sel)}</>
             : null}
@@ -2427,27 +2527,32 @@ function CustomerInfo() {
 				null
 			)}
 
-			{/* Meal Plans */}
-			{/* <div
-				style={{
-					border: 'solid',
-					marginTop: '20px',
-					height: '300px',
-					zIndex: '1'
-				}}
-			>
-				{selectedCustomer === null ? (
-					<>{"Waiting for selection..."}</>
-				) : (
-					<>
-						{"Meal Plans: "}
-						<br /> */}
 						<div className={styles.containerMeals}>
 							<div className={styles.sectionHeader}>
 								All Meal Plans
 							</div>
+              <div className={styles.mealButtonHeader}>
+                <div className={styles.mealButtonSection2} style={{fontWeight: 'bold', fontSize: '20px'}}>
+                  Meal Plans
+                </div>
+                <div className={styles.mealButtonSection2} style={{fontWeight: 'bold', fontSize: '20px'}}>
+                  Purchase ID
+                </div>
+                <div className={styles.mealButtonSection} style={{fontWeight: 'bold', fontSize: '20px'}}>
+                  Next Delivery Date
+                </div>
+                <div className={styles.mealButtonSection} style={{fontWeight: 'bold', fontSize: '20px'}}>
+                  Next Delivery Status
+                </div>
+                <div className={styles.mealButtonSection} style={{fontWeight: 'bold', fontSize: '20px'}}>
+                  Next Billing Date
+                </div>
+                <div className={styles.mealButtonSection} style={{fontWeight: 'bold', fontSize: '20px'}}>
+                  Next Billing Amount
+                </div>
+              </div>
 							<div className={styles.boxScroll}>
-								<div className={styles.mealButtonHeader}>
+								{/* <div className={styles.mealButtonHeader}>
 									<div className={styles.mealButtonSection2} style={{fontWeight: 'bold', fontSize: '20px'}}>
 										Meal Plans
 									</div>
@@ -2466,7 +2571,7 @@ function CustomerInfo() {
 									<div className={styles.mealButtonSection} style={{fontWeight: 'bold', fontSize: '20px'}}>
 										Next Billing Amount
 									</div>
-								</div>
+								</div> */}
 
 								{console.log("subscriptions loaded? ", subscriptionsLoaded)}
 								<div style={{display: 'flex'}}>
@@ -2501,50 +2606,139 @@ function CustomerInfo() {
 									// border: 'dashed'
 								}}
 							>
-								<div className={styles.orangeHeaderCycle}>
+								{/* <div className={styles.orangeHeaderCycle}>
 									Billing Cycle
-								</div>
-								<div 
+								</div> */}
+                <div className={styles.planCellOuterWrapper2}>
+                  <div className={styles.planCellInnerWrapper}>
+                    <span className={styles.orangeCellContent}>
+                      Billing Cycle
+                    </span>
+                  </div>
+                </div>
+
+								{/* <div 
 									id={'payment-id'}
 									className={styles.orangeHeaderSection}>
 									Payment ID
-								</div>
-								<div className={styles.orangeHeaderSection}>
+								</div> */}
+                <div className={styles.planCellOuterWrapper}>
+                  <div className={styles.planCellInnerWrapper}>
+                    <span className={styles.orangeCellContent}>
+                      Payment ID
+                    </span>
+                  </div>
+                </div>
+
+								{/* <div className={styles.orangeCellContent}>
 									Payment Time Stamp
-								</div>
-								<div className={styles.orangeHeaderSection}>
-									Payment Type
-								</div>
-								<div className={styles.orangeHeaderSection}>
-									Addon
-								</div>
-								<div className={styles.orangeHeaderSection}>
-									Subtotal
-								</div>
-								<div className={styles.orangeHeaderSection}>
-									Discount
-								</div>
-								<div className={styles.orangeHeaderSection}>
-									Service Fee
-								</div>
-								<div className={styles.orangeHeaderSection}>
-									Delivery Fee
-								</div>
-								<div className={styles.orangeHeaderSection}>
-									Driver Tip
-								</div>
-								<div className={styles.orangeHeaderSection}>
-									Taxes
-								</div>
-								<div className={styles.orangeHeaderSection}>
-									Ambassador Code
-								</div>
-								<div className={styles.orangeHeaderSection}>
-									Amount Paid
-								</div>
-								<div className={styles.orangeHeaderSection}>
-									Amount Due
-								</div>
+								</div> */}
+                {/* <div
+                  className={styles.cellOuterWrapper2}
+                  style={{width: CELL.id_width}}
+                >
+                  <div className={styles.cellInnerWrapper}>
+                    <span className={styles.orangeCellContent}>
+                      Payment Time Stamp
+                    </span>
+                  </div>
+                </div> */}
+                <div className={styles.planCellOuterWrapper}>
+                  <div className={styles.planCellInnerWrapper}>
+                    <span className={styles.orangeCellContent}>
+                      Payment Time Stamp
+                    </span>
+                  </div>
+                </div>
+
+                <div className={styles.planCellOuterWrapper}>
+                  <div className={styles.planCellInnerWrapper}>
+                    <span className={styles.orangeCellContent}>
+                      Payment Type
+                    </span>
+                  </div>
+                </div>
+
+								<div className={styles.planCellOuterWrapper}>
+                  <div className={styles.planCellInnerWrapper}>
+                    <span className={styles.orangeCellContent}>
+                      Addon
+                    </span>
+                  </div>
+                </div>
+
+								<div className={styles.planCellOuterWrapper}>
+                  <div className={styles.planCellInnerWrapper}>
+                    <span className={styles.orangeCellContent}>
+                      Subtotal
+                    </span>
+                  </div>
+                </div>
+
+								<div className={styles.planCellOuterWrapper}>
+                  <div className={styles.planCellInnerWrapper}>
+                    <span className={styles.orangeCellContent}>
+                      Discount
+                    </span>
+                  </div>
+                </div>
+
+								<div className={styles.planCellOuterWrapper}>
+                  <div className={styles.planCellInnerWrapper}>
+                    <span className={styles.orangeCellContent}>
+                      Service Fee
+                    </span>
+                  </div>
+                </div>
+
+								<div className={styles.planCellOuterWrapper}>
+                  <div className={styles.planCellInnerWrapper}>
+                    <span className={styles.orangeCellContent}>
+                      Delivery Fee
+                    </span>
+                  </div>
+                </div>
+
+								<div className={styles.planCellOuterWrapper}>
+                  <div className={styles.planCellInnerWrapper}>
+                    <span className={styles.orangeCellContent}>
+                      Driver Tip
+                    </span>
+                  </div>
+                </div>
+
+								<div className={styles.planCellOuterWrapper}>
+                  <div className={styles.planCellInnerWrapper}>
+                    <span className={styles.orangeCellContent}>
+                      Taxes
+                    </span>
+                  </div>
+                </div>
+
+								<div className={styles.planCellOuterWrapper}>
+                  <div className={styles.planCellInnerWrapper}>
+                    <span className={styles.orangeCellContent}>
+                      Ambassador Code
+                    </span>
+                  </div>
+                </div>
+
+								<div className={styles.planCellOuterWrapper}>
+                  <div className={styles.planCellInnerWrapper}>
+                    <span className={styles.orangeCellContent}>
+                      Amount Paid
+                    </span>
+                  </div>
+                </div>
+
+								<div className={styles.planCellOuterWrapper}>
+                  <div className={styles.planCellInnerWrapper}>
+                    <span className={styles.orangeCellContent}>
+                      Amount Due
+                    </span>
+                  </div>
+                </div>
+
 							</div>
 
 							{uniquePlans === null || currentPlan === null ? (
