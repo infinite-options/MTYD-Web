@@ -19,6 +19,9 @@ const initialState = {
   mounted: false,
   defaultFlag: true,
   selectedDate: "",
+  currDisplayDate: "",
+  selectedBusinessID: "",
+  selectedBusinessData: [],
   closestDate: "",
   ordersData: [],
   sortedOrdersData: [],
@@ -50,9 +53,18 @@ function reducer(state, action) {
         mounted: true,
       };
     case "CHANGE_DATE":
+      console.log(action.payload);
       return {
         ...state,
-        selectedDate: action.payload,
+        selectedDate: action.payload.newDate,
+        currDisplayDate: action.payload.display,
+      };
+    case "FILTER_BUSINESS":
+      console.log("Payload: " + action.payload);
+      return {
+        ...state,
+        selectedBusinessID: action.payload.newBusinessID,
+        selectedBusinessData: action.payload.newBusinessData,
       };
     case "DISPLAY_DATE":
       return {
@@ -488,30 +500,33 @@ function OrdersIngredients({ history, ...props }) {
   };
 
   // Change date
-  const changeDate = (newDate) => {
-    dispatch({ type: "CHANGE_DATE", payload: newDate });
+  const changeDate = (newDate, displayDate) => {
+    dispatch({
+      type: "CHANGE_DATE",
+      payload: { newDate: newDate, display: displayDate },
+    });
     state.defaultFlag = false;
-    const newOrders = getOrderData(newDate);
-    const sortedOrders = sortedArray(
-      newOrders,
-      state.sortOrders.field,
-      state.sortOrders.direction
-    );
-    const newIngredients = getIngredientsData(newDate);
-    const sortedIngredients = sortedArray(
-      newIngredients,
-      state.sortIngredients.field,
-      state.sortIngredients.direction
-    );
-    const newCustomers = getCustomerData(newDate);
-    const sortedCustomers = sortedArray(
-      newCustomers,
-      state.sortCustomers.field,
-      state.sortCustomers.direction
-    );
-    dispatch({ type: "FILTER_ORDERS", payload: sortedOrders });
-    dispatch({ type: "FILTER_INGREDIENTS", payload: sortedIngredients });
-    dispatch({ type: "FILTER_CUSTOMERS", payload: sortedCustomers });
+    // const newOrders = getOrderData(newDate);
+    // const sortedOrders = sortedArray(
+    //   newOrders,
+    //   state.sortOrders.field,
+    //   state.sortOrders.direction
+    // );
+    // const newIngredients = getIngredientsData(newDate);
+    // const sortedIngredients = sortedArray(
+    //   newIngredients,
+    //   state.sortIngredients.field,
+    //   state.sortIngredients.direction
+    // );
+    // const newCustomers = getCustomerData(newDate);
+    // const sortedCustomers = sortedArray(
+    //   newCustomers,
+    //   state.sortCustomers.field,
+    //   state.sortCustomers.direction
+    // );
+    // dispatch({ type: "FILTER_ORDERS", payload: sortedOrders });
+    // dispatch({ type: "FILTER_INGREDIENTS", payload: sortedIngredients });
+    // dispatch({ type: "FILTER_CUSTOMERS", payload: sortedCustomers });
   };
   // display the default order/ingredient/customer data to the closest date we have in dropdown list based on todays day
   if (state.defaultFlag) {
@@ -540,17 +555,43 @@ function OrdersIngredients({ history, ...props }) {
   }
 
   const filterBusiness = (event) => {
-    console.log("New Business: " + event.target.value);
+    const newBusinessID = event.target.value;
+    if (newBusinessID === "All Orders") {
+      dispatch({
+        type: "FILTER_BUSINESS",
+        payload: {
+          newBusinessID: "",
+          newBusinessData: [],
+        },
+      });
+    } else {
+      const newBusinessData = state.businessData.filter(
+        (business) => business.business_uid === newBusinessID
+      );
+      dispatch({
+        type: "FILTER_BUSINESS",
+        payload: {
+          newBusinessID: newBusinessID,
+          newBusinessData: newBusinessData[0],
+        },
+      });
+    }
+    state.defaultFlag = false;
   };
 
-  const handleDateButtonClick = (event) => {
+  const handleDateButtonClick = (event, displayDate) => {
     const newDate = event.target.value;
     console.log("New Date: " + newDate);
-    changeDate(newDate);
+    changeDate(newDate, displayDate);
+  };
+
+  const formatDisplayDate = (displayDate) => {
+    return displayDate.substring(4, 10) + "," + displayDate.substring(10);
   };
 
   return (
     <div className={styles.root}>
+      {console.log(state)}
       {/* <Breadcrumb>
         <Breadcrumb.Item href="/"> Admin Site </Breadcrumb.Item>
         <Breadcrumb.Item active> & Ingredients </Breadcrumb.Item>
@@ -558,7 +599,14 @@ function OrdersIngredients({ history, ...props }) {
       <Container fluid className={styles.container}>
         <Row className={[styles.section, styles.row1].join(" ")}>
           <Col md="auto" className={styles.restaurantSelector}>
-            <div className={styles.restaurantImg}>Image</div>
+            {state.selectedBusinessID ? (
+              <img
+                src={state.selectedBusinessData.business_image}
+                className={styles.restaurantImg}
+              ></img>
+            ) : (
+              <div className={styles.restaurantImg}></div>
+            )}
             <div style={{ marginLeft: "10px" }}>
               <form>
                 <div className={styles.dropdownArrow}>
@@ -603,7 +651,7 @@ function OrdersIngredients({ history, ...props }) {
                     ].join(" ")}
                     key={date.value}
                     value={date.value}
-                    onClick={handleDateButtonClick}
+                    onClick={(e) => handleDateButtonClick(e, date.display)}
                   >
                     {dayName} <br /> {day}
                   </button>
@@ -623,8 +671,8 @@ function OrdersIngredients({ history, ...props }) {
             <div style={{ marginBottom: "10px", color: "#f26522" }}>
               Contact Info
             </div>
-            <div>pmarathay@gmail.com</div>
-            <div>(686) 908-9080</div>
+            <div>{state.selectedBusinessData.business_email}</div>
+            <div>{state.selectedBusinessData.business_phone_num}</div>
           </Col>
           <Col
             md="auto"
@@ -653,7 +701,8 @@ function OrdersIngredients({ history, ...props }) {
         </Row>
         <Row className={styles.row2}>
           <Col xs={5} className={styles.section} style={{ marginRight: 10 }}>
-            Upcoming Meal Orders And Revenue
+            Upcoming Meal Orders And Revenue:{" "}
+            {formatDisplayDate(state.currDisplayDate)}
             <Table>
               <TableHead>
                 <TableRow>
@@ -668,7 +717,7 @@ function OrdersIngredients({ history, ...props }) {
             </Table>
           </Col>
           <Col xs={4} className={styles.section} style={{ marginRight: 10 }}>
-            Revenue
+            Revenue: {formatDisplayDate(state.currDisplayDate)}
             <Table>
               <TableHead>
                 <TableRow>
@@ -682,7 +731,7 @@ function OrdersIngredients({ history, ...props }) {
             </Table>
           </Col>
           <Col className={styles.section}>
-            Ingredients
+            Ingredients Needed: {formatDisplayDate(state.currDisplayDate)}
             <Table>
               <TableHead>
                 <TableCell>Ingredient Name</TableCell>
