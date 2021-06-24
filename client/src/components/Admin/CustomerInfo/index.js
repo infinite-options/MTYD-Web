@@ -257,43 +257,31 @@ function CustomerInfo() {
 
 			subHistory.forEach((sub) => {
 
+        console.log("(init) sub: ", sub);
+
 				let elIndex = tempUniquePlans.findIndex(element => element.id === sub.purchase_id);
 
-				// console.log(' ');
-				// console.log('(1) ==============================');
-				// console.log("sub: ", sub);
 
-				// let lplp_info = LPLP.find(element => element.purchase_id === sub.purchase_id);
-
+        // New plan found
 				if (elIndex === -1) {
 
-					// console.log("-- (1.1) UNIQUE PLAN FOUND: ", sub.purchase_id);
 	
 					let tempUniquePlan = {
 						id: sub.purchase_uid,
-						// payment_id: sub.payment_id,
 						history: []
 					};
 	
-					// console.log("-- (1.2) plan to be pushed: ", tempUniquePlan);
 	
 					tempUniquePlans.push(tempUniquePlan);
 	
 					elIndex = tempUniquePlans.findIndex(element => element.id === sub.purchase_uid);
-
-					// console.log("-- (1.3) element index: ", elIndex);
-					// console.log("-- (1.4) adding to plan: ", sub);
-
-					// let lplp_info = LPLP.find(element => element.purchase_id === sub.purchase_id);
-
-					// console.log("adding LPLP info: ", lplp_info);
 					
 					let historyTab = {
 						date: sub.payment_time_stamp,
 						show_dropdown: false,
 						payment_id: sub.payment_id,
-						// payment_info: lplp_info,
-						deliveries: []
+						deliveries: [],
+            revenue: sub.amount_paid
 					};
 					tempUniquePlans[elIndex].history.push(historyTab);
 					tempUniquePlans[elIndex].history[0].deliveries.push(sub);
@@ -301,33 +289,26 @@ function CustomerInfo() {
 					uniquePlansFetched++;
 
 				} else {
-					// console.log("-- (2.1) data before: ", JSON.parse(JSON.stringify(tempUniquePlans[elIndex].history)));
 					let dateIndex = tempUniquePlans[elIndex].history.findIndex(
 						element => element.date === sub.payment_time_stamp
 					);
-					// console.log("-- (2.2) date index: ", dateIndex);
+
 					if(dateIndex === -1) {
-						// console.log("---- (2A) deliveries for date not found; creating new tab...");
 						let historyTab = {
 							date: sub.payment_time_stamp,
 							show_dropdown: false,
 							payment_id: sub.payment_id,
-							// payment_info: lplp_info,
-							deliveries: []
+							deliveries: [],
+              revenue: sub.amount_paid
 						};
 						tempUniquePlans[elIndex].history.push(historyTab);
-						// console.log("----      history length: ", tempUniquePlans[elIndex].history.length);
 						tempUniquePlans[elIndex].history[(tempUniquePlans[elIndex].history.length)-1].deliveries.push(sub);
 					} else {
-						// console.log("---- (2B) deliveries for date found at " + dateIndex + "! adding to tab...");
 						tempUniquePlans[elIndex].history[dateIndex].deliveries.push(sub);
 					}
-					// console.log("-- (2.3) data after: ", JSON.parse(JSON.stringify(tempUniquePlans[elIndex].history)));
 	
 				}
 	
-				// console.log("-- new unique plan array: ", JSON.parse(JSON.stringify(tempUniquePlans)));
-				// console.log('(2) ==============================');
 			});
 
 			console.log("final unique plans: ", tempUniquePlans);
@@ -350,11 +331,15 @@ function CustomerInfo() {
 		return false;
 	}
 
-	const formatDate = (rawDate) => {
+	const formatDate = (rawDate, withTime) => {
 
     let dateElements = rawDate.split(' ');
+
     let yyyy_mm_dd = dateElements[0].split('-');
+    let hh_mm_ss = dateElements[1].split('-');
+
     let month;
+    let hour;
 
     // Parse month
     switch(yyyy_mm_dd[1]){
@@ -395,11 +380,97 @@ function CustomerInfo() {
         month = "December";
         break;
       default:
-        month = "";
+        month = "[ERROR]";
+    }
+
+    // Parse time of day
+    switch(hh_mm_ss[0]){
+
+      // AM
+      case "00":
+        hour = "12";
+        break;
+      case "01":
+        hour = "1";
+        break;
+      case "02":
+        hour = "2";
+        break;
+      case "03":
+        hour = "3";
+        break;
+      case "04":
+        hour = "4";
+        break;
+      case "05":
+        hour = "5";
+        break;
+      case "06":
+        hour = "6";
+        break;
+      case "07":
+        hour = "7";
+        break;
+      case "08":
+        hour = "8";
+        break;
+      case "09":
+        hour = "9";
+        break;
+      case "10":
+        hour = "10";
+        break;
+      case "11":
+        hour = "11";
+        break;
+
+      // PM
+      case "12":
+        hour = "12";
+        break;
+      case "13":
+        hour = "1";
+        break;
+      case "14":
+        hour = "2";
+        break;
+      case "15":
+        hour = "3";
+        break;
+      case "16":
+        hour = "4";
+        break;
+      case "17":
+        hour = "5";
+        break;
+      case "18":
+        hour = "6";
+        break;
+      case "19":
+        hour = "7";
+        break;
+      case "20":
+        hour = "8";
+        break;
+      case "21":
+        hour = "9";
+        break;
+      case "22":
+        hour = "10";
+        break;
+      case "23":
+        hour = "11";
+        break;
+
+      default:
+        hour = "[ERROR]";
     }
 
     let dateString = month + " " + yyyy_mm_dd[2] + ", " + yyyy_mm_dd[0];
-    // console.log("date string: ", dateString);
+
+    if(withTime === true) {
+      dateString = dateString + " " + hour + ":" + hh_mm_ss[1] + " PM";
+    }
 
     return dateString;
   }
@@ -429,6 +500,7 @@ function CustomerInfo() {
 	}
 
 	const setCurrentCustomer = (cust) => {
+    let remoteDataFetched = 0;
     setLoadingUserInfo(true);
 
 		console.log("set current customer: ", cust.customer_uid);
@@ -442,7 +514,11 @@ function CustomerInfo() {
 			.then(res => {
 				console.log("(pnba) next meal info res: ", res);
 				setSubscriptionsList(res.data.result);
-        setLoadingUserInfo(false);
+        remoteDataFetched++;
+        if(remoteDataFetched === 2) {
+          setLoadingUserInfo(false);
+        }
+        // setLoadingUserInfo(false);
 			})
 			.catch(err => {
 				console.log(err);
@@ -454,6 +530,10 @@ function CustomerInfo() {
 			.then(res => {
 				console.log("(sh) sub history res: ", res);
 				setSubHistory(res.data.result);
+        remoteDataFetched++;
+        if(remoteDataFetched === 2) {
+          setLoadingUserInfo(false);
+        }
 			})
 			.catch(err => {
 				console.log(err);
@@ -837,6 +917,17 @@ function CustomerInfo() {
 		}
 	}
 
+  const calculateRevenue = () => {
+    console.log("(calculateRevenue) unique plans: ", uniquePlans);
+    let totalRevenue = 0;
+    uniquePlans.forEach((uniquePlan) => {
+      uniquePlan.history.forEach((payment) => {
+        totalRevenue += payment.revenue;
+      });
+    });
+    return totalRevenue;
+  }
+
 	const showSubscribedMeals = () => {
 
     let deselectedMealButton = styles.mealButton;
@@ -918,6 +1009,8 @@ function CustomerInfo() {
               width: '8%',
               fontSize: '20px',
               fontWeight: '600',
+              display: 'flex',
+							alignItems: 'center',
               // paddingTop: '15px'
             }}
           >
@@ -929,16 +1022,30 @@ function CustomerInfo() {
               width: '92%',
               fontWeight: '600',
               // paddingTop: '33px'
+              display: 'flex',
+							alignItems: 'center'
             }}
           >
             {data.meal_name}
           </div>
+          {/* <div
+            style={{
+              display: 'flex',
+              border: 'inset',
+              width: '0%',
+              minWidth: '100px',
+              textAlign: 'right',
+              float: 'right',
+              fontWeight: '600'
+            }}
+          > */}
           <div
             style={{
               display: 'flex',
+							alignItems: 'center',
               // border: 'inset',
               width: '0%',
-              minWidth: '100px',
+              minWidth: '50px',
               textAlign: 'right',
               float: 'right',
               fontWeight: '600'
@@ -947,9 +1054,12 @@ function CustomerInfo() {
             <div
               style={{
                 // border: 'dashed',
-                width: '100px',
-                height: '100px',
+                width: '50px',
+                height: '50px',
+                minWidth: '50px',
+                minHeight: '50px',
                 marginTop: '5px',
+                float: 'right',
                 backgroundImage: `url(${data.meal_photo_URL})`,
                 backgroundSize: 'cover'
               }}
@@ -966,7 +1076,7 @@ function CustomerInfo() {
         title={formatDate(data.sel_menu_date) + ". "+ currentPlan.meals+ "surprises"}>
           <div
             style={{
-              border: 'inset',
+              // border: 'inset',
               width: '8%',
               fontSize: '20px',
               fontWeight: '600',
@@ -979,7 +1089,7 @@ function CustomerInfo() {
           </div>
           <div
             style={{
-              border: 'inset',
+              // border: 'inset',
 							// position: 'absolute',
 							// left: '100px',
 							// top: '0px',
@@ -996,7 +1106,7 @@ function CustomerInfo() {
             style={{
               display: 'flex',
 							alignItems: 'center',
-              border: 'inset',
+              // border: 'inset',
               width: '0%',
               minWidth: '50px',
               textAlign: 'right',
@@ -1009,6 +1119,8 @@ function CustomerInfo() {
                 border: 'dashed',
                 width: '50px',
                 height: '50px',
+                minWidth: '50px',
+                minHeight: '50px',
                 marginTop: '5px',
                 borderWidth: '2px',
                 // backgroundColor: 'whitesmoke',
@@ -1017,7 +1129,8 @@ function CustomerInfo() {
                 // paddingTop: '10px'
 								display: 'flex',
 								justifyContent: 'center',
-								alignItems: 'center'
+								alignItems: 'center',
+                float: 'right'
               }}
             >
               ?
@@ -1036,6 +1149,8 @@ function CustomerInfo() {
               width: '8%',
               fontSize: '20px',
               fontWeight: '600',
+              display: 'flex',
+							alignItems: 'center'
               // paddingTop: '15px'
             }}
           >
@@ -1047,6 +1162,8 @@ function CustomerInfo() {
               width: '92%',
               fontWeight: '600',
               // paddingTop: '33px'
+              display: 'flex',
+							alignItems: 'center'
             }}
           >
             {"(Skip)"}
@@ -1058,8 +1175,8 @@ function CustomerInfo() {
     return (
 			<div 
 				style={{
-					border: 'solid',
-					borderColor: 'cyan',
+					// border: 'solid',
+					// borderColor: 'cyan',
 					// display: 'flex',
 					// alignItems: 'center'
 				}}
@@ -1141,8 +1258,8 @@ function CustomerInfo() {
 								style={{
 									display: 'inline-block', 
 									width: '100%',
-									border: 'solid',
-									borderColor: 'red'
+									// border: 'solid',
+									// borderColor: 'red'
 								}}
 							>
 								{displayMealInfo(del)}
@@ -1155,8 +1272,8 @@ function CustomerInfo() {
 					mealsDisplay.push(
 						<div
 							style={{
-								border: 'solid',
-								borderColor: 'green',
+								// border: 'solid',
+								// borderColor: 'green',
 								display: 'flex',
 								marginTop: '15px',
 								// marginBottom: '10px'
@@ -1213,10 +1330,16 @@ function CustomerInfo() {
     return (
       <div
 				style={{
-					border: 'dashed',
-					width: '96%',
-					marginLeft: '2%',
-					marginRight: '2%',
+					// border: 'dashed',
+					// width: '96%',
+          // maxWidth: '400px',
+					// marginLeft: '2%',
+					// marginRight: '2%',
+          marginLeft: '1%',
+          width: '22%',
+          minWidth: '300px',
+          marginBottom: '20px',
+
 					fontSize: '12px'
 				}}
 			>
@@ -1234,14 +1357,17 @@ function CustomerInfo() {
       return plan.id === currentPlan.purchase_uid;
     });
 
-    // console.log("plan history: ", planHistory);
+    console.log("plan history: ", planHistory);
 		// console.log("plan history 2: ", planHistory.history);
 
 		let historyTabs = [];
 
+    let dataValid = true;
+
     planHistory.history.forEach((sel) => {
 			console.log("(showHistory) sel: ", sel);
 
+      try {
       historyTabs.push(
 				<div>
 
@@ -1316,7 +1442,8 @@ function CustomerInfo() {
             <div className={styles.histCellOuterWrapper}>
               <div className={styles.histCellInnerWrapper}>
                 <span className={styles.historyCellContent}>
-                  {sel.deliveries[0].payment_time_stamp}
+                  {/* {sel.deliveries[0].payment_time_stamp} */}
+                  {formatDate(sel.deliveries[0].payment_time_stamp, true)}
                 </span>
               </div>
             </div>
@@ -1442,7 +1569,39 @@ function CustomerInfo() {
 
 				</div>
 			);
+      } catch (e) {
+        console.log("error pushing delivery: ", e);
+        dataValid = false;
+      }
 		});
+
+    if(dataValid === false) {
+      return(
+        <div
+          style={{
+            // border: 'solid',
+            color: 'red',
+            overflowY: 'scroll',
+            maxHeight: '562px',
+            borderTop: 'solid',
+            borderBottom: 'solid',
+            borderWidth: '1px',
+            borderColor: '#f26522',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '70px',
+            fontWeight: 'bold',
+            fontSize: '30px',
+
+            // marginBottom: '50px'
+            // paddingBottom: '50px'
+          }}
+        >
+          {["DATA ERROR"]}
+        </div>
+      );
+    }
 
 		return(
       <div
@@ -1484,7 +1643,7 @@ function CustomerInfo() {
 			/>
 
 			{/* For debugging window size */}
-			<span 
+			{/* <span 
 				style={{
 					zIndex: '101',
 					position: 'fixed',
@@ -1498,7 +1657,7 @@ function CustomerInfo() {
 				Height: {dimensions.height}px
 				<br />
 				Width: {dimensions.width}px
-			</span>
+			</span> */}
 
 			{/* <span 
 				style={{
@@ -1748,7 +1907,7 @@ function CustomerInfo() {
                         // width: '25%'
                       }}
                     >
-                      $95.90
+                      ${calculateRevenue().toFixed(2)}
                     </div>
 
                     <div 
@@ -1891,7 +2050,7 @@ function CustomerInfo() {
                       width: '100%'
                     }}
                   >
-                    LOADING USER INFO...
+                    FETCHING USER INFO...
                   </div>
                 )}
 
@@ -2201,7 +2360,7 @@ function CustomerInfo() {
                             // width: '25%'
                           }}
                         >
-                          $95.90
+                          ${calculateRevenue().toFixed(2)}
                         </div>
                       </div>
 
@@ -2218,7 +2377,7 @@ function CustomerInfo() {
                       fontWeight: 'bold'
                     }}
                   >
-                    LOADING USER INFO...
+                    FETCHING USER INFO...
                   </div>
                 )}
               </div>

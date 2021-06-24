@@ -11,23 +11,24 @@
 .customerFilter {
   border: solid;
   border-width: 2px;
-  width: 30%;
+  width: 40%;
   height: 36px;
   /* margin-left: %; */
   /* margin-right: 2%; */
   z-index: 2;
   /* cursor: pointer; */
   color: #F26522;
-  padding-left: 1%;
+  padding-left: 15px;
   font-weight: 600;
   font-size: 18px;
+  font-style: italic;
   border-radius: 10px;
   min-width: 400px;
   /* display: inline-block; */
   /* display: flex; */
   align-items: center;
   text-overflow: ellipsis;
-  padding-top: 3px;
+  /* padding-top: 3px; */
   display: block;
   white-space: nowrap;
   overflow: hidden;
