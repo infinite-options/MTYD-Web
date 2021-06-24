@@ -13,16 +13,23 @@ import m4me_logo from '../../../images/LOGO_NoBG_MealsForMe.png';
 const ARROW_ID = 0;
 const ARROW_NAME = 1;
 const ARROW_ADDRESS = 2;
+const ARROW_EMAIL = 3;
+const ARROW_ZIP = 4;
+const ARROW_PHONE = 5;
 
 // For choosing sorting mode
-const SORT_ID = 3;
-const SORT_ID_REVERSE = 4;
-const SORT_NAME = 5;
-const SORT_NAME_REVERSE = 6;
-const SORT_ADDRESS = 7;
-const SORT_ADDRESS_REVERSE = 8;
-const SORT_EMAIL = 9;
-const SORT_EMAIL_REVERSE = 10;
+const SORT_ID = 6;
+const SORT_ID_REVERSE = 7;
+const SORT_NAME = 8;
+const SORT_NAME_REVERSE = 9;
+const SORT_ADDRESS = 10;
+const SORT_ADDRESS_REVERSE = 11;
+const SORT_EMAIL = 12;
+const SORT_EMAIL_REVERSE = 13;
+const SORT_ZIP = 14;
+const SORT_ZIP_REVERSE = 15;
+const SORT_PHONE = 16;
+const SORT_PHONE_REVERSE = 17;
 
 const CELL = {
 	id_width: '10%',
@@ -39,20 +46,25 @@ const CELL = {
 const ERR_VAL = <>&nbsp;<strong style={{color: 'red'}}>[NULL]</strong></>;
 
 function CustomerInfo() {
-	const [ customersByName  , setCustomersByName  ] = useState(null);
-	const [ customersById	   , setCustomersById	   ] = useState(null);
-	const [ customersByEmail , setCustomersByEmail ] = useState(null);
+	const [ customersByName    , setCustomersByName    ] = useState(null);
+	const [ customersById	     , setCustomersById	     ] = useState(null);
+	const [ customersByEmail   , setCustomersByEmail   ] = useState(null);
+  const [ customersByAddress , setCustomersByAddress ] = useState(null);
+  const [ customersByZipcode , setCustomersByZipcode ] = useState(null);
+  const [ customersByPhone   , setCustomersByPhone   ] = useState(null);
 
 	const [customerDropdown, setCustomerDropdown] = useState(true);
 	const [selectedCustomer, selectCustomer] = useState(null);
 	const [subscriptionsLoaded, setSubscriptionsLoaded] = useState(false);
 	const [subscriptionsList, setSubscriptionsList] = useState(null);
+  const [loadingUserInfo, setLoadingUserInfo] = useState(false);
 	const [currentPlan, setCurrentPlan] = useState(null);
 	const [subHistory, setSubHistory] = useState(null);
-	const [LPLP, setLPLP] = useState(null);
+	// const [LPLP, setLPLP] = useState(null);
 	const [uniquePlans, setUniquePlans] = useState(null);
 	const [billingInfo, setBillingInfo] = useState(null);
 
+  const [searchInput, inputSearch] = useState('');
 	const [nameInput, inputName] = useState('');
 	const [idInput, inputId] = useState('');
 	const [addressInput, inputAddress] = useState('');
@@ -93,18 +105,51 @@ function CustomerInfo() {
 				const customers_name = [...customers_id] ;
 
 				// Make a copy, sort by name
+        console.log("== (1) =============================================||");
 				customers_name.sort((eltA, eltB) => {
+
+          console.log("\nWhich comes first: '" + eltA.customer_first_name + "' or '" + eltB.customer_first_name + "'?");
+          if(eltA.customer_first_name === null){
+            console.log("Found a NULL value!");
+            return -1;
+          }
+          if(eltB.customer_first_name === null){
+            console.log("Found a NULL value!");
+            return 1;
+          }
+          
 					let result = -descendingComparator(eltA, eltB, 'customer_first_name');
+          
+          if(result === 1) {
+            console.log("ANSWER: ", eltB.customer_first_name);
+          } else if (result === -1) {
+            console.log("ANSWER: ", eltA.customer_first_name);
+          } else {
+            console.log("ANSWER: They're the same");
+          }
+
 					if(result !== 0) {
 						return result;
 					}
-					result = -descendingComparator(eltA, eltB, 'customer_last_name');
-					if(result !== 0) {
-						return result;
-					}
-					result = -descendingComparator(eltA, eltB, 'customer_email');
+
+          if(eltA.customer_last_name === null){
+            return -1;
+          }
+          if(eltB.customer_last_name === null){
+            return 1;
+          }
+
+					// result = -descendingComparator(eltA, eltB, 'customer_last_name');
+					// if(result !== 0) {
+					// 	return result;
+					// }
+					// result = -descendingComparator(eltA, eltB, 'customer_email');
+					// return result;
+          result = -descendingComparator(eltA, eltB, 'customer_last_name');
 					return result;
 				});
+        console.log("\n");
+        console.log("== (2) =============================================||");
 
 				// Make a copy, sort by email
 				const customers_email = [...customers_id];
@@ -113,13 +158,74 @@ function CustomerInfo() {
 					return result;
 				});
 
+        // Make a copy, sort by address
+				const customers_address = [...customers_id];
+        customers_address.sort((eltA, eltB) => {
+
+          if(eltA.customer_address === null){
+            return -1;
+          }
+          if(eltB.customer_address === null){
+            return 1;
+          }
+          
+          let result = -descendingComparator(eltA, eltB, 'customer_address');
+
+          if(result !== 0) {
+            return result;
+          }
+
+          if(eltA.customer_city === null){
+            return -1;
+          }
+          if(eltB.customer_city === null){
+            return 1;
+          }
+          
+          result = -descendingComparator(eltA, eltB, 'customer_city');
+
+          if(result !== 0) {
+            return result;
+          }
+
+          if(eltA.customer_state === null){
+            return -1;
+          }
+          if(eltB.customer_state === null){
+            return 1;
+          }
+
+          result = -descendingComparator(eltA, eltB, 'customer_state');
+          return result;
+        });
+
+        // Make a copy, sort by zipcode
+				const customers_zip = [...customers_id];
+				customers_zip.sort((eltA, eltB) => {
+					let result = -descendingComparator(eltA, eltB, 'customer_zip');
+					return result;
+				});
+
+        // Make a copy, sort by phone
+				const customers_phone = [...customers_id];
+				customers_phone.sort((eltA, eltB) => {
+					let result = -descendingComparator(eltA, eltB, 'customer_phone_num');
+					return result;
+				});
+
 				console.log("by Name: ", customers_name);
 				console.log("by ID: ", customers_id);
 				console.log("by Email: ", customers_email);
+        console.log("by Address: ", customers_address);
+        console.log("by Zip: ", customers_zip);
+        console.log("by Phone: ", customers_phone);
 
 				setCustomersByName(customers_name);
 				setCustomersById(customers_id);
 				setCustomersByEmail(customers_email);
+        setCustomersByAddress(customers_address);
+        setCustomersByZipcode(customers_zip);
+        setCustomersByPhone(customers_phone);
 			})
 			.catch((err) => {
         if (err.response) {
@@ -143,10 +249,11 @@ function CustomerInfo() {
     let tempUniquePlans = [];
     let dropdownIndex = 0;
 
-		if(subHistory !== null && LPLP !== null && typeof(LPLP) !== 'undefined'){
+		// if(subHistory !== null && LPLP !== null && typeof(LPLP) !== 'undefined'){
+    if(subHistory !== null){
 			console.log("meal data initialized!");
 
-			console.log("LPLP info: ", LPLP);
+			// console.log("LPLP info: ", LPLP);
 
 			subHistory.forEach((sub) => {
 
@@ -156,7 +263,7 @@ function CustomerInfo() {
 				// console.log('(1) ==============================');
 				// console.log("sub: ", sub);
 
-				let lplp_info = LPLP.find(element => element.purchase_id === sub.purchase_id);
+				// let lplp_info = LPLP.find(element => element.purchase_id === sub.purchase_id);
 
 				if (elIndex === -1) {
 
@@ -179,13 +286,13 @@ function CustomerInfo() {
 
 					// let lplp_info = LPLP.find(element => element.purchase_id === sub.purchase_id);
 
-					console.log("adding LPLP info: ", lplp_info);
+					// console.log("adding LPLP info: ", lplp_info);
 					
 					let historyTab = {
 						date: sub.payment_time_stamp,
 						show_dropdown: false,
 						payment_id: sub.payment_id,
-						payment_info: lplp_info,
+						// payment_info: lplp_info,
 						deliveries: []
 					};
 					tempUniquePlans[elIndex].history.push(historyTab);
@@ -205,7 +312,7 @@ function CustomerInfo() {
 							date: sub.payment_time_stamp,
 							show_dropdown: false,
 							payment_id: sub.payment_id,
-							payment_info: lplp_info,
+							// payment_info: lplp_info,
 							deliveries: []
 						};
 						tempUniquePlans[elIndex].history.push(historyTab);
@@ -229,7 +336,8 @@ function CustomerInfo() {
 
 		}
 
-	}, [subHistory, LPLP]);
+	// }, [subHistory, LPLP]);
+  }, [subHistory]);
 
 	const isInvalid = (val) => {
 		if(
@@ -321,6 +429,7 @@ function CustomerInfo() {
 	}
 
 	const setCurrentCustomer = (cust) => {
+    setLoadingUserInfo(true);
 
 		console.log("set current customer: ", cust.customer_uid);
 		setCurrentPlan(null);
@@ -333,6 +442,7 @@ function CustomerInfo() {
 			.then(res => {
 				console.log("(pnba) next meal info res: ", res);
 				setSubscriptionsList(res.data.result);
+        setLoadingUserInfo(false);
 			})
 			.catch(err => {
 				console.log(err);
@@ -349,45 +459,102 @@ function CustomerInfo() {
 				console.log(err);
 			});
 
-		console.log("(scc) calling customer_lplp on ", cust.customer_uid);
-		axios
-			.get(API_URL + 'customer_lplp?customer_uid=' + cust.customer_uid)
-			.then(res => {
-				console.log("(lplp) res: ", res);
-				setLPLP(res.data.result);
-			})
-			.catch(err => {
-				console.log(err);
-			});
+		// console.log("(scc) calling customer_lplp on ", cust.customer_uid);
+		// axios
+		// 	.get(API_URL + 'customer_lplp?customer_uid=' + cust.customer_uid)
+		// 	.then(res => {
+		// 		console.log("(lplp) res: ", res);
+		// 		setLPLP(res.data.result);
+		// 	})
+		// 	.catch(err => {
+		// 		console.log(err);
+		// 	});
 
 		selectCustomer(cust);
 		console.log("initial customer selected!");
 	}
 
 	const sortCustomers = () => {
-		let sortedCustomers = []; 
+		let sortedCustomers; 
 
-		if(sortMode === SORT_ID) {
-			sortedCustomers = customersById;
-		} else if (sortMode === SORT_ID_REVERSE) {
-			sortedCustomers = [...customersById];
-			sortedCustomers.reverse();
+		// if(sortMode === SORT_ID) {
+		// 	sortedCustomers = customersById;
+		// } else if (sortMode === SORT_ID_REVERSE) {
+		// 	sortedCustomers = [...customersById];
+		// 	sortedCustomers.reverse();
 
-		} else if (sortMode === SORT_NAME) {
-			sortedCustomers = customersByName;
-		} else if (sortMode === SORT_NAME_REVERSE) {
-			sortedCustomers = [...customersByName];
-			sortedCustomers.reverse();
+		// } else if (sortMode === SORT_NAME) {
+		// 	sortedCustomers = customersByName;
+		// } else if (sortMode === SORT_NAME_REVERSE) {
+		// 	sortedCustomers = [...customersByName];
+		// 	sortedCustomers.reverse();
 
-		} else if (sortMode === SORT_ADDRESS) {
-			sortedCustomers = customersByEmail;
-		} else if (sortMode === SORT_ADDRESS_REVERSE) {
-			sortedCustomers = [...customersByEmail]
-			sortedCustomers.reverse();
-		}
+		// } else if (sortMode === SORT_ADDRESS) {
+		// 	sortedCustomers = customersByEmail;
+		// } else if (sortMode === SORT_ADDRESS_REVERSE) {
+		// 	sortedCustomers = [...customersByEmail]
+		// 	sortedCustomers.reverse();
+		// }
+
+    switch(sortMode){
+      case SORT_ID:
+        sortedCustomers = customersById;
+        break;
+      case SORT_ID_REVERSE:
+        sortedCustomers = [...customersById];
+		  	sortedCustomers.reverse();
+        break;
+      case SORT_NAME:
+        sortedCustomers = customersByName;
+        break;
+      case SORT_NAME_REVERSE:
+        sortedCustomers = [...customersByName];
+        sortedCustomers.reverse();
+        break;
+      case SORT_EMAIL:
+        sortedCustomers = customersByEmail;
+        break;
+      case SORT_EMAIL_REVERSE:
+        sortedCustomers = [...customersByEmail];
+        sortedCustomers.reverse();
+        break;
+      case SORT_ADDRESS:
+        sortedCustomers = customersByAddress;
+        break;
+      case SORT_ADDRESS_REVERSE:
+        sortedCustomers = [...customersByAddress];
+        sortedCustomers.reverse();
+        break;
+      case SORT_PHONE:
+        sortedCustomers = customersByPhone;
+        break;
+      case SORT_PHONE_REVERSE:
+        sortedCustomers = [...customersByPhone];
+        sortedCustomers.reverse();
+        break;
+      case SORT_ZIP:
+        sortedCustomers = customersByZipcode;
+        break;
+      case SORT_ZIP_REVERSE:
+        sortedCustomers = [...customersByZipcode];
+        sortedCustomers.reverse();
+        break;
+      default:
+        sortedCustomers = [];
+    }
 
 		return sortedCustomers;
 	}
+
+  const inSearchResults = (arr) => {
+    let keywordFound = false;
+    arr.forEach((arrData) => {
+      if (arrData !== null && arrData.toUpperCase().includes(searchInput.toUpperCase())) {
+        keywordFound = true;
+      }
+    });
+    return keywordFound;
+  }
 
 	const filterCustomers = () => {
 		let sortedCustomerButtons = [];
@@ -448,11 +615,31 @@ function CustomerInfo() {
 			}
 
 			// Only show customers that satisfy filter
-			if(
-				cust.customer_uid.includes(idInput.toUpperCase()) && 
-				address.toUpperCase().includes(addressInput.toUpperCase()) && 
-				fullname.toUpperCase().includes(nameInput.toUpperCase())
-			) {
+			// if(
+			// 	cust.customer_uid.includes(idInput.toUpperCase()) && 
+			// 	address.toUpperCase().includes(addressInput.toUpperCase()) && 
+			// 	fullname.toUpperCase().includes(nameInput.toUpperCase())
+			// ) {
+      console.log("before filter: ", cust);
+      // if(
+      //   // cust.customer_uid.includes(searchInput.toUpperCase()) ||
+      //   // fullname.toUpperCase().includes(searchInput.toUpperCase()) ||
+      //   // cust.customer_email.toUpperCase().includes(searchInput.toUpperCase()) ||
+      //   // address.toUpperCase().includes(searchInput.toUpperCase()) ||
+      //   // cust.customer_zip.toUpperCase().includes(searchInput.toUpperCase()) ||
+      //   // cust.customer_phone_num.toUpperCase().includes(searchInput.toUpperCase())
+      //   // fullname.toUpperCase().includes(searchInput.toUpperCase())
+      // ) {
+      if(
+        inSearchResults([
+          cust.customer_uid, 
+          fullname, 
+          cust.customer_email, 
+          address, 
+          cust.customer_zip, 
+          cust.customer_phone_num
+        ]) === true
+      ) {
 
 				let buttonColor = (
 					selectedCustomer !== null &&
@@ -471,7 +658,7 @@ function CustomerInfo() {
 					>
 
 						<div
-							className={styles.cellOuterWrapper}
+							className={styles.cellOuterWrapper2}
 							style={{width: CELL.id_width}}
 						>
 							<div className={styles.cellInnerWrapper}>
@@ -482,7 +669,7 @@ function CustomerInfo() {
 						</div>
 
 						<div
-							className={styles.cellOuterWrapper}
+							className={styles.cellOuterWrapper2}
 							style={{width: CELL.name_width}}
 						>
 							<div className={styles.cellInnerWrapper}>
@@ -493,7 +680,7 @@ function CustomerInfo() {
 						</div>
 
 						<div
-							className={styles.cellOuterWrapper}
+							className={styles.cellOuterWrapper2}
 							style={{width: CELL.email_width}}
 						>
 							<div className={styles.cellInnerWrapper}>
@@ -504,7 +691,7 @@ function CustomerInfo() {
 						</div>
 
 						<div
-							className={styles.cellOuterWrapper}
+							className={styles.cellOuterWrapper2}
 							style={{width: CELL.last_order_width}}
 						>
 							<div className={styles.cellInnerWrapper}>
@@ -516,7 +703,7 @@ function CustomerInfo() {
 						</div>
 
 						<div
-							className={styles.cellOuterWrapper}
+							className={styles.cellOuterWrapper2}
 							style={{width: CELL.cust_since_width}}
 						>
 							<div className={styles.cellInnerWrapper}>
@@ -528,7 +715,7 @@ function CustomerInfo() {
 						</div>
 
 						<div
-							className={styles.cellOuterWrapper}
+							className={styles.cellOuterWrapper2}
 							style={{width: CELL.address_width}}
 						>
 							<div className={styles.cellInnerWrapper}>
@@ -539,7 +726,7 @@ function CustomerInfo() {
 						</div>
 
 						<div
-							className={styles.cellOuterWrapper}
+							className={styles.cellOuterWrapper2}
 							style={{width: CELL.zone_width}}
 						>
 							<div className={styles.cellInnerWrapper}>
@@ -551,7 +738,7 @@ function CustomerInfo() {
 						</div>
 
 						<div
-							className={styles.cellOuterWrapper}
+							className={styles.cellOuterWrapper2}
 							style={{width: CELL.zip_width}}
 						>
 							<div className={styles.cellInnerWrapper}>
@@ -562,7 +749,7 @@ function CustomerInfo() {
 						</div>
 
 						<div
-							className={styles.cellOuterWrapper}
+							className={styles.cellOuterWrapper2}
 							style={{width: CELL.phone_width}}
 						>
 							<div className={styles.cellInnerWrapper}>
@@ -700,7 +887,7 @@ function CustomerInfo() {
 						{formatDate(sub.next_billing_date)}
 					</div>
 					<div className={styles.mealButtonSection}>
-						${sub.amount_due}
+						${sub.amount_due.toFixed(2)}
 					</div>
 				</div>
 			);
@@ -714,7 +901,7 @@ function CustomerInfo() {
     );
 	}
 
-	const displayMealInfo = (data) => {
+  const displayMealInfo = (data) => {
     console.log("(displayMealInfo) data: ", data);
     // console.log("(showMealsForDelivery) total meals: ", totalMeals);
 
@@ -722,16 +909,16 @@ function CustomerInfo() {
 
     if(data.meal_uid !== null){
       mealsForDelivery.push(
-        <div style={{display: 'inline-flex', width: '100%', height: '110px'}} tabIndex="0" 
+        <div style={{display: 'inline-flex', width: '100%', height: '55px'}} tabIndex="0" 
         aria-label={formatDate(data.sel_menu_date) + ". "+ data.meal_qty+ " "+data.meal_name+"s"}
         title={formatDate(data.sel_menu_date) + ". "+ data.meal_qty+ " "+data.meal_name+"s"}>
           <div
             style={{
               // border: 'inset',
               width: '8%',
-              fontSize: '40px',
+              fontSize: '20px',
               fontWeight: '600',
-              paddingTop: '15px'
+              // paddingTop: '15px'
             }}
           >
             {data.meal_qty}
@@ -741,7 +928,7 @@ function CustomerInfo() {
               // border: 'inset',
               width: '92%',
               fontWeight: '600',
-              paddingTop: '33px'
+              // paddingTop: '33px'
             }}
           >
             {data.meal_name}
@@ -774,26 +961,33 @@ function CustomerInfo() {
       );
     } else if (data.meal_desc === "SURPRISE") {
       mealsForDelivery.push(
-        <div style={{display: 'inline-flex', width: '100%', height: '110px'}} tabIndex="0" 
+        <div style={{display: 'inline-flex', width: '100%', height: '55px'}} tabIndex="0" 
         aria-label={formatDate(data.sel_menu_date) + ". "+ currentPlan.meals+ "surprises"}
         title={formatDate(data.sel_menu_date) + ". "+ currentPlan.meals+ "surprises"}>
           <div
             style={{
-              // border: 'inset',
+              border: 'inset',
               width: '8%',
-              fontSize: '40px',
+              fontSize: '20px',
               fontWeight: '600',
-              paddingTop: '15px'
+							display: 'flex',
+							alignItems: 'center'
+              // paddingTop: '15px'
             }}
           >
-            {currentPlan.meals}
+            {parseMeals(data)}
           </div>
           <div
             style={{
-              // border: 'inset',
+              border: 'inset',
+							// position: 'absolute',
+							// left: '100px',
+							// top: '0px',
               width: '92%',
               fontWeight: '600',
-              paddingTop: '33px'
+							display: 'flex',
+							alignItems: 'center'
+              // paddingTop: '33px'
             }}
           >
             {"Surprises"}
@@ -801,9 +995,10 @@ function CustomerInfo() {
           <div
             style={{
               display: 'flex',
-              // border: 'inset',
+							alignItems: 'center',
+              border: 'inset',
               width: '0%',
-              minWidth: '100px',
+              minWidth: '50px',
               textAlign: 'right',
               float: 'right',
               fontWeight: '600'
@@ -812,14 +1007,17 @@ function CustomerInfo() {
             <div
               style={{
                 border: 'dashed',
-                width: '100px',
-                height: '100px',
+                width: '50px',
+                height: '50px',
                 marginTop: '5px',
                 borderWidth: '2px',
                 // backgroundColor: 'whitesmoke',
-                fontSize: '50px',
-                paddingRight: '33px',
-                paddingTop: '10px'
+                fontSize: '25px',
+                // paddingRight: '33px',
+                // paddingTop: '10px'
+								display: 'flex',
+								justifyContent: 'center',
+								alignItems: 'center'
               }}
             >
               ?
@@ -829,16 +1027,16 @@ function CustomerInfo() {
       );
     } else if (data.meal_desc === "SKIP") {
       mealsForDelivery.push(
-        <div style={{display: 'inline-flex', width: '100%', height: '110px'}} tabIndex="0" 
+        <div style={{display: 'inline-flex', width: '100%', height: '55px'}} tabIndex="0" 
         aria-label={formatDate(data.sel_menu_date) + ". skip"}
         title={formatDate(data.sel_menu_date) + ". skip"}>
           <div
             style={{
               // border: 'inset',
               width: '8%',
-              fontSize: '40px',
+              fontSize: '20px',
               fontWeight: '600',
-              paddingTop: '15px'
+              // paddingTop: '15px'
             }}
           >
             0
@@ -848,7 +1046,7 @@ function CustomerInfo() {
               // border: 'inset',
               width: '92%',
               fontWeight: '600',
-              paddingTop: '33px'
+              // paddingTop: '33px'
             }}
           >
             {"(Skip)"}
@@ -857,7 +1055,18 @@ function CustomerInfo() {
       );
     }
 
-    return mealsForDelivery;
+    return (
+			<div 
+				style={{
+					border: 'solid',
+					borderColor: 'cyan',
+					// display: 'flex',
+					// alignItems: 'center'
+				}}
+			>
+				{mealsForDelivery}
+			</div>
+		);
   }
 
 	// const nextBillingDate = (id) => {
@@ -909,14 +1118,14 @@ function CustomerInfo() {
   }
 
 	const showPastMeals = (data) => {
-    console.log("(showPastMeals) data: ", data);
+    // console.log("(showPastMeals) data: ", data);
 
     let uniqueDates = [];
 
     let mealsDisplay = [];
 
     data.deliveries.forEach((del) => {
-      console.log("del: ", del);
+      // console.log("del: ", del);
       if(!isFutureCycle(del.sel_menu_date, nextBillingDate(currentPlan.purchase_id))) {
 				if(uniqueDates.includes(del.sel_menu_date)){
 					mealsDisplay.push(
@@ -928,7 +1137,14 @@ function CustomerInfo() {
 							}}
 						>
   
-							<div style={{display: 'inline-block', width: '100%'}}>
+							<div 
+								style={{
+									display: 'inline-block', 
+									width: '100%',
+									border: 'solid',
+									borderColor: 'red'
+								}}
+							>
 								{displayMealInfo(del)}
 							</div>
 		
@@ -939,14 +1155,24 @@ function CustomerInfo() {
 					mealsDisplay.push(
 						<div
 							style={{
-								// border: 'solid',
+								border: 'solid',
+								borderColor: 'green',
 								display: 'flex',
-								marginTop: '15px'
+								marginTop: '15px',
 								// marginBottom: '10px'
+								// fontSize: '12px'
 							}}
 						>
 		
-							<div style={{display: 'inline-block', width: '100%'}}>
+							<div 
+								style={{
+									display: 'inline-block', 
+									width: '100%',
+									// border: 'solid',
+									// borderColor: 'orchid',
+									// fontWeight: '12px'
+								}}
+							>
 					
 								<div style={{display: 'inline-flex', width: '100%'}}>
 									<div
@@ -985,7 +1211,17 @@ function CustomerInfo() {
     });
 
     return (
-      <div>{mealsDisplay}</div>
+      <div
+				style={{
+					border: 'dashed',
+					width: '96%',
+					marginLeft: '2%',
+					marginRight: '2%',
+					fontSize: '12px'
+				}}
+			>
+				{mealsDisplay}
+			</div>
     );
   }
 
@@ -1004,7 +1240,7 @@ function CustomerInfo() {
 		let historyTabs = [];
 
     planHistory.history.forEach((sel) => {
-			// console.log("(showHistory) sel: ", sel);
+			console.log("(showHistory) sel: ", sel);
 
       historyTabs.push(
 				<div>
@@ -1056,40 +1292,44 @@ function CustomerInfo() {
 							{sel.payment_id}
 						</div>
 						<div className={styles.historySection}>
-							{sel.payment_info.payment_time_stamp}
+							{/* {sel.payment_info.payment_time_stamp} */}
+              {sel.deliveries[0].payment_time_stamp}
 						</div>
 						<div className={styles.historySection}>
-							{sel.payment_info.payment_type}
+							{/* {sel.payment_info.payment_type} */}
+              {sel.deliveries[0].payment_type}
 						</div>
 						<div className={styles.historySection}>
 							--
 						</div>
 						<div className={styles.historySection}>
-							${sel.payment_info.subtotal.toFixed(2)}
+							{/* ${sel.payment_info.subtotal.toFixed(2)} */}
+              ${sel.deliveries[0].subtotal.toFixed(2)}
 						</div>
 						<div className={styles.historySection}>
-							${sel.payment_info.amount_discount.toFixed(2)}
+							{/* ${sel.payment_info.amount_discount.toFixed(2)} */}
+              ${sel.deliveries[0].amount_discount.toFixed(2)}
 						</div>
 						<div className={styles.historySection}>
-							${sel.payment_info.service_fee.toFixed(2)}
+							${sel.deliveries[0].service_fee.toFixed(2)}
 						</div>
 						<div className={styles.historySection}>
-							${sel.payment_info.delivery_fee.toFixed(2)}
+							${sel.deliveries[0].delivery_fee.toFixed(2)}
 						</div>
 						<div className={styles.historySection}>
-							${sel.payment_info.driver_tip.toFixed(2)}
+							${sel.deliveries[0].driver_tip.toFixed(2)}
 						</div>
 						<div className={styles.historySection}>
-							${sel.payment_info.taxes.toFixed(2)}
+							${sel.deliveries[0].taxes.toFixed(2)}
 						</div>
 						<div className={styles.historySection}>
-							${sel.payment_info.ambassador_code.toFixed(2)}
+							{/* ${sel.payment_info.ambassador_code.toFixed(2)} */}
 						</div>
 						<div className={styles.historySection}>
-							${sel.payment_info.amount_paid.toFixed(2)}
+							{/* ${sel.payment_info.amount_paid.toFixed(2)} */}
 						</div>
 						<div className={styles.historySection}>
-							${sel.payment_info.amount_due.toFixed(2)}
+							{/* ${sel.payment_info.amount_due.toFixed(2)} */}
 						</div>
 					</div>
 
@@ -1107,7 +1347,13 @@ function CustomerInfo() {
 		return(
       <div
 				style={{
-					border: 'solid',
+					// border: 'solid',
+					overflowY: 'scroll',
+					maxHeight: '562px',
+					borderTop: 'solid',
+					borderBottom: 'solid',
+					borderWidth: '1px',
+					borderColor: '#f26522',
 					// marginBottom: '50px'
 					// paddingBottom: '50px'
 				}}
@@ -1118,7 +1364,24 @@ function CustomerInfo() {
 	}
 
   return (
-		<div style={{backgroundColor: '#F26522'}}>
+		<div 
+			style={{
+				backgroundColor: '#F26522',
+				height: '10px'
+			}}
+		>
+
+			<div 
+				style={{
+					position: 'fixed',
+					backgroundColor: '#F26522',
+          // border: 'solid',
+          // backgroundColor: 'yellow',
+					height: '110vh',
+					width: '100vw',
+					zIndex: '-100'
+				}}
+			/>
 
 			{/* For debugging window size */}
 			<span 
@@ -1161,6 +1424,7 @@ function CustomerInfo() {
 						zIndex: '99',
 						height: '100vh',
 						width: '100vw',
+            maxWidth: '100%',
 						// height: '50vh',
 						// width: '50vw',
 						// border: 'inset',
@@ -1168,6 +1432,7 @@ function CustomerInfo() {
 						top: '0',
 						left: '0',
 						backgroundColor: '#F7F4E5',
+            // backgroundColor: 'blue',
 						display: 'flex',
 						justifyContent: 'center',
 						alignItems: 'center'
@@ -1180,7 +1445,18 @@ function CustomerInfo() {
 			)}
 
 			{console.log("Current customer info: ", selectedCustomer)}
-			<div className={styles.containerCustomer}>
+			{/* <div className={styles.containerCustomer}> */}
+			<div 
+				// className={styles.containerCustomer}
+				className={
+					document.getElementById("custInfo") === null ||
+					document.getElementById("custInfo").offsetWidth > 800 ? (
+						styles.containerCustomer
+					) : (
+						styles.containerCustomerNarrow
+					)
+				}
+			>
 				{selectedCustomer === null ? (
 					<div 
 						// id={"custInfo"}
@@ -1194,463 +1470,659 @@ function CustomerInfo() {
 							alignText: 'center',
 							paddingRight: '20px',
 							paddingLeft: '20px',
-							border: 'solid',
-							borderColor: 'orchid'
+							// border: 'solid',
+							// borderColor: 'orchid'
 						}}
 					>
 						Select a customer to display their information.
 					</div>
 				) : (
-
 					document.getElementById("custInfo") === null ||
 					document.getElementById("custInfo").offsetWidth > 800 ? (
-					<div
-						style={{
-							display: 'flex',
-							// border: 'dashed',
-							height: '100%',
-							justifyContent: 'center',
-							alignItems: 'center'
-						}}
-					>
-						{/* {console.log("(1) width: ", document.getElementById("custInfo").offsetWidth)} */}
-						<div
-							style={{
-								border: 'solid',
-								borderColor: 'green',
-								marginLeft: '50px',
-								marginRight: '50px',
-								display: 'inline-flex',
-								alignItems: 'center',
-								height: '80px',
-								// zIndex: '2'
-								// width: '40%',
-								// minWidth: '300px'
-							}}
-						>
-							<div
-								className={styles.avatar}
-							>
-								?
-							</div>
-							<div
-								style={{
-									// border: 'solid',
-									display: 'inline-block'
-								}}
-							>
-								<div
-									style={{
-										// border: 'inset',
-										display: 'inline-flex',
-										width: '100%'
-									}}
-								>
-									<div
-										style={{
-											// border: 'solid',
-											// color: 'green'
-											fontWeight: '600',
-											fontSize: '18px',
-											marginRight: '15px'
-										}}
-									>
-										{/* {
-											selectedCustomer.customer_first_name + " " + 
-											selectedCustomer.customer_last_name
-										} */}
-										{isInvalid(selectedCustomer.customer_first_name) ? (
-											ERR_VAL
-										) : (
-											selectedCustomer.customer_first_name
-										)}
-										&nbsp;
-										{isInvalid(selectedCustomer.customer_last_name) ? (
-											ERR_VAL
-										) : (
-											selectedCustomer.customer_last_name
-										)}
-									</div>
+            <div
+              style={{
+                display: 'flex',
+                // border: 'dashed',
+                height: '100%',
+                justifyContent: 'center',
+                alignItems: 'center'
+              }}
+            >
+              {/* {console.log("(1) width: ", document.getElementById("custInfo").offsetWidth)} */}
+              <div
+                style={{
+                  // border: 'solid',
+                  // borderColor: 'green',
+                  marginLeft: '50px',
+                  marginRight: '50px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  height: '80px',
+                  // zIndex: '2'
+                  // width: '40%',
+                  // minWidth: '300px'
+                }}
+              >
+                <div
+                  className={styles.avatar}
+                >
+                  ?
+                </div>
+                <div
+                  style={{
+                    // border: 'solid',
+                    display: 'inline-block'
+                  }}
+                >
+                  <div
+                    style={{
+                      // border: 'inset',
+                      display: 'inline-flex',
+                      width: '100%'
+                    }}
+                  >
+                    <div
+                      style={{
+                        // border: 'solid',
+                        // color: 'green'
+                        fontWeight: '600',
+                        fontSize: '18px',
+                        marginRight: '15px'
+                      }}
+                    >
+                      {/* {
+                        selectedCustomer.customer_first_name + " " + 
+                        selectedCustomer.customer_last_name
+                      } */}
+                      {isInvalid(selectedCustomer.customer_first_name) ? (
+                        ERR_VAL
+                      ) : (
+                        selectedCustomer.customer_first_name
+                      )}
+                      &nbsp;
+                      {isInvalid(selectedCustomer.customer_last_name) ? (
+                        ERR_VAL
+                      ) : (
+                        selectedCustomer.customer_last_name
+                      )}
+                    </div>
 
-									<div
-										onClick={() => {setCustomerDropdown(!customerDropdown)}}
-										className={customerDropdown ? (
-											styles.orangeArrowUp
-										) : (
-											styles.orangeArrowDown
-										)}
-									/>
+                    <div
+                      onClick={() => {setCustomerDropdown(!customerDropdown)}}
+                      // className={customerDropdown ? (
+                      //   styles.orangeArrowUp
+                      // ) : (
+                      //   styles.orangeArrowDown
+                      // )}
+                      className={customerDropdown ? (
+                        loadingUserInfo ? (null) : (styles.orangeArrowUp)
+                      ) : (
+                        styles.orangeArrowDown
+                      )}
+                    />
 
-								</div>
-								<br />
-								<div
-									style={{
-										// border: 'inset',
-										display: 'inline-flex'
-									}}
-								>
-									<div
-										style={{
-											// border: 'solid',
-											// color: 'green'
-											color: '#f26522',
-											textDecoration: 'underline',
-											marginRight: '15px',
-											fontWeight: '500',
-											fontSize: '14px',
-											cursor: 'pointer'
-										}}
-									>
-										Send Message
-									</div>
-									<div
-										style={{
-											// border: 'solid',
-											// color: 'green'
-											color: '#f26522',
-											textDecoration: 'underline',
-											// marginRight: '15px',
-											fontWeight: '500',
-											fontSize: '14px',
-											cursor: 'pointer'
-										}}
-									>
-										Issue Coupon
-									</div>
-								</div>
-							</div>
-							{/* {
-								selectedCustomer.customer_first_name + " " + 
-								selectedCustomer.customer_last_name
-							} */}
-						</div>
-						<div
-							id={"custInfo"}
-							style={{
-								border: 'solid',
-								borderColor: 'blue',
-								flexGrow: '1',
-								display: 'inline-flex',
-								position: 'relative',
-								height: '100%'
-							}}
-						>
-							{/* {document.getElementById("custInfo").offsetWidth > 800 ? ( */}
-							{document.getElementById("custInfo") !== null ? (
-								<>
-									<div 
-										style={{
-											// border: 'inset', 
-											position: 'absolute',
-											right: '0',
-											width: '200px',
-											display: 'flex',
-											justifyContent: 'center',
-											top: '15px',
-											height: '30px',
-											color: '#f26522',
-											fontWeight: '500'
-											// width: '25%'
-										}}
-									>
-										Total Revenue
-									</div>
-									<div 
-										style={{
-											// border: 'inset', 
-											position: 'absolute',
-											right: '0',
-											width: '200px',
-											display: 'flex',
-											justifyContent: 'center',
-											top: '45px',
-											fontSize: '24px'
-											// width: '25%'
-										}}
-									>
-										$95.90
-									</div>
+                  </div>
+                  <br />
+                  <div
+                    style={{
+                      // border: 'inset',
+                      display: 'inline-flex'
+                    }}
+                  >
+                    <div
+                      style={{
+                        // border: 'solid',
+                        // color: 'green'
+                        color: '#f26522',
+                        textDecoration: 'underline',
+                        marginRight: '15px',
+                        fontWeight: '500',
+                        fontSize: '14px',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Send Message
+                    </div>
+                    <div
+                      style={{
+                        // border: 'solid',
+                        // color: 'green'
+                        color: '#f26522',
+                        textDecoration: 'underline',
+                        // marginRight: '15px',
+                        fontWeight: '500',
+                        fontSize: '14px',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Issue Coupon
+                    </div>
+                  </div>
+                </div>
+                {/* {
+                  selectedCustomer.customer_first_name + " " + 
+                  selectedCustomer.customer_last_name
+                } */}
+              </div>
+              <div
+                id={"custInfo"}
+                style={{
+                  // border: 'solid',
+                  // borderColor: 'blue',
+                  flexGrow: '1',
+                  display: 'inline-flex',
+                  position: 'relative',
+                  height: '100%'
+                }}
+              >
+                {/* {document.getElementById("custInfo").offsetWidth > 800 ? ( */}
+                {document.getElementById("custInfo") !== null && loadingUserInfo === false? (
+                  <>
+                    <div 
+                      style={{
+                        // border: 'inset', 
+                        position: 'absolute',
+                        right: '0',
+                        width: '200px',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        top: '20px',
+                        height: '30px',
+                        color: '#f26522',
+                        fontWeight: '500'
+                        // width: '25%'
+                      }}
+                    >
+                      Total Revenue
+                    </div>
+                    <div 
+                      style={{
+                        // border: 'inset', 
+                        position: 'absolute',
+                        right: '0',
+                        width: '200px',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        top: '50px',
+                        fontSize: '24px'
+                        // width: '25%'
+                      }}
+                    >
+                      $95.90
+                    </div>
 
-									<div 
-										style={{
-											position: 'absolute',
-											right: '200px',
-											width: '200px',
-											display: 'flex',
-											justifyContent: 'center',
-											top: '15px',
-											height: '30px',
-											color: '#f26522',
-											fontWeight: '500'
-										}}
-									>
-										Active Subscriptions
-									</div>
-									<div 
-										style={{
-											position: 'absolute',
-											right: '200px',
-											width: '200px',
-											display: 'flex',
-											justifyContent: 'center',
-											top: '45px',
-											fontSize: '24px'
-										}}
-									>
-										{countActiveSubs()}
-									</div>
+                    <div 
+                      style={{
+                        position: 'absolute',
+                        right: '200px',
+                        width: '200px',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        top: '20px',
+                        height: '30px',
+                        color: '#f26522',
+                        fontWeight: '500'
+                      }}
+                    >
+                      Active Subscriptions
+                    </div>
+                    <div 
+                      style={{
+                        position: 'absolute',
+                        right: '200px',
+                        width: '200px',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        top: '50px',
+                        fontSize: '24px'
+                      }}
+                    >
+                      {countActiveSubs()}
+                    </div>
 
-									<div 
-										style={{
-											position: 'absolute',
-											right: '400px',
-											width: '200px',
-											display: 'flex',
-											justifyContent: 'center',
-											top: '15px',
-											height: '30px',
-											color: '#f26522',
-											fontWeight: '500'
-										}}
-									>
-										Delivery Info
-									</div>
-									<div 
-										style={{
-											position: 'absolute',
-											right: '400px',
-											width: '200px',
-											display: 'flex',
-											justifyContent: 'center',
-											top: '45px',
-											fontSize: '15px'
-										}}
-									>
-										{isInvalid(selectedCustomer.customer_address) ? (
-											ERR_VAL
-										) : (
-											selectedCustomer.customer_address
-										)}
-									</div>
-									<div 
-										style={{
-											position: 'absolute',
-											right: '400px',
-											width: '200px',
-											display: 'flex',
-											justifyContent: 'center',
-											top: '64px',
-											fontSize: '15px'
-										}}
-									>
-										{isInvalid(selectedCustomer.customer_city) ? (
-											ERR_VAL
-										) : (
-											selectedCustomer.customer_city
-										)}
-										{", CA, "}
-										{isInvalid(selectedCustomer.customer_zip) ? (
-											ERR_VAL
-										) : (
-											selectedCustomer.customer_zip
-										)}
-									</div>
+                    <div 
+                      style={{
+                        position: 'absolute',
+                        right: '400px',
+                        width: '200px',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        top: '20px',
+                        height: '30px',
+                        color: '#f26522',
+                        fontWeight: '500'
+                      }}
+                    >
+                      Delivery Info
+                    </div>
+                    <div 
+                      style={{
+                        position: 'absolute',
+                        right: '400px',
+                        width: '200px',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        top: '50px',
+                        fontSize: '15px'
+                      }}
+                    >
+                      {isInvalid(selectedCustomer.customer_address) ? (
+                        ERR_VAL
+                      ) : (
+                        selectedCustomer.customer_address
+                      )}
+                    </div>
+                    <div 
+                      style={{
+                        position: 'absolute',
+                        right: '400px',
+                        width: '200px',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        top: '70px',
+                        fontSize: '15px'
+                      }}
+                    >
+                      {isInvalid(selectedCustomer.customer_city) ? (
+                        ERR_VAL
+                      ) : (
+                        selectedCustomer.customer_city
+                      )}
+                      {", CA, "}
+                      {isInvalid(selectedCustomer.customer_zip) ? (
+                        ERR_VAL
+                      ) : (
+                        selectedCustomer.customer_zip
+                      )}
+                    </div>
 
-									<div 
-										style={{
-											position: 'absolute',
-											right: '600px',
-											width: '200px',
-											display: 'flex',
-											justifyContent: 'center',
-											top: '15px',
-											height: '30px',
-											color: '#f26522',
-											fontWeight: '500'
-										}}
-									>
-										Contact Info
-									</div>
-									<div 
-										style={{
-											position: 'absolute',
-											right: '600px',
-											width: '200px',
-											display: 'flex',
-											justifyContent: 'center',
-											top: '45px',
-											fontSize: '15px'
-										}}
-									>
-										{selectedCustomer.customer_email}
-									</div>
-									<div 
-										style={{
-											position: 'absolute',
-											right: '600px',
-											width: '200px',
-											display: 'flex',
-											justifyContent: 'center',
-											top: '64px',
-											fontSize: '15px'
-										}}
-									>
-										{selectedCustomer.customer_phone_num}
-									</div>
-								</>
-							) : (
-								<div>
-									NOTHING
-								</div>
-							)}
+                    <div 
+                      style={{
+                        position: 'absolute',
+                        right: '600px',
+                        width: '200px',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        top: '20px',
+                        height: '30px',
+                        color: '#f26522',
+                        fontWeight: '500'
+                      }}
+                    >
+                      Contact Info
+                    </div>
+                    <div 
+                      style={{
+                        position: 'absolute',
+                        right: '600px',
+                        width: '200px',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        top: '50px',
+                        fontSize: '15px'
+                      }}
+                    >
+                      {selectedCustomer.customer_email}
+                    </div>
+                    <div 
+                      style={{
+                        position: 'absolute',
+                        right: '600px',
+                        width: '200px',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        top: '70px',
+                        fontSize: '15px'
+                      }}
+                    >
+                      {selectedCustomer.customer_phone_num}
+                    </div>
+                  </>
+                ) : (
+                  <div 
+                    style={{
+                      // height: '170px',
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      fontSize: '30px',
+                      fontWeight: 'bold',
+                      // border: 'dashed',
+                      width: '100%'
+                    }}
+                  >
+                    LOADING USER INFO...
+                  </div>
+                )}
 
-						</div>
-					</div>
+              </div>
+            </div>
 					) : (
 
 						<>
-						{/* {initialHeader === false ? setInitialHeader(true) : null} */}
-						<div
-							style={{
-								display: 'flex',
-								// border: 'dashed',
-								height: '100%',
-								justifyContent: 'center',
-								alignItems: 'center'
-							}}
-						>
-							<div
-								style={{
-									border: 'solid',
-									borderColor: 'red',
-									marginLeft: '50px',
-									marginRight: '50px',
-									display: 'inline-flex',
-									alignItems: 'center',
-									height: '80px',
-									// zIndex: '2'
-									// width: '40%',
-									// minWidth: '300px'
-								}}
-							>
-								<div
-									className={styles.avatar}
-								>
-									?
-								</div>
-								<div
-									style={{
-										// border: 'solid',
-										display: 'inline-block'
-									}}
-								>
-									<div
-										style={{
-											// border: 'inset',
-											display: 'inline-flex',
-											width: '100%'
-										}}
-									>
-										<div
-											style={{
-												// border: 'solid',
-												// color: 'green'
-												fontWeight: '600',
-												fontSize: '18px',
-												marginRight: '15px'
-											}}
-										>
-											{/* {
-												selectedCustomer.customer_first_name + " " + 
-												selectedCustomer.customer_last_name
-											} */}
-											{isInvalid(selectedCustomer.customer_first_name) ? (
-												ERR_VAL
-											) : (
-												selectedCustomer.customer_first_name
-											)}
-											&nbsp;
-											{isInvalid(selectedCustomer.customer_last_name) ? (
-												ERR_VAL
-											) : (
-												selectedCustomer.customer_last_name
-											)}
-										</div>
+              {/* {initialHeader === false ? setInitialHeader(true) : null} */}
+              <div
+                style={{
+                  display: 'flex',
+                  // border: 'dashed',
+                  height: '100%',
+                  maxHeight: '120px',
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }}
+              >
+                <div
+                  style={{
+                    // border: 'solid',
+                    // borderColor: 'red',
+                    marginLeft: '50px',
+                    marginRight: '50px',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    height: '80px',
+                    // zIndex: '2'
+                    // width: '40%',
+                    // minWidth: '300px'
+                  }}
+                >
+                  <div
+                    className={styles.avatar}
+                  >
+                    ?
+                  </div>
+                  <div
+                    style={{
+                      // border: 'solid',
+                      display: 'inline-block'
+                    }}
+                  >
+                    <div
+                      style={{
+                        // border: 'inset',
+                        display: 'inline-flex',
+                        width: '100%'
+                      }}
+                    >
+                      <div
+                        style={{
+                          // border: 'solid',
+                          // color: 'green'
+                          fontWeight: '600',
+                          fontSize: '18px',
+                          marginRight: '15px'
+                        }}
+                      >
+                        {/* {
+                          selectedCustomer.customer_first_name + " " + 
+                          selectedCustomer.customer_last_name
+                        } */}
+                        {isInvalid(selectedCustomer.customer_first_name) ? (
+                          ERR_VAL
+                        ) : (
+                          selectedCustomer.customer_first_name
+                        )}
+                        &nbsp;
+                        {isInvalid(selectedCustomer.customer_last_name) ? (
+                          ERR_VAL
+                        ) : (
+                          selectedCustomer.customer_last_name
+                        )}
+                      </div>
 
-										<div
-											onClick={() => {setCustomerDropdown(!customerDropdown)}}
-											className={customerDropdown ? (
-												styles.orangeArrowUp
-											) : (
-												styles.orangeArrowDown
-											)}
-										/>
+                      <div
+                        onClick={() => {setCustomerDropdown(!customerDropdown)}}
+                        // className={customerDropdown ? (
+                        //   styles.orangeArrowUp
+                        // ) : (
+                        //   styles.orangeArrowDown
+                        // )}
+                        className={customerDropdown ? (
+                          loadingUserInfo ? (styles.orangeArrowHidden) : (styles.orangeArrowUp)
+                        ) : (
+                          styles.orangeArrowDown
+                        )}
+                      />
 
-									</div>
-									<br />
-									<div
-										style={{
-											// border: 'inset',
-											display: 'inline-flex'
-										}}
-									>
-										<div
-											style={{
-												// border: 'solid',
-												// color: 'green'
-												color: '#f26522',
-												textDecoration: 'underline',
-												marginRight: '15px',
-												fontWeight: '500',
-												fontSize: '14px',
-												cursor: 'pointer'
-											}}
-										>
-											Send Message
-										</div>
-										<div
-											style={{
-												// border: 'solid',
-												// color: 'green'
-												color: '#f26522',
-												textDecoration: 'underline',
-												// marginRight: '15px',
-												fontWeight: '500',
-												fontSize: '14px',
-												cursor: 'pointer'
-											}}
-										>
-											Issue Coupon
-										</div>
-									</div>
-								</div>
-								{/* {
-									selectedCustomer.customer_first_name + " " + 
-									selectedCustomer.customer_last_name
-								} */}
-							</div>
-							<div
-								id={"custInfo"}
-								style={{
-									border: 'solid',
-									borderColor: 'cyan',
-									flexGrow: '1',
-									display: 'inline-flex',
-									position: 'relative',
-									height: '100%'
-								}}
-							/>
-						</div>
+                    </div>
+                    <br />
+                    <div
+                      style={{
+                        // border: 'inset',
+                        display: 'inline-flex'
+                      }}
+                    >
+                      <div
+                        style={{
+                          // border: 'solid',
+                          // color: 'green'
+                          color: '#f26522',
+                          textDecoration: 'underline',
+                          marginRight: '15px',
+                          fontWeight: '500',
+                          fontSize: '14px',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        Send Message
+                      </div>
+                      <div
+                        style={{
+                          // border: 'solid',
+                          // color: 'green'
+                          color: '#f26522',
+                          textDecoration: 'underline',
+                          // marginRight: '15px',
+                          fontWeight: '500',
+                          fontSize: '14px',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        Issue Coupon
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
-						<div
-							style={{
-								border: 'solid'
-							}}
-						>
-							NARROW VIEW
-						</div>
+                <div
+                  id={"custInfo"}
+                  style={{
+                    // border: 'solid',
+                    // borderColor: 'cyan',
+                    flexGrow: '1',
+                    display: 'inline-flex',
+                    position: 'relative',
+                    height: '100%',
+                    // maxHeight: '120px'
+                  }}
+                />
+              </div>
 
+              <div
+                style={{
+                  // border: 'inset',
+                  width: '100%',
+                  // display: 'inline-block',
+                  // justifyContent: 'center',
+                  // whiteSpace: 'initial',
+                  // float: 'left'
+                  // float: 'center'
+                  // paddingBottom: '20px'
+                  // border: 'solid',
+                  // borderColor: 'lime'
+                }}
+              >
+                {loadingUserInfo === false ? (
+                  <>
+                    <div
+                      style={{
+                        // border: 'dashed',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        // maxWidth: '500px',
+                        width: '100%',
+                        marginBottom: '30px'
+                      }}
+                    >
+                      <div className={styles.narrowInfoBox}>
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            height: '30px',
+                            color: '#f26522',
+                            fontWeight: '500'
+                          }}
+                        >
+                          Contact Info
+                        </div>
+                        <div 
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            fontSize: '15px'
+                          }}
+                        >
+                          {selectedCustomer.customer_email}
+                        </div>
+                        <div 
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            fontSize: '15px'
+                          }}
+                        >
+                          {selectedCustomer.customer_phone_num}
+                        </div>
+                      </div>
 
+                      <div className={styles.narrowInfoBox}>
+                        <div 
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            height: '30px',
+                            color: '#f26522',
+                            fontWeight: '500'
+                          }}
+                        >
+                          Delivery Info
+                        </div>
+                        <div 
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            fontSize: '15px'
+                          }}
+                        >
+                          {isInvalid(selectedCustomer.customer_address) ? (
+                            ERR_VAL
+                          ) : (
+                            selectedCustomer.customer_address
+                          )}
+                        </div>
+                        <div 
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            fontSize: '15px'
+                          }}
+                        >
+                          {isInvalid(selectedCustomer.customer_city) ? (
+                            ERR_VAL
+                          ) : (
+                            selectedCustomer.customer_city
+                          )}
+                          {", CA, "}
+                          {isInvalid(selectedCustomer.customer_zip) ? (
+                            ERR_VAL
+                          ) : (
+                            selectedCustomer.customer_zip
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div
+                      style={{
+                        // border: 'dashed',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        // maxWidth: '500px',
+                        width: '100%'
+                      }}
+                    >
+
+                      <div
+                        className={styles.narrowInfoBox}
+                      >
+                        <div 
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            height: '30px',
+                            color: '#f26522',
+                            fontWeight: '500'
+                          }}
+                        >
+                          Active Subscriptions
+                        </div>
+                        <div 
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            top: '50px',
+                            fontSize: '24px'
+                          }}
+                        >
+                          {countActiveSubs()}
+                        </div>
+                      </div>
+
+                      <div
+                        className={styles.narrowInfoBox}
+                      >
+                        <div 
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            height: '30px',
+                            color: '#f26522',
+                            fontWeight: '500'
+                            // width: '25%'
+                          }}
+                        >
+                          Total Revenue
+                        </div>
+                        <div 
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            fontSize: '24px'
+                            // width: '25%'
+                          }}
+                        >
+                          $95.90
+                        </div>
+                      </div>
+
+                    </div>
+                  </>
+                ) : (
+                  <div 
+                    style={{
+                      height: '170px',
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      fontSize: '30px',
+                      fontWeight: 'bold'
+                    }}
+                  >
+                    LOADING USER INFO...
+                  </div>
+                )}
+              </div>
+    
 						</>
 					)
 					
@@ -1659,9 +2131,21 @@ function CustomerInfo() {
 
 			{customersById !== null && customerDropdown ? (
 				<div
+					style={{
+						position: 'absolute',
+						// border: 'solid',
+						marginBottom: '20px',
+						zIndex: '9',
+						height: '750px',
+						width: '100vw',
+            maxWidth: '100%',
+            // backgroundColor: 'red'
+					}}
+				>
+				<div
 					type='text'
 					style={{
-						// border: 'solid',
+						// border: 'dashed',
 						// borderWidth: '1px',
 						borderRadius: '15px',
 						marginTop: '20px',
@@ -1672,7 +2156,7 @@ function CustomerInfo() {
 						position: 'absolute',
 						backgroundColor: '#FFF7E0',
 						width: '96%',
-						height: '700px'
+						height: '700px',
 					}}
 				>
 					<div
@@ -1685,33 +2169,14 @@ function CustomerInfo() {
 							marginLeft: '2%'
 						}}
 					>
-						<strong>Search by</strong>
 						<input
 							type='text'
-							placeholder='Name'
+							placeholder='Search'
 							className={styles.customerFilter}
-							style={{marginLeft: '2%'}}
-							value={nameInput}
+							// style={{marginLeft: '2%'}}
+							value={searchInput}
 							onChange={e => {
-								inputName(e.target.value)
-							}}
-						/>
-						<input
-							type='text'
-							placeholder='Address'
-							className={styles.customerFilter}
-							value={addressInput}
-							onChange={e => {
-								inputAddress(e.target.value)
-							}}
-						/>
-						<input
-							type='text'
-							placeholder='Purchase ID'
-							className={styles.customerFilter}
-							value={idInput}
-							onChange={e => {
-								inputId(e.target.value);
+								inputSearch(e.target.value)
 							}}
 						/>
 					</div>
@@ -1753,7 +2218,9 @@ function CustomerInfo() {
 											styles.sortingArrowUp
 										)}
 									/> 
-								) : (null)}
+								) : (
+                  <div className={styles.sortingArrowInactive} />
+                )}
 							</div>
 						</div>
 
@@ -1782,22 +2249,45 @@ function CustomerInfo() {
 											styles.sortingArrowUp
 										)}
 									/> 
-								) : (null)}
+								) : (
+                  <div className={styles.sortingArrowInactive} />
+                )}
 							</div>
 						</div>
 
 						<div
 							className={styles.cellOuterWrapper}
-							style={{width: CELL.email_width}}>
+							style={{
+								width: CELL.email_width,
+								cursor: 'pointer'
+							}}
+							onClick={() => {
+								if (sortMode === SORT_EMAIL) {
+									setSortMode(SORT_EMAIL_REVERSE);
+								} else { 
+									setSortMode(SORT_EMAIL);
+								}
+							}}>
 							<div className={styles.cellInnerWrapper}>
 								<span className={styles.cellContent}>
 									<strong>Email</strong>
 								</span>
+                {sortMode === SORT_EMAIL || sortMode === SORT_EMAIL_REVERSE ? (
+									<div
+										className={sortMode === SORT_EMAIL ? (
+											styles.sortingArrowDown
+										) : (
+											styles.sortingArrowUp
+										)}
+									/> 
+								) : (
+                  <div className={styles.sortingArrowInactive} />
+                )}
 							</div>
 						</div>
 
 						<div
-							className={styles.cellOuterWrapper}
+							className={styles.cellOuterWrapper2}
 							style={{width: CELL.last_order_width}}>
 							<div className={styles.cellInnerWrapper}>
 								<span className={styles.cellContent}>
@@ -1807,7 +2297,7 @@ function CustomerInfo() {
 						</div>
 
 						<div
-							className={styles.cellOuterWrapper}
+							className={styles.cellOuterWrapper2}
 							style={{width: CELL.cust_since_width}}>
 							<div className={styles.cellInnerWrapper}>
 								<span className={styles.cellContent}>
@@ -1819,7 +2309,7 @@ function CustomerInfo() {
 						<div
 							className={styles.cellOuterWrapper}
 							style={{
-								width: CELL.name_width,
+								width: CELL.address_width,
 								cursor: 'pointer'
 							}}
 							onClick={() => {
@@ -1836,17 +2326,19 @@ function CustomerInfo() {
 								{sortMode === SORT_ADDRESS || sortMode === SORT_ADDRESS_REVERSE ? (
 									<div
 										className={sortMode === SORT_ADDRESS ? (
-											styles.orangeArrowDown
+											styles.sortingArrowDown
 										) : (
-											styles.orangeArrowUp
+											styles.sortingArrowUp
 										)}
 									/> 
-								) : (null)}
+								) : (
+                  <div className={styles.sortingArrowInactive} />
+                )}
 							</div>
 						</div>
 
 						<div
-							className={styles.cellOuterWrapper}
+							className={styles.cellOuterWrapper2}
 							style={{width: CELL.zone_width}}>
 							<div className={styles.cellInnerWrapper}>
 								<span className={styles.cellContent}>
@@ -1857,21 +2349,63 @@ function CustomerInfo() {
 
 						<div
 							className={styles.cellOuterWrapper}
-							style={{width: CELL.last_order_width}}>
+							style={{
+								width: CELL.zip_width,
+								cursor: 'pointer'
+							}}
+							onClick={() => {
+								if (sortMode === SORT_ZIP) {
+									setSortMode(SORT_ZIP_REVERSE);
+								} else { 
+									setSortMode(SORT_ZIP);
+								}
+							}}>
 							<div className={styles.cellInnerWrapper}>
 								<span className={styles.cellContent}>
 									<strong>Zip Code</strong>
 								</span>
+                {sortMode === SORT_ZIP || sortMode === SORT_ZIP_REVERSE ? (
+									<div
+										className={sortMode === SORT_ZIP ? (
+											styles.sortingArrowDown
+										) : (
+											styles.sortingArrowUp
+										)}
+									/> 
+								) : (
+                  <div className={styles.sortingArrowInactive} />
+                )}
 							</div>
 						</div>
 
 						<div
 							className={styles.cellOuterWrapper}
-							style={{width: CELL.phone_width}}>
+							style={{
+								width: CELL.phone_width,
+								cursor: 'pointer'
+							}}
+							onClick={() => {
+								if (sortMode === SORT_PHONE) {
+									setSortMode(SORT_PHONE_REVERSE);
+								} else { 
+									setSortMode(SORT_PHONE);
+								}
+							}}>
 							<div className={styles.cellInnerWrapper}>
 								<span className={styles.cellContent}>
 									<strong>Phone Number</strong>
 								</span>
+                {sortMode === SORT_PHONE || sortMode === SORT_PHONE_REVERSE ? (
+									<div
+										className={sortMode === SORT_PHONE ? (
+											styles.sortingArrowDown
+										) : (
+											styles.sortingArrowUp
+										)}
+									/> 
+								) : (
+                  <div className={styles.sortingArrowInactive} />
+                )}
 							</div>
 						</div>
 
@@ -1885,91 +2419,9 @@ function CustomerInfo() {
 					>
 						{filterCustomers()}
 					</div>
+            
 
-					{/* <div
-						style={{
-							display: 'inline-flex',
-							width: '100%',
-							border: 'inset'
-						}}
-					>
-					<div
-						style={{
-							display: 'flex',
-							alignItems: 'center',
-							justifyContent: 'center',
-							border: 'dashed',
-							width: '20%'
-						}}
-					>
-						<div
-							style={{
-								alignSelf: 'flex-start',
-								// maxWidth: '100%',
-								overflow: 'hidden',
-								display: 'flex',
-								alignItems: 'center',
-								justifyContent: 'center',
-								boxSizing: 'border-box',
-								padding: '5px 10px',
-								border: '1px solid black',
-								borderRadius: '5px',
-								// marginBottom: '10px',
-								backgroundColor: 'white',
-								height: '50px'
-							}}
-						>
-							<span
-								style={{
-									whiteSpace: 'nowrap',
-									textOverflow: 'ellipsis',
-									overflow: 'hidden',
-									// width: '500px'
-								}}
-							>
-								Stuff 1
-							</span>
-						</div>
-					</div>
-					<div
-						style={{
-							display: 'flex',
-							alignItems: 'center',
-							justifyContent: 'center',
-							border: 'dashed',
-							width: '20%'
-						}}
-					>
-						<div
-							style={{
-								alignSelf: 'flex-start',
-								// maxWidth: '100%',
-								overflow: 'hidden',
-								display: 'flex',
-								alignItems: 'center',
-								justifyContent: 'center',
-								boxSizing: 'border-box',
-								padding: '5px 10px',
-								border: '1px solid black',
-								borderRadius: '5px',
-								// marginBottom: '10px',
-								backgroundColor: 'white',
-								height: '50px'
-							}}
-						>
-							<span
-								style={{
-									whiteSpace: 'nowrap',
-									textOverflow: 'ellipsis',
-									overflow: 'hidden'
-								}}
-							>
-								Stuff 2
-							</span>
-						</div>
-					</div>
-					</div> */}
-
+				</div>
 				</div>
 			) : (
 				null
@@ -2026,13 +2478,29 @@ function CustomerInfo() {
 							</div>
         		</div>
 
+						{customerDropdown === false ? (
+						<div
+							style={{
+								// marginBottom: '20px',
+								paddingBottom: '20px'
+								// border: 'dashed'
+							}}
+						>
+
 						<div className={styles.containerHistory}>
 
 							<div className={styles.sectionHeader}>
 								Meal Plan History
 							</div>
 
-							<div style={{display: 'inline-flex', width: '100%'}}>
+							<div 
+								style={{
+									display: 'inline-flex', 
+									width: '100%',
+									paddingRight: '15px',
+									// border: 'dashed'
+								}}
+							>
 								<div className={styles.orangeHeaderCycle}>
 									Billing Cycle
 								</div>
@@ -2080,13 +2548,24 @@ function CustomerInfo() {
 							</div>
 
 							{uniquePlans === null || currentPlan === null ? (
-								<div
+								<div 
+									// id={"custInfo"}
 									style={{
-										// border: 'solid',
-										width: '100%',
+										display: 'flex',
+										height: '120px',
+										fontSize: '30px',
+										fontWeight: 'bold',
+										justifyContent: 'center',
+										alignItems: 'center',
+										alignText: 'center',
+										paddingRight: '20px',
+										paddingLeft: '20px',
+										borderTop: 'solid',
+										borderWidth: '1px',
+										borderColor: '#F26522'
 									}}
 								>
-									{"Waiting for selection..."}
+									Select a meal plan to display its history.
 								</div>
 							) : (
 								<div
@@ -2099,8 +2578,12 @@ function CustomerInfo() {
 								</div>
 							)}
 						</div>
+						</div>
+						) : (
+							null
+						)}
 
-						<br />
+						{/* <br /> */}
 					{/* </>
 				)}
 			</div> */}
