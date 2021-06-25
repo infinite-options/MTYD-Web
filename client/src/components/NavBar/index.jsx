@@ -1,4 +1,4 @@
-import React, {Fragment,useState, useEffect, useRef} from "react";
+import React from "react";
 import Subscribe from "../NavBar/subscribe.png";
 import Select from "../NavBar/select.png";
 import Profile from "../NavBar/profile.png";
@@ -12,8 +12,6 @@ import {resetSubscription} from "../../reducers/actions/subscriptionActions";
 import store from "../../reducers/store";
 import styles from "./navBar.module.css";
 import Cookies from "js-cookie";
-import User from "./User.svg";
-import Logo from "../../images/LOGO_White_BG_MealsForMe.png";
 import whiteLogo from "../../images/White_logo_for_web.png";
 import axios from 'axios';
 import { API_URL } from '../../reducers/constants';

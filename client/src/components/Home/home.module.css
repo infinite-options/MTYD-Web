@@ -10,8 +10,10 @@ It is breaking everything.
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
-  height: 680px;
+  /* height: 680px; */
+  height: 760px;
   width: 1920px inherit;
+  z-index: 1;
 }
 
 .gridcontainer {
@@ -264,13 +266,24 @@ input[type="zipCode"]:focus {
 
 }
 .whiteStripe {
-  top: 367px;
+  /* top: 367px; */
+  /* top: 447px; */
+  /* margin-top: 80px; */
   left: -320px;
-  width: 100%;
+  /* width: 100%; */
+  /* width: 450px; */
+  border-radius: 15px;
+  /* border: solid; */
   height: 140px;
-  background: #FFFFFF 0% 0% no-repeat padding-box;
-  opacity: 1;	
-  margin-top: 30px;
+  /* height: 100%; */
+  width: 500px;
+  /* width: 90%; */
+  /* background: #FFFFFF 0% 0% no-repeat padding-box; */
+  background-color: rgb(255, 255, 255, 0.85);
+  /* opacity: 1;	 */
+  /* background-opacity: 1; */
+  /* margin-top: 30px; */
+  margin-top: 110px;
 }
 .gridRightIcons {
   position: absolute;

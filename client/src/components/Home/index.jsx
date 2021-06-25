@@ -203,9 +203,20 @@ class Home extends Component {
   render() { 
     return (
       <>
-      <div>
+      <div
+        style={{
+          zIndex: '99',
+          position: 'absolute',
+          width: '100vw',
+          maxWidth: '100%'
+        }}
+      >
         <WebNavBar/>
       </div>
+        {/* <WebNavBar/> */}
+      {/* <div>
+        <WebNavBar/>
+      </div> */}
       <div
       style={{
         position:'absolute',
@@ -224,7 +235,7 @@ class Home extends Component {
             />
           </div>
 
-        <div className =  {styles.whiteStripe}>		  
+        {/* <div className =  {styles.whiteStripe}>		  
           <div className = {styles.gridDisplayCenter}>
             <div className = {styles.centerSubtitleText}>
               <img className = {styles.centerImage} src = {Logo} alt="logo" />
@@ -237,7 +248,32 @@ class Home extends Component {
             </div>
 
           </div>
-        </div>		  
+        </div>	 */}
+
+        <div
+          style={{
+            width: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+          }}
+        >
+          <div className =  {styles.whiteStripe}>		  
+            <div className = {styles.gridDisplayCenter}>
+              <div className = {styles.centerSubtitleText}>
+                <img className = {styles.centerImage} src = {Logo} alt="logo" />
+              </div>
+              <div
+                style={{
+                  zIndex:'3',
+                  opacity: '1'
+                }}
+              >
+                <HomeMap/>
+              </div>
+            </div>
+          </div>	
+        </div>
+
       </div>
 
       {(() => {
