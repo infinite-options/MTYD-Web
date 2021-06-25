@@ -33,8 +33,8 @@ function IngredientsUnits() {
 	// const [LPLP, setLPLP] = useState(null);
 	const [uniquePlans, setUniquePlans] = useState(null);
 
-  const [savedIngredients, saveIngredients] = useState([]);
-  const [savedUnits, saveUnits] = useState([]);
+  const [savedIngredients, saveIngredients] = useState(null);
+  const [savedUnits, saveUnits] = useState(null);
 
   const [createModal, setCreateModal] = useState(CREATE_INGREDIENT);
 
@@ -59,7 +59,15 @@ function IngredientsUnits() {
   });
 
 	useEffect(() => {
-
+    axios
+    .get(API_URL + 'ingredients')
+    .then(res => {
+      console.log("(ingredients) res: ", res);
+      saveIngredients(res.data.result);
+    })
+    .catch(err => {
+      console.log(err);
+    });
 	}, []);
 
 	// Set history tab
@@ -486,7 +494,7 @@ function IngredientsUnits() {
 
 			<AdminNavBar currentPage={'ingredients-units'}/>
 
-			{/* {customersById === null ? (
+			{savedIngredients === null ? (
 				<div
 					style={{
 						color: 'red',
@@ -511,7 +519,7 @@ function IngredientsUnits() {
 				</div>
 			) : (
 				null
-			)} */}
+			)}
 
       <div
         style={{
@@ -550,91 +558,91 @@ function IngredientsUnits() {
             height: '100%'
           }}
         >
-        <div 
-          style={{
-            position: 'absolute',
-            right: '400px',
-            width: '200px',
-            display: 'flex',
-            justifyContent: 'center',
-            top: '20px',
-            height: '30px',
-            color: '#f26522',
-            fontWeight: '500'
-          }}
-        >
-          Total no. of Restaurants
+          <div 
+            style={{
+              position: 'absolute',
+              right: '400px',
+              width: '200px',
+              display: 'flex',
+              justifyContent: 'center',
+              top: '20px',
+              height: '30px',
+              color: '#f26522',
+              fontWeight: '500'
+            }}
+          >
+            Total no. of Restaurants
+          </div>
+          <div 
+            style={{
+              position: 'absolute',
+              right: '400px',
+              width: '200px',
+              display: 'flex',
+              justifyContent: 'center',
+              top: '50px',
+              fontSize: '24px'
+            }}
+          >
+            --
+          </div>
+          <div 
+            style={{
+              position: 'absolute',
+              right: '200px',
+              width: '200px',
+              display: 'flex',
+              justifyContent: 'center',
+              top: '20px',
+              height: '30px',
+              color: '#f26522',
+              fontWeight: '500'
+            }}
+          >
+            Total no. of Meals
+          </div>
+          <div 
+            style={{
+              position: 'absolute',
+              right: '200px',
+              width: '200px',
+              display: 'flex',
+              justifyContent: 'center',
+              top: '50px',
+              fontSize: '24px'
+            }}
+          >
+            --
+          </div>
+          <div 
+            style={{
+              position: 'absolute',
+              right: '0',
+              width: '200px',
+              display: 'flex',
+              justifyContent: 'center',
+              top: '20px',
+              height: '30px',
+              color: '#f26522',
+              fontWeight: '500'
+            }}
+          >
+            Total no. of Ingredients
+          </div>
+          <div 
+            style={{
+              position: 'absolute',
+              right: '0',
+              width: '200px',
+              display: 'flex',
+              justifyContent: 'center',
+              top: '50px',
+              fontSize: '24px'
+            }}
+          >
+            --
+          </div>
         </div>
-        <div 
-          style={{
-            position: 'absolute',
-            right: '400px',
-            width: '200px',
-            display: 'flex',
-            justifyContent: 'center',
-            top: '50px',
-            fontSize: '24px'
-          }}
-        >
-          --
-        </div>
-        <div 
-          style={{
-            position: 'absolute',
-            right: '200px',
-            width: '200px',
-            display: 'flex',
-            justifyContent: 'center',
-            top: '20px',
-            height: '30px',
-            color: '#f26522',
-            fontWeight: '500'
-          }}
-        >
-          Total no. of Meals
-        </div>
-        <div 
-          style={{
-            position: 'absolute',
-            right: '200px',
-            width: '200px',
-            display: 'flex',
-            justifyContent: 'center',
-            top: '50px',
-            fontSize: '24px'
-          }}
-        >
-          --
-        </div>
-        <div 
-          style={{
-            position: 'absolute',
-            right: '0',
-            width: '200px',
-            display: 'flex',
-            justifyContent: 'center',
-            top: '20px',
-            height: '30px',
-            color: '#f26522',
-            fontWeight: '500'
-          }}
-        >
-          Total no. of Ingredients
-        </div>
-        <div 
-          style={{
-            position: 'absolute',
-            right: '0',
-            width: '200px',
-            display: 'flex',
-            justifyContent: 'center',
-            top: '50px',
-            fontSize: '24px'
-          }}
-        >
-          --
-        </div>
-      </div>
       </div>
 
       <div
@@ -644,133 +652,122 @@ function IngredientsUnits() {
           width: '100%'
         }}
       >
-      <div
-        style={{
-          // border: 'solid',
-          marginTop: '20px',
-          borderRadius: '15px',
-          marginLeft: '2%',
-          width: '34%',
-          height: '600px',
-          backgroundColor: 'white',
-          marginBottom: '20px'
-          // display: 'flex',
-          // alignItems: 'center'
-        }}
-      >
         <div
           style={{
-            height: '100px',
-            paddingTop: '20px',
+            // border: 'solid',
+            marginTop: '20px',
+            borderRadius: '15px',
+            marginLeft: '2%',
+            width: '34%',
+            height: '600px',
+            backgroundColor: 'white',
+            marginBottom: '20px'
             // display: 'flex',
-            // alignItems: 'center',
-
-            border: 'solid',
-            // width: '60%',
-            // width: '200px',
-            fontWeight: 'bold',
-            paddingLeft: '20px',
-            fontSize: '26px',
-            position: 'relative'
+            // alignItems: 'center'
           }}
         >
-          Ingredients
           <div
             style={{
-              position: 'absolute',
-              top: '10px',
-              left: '168px',
-              fontSize: '36px',
-              fontWeight: '700',
-              cursor: 'pointer'
-            }}
-            onClick={() => {
-              setCreateModal(CREATE_INGREDIENT)
+              height: '90px',
+              // paddingTop: '20px',
+              // display: 'flex',
+              // alignItems: 'center',
+
+              border: 'solid',
+              // width: '60%',
+              // width: '200px',
+              fontWeight: 'bold',
+              paddingLeft: '20px',
+              fontSize: '26px',
+              position: 'relative',
+              display: 'inline-flex',
+              alignItems: 'center'
             }}
           >
-            +
+            <div
+              style={{
+                border: 'dashed'
+              }}
+            >
+            Ingredients
+            </div>
+            <div
+              style={{
+                // position: 'absolute',
+                // top: '10px',
+                // left: '168px',
+                fontSize: '36px',
+                fontWeight: '700',
+                cursor: 'pointer',
+                border: 'dashed'
+              }}
+              onClick={() => {
+                setCreateModal(CREATE_INGREDIENT)
+              }}
+            >
+              &nbsp;+
+            </div>
           </div>
         </div>
-      </div>
 
-      <div
-        style={{
-          // border: 'solid',
-          marginTop: '20px',
-          borderRadius: '15px',
-          marginLeft: '2%',
-          width: '34%',
-          height: '600px',
-          backgroundColor: 'white',
-          // display: 'flex',
-          // alignItems: 'center'
-        }}
-      >
         <div
           style={{
-            height: '100px',
+            // border: 'solid',
+            marginTop: '20px',
+            borderRadius: '15px',
+            marginLeft: '2%',
+            width: '34%',
+            height: '600px',
+            backgroundColor: 'white',
             // display: 'flex',
-            // alignItems: 'center',
-            paddingTop: '20px',
-            border: 'solid',
-            // width: '60%',
-            // width: '100px',
-            fontWeight: 'bold',
-            paddingLeft: '20px',
-            fontSize: '26px',
-            position: 'relative'
+            // alignItems: 'center'
           }}
         >
-          Units
           <div
             style={{
-              position: 'absolute',
-              top: '10px',
-              left: '92px',
-              fontSize: '36px',
-              fontWeight: '700',
-              cursor: 'pointer'
-            }}
-            onClick={() => {
-              setCreateModal(CREATE_UNIT)
+              height: '90px',
+              // paddingTop: '20px',
+              // display: 'flex',
+              // alignItems: 'center',
+
+              border: 'solid',
+              // width: '60%',
+              // width: '200px',
+              fontWeight: 'bold',
+              paddingLeft: '20px',
+              fontSize: '26px',
+              position: 'relative',
+              display: 'inline-flex',
+              alignItems: 'center'
             }}
           >
-            +
+            <div
+              style={{
+                border: 'dashed'
+              }}
+            >
+              Units
+            </div>
+            <div
+              style={{
+                // position: 'absolute',
+                // top: '10px',
+                // left: '168px',
+                fontSize: '36px',
+                fontWeight: '700',
+                cursor: 'pointer',
+                border: 'dashed'
+              }}
+              onClick={() => {
+                setCreateModal(CREATE_UNIT)
+              }}
+            >
+              &nbsp;+
+            </div>
           </div>
         </div>
-      </div>
-
-      {/* <div
-        style={{
-          // border: 'solid',
-          marginTop: '20px',
-          borderRadius: '15px',
-          marginLeft: '2%',
-          width: '24%',
-          height: '600px',
-          backgroundColor: 'white',
-          // display: 'flex',
-          // alignItems: 'center'
-        }}
-      >
-        <div
-          style={{
-            height: '100px',
-            // display: 'flex',
-            // alignItems: 'center',
-            paddingTop: '20px',
-            border: 'solid',
-            // width: '60%',
-            // width: '200px',
-            fontWeight: 'bold',
-            paddingLeft: '20px',
-            fontSize: '26px'
-          }}
-        >
-          Create New Ingredient
-        </div>
-      </div> */}
-      {displayCreateModal()}
+        
+        {displayCreateModal()}
 
       </div>
 

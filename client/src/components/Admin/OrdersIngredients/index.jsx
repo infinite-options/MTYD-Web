@@ -16,6 +16,7 @@ import styles from "./ordersIngredients.module.css";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import { collapseTextChangeRangesAcrossMultipleVersions } from "typescript";
+import AdminNavBar from '../AdminNavBar'
 
 const initialState = {
   mounted: false,
@@ -750,6 +751,8 @@ function OrdersIngredients({ history, ...props }) {
   });
 
   return (
+    <>
+    <AdminNavBar currentPage={'orders-ingredients'}/>
     <div className={styles.root}>
       {console.log(state)}
       <Container fluid className={styles.container}>
@@ -1208,6 +1211,7 @@ function OrdersIngredients({ history, ...props }) {
         </Row> */}
       </Container>
     </div>
+    </>
   );
 }
 

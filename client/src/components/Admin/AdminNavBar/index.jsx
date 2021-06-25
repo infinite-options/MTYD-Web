@@ -129,7 +129,7 @@ function NavBar(props) {
             <a 
               href='/admin/order-ingredients' 
               className={styles.navLink5}
-              style={props.currentPage === 'order-ingredients' ? {color: 'black'} : {}}
+              style={props.currentPage === 'orders-ingredients' ? {color: 'black'} : {}}
             > 
               Orders & Ingredients 
             </a>

@@ -143,7 +143,7 @@ function App() {
               {/* {adminNavBar} */}
               <AdminPlansCoupons />
             </Route>
-            <Route exact path="/admin/order-ingredients">
+            <Route exact path="/admin/orders-ingredients">
               {/* {adminNavBar} */}
               <AdminOrderIngredients />
             </Route>
