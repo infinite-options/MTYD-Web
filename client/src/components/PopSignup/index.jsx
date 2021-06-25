@@ -179,33 +179,52 @@ export class PopSignup extends Component {
 
   wrapperFunction=()=>{
     console.log(this.state)
-    this.props.submitPasswordSignUp(
-      this.props.email,
-      this.props.password,
-      this.props.passwordConfirm,
-      this.props.firstName,
-      this.props.lastName,
-      this.props.phone,
-      this.state.street_address,
-      this.props.unit,
-      this.state.city,
-      this.state.state,
-      this.state.zip_code,
-    );
-    let temppd= this.props.password
-    let tempem = this.props.email
-
-    console.log('finish signup function');
-
-    this.sleep(1000).then(()=>{
-      this.props.loginAttempt(
-        tempem,
-        temppd,
-        this.successLogin
+    let nameCheck = false
+    let emailCheck = false
+    let passwordCheck = false
+    if(this.props.firstName == '' || this.props.lastName == ''){
+      alert('first name and last name is required')
+    } else {
+      nameCheck = true
+    }
+    if(this.props.email == ''){
+      alert('email is required')
+    } else {
+      emailCheck = true
+    }
+    if(this.props.password != this.props.passwordConfirm) {
+      alert('passwords do not match')
+    } else {
+      passwordCheck = true
+    }
+    if(nameCheck == true && emailCheck == true && passwordCheck == true){
+      this.props.submitPasswordSignUp(
+        this.props.email,
+        this.props.password,
+        this.props.passwordConfirm,
+        this.props.firstName,
+        this.props.lastName,
+        this.props.phone,
+        this.state.street_address,
+        this.props.unit,
+        this.state.city,
+        this.state.state,
+        this.state.zip_code,
       );
-      console.log('finish login function')
-    })
+      let temppd= this.props.password
+      let tempem = this.props.email
 
+      console.log('finish signup function');
+
+      this.sleep(1000).then(()=>{
+        this.props.loginAttempt(
+          tempem,
+          temppd,
+          this.successLogin
+        );
+        console.log('finish login function')
+      })
+    }
   }
 
 
@@ -336,7 +355,7 @@ export class PopSignup extends Component {
             placeholder='Phone Number'
             value={this.props.phone}
             onChange={e => {
-              this.props.changeNewPasswordConfirm(e.target.value);
+              this.props.changeNewPhone(e.target.value);
             }}
             aria-label="Enter your phone number"
             title="Enter your phone number"
@@ -348,6 +367,9 @@ export class PopSignup extends Component {
 
             id="ship-address"
             name="ship-address"
+            onChange={e => {
+              this.props.changeNewAddress(e.target.value);
+            }}
 
             placeholder={this.state.street_address==''? 'Street Address':this.state.street_address}
             aria-label="Enter your street address"
@@ -380,6 +402,9 @@ export class PopSignup extends Component {
             value = {this.state.city}
             aria-label="Enter your city"
             title="Enter your city"
+            onChange={e => {
+              this.props.changeNewCity(e.target.value);
+            }}
             />
 
 
@@ -395,6 +420,9 @@ export class PopSignup extends Component {
             value = {this.state.state}
             aria-label="Enter your state"
             title="Enter your state"
+            onChange={e => {
+              this.props.changeNewState(e.target.value);
+            }}
             />
 
 
@@ -409,6 +437,9 @@ export class PopSignup extends Component {
               value = {this.state.zip_code}
               aria-label="Enter your zip code"
               title="Enter your zip code"
+              onChange={e => {
+                this.props.changeNewZip(e.target.value);
+              }}
             />
         </div>
 

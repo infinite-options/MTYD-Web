@@ -488,9 +488,170 @@ class MenuItemList extends Component {
     }
   };
 
+  mealsOnClick = e => {
+    // passing props.subscribedPlans[index]
+    console.log("Meals on Click e is:")
+    console.log(e)
 
+    let cust_id = Cookies.get("customer_uid")
+
+    fetch(
+      `${API_URL}meals_selected?customer_uid=${cust_id}`
+    )
+      .then(response => response.json())
+      .then(json => {
+        let mealSelected = [...json.result];
+        console.log("mealSelected: "+mealSelected)
+
+        // console.log(mealSelected)
+        this.setState({
+          mealSelected
+        });
+      })
+      .catch(error => {
+        console.error(error);
+      });
+
+      this.dateButtonArray();
+    
+    let planName = e.purchase_uid
+    console.log("onclick planname" + planName)
+
+      {/*Checkpt 1*/}
+
+    this.state.meals.map(mealItem => {
+
+      console.log("mealitem:")
+      console.log(mealItem)
+
+      if (mealItem.purchase_uid === planName) {
+        let meal = JSON.parse(mealItem.items)[0];
+
+        console.log(meal.name)
+
+        let mystr = meal.name
+          .toString()
+          .slice(0, 2)
+          .replace(/\s/g, "");
+
+        
+        this.setState({
+          // totalMeals: mystr,
+          totalMeals: parseInt(mystr),
+          purchaseID: mealItem.purchase_id,
+          saveButton: true
+        });
+      } else {
+        return this.setState({selectValue: "SURPRISE"});
+      }
+    });
+    let cartItemsArr = [];
+    let addOnArr = [];
+    let delivery_Day = "";
+    let myCounter = 0;
+    let addOnCount = 0;
+    let pulledSelection = this.state.mealSelected.filter(
+      item =>
+        item.sel_purchase_id === planName &&
+        item.sel_menu_date === this.state.myDate
+    );
+
+    if (pulledSelection.length > 0) {
+      let selection = JSON.parse(pulledSelection[0].meal_selection);
+      let addOnSelection = JSON.parse(pulledSelection[0].addon_selection);
+      delivery_Day = pulledSelection[0].delivery_day;
+
+      // console.log(selection)
+
+      // if(JSON.parse(pulledSelection[0].items)!=[]){
+      //   let tempstring = JSON.parse(pulledSelection[0].items)[0].name
+      //   myCounter = tempstring.substring(0,1);
+      // }else{
+      //   myCounter=selection[0].qty
+      // }
+      
+
+      selection.map(myItem => {
+        let required_Id = myItem.item_uid;
+        let menuItemCur = this.state.data.filter(
+          dateCheck =>
+            dateCheck.menu_date === this.state.myDate &&
+            dateCheck.meal_uid === required_Id
+        );
+
+        let spreadObj = {...menuItemCur};
+        let pushingObj = {
+          count: myItem.qty,
+          ...spreadObj[0]
+        };
+
+        if (myItem.name !== "SKIP" && myItem.name !== "SURPRISE") {
+          cartItemsArr.push(pushingObj);
+          myCounter = myCounter + myItem.qty;
+          return this.setState({selectValue: "SAVE"});
+        } else {
+          let select_val = myItem.name;
+          let myoutput =
+            select_val[0].toUpperCase() +
+            select_val.substring(1, select_val.length).toUpperCase();
+
+          return this.setState({selectValue: myoutput});
+        }
+      });
+
+      if (addOnSelection !== null) {
+
+        addOnSelection.map(myItem => {
+          // console.log(myItem)
+          let required_Id = myItem.item_uid;
+          let menuItemCur = this.state.data.filter(
+            dateCheck =>
+              dateCheck.menu_date === this.state.myDate &&
+              dateCheck.meal_uid === required_Id
+          );
+  
+          let spreadObj = {...menuItemCur};
+          let pushingObj = {
+            count: myItem.qty,
+            ...spreadObj[0]
+          };
+  
+          if (myItem.name !== "SKIP" && myItem.name !== "SURPRISE") {
+            addOnArr.push(pushingObj);
+            addOnCount = addOnCount + myItem.qty;
+          //   return this.setState({selectValue: "SAVE"});
+          // } else {
+          //   let select_val = myItem.name;
+          //   let myoutput =
+          //     select_val[0].toUpperCase() +
+          //     select_val.substring(1, select_val.length).toUpperCase();
+  
+          //   return this.setState({selectValue: myoutput});
+          }
+        });
+
+      }
+
+    }
+
+    console.log('counter is '+ myCounter)
+    return this.setState({
+      deliveryDay: delivery_Day !== "" && delivery_Day !== "SKIP" ? delivery_Day : "Sunday",
+      // deliveryDay: delivery_Day !== "" ? delivery_Day : "Sunday",
+      cartItems: [...cartItemsArr],
+      addOnItems: [...addOnArr],
+      totalCount: myCounter,
+      addOnAmount: addOnCount,
+      displayCount: "block"
+    });
+  };
 
   mealsOnChange = e => {
+    console.log("Meals on change e is:")
+    console.log(e)
+    
+
+    console.log(Cookies.get("customer_uid"))
     let cust_id = Cookies.get("customer_uid");
     fetch(
       `${API_URL}meals_selected?customer_uid=${cust_id}`
@@ -498,6 +659,7 @@ class MenuItemList extends Component {
       .then(response => response.json())
       .then(json => {
         let mealSelected = [...json.result];
+        console.log("mealSelected: "+mealSelected)
 
         // console.log(mealSelected)
         this.setState({
@@ -511,12 +673,14 @@ class MenuItemList extends Component {
       this.dateButtonArray();
 
     let planName = e.target.value;
+    console.log("e.targetvalue " + e.target.value)
 
-    console.log(planName)
+    //console.log(planName)
 
 
     this.state.meals.map(mealItem => {
 
+      console.log("mealitem:")
       console.log(mealItem)
 
       if (mealItem.purchase_uid === planName) {
@@ -782,6 +946,8 @@ class MenuItemList extends Component {
       addOnAmount: addOnCount,
     });
   };
+
+
 
   setDeliveryDay = e => {
     let deliver = e.target.value;
@@ -1670,7 +1836,12 @@ class MenuItemList extends Component {
           dates={uniqueDates}
           filterDates={this.filterDates}
           meals={this.state.meals}
+<<<<<<< HEAD
           // meals_nbd={this.state.meals_nbd}
+=======
+          meals_nbd={this.state.meals_nbd}
+          mealsOnClick={this.mealsOnClick}
+>>>>>>> Kyle_0618
           mealsOnChange={this.mealsOnChange}
           totalCount={this.state.totalCount}
           totalMeals={this.state.totalMeals}

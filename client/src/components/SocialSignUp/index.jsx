@@ -72,7 +72,7 @@ class SocialSignUp extends React.Component {
       console.log("(SSU) NOT initAppleSignup");
 
       this.setState({
-        mounted: true
+        mounted: true // always true?
       });
     }
 
@@ -173,8 +173,7 @@ class SocialSignUp extends React.Component {
 
     if(this.props.firstName==''||this.props.lastName==''){
       alert('first name and last name is required')
-    }
-    else{
+    }else{
         this.props.submitSocialSignUp(
         this.props.AppleSignUp,
         this.props.customerId,
@@ -194,6 +193,25 @@ class SocialSignUp extends React.Component {
       );
     }
 
+    // The following code allows you to create null social media accounts for testing
+
+    // this.props.submitSocialSignUp(
+    //       this.props.AppleSignUp,
+    //       this.props.customerId,
+    //       this.props.email,
+    //       this.props.platform,
+    //       this.props.accessToken,
+    //       this.props.refreshToken,
+    //       this.props.firstName,
+    //       this.props.lastName,
+    //       this.props.phone,
+    //       this.state.street_address,
+    //       this.props.unit,
+    //       this.state.city,
+    //       this.state.state,
+    //       this.state.zip_code,
+    //       this.signUpSuccess
+    //     );
 
 
 
@@ -207,9 +225,10 @@ class SocialSignUp extends React.Component {
     if (!this.state.mounted) {
       return null;
     }
+    // Removed this code so Apple Login would work
     // if (this.props.email === "" || this.props.refreshToken === "") {
     //   this.props.history.push("sign-up");
-    // }
+    //}
     return (
       <div className={styles.root}>
         <WebNavBar />
@@ -227,6 +246,7 @@ class SocialSignUp extends React.Component {
                     onChange={e => {
                       this.props.changeNewFirstName(e.target.value);
                     }}
+                    aria-label="Enter your first name here"
                   />
                 </div>
                 <div className={styles.inputItem}>
@@ -239,6 +259,7 @@ class SocialSignUp extends React.Component {
                       this.props.changeNewLastName(e.target.value);
                     }}
                     required
+                    aria-label="Enter your last name here"
                   />
                 </div>
                 <div className={styles.inputItem}>
@@ -250,6 +271,7 @@ class SocialSignUp extends React.Component {
                     onChange={e => {
                       this.props.changeNewPhone(e.target.value);
                     }}
+                    aria-label="Enter your phone number here"
                   />
                 </div>
               </div>
@@ -261,7 +283,7 @@ class SocialSignUp extends React.Component {
                     name="ship-address-social-login"
 
                     placeholder='Street Address'
-
+                    aria-label="Enter your street address"
                   />
                 </div>
                 <div className={styles.inputItemAddress}>
@@ -271,6 +293,7 @@ class SocialSignUp extends React.Component {
                     onChange={e => {
                       this.props.changeNewUnit(e.target.value);
                     }}
+                    aria-label="Enter your unit number. Optional"
                   />
                 </div>
                 <div className={styles.inputItemAddress}>
@@ -278,7 +301,7 @@ class SocialSignUp extends React.Component {
                     placeholder='City'
                     placeholder='City'
                     id="locality" name="locality"
-
+                    aria-label="Enter your city"
 
                   />
                 </div>
@@ -287,7 +310,7 @@ class SocialSignUp extends React.Component {
 
                     placeholder='State'
                     id="state" name="state"
-
+                    aria-label="Enter your state"
                   />
                 </div>
                 <div className={styles.inputItemAddress}>
@@ -295,16 +318,17 @@ class SocialSignUp extends React.Component {
                     placeholder='Zip'
                     placeholder='Zip'
                     id="postcode" name="postcode"
-
+                    aria-label="Enter your zip code"
 
                   />
                 </div>
               </div>
               <div className={styles.buttonContainer}>
-                <button className={styles.button + " mr-3"}>BACK</button>
+                <button className={styles.button + " mr-3"} aria-label="Click here to go back">BACK</button>
                 <button
                   className={styles.button + " ml-3"}
                   onClick={this.signupCheck}
+                  aria-label="Click here to sign up"
                 >
                   SIGN UP
                 </button>
@@ -313,7 +337,7 @@ class SocialSignUp extends React.Component {
             <div className={"col-5 " + styles.explore}>
               <div className={"row " + styles.centerBtn}>
                 <p>EXPLORE WITHOUT LOGIN</p>
-                <button> START </button>
+                <button aria-label="Click here to explore without loging in"> START </button>
               </div>
             </div>
           </div>
