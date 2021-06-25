@@ -13,12 +13,15 @@ import {
 } from "@material-ui/core";
 import { withRouter } from "react-router";
 import styles from "./ordersIngredients.module.css";
+import Carousel from "react-multi-carousel";
+import "react-multi-carousel/lib/styles.css";
 import { collapseTextChangeRangesAcrossMultipleVersions } from "typescript";
 
 const initialState = {
   mounted: false,
   defaultFlag: true,
   selectedDate: "",
+  dateIndex: 0,
   currDisplayDate: "",
   selectedBusinessID: "",
   selectedBusinessData: [],
@@ -43,6 +46,27 @@ const initialState = {
   },
   businessData: [],
   mealDates: [],
+  revenueData: [],
+};
+
+const responsive = {
+  superLargeDesktop: {
+    // the naming can be any, depends on you.
+    breakpoint: { max: 4000, min: 3000 },
+    items: 8,
+  },
+  desktop: {
+    breakpoint: { max: 3000, min: 1024 },
+    items: 5,
+  },
+  tablet: {
+    breakpoint: { max: 1024, min: 464 },
+    items: 2,
+  },
+  mobile: {
+    breakpoint: { max: 464, min: 0 },
+    items: 1,
+  },
 };
 
 function reducer(state, action) {
@@ -53,14 +77,12 @@ function reducer(state, action) {
         mounted: true,
       };
     case "CHANGE_DATE":
-      console.log(action.payload);
       return {
         ...state,
         selectedDate: action.payload.newDate,
         currDisplayDate: action.payload.display,
       };
     case "FILTER_BUSINESS":
-      console.log("Payload: " + action.payload);
       return {
         ...state,
         selectedBusinessID: action.payload.newBusinessID,
@@ -135,6 +157,17 @@ function reducer(state, action) {
         ...state,
         mealDates: action.payload,
       };
+    case "FETCH_REVENUE":
+      return {
+        ...state,
+        revenueData: action.payload,
+      };
+    case "INITIALIZE_DATES":
+      return {
+        ...state,
+        selectedDate: action.payload.selectedDate,
+        dateIndex: action.payload.dateIndex,
+      };
     default:
       return state;
   }
@@ -196,32 +229,39 @@ function OrdersIngredients({ history, ...props }) {
         console.log(err);
       });
   }, []);
-
-  // Fetch Businesses
+  // Fetch dates
   useEffect(() => {
+    let closestDate = "";
     axios
       .get(`${API_URL}all_menu_dates`)
       .then((response) => {
         const datesApi = response.data.result;
-        dispatch({ type: "FETCH_MEAL_DATES", payload: datesApi });
-      })
-      .catch((err) => {
-        if (err.response) {
-          // eslint-disable-next-line no-console
-          console.log(err.response);
-        }
-        // eslint-disable-next-line no-console
-        console.log(err);
-      });
-  }, []);
+        const curDay = getCurrentDate();
+        const closestDateIndex = getClosestDateIndex();
+        closestDate = datesApi[closestDateIndex].menu_date;
 
-  // Fetch Meals
-  useEffect(() => {
-    axios
-      .get(`${API_URL}Meal_Detail/2021-06-21+00:00:00`)
+        dispatch({ type: "FETCH_MEAL_DATES", payload: datesApi });
+        dispatch({
+          type: "INITIALIZE_DATES",
+          payload: {
+            selectedDate: closestDate,
+            dateIndex: closestDateIndex,
+          },
+        });
+        return axios.get(
+          `${API_URL}meals_ordered_by_date/${closestDate.substring(0, 10)}`
+        );
+      })
       .then((response) => {
-        const ordersApi = response.data.result.result;
+        const ordersApi = response.data.result;
         dispatch({ type: "FETCH_ORDERS", payload: ordersApi });
+        return axios.get(
+          `${API_URL}revenue_by_date/${closestDate.substring(0, 10)}`
+        );
+      })
+      .then((response) => {
+        const revenueApi = response.data.result;
+        dispatch({ type: "FETCH_REVENUE", payload: revenueApi });
       })
       .catch((err) => {
         if (err.response) {
@@ -232,6 +272,23 @@ function OrdersIngredients({ history, ...props }) {
         console.log(err);
       });
   }, []);
+  // Fetch Meals
+  // useEffect(() => {
+  //   axios
+  //     .get(`${API_URL}meals_ordered_by_date/2021-06-25`)
+  //     .then((response) => {
+  //       const ordersApi = response.data.result;
+  //       dispatch({ type: "FETCH_ORDERS", payload: ordersApi });
+  //     })
+  //     .catch((err) => {
+  //       if (err.response) {
+  //         // eslint-disable-next-line no-console
+  //         console.log(err.response);
+  //       }
+  //       // eslint-disable-next-line no-console
+  //       console.log(err);
+  //     });
+  // }, []);
 
   // Fetch Ingredients
   useEffect(() => {
@@ -251,12 +308,31 @@ function OrdersIngredients({ history, ...props }) {
       });
   }, []);
 
+  const getCurrentDate = () => {
+    const currentDate = new Date();
+    let day = currentDate.getDate();
+    if (day < 10) {
+      day = ["0", day].join("");
+    }
+    let month = currentDate.getMonth() + 1;
+    if (month < 10) {
+      month = ["0", month].join("");
+    }
+    let year = currentDate.getFullYear();
+    return [[year, month, day].join("-"), "00-00-00"].join(" ");
+  };
+
+  const getClosestDateIndex = () => {
+    return 48;
+  };
+
+  const convertToDisplayDate = (date) => {
+    const displayDate = new Date(formatTime(date));
+    return displayDate.toDateString();
+  };
+
   const orderDates = useMemo(() => {
-    console.log("dates from state");
-    console.log(state.mealDates);
     const orderDates = state.mealDates.map((menuDate) => menuDate.menu_date);
-    console.log("MealDates");
-    console.log(orderDates);
     const orderDatesUnique = orderDates.filter(
       (elt, index) => orderDates.indexOf(elt) === index
     );
@@ -273,6 +349,12 @@ function OrdersIngredients({ history, ...props }) {
     return orederDatesFormatted;
   }, [state.ordersData]);
 
+  const formatToDisplayDate = (date) => {
+    let formattedDate = new Date(formatTime(date));
+    return formattedDate.toDateString();
+  };
+
+  formatToDisplayDate(state.selectedDate);
   // const nowTest1 = new Date('May 06, 2021');
   // const nowTest = nowTest1.toString();
   var now = Date().toLocaleString();
@@ -407,41 +489,40 @@ function OrdersIngredients({ history, ...props }) {
 
   ////// DEPRECATED API CALLS //////
   // Fetch orders
-  useEffect(() => {
-    axios
-      .get(`${API_URL}Orders_by_Items_total_items`)
-      .then((response) => {
-        const ordersApi = response.data.result;
-        dispatch({ type: "FETCH_ORDERS", payload: ordersApi });
-      })
-      .catch((err) => {
-        if (err.response) {
-          // eslint-disable-next-line no-console
-          console.log(err.response);
-        }
-        // eslint-disable-next-line no-console
-        console.log(err);
-      });
-  }, []);
+  // useEffect(() => {
+  //   axios
+  //     .get(`${API_URL}Orders_by_Items_total_items`)
+  //     .then((response) => {
+  //       const ordersApi = response.data.result;
+  //       dispatch({ type: "FETCH_ORDERS", payload: ordersApi });
+  //     })
+  //     .catch((err) => {
+  //       if (err.response) {
+  //         // eslint-disable-next-line no-console
+  //         console.log(err.response);
+  //       }
+  //       // eslint-disable-next-line no-console
+  //       console.log(err);
+  //     });
+  // }, []);
 
   // Fetch Customer Names
-  useEffect(() => {
-    axios
-      .get(`${API_URL}orders_by_customers`)
-      .then((response) => {
-        const customersApi = response.data.result;
-        dispatch({ type: "FETCH_CUSTOMERS", payload: customersApi });
-      })
-      .catch((err) => {
-        if (err.response) {
-          // eslint-disable-next-line no-console
-          console.log(err.response);
-        }
-        // eslint-disable-next-line no-console
-        console.log(err);
-      });
-  }, []);
-
+  // useEffect(() => {
+  //   axios
+  //     .get(`${API_URL}orders_by_customers`)
+  //     .then((response) => {
+  //       const customersApi = response.data.result;
+  //       dispatch({ type: "FETCH_CUSTOMERS", payload: customersApi });
+  //     })
+  //     .catch((err) => {
+  //       if (err.response) {
+  //         // eslint-disable-next-line no-console
+  //         console.log(err.response);
+  //       }
+  //       // eslint-disable-next-line no-console
+  //       console.log(err);
+  //     });
+  // }, []);
   ////// END DEPRECATED API CALLS //////
 
   const changeSortOrder = (field) => {
@@ -529,30 +610,30 @@ function OrdersIngredients({ history, ...props }) {
     // dispatch({ type: "FILTER_CUSTOMERS", payload: sortedCustomers });
   };
   // display the default order/ingredient/customer data to the closest date we have in dropdown list based on todays day
-  if (state.defaultFlag) {
-    const newOrders = getOrderData(closestToCurrDayVal);
-    const sortedOrders = sortedArray(
-      newOrders,
-      state.sortOrders.field,
-      state.sortOrders.direction
-    );
-    const newIngredients = getIngredientsData(closestToCurrDayVal);
-    const sortedIngredients = sortedArray(
-      newIngredients,
-      state.sortIngredients.field,
-      state.sortIngredients.direction
-    );
-    const newCustomers = getCustomerData(closestToCurrDayVal);
-    const sortedCustomers = sortedArray(
-      newCustomers,
-      state.sortCustomers.field,
-      state.sortCustomers.direction
-    );
+  // if (state.defaultFlag) {
+  //   const newOrders = getOrderData(closestToCurrDayVal);
+  //   const sortedOrders = sortedArray(
+  //     newOrders,
+  //     state.sortOrders.field,
+  //     state.sortOrders.direction
+  //   );
+  //   const newIngredients = getIngredientsData(closestToCurrDayVal);
+  //   const sortedIngredients = sortedArray(
+  //     newIngredients,
+  //     state.sortIngredients.field,
+  //     state.sortIngredients.direction
+  //   );
+  //   const newCustomers = getCustomerData(closestToCurrDayVal);
+  //   const sortedCustomers = sortedArray(
+  //     newCustomers,
+  //     state.sortCustomers.field,
+  //     state.sortCustomers.direction
+  //   );
 
-    state.sortedOrdersData = sortedOrders;
-    state.sortedIngredientsData = sortedIngredients;
-    state.sortedCustomersData = sortedCustomers;
-  }
+  //   state.sortedOrdersData = sortedOrders;
+  //   state.sortedIngredientsData = sortedIngredients;
+  //   state.sortedCustomersData = sortedCustomers;
+  // }
 
   const filterBusiness = (event) => {
     const newBusinessID = event.target.value;
@@ -579,9 +660,15 @@ function OrdersIngredients({ history, ...props }) {
     state.defaultFlag = false;
   };
 
+  const filterDataByBusiness = (data, id) => {
+    if (id) {
+      return data.filter((item) => item.meal_business === id);
+    }
+    return data;
+  };
+
   const handleDateButtonClick = (event, displayDate) => {
     const newDate = event.target.value;
-    console.log("New Date: " + newDate);
     changeDate(newDate, displayDate);
   };
 
@@ -589,13 +676,27 @@ function OrdersIngredients({ history, ...props }) {
     return displayDate.substring(4, 10) + "," + displayDate.substring(10);
   };
 
+  const getBusinessName = (id) => {
+    if (id) {
+      if (state.businessData.length > 0) {
+        return state.businessData.filter(
+          (business) => business.business_uid === id
+        )[0].business_name;
+      } else {
+        return "";
+      }
+    }
+    return "";
+  };
+
+  const currencyFormatter = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+  });
+
   return (
     <div className={styles.root}>
       {console.log(state)}
-      {/* <Breadcrumb>
-        <Breadcrumb.Item href="/"> Admin Site </Breadcrumb.Item>
-        <Breadcrumb.Item active> & Ingredients </Breadcrumb.Item>
-      </Breadcrumb> */}
       <Container fluid className={styles.container}>
         <Row className={[styles.section, styles.row1].join(" ")}>
           <Col md="auto" className={styles.restaurantSelector}>
@@ -633,11 +734,89 @@ function OrdersIngredients({ history, ...props }) {
               </div>
             </div>
           </Col>
-          <Col className={styles.dateSelector}>
-            {
-              ((console.log("dates:"), console.log(orderDates)),
-              console.log("now: " + now.substring(0, 15)))
-            }
+          <Col xs={7}>
+            {/* <Carousel responsive={responsive}>
+              <button
+                className={[
+                  styles.datebutton,
+                  styles.datebuttonNotSelected,
+                ].join(" ")}
+              >
+                Fri <br /> June 25
+              </button>
+              <button
+                className={[
+                  styles.datebutton,
+                  styles.datebuttonNotSelected,
+                ].join(" ")}
+              >
+                Fri <br /> June 25
+              </button>
+              <button
+                className={[
+                  styles.datebutton,
+                  styles.datebuttonNotSelected,
+                ].join(" ")}
+              >
+                Fri <br /> June 25
+              </button>
+              <button
+                className={[
+                  styles.datebutton,
+                  styles.datebuttonNotSelected,
+                ].join(" ")}
+              >
+                Fri <br /> June 25
+              </button>
+              <button
+                className={[
+                  styles.datebutton,
+                  styles.datebuttonNotSelected,
+                ].join(" ")}
+              >
+                Fri <br /> June 25
+              </button>
+              <button
+                className={[
+                  styles.datebutton,
+                  styles.datebuttonNotSelected,
+                ].join(" ")}
+              >
+                Fri <br /> June 25
+              </button>
+              <button
+                className={[
+                  styles.datebutton,
+                  styles.datebuttonNotSelected,
+                ].join(" ")}
+              >
+                Fri <br /> June 25
+              </button>
+              <button
+                className={[
+                  styles.datebutton,
+                  styles.datebuttonNotSelected,
+                ].join(" ")}
+              >
+                Fri <br /> June 25
+              </button>
+              <button
+                className={[
+                  styles.datebutton,
+                  styles.datebuttonNotSelected,
+                ].join(" ")}
+              >
+                Fri <br /> June 25
+              </button>
+              <button
+                className={[
+                  styles.datebutton,
+                  styles.datebuttonNotSelected,
+                ].join(" ")}
+              >
+                Fri <br /> June 25
+              </button>
+            </Carousel> */}
             <button className={styles.dateLeft}></button>
             {getDateButtonRange(closestDateIndex).map((date) => {
               if (date) {
@@ -702,7 +881,7 @@ function OrdersIngredients({ history, ...props }) {
         <Row className={styles.row2}>
           <Col xs={5} className={styles.section} style={{ marginRight: 10 }}>
             Upcoming Meal Orders And Revenue:{" "}
-            {formatDisplayDate(state.currDisplayDate)}
+            {formatDisplayDate(formatToDisplayDate(state.selectedDate))}
             <Table>
               <TableHead>
                 <TableRow>
@@ -714,10 +893,37 @@ function OrdersIngredients({ history, ...props }) {
                   <TableCell>Additional Revenue</TableCell>
                 </TableRow>
               </TableHead>
+              <TableBody>
+                {filterDataByBusiness(
+                  state.ordersData,
+                  state.selectedBusinessID
+                ).map((item) => {
+                  return (
+                    <TableRow>
+                      <TableCell>{item.total_qty}</TableCell>
+                      <TableCell>{item.jt_name}</TableCell>
+                      <TableCell>
+                        <img
+                          src={item.meal_photo_URL}
+                          className={styles.mealImg}
+                        ></img>
+                      </TableCell>
+                      <TableCell>
+                        {currencyFormatter.format(item.meal_cost)}
+                      </TableCell>
+                      <TableCell>
+                        {currencyFormatter.format(item.total_cost)}
+                      </TableCell>
+                      <TableCell>?</TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
             </Table>
           </Col>
           <Col xs={4} className={styles.section} style={{ marginRight: 10 }}>
-            Revenue: {formatDisplayDate(state.currDisplayDate)}
+            Revenue:{" "}
+            {formatDisplayDate(formatToDisplayDate(state.selectedDate))}
             <Table>
               <TableHead>
                 <TableRow>
@@ -728,10 +934,34 @@ function OrdersIngredients({ history, ...props }) {
                   <TableCell>M4Me Profits</TableCell>
                 </TableRow>
               </TableHead>
+              <TableBody>
+                {console.log(state.revenueData)}
+                {filterDataByBusiness(
+                  state.revenueData,
+                  state.selectedBusinessID
+                ).map((item) => {
+                  return (
+                    <TableRow>
+                      <TableCell>
+                        {getBusinessName(item.meal_business)}
+                      </TableCell>
+                      <TableCell>
+                        {currencyFormatter.format(item.total_cost)}
+                      </TableCell>
+                      <TableCell>?</TableCell>
+                      <TableCell>
+                        {currencyFormatter.format(item.total_revenue)}
+                      </TableCell>
+                      <TableCell>?</TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
             </Table>
           </Col>
           <Col className={styles.section}>
-            Ingredients Needed: {formatDisplayDate(state.currDisplayDate)}
+            Ingredients Needed:{" "}
+            {formatDisplayDate(formatToDisplayDate(state.selectedDate))}
             <Table>
               <TableHead>
                 <TableCell>Ingredient Name</TableCell>
