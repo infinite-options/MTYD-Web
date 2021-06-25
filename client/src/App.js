@@ -1,10 +1,12 @@
-import {Provider} from "react-redux";
+import React from "react";
+import { Provider } from "react-redux";
 import store from "./reducers/store";
 
 import {
   Router,
   Route,
-  Switch
+  // Route, Redirect,
+  Switch,
 } from "react-router-dom";
 import AppliedRoute from "./components/AppliedRoute";
 
@@ -22,7 +24,7 @@ import Home from "./components/Home";
 import EditPlan from "./components/EditPlan";
 import Terms from "./components/Terms";
 import UpdatePlan from "./components/UpdatePlan";
-import ForgotPassword from "./components/RecoverPassword"
+import ForgotPassword from "./components/RecoverPassword";
 import "./App.css";
 
 import { createBrowserHistory } from "history";
@@ -66,38 +68,54 @@ function App() {
   */
 
   const adminNavBar = <AdminNavBar />;
-    
+
   return (
-    <div className='root'>
+    <div className="root">
       <Provider store={store}>
         <Router history={history}>
           <Switch>
-            <AppliedRoute exact path='/home' component={Home} />
-            <AppliedRoute exact path='/about' component={About} />
-            <AppliedRoute exact path='/' component={Home} />
-            <AppliedRoute exact path='/sign-up' component={SignUp} />
+            <AppliedRoute exact path="/home" component={Home} />
+            <AppliedRoute exact path="/about" component={About} />
+            <AppliedRoute exact path="/" component={Home} />
+            <AppliedRoute exact path="/sign-up" component={SignUp} />
             <AppliedRoute
               exact
-              path='/social-sign-up'
+              path="/social-sign-up"
               component={SocialSignUp}
             />
-            <AppliedRoute exact path='/choose-plan' component={ChoosePlan} />
-            <AppliedRoute exact path='/subscription-history' component={MealPlan} />
-            <AppliedRoute exact path='/meal-plan' component={EditPlan} />
-            <AppliedRoute exact path='/terms-and-conditions' component={Terms} />
+            <AppliedRoute exact path="/choose-plan" component={ChoosePlan} />
             <AppliedRoute
               exact
-              path='/payment-details'
+              path="/subscription-history"
+              component={MealPlan}
+            />
+            <AppliedRoute exact path="/meal-plan" component={EditPlan} />
+            <AppliedRoute
+              exact
+              path="/terms-and-conditions"
+              component={Terms}
+            />
+            <AppliedRoute
+              exact
+              path="/payment-details"
               component={PaymentDetails}
             />
-            <AppliedRoute exact path='/profile' component={Profile} />
-            <AppliedRoute exact path='/select-meal' component={SelectMeal} />
-            <AppliedRoute exact path='/congratulations' component={Congratulations} />
-            <AppliedRoute exact path='/login' component={Login} />
-            <AppliedRoute exact path='/forgot-password' component={ForgotPassword} />
-            <AppliedRoute exact path='/congrats' component={Congrats} />
+            <AppliedRoute exact path="/profile" component={Profile} />
+            <AppliedRoute exact path="/select-meal" component={SelectMeal} />
+            <AppliedRoute
+              exact
+              path="/congratulations"
+              component={Congratulations}
+            />
+            <AppliedRoute exact path="/login" component={Login} />
+            <AppliedRoute
+              exact
+              path="/forgot-password"
+              component={ForgotPassword}
+            />
+            <AppliedRoute exact path="/congrats" component={Congrats} />
             {/*<AppliedRoute exact path='/edit-plan' component={EditPlan} />*/}
-            <AppliedRoute exact path='/update-plan' component={UpdatePlan} />
+            <AppliedRoute exact path="/update-plan" component={UpdatePlan} />
 
             {/* <AppliedRoute exact path='/test' component={MapTest} /> */}
 

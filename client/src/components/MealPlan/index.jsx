@@ -63,18 +63,6 @@ const MealPlan = props => {
             console.log("(sh) res: ", res.data.result);
 
             setSubHistory(res.data.result);
-          })
-          .catch((err) => {
-            if(err.response) {
-              console.log(err.response);
-            }
-            console.log(err);
-          });
-
-        axios.get(API_URL + 'predict_next_billing_date/' + customerId)
-          .then((res) => {
-            console.log("(pnbd) res: ", res.data.result);
-
             setBillingInfo(res.data.result);
           })
           .catch((err) => {
@@ -83,6 +71,19 @@ const MealPlan = props => {
             }
             console.log(err);
           });
+
+        // axios.get(API_URL + 'predict_next_billing_date/' + customerId)
+        //   .then((res) => {
+        //     console.log("(pnbd) res: ", res.data.result);
+
+        //     setBillingInfo(res.data.result);
+        //   })
+        //   .catch((err) => {
+        //     if(err.response) {
+        //       console.log(err.response);
+        //     }
+        //     console.log(err);
+        //   });
         
       } catch (err) {
         console.log(err);
@@ -178,6 +179,8 @@ const MealPlan = props => {
             onClick={() => {
               console.log("pressed: ", sub.purchase_id);
               setCurrentPlan(parsedPlan);
+              console.log("Parsed Plan")
+              console.log(parsedPlan)
               toggleShowDropdown(false);
             }}
             style={{
@@ -870,7 +873,7 @@ const MealPlan = props => {
                 {/* [placeholder default meal plan] */}
                 {
                   currentPlan === null
-                    ? "wait..."
+                    ? "No Active Plans"
                     : (
                         currentPlan.meals + " Meals, " +
                         currentPlan.deliveries + " Deliveries : " +
@@ -885,7 +888,12 @@ const MealPlan = props => {
                   marginRight: '5%'
                 }}
               >
-                <div className={styles.whiteArrowDown} /> 
+                {
+                  currentPlan === null
+                    ? null
+                    : <div className={styles.whiteArrowDown} /> 
+                }
+                {/* <div className={styles.whiteArrowDown} />  */}
               </div>
             </div>
 
@@ -914,7 +922,7 @@ const MealPlan = props => {
               <div className={styles.orangeHeaderRightUL}>
                 {
                   currentPlan === null
-                    ? "wait..."
+                    ? "No Active Plans"
                     : (
                       currentPlan.meals + " Meals, " +
                       currentPlan.deliveries + " Deliveries"
