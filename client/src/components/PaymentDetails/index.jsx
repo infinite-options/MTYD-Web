@@ -1568,7 +1568,6 @@ class PaymentDetails extends React.Component {
               aria-label="Enter your address"
               title="Enter your address"
               autoComplete="chrome-off"
-<<<<<<< HEAD
               onChange={e => {
                 this.setState({street: e.target.value.split(", ")[0]})
                 console.log(this.state.street)
@@ -1577,14 +1576,6 @@ class PaymentDetails extends React.Component {
                 })
               }}
               
-=======
-              // onChange={e =>{
-              //   console.log("Address :"+e.target.value)
-              //   this.setState({
-              //     street: e.target.value
-              //   });
-              // }}
->>>>>>> Kyle_0618
             />
 
             <div style={{display: 'flex'}}>
@@ -1610,13 +1601,10 @@ class PaymentDetails extends React.Component {
                 className={styles.inputContactRight}
                 aria-label="Enter your city"
                 title="Enter your city"
-<<<<<<< HEAD
                 onChange={e => {
                   this.setState({city: e.target.value})
                   console.log(this.state.city)
                 }}
-=======
->>>>>>> Kyle_0618
                 //autoComplete="chrome-off"
                 // onChange={e =>{
                 //   console.log("City: "+e.target.value)
@@ -1635,13 +1623,10 @@ class PaymentDetails extends React.Component {
                 id="state" name="state"
                 aria-label="Enter your state"
                 title="Enter your state"
-<<<<<<< HEAD
                 onChange={e => {
                   this.setState({state: e.target.value})
                   console.log(this.state.state)
                 }}
-=======
->>>>>>> Kyle_0618
                 //autoComplete="chrome-off"
                 // onChange={e =>{
                 //   console.log("State: "+e.target.value)
@@ -1657,13 +1642,10 @@ class PaymentDetails extends React.Component {
                 id="postcode" name="postcode"
                 aria-label="Enter your zipcode"
                 title="Enter your zipcode"
-<<<<<<< HEAD
                 onChange={e => {
                   this.setState({addressZip: e.target.value})
                   console.log(this.state.addressZip)
                 }}
-=======
->>>>>>> Kyle_0618
                 //autoComplete="chrome-off"
                 // onChange={e =>{
                 //   console.log("Zip: "+e.target.value)

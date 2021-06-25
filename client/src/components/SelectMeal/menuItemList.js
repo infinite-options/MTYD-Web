@@ -1836,12 +1836,9 @@ class MenuItemList extends Component {
           dates={uniqueDates}
           filterDates={this.filterDates}
           meals={this.state.meals}
-<<<<<<< HEAD
           // meals_nbd={this.state.meals_nbd}
-=======
           meals_nbd={this.state.meals_nbd}
           mealsOnClick={this.mealsOnClick}
->>>>>>> Kyle_0618
           mealsOnChange={this.mealsOnChange}
           totalCount={this.state.totalCount}
           totalMeals={this.state.totalMeals}
