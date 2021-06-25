@@ -582,6 +582,37 @@ function OrdersIngredients({ history, ...props }) {
 
   // Change date
   const changeDate = (newDate, displayDate) => {
+    axios
+      .get(`${API_URL}meals_ordered_by_date/${newDate.substring(0, 10)}`)
+      .then((response) => {
+        const ordersApi = response.data.result;
+        dispatch({ type: "FETCH_ORDERS", payload: ordersApi });
+      })
+      .catch((err) => {
+        if (err.response) {
+          // eslint-disable-next-line no-console
+          console.log(err.response);
+        }
+        // eslint-disable-next-line no-console
+        console.log(err);
+      });
+
+    axios
+      .get(`${API_URL}revenue_by_date/${newDate.substring(0, 10)}`)
+      .then((response) => {
+        console.log(response);
+        const revenueApi = response.data.result;
+        dispatch({ type: "FETCH_REVENUE", payload: revenueApi });
+      })
+      .catch((err) => {
+        if (err.response) {
+          // eslint-disable-next-line no-console
+          console.log(err.response);
+        }
+        // eslint-disable-next-line no-console
+        console.log(err);
+      });
+
     dispatch({
       type: "CHANGE_DATE",
       payload: { newDate: newDate, display: displayDate },
@@ -758,91 +789,28 @@ function OrdersIngredients({ history, ...props }) {
               </div>
             </div>
           </Col>
-          <Col>
-            {/* <Carousel responsive={responsive}>
-              <button
-                className={[
-                  styles.datebutton,
-                  styles.datebuttonNotSelected,
-                ].join(" ")}
-              >
-                Fri <br /> June 25
-              </button>
-              <button
-                className={[
-                  styles.datebutton,
-                  styles.datebuttonNotSelected,
-                ].join(" ")}
-              >
-                Fri <br /> June 25
-              </button>
-              <button
-                className={[
-                  styles.datebutton,
-                  styles.datebuttonNotSelected,
-                ].join(" ")}
-              >
-                Fri <br /> June 25
-              </button>
-              <button
-                className={[
-                  styles.datebutton,
-                  styles.datebuttonNotSelected,
-                ].join(" ")}
-              >
-                Fri <br /> June 25
-              </button>
-              <button
-                className={[
-                  styles.datebutton,
-                  styles.datebuttonNotSelected,
-                ].join(" ")}
-              >
-                Fri <br /> June 25
-              </button>
-              <button
-                className={[
-                  styles.datebutton,
-                  styles.datebuttonNotSelected,
-                ].join(" ")}
-              >
-                Fri <br /> June 25
-              </button>
-              <button
-                className={[
-                  styles.datebutton,
-                  styles.datebuttonNotSelected,
-                ].join(" ")}
-              >
-                Fri <br /> June 25
-              </button>
-              <button
-                className={[
-                  styles.datebutton,
-                  styles.datebuttonNotSelected,
-                ].join(" ")}
-              >
-                Fri <br /> June 25
-              </button>
-              <button
-                className={[
-                  styles.datebutton,
-                  styles.datebuttonNotSelected,
-                ].join(" ")}
-              >
-                Fri <br /> June 25
-              </button>
-              <button
-                className={[
-                  styles.datebutton,
-                  styles.datebuttonNotSelected,
-                ].join(" ")}
-              >
-                Fri <br /> June 25
-              </button>
-            </Carousel> */}
-            <button className={styles.dateLeft}></button>
-            {getDateButtonRange(closestDateIndex).map((date) => {
+          <Col xs={6}>
+            <Carousel responsive={responsive}>
+              {state.mealDates.map((date) => {
+                const displayDate = convertToDisplayDate(date.menu_date);
+                return (
+                  <button
+                    className={[
+                      styles.datebutton,
+                      styles.datebuttonNotSelected,
+                    ].join(" ")}
+                    key={date.menu_date}
+                    value={date.menu_date}
+                    onClick={(e) => handleDateButtonClick(e, displayDate)}
+                  >
+                    {displayDate.substring(0, 3)} <br />{" "}
+                    {displayDate.substring(4, 10)}
+                  </button>
+                );
+              })}
+            </Carousel>
+            {/* <button className={styles.dateLeft}></button> */}
+            {/* {getDateButtonRange(closestDateIndex).map((date) => {
               if (date) {
                 const dayName = date.display.substring(0, 3);
                 const day = date.display.substring(4, 10);
@@ -859,10 +827,9 @@ function OrdersIngredients({ history, ...props }) {
                     {dayName} <br /> {day}
                   </button>
                 );
-              }
-            })}
-
-            <button className={styles.dateRight}></button>
+              } */}
+            {/* })} */}
+            {/* <button className={styles.dateRight}></button> */}
           </Col>
           <Col
             md="auto"
