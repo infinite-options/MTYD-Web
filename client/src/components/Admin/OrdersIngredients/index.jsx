@@ -635,6 +635,30 @@ function OrdersIngredients({ history, ...props }) {
   //   state.sortedCustomersData = sortedCustomers;
   // }
 
+  const calculateTotalMealQty = (meals) => {
+    let sum = 0;
+    meals.forEach((item) => {
+      if (item.total_qty !== null) {
+        sum += item.total_qty;
+      } else {
+        sum += 0;
+      }
+    });
+    return sum;
+  };
+
+  const calculateTotalRevenue = (data) => {
+    let sum = 0;
+    data.forEach((item) => {
+      if (item.total_revenue !== null) {
+        sum += item.total_revenue;
+      } else {
+        sum += 0;
+      }
+    });
+    return sum;
+  };
+
   const filterBusiness = (event) => {
     const newBusinessID = event.target.value;
     if (newBusinessID === "All Orders") {
@@ -734,7 +758,7 @@ function OrdersIngredients({ history, ...props }) {
               </div>
             </div>
           </Col>
-          <Col xs={7}>
+          <Col>
             {/* <Carousel responsive={responsive}>
               <button
                 className={[
