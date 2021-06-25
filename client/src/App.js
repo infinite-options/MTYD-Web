@@ -41,6 +41,7 @@ import AdminGoogleAnalytics from './components/Admin/GoogleAnalytics';
 import AdminNotfications from './components/Admin/Notifications';
 import AdminZones from './components/Admin/Zones';
 import AdminCustomerInfo from './components/Admin/CustomerInfo';
+import AdminIngredientsUnits from './components/Admin/IngredientsUnits';
 
 // import MapTest from './components/MapTest';
 import Congrats from "./components/Congrats";
@@ -147,6 +148,10 @@ function App() {
             <Route exact path="/admin/customer-info">
               {/* {adminNavBar} */}
               <AdminCustomerInfo />
+            </Route>
+            <Route exact path="/admin/ingredients-units">
+              {/* {adminNavBar} */}
+              <AdminIngredientsUnits />
             </Route>
             <AppliedRoute path='*' component={NotFound} />
           </Switch>

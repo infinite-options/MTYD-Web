@@ -270,16 +270,16 @@ input[type="zipCode"]:focus {
   /* top: 447px; */
   /* margin-top: 80px; */
   left: -320px;
-  /* width: 100%; */
+  width: 100%;
   /* width: 450px; */
-  border-radius: 15px;
+  /* border-radius: 15px; */
   /* border: solid; */
   height: 140px;
   /* height: 100%; */
-  width: 500px;
+  /* width: 500px; */
   /* width: 90%; */
-  /* background: #FFFFFF 0% 0% no-repeat padding-box; */
-  background-color: rgb(255, 255, 255, 0.85);
+  background: #FFFFFF 0% 0% no-repeat padding-box;
+  /* background-color: rgb(255, 255, 255, 0.85); */
   /* opacity: 1;	 */
   /* background-opacity: 1; */
   /* margin-top: 30px; */
