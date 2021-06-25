@@ -249,7 +249,7 @@ const StripeCheckout = (props) => {
                     delivery_zip: props.zip,
                     delivery_latitude: props.latitude,
                     delivery_longitude: props.longitude,
-                    purchase_notes: 'purchase_notes',
+                    purchase_notes: props.dpvCode, // make it the code
                     amount_due: props.paymentSummary.total,
                     amount_discount: props.paymentSummary.discountAmount,
                     amount_paid: '0.00',

@@ -82,6 +82,21 @@
   /* display: flex; */
 }
 
+.containerEditBusiness {
+  /* text-align: center;
+  display: flex; */
+  width: 96%;
+  /* height: 120px; */
+  z-index: 1;
+  /* border: solid; */
+  border-radius: 15px;
+  margin-top: 20px;
+  margin-left: 2%;
+  margin-right: 2%;
+  background-color: white;
+  /* display: flex; */
+}
+
 .boxScroll {
   /* margin-left: 4%; */
   text-align: center;
@@ -429,4 +444,22 @@
   height: 18px;
   display: inline-block;
   margin-left: 15px;
+}
+
+.editIcon {
+  background-image: url('static/Icon\ material-edit.svg');
+  background-size: 100%;
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+  margin-left: 15px;
+}
+
+.editIconSmall {
+  background-image: url('static/Icon\ material-edit.svg');
+  background-size: 100%;
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  margin-left: "4px";
 }
