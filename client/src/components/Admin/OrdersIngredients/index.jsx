@@ -888,7 +888,7 @@ function OrdersIngredients({ history, ...props }) {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {filterDataByBusiness(
+                {state.ordersData && filterDataByBusiness(
                   state.ordersData,
                   state.selectedBusinessID
                 ).map((item) => {
@@ -929,8 +929,7 @@ function OrdersIngredients({ history, ...props }) {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {console.log(state.revenueData)}
-                {filterDataByBusiness(
+                {state.revenueData && filterDataByBusiness(
                   state.revenueData,
                   state.selectedBusinessID
                 ).map((item) => {
