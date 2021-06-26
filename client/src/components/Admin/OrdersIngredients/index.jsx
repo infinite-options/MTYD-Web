@@ -539,7 +539,8 @@ function OrdersIngredients({ history, ...props }) {
       .then((response) => {
         console.log(response);
         const revenueApi = response.data.result;
-        dispatch({ type: "FETCH_REVENUE", payload: revenueApi });
+        const filteredData = revenueApi ? revenueApi.filter((item) => item.meal_business !== null) : revenueApi;
+        dispatch({ type: "FETCH_REVENUE", payload: filteredData });
       })
       .catch((err) => {
         if (err.response) {
@@ -887,7 +888,7 @@ function OrdersIngredients({ history, ...props }) {
                     return (
                       <TableRow>
                         <TableCell>{ingredient.ingredient_desc}</TableCell>
-                        <TableCell>{ingredient.qty_needed}</TableCell>
+                        <TableCell>?</TableCell>
                         <TableCell>{ingredient.units}</TableCell>
                       </TableRow>
                     );
