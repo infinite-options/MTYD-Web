@@ -859,7 +859,7 @@
 }
 
 .chargeCancelButton{
-  background-image: url('./static/x_button.png');
+  background-image: url('../../images/x_button.png');
   z-index: 2; 
   float: right;
   position: absolute; 

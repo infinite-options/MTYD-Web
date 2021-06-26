@@ -915,7 +915,7 @@
   border: solid;
 }
 .iconTrash {
-  background-image: url('./static/trash_icon.png');
+  background-image: url('../../images/trash_icon.png');
   background-size: 100%;
   outline: 0;
   margin: auto;
@@ -1321,7 +1321,7 @@
 }
 
 .chargeCancelButton{
-  background-image: url('./static/x_button.png');
+  background-image: url('../../images/x_button.png');
   z-index: 2; 
   float: right;
   position: absolute; 
@@ -1416,7 +1416,7 @@
 }
 
 .errorCancelButton{
-  background-image: url('./static/x_button.png');
+  background-image: url('../../images/x_button.png');
   z-index: 2; 
   float: right;
   position: absolute; 
