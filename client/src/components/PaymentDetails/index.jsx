@@ -1,3 +1,4 @@
+
 import React from "react";
 import PropTypes from "prop-types";
 import {connect} from "react-redux";
@@ -35,6 +36,7 @@ import createGuestAccount from '../../utils/CreateGuestAccount';
 import fetchAddressCoordinates from '../../utils/FetchAddressCoordinates';
 
 const google = window.google;
+
 
 const CLOSED = -1;
 const DATA_ERROR = 0;
@@ -97,7 +99,10 @@ class PaymentDetails extends React.Component {
       createGuestErrorCode: -1,
       termsAccepted: true,
       windowHeight: undefined,
-      windowWidth: undefined
+      windowWidth: undefined,
+      streetChanged: false,
+      autoCompleteClicked: false,
+      responseCode: ""
     };
   }
 
@@ -130,7 +135,96 @@ class PaymentDetails extends React.Component {
     }
   };
 
+  updateMap = () => {
+    console.log([this.state.street, this.state.city, this.state.state, this.state.addressZip])
+    if (this.state.streetChanged == false) {
+      return
+    }
+      if (this.state.streetChanged == true )
+    {
+      console.log("calling fetchAddressCoordinates...");
+    
+    fetchAddressCoordinates( //(address, city, state, zip, _callback) {å
+      // this.state.street,
+      // this.state.city,
+      // this.state.state,
+      // this.state.zip,
+      document.getElementById("pac-input").value,
+        document.getElementById("locality").value,
+        document.getElementById("state").value,
+        document.getElementById("postcode").value,
+      (coords) => {
+        console.log("(mount) Fetched coordinates: " + JSON.stringify(coords));
+
+        this.setState({
+          latitude: coords.latitude,
+          longitude: coords.longitude,
+          loadingMap: false
+        });
+
+        const temp_position = {lat:parseFloat(coords.latitude), lng:parseFloat(coords.longitude)}
+
+        console.log(temp_position)
+        console.log(this.state.streetChanged)
+        console.log(this.state.autoCompleteClicked)
+
+        map.setCenter(temp_position)
+
+        if(coords.latitude !== ''){
+          
+          map.setZoom(17);
+          new google.maps.Marker({
+            position: temp_position,
+            map,
+          });
+        }
+      }
+    );
+
+    if(JSON.stringify(this.props.selectedPlan) === '{}'){
+      this.displayError(DATA_ERROR, 'No plans selected. Please select a Meal Plan to proceed.');
+    }
+
+    let temp_lat;
+    let temp_lng;
+
+    if(this.state.latitude==''){
+      temp_lat = 37.3382;
+    }
+    else{
+      temp_lat = this.state.latitude;
+    }
+
+    if(this.state.longitude==''){
+      temp_lng = -121.893028
+    }
+    else{
+      temp_lng = this.state.longitude;
+    }
+
+    const map = new google.maps.Map(document.getElementById("map"), {
+      center: { lat: temp_lat, lng: temp_lng},
+      zoom: 12,
+    });
+    this.setState({
+      streetChanged: false,
+    })
+  }
+  if(this.state.autoCompleteClicked == true) {
+    console.log("reseting click boolean")
+    this.setState({
+      autoCompleteClicked: false
+    })
+  }
+  }
+
   componentDidMount() {
+    this.setState({
+      street: this.props.street,
+      addressZip: this.props.zip,
+      state: this.props.state,
+      city: this.props.city
+    })
     console.log("(mount) props: ", this.props);
     console.log("(mount) selectedPlan: ", this.props.selectedPlan);
     console.log("(mount) email: ", this.props.email);
@@ -150,6 +244,10 @@ class PaymentDetails extends React.Component {
       document.getElementById("locality").value,
       document.getElementById("state").value,
       document.getElementById("postcode").value,
+      // this.state.street,
+      // this.state.city,
+      // this.state.state,
+      // this.state.zip,
       (coords) => {
         console.log("(mount) Fetched coordinates: " + JSON.stringify(coords));
 
@@ -215,6 +313,12 @@ class PaymentDetails extends React.Component {
     });
 
     autocomplete.addListener("place_changed", () => {
+      
+      this.setState({
+        autoCompleteClicked: true,
+        streetChanged: false
+      })
+      
       let address1 = '';
       let postcode = '';
       let city = '';
@@ -226,6 +330,7 @@ class PaymentDetails extends React.Component {
       marker.setVisible(false);
       const place = autocomplete.getPlace();
       console.log(place)
+      
       if (!place.geometry || !place.geometry.location) {
         // User entered the name of a Place that was not suggested and
         // pressed the Enter key, or the Place Details request failed.
@@ -241,9 +346,15 @@ class PaymentDetails extends React.Component {
         map.setCenter(place.geometry.location);
       }
 
+      
       map.setZoom(17);
       marker.setPosition(place.geometry.location);
       marker.setVisible(true);
+
+      this.setState({
+        streetChanged: true,
+        autoCompleteClicked: true
+      })
 
       for (const component of place.address_components) {
         const componentType = component.types[0];
@@ -287,8 +398,10 @@ class PaymentDetails extends React.Component {
         addressZip: postcode,
         latitude: place.geometry.location.lat(),
         longitude: place.geometry.location.lng(),
+        // streetChanged: false,
+        autoCompleteClicked: true
       })
-
+      //console.log(this.state.autoCompleteClicked)
     });
 
     if (
@@ -433,7 +546,7 @@ class PaymentDetails extends React.Component {
     console.log("(2) Saving delivery details");
       
     this.props.changeDeliveryDetails({
-      street: document.getElementById("pac-input").value,
+      street: document.getElementById("pac-input").value.split(", ")[0],
       city: document.getElementById("locality").value,
       state: document.getElementById("state").value,
       zip: document.getElementById("postcode").value,
@@ -666,70 +779,124 @@ class PaymentDetails extends React.Component {
 
   }
 
+  setResponseCode(responseData) {
+    this.setState({responseCode: responseData.dpv_confirmation})
+  }
+
+  isValidAddress() {
+    let responseData = ""
+
+    console.log("street address test: ")
+
+    console.log(document.getElementById("pac-input").value.split(", ")[0])
+
+    let uspsURL = 'http://production.shippingapis.com/ShippingAPI.dll?API=Verify&XML=<AddressValidateRequest USERID="400INFIN1745"><Revision>1</Revision><Address ID="0"><Address1>' + 
+    document.getElementById("pac-input").value.split(", ")[0] +'</Address1><Address2>'+ 
+    document.getElementById("unitNo").value +'</Address2><City>'+ 
+    document.getElementById("locality").value +'</City><State>'+ 
+    document.getElementById("state").value +'</State><Zip5>'+ 
+    document.getElementById("postcode").value +'</Zip5><Zip4></Zip4></Address></AddressValidateRequest>'
+
+    console.log(uspsURL)
+
+    axios
+    .get(uspsURL)
+    .then(response=>{
+      var parser = new DOMParser();
+      responseData = response.data.split("\n")[1]
+      var xmlDoc = parser.parseFromString(responseData, "text/xml")
+      this.setState({responseCode: xmlDoc.getElementsByTagName("DPVConfirmation")[0].childNodes[0].nodeValue})
+      console.log(xmlDoc.getElementsByTagName("DPVConfirmation")[0].childNodes[0].nodeValue)
+      this.validateAddress()
+    })
+
+    console.log("in isValidAddress")
+
+    console.log("this.state.responseCode: " + this.state.responseCode)
+  }
+
   validateAddress() {
+
     console.log("(validateAddress) before FAC");
+    console.log([document.getElementById("pac-input").value.split(", ")[0],
+    document.getElementById("locality").value,
+    document.getElementById("state").value,
+    document.getElementById("postcode").value])    
 
-    this.setState(prevState => ({
-      fetchingFees: true,
-      showPaymentInfo: false
-    }), () => {
+    console.log("in validateAddress")
 
-      fetchAddressCoordinates(
-        document.getElementById("pac-input").value,
-        document.getElementById("locality").value,
-        document.getElementById("state").value,
-        document.getElementById("postcode").value,
-        (coords) => {
+    console.log("this.state.responseCode before checks: " + this.state.responseCode)
 
-          console.log("Fetched coordinates: " + JSON.stringify(coords));
-          this.setState({
-            latitude: coords.latitude,
-            longitude: coords.longitude,
-            loadingMap: false
-          });
+    if (this.state.responseCode == 'Y' || this.state.responseCode == 'S') {
+      console.log("address is fine")
 
-          console.log("Calling categorical options...");
-          axios
-            .get(`${API_URL}categoricalOptions/${coords.longitude},${coords.latitude}`)
-            .then((response) => {
-              console.log("Categorical Options response: ", response);
+      if (this.state.responseCode == 'S') {
+        console.log("apartment not confirmed")
+        this.displayError(ADDRESS_ERROR, `
+          Warning! We couldn't confirm the apartment number provided. Go ahead and place your order and we will contact you for more details.
+        `);
+      }
 
-              if(response.data.result.length !== 0) {
-                console.log("(VA) valid zone!");
+      this.setState(prevState => ({
+        fetchingFees: true,
+        showPaymentInfo: false
+      }), () => {
+        fetchAddressCoordinates(
+          document.getElementById("pac-input").value,
+          document.getElementById("locality").value,
+          document.getElementById("state").value,
+          document.getElementById("postcode").value,
+          (coords) => {
 
-                console.log("cat options for: ", document.getElementById("pac-input").value);
-                this.setState(prevState => ({
-                  recalculatingPrice: true,
-                  paymentSummary: {
-                    ...prevState.paymentSummary,
-                    taxRate: response.data.result[1].tax_rate,
-                    serviceFee: response.data.result[1].service_fee.toFixed(2),
-                    deliveryFee: response.data.result[1].delivery_fee.toFixed(2),
-                    taxAmount: (
-                      this.props.selectedPlan.item_price *
-                      this.props.selectedPlan.num_deliveries *
-                      (1-(this.props.selectedPlan.delivery_discount*0.01)) *
-                      response.data.result[1].tax_rate * 0.01
-                    ).toFixed(2)
-                  }
-                }), () => {
-                  this.setTotal();
-                  console.log("(VA) proceeding to payment...");
-                  this.proceedToPayment();
-                });
+            console.log("Fetched coordinates: " + JSON.stringify(coords));
+            this.setState({
+              latitude: coords.latitude,
+              longitude: coords.longitude,
+              loadingMap: false
+            });
 
-              } else {
-                console.log("(VA) invalid zone!");
+            console.log("Calling categorical options...");
+            axios
+              .get(`${API_URL}categoricalOptions/${coords.longitude},${coords.latitude}`)
+              .then((response) => {
+                console.log("Categorical Options response: ", response);
 
-                this.displayError(ADDRESS_ERROR, `
-                  Sorry, it looks like we don't deliver to your neighborhood yet. 
-                  Enter your email address and we will let you know as soon as
-                  we come to your neighborhood.
-                `);
+                if(response.data.result.length !== 0) {
+                  console.log("(VA) valid zone!");
 
-                this.setState({
-                  fetchingFees: false
-                });
+                  console.log("cat options for: ", document.getElementById("pac-input").value.split(", ")[0]);
+                  this.setState(prevState => ({
+                    recalculatingPrice: true,
+                    paymentSummary: {
+                      ...prevState.paymentSummary,
+                      taxRate: response.data.result[1].tax_rate,
+                      serviceFee: response.data.result[1].service_fee.toFixed(2),
+                      deliveryFee: response.data.result[1].delivery_fee.toFixed(2),
+                      taxAmount: (
+                        this.props.selectedPlan.item_price *
+                        this.props.selectedPlan.num_deliveries *
+                        (1-(this.props.selectedPlan.delivery_discount*0.01)) *
+                        response.data.result[1].tax_rate * 0.01
+                      ).toFixed(2)
+                    }
+                  }), () => {
+                    this.setTotal();
+                    console.log("(VA) proceeding to payment...");
+                    this.proceedToPayment();
+                  });
+
+                } else {
+                  console.log("(VA) invalid zone!");
+
+                  this.displayError(ADDRESS_ERROR, `
+                    Sorry, it looks like we don't deliver to your neighborhood yet. 
+                    Enter your email address and we will let you know as soon as
+                    we come to your neighborhood.
+                  `);
+
+                  this.setState({
+                    fetchingFees: false
+                  });
                 // this.setState(prevState => ({
                 //   recalculatingPrice: true,
                 //   paymentSummary: {
@@ -743,18 +910,128 @@ class PaymentDetails extends React.Component {
                 //   this.setTotal();
                 // });
 
-              }
-            })
-            .catch((err) => {
-              if (err.response) {
-                console.log(err.response);
-              }
-              console.log(err);
-            });
-        }
-      );
+                }
+              })
+              .catch((err) => {
+                if (err.response) {
+                  console.log(err.response);
+                }
+                console.log(err);
+              });
+          }
+        );
+      })
 
-    });
+    }
+
+    if (this.state.responseCode == "N") {
+      console.log("address not right")
+      this.displayError(ADDRESS_ERROR, `
+        Something is not right. Please make sure that the address you entered is correct.
+      `);
+    }
+    if (this.state.responseCode == "D") {
+      console.log("apartment missing")
+      this.displayError(ADDRESS_ERROR, `
+        Something is not right. It seems that your address requires an apartment number. Please make sure to input your apartment number.
+      `);
+    }
+    // if (this.state.responseCode == "S") {
+    //   console.log("appartmnent not right")
+    //   this.displayError(ADDRESS_ERROR, `
+    //     Something is not right. Please make sure that the apartment number you entered is correct.
+    //   `);
+
+    //   this.setState(prevState => ({
+    //     fetchingFees: true,
+    //     showPaymentInfo: false
+    //   }), () => {
+    //     fetchAddressCoordinates(
+    //       document.getElementById("pac-input").value,
+    //       document.getElementById("locality").value,
+    //       document.getElementById("state").value,
+    //       document.getElementById("postcode").value,
+    //       (coords) => {
+
+    //         console.log("Fetched coordinates: " + JSON.stringify(coords));
+    //         this.setState({
+    //           latitude: coords.latitude,
+    //           longitude: coords.longitude,
+    //           loadingMap: false
+    //         });
+
+    //         console.log("Calling categorical options...");
+    //         axios
+    //           .get(`${API_URL}categoricalOptions/${coords.longitude},${coords.latitude}`)
+    //           .then((response) => {
+    //             console.log("Categorical Options response: ", response);
+
+    //             if(response.data.result.length !== 0) {
+    //               console.log("(VA) valid zone!");
+
+    //               console.log("cat options for: ", document.getElementById("pac-input").value.split(", ")[0]);
+    //               this.setState(prevState => ({
+    //                 recalculatingPrice: true,
+    //                 paymentSummary: {
+    //                   ...prevState.paymentSummary,
+    //                   taxRate: response.data.result[1].tax_rate,
+    //                   serviceFee: response.data.result[1].service_fee.toFixed(2),
+    //                   deliveryFee: response.data.result[1].delivery_fee.toFixed(2),
+    //                   taxAmount: (
+    //                     this.props.selectedPlan.item_price *
+    //                     this.props.selectedPlan.num_deliveries *
+    //                     (1-(this.props.selectedPlan.delivery_discount*0.01)) *
+    //                     response.data.result[1].tax_rate * 0.01
+    //                   ).toFixed(2)
+    //                 }
+    //               }), () => {
+    //                 this.setTotal();
+    //                 console.log("(VA) proceeding to payment...");
+    //                 this.proceedToPayment();
+    //               });
+
+    //             } else {
+    //               console.log("(VA) invalid zone!");
+
+    //               this.displayError(ADDRESS_ERROR, `
+    //                 Sorry, it looks like we don't deliver to your neighborhood yet. 
+    //                 Enter your email address and we will let you know as soon as
+    //                 we come to your neighborhood.
+    //               `);
+
+    //               this.setState({
+    //                 fetchingFees: false
+    //               });
+    //             // this.setState(prevState => ({
+    //             //   recalculatingPrice: true,
+    //             //   paymentSummary: {
+    //             //     ...prevState.paymentSummary,
+    //             //     taxRate: 0,
+    //             //     serviceFee: "0.00",
+    //             //     deliveryFee: "0.00",
+    //             //     taxAmount: "0.00"
+    //             //   }
+    //             // }), () => {
+    //             //   this.setTotal();
+    //             // });
+
+    //             }
+    //           })
+    //           .catch((err) => {
+    //             if (err.response) {
+    //               console.log(err.response);
+    //             }
+    //             console.log(err);
+    //           });
+    //       }
+    //     );
+    //   })
+    // }
+    // if (this.state.responseCode == "") {
+    //   this.displayError(ADDRESS_ERROR, `
+    //     Something is not right.
+    //   `);
+    // }
 
     console.log("(validateAddress) after FAC");
   }
@@ -906,7 +1183,6 @@ class PaymentDetails extends React.Component {
     }
     return (
       <>
-
         {/* For debugging window size */}
         {/* <span 
           style={{
@@ -1086,7 +1362,7 @@ class PaymentDetails extends React.Component {
 
                     <div className={styles.errorContainer}>    
 
-                      <h6 style = {{margin: '5px', fontWeight: 'bold', fontSize: '25px'}}>Still Growing...</h6>
+                      <h6 style = {{margin: '5px', fontWeight: 'bold', fontSize: '25px'}}>Uh-Oh...</h6>
 
                       <div style = {{display: 'block', width: '300px', margin: '20px auto 0px'}}>
                         {this.state.errorMessage}
@@ -1285,50 +1561,6 @@ class PaymentDetails extends React.Component {
               title="Enter your phone number"
             />
 
-            {/* <input
-              type='text'
-              placeholder={this.props.address.street==''?"street":this.props.address.street}
-              className={styles.input}
-              id="pac-iput"
-            />
-
-            <div style={{display: 'flex'}}>
-              <input
-                type='text'
-                placeholder={this.props.address.unit==''?'Unit':this.props.address.unit}
-                className={styles.inputContactLeft}
-                value={this.state.unit}
-                onChange={e => {
-                  this.setState({
-                    unit: e.target.value
-                  });
-                }}
-              />
-              <input
-                type='text'
-                placeholder={this.props.address.city==''?"city":this.props.address.city}
-                id="locality" name="locality"
-
-                className={styles.inputContactRight}
-              />
-            </div>
-
-            <div style={{display: 'flex'}}>
-              <input
-                type='text'
-                placeholder={this.props.address.state==''?"State":this.props.address.state}
-                
-                className={styles.inputContactLeft}
-                id="state" name="state"
-              />
-              <input
-                type='text'
-                placeholder={this.props.address.zip==''?"zip":this.props.address.zip}
-                className={styles.inputContactRight}
-                id="postcode" name="postcode"
-              />
-            </div> */}
-
             <input
               type='text'
               placeholder={"Address 1"}
@@ -1336,21 +1568,23 @@ class PaymentDetails extends React.Component {
               id="pac-input" name="pac-input"
               aria-label="Enter your address"
               title="Enter your address"
+              autoComplete="chrome-off"
+              onChange={e => {
+                this.setState({street: e.target.value.split(", ")[0]})
+                console.log(this.state.street)
+                this.setState({
+                  streetChanged: true
+                })
+              }}
+              
             />
-
-              {/* <input
-                type='text'
-                placeholder={'Zip Code'}
-                autocomplete="bs"
-                className={styles.inputContactRight}
-                id="postcode" name="postcode"
-              /> */}
 
             <div style={{display: 'flex'}}>
               <input
                 type='text'
                 placeholder={'Unit'}
                 className={styles.inputContactLeft}
+                id="unitNo" name="unitNo"
                 value={this.state.unit}
                 onChange={e => {
                   this.setState({
@@ -1368,6 +1602,17 @@ class PaymentDetails extends React.Component {
                 className={styles.inputContactRight}
                 aria-label="Enter your city"
                 title="Enter your city"
+                onChange={e => {
+                  this.setState({city: e.target.value})
+                  console.log(this.state.city)
+                }}
+                //autoComplete="chrome-off"
+                // onChange={e =>{
+                //   console.log("City: "+e.target.value)
+                //   this.setState({
+                //     city: e.target.value
+                //   });
+                // }}
               />
             </div>
 
@@ -1379,6 +1624,17 @@ class PaymentDetails extends React.Component {
                 id="state" name="state"
                 aria-label="Enter your state"
                 title="Enter your state"
+                onChange={e => {
+                  this.setState({state: e.target.value})
+                  console.log(this.state.state)
+                }}
+                //autoComplete="chrome-off"
+                // onChange={e =>{
+                //   console.log("State: "+e.target.value)
+                //   this.setState({
+                //     state: e.target.value
+                //   });
+                // }}
               />
               <input
                 type='text'
@@ -1387,6 +1643,17 @@ class PaymentDetails extends React.Component {
                 id="postcode" name="postcode"
                 aria-label="Enter your zipcode"
                 title="Enter your zipcode"
+                onChange={e => {
+                  this.setState({addressZip: e.target.value})
+                  console.log(this.state.addressZip)
+                }}
+                //autoComplete="chrome-off"
+                // onChange={e =>{
+                //   console.log("Zip: "+e.target.value)
+                //   this.setState({
+                //     addressZip: e.target.value
+                //   });
+                // }}
               />
             </div> 
 
@@ -1403,6 +1670,10 @@ class PaymentDetails extends React.Component {
               aria-label="Enter delivery instructions"
               title="Enter delivery instructions"
             />
+            {console.log("line 1558")}
+            {console.log(this.state.autoCompleteClicked)}
+            {console.log(this.state.streetChanged)}
+            {this.updateMap()}
 
             <div className = {styles.googleMap} id = "map"/>     
 
@@ -1411,7 +1682,10 @@ class PaymentDetails extends React.Component {
                 className={styles.orangeBtn}
                 disabled={this.state.loadingMap || this.state.fetchingFees}
                 // onClick={()=>this.proceedToPayment()}
-                onClick={()=>this.validateAddress()}
+                onClick={()=>{
+                  this.isValidAddress()
+                  //this.validateAddress()
+                }}
                 aria-label="Click here to save your delivery information and proceed"
                 title="Click here to save your delivery information and proceed"
               >
@@ -1740,6 +2014,7 @@ class PaymentDetails extends React.Component {
                               phone={this.state.phone}
                               fetchingFees={this.state.fetchingFees}
                               displayError={this.displayError}
+                              dpvCode = {this.state.responseCode}
                             />
                           </div>
                       </div>
@@ -1765,7 +2040,6 @@ class PaymentDetails extends React.Component {
                   })
             }
           >
-
           </div> */}
 
           {

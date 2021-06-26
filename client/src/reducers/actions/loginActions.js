@@ -122,6 +122,13 @@ export const forgotPassword = (email) => dispatch => {
          })
 }
 
+export var errMessage = ''
+
+export function getErrMessage(){
+  //console.log("getErrMessage = " + errMessage)
+  return errMessage
+}
+
 export const loginAttempt = (email, password, callback) => dispatch => {
   // Get salt for account
   console.log('inside login attempt')
@@ -210,8 +217,10 @@ export const loginAttempt = (email, password, callback) => dispatch => {
             .then(res => {
               // Don't expect success, checking for need to log in by social media
               if (res.data.code === 401) {
+                errMessage="Log in via social media"
                 console.log("Need to log in by social media");
               } else {
+                errMessage="Unknown login error"
                 console.log("Unknown login error");
               }
             })
@@ -225,10 +234,15 @@ export const loginAttempt = (email, password, callback) => dispatch => {
         }
         // No information from Account Salt endpoint, probably invalid credentials
       } else {
-        // Status not 200
         if (res.data?.message) {
+          errMessage=res.data.message
+          console.log(errMessage)
+          console.log(":P")
           dispatch(setAlert("LoginError", res.data.message));
+          console.log("done with dispatch")
+          //return res.data.message 
         } else {
+          errMessage="Something weird happened"
           console.log("Something weird happened.");
         }
       }
