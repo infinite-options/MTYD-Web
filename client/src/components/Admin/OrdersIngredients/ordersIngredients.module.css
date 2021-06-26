@@ -1,0 +1,114 @@
+.root {
+  background-color: #f26522;
+  width: 100vw;
+  height: 93vh;
+  padding: 25px;
+}
+
+.container {
+  height: 100%;
+}
+
+.section {
+  background-color: white;
+  border-radius: 15px;
+}
+
+.row1 {
+  height: 15%;
+}
+
+.row2 {
+  margin-top: 10px;
+  height: 85%;
+}
+
+.restaurantImg {
+  height: 70px;
+  width: 70px;
+}
+
+.restaurantSelector {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.dropdown {
+  border: none;
+  padding: 0px;
+  padding-right: 20px;
+  color: black;
+  background-color: white;
+  width: 13vw;
+  outline: none;
+  display: inline-block;
+  appearance: none;
+  cursor: pointer;
+  background: url("./static/dropdown.svg") no-repeat;
+  background-position: right 5px top 50%;
+}
+
+.restaurantLinks {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  color: #f26522;
+  font-size: 12px;
+  text-decoration: underline;
+}
+
+.dateSelector {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.datebutton {
+  height: 80px;
+  width: 80px;
+  width: same-as-height;
+  font-size: 15px;
+  border: none;
+}
+
+.datebuttonNotSelected {
+  box-shadow: 0 0 7px #838383;
+  background-color: white;
+}
+
+.datebuttonSelected {
+  background-color: #f8bb17;
+  border: 4px solid rgb(240, 142, 31);
+}
+
+.dateLeft {
+  border: none;
+  padding: 12px 16px;
+  cursor: pointer;
+  width: 0px;
+  padding: 0px;
+}
+
+.dateLeft:before {
+  content: url("./static/dateLeftArrow.svg");
+}
+
+.dateRight {
+  border: none;
+  padding: 12px 16px;
+  cursor: pointer;
+  width: 0px;
+  padding: 0px;
+}
+
+.dateRight:before {
+  content: url("./static/dateRightArrow.svg");
+}
+
+.mealImg {
+  height: 40px;
+  width: 40px;
+}
