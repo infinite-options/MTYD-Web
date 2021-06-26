@@ -46,6 +46,11 @@ function IngredientsUnits() {
 
   const [createModal, setCreateModal] = useState(CREATE_INGREDIENT);
 
+  const [ingredientInput, inputIngredient] = useState('');
+  const [packageSizeInput, inputPackageSize] = useState('');
+  const [packageUnitInput, inputPackageUnit] = useState('');
+  const [packageCostInput, inputPackageCost] = useState('');
+
 	const [dimensions, setDimensions] = useState({ 
     height: window.innerHeight,
     width: window.innerWidth
@@ -322,7 +327,9 @@ function IngredientsUnits() {
       ingredientDisplay.push(
         <div
           style={{
-            border: 'solid',
+            // border: 'solid',
+            borderBottom: 'solid',
+            borderColor: '#F8BB17',
             width: '100%',
             height: '60px',
             display: 'inline-flex'
@@ -404,7 +411,9 @@ function IngredientsUnits() {
       <div
         style={{
           overflowY: 'scroll',
-          height: '300px'
+          height: '300px',
+          borderBottom: 'solid',
+          borderColor: '#F8BB17'
         }}
       >
         {ingredientDisplay}
@@ -424,7 +433,9 @@ function IngredientsUnits() {
       unitDisplay.push(
         <div
           style={{
-            border: 'solid',
+            // border: 'solid',
+            borderBottom: 'solid',
+            borderColor: '#F8BB17',
             width: '100%',
             height: '60px',
             display: 'inline-flex'
@@ -469,7 +480,9 @@ function IngredientsUnits() {
       <div
         style={{
           overflowY: 'scroll',
-          height: '300px'
+          height: '300px',
+          borderBottom: 'solid',
+          borderColor: '#F8BB17'
         }}
       >
         {unitDisplay}
@@ -486,9 +499,9 @@ function IngredientsUnits() {
             marginTop: '20px',
             borderRadius: '15px',
             marginLeft: '2%',
-            width: '24%',
+            width: '28%',
             // height: '600px',
-            height: '500px',
+            height: '420px',
             backgroundColor: 'white',
             // display: 'flex',
             // alignItems: 'center'
@@ -574,13 +587,113 @@ function IngredientsUnits() {
             </div> */}
           </div>
 
-          {/* <div className={styles.cellOuterWrapper}>
-            <div className={styles.cellInnerWrapper}>
-              <span className={styles.cellContent}>
-                Type
-              </span>
+          <div
+            style={{
+              border: 'solid',
+              width: '100%',
+              height: '60px',
+              display: 'inline-flex'
+            }}
+          >
+            <div className={styles.createModalLabel}>
+              Ingredient
             </div>
-          </div> */}
+            {/* <div className={styles.createModalInput}>
+              [Input]
+            </div> */}
+            <input
+              className={styles.createModalInput}
+              onChange={(e) => {
+                inputIngredient(e.target.value)
+              }}
+              value={ingredientInput}
+            />
+          </div>
+
+          <div
+            style={{
+              border: 'solid',
+              width: '100%',
+              height: '60px',
+              display: 'inline-flex'
+            }}
+          >
+            <div className={styles.createModalLabel}>
+              Package Size
+            </div>
+            <input
+              className={styles.createModalInput}
+              onChange={(e) => {
+                inputPackageSize(e.target.value)
+              }}
+              value={packageSizeInput}
+            />
+          </div>
+
+          <div
+            style={{
+              border: 'solid',
+              width: '100%',
+              height: '60px',
+              display: 'inline-flex'
+            }}
+          >
+            <div className={styles.createModalLabel}>
+              Package Unit
+            </div>
+            <input
+              className={styles.createModalInput}
+              onChange={(e) => {
+                inputPackageUnit(e.target.value)
+              }}
+              value={packageUnitInput}
+            />
+          </div>
+
+          <div
+            style={{
+              border: 'solid',
+              width: '100%',
+              height: '60px',
+              display: 'inline-flex'
+            }}
+          >
+            <div className={styles.createModalLabel}>
+              Package Cost
+            </div>
+            <input
+              className={styles.createModalInput}
+              onChange={(e) => {
+                inputPackageCost(e.target.value)
+              }}
+              value={packageCostInput}
+            />
+          </div>
+
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center'
+            }}
+          >
+            <div
+              style={{
+                borderRadius: '15px',
+                height: '40px',
+                color: 'white',
+                backgroundColor: '#f26522',
+                marginTop: '20px',
+                width: '80%',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                textAlign: 'center',
+                cursor: 'pointer'
+              }}
+            >
+              Save New Ingredient
+            </div>
+          </div>
 
         </div>
       );
@@ -592,7 +705,8 @@ function IngredientsUnits() {
             marginTop: '20px',
             borderRadius: '15px',
             marginLeft: '2%',
-            width: '24%',
+            width: '28%',
+            // height: '600px',
             height: '500px',
             backgroundColor: 'white',
             // display: 'flex',
@@ -626,7 +740,7 @@ function IngredientsUnits() {
             <div className={styles.cellOuterWrapper2}>
               <div className={styles.cellInnerWrapper2}>
                 <span className={styles.cellContent2}>
-                  Create New Unit
+                  Create New Measure Unit
                 </span>
               </div>
             </div>
@@ -876,7 +990,7 @@ function IngredientsUnits() {
             marginTop: '20px',
             borderRadius: '15px',
             marginLeft: '2%',
-            width: '34%',
+            width: '32%',
             height: '500px',
             backgroundColor: 'white',
             marginBottom: '20px'
@@ -930,17 +1044,19 @@ function IngredientsUnits() {
           <div
             style={{
               marginTop: '20px',
-              border: 'solid',
+              // border: 'solid',
               width: '100%',
               height: '60px',
               display: 'inline-flex',
-              paddingRight: '15px'
+              paddingRight: '15px',
+              borderBottom: 'solid',
+              color: '#F8BB17'
             }}
           >
 
             <div className={styles.cellOuterWrapper}>
               <div className={styles.cellInnerWrapper}>
-                <span className={styles.cellContent}>
+                <span className={styles.cellContentOrange}>
                   Ingredient Name
                 </span>
               </div>
@@ -948,7 +1064,7 @@ function IngredientsUnits() {
 
             <div className={styles.cellOuterWrapper}>
               <div className={styles.cellInnerWrapper}>
-                <span className={styles.cellContent}>
+                <span className={styles.cellContentOrange}>
                   Package Size
                 </span>
               </div>
@@ -956,7 +1072,7 @@ function IngredientsUnits() {
             
             <div className={styles.cellOuterWrapper}>
               <div className={styles.cellInnerWrapper}>
-                <span className={styles.cellContent}>
+                <span className={styles.cellContentOrange}>
                   Package Unit
                 </span>
               </div>
@@ -964,7 +1080,7 @@ function IngredientsUnits() {
 
             <div className={styles.cellOuterWrapper}>
               <div className={styles.cellInnerWrapper}>
-                <span className={styles.cellContent}>
+                <span className={styles.cellContentOrange}>
                   Package Cost
                 </span>
               </div>
@@ -982,7 +1098,7 @@ function IngredientsUnits() {
             marginTop: '20px',
             borderRadius: '15px',
             marginLeft: '2%',
-            width: '34%',
+            width: '32%',
             height: '500px',
             backgroundColor: 'white',
             // display: 'flex',
@@ -1035,7 +1151,9 @@ function IngredientsUnits() {
           <div
             style={{
               marginTop: '20px',
-              border: 'solid',
+              // border: 'solid',
+              borderBottom: 'solid',
+              color: '#F8BB17',
               width: '100%',
               height: '60px',
               display: 'inline-flex',
@@ -1045,7 +1163,7 @@ function IngredientsUnits() {
 
             <div className={styles.cellOuterWrapper}>
               <div className={styles.cellInnerWrapper}>
-                <span className={styles.cellContent}>
+                <span className={styles.cellContentOrange}>
                   Type
                 </span>
               </div>
@@ -1053,7 +1171,7 @@ function IngredientsUnits() {
 
             <div className={styles.cellOuterWrapper}>
               <div className={styles.cellInnerWrapper}>
-                <span className={styles.cellContent}>
+                <span className={styles.cellContentOrange}>
                   Unit Name
                 </span>
               </div>
@@ -1061,7 +1179,7 @@ function IngredientsUnits() {
 
             <div className={styles.cellOuterWrapper}>
               <div className={styles.cellInnerWrapper}>
-                <span className={styles.cellContent}>
+                <span className={styles.cellContentOrange}>
                   Conversion Ratio
                 </span>
               </div>
@@ -1069,7 +1187,7 @@ function IngredientsUnits() {
 
             <div className={styles.cellOuterWrapper}>
               <div className={styles.cellInnerWrapper}>
-                <span className={styles.cellContent}>
+                <span className={styles.cellContentOrange}>
                   Base Unit
                 </span>
               </div>
