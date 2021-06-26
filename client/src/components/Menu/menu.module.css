@@ -183,3 +183,29 @@ select {
 .pickers:focus {
   outline: none;
 }
+
+.dropdownSelection {
+  color: white;
+  border-radius: 15px;
+  background-color: #f26522;
+  font-size: 20px;
+  height: 40px;
+  padding-top: 5px;
+  box-shadow: 0px 5px 10px gray;
+  margin-bottom: 10px;
+  display: flex;
+  width: 40%;
+  min-width: 300px;
+  z-index: 2;
+  position: absolute;
+  cursor: pointer;
+}
+
+.whiteArrowDown {
+  background-image: url('./static/white_arrow_down.png');
+  background-size: 100%;
+  width: 24px;
+  height: 16px;
+  margin-top: 6px;
+  float: right;
+}
