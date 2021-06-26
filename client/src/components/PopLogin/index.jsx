@@ -30,6 +30,35 @@ export class PopLogin extends Component {
 
   constructor(){
     super();
+    // this.state = {
+    //   showErrorModal: false,
+    //   errorModal: null,
+    //   errorMessage: '',
+    //   errorLink: '',
+    //   errorLinkText: '',
+    //   errorHeader: ''
+    // }
+  }
+
+  errVal=''
+  attemptLogin=false
+  attemptShow=true
+  attemptReload=false
+  showErrorModal = false
+  errorModal = null
+  errorMessage = ''
+  errorLink = ''
+  errorLinkText = ''
+  errorHeader = ''
+  loginClicked = false
+
+  componentDidMount() {
+    window.AppleID.auth.init({
+      clientId: process.env.REACT_APP_APPLE_CLIENT_ID,
+      scope: "email",
+      redirectURI: process.env.REACT_APP_APPLE_REDIRECT_URI
+      //redirectURI: ""
+    });
   }
 
   errVal=''
@@ -111,7 +140,7 @@ export class PopLogin extends Component {
   }
 
   successLogin = page => {
-    console.log(page)
+    //console.log(page)
     this.props.history.push(`/${page}`);
   }; 
 

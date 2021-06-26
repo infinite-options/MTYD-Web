@@ -160,9 +160,19 @@ class NavBar extends React.Component {
       store.subscribe(() => {
         let userInfo = store.getState().login.userInfo;
         if (userInfo && userInfo.customerId !== "") {
-          let iconName = (
-            userInfo.firstName.charAt(0) + userInfo.lastName.charAt(0)
-          ).toUpperCase();
+          if (userInfo.firstName == ''){ // check for first name
+            this.setState({
+              firstName: "No Name"
+            })
+          } 
+          if (userInfo.lastName == ''){ // check for last name
+            this.setState({
+              lastName: "No Name"
+            })
+          }
+          
+          let iconName = (userInfo.firstName.charAt(0) + userInfo.lastName.charAt(0)).toUpperCase();
+          
           this.setState(state => ({
             ...state,
             ...userInfo,
@@ -350,6 +360,9 @@ class NavBar extends React.Component {
                   <div
                     className={styles.logoutBtn}
                     onClick={this.logOut}
+                    tabIndex="0"
+                    aria-label="Click here to logout"
+                    title="Click here to logout"
                   >
                     Logout
                   </div>

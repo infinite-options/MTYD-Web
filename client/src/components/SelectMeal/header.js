@@ -136,6 +136,8 @@ class Header extends Component {
           onClick={e => this.props.makeSelection(e)}
           // aria-label = {ariaTag}
           // title={ariaTag}
+          aria-label = {ariaTag}
+          title = {ariaTag}
         >
           {displayMessage}
         </button>
@@ -208,6 +210,7 @@ class Header extends Component {
           login = {login} 
           subscribedPlans = {this.props.subscribedPlans} 
           mealsOnChange={this.props.mealsOnChange}
+          mealsOnClick={this.props.mealsOnClick}
           meals={meals}
         />  
 

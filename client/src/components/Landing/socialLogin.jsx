@@ -17,6 +17,7 @@ import socialG from "../../images/socialGoogle.png"
 import socialF from "../../images/socialFb.png"
 import socialA from "../../images/socialApple.png"
 
+export var responseData = null
 
 class SocialLogin extends Component {
 
@@ -45,6 +46,7 @@ class SocialLogin extends Component {
         clientId: process.env.REACT_APP_APPLE_CLIENT_ID,
         scope: "email",
         redirectURI: process.env.REACT_APP_APPLE_REDIRECT_URI
+        //redirectURI: ""
       });
   }
 
@@ -91,6 +93,7 @@ class SocialLogin extends Component {
           console.log("Facebook Login failed");
         }
       };
+
       showError = err => {
         console.log("this is error in show err: ", err);
         return (
@@ -112,6 +115,7 @@ class SocialLogin extends Component {
       };
 
     render() { 
+        let data = null
         return ( 
 
           !this.state.verticalFormat?
@@ -184,9 +188,12 @@ class SocialLogin extends Component {
               >
                 <button
                   onClick={() => {
-                    window.AppleID.auth.signIn();
+                    console.log("pressed apple login button")
+                    const data = window.AppleID.auth.signIn();
+                    console.log(data)
                   }}
                   className={styles.appleLogin}
+                  //callback={this.responseApple}
                   aria-label="Continue with your Apple ID"     
                   title="Continue with your Apple ID" 
                 >
@@ -228,11 +235,17 @@ class SocialLogin extends Component {
                     
                   />
                 </div>
-
+                
                 <div>
                   <button
                     onClick={() => {
-                      window.AppleID.auth.signIn();
+                      try{
+                        console.log("pressed apple login button")
+                        const data = window.AppleID.auth.signIn();
+                        console.log(data)
+                      } catch (error) {
+                        console.log(data)
+                      };
                     }}
                     className={styles.appleLoginCircle}
                     style={{
@@ -260,6 +273,8 @@ class SocialLogin extends Component {
          );
     }
 }
+
+
 
 SocialLogin.propTypes = {
     // bypassLogin: PropTypes.func.isRequired,

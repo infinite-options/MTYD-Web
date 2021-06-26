@@ -131,6 +131,7 @@ export function getErrMessage(){
 
 export const loginAttempt = (email, password, callback) => dispatch => {
   // Get salt for account
+  let m = ''
   console.log('inside login attempt')
   axios
     .post(API_URL + "accountsalt", {
@@ -253,7 +254,9 @@ export const loginAttempt = (email, password, callback) => dispatch => {
       if (err.response) {
         console.log(err.response);
       }
+      
     });
+    
 };
 
 export const socialLoginAttempt = (
@@ -356,6 +359,7 @@ export const initAppleSignUp = (newId, callback) => dispatch => {
       let email = newUserInfo.customer_email;
       let refreshToken = newUserInfo.user_refresh_token;
       console.log("(IASU) refresh token: ", refreshToken);
+      console.log("at initAppleSignUp: "+newUserInfo+", "+email+", "+refreshToken)
       dispatch({
         type: START_APPLE_SIGNUP,
         payload: {

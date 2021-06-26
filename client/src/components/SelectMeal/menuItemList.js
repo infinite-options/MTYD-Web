@@ -647,6 +647,11 @@ class MenuItemList extends Component {
   };
 
   mealsOnChange = e => {
+    console.log("Meals on change e is:")
+    console.log(e)
+    
+
+    console.log(Cookies.get("customer_uid"))
     let cust_id = Cookies.get("customer_uid");
     fetch(
       `${API_URL}meals_selected?customer_uid=${cust_id}`
@@ -654,6 +659,7 @@ class MenuItemList extends Component {
       .then(response => response.json())
       .then(json => {
         let mealSelected = [...json.result];
+        console.log("mealSelected: "+mealSelected)
 
         // console.log(mealSelected)
         this.setState({
@@ -667,12 +673,14 @@ class MenuItemList extends Component {
       this.dateButtonArray();
 
     let planName = e.target.value;
+    console.log("e.targetvalue " + e.target.value)
 
-    console.log(planName)
+    //console.log(planName)
 
 
     this.state.meals.map(mealItem => {
 
+      console.log("mealitem:")
       console.log(mealItem)
 
       if (mealItem.purchase_uid === planName) {
@@ -938,6 +946,8 @@ class MenuItemList extends Component {
       addOnAmount: addOnCount,
     });
   };
+
+
 
   setDeliveryDay = e => {
     let deliver = e.target.value;
