@@ -587,87 +587,74 @@ function IngredientsUnits() {
             </div> */}
           </div>
 
-          <div
-            style={{
-              border: 'solid',
-              width: '100%',
-              height: '60px',
-              display: 'inline-flex'
-            }}
-          >
+          <div className={styles.createModalSection}>
             <div className={styles.createModalLabel}>
               Ingredient
             </div>
             {/* <div className={styles.createModalInput}>
               [Input]
             </div> */}
-            <input
-              className={styles.createModalInput}
-              onChange={(e) => {
-                inputIngredient(e.target.value)
-              }}
-              value={ingredientInput}
-            />
+            <div className={styles.createModalInputWrapper}>
+              <input
+                className={styles.createModalInput}
+                onChange={(e) => {
+                  inputIngredient(e.target.value)
+                }}
+                value={ingredientInput}
+              />
+            </div>
           </div>
 
-          <div
-            style={{
-              border: 'solid',
-              width: '100%',
-              height: '60px',
-              display: 'inline-flex'
-            }}
-          >
+          <div className={styles.createModalSection}>
             <div className={styles.createModalLabel}>
               Package Size
             </div>
-            <input
-              className={styles.createModalInput}
-              onChange={(e) => {
-                inputPackageSize(e.target.value)
-              }}
-              value={packageSizeInput}
-            />
-          </div>
-
-          <div
-            style={{
-              border: 'solid',
-              width: '100%',
-              height: '60px',
-              display: 'inline-flex'
-            }}
-          >
-            <div className={styles.createModalLabel}>
-              Package Unit
+            <div className={styles.createModalInputWrapper}>
+              <input
+                className={styles.createModalInput}
+                onChange={(e) => {
+                  inputPackageSize(e.target.value)
+                }}
+                value={packageSizeInput}
+              />
             </div>
-            <input
-              className={styles.createModalInput}
-              onChange={(e) => {
-                inputPackageUnit(e.target.value)
-              }}
-              value={packageUnitInput}
-            />
           </div>
 
-          <div
-            style={{
-              border: 'solid',
-              width: '100%',
-              height: '60px',
-              display: 'inline-flex'
-            }}
-          >
+          <div className={styles.createModalSection}>
+            {/* <div className={styles.createModalLabel}>
+              Package Unit
+            </div> */}
+            <div className={styles.CML_OuterWrapper}>
+              <div className={styles.CML_InnerWrapper}>
+                <div className={styles.createModalLabel}>
+                  Conversion Ratio
+                </div>
+              </div>
+            </div>
+            <div className={styles.createModalInputWrapper}>
+              <input
+                className={styles.createModalInput}
+                onChange={(e) => {
+                  inputPackageUnit(e.target.value)
+                }}
+                value={packageUnitInput}
+              />
+            </div>
+          </div>
+
+          <div className={styles.createModalSection}>
             <div className={styles.createModalLabel}>
               Package Cost
             </div>
-            <input
-              className={styles.createModalInput}
-              onChange={(e) => {
-                inputPackageCost(e.target.value)
-              }}
-              value={packageCostInput}
-            />
+            <div className={styles.createModalInputWrapper}>
+              <input
+                className={styles.createModalInput}
+                onChange={(e) => {
+                  inputPackageCost(e.target.value)
+                }}
+                value={packageCostInput}
+              />
+            </div>
           </div>
 
           <div
