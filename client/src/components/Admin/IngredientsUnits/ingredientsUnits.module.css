@@ -1,309 +1,80 @@
-.sectionHeader {
-  font-weight: 700;
-  font-size: 22px;
-  padding-left: 30px;
-  /* border: solid; */
-  height: 80px;
+.cellOuterWrapper {
   display: flex;
   align-items: center;
-}
-
-.customerFilter {
-  border: solid;
-  border-width: 2px;
-  width: 40%;
-  height: 36px;
-  /* margin-left: %; */
-  /* margin-right: 2%; */
-  z-index: 2;
-  /* cursor: pointer; */
-  color: #F26522;
-  padding-left: 15px;
-  font-weight: 600;
-  font-size: 18px;
-  font-style: italic;
-  border-radius: 10px;
-  min-width: 400px;
-  /* display: inline-block; */
-  /* display: flex; */
-  align-items: center;
-  text-overflow: ellipsis;
-  /* padding-top: 3px; */
-  display: block;
-  white-space: nowrap;
-  overflow: hidden;
-}
-
-.containerMeals {
-  /* text-align: center; */
-  /* display: inline-block; */
-  /* display: flex; */
-  width: 96%;
-  /* border: solid; */
-  border-radius: 15px;
-  margin-top: 20px;
-  margin-left: 2%;
-  margin-right: 2%;
-  background-color: white;
-  z-index: -500;
-}
-
-.containerHistory {
-  /* text-align: center;
-  display: flex; */
-  width: 96%;
-  /* border: solid; */
-  border-radius: 15px;
-  margin-top: 20px;
-  margin-left: 2%;
-  margin-right: 2%;
-  background-color: white;
-  /* min-height: 300px; */
-  /* margin-bottom: 20px; */
-  padding-bottom: 20px;
-}
-
-.containerCustomer {
-  /* text-align: center;
-  display: flex; */
-  width: 96%;
-  height: 120px;
-  z-index: 1;
-  /* border: solid; */
-  border-radius: 15px;
-  margin-top: 20px;
-  margin-left: 2%;
-  margin-right: 2%;
-  background-color: white;
-  /* display: flex; */
-}
-.containerCustomerNarrow {
-  /* text-align: center;
-  display: flex; */
-  width: 96%;
-  height: 320px;
-  z-index: 1;
-  /* border: solid; */
-  border-radius: 15px;
-  margin-top: 20px;
-  margin-left: 2%;
-  margin-right: 2%;
-  background-color: white;
-  /* display: flex; */
-}
-
-.boxScroll {
-  /* margin-left: 4%; */
-  text-align: center;
-  overflow-y: auto;
-  /* width: 92%; */
-  width: 100%;
-  flex: inline-block;
-  height: 300px;
-}
-
-.mealButton {
-  border-bottom: 2px solid #ffba00;
-  background-color: #ffffff;
-  border-radius: 0px;
-  padding: 0 0 0 0;
-  width: 100%;
-  font-size: 20px;
-  outline: 0;
-  height: 50px;
-  background-size: 100%;
-  cursor: pointer;
-}
-
-.mealButtonSelected {
-  background-color: #ffba00;
-  outline: 0;
-}
-/* .mealButtonSelected:hover {
-  background-color: #ffba00;
-  outline: 0;
-} */
-
-.mealButtonHeader {
-  height: 50px;
-  border-bottom: 2px solid #ffba00;
+  justify-content: center;
   /* border: dashed; */
-  margin-right: 15px;
-  text-align: center;
-}
-
-.mealButtonEdit {
-  width: 4%;
+  /* border-top: solid; */
+  /* border-color: #f26522; */
+  /* border-width: 1px; */
+  width: 25%;
   height: 100%;
-  float: left;
-  padding-top: 8px;
-  text-overflow: ellipsis;
-  display: block;
-  white-space: nowrap;
-  overflow: hidden;
+}
+.cellOuterWrapper2 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border: dashed;
-}
-
-.mealButtonPlan {
-  width: 16%;
+  /* border-top: solid; */
+  /* border-color: #f26522; */
+  /* border-width: 1px; */
+  /* width: 25%; */
+  /* width: 80%; */
+  /* max-width: 80%; */
+  margin-right: 50px;
   height: 100%;
-  float: left;
-  padding-top: 8px;
-  text-overflow: ellipsis;
-  display: block;
-  white-space: nowrap;
-  overflow: hidden;
-  border: solid;
 }
 
-.mealButtonSection {
-  width: 16%;
-  height: 100%;
-  float: left;
-  padding-top: 8px;
-  /* padding: 0 0 0 0; */
-  text-overflow: ellipsis;
-  display: block;
-  white-space: nowrap;
-  overflow: hidden;
-  /* border: solid; */
-}
-.mealButtonSection2 {
-  width: 18%;
-  height: 100%;
-  float: left;
-  padding-top: 8px;
-  text-overflow: ellipsis;
-  display: block;
-  white-space: nowrap;
-  overflow: hidden;
-  /* border: solid; */
-}
-.mealButtonSection3 {
-  width: 18%;
-  height: 100%;
-  float: left;
-  padding-top: 8px;
-  padding-left: 10px;
-  text-overflow: ellipsis;
-  display: block;
-  white-space: nowrap;
-  overflow: hidden;
-  /* border: solid; */
-}
-
-.orangeHeaderCycle {
-  display: flex;
-  text-align: center;
-  justify-content: center;
-  align-items: center;
-  color: #f26522;
-  font-size: 14px;
-  font-weight: 600;
-  width: 9%;
-  height: 40px;
-  border-width: 1px;
-  height: 70px;
-}
-
-.orangeHeaderSection {
-  display: flex;
-  text-align: center;
-  justify-content: center;
-  align-items: center;
-  color: #f26522;
-  font-size: 14px;
-  font-weight: 600;
-  width: 7%;
-  height: 40px;
-  border-width: 1px;
-  height: 70px;
-  /* border: solid; */
-}
-
-.planCellOuterWrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  /* border: dashed; */
-  width: 7%;
-  height: 70px;
-  /* width: 10%; */
-}
-.planCellOuterWrapper2 {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  /* border: inset; */
-  width: 9%;
-  height: 70px;
-  /* width: 10%; */
-}
-.planCellInnerWrapper {
+.cellInnerWrapper {
   align-self: flex-start;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
-  /* top right bottom left */
   padding: 5px 5px;    
-  /* border: solid;
-  border-color: red; */
-  /* border: 1px solid black;
-  border-radius: 5px;
-  background-color: white; */
   height: 100%;
 }
-/* .cellContent {
-  white-space: nowrap;
-  text-overflow: ellipsis;
+.cellInnerWrapper2 {
+  align-self: flex-start;
   overflow: hidden;
-} */
-/* .orangeCellContent {
-  color: #f26522;
-  font-size: 14px;
-  font-weight: 600;
-  height: 100%;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-} */
-.orangeCellContent {
-  text-align: center;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  color: #f26522;
-  font-size: 14px;
-  font-weight: 600;
-  width: 100%;
-  border-width: 1px;
-}
-
-.histCellOuterWrapper {
   display: flex;
   align-items: center;
-  justify-content: center;
-  /* border: dashed; */
-  border-top: solid;
+  /* justify-content: center; */
+  box-sizing: border-box;
+  padding: 5px 5px;    
+  height: 100%;
+}
+
+.cellContent {
+  /* text-align: center; */
+  text-overflow: ellipsis;
+  overflow: hidden;
+  font-size: 14px;
+  font-weight: 600;
+  /* border: solid; */
+  /* border-top: solid;
   border-color: #f26522;
-  border-width: 1px;
-  width: 7%;
-  height: 70px;
+  border-width: 1px; */
+  /* height: 70px; */
+  width: 100%;
 }
-
-.histCellInnerWrapper {
-  align-self: flex-start;
+.cellContent2 {
+  /* text-align: center; */
+  text-overflow: ellipsis;
   overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
-  padding: 5px 5px;    
-  height: 100%;
+  font-size: 26px;
+  font-weight: bold;
+  padding-left: 20px;
+  /* border: solid; */
+  /* border-top: solid;
+  border-color: #f26522;
+  border-width: 1px; */
+  /* height: 70px; */
+  width: 100%;
 }
-.historyCellContent {
-  text-align: center;
+.cellContentOrange {
+  /* text-align: center; */
+  color: #f26522;
   text-overflow: ellipsis;
   overflow: hidden;
   font-size: 14px;
@@ -316,344 +87,16 @@
   width: 100%;
 }
 
-.historySection {
-  display: flex;
-  text-align: center;
-  justify-content: center;
-  align-items: center;
-  font-size: 14px;
-  font-weight: 600;
-  width: 7%;
-  height: 40px;
-  border-top: solid;
-  border-color: #f26522;
-  border-width: 1px;
-  height: 70px;
-}
-/* .historySection {
-  display: flex;
-  text-align: center;
-  justify-content: center;
-  align-items: center;
-  font-size: 14px;
-  font-weight: 600;
-  width: 7%;
-  height: 40px;
-  border-top: solid;
-  border-color: #f26522;
-  border-width: 1px;
-  height: 70px;
-} */
-/* .historySection {
-  display: flex;
-  text-align: center;
-  justify-content: center;
-  align-items: center;
-  font-size: 14px;
-  font-weight: 600;
-  width: 7%;
-  border: solid;
-  border-color: #f26522;
-  border-width: 1px;
-  height: 70px;
-} */
-
-.historyCycles {
-  color: #f26522;
-  font-size: 14px;
-  font-weight: 600;
-  width: 7%;
-  border-top: solid;
-  border-width: 1px;
-  /* border: solid; */
-  display: flex;
-  align-items: center;
-  padding-left: 5px;
-  height: 70px;
-}
-
-.arrowCell {
-  display: flex;
-  align-items: center;
-  width: 2%;
-  color: #f26522;
-  border-top: solid;
-  border-width: 1px;
-  /* border: dashed; */
-}
-
-.orangeHeaderLeft {
-  border-top: solid;
-  color: #f26522;
-  border-width: 1px;
-  font-size: 20px;
-  padding-top: 4px;
-  padding-left: 4px;
+.createModalLabel {
   width: 50%;
-  height: 40px;
-  text-overflow: ellipsis;
-  display: block;
-  white-space: nowrap;
-  overflow: hidden;
-}
-
-.orangeHeaderRight {
-  border-top: solid;
+  border: inset;
   color: #f26522;
-  border-width: 1px;
-  font-size: 20px;
-  padding-top: 4px;
-  padding-right: 4px;
+  display: flex;
+  align-items: center;
+  padding-left: 20px;
+}
+
+.createModalInput {
   width: 50%;
-  height: 40px;
-  text-align: right;
-  text-overflow: ellipsis;
-  display: block;
-  white-space: nowrap;
-  overflow: hidden;
-}
-
-.orangeHeaderRightArrow {
-  border-top: solid;
-  /* border: solid; */
-  color: #f26522;
-  border-width: 1px;
-  font-size: 20px;
-  padding-top: 4px;
-  padding-right: 4px;
-  /* width: 50%; */
-  width: 46%;
-  height: 40px;
-  text-align: right;
-  text-overflow: ellipsis;
-  display: block;
-  white-space: nowrap;
-  overflow: hidden;
-}
-
-.orangeHeaderRightUL {
-  border-top: solid;
-  color: #f26522;
-  border-width: 1px;
-  font-size: 20px;
-  padding-top: 4px;
-  padding-right: 4px;
-  width: 50%;
-  height: 40px;
-  text-align: right;
-  text-decoration: underline;
-  text-overflow: ellipsis;
-  display: block;
-  white-space: nowrap;
-  overflow: hidden;
-}
-
-.avatar{
-  width: 70px;
-  height: 70px;
-  color: white;
-  font-size: 40px;
-  font-weight: bold;
-  background-color: lightgray;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 50%;
-  /* border: solid;
-  border-color: black;
-  border-width: 1px; */
-  margin-right: 10px;
-  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
-}
-
-.orangeArrowUp {
-  /* background-image: url('./static/orange_arrow_up.png'); */
-  background-image: url('../../../images/orange_arrow_up.png');
-  background-size: 100%;
-  width: 12px;
-  height: 11px;
-  margin-top: 5px;
-  cursor: pointer;
-}
-.orangeArrowHidden {
-  /* background-image: url('./static/orange_arrow_up.png'); */
-  /* background-image: url('../../../images/orange_arrow_up.png');
-  background-size: 100%;
-  width: 12px;
-  height: 11px;
-  margin-top: 5px;
-  cursor: pointer;
-  opacity: 0.5; */
-  display: hidden;
-}
-
-.orangeArrowDown {
-  /* background-image: url('./static/orange_arrow_down.png'); */
-  background-image: url('../../../images/orange_arrow_down.png');
-  background-size: 100%;
-  width: 12px;
-  height: 11px;
-  margin-top: 5px;
-  cursor: pointer;
-}
-
-.sortingArrowUp {
-  /* background-image: url('./static/orange_arrow_up.png'); */
-  background-image: url('../../../images/orange_arrow_up.png');
-  background-size: 100%;
-  width: 12px;
-  height: 11px;
-  min-width: 12px;
-  min-height: 11px;
-  margin-left: 5px;
-  margin-top: 0px;
-  cursor: pointer;
-}
-
-.sortingArrowDown {
-  /* background-image: url('./static/orange_arrow_down.png'); */
-  background-image: url('../../../images/orange_arrow_down.png');
-  background-size: 100%;
-  width: 12px;
-  height: 11px;
-  min-width: 12px;
-  min-height: 11px;
-  margin-left: 5px;
-  margin-top: 0px;
-  cursor: pointer;
-}
-
-.historyArrowUp {
-  /* background-image: url('./static/orange_arrow_up.png'); */
-  background-image: url('../../../images/orange_arrow_up.png');
-  background-size: 100%;
-  width: 12px;
-  height: 11px;
-  min-width: 12px;
-  min-height: 11px;
-  cursor: pointer;
-}
-
-.historyArrowDown {
-  /* background-image: url('./static/orange_arrow_down.png'); */
-  background-image: url('../../../images/orange_arrow_down.png');
-  background-size: 100%;
-  width: 12px;
-  height: 11px;
-  min-width: 12px;
-  min-height: 11px;
-  cursor: pointer;
-}
-
-.filterRow {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  height: 50px;
-  z-index: 30;
-  cursor: pointer;
-  border: solid;
-  border-width: 2px;
-  border-color: #FFF7E0;
-  border-radius: 10px;
-}
-.filterRow:hover {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  height: 50px;
-  z-index: 30;
-  cursor: pointer;
-  /* font-weight: bold; */
-  border: solid;
-  border-width: 2px;
-  /* border-radius: 10px; */
-  /* border-color: #F8BB17; */
-  border-color: #f26522;
-}
-
-.cellOuterWrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  /* border: dashed; */
-  /* width: 10%; */
-}
-/* .cellOuterWrapper:hover {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0.5;
-} */
-
-.cellOuterWrapper2 {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  /* border: dashed; */
-  /* width: 10%; */
-}
-
-.cellInnerWrapper {
-  align-self: flex-start;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
-  padding: 5px 5px;
-  /* border: solid;
-  border-color: red; */
-  /* border: 1px solid black;
-  border-radius: 5px;
-  background-color: white; */
-  height: 50px;
-}
-
-.cellContent {
- 	white-space: nowrap;
- 	text-overflow: ellipsis;
- 	overflow: hidden;
-}
-
-.narrowInfoBox {
-  /* border: solid; */
-  /* min0-width: 2 */
-  width: 50%;
-  max-width: 300px;
-  /* margin-left: 10%;
-  margin-right: 10%; */
-}
-
-.sortingArrowInactive {
-  /* background-image: url('./static/orange_arrow_down.png'); */
-  /* background-image: url('../../../images/orange_arrow_down.png');
-  background-size: 100%;
-  width: 12px;
-  height: 11px;
-  min-width: 12px;
-  min-height: 11px;
-  margin-left: 5px;
-  margin-top: 0px;
-  cursor: pointer;
-  opacity: 0.5; */
-  display: none;
-}
-.cellOuterWrapper:hover > .cellInnerWrapper > .sortingArrowInactive{
-  /* background-image: url('./static/orange_arrow_down.png'); */
-  background-image: url('../../../images/orange_arrow_down.png');
-  background-size: 100%;
-  width: 12px;
-  height: 11px;
-  min-width: 12px;
-  min-height: 11px;
-  margin-left: 5px;
-  margin-top: 0px;
-  cursor: pointer;
-  opacity: 0.5;
-  display: inline;
+  border: inset;
 }

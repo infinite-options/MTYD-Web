@@ -6,6 +6,9 @@ import { withRouter } from "react-router";
 import styles from "./ingredientsUnits.module.css";
 import AdminNavBar from '../AdminNavBar'
 import zIndex from '@material-ui/core/styles/zIndex';
+import trashIcon from '../../../images/trash_icon.png';
+import xButton from '../../../images/x_button.png';
+// import editIcon from '../../../images/edit_icon.png';
 
 import m4me_logo from '../../../images/LOGO_NoBG_MealsForMe.png';
 
@@ -33,10 +36,20 @@ function IngredientsUnits() {
 	// const [LPLP, setLPLP] = useState(null);
 	const [uniquePlans, setUniquePlans] = useState(null);
 
-  const [savedIngredients, saveIngredients] = useState([]);
-  const [savedUnits, saveUnits] = useState([]);
+  const [savedIngredients, saveIngredients] = useState(null);
+  const [savedUnits, saveUnits] = useState(null);
+
+  const [savedMeals, saveMeals] = useState(null);
+  const [savedBusinesses, saveBusinesses] = useState(null);
+
+  const [loadingData, setLoadingData] = useState(true);
 
   const [createModal, setCreateModal] = useState(CREATE_INGREDIENT);
+
+  const [ingredientInput, inputIngredient] = useState('');
+  const [packageSizeInput, inputPackageSize] = useState('');
+  const [packageUnitInput, inputPackageUnit] = useState('');
+  const [packageCostInput, inputPackageCost] = useState('');
 
 	const [dimensions, setDimensions] = useState({ 
     height: window.innerHeight,
@@ -59,89 +72,65 @@ function IngredientsUnits() {
   });
 
 	useEffect(() => {
+    let remoteDataFetched = 0;
+
+    axios
+      .get(API_URL + 'ingredients')
+      .then(res => {
+        console.log("(ingredients) res: ", res);
+        remoteDataFetched++;
+        if(remoteDataFetched === 4) {
+          setLoadingData(false);
+        }
+        saveIngredients(res.data.result);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+
+    axios
+      .get(API_URL + 'measure_unit')
+      .then(res => {
+        console.log("(measure_unit) res: ", res);
+        remoteDataFetched++;
+        if(remoteDataFetched === 4) {
+          setLoadingData(false);
+        }
+        saveUnits(res.data.result);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+
+    axios
+      .get(API_URL + 'all_businesses')
+      .then(res => {
+        console.log("(all_businesses) res: ", res);
+        remoteDataFetched++;
+        if(remoteDataFetched === 4) {
+          setLoadingData(false);
+        }
+        saveBusinesses(res.data.result);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+
+    axios
+      .get(API_URL + 'meals')
+      .then(res => {
+        console.log("(meals) res: ", res);
+        remoteDataFetched++;
+        if(remoteDataFetched === 4) {
+          setLoadingData(false);
+        }
+        saveMeals(res.data.result);
+      })
+      .catch(err => {
+        console.log(err);
+      });
 
 	}, []);
-
-	// Set history tab
-	useEffect(() => {
-		console.log("(rerender) setting history tab for: ", selectedCustomer);
-
-		let tempDropdownButtons = [];
-    let uniquePlansFetched = 0;
-    let defaultSub = false;
-    let tempUniquePlans = [];
-    let dropdownIndex = 0;
-
-		// if(subHistory !== null && LPLP !== null && typeof(LPLP) !== 'undefined'){
-    if(subHistory !== null){
-			console.log("meal data initialized!");
-
-			// console.log("LPLP info: ", LPLP);
-
-			subHistory.forEach((sub) => {
-
-        console.log("(init) sub: ", sub);
-
-				let elIndex = tempUniquePlans.findIndex(element => element.id === sub.purchase_id);
-
-
-        // New plan found
-				if (elIndex === -1) {
-
-	
-					let tempUniquePlan = {
-						id: sub.purchase_uid,
-						history: []
-					};
-	
-	
-					tempUniquePlans.push(tempUniquePlan);
-	
-					elIndex = tempUniquePlans.findIndex(element => element.id === sub.purchase_uid);
-					
-					let historyTab = {
-						date: sub.payment_time_stamp,
-						show_dropdown: false,
-						payment_id: sub.payment_id,
-						deliveries: [],
-            revenue: sub.amount_paid
-					};
-					tempUniquePlans[elIndex].history.push(historyTab);
-					tempUniquePlans[elIndex].history[0].deliveries.push(sub);
-
-					uniquePlansFetched++;
-
-				} else {
-					let dateIndex = tempUniquePlans[elIndex].history.findIndex(
-						element => element.date === sub.payment_time_stamp
-					);
-
-					if(dateIndex === -1) {
-						let historyTab = {
-							date: sub.payment_time_stamp,
-							show_dropdown: false,
-							payment_id: sub.payment_id,
-							deliveries: [],
-              revenue: sub.amount_paid
-						};
-						tempUniquePlans[elIndex].history.push(historyTab);
-						tempUniquePlans[elIndex].history[(tempUniquePlans[elIndex].history.length)-1].deliveries.push(sub);
-					} else {
-						tempUniquePlans[elIndex].history[dateIndex].deliveries.push(sub);
-					}
-	
-				}
-	
-			});
-
-			console.log("final unique plans: ", tempUniquePlans);
-
-			setUniquePlans(tempUniquePlans);
-
-		}
-
-	// }, [subHistory, LPLP]);
-  }, [subHistory]);
 
 	const isInvalid = (val) => {
 		if(
@@ -322,43 +311,184 @@ function IngredientsUnits() {
 		return parsedDeliveries;
 	}
 
-	// Display when initial information has not been loaded on first page render
-	const hideSubscribedMeals = (config) => {
+  const displayIngredients = () => {
 
-		// For select meal plan section
-		if(config === 'plan') {
-			return (
-				<div 
-					style={{
-						textAlign: 'center', 
-						paddingTop: '80px',
-						fontSize: '40px', 
-						fontWeight: 'bold',
-						width: '100%'
-					}}
-				>
-					Loading Subscriptions...
-				</div>
-			);
+    if(savedIngredients === null) {
+      return (
+        <div>
+          LOADING...
+        </div>
+      );
+    }
 
-		// For edit plan section
-		} else {
-			return (
-				<div 
-					style={{
-						textAlign: 'center', 
-						paddingTop: '70px',
-						fontSize: '40px', 
-						fontWeight: 'bold',
-						width: '100%',
-						marginBottom: '100px'
-					}}
-				>
-					Loading Subscriptions...
-				</div>
-			);
-		}
-	}
+    let ingredientDisplay = [];
+    savedIngredients.forEach((ingredient) => {
+      console.log("(displayIngredients) ingredient: ", ingredient);
+      ingredientDisplay.push(
+        <div
+          style={{
+            // border: 'solid',
+            borderBottom: 'solid',
+            borderColor: '#F8BB17',
+            width: '100%',
+            height: '60px',
+            display: 'inline-flex'
+          }}
+        >
+          {/* <div
+            style={{
+              border: 'dashed',
+              height: '100%',
+              width: '25%'
+            }}
+          >
+            {ingredient.ingredient_desc}
+          </div>
+          <div
+            style={{
+              border: 'dashed',
+              height: '100%',
+              width: '25%'
+            }}
+          >
+            {ingredient.package_size}
+          </div>
+          <div
+            style={{
+              border: 'dashed',
+              height: '100%',
+              width: '25%'
+            }}
+          >
+            {isInvalid(ingredient.package_unit) ? '--' : ingredient.package_unit}
+          </div>
+          <div
+            style={{
+              border: 'dashed',
+              height: '100%',
+              width: '25%'
+            }}
+          >
+            ${ingredient.package_cost.toFixed(2)}
+          </div> */}
+
+          <div className={styles.cellOuterWrapper}>
+            <div className={styles.cellInnerWrapper}>
+              <span className={styles.cellContent}>
+                {ingredient.ingredient_desc}
+              </span>
+            </div>
+          </div>
+
+          <div className={styles.cellOuterWrapper}>
+            <div className={styles.cellInnerWrapper}>
+              <span className={styles.cellContent}>
+                {ingredient.package_size}
+              </span>
+            </div>
+          </div>
+
+          <div className={styles.cellOuterWrapper}>
+            <div className={styles.cellInnerWrapper}>
+              <span className={styles.cellContent}>
+                {isInvalid(ingredient.package_unit) ? '--' : ingredient.package_unit}
+              </span>
+            </div>
+          </div>
+
+          <div className={styles.cellOuterWrapper}>
+            <div className={styles.cellInnerWrapper}>
+              <span className={styles.cellContent}>
+                {ingredient.package_size}
+              </span>
+            </div>
+          </div>
+
+        </div>
+      );
+    });
+    return (
+      <div
+        style={{
+          overflowY: 'scroll',
+          height: '300px',
+          borderBottom: 'solid',
+          borderColor: '#F8BB17'
+        }}
+      >
+        {ingredientDisplay}
+      </div>
+    );
+  }
+
+  const displayUnits = () => {
+
+    if(savedUnits === null) {
+      return null;
+    }
+
+    let unitDisplay = [];
+    savedUnits.forEach((unit) => {
+      console.log("(displayUnits) units: ", unit);
+      unitDisplay.push(
+        <div
+          style={{
+            // border: 'solid',
+            borderBottom: 'solid',
+            borderColor: '#F8BB17',
+            width: '100%',
+            height: '60px',
+            display: 'inline-flex'
+          }}
+        >
+          <div className={styles.cellOuterWrapper}>
+            <div className={styles.cellInnerWrapper}>
+              <span className={styles.cellContent}>
+                {unit.type}
+              </span>
+            </div>
+          </div>
+
+          <div className={styles.cellOuterWrapper}>
+            <div className={styles.cellInnerWrapper}>
+              <span className={styles.cellContent}>
+                {unit.recipe_unit}
+              </span>
+            </div>
+          </div>
+
+          <div className={styles.cellOuterWrapper}>
+            <div className={styles.cellInnerWrapper}>
+              <span className={styles.cellContent}>
+                {unit.conversion_ratio}
+              </span>
+            </div>
+          </div>
+
+          <div className={styles.cellOuterWrapper}>
+            <div className={styles.cellInnerWrapper}>
+              <span className={styles.cellContent}>
+                {unit.common_unit}
+              </span>
+            </div>
+          </div>
+
+        </div>
+      );
+    });
+    return (
+      <div
+        style={{
+          overflowY: 'scroll',
+          height: '300px',
+          borderBottom: 'solid',
+          borderColor: '#F8BB17'
+        }}
+      >
+        {unitDisplay}
+      </div>
+    );
+  }
 
   const displayCreateModal = () => {
     if(createModal === CREATE_INGREDIENT) {
@@ -369,8 +499,9 @@ function IngredientsUnits() {
             marginTop: '20px',
             borderRadius: '15px',
             marginLeft: '2%',
-            width: '24%',
-            height: '600px',
+            width: '28%',
+            // height: '600px',
+            height: '420px',
             backgroundColor: 'white',
             // display: 'flex',
             // alignItems: 'center'
@@ -378,20 +509,192 @@ function IngredientsUnits() {
         >
           <div
             style={{
+              position: 'relative',
               height: '100px',
               // display: 'flex',
+              display: 'inline-flex',
               // alignItems: 'center',
-              paddingTop: '20px',
+              // paddingTop: '10px',
               border: 'solid',
+              borderColor: 'red',
+              width: '100%',
               // width: '60%',
               // width: '200px',
               fontWeight: 'bold',
-              paddingLeft: '20px',
-              fontSize: '26px'
+              // paddingLeft: '20px',
+              // paddingRight: '70px',
+              fontSize: '26px',
+              // textOverflow: 'ellipsis',
+              // display: 'block',
+              // whiteSpace: 'nowrap',
+              // overflow: 'hidden'
             }}
           >
-            Create New Ingredient
+
+          <div className={styles.cellOuterWrapper2}>
+            <div className={styles.cellInnerWrapper2}>
+              <span className={styles.cellContent2}>
+                Create New Ingredient
+              </span>
+            </div>
           </div>
+
+          <div
+            style={{
+              position: 'absolute',
+              right: '10px',
+              top: '10px',
+              border: 'dashed',
+              width: '40px',
+              minWidth: '40px',
+              height: '40px',
+              minHeight: '40px',
+              backgroundImage: `url(${xButton})`,
+              backgroundSize: '100%',
+              cursor: 'pointer'
+            }}
+            onClick={() => {
+              setCreateModal(CREATE_NONE)
+            }}
+          />
+
+            {/* <div
+              style={{
+                alignSelf: 'flex-start',
+                overflow: 'hidden',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxSizing: 'border-box',
+                // padding: '5px 5px',   
+                border: 'solid',
+                borderColor: 'red',
+                height: '100%'
+              }}
+            >
+
+              <div
+                style={{
+                  border: 'dashed',
+                  whiteSpace: 'nowrap',
+                  textOverflow: 'ellipsis',
+                  overflow: 'hidden',
+                  // height: '100%'
+                }}
+              >
+                Create New Ingredient
+              </div>
+            </div> */}
+          </div>
+
+          <div
+            style={{
+              border: 'solid',
+              width: '100%',
+              height: '60px',
+              display: 'inline-flex'
+            }}
+          >
+            <div className={styles.createModalLabel}>
+              Ingredient
+            </div>
+            {/* <div className={styles.createModalInput}>
+              [Input]
+            </div> */}
+            <input
+              className={styles.createModalInput}
+              onChange={(e) => {
+                inputIngredient(e.target.value)
+              }}
+              value={ingredientInput}
+            />
+          </div>
+
+          <div
+            style={{
+              border: 'solid',
+              width: '100%',
+              height: '60px',
+              display: 'inline-flex'
+            }}
+          >
+            <div className={styles.createModalLabel}>
+              Package Size
+            </div>
+            <input
+              className={styles.createModalInput}
+              onChange={(e) => {
+                inputPackageSize(e.target.value)
+              }}
+              value={packageSizeInput}
+            />
+          </div>
+
+          <div
+            style={{
+              border: 'solid',
+              width: '100%',
+              height: '60px',
+              display: 'inline-flex'
+            }}
+          >
+            <div className={styles.createModalLabel}>
+              Package Unit
+            </div>
+            <input
+              className={styles.createModalInput}
+              onChange={(e) => {
+                inputPackageUnit(e.target.value)
+              }}
+              value={packageUnitInput}
+            />
+          </div>
+
+          <div
+            style={{
+              border: 'solid',
+              width: '100%',
+              height: '60px',
+              display: 'inline-flex'
+            }}
+          >
+            <div className={styles.createModalLabel}>
+              Package Cost
+            </div>
+            <input
+              className={styles.createModalInput}
+              onChange={(e) => {
+                inputPackageCost(e.target.value)
+              }}
+              value={packageCostInput}
+            />
+          </div>
+
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center'
+            }}
+          >
+            <div
+              style={{
+                borderRadius: '15px',
+                height: '40px',
+                color: 'white',
+                backgroundColor: '#f26522',
+                marginTop: '20px',
+                width: '80%',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                textAlign: 'center',
+                cursor: 'pointer'
+              }}
+            >
+              Save New Ingredient
+            </div>
+          </div>
+
         </div>
       );
     } else if (createModal === CREATE_UNIT) {
@@ -402,8 +705,9 @@ function IngredientsUnits() {
             marginTop: '20px',
             borderRadius: '15px',
             marginLeft: '2%',
-            width: '24%',
-            height: '600px',
+            width: '28%',
+            // height: '600px',
+            height: '500px',
             backgroundColor: 'white',
             // display: 'flex',
             // alignItems: 'center'
@@ -411,19 +715,55 @@ function IngredientsUnits() {
         >
           <div
             style={{
+              position: 'relative',
               height: '100px',
               // display: 'flex',
+              display: 'inline-flex',
               // alignItems: 'center',
-              paddingTop: '20px',
+              // paddingTop: '10px',
               border: 'solid',
+              borderColor: 'red',
+              width: '100%',
               // width: '60%',
               // width: '200px',
               fontWeight: 'bold',
-              paddingLeft: '20px',
-              fontSize: '26px'
+              // paddingLeft: '20px',
+              // paddingRight: '70px',
+              fontSize: '26px',
+              // textOverflow: 'ellipsis',
+              // display: 'block',
+              // whiteSpace: 'nowrap',
+              // overflow: 'hidden'
             }}
           >
-            Create New Unit
+
+            <div className={styles.cellOuterWrapper2}>
+              <div className={styles.cellInnerWrapper2}>
+                <span className={styles.cellContent2}>
+                  Create New Measure Unit
+                </span>
+              </div>
+            </div>
+
+            <div
+              style={{
+                position: 'absolute',
+                right: '10px',
+                top: '10px',
+                border: 'dashed',
+                width: '40px',
+                minWidth: '40px',
+                height: '40px',
+                minHeight: '40px',
+                backgroundImage: `url(${xButton})`,
+                backgroundSize: '100%',
+                cursor: 'pointer'
+              }}
+              onClick={() => {
+                setCreateModal(CREATE_NONE)
+              }}
+            />
+
           </div>
         </div>
       );
@@ -486,7 +826,7 @@ function IngredientsUnits() {
 
 			<AdminNavBar currentPage={'ingredients-units'}/>
 
-			{/* {customersById === null ? (
+			{loadingData === true ? (
 				<div
 					style={{
 						color: 'red',
@@ -511,7 +851,7 @@ function IngredientsUnits() {
 				</div>
 			) : (
 				null
-			)} */}
+			)}
 
       <div
         style={{
@@ -550,91 +890,91 @@ function IngredientsUnits() {
             height: '100%'
           }}
         >
-        <div 
-          style={{
-            position: 'absolute',
-            right: '400px',
-            width: '200px',
-            display: 'flex',
-            justifyContent: 'center',
-            top: '20px',
-            height: '30px',
-            color: '#f26522',
-            fontWeight: '500'
-          }}
-        >
-          Total no. of Restaurants
+          <div 
+            style={{
+              position: 'absolute',
+              right: '400px',
+              width: '200px',
+              display: 'flex',
+              justifyContent: 'center',
+              top: '20px',
+              height: '30px',
+              color: '#f26522',
+              fontWeight: '500'
+            }}
+          >
+            Total no. of Restaurants
+          </div>
+          <div 
+            style={{
+              position: 'absolute',
+              right: '400px',
+              width: '200px',
+              display: 'flex',
+              justifyContent: 'center',
+              top: '50px',
+              fontSize: '24px'
+            }}
+          >
+            {savedBusinesses === null ? 'LOADING...' : savedBusinesses.length}
+          </div>
+          <div 
+            style={{
+              position: 'absolute',
+              right: '200px',
+              width: '200px',
+              display: 'flex',
+              justifyContent: 'center',
+              top: '20px',
+              height: '30px',
+              color: '#f26522',
+              fontWeight: '500'
+            }}
+          >
+            Total no. of Meals
+          </div>
+          <div 
+            style={{
+              position: 'absolute',
+              right: '200px',
+              width: '200px',
+              display: 'flex',
+              justifyContent: 'center',
+              top: '50px',
+              fontSize: '24px'
+            }}
+          >
+            {savedMeals === null ? 'LOADING...' : savedMeals.length}
+          </div>
+          <div 
+            style={{
+              position: 'absolute',
+              right: '0',
+              width: '200px',
+              display: 'flex',
+              justifyContent: 'center',
+              top: '20px',
+              height: '30px',
+              color: '#f26522',
+              fontWeight: '500'
+            }}
+          >
+            Total no. of Ingredients
+          </div>
+          <div 
+            style={{
+              position: 'absolute',
+              right: '0',
+              width: '200px',
+              display: 'flex',
+              justifyContent: 'center',
+              top: '50px',
+              fontSize: '24px'
+            }}
+          >
+            {savedIngredients === null ? 'LOADING...' : savedIngredients.length}
+          </div>
         </div>
-        <div 
-          style={{
-            position: 'absolute',
-            right: '400px',
-            width: '200px',
-            display: 'flex',
-            justifyContent: 'center',
-            top: '50px',
-            fontSize: '24px'
-          }}
-        >
-          --
-        </div>
-        <div 
-          style={{
-            position: 'absolute',
-            right: '200px',
-            width: '200px',
-            display: 'flex',
-            justifyContent: 'center',
-            top: '20px',
-            height: '30px',
-            color: '#f26522',
-            fontWeight: '500'
-          }}
-        >
-          Total no. of Meals
-        </div>
-        <div 
-          style={{
-            position: 'absolute',
-            right: '200px',
-            width: '200px',
-            display: 'flex',
-            justifyContent: 'center',
-            top: '50px',
-            fontSize: '24px'
-          }}
-        >
-          --
-        </div>
-        <div 
-          style={{
-            position: 'absolute',
-            right: '0',
-            width: '200px',
-            display: 'flex',
-            justifyContent: 'center',
-            top: '20px',
-            height: '30px',
-            color: '#f26522',
-            fontWeight: '500'
-          }}
-        >
-          Total no. of Ingredients
-        </div>
-        <div 
-          style={{
-            position: 'absolute',
-            right: '0',
-            width: '200px',
-            display: 'flex',
-            justifyContent: 'center',
-            top: '50px',
-            fontSize: '24px'
-          }}
-        >
-          --
-        </div>
-      </div>
       </div>
 
       <div
@@ -644,133 +984,222 @@ function IngredientsUnits() {
           width: '100%'
         }}
       >
-      <div
-        style={{
-          // border: 'solid',
-          marginTop: '20px',
-          borderRadius: '15px',
-          marginLeft: '2%',
-          width: '34%',
-          height: '600px',
-          backgroundColor: 'white',
-          marginBottom: '20px'
-          // display: 'flex',
-          // alignItems: 'center'
-        }}
-      >
         <div
           style={{
-            height: '100px',
-            paddingTop: '20px',
+            // border: 'solid',
+            marginTop: '20px',
+            borderRadius: '15px',
+            marginLeft: '2%',
+            width: '32%',
+            height: '500px',
+            backgroundColor: 'white',
+            marginBottom: '20px'
             // display: 'flex',
-            // alignItems: 'center',
-
-            border: 'solid',
-            // width: '60%',
-            // width: '200px',
-            fontWeight: 'bold',
-            paddingLeft: '20px',
-            fontSize: '26px',
-            position: 'relative'
+            // alignItems: 'center'
           }}
         >
-          Ingredients
           <div
             style={{
-              position: 'absolute',
-              top: '10px',
-              left: '168px',
-              fontSize: '36px',
-              fontWeight: '700',
-              cursor: 'pointer'
-            }}
-            onClick={() => {
-              setCreateModal(CREATE_INGREDIENT)
+              height: '90px',
+              // paddingTop: '20px',
+              // display: 'flex',
+              // alignItems: 'center',
+
+              border: 'solid',
+              // width: '60%',
+              // width: '200px',
+              fontWeight: 'bold',
+              paddingLeft: '20px',
+              fontSize: '26px',
+              position: 'relative',
+              display: 'inline-flex',
+              alignItems: 'center'
             }}
           >
-            +
+            <div
+              style={{
+                border: 'dashed'
+              }}
+            >
+              Ingredients
+            </div>
+            <div
+              style={{
+                // position: 'absolute',
+                // top: '10px',
+                // left: '168px',
+                fontSize: '36px',
+                // fontWeight: '700',
+                cursor: 'pointer',
+                border: 'dashed'
+              }}
+              onClick={() => {
+                setCreateModal(CREATE_INGREDIENT)
+              }}
+            >
+              &nbsp;+&nbsp;
+            </div>
           </div>
-        </div>
-      </div>
 
-      <div
-        style={{
-          // border: 'solid',
-          marginTop: '20px',
-          borderRadius: '15px',
-          marginLeft: '2%',
-          width: '34%',
-          height: '600px',
-          backgroundColor: 'white',
-          // display: 'flex',
-          // alignItems: 'center'
-        }}
-      >
-        <div
-          style={{
-            height: '100px',
-            // display: 'flex',
-            // alignItems: 'center',
-            paddingTop: '20px',
-            border: 'solid',
-            // width: '60%',
-            // width: '100px',
-            fontWeight: 'bold',
-            paddingLeft: '20px',
-            fontSize: '26px',
-            position: 'relative'
-          }}
-        >
-          Units
           <div
             style={{
-              position: 'absolute',
-              top: '10px',
-              left: '92px',
-              fontSize: '36px',
-              fontWeight: '700',
-              cursor: 'pointer'
-            }}
-            onClick={() => {
-              setCreateModal(CREATE_UNIT)
+              marginTop: '20px',
+              // border: 'solid',
+              width: '100%',
+              height: '60px',
+              display: 'inline-flex',
+              paddingRight: '15px',
+              borderBottom: 'solid',
+              color: '#F8BB17'
             }}
           >
-            +
-          </div>
-        </div>
-      </div>
 
-      {/* <div
-        style={{
-          // border: 'solid',
-          marginTop: '20px',
-          borderRadius: '15px',
-          marginLeft: '2%',
-          width: '24%',
-          height: '600px',
-          backgroundColor: 'white',
-          // display: 'flex',
-          // alignItems: 'center'
-        }}
-      >
+            <div className={styles.cellOuterWrapper}>
+              <div className={styles.cellInnerWrapper}>
+                <span className={styles.cellContentOrange}>
+                  Ingredient Name
+                </span>
+              </div>
+            </div>
+
+            <div className={styles.cellOuterWrapper}>
+              <div className={styles.cellInnerWrapper}>
+                <span className={styles.cellContentOrange}>
+                  Package Size
+                </span>
+              </div>
+            </div>
+            
+            <div className={styles.cellOuterWrapper}>
+              <div className={styles.cellInnerWrapper}>
+                <span className={styles.cellContentOrange}>
+                  Package Unit
+                </span>
+              </div>
+            </div>
+
+            <div className={styles.cellOuterWrapper}>
+              <div className={styles.cellInnerWrapper}>
+                <span className={styles.cellContentOrange}>
+                  Package Cost
+                </span>
+              </div>
+            </div>
+
+          </div>
+
+          {displayIngredients()}
+
+        </div>
+
         <div
           style={{
-            height: '100px',
+            // border: 'solid',
+            marginTop: '20px',
+            borderRadius: '15px',
+            marginLeft: '2%',
+            width: '32%',
+            height: '500px',
+            backgroundColor: 'white',
             // display: 'flex',
-            // alignItems: 'center',
-            paddingTop: '20px',
-            border: 'solid',
-            // width: '60%',
-            // width: '200px',
-            fontWeight: 'bold',
-            paddingLeft: '20px',
-            fontSize: '26px'
+            // alignItems: 'center'
           }}
         >
-          Create New Ingredient
+          <div
+            style={{
+              height: '90px',
+              // paddingTop: '20px',
+              // display: 'flex',
+              // alignItems: 'center',
+
+              border: 'solid',
+              // width: '60%',
+              // width: '200px',
+              fontWeight: 'bold',
+              paddingLeft: '20px',
+              fontSize: '26px',
+              position: 'relative',
+              display: 'inline-flex',
+              alignItems: 'center'
+            }}
+          >
+            <div
+              style={{
+                border: 'dashed'
+              }}
+            >
+              Units
+            </div>
+            <div
+              style={{
+                // position: 'absolute',
+                // top: '10px',
+                // left: '168px',
+                fontSize: '36px',
+                // fontWeight: '700',
+                cursor: 'pointer',
+                border: 'dashed'
+              }}
+              onClick={() => {
+                setCreateModal(CREATE_UNIT)
+              }}
+            >
+              &nbsp;+&nbsp;
+            </div>
+          </div>
+
+          <div
+            style={{
+              marginTop: '20px',
+              // border: 'solid',
+              borderBottom: 'solid',
+              color: '#F8BB17',
+              width: '100%',
+              height: '60px',
+              display: 'inline-flex',
+              paddingRight: '15px'
+            }}
+          >
+
+            <div className={styles.cellOuterWrapper}>
+              <div className={styles.cellInnerWrapper}>
+                <span className={styles.cellContentOrange}>
+                  Type
+                </span>
+              </div>
+            </div>
+
+            <div className={styles.cellOuterWrapper}>
+              <div className={styles.cellInnerWrapper}>
+                <span className={styles.cellContentOrange}>
+                  Unit Name
+                </span>
+              </div>
+            </div>
+
+            <div className={styles.cellOuterWrapper}>
+              <div className={styles.cellInnerWrapper}>
+                <span className={styles.cellContentOrange}>
+                  Conversion Ratio
+                </span>
+              </div>
+            </div>
+
+            <div className={styles.cellOuterWrapper}>
+              <div className={styles.cellInnerWrapper}>
+                <span className={styles.cellContentOrange}>
+                  Base Unit
+                </span>
+              </div>
+            </div>
+
+          </div>
+
+          {displayUnits()}
+
         </div>
-      </div> */}
-      {displayCreateModal()}
+        
+        {displayCreateModal()}
 
       </div>
 

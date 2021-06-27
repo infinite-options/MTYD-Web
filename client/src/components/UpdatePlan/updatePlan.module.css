@@ -323,12 +323,12 @@
   outline: 0;
   width: 100%;
   height: 100%;
-  background-image: url('./static/yellow_plate.png');
+  background-image: url('../../images/yellow_plate.png');
   background-size: 100%;
 }
 
 .mealButtonSelected {
-  background-image: url('./static/orange_plate.png');
+  background-image: url('../../images/orange_plate.png');
   background-color: #FFBA00;
   outline: 0;
 }
@@ -788,7 +788,7 @@
   color: #ff6505;
 }
 .iconMeals {
-  background-image: url('./static/orange_plate.png');
+  background-image: url('../../images/orange_plate.png');
   background-size: 100%;
   outline: 0;
   height: 110px;
@@ -859,7 +859,7 @@
 }
 
 .chargeCancelButton{
-  background-image: url('./static/x_button.png');
+  background-image: url('../../images/x_button.png');
   z-index: 2; 
   float: right;
   position: absolute; 
