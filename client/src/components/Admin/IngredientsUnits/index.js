@@ -497,96 +497,54 @@ function IngredientsUnits() {
       return (
         <div
           style={{
-            // border: 'solid',
             marginTop: '20px',
             borderRadius: '15px',
             marginLeft: '2%',
             width: '28%',
-            // height: '600px',
             height: '420px',
-            backgroundColor: 'white',
-            // display: 'flex',
-            // alignItems: 'center'
+            backgroundColor: 'white'
           }}
         >
           <div
             style={{
               position: 'relative',
               height: '100px',
-              // display: 'flex',
               display: 'inline-flex',
-              // alignItems: 'center',
-              // paddingTop: '10px',
               border: 'solid',
               borderColor: 'red',
               width: '100%',
-              // width: '60%',
-              // width: '200px',
               fontWeight: 'bold',
-              // paddingLeft: '20px',
-              // paddingRight: '70px',
-              fontSize: '26px',
-              // textOverflow: 'ellipsis',
-              // display: 'block',
-              // whiteSpace: 'nowrap',
-              // overflow: 'hidden'
+              fontSize: '26px'
             }}
           >
 
-          <div className={styles.cellOuterWrapper2}>
-            <div className={styles.cellInnerWrapper2}>
-              <span className={styles.cellContent2}>
-                Create New Ingredient
-              </span>
-            </div>
-          </div>
-
-          <div
-            style={{
-              position: 'absolute',
-              right: '10px',
-              top: '10px',
-              border: 'dashed',
-              width: '40px',
-              minWidth: '40px',
-              height: '40px',
-              minHeight: '40px',
-              backgroundImage: `url(${xButton})`,
-              backgroundSize: '100%',
-              cursor: 'pointer'
-            }}
-            onClick={() => {
-              setCreateModal(CREATE_NONE)
-            }}
-          />
-
-            {/* <div
-              style={{
-                alignSelf: 'flex-start',
-                overflow: 'hidden',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                boxSizing: 'border-box',
-                // padding: '5px 5px',   
-                border: 'solid',
-                borderColor: 'red',
-                height: '100%'
-              }}
-            >
-
-              <div
-                style={{
-                  border: 'dashed',
-                  whiteSpace: 'nowrap',
-                  textOverflow: 'ellipsis',
-                  overflow: 'hidden',
-                  // height: '100%'
-                }}
-              >
-                Create New Ingredient
+            <div className={styles.cellOuterWrapper2}>
+              <div className={styles.cellInnerWrapper2}>
+                <span className={styles.cellContent2}>
+                  Create New Ingredient
+                </span>
               </div>
-            </div> */}
+            </div>
+
+            <div
+              style={{
+                position: 'absolute',
+                right: '10px',
+                top: '10px',
+                border: 'dashed',
+                width: '40px',
+                minWidth: '40px',
+                height: '40px',
+                minHeight: '40px',
+                backgroundImage: `url(${xButton})`,
+                backgroundSize: '100%',
+                cursor: 'pointer'
+              }}
+              onClick={() => {
+                setCreateModal(CREATE_NONE)
+              }}
+            />
+
           </div>
 
           <div className={styles.createModalSection}>
@@ -636,13 +594,6 @@ function IngredientsUnits() {
               </div>
             </div>
             <div className={styles.createModalDropdownWrapper}>
-              {/* <input
-                className={styles.createModalInput}
-                onChange={(e) => {
-                  inputPackageUnit(e.target.value)
-                }}
-                value={packageUnitInput}
-              /> */}
               <div 
                 className={styles.createModalDropdown}
                 onClick={() => {toggleShowUnitDropdown(!showUnitDropdown)}}
@@ -654,14 +605,10 @@ function IngredientsUnits() {
                       style={{
                         display: 'inline-block',
                         alignItems: 'top',
-                        // height: '400px',
                         marginTop: '36px',
                         borderStyle: 'solid solid none solid',
                         borderWidth: '2px',
                         borderColor: '#ADADAD',
-                        // border: 'none solid none solid',
-                        // height: '40px',
-                        // width: '100%',
                         width: 'calc(100% + 4px)',
                         position: 'absolute',
                         left: '-2px',
@@ -691,51 +638,6 @@ function IngredientsUnits() {
                   {packageUnitSelection}
                 </div>
               </div>
-
-              {/* {showUnitDropdown ? (
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'top',
-                    height: '400px',
-                    // marginTop: '80px',
-                    border: 'dashed',
-                    // height: '40px',
-                    width: '100%',
-                    position: 'absolute',
-                    top: '0',
-                    marginRight: '200px',
-                    zIndex: '10'
-                  }}
-                >
-                  <div style={{flex: 'inline-block'}}>
-                  <div
-                    style={{
-                      borderStyle: 'solid solid none solid',
-                      borderWidth: '2px',
-                      marginRight: '20px',
-                      height: '100%',
-                      backgroundColor: 'yellow',
-                      height: '40px'
-                    }}
-                  >
-                    YES
-                  </div>
-                  <div
-                    style={{
-                      borderStyle: 'solid solid none solid',
-                      borderWidth: '2px',
-                      marginRight: '20px',
-                      height: '100%',
-                      backgroundColor: 'yellow',
-                      height: '40px'
-                    }}
-                  >
-                    YES
-                  </div>
-                  </div>
-                </div>
-              ) : (null)} */}
             </div>
           </div>
 
@@ -753,6 +655,7 @@ function IngredientsUnits() {
                 onChange={(e) => {
                   inputPackageCost(e.target.value)
                 }}
+                placeholder={"$0.00"}
                 value={packageCostInput}
               />
             </div>
@@ -789,39 +692,24 @@ function IngredientsUnits() {
       return (
         <div
           style={{
-            // border: 'solid',
             marginTop: '20px',
             borderRadius: '15px',
             marginLeft: '2%',
             width: '28%',
-            // height: '600px',
-            height: '500px',
-            backgroundColor: 'white',
-            // display: 'flex',
-            // alignItems: 'center'
+            height: '420px',
+            backgroundColor: 'white'
           }}
         >
           <div
             style={{
               position: 'relative',
               height: '100px',
-              // display: 'flex',
               display: 'inline-flex',
-              // alignItems: 'center',
-              // paddingTop: '10px',
               border: 'solid',
               borderColor: 'red',
               width: '100%',
-              // width: '60%',
-              // width: '200px',
               fontWeight: 'bold',
-              // paddingLeft: '20px',
-              // paddingRight: '70px',
-              fontSize: '26px',
-              // textOverflow: 'ellipsis',
-              // display: 'block',
-              // whiteSpace: 'nowrap',
-              // overflow: 'hidden'
+              fontSize: '26px'
             }}
           >
 
@@ -853,6 +741,146 @@ function IngredientsUnits() {
             />
 
           </div>
+
+          <div className={styles.createModalSection}>
+            <div className={styles.CML_OuterWrapper}>
+              <div className={styles.CML_InnerWrapper}>
+                <div className={styles.createModalLabel}>
+                  Ingredient
+                </div>
+              </div>
+            </div>
+            <div className={styles.createModalInputWrapper}>
+              <input
+                className={styles.createModalInput}
+                onChange={(e) => {
+                  inputIngredient(e.target.value)
+                }}
+                value={ingredientInput}
+              />
+            </div>
+          </div>
+
+          <div className={styles.createModalSection}>
+            <div className={styles.CML_OuterWrapper}>
+              <div className={styles.CML_InnerWrapper}>
+                <div className={styles.createModalLabel}>
+                  Package Size
+                </div>
+              </div>
+            </div>
+            <div className={styles.createModalInputWrapper}>
+              <input
+                className={styles.createModalInput}
+                onChange={(e) => {
+                  inputPackageSize(e.target.value)
+                }}
+                value={packageSizeInput}
+              />
+            </div>
+          </div>
+
+          <div className={styles.createModalSection}>
+            <div className={styles.CML_OuterWrapper}>
+              <div className={styles.CML_InnerWrapper}>
+                <div className={styles.createModalLabel}>
+                  Package Unit
+                </div>
+              </div>
+            </div>
+            <div className={styles.createModalDropdownWrapper}>
+              <div 
+                className={styles.createModalDropdown}
+                onClick={() => {toggleShowUnitDropdown(!showUnitDropdown)}}
+              >
+                {showUnitDropdown ? (
+                  <>
+                    <div className={styles.grayArrowUp}/>
+                    <div
+                      style={{
+                        display: 'inline-block',
+                        alignItems: 'top',
+                        marginTop: '36px',
+                        borderStyle: 'solid solid none solid',
+                        borderWidth: '2px',
+                        borderColor: '#ADADAD',
+                        width: 'calc(100% + 4px)',
+                        position: 'absolute',
+                        left: '-2px',
+                        top: '0',
+                        marginRight: '200px',
+                        zIndex: '10'
+                      }}
+                    >
+                      <div 
+                        className={styles.createModalDropdownButton}
+                        onClick={() => {selectPackageUnit('lb')}}
+                      >
+                        lb
+                      </div>
+                      <div 
+                        className={styles.createModalDropdownButton}
+                        onClick={() => {selectPackageUnit('kg')}}
+                      >
+                        kg
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <div className={styles.grayArrowDown}/>
+                )}
+                <div className={styles.centeringWrapper}>
+                  {packageUnitSelection}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className={styles.createModalSection}>
+            <div className={styles.CML_OuterWrapper}>
+              <div className={styles.CML_InnerWrapper}>
+                <div className={styles.createModalLabel}>
+                  Package Cost
+                </div>
+              </div>
+            </div>
+            <div className={styles.createModalInputWrapper}>
+              <input
+                className={styles.createModalInput}
+                onChange={(e) => {
+                  inputPackageCost(e.target.value)
+                }}
+                placeholder={"$0.00"}
+                value={packageCostInput}
+              />
+            </div>
+          </div>
+
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center'
+            }}
+          >
+            <div
+              style={{
+                borderRadius: '15px',
+                height: '40px',
+                color: 'white',
+                backgroundColor: '#f26522',
+                marginTop: '20px',
+                width: '80%',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                textAlign: 'center',
+                cursor: 'pointer'
+              }}
+            >
+              Save New Ingredient
+            </div>
+          </div>
+
         </div>
       );
     } else {
