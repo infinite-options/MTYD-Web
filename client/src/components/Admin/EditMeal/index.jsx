@@ -530,7 +530,11 @@ function EditMeal({history, ...props}) {
             setSatFin(getActiveBusinessHours().Saturday[1])
             tempSetSunStart(getActiveBusinessHours().Sunday[0])
             setSunFin(getActiveBusinessHours().Sunday[1])
+            
             toggleShowDropdown(false)
+            toggleEditMeal(false)
+            toggleBusinessDetails(false)
+
             console.log("test")
             console.log(tempBusinessName)
             console.log(tempCusine)
@@ -1607,7 +1611,9 @@ function EditMeal({history, ...props}) {
 					Meals Offered
 				</div>
 
-        <div style={{fontSize: "32px", display: "inline", marginLeft: "15px"}}>+</div>
+        <div style={{fontSize: "32px", display: "inline", marginLeft: "15px"}}
+          onClick={()=>{toggleNewMeal(true)}}
+        >+</div>
 
         <table width="100%">
           <tr>
