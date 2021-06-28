@@ -98,7 +98,16 @@ function IngredientsUnits() {
         if(remoteDataFetched === 4) {
           setLoadingData(false);
         }
-        saveIngredients(res.data.result);
+        // saveIngredients(res.data.result);
+        let uniqueIngredients = [];
+        res.data.result.forEach((ingredient) => {
+          let ingredientFound = uniqueIngredients.findIndex(element => element.ingredient_uid === ingredient.ingredient_uid);
+          // console.log("Ingredient found? ", ingredientFound);
+          if(ingredientFound === -1) {
+            uniqueIngredients.push(ingredient);
+          }
+        });
+        saveIngredients(uniqueIngredients);
       })
       .catch(err => {
         console.log(err);
@@ -244,7 +253,7 @@ function IngredientsUnits() {
 
     let ingredientDisplay = [];
     savedIngredients.forEach((ingredient) => {
-      console.log("(displayIngredients) ingredient: ", ingredient);
+      // console.log("(displayIngredients) ingredient: ", ingredient);
       ingredientDisplay.push(
         <div
           style={{
@@ -334,7 +343,7 @@ function IngredientsUnits() {
 
     let unitDisplay = [];
     savedUnits.forEach((unit) => {
-      console.log("(displayUnits) units: ", unit);
+      // console.log("(displayUnits) units: ", unit);
       unitDisplay.push(
         <div
           style={{
@@ -466,7 +475,7 @@ function IngredientsUnits() {
         package_cost: "20"
       })
       .then(res => {
-        console.log("(all_businesses) res: ", res);
+        console.log("(ingredients -- save) res: ", res);
       })
       .catch(err => {
         console.log(err);
