@@ -1319,7 +1319,18 @@ function IngredientsUnits() {
         }}
       >
         <div
-          style={{
+          style={createModal === CREATE_NONE ? ({
+            // border: 'solid',
+            marginTop: '20px',
+            borderRadius: '15px',
+            marginLeft: '2%',
+            width: '47%',
+            height: '500px',
+            backgroundColor: 'white',
+            marginBottom: '20px'
+            // display: 'flex',
+            // alignItems: 'center'
+          }) : ({
             // border: 'solid',
             marginTop: '20px',
             borderRadius: '15px',
@@ -1330,7 +1341,7 @@ function IngredientsUnits() {
             marginBottom: '20px'
             // display: 'flex',
             // alignItems: 'center'
-          }}
+          })}
         >
           <div
             style={{
@@ -1427,7 +1438,7 @@ function IngredientsUnits() {
 
         </div>
 
-        <div
+        {/* <div
           style={{
             // border: 'solid',
             marginTop: '20px',
@@ -1439,6 +1450,31 @@ function IngredientsUnits() {
             // display: 'flex',
             // alignItems: 'center'
           }}
+        > */}
+        <div
+          style={createModal === CREATE_NONE ? ({
+            // border: 'solid',
+            marginTop: '20px',
+            borderRadius: '15px',
+            marginLeft: '2%',
+            width: '47%',
+            height: '500px',
+            backgroundColor: 'white',
+            marginBottom: '20px'
+            // display: 'flex',
+            // alignItems: 'center'
+          }) : ({
+            // border: 'solid',
+            marginTop: '20px',
+            borderRadius: '15px',
+            marginLeft: '2%',
+            width: '32%',
+            height: '500px',
+            backgroundColor: 'white',
+            marginBottom: '20px'
+            // display: 'flex',
+            // alignItems: 'center'
+          })}
         >
           <div
             style={{
