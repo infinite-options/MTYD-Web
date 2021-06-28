@@ -15,6 +15,7 @@ import m4me_logo from '../../../images/LOGO_NoBG_MealsForMe.png';
 const CREATE_NONE = 0;
 const CREATE_INGREDIENT = 1;
 const CREATE_UNIT = 2;
+const EDIT_INGREDIENT = 3;
 
 const SAVE_INGREDIENT = 0;
 const SAVE_UNIT = 1;
@@ -34,10 +35,6 @@ const CELL = {
 const ERR_VAL = <>&nbsp;<strong style={{color: 'red'}}>[NULL]</strong></>;
 
 function IngredientsUnits() {
-	const [selectedCustomer, selectCustomer] = useState(null);
-	const [subHistory, setSubHistory] = useState(null);
-	// const [LPLP, setLPLP] = useState(null);
-	const [uniquePlans, setUniquePlans] = useState(null);
 
   const [savedIngredients, saveIngredients] = useState(null);
   const [savedUnits, saveUnits] = useState(null);
@@ -67,6 +64,8 @@ function IngredientsUnits() {
 
   const [savingUnit, setSavingUnit] = useState(false);
   const [savingIngredient, setSavingIngredient] = useState(false);
+
+  const [showSuccessPopup, toggleSuccessPopup] = useState(false);
 
 	const [dimensions, setDimensions] = useState({ 
     height: window.innerHeight,
@@ -204,180 +203,33 @@ function IngredientsUnits() {
 			return true;
 		}
 		return false;
-	}
-
-	const formatDate = (rawDate, withTime) => {
-
-    let dateElements = rawDate.split(' ');
-
-    let yyyy_mm_dd = dateElements[0].split('-');
-    let hh_mm_ss = dateElements[1].split('-');
-
-    let month;
-    let hour;
-
-    // Parse month
-    switch(yyyy_mm_dd[1]){
-      case "01":
-        month = "January";
-        break;
-      case "02":
-        month = "February";
-        break;
-      case "03":
-        month = "March";
-        break;
-      case "04":
-        month = "April";
-        break;
-      case "05":
-        month = "May";
-        break;
-      case "06":
-        month = "June";
-        break;
-      case "07":
-        month = "July";
-        break;
-      case "08":
-        month = "August";
-        break;
-      case "09":
-        month = "September";
-        break;
-      case "10":
-        month = "October";
-        break;
-      case "11":
-        month = "November";
-        break;
-      case "12":
-        month = "December";
-        break;
-      default:
-        month = "[ERROR]";
-    }
-
-    // Parse time of day
-    switch(hh_mm_ss[0]){
-
-      // AM
-      case "00":
-        hour = "12";
-        break;
-      case "01":
-        hour = "1";
-        break;
-      case "02":
-        hour = "2";
-        break;
-      case "03":
-        hour = "3";
-        break;
-      case "04":
-        hour = "4";
-        break;
-      case "05":
-        hour = "5";
-        break;
-      case "06":
-        hour = "6";
-        break;
-      case "07":
-        hour = "7";
-        break;
-      case "08":
-        hour = "8";
-        break;
-      case "09":
-        hour = "9";
-        break;
-      case "10":
-        hour = "10";
-        break;
-      case "11":
-        hour = "11";
-        break;
-
-      // PM
-      case "12":
-        hour = "12";
-        break;
-      case "13":
-        hour = "1";
-        break;
-      case "14":
-        hour = "2";
-        break;
-      case "15":
-        hour = "3";
-        break;
-      case "16":
-        hour = "4";
-        break;
-      case "17":
-        hour = "5";
-        break;
-      case "18":
-        hour = "6";
-        break;
-      case "19":
-        hour = "7";
-        break;
-      case "20":
-        hour = "8";
-        break;
-      case "21":
-        hour = "9";
-        break;
-      case "22":
-        hour = "10";
-        break;
-      case "23":
-        hour = "11";
-        break;
-
-      default:
-        hour = "[ERROR]";
-    }
-
-    let dateString = month + " " + yyyy_mm_dd[2] + ", " + yyyy_mm_dd[0];
-
-    if(withTime === true) {
-      dateString = dateString + " " + hour + ":" + hh_mm_ss[1] + " PM";
-    }
-
-    return dateString;
   }
-
-	const parseID = (sub) => {
-		// console.log("parseID sub: ", sub);
-		let parsedId = sub.purchase_uid.substring(
-			sub.purchase_id.indexOf("-")+1,
-			sub.purchase_id.length
-		);
-		return parsedId;
-	}
-
-	const parseMeals = (sub) => {
-		let parsedItems = JSON.parse(sub.items)[0];
-		let parsedMeals = parsedItems.name.substring(
-			0,
-			parsedItems.name.indexOf(" ")
-		);
-		return parsedMeals;
-	}
-
-	const parseDeliveries = (sub) => {
-		let parsedItems = JSON.parse(sub.items)[0];
-		let parsedDeliveries = parsedItems.qty;
-		return parsedDeliveries;
-	}
 
   const resetDropdowns = () => {
     toggle_base_unit_dropd(false);
     toggle_pack_unit_dropd(false);
     toggle_unit_type_dropd(false);
+  }
+
+  const resetInputs = () => {
+    // const [ingredientInput, inputIngredient] = useState('');
+    // const [packageSizeInput, inputPackageSize] = useState('');
+    // const [packageUnitSelection, selectPackageUnit] = useState('');
+    // const [packageCostInput, inputPackageCost] = useState('');
+  
+    // const [unitTypeSelection, selectUnitType] = useState(null);
+    // const [unitNameInput, inputUnitName] = useState('');
+    // const [convertRatioInput, inputConvertRatio] = useState('');
+    // const [baseUnitSelection, selectBaseUnit] = useState('');
+    resetDropdowns();
+    inputIngredient('');
+    inputPackageSize('');
+    selectPackageUnit('');
+    inputPackageCost('');
+    selectUnitType(null);
+    inputUnitName('');
+    inputConvertRatio('');
+    selectBaseUnit('');
   }
 
   const displayIngredients = () => {
@@ -396,7 +248,7 @@ function IngredientsUnits() {
       ingredientDisplay.push(
         <div
           style={{
-            // border: 'solid',
+            // border: 'dashed',
             borderBottom: 'solid',
             borderColor: '#F8BB17',
             width: '100%',
@@ -404,42 +256,6 @@ function IngredientsUnits() {
             display: 'inline-flex'
           }}
         >
-          {/* <div
-            style={{
-              border: 'dashed',
-              height: '100%',
-              width: '25%'
-            }}
-          >
-            {ingredient.ingredient_desc}
-          </div>
-          <div
-            style={{
-              border: 'dashed',
-              height: '100%',
-              width: '25%'
-            }}
-          >
-            {ingredient.package_size}
-          </div>
-          <div
-            style={{
-              border: 'dashed',
-              height: '100%',
-              width: '25%'
-            }}
-          >
-            {isInvalid(ingredient.package_unit) ? '--' : ingredient.package_unit}
-          </div>
-          <div
-            style={{
-              border: 'dashed',
-              height: '100%',
-              width: '25%'
-            }}
-          >
-            ${ingredient.package_cost.toFixed(2)}
-          </div> */}
 
           <div className={styles.cellOuterWrapper}>
             <div className={styles.cellInnerWrapper}>
@@ -468,9 +284,29 @@ function IngredientsUnits() {
           <div className={styles.cellOuterWrapper}>
             <div className={styles.cellInnerWrapper}>
               <span className={styles.cellContent}>
-                {ingredient.package_size}
+                {ingredient.package_cost}
               </span>
             </div>
+          </div>
+
+          <div className={styles.buttonWrapper}>
+            <div 
+              className={styles.editButton}
+              onClick={() => {
+                console.log("editing ingredient: ", ingredient);
+                // resetDropdowns();
+                resetInputs();
+                inputIngredient(ingredient.ingredient_desc);
+                inputPackageSize(ingredient.package_size);
+                selectPackageUnit(ingredient.package_unit);
+                inputPackageCost(ingredient.package_cost);
+                setCreateModal(EDIT_INGREDIENT);
+                // const [ingredientInput, inputIngredient] = useState('');
+                // const [packageSizeInput, inputPackageSize] = useState('');
+                // const [packageUnitSelection, selectPackageUnit] = useState('');
+                // const [packageCostInput, inputPackageCost] = useState('');
+              }}
+            />
           </div>
 
         </div>
@@ -559,24 +395,6 @@ function IngredientsUnits() {
     );
   }
 
-  /* <div 
-    className={styles.createModalDropdownButton}
-    onClick={() => {
-      selectBaseUnit('g');
-      resetDropdowns();
-    }}
-  >
-    g
-  </div>
-  <div 
-    className={styles.createModalDropdownButton}
-    onClick={() => {
-      selectBaseUnit('ltr');
-      resetDropdowns();
-    }}
-  >
-    ltr
-  </div> */
   const showUnitsForType = () => {
     if (unitTypeSelection === 'mass') {
       return (
@@ -585,7 +403,6 @@ function IngredientsUnits() {
             className={styles.createModalDropdownButton}
             onClick={() => {
               selectBaseUnit('g');
-              resetDropdowns();
             }}
           >
             g
@@ -640,11 +457,52 @@ function IngredientsUnits() {
   const saveNewIngredient = () => {
     console.log("Saving new ingredient...");
     setSavingIngredient(true);
+
+    axios
+      .post(API_URL + 'ingredients', {
+        ingredient_desc: "testing food",
+        package_size: "1",
+        package_unit: "kg",
+        package_cost: "20"
+      })
+      .then(res => {
+        console.log("(all_businesses) res: ", res);
+      })
+      .catch(err => {
+        console.log(err);
+        if(err.response) {
+          console.log("error: ", err.response);
+        }
+      });
+  }
+
+  const saveEditIngredient = () => {
+    console.log("Saving new ingredient...");
+    setSavingIngredient(true);
+
+    axios
+      .post(API_URL + 'ingredients', {
+        ingredient_desc: "testing food",
+        package_size: "1",
+        package_unit: "kg",
+        package_cost: "20"
+      })
+      .then(res => {
+        console.log("(all_businesses) res: ", res);
+      })
+      .catch(err => {
+        console.log(err);
+        if(err.response) {
+          console.log("error: ", err.response);
+        }
+      });
   }
 
   const saveNewUnit = () => {
     console.log("Saving new unit...");
     setSavingUnit(true);
+
+    
   }
 
   const displayCreateModal = () => {
@@ -696,7 +554,8 @@ function IngredientsUnits() {
                 cursor: 'pointer'
               }}
               onClick={() => {
-                resetDropdowns();
+                // resetDropdowns();
+                resetInputs();
                 setCreateModal(CREATE_NONE)
               }}
             />
@@ -888,7 +747,8 @@ function IngredientsUnits() {
                 cursor: 'pointer'
               }}
               onClick={() => {
-                resetDropdowns();
+                // resetDropdowns();
+                resetInputs();
                 setCreateModal(CREATE_NONE)
               }}
             />
@@ -1064,24 +924,6 @@ function IngredientsUnits() {
                       }}
                     >
                       {showUnitsForType()}
-                      {/* <div 
-                        className={styles.createModalDropdownButton}
-                        onClick={() => {
-                          selectBaseUnit('g');
-                          resetDropdowns();
-                        }}
-                      >
-                        g
-                      </div>
-                      <div 
-                        className={styles.createModalDropdownButton}
-                        onClick={() => {
-                          selectBaseUnit('ltr');
-                          resetDropdowns();
-                        }}
-                      >
-                        ltr
-                      </div> */}
                     </div>
                   </>
                 ) : (
@@ -1106,6 +948,199 @@ function IngredientsUnits() {
               onClick={() => {saveNewUnit()}}
             >
               Save New Measure Unit
+            </button>
+          </div>
+
+        </div>
+      );
+    } else if (createModal === EDIT_INGREDIENT) {
+      return (
+        <div
+          style={{
+            marginTop: '20px',
+            borderRadius: '15px',
+            marginLeft: '2%',
+            width: '28%',
+            height: '420px',
+            backgroundColor: 'white'
+          }}
+        >
+          <div
+            style={{
+              position: 'relative',
+              height: '100px',
+              display: 'inline-flex',
+              // border: 'solid',
+              // borderColor: 'red',
+              width: '100%',
+              fontWeight: 'bold',
+              fontSize: '26px'
+            }}
+          >
+
+            <div className={styles.cellOuterWrapper2}>
+              <div className={styles.cellInnerWrapper2}>
+                <span className={styles.cellContent2}>
+                  Edit Ingredient
+                </span>
+              </div>
+            </div>
+
+            <div
+              style={{
+                position: 'absolute',
+                right: '10px',
+                top: '10px',
+                // border: 'dashed',
+                width: '40px',
+                minWidth: '40px',
+                height: '40px',
+                minHeight: '40px',
+                backgroundImage: `url(${xButton})`,
+                backgroundSize: '100%',
+                cursor: 'pointer'
+              }}
+              onClick={() => {
+                // resetDropdowns();
+                resetInputs();
+                setCreateModal(CREATE_NONE)
+              }}
+            />
+
+          </div>
+
+          <div className={styles.createModalSection}>
+            <div className={styles.CML_OuterWrapper}>
+              <div className={styles.CML_InnerWrapper}>
+                <div className={styles.createModalLabel}>
+                  Ingredient
+                </div>
+              </div>
+            </div>
+            <div className={styles.createModalInputWrapper}>
+              <input
+                className={styles.createModalInput}
+                onChange={(e) => {
+                  inputIngredient(e.target.value)
+                }}
+                value={ingredientInput}
+              />
+            </div>
+          </div>
+
+          <div className={styles.createModalSection}>
+            <div className={styles.CML_OuterWrapper}>
+              <div className={styles.CML_InnerWrapper}>
+                <div className={styles.createModalLabel}>
+                  Package Size
+                </div>
+              </div>
+            </div>
+            <div className={styles.createModalInputWrapper}>
+              <input
+                className={styles.createModalInput}
+                onChange={(e) => {
+                  inputPackageSize(e.target.value)
+                }}
+                value={packageSizeInput}
+              />
+            </div>
+          </div>
+
+          <div className={styles.createModalSection}>
+            <div className={styles.CML_OuterWrapper}>
+              <div className={styles.CML_InnerWrapper}>
+                <div className={styles.createModalLabel}>
+                  Package Unit
+                </div>
+              </div>
+            </div>
+            <div className={styles.createModalDropdownWrapper}>
+              <div 
+                className={styles.createModalDropdown}
+                onClick={() => {toggle_pack_unit_dropd(!show_pack_unit_dropd)}}
+              >
+                {show_pack_unit_dropd ? (
+                  <>
+                    <div className={styles.grayArrowUp}/>
+                    <div
+                      style={{
+                        display: 'inline-block',
+                        alignItems: 'top',
+                        marginTop: '36px',
+                        borderStyle: 'solid solid none solid',
+                        borderWidth: '2px',
+                        borderColor: '#ADADAD',
+                        width: 'calc(100% + 4px)',
+                        position: 'absolute',
+                        left: '-2px',
+                        top: '0',
+                        marginRight: '200px',
+                        zIndex: '10'
+                      }}
+                    >
+                      <div 
+                        className={styles.createModalDropdownButton}
+                        onClick={() => {
+                          selectPackageUnit('lb');
+                          resetDropdowns();
+                        }}
+                      >
+                        lb
+                      </div>
+                      <div 
+                        className={styles.createModalDropdownButton}
+                        onClick={() => {
+                          selectPackageUnit('kg');
+                          resetDropdowns();
+                        }}
+                      >
+                        kg
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <div className={styles.grayArrowDown}/>
+                )}
+                <div className={styles.centeringWrapper}>
+                  {packageUnitSelection}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className={styles.createModalSection}>
+            <div className={styles.CML_OuterWrapper}>
+              <div className={styles.CML_InnerWrapper}>
+                <div className={styles.createModalLabel}>
+                  Package Cost
+                </div>
+              </div>
+            </div>
+            <div className={styles.createModalInputWrapper}>
+              <input
+                className={styles.createModalInput}
+                onChange={(e) => {
+                  inputPackageCost(e.target.value)
+                }}
+                // placeholder={"$0.00"}
+                value={packageCostInput}
+              />
+            </div>
+          </div>
+
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center'
+            }}
+          >
+            <button
+              disabled={disableSaveButton(SAVE_INGREDIENT)}
+              className={styles.saveButton}
+              onClick={() => {saveEditIngredient()}}
+            >
+              Save Edit Ingredient
             </button>
           </div>
 
@@ -1243,7 +1278,8 @@ function IngredientsUnits() {
                 display: 'flex',
                 justifyContent: 'center',
                 top: '50px',
-                fontSize: '24px'
+                fontSize: '24px',
+                fontWeight: '600'
               }}
             >
               {savedBusinesses === null ? 'LOADING...' : savedBusinesses.length}
@@ -1271,7 +1307,8 @@ function IngredientsUnits() {
                 display: 'flex',
                 justifyContent: 'center',
                 top: '50px',
-                fontSize: '24px'
+                fontSize: '24px',
+                fontWeight: '600'
               }}
             >
               {savedMeals === null ? 'LOADING...' : savedMeals.length}
@@ -1299,7 +1336,8 @@ function IngredientsUnits() {
                 display: 'flex',
                 justifyContent: 'center',
                 top: '50px',
-                fontSize: '24px'
+                fontSize: '24px',
+                fontWeight: '600'
               }}
             >
               {savedIngredients === null ? 'LOADING...' : savedIngredients.length}
@@ -1379,7 +1417,8 @@ function IngredientsUnits() {
                 // border: 'dashed'
               }}
               onClick={() => {
-                resetDropdowns();
+                // resetDropdowns();
+                resetInputs();
                 setCreateModal(CREATE_INGREDIENT)
               }}
             >
@@ -1432,25 +1471,14 @@ function IngredientsUnits() {
               </div>
             </div>
 
+            <div className={styles.buttonWrapper} />
+
           </div>
 
           {displayIngredients()}
 
         </div>
 
-        {/* <div
-          style={{
-            // border: 'solid',
-            marginTop: '20px',
-            borderRadius: '15px',
-            marginLeft: '2%',
-            width: '32%',
-            height: '500px',
-            backgroundColor: 'white',
-            // display: 'flex',
-            // alignItems: 'center'
-          }}
-        > */}
         <div
           style={createModal === CREATE_NONE ? ({
             // border: 'solid',
@@ -1512,7 +1540,8 @@ function IngredientsUnits() {
                 // border: 'dashed'
               }}
               onClick={() => {
-                resetDropdowns();
+                // resetDropdowns();
+                resetInputs();
                 setCreateModal(CREATE_UNIT)
               }}
             >

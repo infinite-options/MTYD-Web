@@ -2,11 +2,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  text-align: center;
   /* border: dashed; */
   /* border-top: solid; */
   /* border-color: #f26522; */
   /* border-width: 1px; */
+  /* width: 25%; */
   width: 25%;
+  /* margin-right: 100px; */
   height: 100%;
 }
 .cellOuterWrapper2 {
@@ -257,28 +260,43 @@
   justify-content: center;
 }
 
+/* .headerWhiteSpace {
+  border: solid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 40px;
+} */
+.buttonWrapper {
+  /* border: solid; */
+  display: flex;
+  align-items: center;
+  /* justify-content: center; */
+  height: 100%;
+  width: 40px;
+}
 .deleteButton {
   /* border: solid 1px; */
-  position: absolute;
-  right: 5px;
+  /* position: absolute;
+  right: 5px; */
   background-image: url('../../../images/trash_icon.png');
   background-size: 100%;
   width: 16px;
-  height: 16px;
-  margin-top: 8px;
-  /* cursor: pointer; */
+  height: 20px;
+  /* margin-top: 8px; */
+  cursor: pointer;
 }
-
 .editButton {
   /* border: solid 1px; */
-  position: absolute;
-  right: 5px;
+  /* position: absolute;
+  right: 5px; */
   background-image: url('../../../images/edit_icon.png');
   background-size: 100%;
-  width: 16px;
-  height: 16px;
-  margin-top: 8px;
-  /* cursor: pointer; */
+  width: 20px;
+  height: 20px;
+  /* margin-top: 8px; */
+  cursor: pointer;
 }
 
 .saveButton {
