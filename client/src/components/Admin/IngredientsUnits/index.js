@@ -16,6 +16,9 @@ const CREATE_NONE = 0;
 const CREATE_INGREDIENT = 1;
 const CREATE_UNIT = 2;
 
+const SAVE_INGREDIENT = 0;
+const SAVE_UNIT = 1;
+
 const CELL = {
 	id_width: '10%',
 	name_width: '12%',
@@ -51,7 +54,19 @@ function IngredientsUnits() {
   const [packageUnitSelection, selectPackageUnit] = useState('');
   const [packageCostInput, inputPackageCost] = useState('');
 
-  const [showUnitDropdown, toggleShowUnitDropdown] = useState(false);
+  const [unitTypeSelection, selectUnitType] = useState(null);
+  const [unitNameInput, inputUnitName] = useState('');
+  const [convertRatioInput, inputConvertRatio] = useState('');
+  const [baseUnitSelection, selectBaseUnit] = useState('');
+
+  const [show_pack_unit_dropd, toggle_pack_unit_dropd] = useState(false);
+  const [show_base_unit_dropd, toggle_base_unit_dropd] = useState(false);
+  const [show_unit_type_dropd, toggle_unit_type_dropd] = useState(false);
+
+  const [showEditModal, toggleEditModal] = useState(false);
+
+  const [savingUnit, setSavingUnit] = useState(false);
+  const [savingIngredient, setSavingIngredient] = useState(false);
 
 	const [dimensions, setDimensions] = useState({ 
     height: window.innerHeight,
@@ -133,6 +148,52 @@ function IngredientsUnits() {
       });
 
 	}, []);
+
+  // const [ingredientInput, inputIngredient] = useState('');
+  // const [packageSizeInput, inputPackageSize] = useState('');
+  // const [packageUnitSelection, selectPackageUnit] = useState('');
+  // const [packageCostInput, inputPackageCost] = useState('');
+
+  // const [unitTypeSelection, selectUnitType] = useState(null);
+  // const [unitNameInput, inputUnitName] = useState('');
+  // const [convertRatioInput, inputConvertRatio] = useState('');
+  // const [baseUnitSelection, selectBaseUnit] = useState('');
+  const disableSaveButton = (type) => {
+
+    if(savingIngredient || savingUnit) {
+      return true;
+    }
+
+    if(type === SAVE_INGREDIENT) {
+      if(
+        ingredientInput === '' ||
+        packageSizeInput === '' ||
+        packageUnitSelection === '' ||
+        packageCostInput === ''
+      ) {
+        console.log("save new ingredient: disabled");
+        return true;
+      } else {
+        console.log("save new ingredient: enabled");
+        return false;
+      }
+    
+    } else if (type === SAVE_UNIT) {
+      if(
+        unitTypeSelection === null ||
+        unitNameInput === '' ||
+        convertRatioInput === '' ||
+        baseUnitSelection === ''
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+
+    } else {
+      return true;
+    }
+  }
 
 	const isInvalid = (val) => {
 		if(
@@ -313,6 +374,12 @@ function IngredientsUnits() {
 		return parsedDeliveries;
 	}
 
+  const resetDropdowns = () => {
+    toggle_base_unit_dropd(false);
+    toggle_pack_unit_dropd(false);
+    toggle_unit_type_dropd(false);
+  }
+
   const displayIngredients = () => {
 
     if(savedIngredients === null) {
@@ -492,6 +559,94 @@ function IngredientsUnits() {
     );
   }
 
+  /* <div 
+    className={styles.createModalDropdownButton}
+    onClick={() => {
+      selectBaseUnit('g');
+      resetDropdowns();
+    }}
+  >
+    g
+  </div>
+  <div 
+    className={styles.createModalDropdownButton}
+    onClick={() => {
+      selectBaseUnit('ltr');
+      resetDropdowns();
+    }}
+  >
+    ltr
+  </div> */
+  const showUnitsForType = () => {
+    if (unitTypeSelection === 'mass') {
+      return (
+        <>
+          <div 
+            className={styles.createModalDropdownButton}
+            onClick={() => {
+              selectBaseUnit('g');
+              resetDropdowns();
+            }}
+          >
+            g
+          </div>
+        </>
+      );
+    } else if (unitTypeSelection === 'volume') {
+      return (
+        <>
+          <div 
+            className={styles.createModalDropdownButton}
+            onClick={() => {
+              selectBaseUnit('L');
+              resetDropdowns();
+            }}
+          >
+            L
+          </div>
+        </>
+      );
+    } else if (unitTypeSelection === 'length') {
+      return (
+        <>
+          <div 
+            className={styles.createModalDropdownButton}
+            onClick={() => {
+              selectBaseUnit('cm');
+              resetDropdowns();
+            }}
+          >
+            cm
+          </div>
+        </>
+      );
+    } else if (unitTypeSelection === 'each') {
+      return (
+        <>
+          <div 
+            className={styles.createModalDropdownButton}
+            onClick={() => {
+              selectBaseUnit('ea');
+              resetDropdowns();
+            }}
+          >
+            ea
+          </div>
+        </>
+      );
+    }
+  }
+
+  const saveNewIngredient = () => {
+    console.log("Saving new ingredient...");
+    setSavingIngredient(true);
+  }
+
+  const saveNewUnit = () => {
+    console.log("Saving new unit...");
+    setSavingUnit(true);
+  }
+
   const displayCreateModal = () => {
     if(createModal === CREATE_INGREDIENT) {
       return (
@@ -510,8 +665,8 @@ function IngredientsUnits() {
               position: 'relative',
               height: '100px',
               display: 'inline-flex',
-              border: 'solid',
-              borderColor: 'red',
+              // border: 'solid',
+              // borderColor: 'red',
               width: '100%',
               fontWeight: 'bold',
               fontSize: '26px'
@@ -531,7 +686,7 @@ function IngredientsUnits() {
                 position: 'absolute',
                 right: '10px',
                 top: '10px',
-                border: 'dashed',
+                // border: 'dashed',
                 width: '40px',
                 minWidth: '40px',
                 height: '40px',
@@ -541,6 +696,7 @@ function IngredientsUnits() {
                 cursor: 'pointer'
               }}
               onClick={() => {
+                resetDropdowns();
                 setCreateModal(CREATE_NONE)
               }}
             />
@@ -596,9 +752,9 @@ function IngredientsUnits() {
             <div className={styles.createModalDropdownWrapper}>
               <div 
                 className={styles.createModalDropdown}
-                onClick={() => {toggleShowUnitDropdown(!showUnitDropdown)}}
+                onClick={() => {toggle_pack_unit_dropd(!show_pack_unit_dropd)}}
               >
-                {showUnitDropdown ? (
+                {show_pack_unit_dropd ? (
                   <>
                     <div className={styles.grayArrowUp}/>
                     <div
@@ -619,13 +775,19 @@ function IngredientsUnits() {
                     >
                       <div 
                         className={styles.createModalDropdownButton}
-                        onClick={() => {selectPackageUnit('lb')}}
+                        onClick={() => {
+                          selectPackageUnit('lb');
+                          resetDropdowns();
+                        }}
                       >
                         lb
                       </div>
                       <div 
                         className={styles.createModalDropdownButton}
-                        onClick={() => {selectPackageUnit('kg')}}
+                        onClick={() => {
+                          selectPackageUnit('kg');
+                          resetDropdowns();
+                        }}
                       >
                         kg
                       </div>
@@ -655,7 +817,7 @@ function IngredientsUnits() {
                 onChange={(e) => {
                   inputPackageCost(e.target.value)
                 }}
-                placeholder={"$0.00"}
+                // placeholder={"$0.00"}
                 value={packageCostInput}
               />
             </div>
@@ -667,23 +829,13 @@ function IngredientsUnits() {
               justifyContent: 'center'
             }}
           >
-            <div
-              style={{
-                borderRadius: '15px',
-                height: '40px',
-                color: 'white',
-                backgroundColor: '#f26522',
-                marginTop: '20px',
-                width: '80%',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                textAlign: 'center',
-                cursor: 'pointer'
-              }}
+            <button
+              disabled={disableSaveButton(SAVE_INGREDIENT)}
+              className={styles.saveButton}
+              onClick={() => {saveNewIngredient()}}
             >
               Save New Ingredient
-            </div>
+            </button>
           </div>
 
         </div>
@@ -705,8 +857,8 @@ function IngredientsUnits() {
               position: 'relative',
               height: '100px',
               display: 'inline-flex',
-              border: 'solid',
-              borderColor: 'red',
+              // border: 'solid',
+              // borderColor: 'red',
               width: '100%',
               fontWeight: 'bold',
               fontSize: '26px'
@@ -726,7 +878,7 @@ function IngredientsUnits() {
                 position: 'absolute',
                 right: '10px',
                 top: '10px',
-                border: 'dashed',
+                // border: 'dashed',
                 width: '40px',
                 minWidth: '40px',
                 height: '40px',
@@ -736,6 +888,7 @@ function IngredientsUnits() {
                 cursor: 'pointer'
               }}
               onClick={() => {
+                resetDropdowns();
                 setCreateModal(CREATE_NONE)
               }}
             />
@@ -743,57 +896,19 @@ function IngredientsUnits() {
           </div>
 
           <div className={styles.createModalSection}>
-            <div className={styles.CML_OuterWrapper}>
+            <div className={styles.CML_OuterWrapper2}>
               <div className={styles.CML_InnerWrapper}>
                 <div className={styles.createModalLabel}>
-                  Ingredient
-                </div>
-              </div>
-            </div>
-            <div className={styles.createModalInputWrapper}>
-              <input
-                className={styles.createModalInput}
-                onChange={(e) => {
-                  inputIngredient(e.target.value)
-                }}
-                value={ingredientInput}
-              />
-            </div>
-          </div>
-
-          <div className={styles.createModalSection}>
-            <div className={styles.CML_OuterWrapper}>
-              <div className={styles.CML_InnerWrapper}>
-                <div className={styles.createModalLabel}>
-                  Package Size
-                </div>
-              </div>
-            </div>
-            <div className={styles.createModalInputWrapper}>
-              <input
-                className={styles.createModalInput}
-                onChange={(e) => {
-                  inputPackageSize(e.target.value)
-                }}
-                value={packageSizeInput}
-              />
-            </div>
-          </div>
-
-          <div className={styles.createModalSection}>
-            <div className={styles.CML_OuterWrapper}>
-              <div className={styles.CML_InnerWrapper}>
-                <div className={styles.createModalLabel}>
-                  Package Unit
+                  Select a Type
                 </div>
               </div>
             </div>
             <div className={styles.createModalDropdownWrapper}>
               <div 
                 className={styles.createModalDropdown}
-                onClick={() => {toggleShowUnitDropdown(!showUnitDropdown)}}
+                onClick={() => {toggle_unit_type_dropd(!show_unit_type_dropd)}}
               >
-                {showUnitDropdown ? (
+                {show_unit_type_dropd ? (
                   <>
                     <div className={styles.grayArrowUp}/>
                     <div
@@ -814,15 +929,43 @@ function IngredientsUnits() {
                     >
                       <div 
                         className={styles.createModalDropdownButton}
-                        onClick={() => {selectPackageUnit('lb')}}
+                        onClick={() => {
+                          selectUnitType('mass');
+                          selectBaseUnit('kg');
+                          resetDropdowns();
+                        }}
                       >
-                        lb
+                        mass
                       </div>
                       <div 
                         className={styles.createModalDropdownButton}
-                        onClick={() => {selectPackageUnit('kg')}}
+                        onClick={() => {
+                          selectUnitType('volume');
+                          selectBaseUnit('L');
+                          resetDropdowns();
+                        }}
                       >
-                        kg
+                        volume
+                      </div>
+                      <div 
+                        className={styles.createModalDropdownButton}
+                        onClick={() => {
+                          selectUnitType('length');
+                          selectBaseUnit('cm');
+                          resetDropdowns();
+                        }}
+                      >
+                        length
+                      </div>
+                      <div 
+                        className={styles.createModalDropdownButton}
+                        onClick={() => {
+                          selectUnitType('each');
+                          selectBaseUnit('ea');
+                          resetDropdowns();
+                        }}
+                      >
+                        each
                       </div>
                     </div>
                   </>
@@ -830,29 +973,124 @@ function IngredientsUnits() {
                   <div className={styles.grayArrowDown}/>
                 )}
                 <div className={styles.centeringWrapper}>
-                  {packageUnitSelection}
+                  {unitTypeSelection}
                 </div>
               </div>
             </div>
           </div>
 
           <div className={styles.createModalSection}>
-            <div className={styles.CML_OuterWrapper}>
+            <div className={styles.CML_OuterWrapper2}>
               <div className={styles.CML_InnerWrapper}>
                 <div className={styles.createModalLabel}>
-                  Package Cost
+                  Unit Name
                 </div>
               </div>
             </div>
             <div className={styles.createModalInputWrapper}>
               <input
                 className={styles.createModalInput}
+                disabled={unitTypeSelection === null}
                 onChange={(e) => {
-                  inputPackageCost(e.target.value)
+                  inputUnitName(e.target.value)
                 }}
-                placeholder={"$0.00"}
-                value={packageCostInput}
+                value={unitNameInput}
               />
+            </div>
+          </div>
+
+          <div className={styles.createModalSection}>
+            <div className={styles.CML_OuterWrapper2}>
+              <div className={styles.CML_InnerWrapper}>
+                <div className={styles.createModalLabel}>
+                  Conversion Ratio
+                </div>
+              </div>
+            </div>
+            <div className={styles.createModalInputWrapper}>
+              <input
+                className={styles.createModalInput}
+                // className={styles.createModalDropdown}
+                disabled={unitTypeSelection === null}
+                // className={unitTypeSelection === '' ? (
+                //   styles.createModalDropdown_disabled
+                // ) : (
+                //   styles.createModalDropdown
+                // )}
+                onChange={(e) => {
+                  inputConvertRatio(e.target.value)
+                }}
+                value={convertRatioInput}
+              />
+            </div>
+          </div>
+
+          <div className={styles.createModalSection}>
+            <div className={styles.CML_OuterWrapper2}>
+              <div className={styles.CML_InnerWrapper}>
+                <div className={styles.createModalLabel}>
+                  Base Unit
+                </div>
+              </div>
+            </div>
+            <div className={styles.createModalDropdownWrapper}>
+              <div 
+                // className={styles.createModalDropdown}
+                disabled={unitTypeSelection === null}
+                className={unitTypeSelection === null ? (
+                  styles.createModalDropdown_disabled
+                ) : (
+                  styles.createModalDropdown
+                )}
+                onClick={() => {toggle_base_unit_dropd(!show_base_unit_dropd)}}
+              >
+                {show_base_unit_dropd ? (
+                  <>
+                    <div className={styles.grayArrowUp}/>
+                    <div
+                      style={{
+                        display: 'inline-block',
+                        alignItems: 'top',
+                        marginTop: '36px',
+                        borderStyle: 'solid solid none solid',
+                        borderWidth: '2px',
+                        borderColor: '#ADADAD',
+                        width: 'calc(100% + 4px)',
+                        position: 'absolute',
+                        left: '-2px',
+                        top: '0',
+                        marginRight: '200px',
+                        zIndex: '10'
+                      }}
+                    >
+                      {showUnitsForType()}
+                      {/* <div 
+                        className={styles.createModalDropdownButton}
+                        onClick={() => {
+                          selectBaseUnit('g');
+                          resetDropdowns();
+                        }}
+                      >
+                        g
+                      </div>
+                      <div 
+                        className={styles.createModalDropdownButton}
+                        onClick={() => {
+                          selectBaseUnit('ltr');
+                          resetDropdowns();
+                        }}
+                      >
+                        ltr
+                      </div> */}
+                    </div>
+                  </>
+                ) : (
+                  <div className={styles.grayArrowDown}/>
+                )}
+                <div className={styles.centeringWrapper}>
+                  {baseUnitSelection}
+                </div>
+              </div>
             </div>
           </div>
 
@@ -862,23 +1100,13 @@ function IngredientsUnits() {
               justifyContent: 'center'
             }}
           >
-            <div
-              style={{
-                borderRadius: '15px',
-                height: '40px',
-                color: 'white',
-                backgroundColor: '#f26522',
-                marginTop: '20px',
-                width: '80%',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                textAlign: 'center',
-                cursor: 'pointer'
-              }}
+            <button
+              disabled={disableSaveButton(SAVE_UNIT)}
+              className={styles.saveButton}
+              onClick={() => {saveNewUnit()}}
             >
-              Save New Ingredient
-            </div>
+              Save New Measure Unit
+            </button>
           </div>
 
         </div>
@@ -925,21 +1153,6 @@ function IngredientsUnits() {
 				Width: {dimensions.width}px
 			</span>
 
-			{/* <span 
-				style={{
-					zIndex: '101',
-					position: 'fixed',
-					top: '250px',
-					backgroundColor: 'white',
-					border: 'solid',
-					borderWidth: '1px',
-					borderColor: 'blue',
-					width: '200px'
-				}}
-			>
-				cust info width: {document.getElementById("custInfo").offsetWidth}
-			</span> */}
-
 			<AdminNavBar currentPage={'ingredients-units'}/>
 
 			{loadingData === true ? (
@@ -985,7 +1198,7 @@ function IngredientsUnits() {
 
         <div
           style={{
-            border: 'solid',
+            // border: 'solid',
             // width: '60%',
             width: '300px',
             fontWeight: 'bold',
@@ -996,106 +1209,111 @@ function IngredientsUnits() {
           Ingredients and Units
         </div>
 
-        <div
-          style={{
-            border: 'solid',
-            borderColor: 'blue',
-            flexGrow: '1',
-            display: 'inline-flex',
-            position: 'relative',
-            height: '100%'
-          }}
-        >
-          <div 
+        {dimensions.width > 970 ? (
+          <div
             style={{
-              position: 'absolute',
-              right: '400px',
-              width: '200px',
-              display: 'flex',
-              justifyContent: 'center',
-              top: '20px',
-              height: '30px',
-              color: '#f26522',
-              fontWeight: '500'
+              // border: 'solid',
+              // borderColor: 'blue',
+              flexGrow: '1',
+              display: 'inline-flex',
+              position: 'relative',
+              height: '100%'
             }}
           >
-            Total no. of Restaurants
+            <div 
+              style={{
+                position: 'absolute',
+                right: '400px',
+                width: '200px',
+                display: 'flex',
+                justifyContent: 'center',
+                top: '20px',
+                height: '30px',
+                color: '#f26522',
+                fontWeight: '500'
+              }}
+            >
+              Total no. of Restaurants
+            </div>
+            <div 
+              style={{
+                position: 'absolute',
+                right: '400px',
+                width: '200px',
+                display: 'flex',
+                justifyContent: 'center',
+                top: '50px',
+                fontSize: '24px'
+              }}
+            >
+              {savedBusinesses === null ? 'LOADING...' : savedBusinesses.length}
+            </div>
+            <div 
+              style={{
+                position: 'absolute',
+                right: '200px',
+                width: '200px',
+                display: 'flex',
+                justifyContent: 'center',
+                top: '20px',
+                height: '30px',
+                color: '#f26522',
+                fontWeight: '500'
+              }}
+            >
+              Total no. of Meals
+            </div>
+            <div 
+              style={{
+                position: 'absolute',
+                right: '200px',
+                width: '200px',
+                display: 'flex',
+                justifyContent: 'center',
+                top: '50px',
+                fontSize: '24px'
+              }}
+            >
+              {savedMeals === null ? 'LOADING...' : savedMeals.length}
+            </div>
+            <div 
+              style={{
+                position: 'absolute',
+                right: '0',
+                width: '200px',
+                display: 'flex',
+                justifyContent: 'center',
+                top: '20px',
+                height: '30px',
+                color: '#f26522',
+                fontWeight: '500'
+              }}
+            >
+              Total no. of Ingredients
+            </div>
+            <div 
+              style={{
+                position: 'absolute',
+                right: '0',
+                width: '200px',
+                display: 'flex',
+                justifyContent: 'center',
+                top: '50px',
+                fontSize: '24px'
+              }}
+            >
+              {savedIngredients === null ? 'LOADING...' : savedIngredients.length}
+            </div>
           </div>
-          <div 
-            style={{
-              position: 'absolute',
-              right: '400px',
-              width: '200px',
-              display: 'flex',
-              justifyContent: 'center',
-              top: '50px',
-              fontSize: '24px'
-            }}
-          >
-            {savedBusinesses === null ? 'LOADING...' : savedBusinesses.length}
-          </div>
-          <div 
-            style={{
-              position: 'absolute',
-              right: '200px',
-              width: '200px',
-              display: 'flex',
-              justifyContent: 'center',
-              top: '20px',
-              height: '30px',
-              color: '#f26522',
-              fontWeight: '500'
-            }}
-          >
-            Total no. of Meals
-          </div>
-          <div 
-            style={{
-              position: 'absolute',
-              right: '200px',
-              width: '200px',
-              display: 'flex',
-              justifyContent: 'center',
-              top: '50px',
-              fontSize: '24px'
-            }}
-          >
-            {savedMeals === null ? 'LOADING...' : savedMeals.length}
-          </div>
-          <div 
-            style={{
-              position: 'absolute',
-              right: '0',
-              width: '200px',
-              display: 'flex',
-              justifyContent: 'center',
-              top: '20px',
-              height: '30px',
-              color: '#f26522',
-              fontWeight: '500'
-            }}
-          >
-            Total no. of Ingredients
-          </div>
-          <div 
-            style={{
-              position: 'absolute',
-              right: '0',
-              width: '200px',
-              display: 'flex',
-              justifyContent: 'center',
-              top: '50px',
-              fontSize: '24px'
-            }}
-          >
-            {savedIngredients === null ? 'LOADING...' : savedIngredients.length}
-          </div>
-        </div>
+        ) : (
+          <>NARROW VIEW</>
+        )}
+        
       </div>
 
       <div
         style={{
-          border: 'dashed',
+          // border: 'dashed',
           display: 'inline-flex',
           width: '100%'
         }}
@@ -1121,7 +1339,7 @@ function IngredientsUnits() {
               // display: 'flex',
               // alignItems: 'center',
 
-              border: 'solid',
+              // border: 'solid',
               // width: '60%',
               // width: '200px',
               fontWeight: 'bold',
@@ -1134,7 +1352,7 @@ function IngredientsUnits() {
           >
             <div
               style={{
-                border: 'dashed'
+                // border: 'dashed'
               }}
             >
               Ingredients
@@ -1147,9 +1365,10 @@ function IngredientsUnits() {
                 fontSize: '36px',
                 // fontWeight: '700',
                 cursor: 'pointer',
-                border: 'dashed'
+                // border: 'dashed'
               }}
               onClick={() => {
+                resetDropdowns();
                 setCreateModal(CREATE_INGREDIENT)
               }}
             >
@@ -1228,7 +1447,7 @@ function IngredientsUnits() {
               // display: 'flex',
               // alignItems: 'center',
 
-              border: 'solid',
+              // border: 'solid',
               // width: '60%',
               // width: '200px',
               fontWeight: 'bold',
@@ -1241,7 +1460,7 @@ function IngredientsUnits() {
           >
             <div
               style={{
-                border: 'dashed'
+                // border: 'dashed'
               }}
             >
               Units
@@ -1254,9 +1473,10 @@ function IngredientsUnits() {
                 fontSize: '36px',
                 // fontWeight: '700',
                 cursor: 'pointer',
-                border: 'dashed'
+                // border: 'dashed'
               }}
               onClick={() => {
+                resetDropdowns();
                 setCreateModal(CREATE_UNIT)
               }}
             >

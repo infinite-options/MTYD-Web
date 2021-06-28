@@ -13,7 +13,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: dashed;
+  /* border: dashed; */
   /* border-top: solid; */
   /* border-color: #f26522; */
   /* border-width: 1px; */
@@ -161,6 +161,16 @@
   border-color: #ADADAD;
   text-align: center;
 }
+.createModalInput:disabled {
+  font-weight: 600;
+  height: 40px;
+  border: solid;
+  border-width: 2px;
+  width: 100%;
+  border-color: #ADADAD;
+  background-color: #ccc9c9;
+  text-align: center;
+}
 .createModalDropdown {
   position: relative;
   font-weight: 600;
@@ -171,6 +181,18 @@
   border-color: #ADADAD;
   text-align: center;
   cursor: pointer;
+}
+.createModalDropdown_disabled {
+  position: relative;
+  font-weight: 600;
+  height: 40px;
+  border: solid;
+  border-width: 2px;
+  width: 100%;
+  border-color: #ADADAD;
+  text-align: center;
+  /* cursor: pointer; */
+  background-color: #ccc9c9;
 }
 
 .createModalDropdownButton {
@@ -184,6 +206,7 @@
   border-width: 2px;
   border-color: #ADADAD;
 }
+
 .createModalDropdownButton:hover {
   display: flex;
   align-items: center;
@@ -212,7 +235,7 @@
   width: 16px;
   height: 16px;
   margin-top: 8px;
-  cursor: pointer;
+  /* cursor: pointer; */
 }
 .grayArrowUp {
   /* border: solid 1px; */
@@ -224,7 +247,7 @@
   height: 16px;
   margin-top: 12px;
   transform: rotate(180deg);
-  cursor: pointer;
+  /* cursor: pointer; */
 }
 
 .centeringWrapper {
@@ -232,4 +255,58 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.deleteButton {
+  /* border: solid 1px; */
+  position: absolute;
+  right: 5px;
+  background-image: url('../../../images/trash_icon.png');
+  background-size: 100%;
+  width: 16px;
+  height: 16px;
+  margin-top: 8px;
+  /* cursor: pointer; */
+}
+
+.editButton {
+  /* border: solid 1px; */
+  position: absolute;
+  right: 5px;
+  background-image: url('../../../images/edit_icon.png');
+  background-size: 100%;
+  width: 16px;
+  height: 16px;
+  margin-top: 8px;
+  /* cursor: pointer; */
+}
+
+.saveButton {
+  border-radius: 15px;
+  border-width: 0;
+  height: 40px;
+  color: white;
+  background-color: #f26522;
+  margin-top: 20px;
+  width: 80%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+}
+
+.saveButton:disabled {
+  border-radius: 15px;
+  border-width: 0;
+  height: 40px;
+  color: white;
+  background-color: #ccc9c9;
+  margin-top: 20px;
+  width: 80%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  /* cursor: pointer; */
 }
