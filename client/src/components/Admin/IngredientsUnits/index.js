@@ -537,21 +537,6 @@ function IngredientsUnits() {
           `);
         }
 
-        // if(res.status >= 200 || res.status < 300) {
-        //   setPopup(SHOW_POPUP, "Success!", `
-        //     Ingredient created successfully: 
-        //   `,`
-        //     ${ingredientInput} (UID: ${res.data.ingredient_uid})
-        //   `);
-        // } else {
-        //   setPopup(SHOW_POPUP, "Error", `
-        //     Ingredient creation unsuccessful: 
-        //   `,`
-        //     ${res.data.message})
-        //   `);
-        // }
-        // setSavingIngredient(false);
-
       })
       .catch(err => {
         console.log(err);
@@ -604,11 +589,6 @@ function IngredientsUnits() {
     console.log("Saving new unit...");
     setSavingUnit(true);
 
-    // const [unitTypeSelection, selectUnitType] = useState(null);
-    // const [unitNameInput, inputUnitName] = useState('');
-    // const [convertRatioInput, inputConvertRatio] = useState('');
-    // const [baseUnitSelection, selectBaseUnit] = useState('');
-
     axios
       .post(API_URL + 'measure_unit', {
         type: unitTypeSelection,
@@ -617,13 +597,77 @@ function IngredientsUnits() {
         common_unit: baseUnitSelection
       })
       .then(res => {
-        console.log("(measure_unit -- edit) res: ", res);
+        console.log("(ingredients -- save) res: ", res);
+
+        let newUID = res.data.measure_unit_uid;
+
+        if(res.status >= 200 || res.status < 300) {
+
+          // Need to refresh ingredients list after successful creation
+          axios
+            .get(API_URL + 'measure_unit')
+            .then(res => {
+              console.log("(measure_unit -- refresh) res: ", res);
+
+              let uniqueUnits = [];
+              res.data.result.forEach((unit) => {
+                let unitFound = uniqueUnits.findIndex(element => element.measure_unit_uid === unit.measure_unit_uid);
+                if(unitFound === -1) {
+                  uniqueUnits.push(unit);
+                }
+              });
+              saveUnits(uniqueUnits);
+
+              // Show popup indicating success
+              setPopup(SHOW_POPUP, "Success!", `
+                Unit created successfully: 
+              `,`
+                ${unitNameInput} (UID: ${newUID})
+              `);
+
+              setSavingUnit(false);
+            })
+            .catch(err => {
+              console.log(err);
+              if(err.response.data.message) {
+                console.log("error: ", err.response);
+                setPopup(SHOW_POPUP, "Error", `
+                  Error refreshing units: 
+                `,`
+                  ${err.response.data.message}
+                `);
+              } else {
+                setPopup(SHOW_POPUP, "Error", `
+                  Something went wrong
+                `);
+              }
+              setSavingUnit(false);
+            });
+
+        } else {
+          setPopup(SHOW_POPUP, "Error", `
+            Unit creation unsuccessful: 
+          `,`
+            ${res.data.message})
+          `);
+        }
+
       })
       .catch(err => {
         console.log(err);
-        if(err.response) {
+        if(err.response.data.message) {
           console.log("error: ", err.response);
+          setPopup(SHOW_POPUP, "Error", `
+            Error creating unit: 
+          `,`
+            ${err.response.data.message}
+          `);
+        } else {
+          setPopup(SHOW_POPUP, "Error", `
+            Something went wrong
+          `);
         }
+        setSavingUnit(false);
       });
   }
 
