@@ -20,6 +20,9 @@ const EDIT_INGREDIENT = 3;
 const SAVE_INGREDIENT = 0;
 const SAVE_UNIT = 1;
 
+const HIDE_POPUP = true;
+const SHOW_POPUP = false;
+
 const CELL = {
 	id_width: '10%',
 	name_width: '12%',
@@ -65,7 +68,10 @@ function IngredientsUnits() {
   const [savingUnit, setSavingUnit] = useState(false);
   const [savingIngredient, setSavingIngredient] = useState(false);
 
-  const [showSuccessPopup, toggleSuccessPopup] = useState(false);
+  const [showPopup, togglePopup] = useState(false);
+  const [popupModal, setPopupModal] = useState(null);
+
+  const [editIngredientID, setEditIngredientID] = useState(null);
 
 	const [dimensions, setDimensions] = useState({ 
     height: window.innerHeight,
@@ -309,6 +315,7 @@ function IngredientsUnits() {
                 inputPackageSize(ingredient.package_size);
                 selectPackageUnit(ingredient.package_unit);
                 inputPackageCost(ingredient.package_cost);
+                setEditIngredientID(ingredient.ingredient_uid);
                 setCreateModal(EDIT_INGREDIENT);
                 // const [ingredientInput, inputIngredient] = useState('');
                 // const [packageSizeInput, inputPackageSize] = useState('');
@@ -355,7 +362,7 @@ function IngredientsUnits() {
             display: 'inline-flex'
           }}
         >
-          <div className={styles.cellOuterWrapper}>
+          <div className={styles.cellOuterWrapper3}>
             <div className={styles.cellInnerWrapper}>
               <span className={styles.cellContent}>
                 {unit.type}
@@ -363,7 +370,7 @@ function IngredientsUnits() {
             </div>
           </div>
 
-          <div className={styles.cellOuterWrapper}>
+          <div className={styles.cellOuterWrapper3}>
             <div className={styles.cellInnerWrapper}>
               <span className={styles.cellContent}>
                 {unit.recipe_unit}
@@ -371,7 +378,7 @@ function IngredientsUnits() {
             </div>
           </div>
 
-          <div className={styles.cellOuterWrapper}>
+          <div className={styles.cellOuterWrapper3}>
             <div className={styles.cellInnerWrapper}>
               <span className={styles.cellContent}>
                 {unit.conversion_ratio}
@@ -379,7 +386,7 @@ function IngredientsUnits() {
             </div>
           </div>
 
-          <div className={styles.cellOuterWrapper}>
+          <div className={styles.cellOuterWrapper3}>
             <div className={styles.cellInnerWrapper}>
               <span className={styles.cellContent}>
                 {unit.common_unit}
@@ -469,35 +476,121 @@ function IngredientsUnits() {
 
     axios
       .post(API_URL + 'ingredients', {
-        ingredient_desc: "testing food",
-        package_size: "1",
-        package_unit: "kg",
-        package_cost: "20"
+        ingredient_desc: ingredientInput,
+        package_size: packageSizeInput,
+        package_unit: packageUnitSelection,
+        package_cost: packageCostInput
       })
       .then(res => {
         console.log("(ingredients -- save) res: ", res);
+
+        let newUID = res.data.ingredient_uid;
+
+        if(res.status >= 200 || res.status < 300) {
+
+          // Need to refresh ingredients list after successful creation
+          axios
+            .get(API_URL + 'ingredients')
+            .then(res => {
+              console.log("(ingredients -- refresh) res: ", res);
+
+              let uniqueIngredients = [];
+              res.data.result.forEach((ingredient) => {
+                let ingredientFound = uniqueIngredients.findIndex(element => element.ingredient_uid === ingredient.ingredient_uid);
+                if(ingredientFound === -1) {
+                  uniqueIngredients.push(ingredient);
+                }
+              });
+              saveIngredients(uniqueIngredients);
+
+              // Show popup indicating success
+              setPopup(SHOW_POPUP, "Success!", `
+                Ingredient created successfully: 
+              `,`
+                ${ingredientInput} (UID: ${newUID})
+              `);
+
+              setSavingIngredient(false);
+            })
+            .catch(err => {
+              console.log(err);
+              if(err.response.data.message) {
+                console.log("error: ", err.response);
+                setPopup(SHOW_POPUP, "Error", `
+                  Error refreshing ingredients: 
+                `,`
+                  ${err.response.data.message}
+                `);
+              } else {
+                setPopup(SHOW_POPUP, "Error", `
+                  Something went wrong
+                `);
+              }
+              setSavingIngredient(false);
+            });
+
+        } else {
+          setPopup(SHOW_POPUP, "Error", `
+            Ingredient creation unsuccessful: 
+          `,`
+            ${res.data.message})
+          `);
+        }
+
+        // if(res.status >= 200 || res.status < 300) {
+        //   setPopup(SHOW_POPUP, "Success!", `
+        //     Ingredient created successfully: 
+        //   `,`
+        //     ${ingredientInput} (UID: ${res.data.ingredient_uid})
+        //   `);
+        // } else {
+        //   setPopup(SHOW_POPUP, "Error", `
+        //     Ingredient creation unsuccessful: 
+        //   `,`
+        //     ${res.data.message})
+        //   `);
+        // }
+        // setSavingIngredient(false);
+
       })
       .catch(err => {
         console.log(err);
-        if(err.response) {
+        if(err.response.data.message) {
           console.log("error: ", err.response);
+          setPopup(SHOW_POPUP, "Error", `
+            Error creating ingredient: 
+          `,`
+            ${err.response.data.message}
+          `);
+        } else {
+          setPopup(SHOW_POPUP, "Error", `
+            Something went wrong
+          `);
         }
+        setSavingIngredient(false);
       });
   }
 
   const saveEditIngredient = () => {
-    console.log("Saving new ingredient...");
+    console.log("(SEI) Saving new ingredient...");
     setSavingIngredient(true);
 
+    console.log("(SEI) uid: ", editIngredientID);
+    console.log("(SEI) desc: ", ingredientInput);
+    console.log("(SEI) unit: ", packageUnitSelection);
+    console.log("(SEI) size: ", packageSizeInput);
+    console.log("(SEI) cost: ", packageCostInput);
+
     axios
-      .post(API_URL + 'ingredients', {
-        ingredient_desc: "testing food",
-        package_size: "1",
-        package_unit: "kg",
-        package_cost: "20"
+      .put(API_URL + 'ingredients', {
+        ingredient_uid: editIngredientID,
+        ingredient_desc: ingredientInput,
+        package_size: packageSizeInput,
+        package_unit: packageUnitSelection,
+        package_cost: packageCostInput
       })
       .then(res => {
-        console.log("(all_businesses) res: ", res);
+        console.log("(ingredients -- edit) res: ", res);
       })
       .catch(err => {
         console.log(err);
@@ -511,7 +604,75 @@ function IngredientsUnits() {
     console.log("Saving new unit...");
     setSavingUnit(true);
 
-    
+    // const [unitTypeSelection, selectUnitType] = useState(null);
+    // const [unitNameInput, inputUnitName] = useState('');
+    // const [convertRatioInput, inputConvertRatio] = useState('');
+    // const [baseUnitSelection, selectBaseUnit] = useState('');
+
+    axios
+      .post(API_URL + 'measure_unit', {
+        type: unitTypeSelection,
+        recipe_unit: unitNameInput,
+        conversion_ratio: convertRatioInput,
+        common_unit: baseUnitSelection
+      })
+      .then(res => {
+        console.log("(measure_unit -- edit) res: ", res);
+      })
+      .catch(err => {
+        console.log(err);
+        if(err.response) {
+          console.log("error: ", err.response);
+        }
+      });
+  }
+
+  const setPopup = (hide, header, message_line1, message_line2) => {
+
+    if(hide === true) {
+      setPopupModal(null);
+    } else {
+      setPopupModal(
+        <div className = {styles.popupBackground}>
+          <div className  = {styles.popupContainer}>
+
+            <div className={styles.popupHeaderWrapper}>
+                {header}
+            </div>
+
+            {/* <div className={styles.popupMessageWrapper}>    
+              {message}
+            </div> */}
+            {message_line2 === null ? (
+              <div className={styles.popupMessageWrapper}>    
+                {message_line1}
+              </div>
+            ) : (
+              <>
+                <div className={styles.popupMessageWrapper}>    
+                  {message_line1}
+                  <br />
+                  {message_line2}
+                </div>
+              </>
+            )}
+
+            <div className={styles.popupBtnWrapper}>
+              <button 
+                className={styles.popupBtn}
+                onClick = {() => {
+                  setPopupModal(null);
+                }}
+              >
+                OK
+              </button>
+            </div>
+
+          </div>
+        </div>
+      );
+    }
+
   }
 
   const displayCreateModal = () => {
@@ -1197,6 +1358,8 @@ function IngredientsUnits() {
 				Width: {dimensions.width}px
 			</span>
 
+      {popupModal}
+
 			<AdminNavBar currentPage={'ingredients-units'}/>
 
 			{loadingData === true ? (
@@ -1396,7 +1559,6 @@ function IngredientsUnits() {
               // paddingTop: '20px',
               // display: 'flex',
               // alignItems: 'center',
-
               // border: 'solid',
               // width: '60%',
               // width: '200px',
@@ -1408,13 +1570,7 @@ function IngredientsUnits() {
               alignItems: 'center'
             }}
           >
-            <div
-              style={{
-                // border: 'dashed'
-              }}
-            >
-              Ingredients
-            </div>
+            <div>Ingredients</div>
             <div
               style={{
                 // position: 'absolute',
@@ -1531,13 +1687,7 @@ function IngredientsUnits() {
               alignItems: 'center'
             }}
           >
-            <div
-              style={{
-                // border: 'dashed'
-              }}
-            >
-              Units
-            </div>
+            <div>Units</div>
             <div
               style={{
                 // position: 'absolute',
@@ -1571,7 +1721,7 @@ function IngredientsUnits() {
             }}
           >
 
-            <div className={styles.cellOuterWrapper}>
+            <div className={styles.cellOuterWrapper3}>
               <div className={styles.cellInnerWrapper}>
                 <span className={styles.cellContentOrange}>
                   Type
@@ -1579,7 +1729,7 @@ function IngredientsUnits() {
               </div>
             </div>
 
-            <div className={styles.cellOuterWrapper}>
+            <div className={styles.cellOuterWrapper3}>
               <div className={styles.cellInnerWrapper}>
                 <span className={styles.cellContentOrange}>
                   Unit Name
@@ -1587,7 +1737,7 @@ function IngredientsUnits() {
               </div>
             </div>
 
-            <div className={styles.cellOuterWrapper}>
+            <div className={styles.cellOuterWrapper3}>
               <div className={styles.cellInnerWrapper}>
                 <span className={styles.cellContentOrange}>
                   Conversion Ratio
@@ -1595,7 +1745,7 @@ function IngredientsUnits() {
               </div>
             </div>
 
-            <div className={styles.cellOuterWrapper}>
+            <div className={styles.cellOuterWrapper3}>
               <div className={styles.cellInnerWrapper}>
                 <span className={styles.cellContentOrange}>
                   Base Unit

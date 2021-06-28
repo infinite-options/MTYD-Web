@@ -2879,22 +2879,6 @@ class EditPlan extends React.Component {
             }
           })()} 
 
-{/* <div className = {styles.errorModalPopUpShow}>
-                    <div className  = {styles.confirmModalContainer}>
-
-                      <div className={styles.deletingContainer}>
-                        <div className={styles.deletingHeader}>
-                          Deleting Purchase
-                        </div>
-
-                        <div className={styles.errorText}>
-                          Please wait...
-                        </div>
-                        
-                      </div> 
-                    </div>
-                  </div> */}
-
           {(() => {
             if (this.state.deletingPurchase === true) {
               return (
@@ -2918,34 +2902,6 @@ class EditPlan extends React.Component {
               );
             }
           })()} 
-
-          {/* <div className = {styles.errorModalPopUpShow}>
-            <div className  = {styles.confirmModalContainer}>
-
-              <div className={styles.confirmContainer}>
-                <div className={styles.cancelledHeader}>
-                  Cancellation Error
-                </div>
-
-                <div className={styles.errorText}>
-                  {this.state.refundError}
-                </div>
-
-                <button 
-                  className={styles.cancelledBtn}
-                  onClick = {() => {
-                    this.setState({
-                      deletingSuccess: null,
-                      confirmModal: styles.errorModalPopUpHide
-                    });
-                  }}
-                >
-                  OK
-                </button>
-                
-              </div> 
-            </div>
-          </div> */}
 
           {(() => {
             if (this.state.deleteSuccess === true) {
