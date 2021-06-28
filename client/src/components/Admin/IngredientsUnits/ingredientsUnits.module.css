@@ -88,12 +88,21 @@
 }
 
 .CML_OuterWrapper {
-  border: dashed;
+  /* border: dashed; */
   display: flex;
   align-items: center;
   /* justify-content: center; */
   width: 50%;
-  max-width: 180px;
+  max-width: 152px;
+  height: 100%;
+}
+.CML_OuterWrapper2 {
+  /* border: dashed; */
+  display: flex;
+  align-items: center;
+  /* justify-content: center; */
+  width: 50%;
+  max-width: 171px;
   height: 100%;
 }
 .CML_InnerWrapper {
@@ -110,9 +119,10 @@
 }
 .createModalLabel {
   width: 100%;
+  font-weight: 600;
   text-overflow: ellipsis;
   overflow: hidden;
-  border: inset;
+  /* border: inset; */
   color: #f26522;
   /* padding-left: 20px; */
 }
@@ -124,26 +134,102 @@
   align-items: center;
   padding-left: 20px;
 } */
-
-.createModalInputWrapper {
+.createModalDropdownWrapper {
+  position: relative;
   display: flex;
   align-items: center;
   padding-right: 20px;
   width: 50%;
   flex-grow: 1;
-  border: inset;
+  /* border: inset; */
+}
+.createModalInputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding-right: 20px;
+  width: 50%;
+  flex-grow: 1;
+  /* border: inset; */
 }
 .createModalInput {
+  font-weight: 600;
   height: 40px;
   border: solid;
   border-width: 2px;
   width: 100%;
   border-color: #ADADAD;
+  text-align: center;
+}
+.createModalDropdown {
+  position: relative;
+  font-weight: 600;
+  height: 40px;
+  border: solid;
+  border-width: 2px;
+  width: 100%;
+  border-color: #ADADAD;
+  text-align: center;
+  cursor: pointer;
+}
+
+.createModalDropdownButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  background-color: white;
+  height: 40px;
+  border-bottom: solid;
+  border-width: 2px;
+  border-color: #ADADAD;
+}
+.createModalDropdownButton:hover {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  background-color: #F8BB17;
+  height: 40px;
+  border-bottom: solid;
+  border-width: 2px;
+  border-color: #ADADAD;
 }
 
 .createModalSection {
-  border: solid;
+  /* border: solid; */
   width: 100%;
   height: 60px;
   display: inline-flex;
+}
+
+.grayArrowDown {
+  /* border: solid 1px; */
+  position: absolute;
+  right: 5px;
+  background-image: url('../../../images/gray_arrow_down.png');
+  background-size: 100%;
+  width: 16px;
+  height: 16px;
+  margin-top: 8px;
+  cursor: pointer;
+}
+.grayArrowUp {
+  /* border: solid 1px; */
+  position: absolute;
+  right: 9px;
+  background-image: url('../../../images/gray_arrow_down.png');
+  background-size: 100%;
+  width: 16px;
+  height: 16px;
+  margin-top: 12px;
+  transform: rotate(180deg);
+  cursor: pointer;
+}
+
+.centeringWrapper {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

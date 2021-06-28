@@ -48,8 +48,10 @@ function IngredientsUnits() {
 
   const [ingredientInput, inputIngredient] = useState('');
   const [packageSizeInput, inputPackageSize] = useState('');
-  const [packageUnitInput, inputPackageUnit] = useState('');
+  const [packageUnitSelection, selectPackageUnit] = useState('');
   const [packageCostInput, inputPackageCost] = useState('');
+
+  const [showUnitDropdown, toggleShowUnitDropdown] = useState(false);
 
 	const [dimensions, setDimensions] = useState({ 
     height: window.innerHeight,
@@ -588,12 +590,13 @@ function IngredientsUnits() {
           </div>
 
           <div className={styles.createModalSection}>
-            <div className={styles.createModalLabel}>
-              Ingredient
+            <div className={styles.CML_OuterWrapper}>
+              <div className={styles.CML_InnerWrapper}>
+                <div className={styles.createModalLabel}>
+                  Ingredient
+                </div>
+              </div>
             </div>
-            {/* <div className={styles.createModalInput}>
-              [Input]
-            </div> */}
             <div className={styles.createModalInputWrapper}>
               <input
                 className={styles.createModalInput}
@@ -606,8 +609,12 @@ function IngredientsUnits() {
           </div>
 
           <div className={styles.createModalSection}>
-            <div className={styles.createModalLabel}>
-              Package Size
+            <div className={styles.CML_OuterWrapper}>
+              <div className={styles.CML_InnerWrapper}>
+                <div className={styles.createModalLabel}>
+                  Package Size
+                </div>
+              </div>
             </div>
             <div className={styles.createModalInputWrapper}>
               <input
@@ -621,30 +628,124 @@ function IngredientsUnits() {
           </div>
 
           <div className={styles.createModalSection}>
-            {/* <div className={styles.createModalLabel}>
-              Package Unit
-            </div> */}
             <div className={styles.CML_OuterWrapper}>
               <div className={styles.CML_InnerWrapper}>
                 <div className={styles.createModalLabel}>
-                  Conversion Ratio
+                  Package Unit
                 </div>
               </div>
             </div>
-            <div className={styles.createModalInputWrapper}>
-              <input
+            <div className={styles.createModalDropdownWrapper}>
+              {/* <input
                 className={styles.createModalInput}
                 onChange={(e) => {
                   inputPackageUnit(e.target.value)
                 }}
                 value={packageUnitInput}
-              />
+              /> */}
+              <div 
+                className={styles.createModalDropdown}
+                onClick={() => {toggleShowUnitDropdown(!showUnitDropdown)}}
+              >
+                {showUnitDropdown ? (
+                  <>
+                    <div className={styles.grayArrowUp}/>
+                    <div
+                      style={{
+                        display: 'inline-block',
+                        alignItems: 'top',
+                        // height: '400px',
+                        marginTop: '36px',
+                        borderStyle: 'solid solid none solid',
+                        borderWidth: '2px',
+                        borderColor: '#ADADAD',
+                        // border: 'none solid none solid',
+                        // height: '40px',
+                        // width: '100%',
+                        width: 'calc(100% + 4px)',
+                        position: 'absolute',
+                        left: '-2px',
+                        top: '0',
+                        marginRight: '200px',
+                        zIndex: '10'
+                      }}
+                    >
+                      <div 
+                        className={styles.createModalDropdownButton}
+                        onClick={() => {selectPackageUnit('lb')}}
+                      >
+                        lb
+                      </div>
+                      <div 
+                        className={styles.createModalDropdownButton}
+                        onClick={() => {selectPackageUnit('kg')}}
+                      >
+                        kg
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <div className={styles.grayArrowDown}/>
+                )}
+                <div className={styles.centeringWrapper}>
+                  {packageUnitSelection}
+                </div>
+              </div>
+
+              {/* {showUnitDropdown ? (
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'top',
+                    height: '400px',
+                    // marginTop: '80px',
+                    border: 'dashed',
+                    // height: '40px',
+                    width: '100%',
+                    position: 'absolute',
+                    top: '0',
+                    marginRight: '200px',
+                    zIndex: '10'
+                  }}
+                >
+                  <div style={{flex: 'inline-block'}}>
+                  <div
+                    style={{
+                      borderStyle: 'solid solid none solid',
+                      borderWidth: '2px',
+                      marginRight: '20px',
+                      height: '100%',
+                      backgroundColor: 'yellow',
+                      height: '40px'
+                    }}
+                  >
+                    YES
+                  </div>
+                  <div
+                    style={{
+                      borderStyle: 'solid solid none solid',
+                      borderWidth: '2px',
+                      marginRight: '20px',
+                      height: '100%',
+                      backgroundColor: 'yellow',
+                      height: '40px'
+                    }}
+                  >
+                    YES
+                  </div>
+                  </div>
+                </div>
+              ) : (null)} */}
             </div>
           </div>
 
           <div className={styles.createModalSection}>
-            <div className={styles.createModalLabel}>
-              Package Cost
+            <div className={styles.CML_OuterWrapper}>
+              <div className={styles.CML_InnerWrapper}>
+                <div className={styles.createModalLabel}>
+                  Package Cost
+                </div>
+              </div>
             </div>
             <div className={styles.createModalInputWrapper}>
               <input
