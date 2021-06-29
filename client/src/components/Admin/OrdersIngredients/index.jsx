@@ -22,7 +22,7 @@ const initialState = {
   mounted: false,
   defaultFlag: true,
   selectedDate: "",
-  dateIndex: 0,
+  dateIndex: null,
   currDisplayDate: "",
   selectedBusinessID: "",
   selectedBusinessData: [],
@@ -50,6 +50,7 @@ const initialState = {
   revenueData: [],
   totalMeals: 0,
   totalRevenue: 0,
+  carouselLoaded: false,
 };
 
 const responsive = {
@@ -171,6 +172,21 @@ function reducer(state, action) {
         selectedDate: action.payload.selectedDate,
         dateIndex: action.payload.dateIndex,
       };
+    case "LOAD_CAROUSEL":
+      return {
+        ...state,
+        carouselLoaded: true,
+      };
+    case "INCREMENT_DATE_INDEX":
+      return {
+        ...state,
+        dateIndex: state.dateIndex + 1,
+      };
+    case "DECREMENT_DATE_INDEX":
+      return {
+        ...state,
+        dateIndex: state.dateIndex - 1,
+      };
     default:
       return state;
   }
@@ -241,8 +257,11 @@ function OrdersIngredients({ history, ...props }) {
       .then((response) => {
         const datesApi = response.data.result;
         const curDay = getCurrentDate();
-        const closestDateIndex = getClosestDateIndex();
+        const closestDateIndex = getClosestDateIndex(datesApi);
+        console.log(closestDateIndex);
         closestDate = datesApi[closestDateIndex].menu_date;
+
+        console.log("Dispatching...");
 
         dispatch({ type: "FETCH_MEAL_DATES", payload: datesApi });
         dispatch({
@@ -345,7 +364,7 @@ function OrdersIngredients({ history, ...props }) {
     return [[year, month, day].join("-"), "00-00-00"].join(" ");
   };
 
-  const getClosestDateIndex = () => {
+  const getClosestDateIndex = (dates) => {
     var now = Date().toLocaleString();
     var monthDict = [];
 
@@ -412,8 +431,8 @@ function OrdersIngredients({ history, ...props }) {
 
     let closestDateIndex = 0;
 
-    for (let i = 0, l = state.mealDates.length; i < l; i++) {
-      var date = state.mealDates[i];
+    for (let i = 0, l = dates.length; i < l; i++) {
+      var date = dates[i];
       var year = date.menu_date.substring(0, 4);
       var month = date.menu_date.substring(5, 7);
       var day = date.menu_date.substring(8, 10);
@@ -719,19 +738,64 @@ function OrdersIngredients({ history, ...props }) {
     return "";
   };
 
-  // Go to closest date
-  if (carouselRef && carouselRef.current)
-    carouselRef.current.goToSlide(getClosestDateIndex());
-
   const currencyFormatter = new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
   });
 
+  if (
+    carouselRef &&
+    carouselRef.current &&
+    state.dateIndex &&
+    !state.carouselLoaded
+  ) {
+    // carouselRef.current.goToSlide(state.dateIndex);
+    carouselRef.current.state.currentSlide = state.dateIndex;
+    dispatch({ type: "LOAD_CAROUSEL" });
+  }
+
+  // if (state.dateIndex && !state.carouselLoaded) {
+  //   initializeCarousel(state.dateIndex);
+  //   dispatch({ type: "LOAD_CAROUSEL" });
+  // }
+
+  // if (
+  //   carouselRef &&
+  //   carouselRef.current &&
+  //   state.dateIndex &&
+  //   !state.carouselLoaded
+  // ) {
+  //   carouselRef.current.goToSlide(state.dateIndex);
+  // }
+
+  const CustomRight = ({ onClick }) => (
+    <button
+      onClick={() => {
+        onClick();
+        // dispatch({ type: "INCREMENT_DATE_INDEX" });
+      }}
+      style={{ position: "absolute", right: 0 }}
+    >
+      Right
+    </button>
+  );
+  const CustomLeft = ({ onClick }) => {
+    return (
+      <button
+        onClick={() => {
+          onClick();
+          // dispatch({ type: "DECREMENT_DATE_INDEX" });
+        }}
+        style={{ position: "absolute", left: 0 }}
+      >
+        Left
+      </button>
+    );
+  };
+
   return (
     <>
       <AdminNavBar currentPage={"order-ingredients"} />
-      {console.log(carouselRef)}
       <div className={styles.root}>
         {console.log(state)}
         <Container fluid className={styles.container}>
@@ -775,25 +839,53 @@ function OrdersIngredients({ history, ...props }) {
               </div>
             </Col>
             <Col xs={6}>
-              <Carousel responsive={responsive} ref={carouselRef}>
-                {state.mealDates.map((date) => {
-                  const displayDate = convertToDisplayDate(date.menu_date);
-                  return (
-                    <button
-                      className={[
-                        styles.datebutton,
-                        styles.datebuttonNotSelected,
-                      ].join(" ")}
-                      key={date.menu_date}
-                      value={date.menu_date}
-                      onClick={(e) => handleDateButtonClick(e, displayDate)}
-                    >
-                      {displayDate.substring(0, 3)} <br />{" "}
-                      {displayDate.substring(4, 10)}
-                    </button>
-                  );
-                })}
-              </Carousel>
+              {/* <button
+                onClick={() => {
+                  const nextSlide = state.dateIndex - 1;
+                  carouselRef.current.goToSlide(nextSlide);
+                  dispatch({ type: "DECREMENT_DATE_INDEX" });
+                }}
+              >
+                Left
+              </button> */}
+              {state.dateIndex != null && (
+                <Carousel
+                  responsive={responsive}
+                  ref={carouselRef}
+                  // arrows
+                  // customRightArrow={<CustomRight />}
+                  // customLeftArrow={<CustomLeft />}
+                >
+                  {console.log(carouselRef)}
+                  {state.mealDates.map((date) => {
+                    const displayDate = convertToDisplayDate(date.menu_date);
+
+                    return (
+                      <button
+                        className={[
+                          styles.datebutton,
+                          styles.datebuttonNotSelected,
+                        ].join(" ")}
+                        key={date.menu_date}
+                        value={date.menu_date}
+                        onClick={(e) => handleDateButtonClick(e, displayDate)}
+                      >
+                        {displayDate.substring(0, 3)} <br />{" "}
+                        {displayDate.substring(4, 10)}
+                      </button>
+                    );
+                  })}
+                </Carousel>
+              )}
+              {/* <button
+                onClick={() => {
+                  const nextSlide = state.dateIndex + 1;
+                  carouselRef.current.goToSlide(nextSlide);
+                  dispatch({ type: "INCREMENT_DATE_INDEX" });
+                }}
+              >
+                Right
+              </button> */}
             </Col>
             <Col
               style={{
