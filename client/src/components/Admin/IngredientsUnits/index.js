@@ -510,6 +510,7 @@ function IngredientsUnits() {
                 ${ingredientInput} (UID: ${newUID})
               `);
 
+              resetInputs();
               setSavingIngredient(false);
             })
             .catch(err => {
@@ -560,12 +561,6 @@ function IngredientsUnits() {
     console.log("(SEI) Saving new ingredient...");
     setSavingIngredient(true);
 
-    console.log("(SEI) uid: ", editIngredientID);
-    console.log("(SEI) desc: ", ingredientInput);
-    console.log("(SEI) unit: ", packageUnitSelection);
-    console.log("(SEI) size: ", packageSizeInput);
-    console.log("(SEI) cost: ", packageCostInput);
-
     axios
       .put(API_URL + 'ingredients', {
         ingredient_uid: editIngredientID,
@@ -576,12 +571,75 @@ function IngredientsUnits() {
       })
       .then(res => {
         console.log("(ingredients -- edit) res: ", res);
+
+        if(res.status >= 200 || res.status < 300) {
+
+          // Need to refresh ingredients list after successful edit
+          axios
+            .get(API_URL + 'ingredients')
+            .then(res => {
+              console.log("(ingredients -- refresh) res: ", res);
+
+              let uniqueIngredients = [];
+              res.data.result.forEach((ingredient) => {
+                let ingredientFound = uniqueIngredients.findIndex(element => element.ingredient_uid === ingredient.ingredient_uid);
+                if(ingredientFound === -1) {
+                  uniqueIngredients.push(ingredient);
+                }
+              });
+              saveIngredients(uniqueIngredients);
+
+              // Show popup indicating success
+              setPopup(SHOW_POPUP, "Success!", `
+                Ingredient updated successfully: 
+              `,`
+                ${ingredientInput} (UID: ${editIngredientID})
+              `);
+
+              resetInputs();
+              setSavingIngredient(false);
+            })
+            .catch(err => {
+              console.log(err);
+              if(err.response.data.message) {
+                console.log("error: ", err.response);
+                setPopup(SHOW_POPUP, "Error", `
+                  Error refreshing ingredients: 
+                `,`
+                  ${err.response.data.message}
+                `);
+              } else {
+                setPopup(SHOW_POPUP, "Error", `
+                  Something went wrong
+                `);
+              }
+              setSavingIngredient(false);
+            });
+
+        } else {
+          setPopup(SHOW_POPUP, "Error", `
+            Ingredient update unsuccessful: 
+          `,`
+            ${res.data.message})
+          `);
+        }
+
       })
       .catch(err => {
         console.log(err);
-        if(err.response) {
+        if(err.response.data.message) {
           console.log("error: ", err.response);
+          setPopup(SHOW_POPUP, "Error", `
+            Error updating ingredient: 
+          `,`
+            ${err.response.data.message}
+          `);
+        } else {
+          setPopup(SHOW_POPUP, "Error", `
+            Something went wrong
+          `);
         }
+        setSavingIngredient(false);
       });
   }
 
@@ -625,6 +683,7 @@ function IngredientsUnits() {
                 ${unitNameInput} (UID: ${newUID})
               `);
 
+              resetInputs();
               setSavingUnit(false);
             })
             .catch(err => {
