@@ -793,6 +793,8 @@ function OrdersIngredients({ history, ...props }) {
     );
   };
 
+  console.log("hello");
+
   return (
     <>
       <AdminNavBar currentPage={"order-ingredients"} />
