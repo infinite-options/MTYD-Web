@@ -418,10 +418,10 @@ function IngredientsUnits() {
           <div 
             className={styles.createModalDropdownButton}
             onClick={() => {
-              selectBaseUnit('g');
+              selectBaseUnit('kg');
             }}
           >
-            g
+            kg
           </div>
         </>
       );
@@ -732,7 +732,7 @@ function IngredientsUnits() {
 
   const setPopup = (hide, header, message_line1, message_line2) => {
 
-    if(hide === true) {
+    if (hide === true) {
       setPopupModal(null);
     } else {
       setPopupModal(
@@ -776,6 +776,56 @@ function IngredientsUnits() {
       );
     }
 
+  }
+
+  const displayUnitDropdown = () => {
+    // <div 
+    //   className={styles.createModalDropdownButton}
+    //   onClick={() => {
+    //     selectPackageUnit('lb');
+    //     resetDropdowns();
+    //   }}
+    // >
+    //   lb
+    // </div>
+    // <div 
+    //   className={styles.createModalDropdownButton}
+    //   onClick={() => {
+    //     selectPackageUnit('kg');
+    //     resetDropdowns();
+    //   }}
+    // >
+    //   kg
+    // </div>
+    let packageUnits = [];
+    savedUnits.forEach((unit) => {
+      // let unitFound = uniqueIngredients.findIndex(element => element.ingredient_uid === ingredient.ingredient_uid);
+      // console.log("(DUD) unit: ", unit);
+      // uniqueUnits.push
+      packageUnits.push(
+        <div 
+          className={styles.createModalDropdownButton}
+          onClick={() => {
+            selectPackageUnit('lb');
+            resetDropdowns();
+          }}
+        >
+          {unit.recipe_unit}
+        </div>
+      );
+    });
+
+    return (
+      <div
+        style={{
+          // border: 'solid 1px',
+          height: '240px',
+          overflow: 'auto'
+        }}
+      >
+        {packageUnits}
+      </div>
+    );
   }
 
   const displayCreateModal = () => {
@@ -905,7 +955,7 @@ function IngredientsUnits() {
                         zIndex: '10'
                       }}
                     >
-                      <div 
+                      {/* <div 
                         className={styles.createModalDropdownButton}
                         onClick={() => {
                           selectPackageUnit('lb');
@@ -922,7 +972,8 @@ function IngredientsUnits() {
                         }}
                       >
                         kg
-                      </div>
+                      </div> */}
+                      {displayUnitDropdown()}
                     </div>
                   </>
                 ) : (
