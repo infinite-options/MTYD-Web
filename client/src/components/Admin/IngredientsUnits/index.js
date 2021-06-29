@@ -1543,7 +1543,7 @@ function IngredientsUnits() {
 				null
 			)}
 
-      <div
+      {/* <div
         style={{
           // border: 'solid',
           marginTop: '20px',
@@ -1568,112 +1568,296 @@ function IngredientsUnits() {
           }}
         >
           Ingredients and Units
-        </div>
+        </div> */}
 
         {dimensions.width > 970 ? (
+
+        <div
+          style={{
+            // border: 'solid',
+            marginTop: '20px',
+            borderRadius: '15px',
+            marginLeft: '2%',
+            width: '96%',
+            backgroundColor: 'white',
+            height: '120px',
+            display: 'flex',
+            alignItems: 'center'
+          }}
+        >
+
           <div
             style={{
               // border: 'solid',
-              // borderColor: 'blue',
-              flexGrow: '1',
-              display: 'inline-flex',
-              position: 'relative',
-              height: '100%'
+              // width: '60%',
+              width: '300px',
+              fontWeight: 'bold',
+              paddingLeft: '20px',
+              fontSize: '26px'
             }}
           >
-            <div 
+            Ingredients and Units
+          </div>
+
+            <div
               style={{
-                position: 'absolute',
-                right: '400px',
-                width: '200px',
-                display: 'flex',
-                justifyContent: 'center',
-                top: '20px',
-                height: '30px',
-                color: '#f26522',
-                fontWeight: '500'
+                // border: 'solid',
+                // borderColor: 'blue',
+                flexGrow: '1',
+                display: 'inline-flex',
+                position: 'relative',
+                height: '100%'
               }}
             >
-              Total no. of Restaurants
-            </div>
-            <div 
-              style={{
-                position: 'absolute',
-                right: '400px',
-                width: '200px',
-                display: 'flex',
-                justifyContent: 'center',
-                top: '50px',
-                fontSize: '24px',
-                fontWeight: '600'
-              }}
-            >
-              {savedBusinesses === null ? 'LOADING...' : savedBusinesses.length}
-            </div>
-            <div 
-              style={{
-                position: 'absolute',
-                right: '200px',
-                width: '200px',
-                display: 'flex',
-                justifyContent: 'center',
-                top: '20px',
-                height: '30px',
-                color: '#f26522',
-                fontWeight: '500'
-              }}
-            >
-              Total no. of Meals
-            </div>
-            <div 
-              style={{
-                position: 'absolute',
-                right: '200px',
-                width: '200px',
-                display: 'flex',
-                justifyContent: 'center',
-                top: '50px',
-                fontSize: '24px',
-                fontWeight: '600'
-              }}
-            >
-              {savedMeals === null ? 'LOADING...' : savedMeals.length}
-            </div>
-            <div 
-              style={{
-                position: 'absolute',
-                right: '0',
-                width: '200px',
-                display: 'flex',
-                justifyContent: 'center',
-                top: '20px',
-                height: '30px',
-                color: '#f26522',
-                fontWeight: '500'
-              }}
-            >
-              Total no. of Ingredients
-            </div>
-            <div 
-              style={{
-                position: 'absolute',
-                right: '0',
-                width: '200px',
-                display: 'flex',
-                justifyContent: 'center',
-                top: '50px',
-                fontSize: '24px',
-                fontWeight: '600'
-              }}
-            >
-              {savedIngredients === null ? 'LOADING...' : savedIngredients.length}
+              <div 
+                style={{
+                  position: 'absolute',
+                  right: '400px',
+                  width: '200px',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  top: '20px',
+                  height: '30px',
+                  color: '#f26522',
+                  fontWeight: '500'
+                }}
+              >
+                Total no. of Restaurants
+              </div>
+              <div 
+                style={{
+                  position: 'absolute',
+                  right: '400px',
+                  width: '200px',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  top: '50px',
+                  fontSize: '24px',
+                  fontWeight: '600'
+                }}
+              >
+                {savedBusinesses === null ? 'LOADING...' : savedBusinesses.length}
+              </div>
+              <div 
+                style={{
+                  position: 'absolute',
+                  right: '200px',
+                  width: '200px',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  top: '20px',
+                  height: '30px',
+                  color: '#f26522',
+                  fontWeight: '500'
+                }}
+              >
+                Total no. of Meals
+              </div>
+              <div 
+                style={{
+                  position: 'absolute',
+                  right: '200px',
+                  width: '200px',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  top: '50px',
+                  fontSize: '24px',
+                  fontWeight: '600'
+                }}
+              >
+                {savedMeals === null ? 'LOADING...' : savedMeals.length}
+              </div>
+              <div 
+                style={{
+                  position: 'absolute',
+                  right: '0',
+                  width: '200px',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  top: '20px',
+                  height: '30px',
+                  color: '#f26522',
+                  fontWeight: '500'
+                }}
+              >
+                Total no. of Ingredients
+              </div>
+              <div 
+                style={{
+                  position: 'absolute',
+                  right: '0',
+                  width: '200px',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  top: '50px',
+                  fontSize: '24px',
+                  fontWeight: '600'
+                }}
+              >
+                {savedIngredients === null ? 'LOADING...' : savedIngredients.length}
+              </div>
             </div>
           </div>
         ) : (
-          <>NARROW VIEW</>
-        )}
-        
-      </div>
+
+          <div
+            style={{
+              // border: 'solid',
+              marginTop: '20px',
+              borderRadius: '15px',
+              marginLeft: '2%',
+              width: '96%',
+              backgroundColor: 'white',
+              height: '350px',
+              // display: 'flex',
+              // alignItems: 'center'
+            }}
+          >
+  
+            <div
+              style={{
+                // border: 'solid',
+                // width: '60%',
+                // width: '300px',
+                width: '100%',
+                height: '80px',
+                // alignText: 'center',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                fontWeight: 'bold',
+                paddingLeft: '20px',
+                fontSize: '26px'
+              }}
+            >
+              Ingredients and Units
+            </div>
+  
+              <div
+                style={{
+                  // border: 'solid',
+                  // borderColor: 'blue',
+                  // flexGrow: '1',
+                  // display: 'inline-flex',ty
+                  display: 'flex',
+                  justifyContent: 'center',
+                  position: 'relative',
+                  // height: '100%',
+                  width: '100%'
+                }}
+              >
+                
+
+                <div
+                  style={{
+                    // border: 'dashed',
+                    // display: 'inline-block',
+                    width: '100%'
+                    // justifyContent: 'center'
+                  }}
+                >
+
+                <div 
+                  style={{
+                    // position: 'absolute',
+                    // right: '400px',
+                    width: '100%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    // top: '20px',
+                    height: '30px',
+                    color: '#f26522',
+                    fontWeight: '500',
+                    marginTop: '10px'
+                    // border: 'solid'
+                  }}
+                >
+                  Total no. of Restaurants
+                </div>
+                <div 
+                  style={{
+                    // position: 'absolute',
+                    // right: '400px',
+                    // width: '200px',
+                    width: '100%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    // top: '50px',
+                    fontSize: '24px',
+                    fontWeight: '600'
+                  }}
+                >
+                  {savedBusinesses === null ? 'LOADING...' : savedBusinesses.length}
+                </div>
+
+                <div 
+                  style={{
+                    // position: 'absolute',
+                    // right: '200px',
+                    // width: '200px',
+                    width: '100%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    // top: '20px',
+                    height: '30px',
+                    color: '#f26522',
+                    fontWeight: '500',
+                    marginTop: '20px'
+                  }}
+                >
+                  Total no. of Meals
+                </div>
+                <div 
+                  style={{
+                    // position: 'absolute',
+                    // right: '200px',
+                    // width: '200px',
+                    width: '100%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    // top: '50px',
+                    fontSize: '24px',
+                    fontWeight: '600'
+                  }}
+                >
+                  {savedMeals === null ? 'LOADING...' : savedMeals.length}
+                </div>
+                <div 
+                  style={{
+                    // position: 'absolute',
+                    // right: '0',
+                    // width: '200px',
+                    width: '100%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    // top: '20px',
+                    height: '30px',
+                    color: '#f26522',
+                    fontWeight: '500',
+                    marginTop: '20px'
+                  }}
+                >
+                  Total no. of Ingredients
+                </div>
+                <div 
+                  style={{
+                    // position: 'absolute',
+                    // right: '0',
+                    // width: '200px',
+                    width: '100%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    // top: '50px',
+                    fontSize: '24px',
+                    fontWeight: '600'
+                  }}
+                >
+                  {savedIngredients === null ? 'LOADING...' : savedIngredients.length}
+                </div>
+              </div>
+              </div>
+            </div>
+          )}
 
       <div
         style={{
