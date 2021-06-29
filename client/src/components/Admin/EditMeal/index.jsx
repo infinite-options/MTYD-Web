@@ -8,6 +8,7 @@ import {withRouter} from "react-router";
 import AdminNavBar from '../AdminNavBar';
 import styles from "./editMeal.module.css";
 import { act } from 'react-dom/test-utils';
+import testImage from './static/test.jpeg'
 
 const initialState = {
   mounted: false,
@@ -67,6 +68,7 @@ var allMeals = []
 var allBusinesses = []
 var idsGenerated = false
 var allBusinessData = []
+var selectedFile = ""
 
 function EditMeal({history, ...props}) {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -252,15 +254,23 @@ function EditMeal({history, ...props}) {
 
   const saveEditedMeal = () => {
     const savedMeal = state.editedMeal;
+    console.log(savedMeal)
     axios
       .put(`${API_URL}meals`,savedMeal)
       .then((response) => {
         if(response.status === 201) {
-          // Make sure if saved and come back to same meal, meal is changed; no need to call API again
-          const changedIndex = state.mealData.findIndex((meal) => meal.meal_uid === state.selectedMeal);
-          const newMealData = [...state.mealData];
-          newMealData[changedIndex] = state.editedMeal;
-          dispatch({ type: 'FETCH_MEALS', payload: newMealData });
+          console.log("in axios put")
+              // Make sure if saved and come back to same meal, meal is changed; no need to call API again
+              const changedIndex = state.mealData.findIndex((meal) => meal.meal_uid === state.selectedMeal);
+              console.log("changedIndex")
+              console.log(changedIndex)
+              const newMealData = [...state.mealData];
+              console.log("newMealData")
+              console.log(newMealData)
+              newMealData[changedIndex] = state.editedMeal;
+              console.log("newMealData[changedIndex")
+              console.log(newMealData[changedIndex])
+              dispatch({ type: 'FETCH_MEALS', payload: newMealData });
         }
       })
       .catch((err) => {
@@ -271,6 +281,76 @@ function EditMeal({history, ...props}) {
         // eslint-disable-next-line no-console
         console.log(err);
       });
+  }
+
+  const postNewMeal = () => {
+    const bodyFormData = new FormData()
+
+    bodyFormData.append('meal_category', state.editedMeal.meal_category)
+    bodyFormData.append('meal_name', state.editedMeal.meal_name)
+    bodyFormData.append('meal_desc', state.editedMeal.meal_desc)
+    bodyFormData.append('meal_hint', state.editedMeal.meal_hint)
+    bodyFormData.append('meal_photo_url', selectedFile)
+    bodyFormData.append('meal_calories', state.editedMeal.meal_calories)
+    bodyFormData.append('meal_protein', state.editedMeal.meal_protein)
+    bodyFormData.append('meal_carbs', state.editedMeal.meal_carbs)
+    bodyFormData.append('meal_fiber', state.editedMeal.meal_fiber)
+    bodyFormData.append('meal_sugar', state.editedMeal.meal_sugar)
+    bodyFormData.append('meal_fat', state.editedMeal.meal_fat)
+    bodyFormData.append('meal_sat', state.editedMeal.meal_sat)
+    bodyFormData.append('meal_business', activeBusiness)
+
+    // console.log(bodyFormData.values())
+    for(var pair of bodyFormData.entries()) {
+      console.log(pair[0]+ ', '+ pair[1]);
+    }
+
+    axios({
+      method: "post", url: 
+      `${API_URL}create_update_meals`,
+      data: bodyFormData,
+      headers: {"Content-Type": "multipart/form-data"}
+    })
+      // .post(`${API_URL}create_update_meals`,bodyFormData)
+      .then((response)=>{
+        console.log(response)
+        const savedMeal = state.editedMeal
+        savedMeal.meal_business = activeBusiness
+        savedMeal.meal_uid = response.data.meal_uid
+        console.log(savedMeal)
+
+        axios
+          .put(`${API_URL}meals`,savedMeal)
+          .then((response) => {
+            if(response.status === 201) {
+              console.log("in axios put")
+              // Make sure if saved and come back to same meal, meal is changed; no need to call API again
+              const changedIndex = state.mealData.findIndex((meal) => meal.meal_uid === state.selectedMeal);
+              console.log("changedIndex")
+              console.log(changedIndex)
+              const newMealData = [...state.mealData];
+              console.log("newMealData")
+              console.log(newMealData)
+              newMealData[changedIndex] = state.editedMeal;
+              console.log("newMealData[changedIndex")
+              console.log(newMealData[changedIndex])
+              dispatch({ type: 'FETCH_MEALS', payload: newMealData });
+            }
+          })
+          .catch((err) => {
+            if (err.response) {
+              // eslint-disable-next-line no-console
+              console.log(err.response);
+            }
+            // eslint-disable-next-line no-console
+            console.log(err);
+          });
+
+        selectedFile=""
+      })
+      .catch((err)=>{
+        console.log(err)
+      })
   }
 
   const getActiveBusinessHours = () => {
@@ -479,8 +559,6 @@ function EditMeal({history, ...props}) {
           setSatFin(getActiveBusinessHours().Saturday[1])
           tempSetSunStart(getActiveBusinessHours().Sunday[0])
           setSunFin(getActiveBusinessHours().Sunday[1])
-          console.log("test")
-          console.log(tempBusinessName)
         }
       }
     }
@@ -763,7 +841,7 @@ function EditMeal({history, ...props}) {
             // generate JSONs as text
             // parse text to JSON
             console.log("Clicked Save")
-            console.log(activeBusinessData)
+            console.log(JSON.stringify(activeBusinessData))
             let myObj = {
               "business_uid" : activeBusiness,
               "business_created_at" : activeBusinessData.business_created_at,
@@ -806,6 +884,7 @@ function EditMeal({history, ...props}) {
               "business_password" : activeBusinessData.business_password
             }
             console.log(JSON.stringify(myObj))
+            console.log(myObj)
             console.log(myObj.business_accepting_hours)
 
             axios.post(API_URL+"business_details_update/Post", myObj)
@@ -835,8 +914,30 @@ function EditMeal({history, ...props}) {
       }
       console.log(mealButtonPressed)
       return (
-        <div style={{zIndex: "100", width: "70%", backgroundColor: "white", justifySelf: "center", alignSelf: "center", position: "relative", marginLeft: "15%"}}>
-          <Form style={{padding: "2%"}}>
+        <div style={{
+          height: "100%",
+          width: "100%",
+          zIndex: "101",
+          left: "0",
+          top: "0",
+          overflow: "auto",
+          position: "fixed",
+          display: "grid",
+          backgroundColor: 'rgba(255, 255, 255, 0.8)'
+        }}>
+          <Form style={{
+            position: "relative",
+            justifySelf: "center",
+            alignSelf: "center",
+            display: "block",
+            border: "#ff6505 solid",
+            backgroundColor: "#FEF7E0",
+            height: "900px",
+            width: "1000px",
+            zIndex:"102",
+            padding: "50px",
+            borderRadius: "20px"
+          }}>
               <Form.Group as={Row}>
                 <Form.Label column sm={2}>
                   Meal Name
@@ -1085,7 +1186,6 @@ function EditMeal({history, ...props}) {
                   <Button
                     variant="primary"
                     onClick={()=>{
-                      saveEditedMeal()
                       toggleEditMeal(false)
                     }}
                   >
@@ -1102,31 +1202,47 @@ function EditMeal({history, ...props}) {
   }
 
   const newMealBox = () => {
-    let highestMealID = 0
+    // let highestMealID = 0
 
-    for (let i = 0; i<allMeals.length; i++) {
-      if (parseInt(allMeals[i].meal_uid.split("-")[1]) > highestMealID) {
-        highestMealID = parseInt(allMeals[i].meal_uid.split("-")[1])
-      }
-    }
+    // for (let i = 0; i<allMeals.length; i++) {
+    //   if (parseInt(allMeals[i].meal_uid.split("-")[1]) > highestMealID) {
+    //     highestMealID = parseInt(allMeals[i].meal_uid.split("-")[1])
+    //   }
+    // }
 
-    console.log(highestMealID)
+    // console.log(highestMealID)
 
-    highestMealID = highestMealID + 1
+    // highestMealID = highestMealID + 1
 
-    let newMealID = "840-"+highestMealID
+    // let newMealID = "840-"+highestMealID
 
     if (showNewMeal == true) {
-     
-        console.log(mealButtonPressed)
-        dispatch({type: 'SELECT_MEAL', payload: newMealID})
-        editMeal('', newMealID)
-        toggleMealButtonPressed(false)
-      
-      console.log(mealButtonPressed)
+        
       return (
-        <div style={{zIndex: "100", width: "70%", backgroundColor: "white", justifySelf: "center", alignSelf: "center", position: "relative", marginLeft: "15%"}}>
-          <Form style={{padding: "2%"}}>
+        <div style={{
+          height: "100%",
+          width: "100%",
+          zIndex: "101",
+          left: "0",
+          top: "0",
+          overflow: "auto",
+          position: "fixed",
+          display: "grid",
+          backgroundColor: 'rgba(255, 255, 255, 0.8)'
+        }}>
+          <Form style={{
+            position: "relative",
+            justifySelf: "center",
+            alignSelf: "center",
+            display: "block",
+            border: "#ff6505 solid",
+            backgroundColor: "#FEF7E0",
+            height: "900px",
+            width: "1000px",
+            zIndex:"102",
+            padding: "50px",
+            borderRadius: "20px"
+          }}>
               <Form.Group as={Row}>
                 <Form.Label column sm={2}>
                   Meal Name
@@ -1134,7 +1250,7 @@ function EditMeal({history, ...props}) {
                 <Col sm={10}>
                   <Form.Control
                     as="textarea"
-                    disabled={!state.selectedMeal}
+                    
                     value={state.editedMeal.meal_name}
                     onChange={
                       (event) => {
@@ -1153,7 +1269,7 @@ function EditMeal({history, ...props}) {
                   <Form.Control
                     as="textarea"
                     rows={3}
-                    disabled={!state.selectedMeal}
+                    
                     value={state.editedMeal.meal_desc}
                     onChange={
                       (event) => {
@@ -1170,7 +1286,7 @@ function EditMeal({history, ...props}) {
                 <Col sm={10}>
                   <Form.Control
                       as="select"
-                      disabled={!state.selectedMeal}
+                      
                       value={state.editedMeal.meal_category}
                       onChange={
                         (event) => {
@@ -1199,7 +1315,7 @@ function EditMeal({history, ...props}) {
                 </Form.Label>
                 <Col sm={10}>
                   <Form.Control
-                    disabled={!state.selectedMeal}
+                    
                     value={state.editedMeal.meal_hint}
                     onChange={
                       (event) => {
@@ -1214,14 +1330,18 @@ function EditMeal({history, ...props}) {
                   Meal Photo URL
                 </Form.Label>
                 <Col sm={10}>
-                  <Form.Control
-                    disabled={!state.selectedMeal}
-                    value={state.editedMeal.meal_photo_URL}
-                    onChange={
-                      (event) => {
-                        editMeal('meal_photo_URL', event.target.value );
-                      }
-                    }
+                  {/* <Form.File 
+                    id = "upload file" 
+                    label="File input"
+                    onChange={(event)=>{
+                      console.log(event.target.value)
+                      editMeal('meal_photo_URL', event.target.value)
+                    }} />*/}
+                  <input type="file" className="form-control" name="upload_file" 
+                    onChange={e => {
+                      selectedFile = e.target.files[0]
+                      console.log(selectedFile)
+                    }} 
                   />
                 </Col>
               </Form.Group>
@@ -1232,7 +1352,7 @@ function EditMeal({history, ...props}) {
                 <Col sm={10}>
                   <Form.Control
                     type="number"
-                    disabled={!state.selectedMeal}
+                    
                     value={state.editedMeal.meal_calories}
                     onChange={
                       (event) => {
@@ -1249,7 +1369,7 @@ function EditMeal({history, ...props}) {
                 <Col sm={10}>
                   <Form.Control
                     type="number"
-                    disabled={!state.selectedMeal}
+                    
                     value={state.editedMeal.meal_protein}
                     onChange={
                       (event) => {
@@ -1266,7 +1386,7 @@ function EditMeal({history, ...props}) {
                 <Col sm={10}>
                   <Form.Control
                     type="number"
-                    disabled={!state.selectedMeal}
+                    
                     value={state.editedMeal.meal_carbs}
                     onChange={
                       (event) => {
@@ -1283,7 +1403,7 @@ function EditMeal({history, ...props}) {
                 <Col sm={10}>
                   <Form.Control
                     type="number"
-                    disabled={!state.selectedMeal}
+                    
                     value={state.editedMeal.meal_fiber}
                     onChange={
                       (event) => {
@@ -1300,7 +1420,7 @@ function EditMeal({history, ...props}) {
                 <Col sm={10}>
                   <Form.Control
                     type="number"
-                    disabled={!state.selectedMeal}
+                    
                     value={state.editedMeal.meal_sugar}
                     onChange={
                       (event) => {
@@ -1317,7 +1437,7 @@ function EditMeal({history, ...props}) {
                 <Col sm={10}>
                   <Form.Control
                     type="number"
-                    disabled={!state.selectedMeal}
+                    
                     value={state.editedMeal.meal_fat}
                     onChange={
                       (event) => {
@@ -1334,7 +1454,7 @@ function EditMeal({history, ...props}) {
                 <Col sm={10}>
                   <Form.Control
                     type="number"
-                    disabled={!state.selectedMeal}
+                    
                     value={state.editedMeal.meal_sat}
                     onChange={
                       (event) => {
@@ -1353,21 +1473,22 @@ function EditMeal({history, ...props}) {
                   <Button
                     variant="primary"
                     onClick={()=>{
-                      saveEditedMeal()
-                      // toggleMealsGenerated(false)
-                      // generateMealsListUpdate()
+                      postNewMeal()
                       
-                      console.log("pog")
+                      
+                      console.log("edited meal data")
                       console.log(state.editedMeal)
-                      for (var i = 0; i < allMeals.length; i++) {
-                        if (allMeals[i].meal_uid == state.editedMeal.meal_uid) {
-                          allMeals[i] = state.editedMeal
-                          console.log("meal changed in allMeals")
-                        }
-                      }
+                      // for (var i = 0; i < allMeals.length; i++) {
+                      //   if (allMeals[i].meal_uid == state.editedMeal.meal_uid) {
+                      //     allMeals[i] = state.editedMeal
+                      //     console.log("meal changed in allMeals")
+                      //   }
+                      // }
+
+                      allMeals.push(state.editedMeal)
 
                       forceUpdate()
-                      toggleEditMeal(false)
+                      toggleNewMeal(false)
                     }}
                   >
                     Save
@@ -1375,8 +1496,7 @@ function EditMeal({history, ...props}) {
                   <Button
                     variant="primary"
                     onClick={()=>{
-                      saveEditedMeal()
-                      toggleEditMeal(false)
+                      toggleNewMeal(false)
                     }}
                   >
                     Cancel
@@ -1390,6 +1510,8 @@ function EditMeal({history, ...props}) {
       return null
     }
   }
+
+  
 
   return (
     <div style={{backgroundColor: '#F26522'}}>
@@ -1605,6 +1727,7 @@ function EditMeal({history, ...props}) {
       </div>
 
       {editBusinessBox()}
+      
 
       <div className={styles.containerMeals}>
         <div className={styles.sectionHeader} style={{display: "inline"}}>
@@ -1645,6 +1768,7 @@ function EditMeal({history, ...props}) {
       {console.log()}
 
       {editMealBox()}
+      {newMealBox()}
       
 
       {/*NEW CODE*/}
