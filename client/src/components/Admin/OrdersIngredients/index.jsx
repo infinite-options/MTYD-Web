@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useReducer } from "react";
+import { useEffect, useMemo, useReducer, useRef } from "react";
 import axios from "axios";
 import { API_URL } from "../../../reducers/constants";
 import { formatTime, sortedArray } from "../../../reducers/helperFuncs";
@@ -16,13 +16,13 @@ import styles from "./ordersIngredients.module.css";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import { collapseTextChangeRangesAcrossMultipleVersions } from "typescript";
-import AdminNavBar from '../AdminNavBar'
+import AdminNavBar from "../AdminNavBar";
 
 const initialState = {
   mounted: false,
   defaultFlag: true,
   selectedDate: "",
-  dateIndex: 0,
+  dateIndex: null,
   currDisplayDate: "",
   selectedBusinessID: "",
   selectedBusinessData: [],
@@ -48,6 +48,9 @@ const initialState = {
   businessData: [],
   mealDates: [],
   revenueData: [],
+  totalMeals: 0,
+  totalRevenue: 0,
+  carouselLoaded: false,
 };
 
 const responsive = {
@@ -169,6 +172,21 @@ function reducer(state, action) {
         selectedDate: action.payload.selectedDate,
         dateIndex: action.payload.dateIndex,
       };
+    case "LOAD_CAROUSEL":
+      return {
+        ...state,
+        carouselLoaded: true,
+      };
+    case "INCREMENT_DATE_INDEX":
+      return {
+        ...state,
+        dateIndex: state.dateIndex + 1,
+      };
+    case "DECREMENT_DATE_INDEX":
+      return {
+        ...state,
+        dateIndex: state.dateIndex - 1,
+      };
     default:
       return state;
   }
@@ -176,6 +194,7 @@ function reducer(state, action) {
 
 function OrdersIngredients({ history, ...props }) {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const carouselRef = useRef();
 
   // Check for log in
   useEffect(() => {
@@ -230,7 +249,7 @@ function OrdersIngredients({ history, ...props }) {
         console.log(err);
       });
   }, []);
-  // Fetch dates
+  // Fetch dates, meals, revenue & ingredients
   useEffect(() => {
     let closestDate = "";
     axios
@@ -238,8 +257,11 @@ function OrdersIngredients({ history, ...props }) {
       .then((response) => {
         const datesApi = response.data.result;
         const curDay = getCurrentDate();
-        const closestDateIndex = getClosestDateIndex();
+        const closestDateIndex = getClosestDateIndex(datesApi);
+        console.log(closestDateIndex);
         closestDate = datesApi[closestDateIndex].menu_date;
+
+        console.log("Dispatching...");
 
         dispatch({ type: "FETCH_MEAL_DATES", payload: datesApi });
         dispatch({
@@ -255,14 +277,32 @@ function OrdersIngredients({ history, ...props }) {
       })
       .then((response) => {
         const ordersApi = response.data.result;
-        dispatch({ type: "FETCH_ORDERS", payload: ordersApi });
+        const filteredData = ordersApi
+          ? ordersApi.filter(
+              (item) => item.jt_name !== "SURPRISE" && item.jt_name !== "SKIP"
+            )
+          : ordersApi;
+        dispatch({ type: "FETCH_ORDERS", payload: filteredData });
         return axios.get(
           `${API_URL}revenue_by_date/${closestDate.substring(0, 10)}`
         );
       })
       .then((response) => {
         const revenueApi = response.data.result;
-        dispatch({ type: "FETCH_REVENUE", payload: revenueApi });
+        const filteredData = revenueApi
+          ? revenueApi.filter((item) => item.meal_business !== null)
+          : revenueApi;
+        dispatch({ type: "FETCH_REVENUE", payload: filteredData });
+        return axios.get(
+          `${API_URL}ingredients_needed_by_date/${closestDate.substring(0, 10)}`
+        );
+      })
+      .then((response) => {
+        const ingredientsApi = response.data.result;
+        const filteredData = ingredientsApi.filter(
+          (item) => item.ingredient_desc !== null
+        );
+        dispatch({ type: "FETCH_INGREDIENTS", payload: filteredData });
       })
       .catch((err) => {
         if (err.response) {
@@ -292,22 +332,23 @@ function OrdersIngredients({ history, ...props }) {
   // }, []);
 
   // Fetch Ingredients
-  useEffect(() => {
-    axios
-      .get(`${API_URL}ingredients_need`)
-      .then((response) => {
-        const ingredientsApi = response.data.result;
-        dispatch({ type: "FETCH_INGREDIENTS", payload: ingredientsApi });
-      })
-      .catch((err) => {
-        if (err.response) {
-          // eslint-disable-next-line no-console
-          console.log(err.response);
-        }
-        // eslint-disable-next-line no-console
-        console.log(err);
-      });
-  }, []);
+
+  // useEffect(() => {
+  //   axios
+  //     .get(`${API_URL}ingredients_need`)
+  //     .then((response) => {
+  //       const ingredientsApi = response.data.result;
+  //       dispatch({ type: "FETCH_INGREDIENTS", payload: ingredientsApi });
+  //     })
+  //     .catch((err) => {
+  //       if (err.response) {
+  //         // eslint-disable-next-line no-console
+  //         console.log(err.response);
+  //       }
+  //       // eslint-disable-next-line no-console
+  //       console.log(err);
+  //     });
+  // }, []);
 
   const getCurrentDate = () => {
     const currentDate = new Date();
@@ -323,8 +364,94 @@ function OrdersIngredients({ history, ...props }) {
     return [[year, month, day].join("-"), "00-00-00"].join(" ");
   };
 
-  const getClosestDateIndex = () => {
-    return 48;
+  const getClosestDateIndex = (dates) => {
+    var now = Date().toLocaleString();
+    var monthDict = [];
+
+    monthDict.push({
+      key: "Jan",
+      value: "01",
+    });
+    monthDict.push({
+      key: "Feb",
+      value: "02",
+    });
+    monthDict.push({
+      key: "Mar",
+      value: "03",
+    });
+    monthDict.push({
+      key: "Apr",
+      value: "04",
+    });
+    monthDict.push({
+      key: "May",
+      value: "05",
+    });
+    monthDict.push({
+      key: "Jun",
+      value: "06",
+    });
+    monthDict.push({
+      key: "Jul",
+      value: "07",
+    });
+    monthDict.push({
+      key: "Aug",
+      value: "08",
+    });
+    monthDict.push({
+      key: "Sep",
+      value: "09",
+    });
+    monthDict.push({
+      key: "Oct",
+      value: "10",
+    });
+    monthDict.push({
+      key: "Nov",
+      value: "11",
+    });
+    monthDict.push({
+      key: "Dec",
+      value: "12",
+    });
+
+    const currMonth = now.substring(4, 7);
+    let currMonthVal = 0;
+    const currDay = now.substring(8, 10);
+    const currYear = now.substring(11, 15);
+
+    // assign value to current month
+    for (let i = 0, l = monthDict.length; i < l; i++) {
+      if (currMonth === monthDict[i].key) {
+        currMonthVal = monthDict[i].value;
+      }
+    }
+
+    let closestDateIndex = 0;
+
+    for (let i = 0, l = dates.length; i < l; i++) {
+      var date = dates[i];
+      var year = date.menu_date.substring(0, 4);
+      var month = date.menu_date.substring(5, 7);
+      var day = date.menu_date.substring(8, 10);
+
+      if (currYear <= year) {
+        if (currMonthVal < month) {
+          if (!closestDateIndex) {
+            return (closestDateIndex = i);
+          }
+        } else if (currMonthVal == month) {
+          if (currDay <= day) {
+            if (!closestDateIndex) {
+              return (closestDateIndex = i);
+            }
+          }
+        }
+      }
+    }
+    return 0;
   };
 
   const convertToDisplayDate = (date) => {
@@ -332,138 +459,13 @@ function OrdersIngredients({ history, ...props }) {
     return displayDate.toDateString();
   };
 
-  const orderDates = useMemo(() => {
-    const orderDates = state.mealDates.map((menuDate) => menuDate.menu_date);
-    const orderDatesUnique = orderDates.filter(
-      (elt, index) => orderDates.indexOf(elt) === index
-    );
-    orderDatesUnique.sort();
-    const orederDatesFormatted = orderDatesUnique.map(
-      (orderDate, dateIndex) => {
-        const orderDateTime = new Date(formatTime(orderDate));
-        return {
-          value: orderDatesUnique[dateIndex],
-          display: orderDateTime.toDateString(),
-        };
-      }
-    );
-    return orederDatesFormatted;
-  }, [state.ordersData]);
-
   const formatToDisplayDate = (date) => {
     let formattedDate = new Date(formatTime(date));
     return formattedDate.toDateString();
   };
 
-  formatToDisplayDate(state.selectedDate);
   // const nowTest1 = new Date('May 06, 2021');
   // const nowTest = nowTest1.toString();
-  var now = Date().toLocaleString();
-  var monthDict = [];
-
-  monthDict.push({
-    key: "Jan",
-    value: "01",
-  });
-  monthDict.push({
-    key: "Feb",
-    value: "02",
-  });
-  monthDict.push({
-    key: "Mar",
-    value: "03",
-  });
-  monthDict.push({
-    key: "Apr",
-    value: "04",
-  });
-  monthDict.push({
-    key: "May",
-    value: "05",
-  });
-  monthDict.push({
-    key: "Jun",
-    value: "06",
-  });
-  monthDict.push({
-    key: "Jul",
-    value: "07",
-  });
-  monthDict.push({
-    key: "Aug",
-    value: "08",
-  });
-  monthDict.push({
-    key: "Sep",
-    value: "09",
-  });
-  monthDict.push({
-    key: "Oct",
-    value: "10",
-  });
-  monthDict.push({
-    key: "Nov",
-    value: "11",
-  });
-  monthDict.push({
-    key: "Dec",
-    value: "12",
-  });
-
-  var currMonth = now.substring(4, 7);
-  var currMonthVal = 0;
-  var currDay = now.substring(8, 10);
-  var currYear = now.substring(11, 15);
-
-  // assign value to current month
-  for (let i = 0, l = monthDict.length; i < l; i++) {
-    if (currMonth === monthDict[i].key) {
-      currMonthVal = monthDict[i].value;
-    }
-  }
-
-  // remove futureDays?
-  var futureDaysList = [];
-  var futureDaysListValues = [];
-
-  let closestDateIndex = 0;
-
-  for (let i = 0, l = orderDates.length; i < l; i++) {
-    var date = orderDates[i].value;
-    var dateDisplay = orderDates[i].display;
-    var year = date.substring(0, 4);
-    var month = date.substring(5, 7);
-    var day = date.substring(8, 10);
-
-    if (currYear <= year) {
-      if (currMonthVal < month) {
-        if (!closestDateIndex) {
-          closestDateIndex = i;
-        }
-        futureDaysListValues.push(orderDates[i].value);
-        futureDaysList.push(dateDisplay);
-      } else if (currMonthVal == month) {
-        if (currDay <= day) {
-          if (!closestDateIndex) {
-            closestDateIndex = i;
-          }
-          futureDaysListValues.push(orderDates[i].value);
-          futureDaysList.push(dateDisplay);
-        }
-      }
-    }
-  }
-
-  const getDateButtonRange = (startDateIndex) => {
-    let dateRange = [];
-    for (let i = startDateIndex; i <= startDateIndex + 5; i++) {
-      dateRange.push(orderDates[i]);
-    }
-    return dateRange;
-  };
-
-  var closestToCurrDay = futureDaysList[0];
-  var closestToCurrDayVal = futureDaysListValues[0];
 
   // DEPRECATED
   const getOrderData = (date) => {
@@ -487,44 +489,6 @@ function OrdersIngredients({ history, ...props }) {
     );
     return curCustomers;
   };
-
-  ////// DEPRECATED API CALLS //////
-  // Fetch orders
-  // useEffect(() => {
-  //   axios
-  //     .get(`${API_URL}Orders_by_Items_total_items`)
-  //     .then((response) => {
-  //       const ordersApi = response.data.result;
-  //       dispatch({ type: "FETCH_ORDERS", payload: ordersApi });
-  //     })
-  //     .catch((err) => {
-  //       if (err.response) {
-  //         // eslint-disable-next-line no-console
-  //         console.log(err.response);
-  //       }
-  //       // eslint-disable-next-line no-console
-  //       console.log(err);
-  //     });
-  // }, []);
-
-  // Fetch Customer Names
-  // useEffect(() => {
-  //   axios
-  //     .get(`${API_URL}orders_by_customers`)
-  //     .then((response) => {
-  //       const customersApi = response.data.result;
-  //       dispatch({ type: "FETCH_CUSTOMERS", payload: customersApi });
-  //     })
-  //     .catch((err) => {
-  //       if (err.response) {
-  //         // eslint-disable-next-line no-console
-  //         console.log(err.response);
-  //       }
-  //       // eslint-disable-next-line no-console
-  //       console.log(err);
-  //     });
-  // }, []);
-  ////// END DEPRECATED API CALLS //////
 
   const changeSortOrder = (field) => {
     const isAsc =
@@ -587,7 +551,12 @@ function OrdersIngredients({ history, ...props }) {
       .get(`${API_URL}meals_ordered_by_date/${newDate.substring(0, 10)}`)
       .then((response) => {
         const ordersApi = response.data.result;
-        dispatch({ type: "FETCH_ORDERS", payload: ordersApi });
+        const filteredData = ordersApi
+          ? ordersApi.filter(
+              (item) => item.jt_name !== "SURPRISE" && item.jt_name !== "SKIP"
+            )
+          : ordersApi;
+        dispatch({ type: "FETCH_ORDERS", payload: filteredData });
       })
       .catch((err) => {
         if (err.response) {
@@ -603,7 +572,10 @@ function OrdersIngredients({ history, ...props }) {
       .then((response) => {
         console.log(response);
         const revenueApi = response.data.result;
-        dispatch({ type: "FETCH_REVENUE", payload: revenueApi });
+        const filteredData = revenueApi
+          ? revenueApi.filter((item) => item.meal_business !== null)
+          : revenueApi;
+        dispatch({ type: "FETCH_REVENUE", payload: filteredData });
       })
       .catch((err) => {
         if (err.response) {
@@ -613,12 +585,26 @@ function OrdersIngredients({ history, ...props }) {
         // eslint-disable-next-line no-console
         console.log(err);
       });
-
+    axios
+      .get(`${API_URL}ingredients_needed_by_date/${newDate.substring(0, 10)}`)
+      .then((response) => {
+        const ingredientsApi = response.data.result;
+        const filteredData = ingredientsApi.filter(
+          (item) => item.ingredient_desc !== null
+        );
+        dispatch({ type: "FETCH_INGREDIENTS", payload: filteredData });
+      })
+      .catch((err) => {
+        if (err.response) {
+          console.log(err.response);
+        }
+        console.log(err);
+      });
     dispatch({
       type: "CHANGE_DATE",
       payload: { newDate: newDate, display: displayDate },
     });
-    state.defaultFlag = false;
+
     // const newOrders = getOrderData(newDate);
     // const sortedOrders = sortedArray(
     //   newOrders,
@@ -640,6 +626,8 @@ function OrdersIngredients({ history, ...props }) {
     // dispatch({ type: "FILTER_ORDERS", payload: sortedOrders });
     // dispatch({ type: "FILTER_INGREDIENTS", payload: sortedIngredients });
     // dispatch({ type: "FILTER_CUSTOMERS", payload: sortedCustomers });
+
+    state.defaultFlag = false;
   };
   // display the default order/ingredient/customer data to the closest date we have in dropdown list based on todays day
   // if (state.defaultFlag) {
@@ -669,25 +657,30 @@ function OrdersIngredients({ history, ...props }) {
 
   const calculateTotalMealQty = (meals) => {
     let sum = 0;
-    meals.forEach((item) => {
-      if (item.total_qty !== null) {
-        sum += item.total_qty;
-      } else {
-        sum += 0;
-      }
-    });
+    if (meals) {
+      meals.forEach((item) => {
+        if (item.total_qty !== null) {
+          sum += item.total_qty;
+        } else {
+          sum += 0;
+        }
+      });
+    }
+
     return sum;
   };
 
   const calculateTotalRevenue = (data) => {
     let sum = 0;
-    data.forEach((item) => {
-      if (item.total_revenue !== null) {
-        sum += item.total_revenue;
-      } else {
-        sum += 0;
-      }
-    });
+    if (data) {
+      data.forEach((item) => {
+        if (item.total_revenue !== null) {
+          sum += item.total_revenue;
+        } else {
+          sum += 0;
+        }
+      });
+    }
     return sum;
   };
 
@@ -717,7 +710,7 @@ function OrdersIngredients({ history, ...props }) {
   };
 
   const filterDataByBusiness = (data, id) => {
-    if (id) {
+    if (data && id) {
       return data.filter((item) => item.meal_business === id);
     }
     return data;
@@ -750,236 +743,328 @@ function OrdersIngredients({ history, ...props }) {
     currency: "USD",
   });
 
+  if (
+    carouselRef &&
+    carouselRef.current &&
+    state.dateIndex &&
+    !state.carouselLoaded
+  ) {
+    // carouselRef.current.goToSlide(state.dateIndex);
+    carouselRef.current.state.currentSlide = state.dateIndex;
+    dispatch({ type: "LOAD_CAROUSEL" });
+  }
+
+  // if (state.dateIndex && !state.carouselLoaded) {
+  //   initializeCarousel(state.dateIndex);
+  //   dispatch({ type: "LOAD_CAROUSEL" });
+  // }
+
+  // if (
+  //   carouselRef &&
+  //   carouselRef.current &&
+  //   state.dateIndex &&
+  //   !state.carouselLoaded
+  // ) {
+  //   carouselRef.current.goToSlide(state.dateIndex);
+  // }
+
+  const CustomRight = ({ onClick }) => (
+    <button
+      onClick={() => {
+        onClick();
+        // dispatch({ type: "INCREMENT_DATE_INDEX" });
+      }}
+      style={{ position: "absolute", right: 0 }}
+    >
+      Right
+    </button>
+  );
+  const CustomLeft = ({ onClick }) => {
+    return (
+      <button
+        onClick={() => {
+          onClick();
+          // dispatch({ type: "DECREMENT_DATE_INDEX" });
+        }}
+        style={{ position: "absolute", left: 0 }}
+      >
+        Left
+      </button>
+    );
+  };
+
   return (
     <>
-    <AdminNavBar currentPage={'order-ingredients'}/>
-    <div className={styles.root}>
-      {console.log(state)}
-      <Container fluid className={styles.container}>
-        <Row className={[styles.section, styles.row1].join(" ")}>
-          <Col md="auto" className={styles.restaurantSelector}>
-            {state.selectedBusinessID ? (
-              <img
-                src={state.selectedBusinessData.business_image}
-                className={styles.restaurantImg}
-              ></img>
-            ) : (
-              <div className={styles.restaurantImg}></div>
-            )}
-            <div style={{ marginLeft: "10px" }}>
-              <form>
-                <div className={styles.dropdownArrow}>
-                  <select className={styles.dropdown} onChange={filterBusiness}>
-                    <option key={0}>All Orders</option>
-                    {state.businessData.map((business) => {
-                      if (business) {
-                        return (
-                          <option
-                            key={business.business_uid}
-                            value={business.business_uid}
-                          >
-                            {business.business_name}
-                          </option>
-                        );
-                      }
-                    })}
-                  </select>
+      <AdminNavBar currentPage={"order-ingredients"} />
+      <div className={styles.root}>
+        {console.log(state)}
+        <Container fluid className={styles.container}>
+          <Row className={[styles.section, styles.row1].join(" ")}>
+            <Col md="auto" className={styles.restaurantSelector}>
+              {state.selectedBusinessID ? (
+                <img
+                  src={state.selectedBusinessData.business_image}
+                  className={styles.restaurantImg}
+                ></img>
+              ) : (
+                <div className={styles.restaurantImg}></div>
+              )}
+              <div style={{ marginLeft: "10px" }}>
+                <form>
+                  <div className={styles.dropdownArrow}>
+                    <select
+                      className={styles.dropdown}
+                      onChange={filterBusiness}
+                    >
+                      <option key={0}>All Orders</option>
+                      {state.businessData.map((business) => {
+                        if (business) {
+                          return (
+                            <option
+                              key={business.business_uid}
+                              value={business.business_uid}
+                            >
+                              {business.business_name}
+                            </option>
+                          );
+                        }
+                      })}
+                    </select>
+                  </div>
+                </form>
+                <div className={styles.restaurantLinks}>
+                  <a>Send Message</a>
+                  <a>Issue Coupon</a>
                 </div>
-              </form>
-              <div className={styles.restaurantLinks}>
-                <a>Send Message</a>
-                <a>Issue Coupon</a>
               </div>
-            </div>
-          </Col>
-          <Col xs={6}>
-            <Carousel responsive={responsive}>
-              {state.mealDates.map((date) => {
-                const displayDate = convertToDisplayDate(date.menu_date);
-                return (
-                  <button
-                    className={[
-                      styles.datebutton,
-                      styles.datebuttonNotSelected,
-                    ].join(" ")}
-                    key={date.menu_date}
-                    value={date.menu_date}
-                    onClick={(e) => handleDateButtonClick(e, displayDate)}
-                  >
-                    {displayDate.substring(0, 3)} <br />{" "}
-                    {displayDate.substring(4, 10)}
-                  </button>
-                );
-              })}
-            </Carousel>
-            {/* <button className={styles.dateLeft}></button> */}
-            {/* {getDateButtonRange(closestDateIndex).map((date) => {
-              if (date) {
-                const dayName = date.display.substring(0, 3);
-                const day = date.display.substring(4, 10);
-                return (
-                  <button
-                    className={[
-                      styles.datebutton,
-                      styles.datebuttonNotSelected,
-                    ].join(" ")}
-                    key={date.value}
-                    value={date.value}
-                    onClick={(e) => handleDateButtonClick(e, date.display)}
-                  >
-                    {dayName} <br /> {day}
-                  </button>
-                );
-              } */}
-            {/* })} */}
-            {/* <button className={styles.dateRight}></button> */}
-          </Col>
-          <Col
-            md="auto"
-            style={{
-              paddingTop: "10px",
-              textAlign: "center",
-            }}
-          >
-            <div style={{ marginBottom: "10px", color: "#f26522" }}>
-              Contact Info
-            </div>
-            <div>{state.selectedBusinessData.business_email}</div>
-            <div>{state.selectedBusinessData.business_phone_num}</div>
-          </Col>
-          <Col
-            md="auto"
-            style={{
-              paddingTop: "10px",
-              textAlign: "center",
-            }}
-          >
-            <div style={{ marginBottom: "10px", color: "#f26522" }}>
-              No. of Meals
-            </div>
-            <div>5</div>
-          </Col>
-          <Col
-            md="auto"
-            style={{
-              paddingTop: "10px",
-              textAlign: "center",
-            }}
-          >
-            <div style={{ marginBottom: "10px", color: "#f26522" }}>
-              Total Revenue
-            </div>
-            <div>$95.90</div>
-          </Col>
-        </Row>
-        <Row className={styles.row2}>
-          <Col xs={5} className={styles.section} style={{ marginRight: 10 }}>
-            Upcoming Meal Orders And Revenue:{" "}
-            {formatDisplayDate(formatToDisplayDate(state.selectedDate))}
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Qty.</TableCell>
-                  <TableCell>Meal Orders</TableCell>
-                  <TableCell>Meal Pictures</TableCell>
-                  <TableCell>Meal Cost</TableCell>
-                  <TableCell>Total Cost</TableCell>
-                  <TableCell>Additional Revenue</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {filterDataByBusiness(
-                  state.ordersData,
-                  state.selectedBusinessID
-                ).map((item) => {
-                  return (
-                    <TableRow>
-                      <TableCell>{item.total_qty}</TableCell>
-                      <TableCell>{item.jt_name}</TableCell>
-                      <TableCell>
-                        <img
-                          src={item.meal_photo_URL}
-                          className={styles.mealImg}
-                        ></img>
-                      </TableCell>
-                      <TableCell>
-                        {currencyFormatter.format(item.meal_cost)}
-                      </TableCell>
-                      <TableCell>
-                        {currencyFormatter.format(item.total_cost)}
-                      </TableCell>
-                      <TableCell>?</TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </Col>
-          <Col xs={4} className={styles.section} style={{ marginRight: 10 }}>
-            Revenue:{" "}
-            {formatDisplayDate(formatToDisplayDate(state.selectedDate))}
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Restaurant Name</TableCell>
-                  <TableCell>Total Cost</TableCell>
-                  <TableCell>Additional Revenue</TableCell>
-                  <TableCell>Total Revenue</TableCell>
-                  <TableCell>M4Me Profits</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {console.log(state.revenueData)}
-                {filterDataByBusiness(
-                  state.revenueData,
-                  state.selectedBusinessID
-                ).map((item) => {
-                  return (
-                    <TableRow>
-                      <TableCell>
-                        {getBusinessName(item.meal_business)}
-                      </TableCell>
-                      <TableCell>
-                        {currencyFormatter.format(item.total_cost)}
-                      </TableCell>
-                      <TableCell>?</TableCell>
-                      <TableCell>
-                        {currencyFormatter.format(item.total_revenue)}
-                      </TableCell>
-                      <TableCell>?</TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </Col>
-          <Col className={styles.section}>
-            Ingredients Needed:{" "}
-            {formatDisplayDate(formatToDisplayDate(state.selectedDate))}
-            <Table>
-              <TableHead>
-                <TableCell>Ingredient Name</TableCell>
-                <TableCell>Quantity</TableCell>
-                <TableCell>Unit</TableCell>
-              </TableHead>
-              <TableBody>
-                {getIngredientsData("2021-06-23 00-00-00").map((ingredient) => {
-                  if (ingredient.ingredient_desc) {
-                    return (
-                      <TableRow>
-                        <TableCell>{ingredient.ingredient_desc}</TableCell>
-                        <TableCell>{ingredient.qty_needed}</TableCell>
-                        <TableCell>{ingredient.units}</TableCell>
-                      </TableRow>
-                    );
-                  }
-                })}
-              </TableBody>
-            </Table>
-          </Col>
-        </Row>
+            </Col>
+            <Col xs={6}>
+              {/* <button
+                onClick={() => {
+                  const nextSlide = state.dateIndex - 1;
+                  carouselRef.current.goToSlide(nextSlide);
+                  dispatch({ type: "DECREMENT_DATE_INDEX" });
+                }}
+              >
+                Left
+              </button> */}
+              {state.dateIndex != null && (
+                <Carousel
+                  responsive={responsive}
+                  ref={carouselRef}
+                  // arrows
+                  // customRightArrow={<CustomRight />}
+                  // customLeftArrow={<CustomLeft />}
+                >
+                  {console.log(carouselRef)}
+                  {state.mealDates.map((date) => {
+                    const displayDate = convertToDisplayDate(date.menu_date);
 
-        {/* <Row>
+                    return (
+                      <button
+                        className={[
+                          styles.datebutton,
+                          styles.datebuttonNotSelected,
+                        ].join(" ")}
+                        key={date.menu_date}
+                        value={date.menu_date}
+                        onClick={(e) => handleDateButtonClick(e, displayDate)}
+                      >
+                        {displayDate.substring(0, 3)} <br />{" "}
+                        {displayDate.substring(4, 10)}
+                      </button>
+                    );
+                  })}
+                </Carousel>
+              )}
+              {/* <button
+                onClick={() => {
+                  const nextSlide = state.dateIndex + 1;
+                  carouselRef.current.goToSlide(nextSlide);
+                  dispatch({ type: "INCREMENT_DATE_INDEX" });
+                }}
+              >
+                Right
+              </button> */}
+            </Col>
+            <Col
+              style={{
+                paddingTop: "10px",
+                textAlign: "center",
+              }}
+            >
+              <div style={{ marginBottom: "10px", color: "#f26522" }}>
+                {state.selectedBusinessID && "Contact Info"}
+              </div>
+              <div>{state.selectedBusinessData.business_email}</div>
+              <div>{state.selectedBusinessData.business_phone_num}</div>
+            </Col>
+            <Col
+              style={{
+                paddingTop: "10px",
+                textAlign: "center",
+              }}
+            >
+              <div style={{ marginBottom: "10px", color: "#f26522" }}>
+                No. of Meals
+              </div>
+              <div>
+                {calculateTotalMealQty(
+                  filterDataByBusiness(
+                    state.ordersData,
+                    state.selectedBusinessID
+                  )
+                )}
+              </div>
+            </Col>
+            <Col
+              style={{
+                paddingTop: "10px",
+                textAlign: "center",
+              }}
+            >
+              <div style={{ marginBottom: "10px", color: "#f26522" }}>
+                Total Revenue
+              </div>
+              <div>
+                {currencyFormatter.format(
+                  calculateTotalRevenue(
+                    filterDataByBusiness(
+                      state.revenueData,
+                      state.selectedBusinessID
+                    )
+                  )
+                )}
+              </div>
+            </Col>
+          </Row>
+          <Row className={styles.row2}>
+            <Col xs={5} className={styles.section} style={{ marginRight: 10 }}>
+              Upcoming Meal Orders And Revenue:{" "}
+              {formatDisplayDate(formatToDisplayDate(state.selectedDate))}
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Qty.</TableCell>
+                    <TableCell>Meal Orders</TableCell>
+                    <TableCell>Meal Pictures</TableCell>
+                    <TableCell>Meal Cost</TableCell>
+                    <TableCell>Total Cost</TableCell>
+                    <TableCell>Additional Revenue</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {state.ordersData &&
+                    filterDataByBusiness(
+                      state.ordersData,
+                      state.selectedBusinessID
+                    ).map((item) => {
+                      return (
+                        <TableRow>
+                          <TableCell>{item.total_qty}</TableCell>
+                          <TableCell>{item.jt_name}</TableCell>
+                          <TableCell>
+                            <img
+                              src={item.meal_photo_URL}
+                              className={styles.mealImg}
+                            ></img>
+                          </TableCell>
+                          <TableCell>
+                            {currencyFormatter.format(item.meal_cost)}
+                          </TableCell>
+                          <TableCell>
+                            {currencyFormatter.format(item.total_cost)}
+                          </TableCell>
+                          <TableCell>
+                            {currencyFormatter.format(
+                              item.total_profit_sharing
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                </TableBody>
+              </Table>
+            </Col>
+            <Col xs={4} className={styles.section} style={{ marginRight: 10 }}>
+              Revenue:{" "}
+              {formatDisplayDate(formatToDisplayDate(state.selectedDate))}
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Restaurant Name</TableCell>
+                    <TableCell>Total Cost</TableCell>
+                    <TableCell>Additional Revenue</TableCell>
+                    <TableCell>Total Revenue</TableCell>
+                    <TableCell>M4Me Profits</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {state.revenueData &&
+                    filterDataByBusiness(
+                      state.revenueData,
+                      state.selectedBusinessID
+                    ).map((item) => {
+                      return (
+                        <TableRow>
+                          <TableCell>
+                            {getBusinessName(item.meal_business)}
+                          </TableCell>
+                          <TableCell>
+                            {currencyFormatter.format(item.total_cost)}
+                          </TableCell>
+                          <TableCell>
+                            {currencyFormatter.format(
+                              item.total_profit_sharing
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            {currencyFormatter.format(item.total_revenue)}
+                          </TableCell>
+                          <TableCell>
+                            {currencyFormatter.format(item.total_M4ME_rev)}
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                </TableBody>
+              </Table>
+            </Col>
+            <Col className={styles.section}>
+              Ingredients Needed:{" "}
+              {formatDisplayDate(formatToDisplayDate(state.selectedDate))}
+              <Table>
+                <TableHead>
+                  <TableCell>Ingredient Name</TableCell>
+                  <TableCell>Quantity</TableCell>
+                  <TableCell>Unit</TableCell>
+                  <TableCell>Measure</TableCell>
+                  <TableCell>Cost</TableCell>
+                </TableHead>
+                <TableBody>
+                  {state.ingredientsData &&
+                    filterDataByBusiness(
+                      state.ingredientsData,
+                      state.selectedBusinessID
+                    ).map((item) => {
+                      return (
+                        <TableRow>
+                          <TableCell>{item.ingredient_desc}</TableCell>
+                          <TableCell>{item.total_ingredient_qty}</TableCell>
+                          <TableCell>{item.package_unit}</TableCell>
+                          <TableCell>{item.package_measure}</TableCell>
+                          <TableCell>
+                            {currencyFormatter.format(item.package_cost)}
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                </TableBody>
+              </Table>
+            </Col>
+          </Row>
+
+          {/* <Row>
           <Col>
             <Form>
               <Form.Group as={Row}>
@@ -1209,8 +1294,8 @@ function OrdersIngredients({ history, ...props }) {
             </Table>
           </Col>
         </Row> */}
-      </Container>
-    </div>
+        </Container>
+      </div>
     </>
   );
 }
