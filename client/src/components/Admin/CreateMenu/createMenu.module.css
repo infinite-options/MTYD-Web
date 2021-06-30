@@ -1,0 +1,50 @@
+.root {
+  background-color: #f26522;
+  width: 100vw;
+  height: 100vh;
+  padding: 25px;
+  overflow: scroll;
+}
+
+.container {
+  height: 100%;
+  margin: 0px;
+}
+
+.section {
+  background-color: white;
+  border-radius: 15px;
+  padding: 15px;
+}
+
+.main {
+  margin-top: 10px;
+  height: 85%;
+  overflow: scroll;
+}
+
+.topBtn {
+  background-color: #f26522;
+  border-radius: 10px;
+  border: none;
+  color: white;
+  height: 70%;
+}
+
+.datebutton {
+  height: 80px;
+  width: 80px;
+  width: same-as-height;
+  font-size: 15px;
+  border: none;
+}
+
+.datebuttonNotSelected {
+  box-shadow: 0 0 7px #838383;
+  background-color: white;
+}
+
+.datebuttonSelected {
+  background-color: #f8bb17;
+  border: 4px solid rgb(240, 142, 31);
+}
