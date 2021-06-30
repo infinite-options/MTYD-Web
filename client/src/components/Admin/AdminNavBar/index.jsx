@@ -8,6 +8,38 @@ import styles from "./adminNavBar.module.css";
 import hamburger from '../../../images/hamburger.png'
 import forkClose from '../../../images/forkClose.png'
 
+const LINK_WIDTH = {
+	menu: '7%',
+	orders: '8%',
+	ingredients_n_units: '16%',
+	businesses_n_meals: '16%',
+	customers: '12%',
+	notifications: '14%',
+	coupons: '9%',
+	zones: '8%',
+	analytics: '10%'
+
+  // menu: '11%',
+	// orders: '11%',
+	// ingredients_n_units: '11%',
+	// businesses_n_meals: '11%',
+	// customers: '11%',
+	// notifications: '11%',
+	// coupons: '11%',
+	// zones: '11%',
+	// analytics: '11%'
+
+  // menu: '9%',
+	// orders: '9%',
+	// ingredients_n_units: '16%',
+	// businesses_n_meals: '16%',
+	// customers: '11%',
+	// notifications: '11%',
+	// coupons: '9%',
+	// zones: '9%',
+	// analytics: '9%'
+}
+
 function NavBar(props) {
   const history = useHistory();
 
@@ -39,17 +71,20 @@ function NavBar(props) {
   });
 
   return (
-    <div
+    <>
+     {/* <div
       style={{
-        // border: 'solid',
+        border: '1px solid red',
         backgroundColor: '#F8BB17',
         display: 'flex',
         // alignItems: 'center',
         height: '80px',
         position: 'relative',
-        zIndex: '100'
+        zIndex: '100',
+        width: '100vw',
+        maxWidth: '100%'
       }}
-    >
+    > */}
 
       {/* For debugging window size */}
 			{/* <span 
@@ -89,7 +124,19 @@ function NavBar(props) {
       </div> */}
 
       {dimensions.width > 1000 ? (
-        <>
+        <div
+          style={{
+            // border: '1px solid white',
+            backgroundColor: '#F8BB17',
+            display: 'flex',
+            // alignItems: 'center',
+            height: '80px',
+            position: 'relative',
+            zIndex: '100',
+            width: '100vw',
+            maxWidth: '100%'
+          }}
+        >
           <div
             style={{
               // border: 'solid',
@@ -103,100 +150,176 @@ function NavBar(props) {
                 backgroundSize:'cover',
                 marginTop: '10px',
                 marginLeft: '20px',
+                // marginRight: '20px',
                 width: '140px',
-                height: '70px'
+                height: '70px',
+                // border: '1px solid'
               }}>
             </a>
           </div>
           <div
             style={{
-              // border: 'solid',
               width: '90%',
+              maxWidth: '90%',
               display: 'flex',
-              // textAlign: 'center',
-              // justifyContent: 'center',
               alignItems: 'center',
-              // display: flex;
-              // /* flex-direction: column; */
-              // text-align: center;
-              // justify-content: center;
-              // align-items: center;
-              height: '80px'
+              height: '80px',
+              // border: '1px solid'
             }}
           >
-            <a href='/admin/edit-meal' className={styles.navLink3}>Meals & Plans</a>
-            <a href='/admin/plans-coupons' className={styles.navLink4}>Plans & Coupons</a>
+
             <a 
-              href='/admin/order-ingredients' 
-              className={styles.navLink5}
-              style={props.currentPage === 'order-ingredients' ? {color: 'black'} : {}}
-            > 
-              Orders & Ingredients 
+              href='/admin/create-menu' 
+              className={styles.navLink}
+              style={props.currentPage === 'create-menu' ? {
+                color: 'black',
+                width: LINK_WIDTH.menu
+              } : {
+                width: LINK_WIDTH.menu
+              }}
+            >
+              Menu
             </a>
+
             <a 
-              href='/admin/customer-info' 
-              className={styles.navLink2}
-              style={props.currentPage === 'customer-info' ? {color: 'black'} : {}}
+              href='/admin/orders-ingredients' 
+              className={styles.navLink}
+              style={props.currentPage === 'orders-ingredients' ? {
+                color: 'black',
+                width: LINK_WIDTH.orders
+              } : {
+                width: LINK_WIDTH.orders
+              }}
+            > 
+              Orders
+            </a>
+
+            <a 
+              href='/admin/ingredients-units' 
+              className={styles.navLink}
+              style={props.currentPage === 'ingredients-units' ? {
+                color: 'black',
+                width: LINK_WIDTH.ingredients_n_units
+              } : {
+                width: LINK_WIDTH.ingredients_n_units
+              }}
+            > 
+              Ingredients & Units
+            </a>
+
+            <a 
+              href='/admin/businesses' 
+              className={styles.navLink}
+              style={props.currentPage === 'businesses' ? {
+                color: 'black',
+                width: LINK_WIDTH.businesses_n_meals
+              } : {
+                width: LINK_WIDTH.businesses_n_meals
+              }}
+            >
+              Businesses & Meals
+            </a>
+
+            <a 
+              href='/admin/customers' 
+              className={styles.navLink}
+              style={props.currentPage === 'customers' ? {
+                color: 'black',
+                width: LINK_WIDTH.customers
+              } : {
+                width: LINK_WIDTH.customers
+              }}
             >
               Customers
             </a>
-            <a href='/admin/customers' className={styles.navLink4}>Google Analytics</a>
-            <a href='/admin/edit-meal' className={styles.navLink3}>Notifications</a>
+
             <a 
-              href='/admin/edit-meal' 
-              className={styles.navLink2}
-              style={props.currentPage === 'edit-meal' ? {color: 'black'} : {}}
+              href='/admin/notifications' 
+              className={styles.navLink}
+              style={props.currentPage === 'notifications' ? {
+                color: 'black',
+                width: LINK_WIDTH.notifications
+              } : {
+                width: LINK_WIDTH.notifications
+              }}
             >
-              Businesses
+              Notifications
             </a>
-            <a href='/admin/edit-meal' className={styles.navLink1}>Zones</a>
-            <a href='/admin/edit-meal' className={styles.navLink1}>Profile</a>
+
+            <a 
+              href='/admin/coupons' 
+              className={styles.navLink}
+              style={props.currentPage === 'plans-coupons' ? {
+                color: 'black',
+                width: LINK_WIDTH.coupons
+              } : {
+                width: LINK_WIDTH.coupons
+              }}
+            >
+              Coupons
+            </a>
+
+            <a 
+              href='/admin/zones' 
+              className={styles.navLink}
+              style={props.currentPage === 'zones' ? {
+                color: 'black',
+                width: LINK_WIDTH.zones
+              } : {
+                width: LINK_WIDTH.zones
+              }}
+            >
+              Zones
+            </a>
+
+            <a 
+              href='/admin/google-analytics' 
+              className={styles.navLink}
+              style={props.currentPage === 'google-analytics' ? {
+                color: 'black',
+                width: LINK_WIDTH.analytics
+              } : {
+                width: LINK_WIDTH.analytics
+              }}
+            >
+              Analytics
+            </a>
+
           </div>
-        </>
+        </div>
       ) : (
         <div
           style={{
-            // border: 'solid',
+            // border: '1px solid white',
+            backgroundColor: '#F8BB17',
+            display: 'flex',
+            justifyContent: 'center',
+            // alignItems: 'center',
+            height: '80px',
+            position: 'relative',
+            zIndex: '100',
+            width: '100vw',
+            maxWidth: '100%'
+          }}
+        >
+        {/* <div
+          style={{
             width: '100%',
             display: 'flex',
             justifyContent: 'center'
           }}
-        >
-          {/* style={{
-            width:"60px",
-            height:"40px",
-            marginLeft: '30px',
-            backgroundImage:`url(${hamburger})`,
-            backgroundSize:'cover',
-            cursor: 'pointer'
-          }} */}
+        > */}
           <div
             style={{
-              // border: 'dashed',
               position: 'absolute',
               left: '0',
               height: '100%',
               paddingLeft: '30px',
               display: 'flex',
-              // justifyContent: 'center',
               alignItems: 'center'
-              // width: '20%'
             }}
           >
             <div
-              // style={{
-              //   width:"60px",
-              //   height:"40px",
-              //   // marginLeft: '30px',
-              //   backgroundImage: (
-              //     showDropdown 
-              //     ? `url(${hamburger})`
-              //     : `url(${forkClose})`
-              //   ),
-              //   backgroundSize:'cover',
-              //   cursor: 'pointer',
-              //   // border: 'solid'
-              // }}
               style={showDropdown ? {
                 width:"50px",
                 height:"50px",
@@ -215,26 +338,12 @@ function NavBar(props) {
               }}
             />
           </div>
-          {/* <div
-            style={{
-              position: 'absolute',
-              left: '0',
-              top: '80px',
-              // border: 'solid',
-              width: '100vw',
-              height: '200px',
-              backgroundColor: '#F8BB17'
-            }}
-          >
-            dropdown menu
-          </div> */}
           {showDropdown ? (
             <div
               style={{
                 position: 'absolute',
                 left: '0',
                 top: '80px',
-                // border: 'solid',
                 width: '100vw',
                 height: '375px',
                 backgroundColor: '#F8BB17'
@@ -246,48 +355,48 @@ function NavBar(props) {
                   className={styles.navLinkDD}
                   style={props.currentPage === 'meals-plans' ? {color: 'black'} : {}}
                 >
-                  Meals & Plans
+                  Menu
                 </a>
               </div>
               <div className={styles.dropdownLink}>
                 <a 
-                  href='/admin/plans-coupons' 
-                  className={styles.navLinkDD}
-                  style={props.currentPage === 'plans-coupons' ? {color: 'black'} : {}}
-                >
-                  Plans & Coupons
-                </a>
-              </div>
-              <div className={styles.dropdownLink}>
-                <a 
-                  href='/admin/order-ingredients' 
+                  href='/admin/orders-ingredients' 
                   className={styles.navLinkDD}
                   style={props.currentPage === 'orders-ingredients' ? {color: 'black'} : {}}
                 >
-                  Orders & Ingredients
+                  Orders
                 </a>
               </div>
               <div className={styles.dropdownLink}>
                 <a 
-                  href='/admin/customer-info'  
+                  href='/admin/ingredients-units' 
                   className={styles.navLinkDD}
-                  style={props.currentPage === 'customer-info' ? {color: 'black'} : {}}
+                  style={props.currentPage === 'ingredients-units' ? {color: 'black'} : {}}
+                >
+                  Ingredients & Units
+                </a>
+              </div>
+              <div className={styles.dropdownLink}>
+                <a 
+                  href='/admin/businesses' 
+                  className={styles.navLinkDD}
+                  style={props.currentPage === 'businesses' ? {color: 'black'} : {}}
+                >
+                  Businesses & Meals
+                </a>
+              </div>
+              <div className={styles.dropdownLink}>
+                <a 
+                  href='/admin/customers'  
+                  className={styles.navLinkDD}
+                  style={props.currentPage === 'customers' ? {color: 'black'} : {}}
                 >
                   Customers
                 </a>
               </div>
               <div className={styles.dropdownLink}>
                 <a 
-                  href='/admin/edit-meal' 
-                  className={styles.navLinkDD}
-                  style={props.currentPage === 'google-analytics' ? {color: 'black'} : {}}
-                >
-                  Google Analytics
-                </a>
-              </div>
-              <div className={styles.dropdownLink}>
-                <a 
-                  href='/admin/edit-meal' 
+                  href='/admin/notifications' 
                   className={styles.navLinkDD}
                   style={props.currentPage === 'notifications' ? {color: 'black'} : {}}
                 >
@@ -298,16 +407,16 @@ function NavBar(props) {
                 <a 
                   href='/admin/edit-meal' 
                   className={styles.navLinkDD}
-                  style={props.currentPage === 'businesses' ? {color: 'black'} : {}}
+                  style={props.currentPage === 'notifications' ? {color: 'black'} : {}}
                 >
-                  Businesses
+                  Coupons
                 </a>
               </div>
               <div className={styles.dropdownLink}>
                 <a 
                   href='/admin/edit-meal' 
                   className={styles.navLinkDD}
-                  style={props.currentPage === 'zones' ? {color: 'black'} : {}}
+                  style={props.currentPage === 'businesses' ? {color: 'black'} : {}}
                 >
                   Zones
                 </a>
@@ -316,9 +425,9 @@ function NavBar(props) {
                 <a 
                   href='/admin/edit-meal' 
                   className={styles.navLinkDD}
-                  style={props.currentPage === 'profile' ? {color: 'black'} : {}}
+                  style={props.currentPage === 'zones' ? {color: 'black'} : {}}
                 >
-                  Profile
+                  Analytics
                 </a>
               </div>
             </div>
@@ -347,7 +456,8 @@ function NavBar(props) {
       )}
 
 
-    </div>
+    {/* </div> */}
+    </>
   );
 }
 

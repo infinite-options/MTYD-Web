@@ -819,7 +819,8 @@ function IngredientsUnits() {
       <div
         style={{
           // border: 'solid 1px',
-          height: '240px',
+          // height: '240px',
+          height: '160px',
           overflow: 'auto'
         }}
       >
@@ -829,6 +830,14 @@ function IngredientsUnits() {
   }
 
   const displayCreateModal = () => {
+
+    let boxWidth;
+    if(dimensions.width > 970) {
+      boxWidth = '28%';
+    } else {
+      boxWidth = '96%';
+    }
+
     if(createModal === CREATE_INGREDIENT) {
       return (
         <div
@@ -836,7 +845,10 @@ function IngredientsUnits() {
             marginTop: '20px',
             borderRadius: '15px',
             marginLeft: '2%',
-            width: '28%',
+            // width: '28%',
+            // width: '96%',
+            width: boxWidth,
+            marginBottom: '20px',
             height: '420px',
             backgroundColor: 'white'
           }}
@@ -1030,7 +1042,10 @@ function IngredientsUnits() {
             marginTop: '20px',
             borderRadius: '15px',
             marginLeft: '2%',
-            width: '28%',
+            // width: '28%',
+            // width: '96%',
+            width: boxWidth,
+            marginBottom: '20px',
             height: '420px',
             backgroundColor: 'white'
           }}
@@ -1284,7 +1299,10 @@ function IngredientsUnits() {
             marginTop: '20px',
             borderRadius: '15px',
             marginLeft: '2%',
-            width: '28%',
+            // width: '28%',
+            // width: '96%',
+            width: boxWidth,
+            marginBottom: '20px',
             height: '420px',
             backgroundColor: 'white'
           }}
@@ -1496,7 +1514,7 @@ function IngredientsUnits() {
 			/>
 
 			{/* For debugging window size */}
-			<span 
+			{/* <span 
 				style={{
 					zIndex: '101',
 					position: 'fixed',
@@ -1510,7 +1528,7 @@ function IngredientsUnits() {
 				Height: {dimensions.height}px
 				<br />
 				Width: {dimensions.width}px
-			</span>
+			</span> */}
 
       {popupModal}
 
@@ -1571,6 +1589,8 @@ function IngredientsUnits() {
         </div> */}
 
         {dimensions.width > 970 ? (
+
+          <>
 
         <div
           style={{
@@ -1698,168 +1718,8 @@ function IngredientsUnits() {
               </div>
             </div>
           </div>
-        ) : (
 
           <div
-            style={{
-              // border: 'solid',
-              marginTop: '20px',
-              borderRadius: '15px',
-              marginLeft: '2%',
-              width: '96%',
-              backgroundColor: 'white',
-              height: '350px',
-              // display: 'flex',
-              // alignItems: 'center'
-            }}
-          >
-  
-            <div
-              style={{
-                // border: 'solid',
-                // width: '60%',
-                // width: '300px',
-                width: '100%',
-                height: '80px',
-                // alignText: 'center',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                fontWeight: 'bold',
-                paddingLeft: '20px',
-                fontSize: '26px'
-              }}
-            >
-              Ingredients and Units
-            </div>
-  
-              <div
-                style={{
-                  // border: 'solid',
-                  // borderColor: 'blue',
-                  // flexGrow: '1',
-                  // display: 'inline-flex',ty
-                  display: 'flex',
-                  justifyContent: 'center',
-                  position: 'relative',
-                  // height: '100%',
-                  width: '100%'
-                }}
-              >
-                
-
-                <div
-                  style={{
-                    // border: 'dashed',
-                    // display: 'inline-block',
-                    width: '100%'
-                    // justifyContent: 'center'
-                  }}
-                >
-
-                <div 
-                  style={{
-                    // position: 'absolute',
-                    // right: '400px',
-                    width: '100%',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    // top: '20px',
-                    height: '30px',
-                    color: '#f26522',
-                    fontWeight: '500',
-                    marginTop: '10px'
-                    // border: 'solid'
-                  }}
-                >
-                  Total no. of Restaurants
-                </div>
-                <div 
-                  style={{
-                    // position: 'absolute',
-                    // right: '400px',
-                    // width: '200px',
-                    width: '100%',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    // top: '50px',
-                    fontSize: '24px',
-                    fontWeight: '600'
-                  }}
-                >
-                  {savedBusinesses === null ? 'LOADING...' : savedBusinesses.length}
-                </div>
-
-                <div 
-                  style={{
-                    // position: 'absolute',
-                    // right: '200px',
-                    // width: '200px',
-                    width: '100%',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    // top: '20px',
-                    height: '30px',
-                    color: '#f26522',
-                    fontWeight: '500',
-                    marginTop: '20px'
-                  }}
-                >
-                  Total no. of Meals
-                </div>
-                <div 
-                  style={{
-                    // position: 'absolute',
-                    // right: '200px',
-                    // width: '200px',
-                    width: '100%',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    // top: '50px',
-                    fontSize: '24px',
-                    fontWeight: '600'
-                  }}
-                >
-                  {savedMeals === null ? 'LOADING...' : savedMeals.length}
-                </div>
-                <div 
-                  style={{
-                    // position: 'absolute',
-                    // right: '0',
-                    // width: '200px',
-                    width: '100%',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    // top: '20px',
-                    height: '30px',
-                    color: '#f26522',
-                    fontWeight: '500',
-                    marginTop: '20px'
-                  }}
-                >
-                  Total no. of Ingredients
-                </div>
-                <div 
-                  style={{
-                    // position: 'absolute',
-                    // right: '0',
-                    // width: '200px',
-                    width: '100%',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    // top: '50px',
-                    fontSize: '24px',
-                    fontWeight: '600'
-                  }}
-                >
-                  {savedIngredients === null ? 'LOADING...' : savedIngredients.length}
-                </div>
-              </div>
-              </div>
-            </div>
-          )}
-
-      <div
         style={{
           // border: 'dashed',
           display: 'inline-flex',
@@ -2100,6 +1960,656 @@ function IngredientsUnits() {
         {displayCreateModal()}
 
       </div>
+
+          </>
+        ) : (
+          <>
+
+          <div
+            style={{
+              // border: 'solid',
+              marginTop: '20px',
+              borderRadius: '15px',
+              marginLeft: '2%',
+              width: '96%',
+              backgroundColor: 'white',
+              height: '350px',
+              // display: 'flex',
+              // alignItems: 'center'
+            }}
+          >
+  
+            <div
+              style={{
+                // border: 'solid',
+                // width: '60%',
+                // width: '300px',
+                width: '100%',
+                height: '80px',
+                // alignText: 'center',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                fontWeight: 'bold',
+                paddingLeft: '20px',
+                fontSize: '26px'
+              }}
+            >
+              Ingredients and Units
+            </div>
+  
+              <div
+                style={{
+                  // border: 'solid',
+                  // borderColor: 'blue',
+                  // flexGrow: '1',
+                  // display: 'inline-flex',ty
+                  display: 'flex',
+                  justifyContent: 'center',
+                  position: 'relative',
+                  // height: '100%',
+                  width: '100%'
+                }}
+              >
+                
+
+                <div
+                  style={{
+                    // border: 'dashed',
+                    // display: 'inline-block',
+                    width: '100%'
+                    // justifyContent: 'center'
+                  }}
+                >
+
+                <div 
+                  style={{
+                    // position: 'absolute',
+                    // right: '400px',
+                    width: '100%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    // top: '20px',
+                    height: '30px',
+                    color: '#f26522',
+                    fontWeight: '500',
+                    marginTop: '10px'
+                    // border: 'solid'
+                  }}
+                >
+                  Total no. of Restaurants
+                </div>
+                <div 
+                  style={{
+                    // position: 'absolute',
+                    // right: '400px',
+                    // width: '200px',
+                    width: '100%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    // top: '50px',
+                    fontSize: '24px',
+                    fontWeight: '600'
+                  }}
+                >
+                  {savedBusinesses === null ? 'LOADING...' : savedBusinesses.length}
+                </div>
+
+                <div 
+                  style={{
+                    // position: 'absolute',
+                    // right: '200px',
+                    // width: '200px',
+                    width: '100%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    // top: '20px',
+                    height: '30px',
+                    color: '#f26522',
+                    fontWeight: '500',
+                    marginTop: '20px'
+                  }}
+                >
+                  Total no. of Meals
+                </div>
+                <div 
+                  style={{
+                    // position: 'absolute',
+                    // right: '200px',
+                    // width: '200px',
+                    width: '100%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    // top: '50px',
+                    fontSize: '24px',
+                    fontWeight: '600'
+                  }}
+                >
+                  {savedMeals === null ? 'LOADING...' : savedMeals.length}
+                </div>
+                <div 
+                  style={{
+                    // position: 'absolute',
+                    // right: '0',
+                    // width: '200px',
+                    width: '100%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    // top: '20px',
+                    height: '30px',
+                    color: '#f26522',
+                    fontWeight: '500',
+                    marginTop: '20px'
+                  }}
+                >
+                  Total no. of Ingredients
+                </div>
+                <div 
+                  style={{
+                    // position: 'absolute',
+                    // right: '0',
+                    // width: '200px',
+                    width: '100%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    // top: '50px',
+                    fontSize: '24px',
+                    fontWeight: '600'
+                  }}
+                >
+                  {savedIngredients === null ? 'LOADING...' : savedIngredients.length}
+                </div>
+              </div>
+              </div>
+            </div>
+
+            <div
+        style={{
+          // border: 'inset',
+          display: 'inline-block',
+          width: '100%'
+        }}
+      >
+        <div
+          // style={createModal === CREATE_NONE ? ({
+          //   // border: 'solid',
+          //   marginTop: '20px',
+          //   borderRadius: '15px',
+          //   marginLeft: '2%',
+          //   width: '47%',
+          //   height: '500px',
+          //   backgroundColor: 'white',
+          //   marginBottom: '20px'
+          //   // display: 'flex',
+          //   // alignItems: 'center'
+          // }) : ({
+          //   // border: 'solid',
+          //   marginTop: '20px',
+          //   borderRadius: '15px',
+          //   marginLeft: '2%',
+          //   width: '32%',
+          //   height: '500px',
+          //   backgroundColor: 'white',
+          //   marginBottom: '20px'
+          //   // display: 'flex',
+          //   // alignItems: 'center'
+          // })}
+          style={{
+            // border: 'solid',
+            marginTop: '20px',
+            borderRadius: '15px',
+            marginLeft: '2%',
+            width: '96%',
+            height: '500px',
+            backgroundColor: 'white',
+            marginBottom: '20px'
+            // display: 'flex',
+            // alignItems: 'center'
+          }}
+        >
+          <div
+            style={{
+              height: '90px',
+              // paddingTop: '20px',
+              // display: 'flex',
+              // alignItems: 'center',
+              // border: 'solid',
+              // width: '60%',
+              // width: '200px',
+              fontWeight: 'bold',
+              paddingLeft: '20px',
+              fontSize: '26px',
+              position: 'relative',
+              display: 'inline-flex',
+              alignItems: 'center'
+            }}
+          >
+            <div>Ingredients</div>
+            <div
+              style={{
+                // position: 'absolute',
+                // top: '10px',
+                // left: '168px',
+                fontSize: '36px',
+                // fontWeight: '700',
+                cursor: 'pointer',
+                // border: 'dashed'
+              }}
+              onClick={() => {
+                // resetDropdowns();
+                resetInputs();
+                setCreateModal(CREATE_INGREDIENT)
+              }}
+            >
+              &nbsp;+&nbsp;
+            </div>
+          </div>
+
+          <div
+            style={{
+              marginTop: '20px',
+              // border: 'solid',
+              width: '100%',
+              height: '60px',
+              display: 'inline-flex',
+              paddingRight: '15px',
+              borderBottom: 'solid',
+              color: '#F8BB17'
+            }}
+          >
+
+            <div className={styles.cellOuterWrapper}>
+              <div className={styles.cellInnerWrapper}>
+                <span className={styles.cellContentOrange}>
+                  Ingredient Name
+                </span>
+              </div>
+            </div>
+
+            <div className={styles.cellOuterWrapper}>
+              <div className={styles.cellInnerWrapper}>
+                <span className={styles.cellContentOrange}>
+                  Package Size
+                </span>
+              </div>
+            </div>
+            
+            <div className={styles.cellOuterWrapper}>
+              <div className={styles.cellInnerWrapper}>
+                <span className={styles.cellContentOrange}>
+                  Package Unit
+                </span>
+              </div>
+            </div>
+
+            <div className={styles.cellOuterWrapper}>
+              <div className={styles.cellInnerWrapper}>
+                <span className={styles.cellContentOrange}>
+                  Package Cost
+                </span>
+              </div>
+            </div>
+
+            <div className={styles.buttonWrapper} />
+
+          </div>
+
+          {displayIngredients()}
+
+        </div>
+
+        <div
+          style={{
+            // border: 'solid',
+            marginTop: '20px',
+            borderRadius: '15px',
+            marginLeft: '2%',
+            width: '96%',
+            height: '500px',
+            backgroundColor: 'white',
+            marginBottom: '20px'
+            // display: 'flex',
+            // alignItems: 'center'
+          }}
+        >
+          <div
+            style={{
+              height: '90px',
+              // paddingTop: '20px',
+              // display: 'flex',
+              // alignItems: 'center',
+
+              // border: 'solid',
+              // width: '60%',
+              // width: '200px',
+              fontWeight: 'bold',
+              paddingLeft: '20px',
+              fontSize: '26px',
+              position: 'relative',
+              display: 'inline-flex',
+              alignItems: 'center'
+            }}
+          >
+            <div>Units</div>
+            <div
+              style={{
+                // position: 'absolute',
+                // top: '10px',
+                // left: '168px',
+                fontSize: '36px',
+                // fontWeight: '700',
+                cursor: 'pointer',
+                // border: 'dashed'
+              }}
+              onClick={() => {
+                // resetDropdowns();
+                resetInputs();
+                setCreateModal(CREATE_UNIT)
+              }}
+            >
+              &nbsp;+&nbsp;
+            </div>
+          </div>
+
+          <div
+            style={{
+              marginTop: '20px',
+              // border: 'solid',
+              borderBottom: 'solid',
+              color: '#F8BB17',
+              width: '100%',
+              height: '60px',
+              display: 'inline-flex',
+              paddingRight: '15px'
+            }}
+          >
+
+            <div className={styles.cellOuterWrapper3}>
+              <div className={styles.cellInnerWrapper}>
+                <span className={styles.cellContentOrange}>
+                  Type
+                </span>
+              </div>
+            </div>
+
+            <div className={styles.cellOuterWrapper3}>
+              <div className={styles.cellInnerWrapper}>
+                <span className={styles.cellContentOrange}>
+                  Unit Name
+                </span>
+              </div>
+            </div>
+
+            <div className={styles.cellOuterWrapper3}>
+              <div className={styles.cellInnerWrapper}>
+                <span className={styles.cellContentOrange}>
+                  Conversion Ratio
+                </span>
+              </div>
+            </div>
+
+            <div className={styles.cellOuterWrapper3}>
+              <div className={styles.cellInnerWrapper}>
+                <span className={styles.cellContentOrange}>
+                  Base Unit
+                </span>
+              </div>
+            </div>
+
+          </div>
+
+          {displayUnits()}
+
+        </div>
+        
+        {displayCreateModal()}
+
+      </div>
+
+            </>
+          )}
+
+      {/* <div
+        style={{
+          border: 'dashed',
+          display: 'inline-flex',
+          width: '100%'
+        }}
+      >
+        <div
+          style={createModal === CREATE_NONE ? ({
+            // border: 'solid',
+            marginTop: '20px',
+            borderRadius: '15px',
+            marginLeft: '2%',
+            width: '47%',
+            height: '500px',
+            backgroundColor: 'white',
+            marginBottom: '20px'
+            // display: 'flex',
+            // alignItems: 'center'
+          }) : ({
+            // border: 'solid',
+            marginTop: '20px',
+            borderRadius: '15px',
+            marginLeft: '2%',
+            width: '32%',
+            height: '500px',
+            backgroundColor: 'white',
+            marginBottom: '20px'
+            // display: 'flex',
+            // alignItems: 'center'
+          })}
+        >
+          <div
+            style={{
+              height: '90px',
+              // paddingTop: '20px',
+              // display: 'flex',
+              // alignItems: 'center',
+              // border: 'solid',
+              // width: '60%',
+              // width: '200px',
+              fontWeight: 'bold',
+              paddingLeft: '20px',
+              fontSize: '26px',
+              position: 'relative',
+              display: 'inline-flex',
+              alignItems: 'center'
+            }}
+          >
+            <div>Ingredients</div>
+            <div
+              style={{
+                // position: 'absolute',
+                // top: '10px',
+                // left: '168px',
+                fontSize: '36px',
+                // fontWeight: '700',
+                cursor: 'pointer',
+                // border: 'dashed'
+              }}
+              onClick={() => {
+                // resetDropdowns();
+                resetInputs();
+                setCreateModal(CREATE_INGREDIENT)
+              }}
+            >
+              &nbsp;+&nbsp;
+            </div>
+          </div>
+
+          <div
+            style={{
+              marginTop: '20px',
+              // border: 'solid',
+              width: '100%',
+              height: '60px',
+              display: 'inline-flex',
+              paddingRight: '15px',
+              borderBottom: 'solid',
+              color: '#F8BB17'
+            }}
+          >
+
+            <div className={styles.cellOuterWrapper}>
+              <div className={styles.cellInnerWrapper}>
+                <span className={styles.cellContentOrange}>
+                  Ingredient Name
+                </span>
+              </div>
+            </div>
+
+            <div className={styles.cellOuterWrapper}>
+              <div className={styles.cellInnerWrapper}>
+                <span className={styles.cellContentOrange}>
+                  Package Size
+                </span>
+              </div>
+            </div>
+            
+            <div className={styles.cellOuterWrapper}>
+              <div className={styles.cellInnerWrapper}>
+                <span className={styles.cellContentOrange}>
+                  Package Unit
+                </span>
+              </div>
+            </div>
+
+            <div className={styles.cellOuterWrapper}>
+              <div className={styles.cellInnerWrapper}>
+                <span className={styles.cellContentOrange}>
+                  Package Cost
+                </span>
+              </div>
+            </div>
+
+            <div className={styles.buttonWrapper} />
+
+          </div>
+
+          {displayIngredients()}
+
+        </div>
+
+        <div
+          style={createModal === CREATE_NONE ? ({
+            // border: 'solid',
+            marginTop: '20px',
+            borderRadius: '15px',
+            marginLeft: '2%',
+            width: '47%',
+            height: '500px',
+            backgroundColor: 'white',
+            marginBottom: '20px'
+            // display: 'flex',
+            // alignItems: 'center'
+          }) : ({
+            // border: 'solid',
+            marginTop: '20px',
+            borderRadius: '15px',
+            marginLeft: '2%',
+            width: '32%',
+            height: '500px',
+            backgroundColor: 'white',
+            marginBottom: '20px'
+            // display: 'flex',
+            // alignItems: 'center'
+          })}
+        >
+          <div
+            style={{
+              height: '90px',
+              // paddingTop: '20px',
+              // display: 'flex',
+              // alignItems: 'center',
+
+              // border: 'solid',
+              // width: '60%',
+              // width: '200px',
+              fontWeight: 'bold',
+              paddingLeft: '20px',
+              fontSize: '26px',
+              position: 'relative',
+              display: 'inline-flex',
+              alignItems: 'center'
+            }}
+          >
+            <div>Units</div>
+            <div
+              style={{
+                // position: 'absolute',
+                // top: '10px',
+                // left: '168px',
+                fontSize: '36px',
+                // fontWeight: '700',
+                cursor: 'pointer',
+                // border: 'dashed'
+              }}
+              onClick={() => {
+                // resetDropdowns();
+                resetInputs();
+                setCreateModal(CREATE_UNIT)
+              }}
+            >
+              &nbsp;+&nbsp;
+            </div>
+          </div>
+
+          <div
+            style={{
+              marginTop: '20px',
+              // border: 'solid',
+              borderBottom: 'solid',
+              color: '#F8BB17',
+              width: '100%',
+              height: '60px',
+              display: 'inline-flex',
+              paddingRight: '15px'
+            }}
+          >
+
+            <div className={styles.cellOuterWrapper3}>
+              <div className={styles.cellInnerWrapper}>
+                <span className={styles.cellContentOrange}>
+                  Type
+                </span>
+              </div>
+            </div>
+
+            <div className={styles.cellOuterWrapper3}>
+              <div className={styles.cellInnerWrapper}>
+                <span className={styles.cellContentOrange}>
+                  Unit Name
+                </span>
+              </div>
+            </div>
+
+            <div className={styles.cellOuterWrapper3}>
+              <div className={styles.cellInnerWrapper}>
+                <span className={styles.cellContentOrange}>
+                  Conversion Ratio
+                </span>
+              </div>
+            </div>
+
+            <div className={styles.cellOuterWrapper3}>
+              <div className={styles.cellInnerWrapper}>
+                <span className={styles.cellContentOrange}>
+                  Base Unit
+                </span>
+              </div>
+            </div>
+
+          </div>
+
+          {displayUnits()}
+
+        </div>
+        
+        {displayCreateModal()}
+
+          </div> */}
 
 		</div>
   )

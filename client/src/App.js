@@ -118,55 +118,39 @@ function App() {
             {/* <AppliedRoute exact path='/test' component={MapTest} /> */}
 
             <Route exact path="/admin">
-              {/* {adminNavBar} */}
               <AdminHome />
             </Route>
             <Route exact path="/admin/create-menu">
-              {/* {adminNavBar} */}
               <AdminCreateMenu />
             </Route>
             <Route exact path="/admin/edit-meal">
-              {/* {adminNavBar} */}
               <AdminEditMeal />
             </Route>
             <Route exact path="/admin/create-meal">
-              {/* {adminNavBar} */}
               <AdminCreateMeal />
             </Route>
             <Route exact path="/admin/edit-meal-recipe">
-              {/* {adminNavBar} */}
               <AdminEditMealRecipe />
             </Route>
             <Route exact path="/admin/plans-coupons">
-              {/* {adminNavBar} */}
               <AdminPlansCoupons />
             </Route>
             <Route exact path="/admin/order-ingredients">
-              {/* {adminNavBar} */}
               <AdminOrderIngredients />
             </Route>
-            <Route exact path="/admin/customers">
-              {/* {adminNavBar} */}
-              <AdminCustomers />
-            </Route>
             <Route exact path="/admin/google-analytics">
-              {/* {adminNavBar} */}
               <AdminGoogleAnalytics />
             </Route>
             <Route exact path="/admin/notifications">
-              {/* {adminNavBar} */}
               <AdminNotfications />
             </Route>
             <Route exact path="/admin/zones">
-              {/* {adminNavBar} */}
               <AdminZones />
             </Route>
-            <Route exact path="/admin/customer-info">
-              {/* {adminNavBar} */}
+            <Route exact path="/admin/customers">
               <AdminCustomerInfo />
             </Route>
             <Route exact path="/admin/ingredients-units">
-              {/* {adminNavBar} */}
               <AdminIngredientsUnits />
             </Route>
             <AppliedRoute path='*' component={NotFound} />

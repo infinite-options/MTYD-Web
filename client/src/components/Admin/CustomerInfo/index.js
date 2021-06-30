@@ -1674,7 +1674,7 @@ function CustomerInfo() {
 				cust info width: {document.getElementById("custInfo").offsetWidth}
 			</span> */}
 
-			<AdminNavBar currentPage={'customer-info'}/>
+			<AdminNavBar currentPage={'customers'}/>
 
 			{customersById === null ? (
 				<div
