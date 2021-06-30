@@ -9,6 +9,7 @@ import { NotificationContext } from './notificationsContext';
 import NotificationOptions from './Options';
 import NotificationMain from './Main';
 import {withRouter} from "react-router";
+import AdminNavBar from '../AdminNavBar'
 
 const initialState = {
   mounted: false,
@@ -144,12 +145,17 @@ function Notifications({history,...props}) {
         dispatch
       }}
     >
-      <div>
-        <Breadcrumb>
+      <div style = {{backgroundColor:"#F26522"}}>
+        <AdminNavBar currentPage={'Notifications'}/>
+        {/* <Breadcrumb>
           <Breadcrumb.Item href="/"> Admin Site </Breadcrumb.Item>
           <Breadcrumb.Item active> Notifications </Breadcrumb.Item>
-        </Breadcrumb>
+        </Breadcrumb> */}
+
+       
+        
         <NotificationOptions
+          
           state={state}
           dispatch={dispatch}
         />

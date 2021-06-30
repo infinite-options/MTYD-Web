@@ -136,6 +136,7 @@ function EditMeal({history, ...props}) {
   const [showEditMeal, toggleEditMeal] = useState(false)
   const [showNewMeal, toggleNewMeal] = useState(false)
   const [mealButtonPressed, toggleMealButtonPressed] = useState(false)
+  const [deleteButtonPressed, toggleDeleteButtonPressed] = useState(false)
 
   const [mealsGenerated, toggleMealsGenerated] = useState(false)
   
@@ -372,59 +373,77 @@ function EditMeal({history, ...props}) {
       if (allMeals[index].meal_business == activeBusiness){    
         tempArray.push(
           <div>
-          <div width = "100%" key = {allMeals[index].meal_uid}
-            onClick={() => {
-              console.log("clicked on " + allMeals[index].meal_uid)
-              setSelectedMeal(allMeals[index])
-              console.log(selectedMeal)
-              //toggleEditMeal(true)
-              //toggleMealButtonPressed(true)
-            }}
-            style={{
-              backgroundColor: selectedMeal==allMeals[index] ? "#FEF7E0" : "white",
-              borderStyle: "solid",
-              borderColor: selectedMeal==allMeals[index] ? "#F26522" : "white",
-              borderRadius: "10px",
-              marginLeft: "2%",
-              marginRight: "2%"
-            }}
-          >
-            <tr >
-              <th style={{marginLeft: "30px", textAlign:"center", display:"inline-block", overflow:"hidden", whiteSpace: "nowrap", textOverflow: "ellipsis"}} width="101px" height="45">
-                {allMeals[index].meal_name}
-              </th>
-              <th style={{marginLeft: "27px", textAlign:"center", display:"inline-block"}} width="60px">
-                <img src={allMeals[index].meal_photo_URL} height="45" width="45"></img>
-              </th>
-              <th style={{marginLeft: "27px", textAlign:"center", display:"inline-block", overflow:"hidden", whiteSpace: "nowrap", textOverflow: "ellipsis"}} width = "142px" height="45">{allMeals[index].meal_desc}</th>
-              <th style={{marginLeft: "27px", textAlign:"center", display:"inline-block"}} width = "122px" height="45">{allMeals[index].meal_category}</th>
-              <th style={{marginLeft: "27px", textAlign:"center", display:"inline-block", overflow:"hidden", whiteSpace: "nowrap", textOverflow: "ellipsis"}} width = "80px" height="45">{allMeals[index].meal_hint}</th>
-              <th style={{marginLeft: "27px", textAlign:"center", display:"inline-block"}} width = "69px" height="45">{allMeals[index].meal_calories} Cal</th>
-              <th style={{marginLeft: "27px", textAlign:"center", display:"inline-block"}} width = "60px" height="45">{allMeals[index].meal_protein}g</th>            
-              <th style={{marginLeft: "27px", textAlign:"center", display:"inline-block"}} width = "50px" height="45">{allMeals[index].meal_carbs}g</th>
-              <th style={{marginLeft: "27px", textAlign:"center", display:"inline-block"}} width = "43px" height="45">{allMeals[index].meal_fiber}g</th>
-              <th style={{marginLeft: "27px", textAlign:"center", display:"inline-block"}} width = "50px" height="45">{allMeals[index].meal_sugar}g</th>
-              <th style={{marginLeft: "27px", textAlign:"center", display:"inline-block"}} width = "35px" height="45">{allMeals[index].meal_fat}%</th>
-              <th style={{marginLeft: "27px", textAlign:"center", display:"inline-block"}} width = "28px" height="45">{allMeals[index].meal_sat}%</th>
-              <th style={{marginLeft: "27px", textAlign:"center", display:"inline-block"}} width = "54px" height="45">Status</th>
-              <th style={{marginLeft: "27px", textAlign:"center", display:"inline-block"}} height="45">
-                <div className={styles.editIcon}
-                  onClick={() => {
-                    console.log("clicked on " + allMeals[index].meal_uid)
-                    setSelectedMeal(allMeals[index])
-                    console.log(selectedMeal)
-                    toggleEditMeal(true)
-                    toggleMealButtonPressed(true)
-                  }}
-                ></div>
-                <div className={styles.saveIcon}></div>
-                <div className={styles.deleteIcon}></div>
-              </th>
-            </tr>
-            
-          </div>
-          <div width="100%" style={{backgroundColor: "white",display: "block", minHeight: "25px"}}></div>
-          <div width="100%" style={{backgroundColor: "#F8BB17", display: "block", minHeight: "2px", marginBottom: "25px"}}></div>
+            <table width = "100%" key = {allMeals[index].meal_uid}
+              onClick={() => {
+                if (allMeals[index] != null) {
+                  console.log("clicked on " + allMeals[index].meal_uid)
+                  setSelectedMeal(allMeals[index])
+                  console.log(selectedMeal)
+                  //toggleEditMeal(true)
+                  //toggleMealButtonPressed(true)
+                }
+                
+              }}
+              style={{
+                backgroundColor: selectedMeal==allMeals[index] ? "#FEF7E0" : "white",
+                borderStyle: "solid",
+                borderColor: selectedMeal==allMeals[index] ? "#F26522" : "white",
+                borderRadius: "10px",
+                // marginLeft: "2%",
+                // marginRight: "2%"
+              }}
+            >
+              <tr width= "100%">
+                <th style={{marginLeft: "27px", textAlign:"center", display:"inline-block", overflow:"hidden", textOverflow: "ellipsis"}} width = "7%">
+                  {allMeals[index].meal_name}
+                </th>
+                <th style={{textAlign:"center", display:"inline-block"}} width="7%">
+                  <img src={allMeals[index].meal_photo_URL} height="45" width="45"></img>
+                </th>
+                <th style={{textAlign:"center", display:"inline-block", overflow:"hidden", textOverflow: "ellipsis"}} width = "7%" height="45">{allMeals[index].meal_desc}</th>
+                <th style={{textAlign:"center", display:"inline-block"}} width = "7%" height="45">{allMeals[index].meal_category}</th>
+                <th style={{textAlign:"center", display:"inline-block", overflow:"hidden", textOverflow: "ellipsis"}} width = "7%" height="45">{allMeals[index].meal_hint}</th>
+                <th style={{textAlign:"center", display:"inline-block"}} width = "7%" height="45">{allMeals[index].meal_calories} Cal</th>
+                <th style={{textAlign:"center", display:"inline-block"}} width = "7%" height="45">{allMeals[index].meal_protein}g</th>            
+                <th style={{textAlign:"center", display:"inline-block"}} width = "7%" height="45">{allMeals[index].meal_carbs}g</th>
+                <th style={{textAlign:"center", display:"inline-block"}} width = "7%" height="45">{allMeals[index].meal_fiber}g</th>
+                <th style={{textAlign:"center", display:"inline-block"}} width = "7%" height="45">{allMeals[index].meal_sugar}g</th>
+                <th style={{textAlign:"center", display:"inline-block"}} width = "7%" height="45">{allMeals[index].meal_fat}%</th>
+                <th style={{textAlign:"center", display:"inline-block"}} width = "7%" height="45">{allMeals[index].meal_sat}%</th>
+                <th style={{textAlign:"center", display:"inline-block"}} width = "7%" height="45">Status</th>
+                <th style={{textAlign:"center", display:"inline-block"}} width = "7%" height="45">
+                  <div className={styles.editIcon}
+                    onClick={() => {
+                      console.log("clicked on " + allMeals[index].meal_uid)
+                      setSelectedMeal(allMeals[index])
+                      console.log(selectedMeal)
+                      toggleEditMeal(true)
+                      toggleMealButtonPressed(true)
+                    }}
+                  ></div>
+                  
+                  <div className={styles.deleteIcon}
+                    onClick={() => {
+                      console.log("clicked on delete" + allMeals[index].meal_uid)
+                      toggleDeleteButtonPressed(true)
+                      setSelectedMeal(allMeals[index])
+                      console.log(selectedMeal)
+                      // toggleEditMeal(true)
+                      toggleMealButtonPressed(true)
+                      axios
+                        .delete(API_URL+"meals?meal_uid="+allMeals[index].meal_uid)
+                        .then(response => {
+                          console.log(response)
+                        })
+                      allMeals.splice(index, 1)
+                    }}
+                  ></div>
+                </th>
+              </tr>
+              
+            </table>
+            <div width="100%" style={{backgroundColor: "white",display: "block", minHeight: "25px"}}></div>
+            <div width="100%" style={{backgroundColor: "#F8BB17", display: "block", minHeight: "2px", marginBottom: "25px"}}></div>
           </div>
         )
       }
@@ -1251,7 +1270,7 @@ function EditMeal({history, ...props}) {
                   <Form.Control
                     as="textarea"
                     
-                    value={state.editedMeal.meal_name}
+                    placeholder="Enter Meal Name"
                     onChange={
                       (event) => {
                         editMeal('meal_name', event.target.value)
@@ -1270,7 +1289,7 @@ function EditMeal({history, ...props}) {
                     as="textarea"
                     rows={3}
                     
-                    value={state.editedMeal.meal_desc}
+                    placeholder="Enter Meal Description"
                     onChange={
                       (event) => {
                         editMeal('meal_desc', event.target.value );
@@ -1316,7 +1335,7 @@ function EditMeal({history, ...props}) {
                 <Col sm={10}>
                   <Form.Control
                     
-                    value={state.editedMeal.meal_hint}
+                    placeholder="Enter Meal Hint"
                     onChange={
                       (event) => {
                         editMeal('meal_hint', event.target.value );
@@ -1353,7 +1372,7 @@ function EditMeal({history, ...props}) {
                   <Form.Control
                     type="number"
                     
-                    value={state.editedMeal.meal_calories}
+                    placeholder="Enter Calories"
                     onChange={
                       (event) => {
                         editMeal('meal_calories', event.target.value );
@@ -1370,7 +1389,7 @@ function EditMeal({history, ...props}) {
                   <Form.Control
                     type="number"
                     
-                    value={state.editedMeal.meal_protein}
+                    placeholder="Enter Protein Amount"
                     onChange={
                       (event) => {
                         editMeal('meal_protein', event.target.value );
@@ -1387,7 +1406,7 @@ function EditMeal({history, ...props}) {
                   <Form.Control
                     type="number"
                     
-                    value={state.editedMeal.meal_carbs}
+                    placeholder="Enter Carb Amount"
                     onChange={
                       (event) => {
                         editMeal('meal_carbs', event.target.value );
@@ -1404,7 +1423,7 @@ function EditMeal({history, ...props}) {
                   <Form.Control
                     type="number"
                     
-                    value={state.editedMeal.meal_fiber}
+                    placeholder="Enter Fiber Amount"
                     onChange={
                       (event) => {
                         editMeal('meal_fiber', event.target.value );
@@ -1421,7 +1440,7 @@ function EditMeal({history, ...props}) {
                   <Form.Control
                     type="number"
                     
-                    value={state.editedMeal.meal_sugar}
+                    placeholder="Enter Sugar Amount"
                     onChange={
                       (event) => {
                         editMeal('meal_sugar', event.target.value );
@@ -1438,7 +1457,7 @@ function EditMeal({history, ...props}) {
                   <Form.Control
                     type="number"
                     
-                    value={state.editedMeal.meal_fat}
+                    placeholder="Enter Fat Amount"
                     onChange={
                       (event) => {
                         editMeal('meal_fat', event.target.value );
@@ -1455,7 +1474,7 @@ function EditMeal({history, ...props}) {
                   <Form.Control
                     type="number"
                     
-                    value={state.editedMeal.meal_sat}
+                    placeholder="Enter Saturated Fat Amount"
                     onChange={
                       (event) => {
                         editMeal('meal_sat', event.target.value );
@@ -1739,20 +1758,20 @@ function EditMeal({history, ...props}) {
         >+</div>
 
         <table width="100%">
-          <tr>
-            <th style={{color: '#F26522', marginLeft: "30px", textAlign:"center", display:"inline-block", fontSize:"18px"}} width = "101px">Meal Name</th>
-            <th style={{color: '#F26522', marginLeft: "27px", textAlign:"center", display:"inline-block"}} width = "60px">Picture</th>
-            <th style={{color: '#F26522', marginLeft: "27px", textAlign:"center", display:"inline-block"}} width = "142px">Meal Description</th>
-            <th style={{color: '#F26522', marginLeft: "27px", textAlign:"center", display:"inline-block"}} width = "122px">Meal Category</th>
-            <th style={{color: '#F26522', marginLeft: "27px", textAlign:"center", display:"inline-block"}} width = "80px">Meal Hint</th>
-            <th style={{color: '#F26522', marginLeft: "27px", textAlign:"center", display:"inline-block"}} width = "69px">Calories</th>
-            <th style={{color: '#F26522', marginLeft: "27px", textAlign:"center", display:"inline-block"}} width = "60px">Protein</th>
-            <th style={{color: '#F26522', marginLeft: "27px", textAlign:"center", display:"inline-block"}} width = "50px">Carbs</th>
-            <th style={{color: '#F26522', marginLeft: "27px", textAlign:"center", display:"inline-block"}} width = "43px">Fiber</th>
-            <th style={{color: '#F26522', marginLeft: "27px", textAlign:"center", display:"inline-block"}} width = "50px">Sugar</th>
-            <th style={{color: '#F26522', marginLeft: "27px", textAlign:"center", display:"inline-block"}} width = "35px">Fats</th>
-            <th style={{color: '#F26522', marginLeft: "27px", textAlign:"center", display:"inline-block"}} width = "28px">Sat</th>
-            <th style={{color: '#F26522', marginLeft: "27px", textAlign:"center", display:"inline-block"}} width = "54px">Status</th>
+          <tr width="100%">
+            <th style={{color: '#F26522', marginLeft: "27px", textAlign:"center", display:"inline-block"}} width = "7%">Meal Name</th>
+            <th style={{color: '#F26522', margin: "auto", textAlign:"center", display:"inline-block"}} width = "7%">Picture</th>
+            <th style={{color: '#F26522', margin: "auto", textAlign:"center", display:"inline-block"}} width = "7%">Meal Description</th>
+            <th style={{color: '#F26522', margin: "auto", textAlign:"center", display:"inline-block"}} width = "7%">Meal Category</th>
+            <th style={{color: '#F26522', margin: "auto", textAlign:"center", display:"inline-block"}} width = "7%">Meal Hint</th>
+            <th style={{color: '#F26522', margin: "auto", textAlign:"center", display:"inline-block"}} width = "7%">Calories</th>
+            <th style={{color: '#F26522', margin: "auto", textAlign:"center", display:"inline-block"}} width = "7%">Protein</th>
+            <th style={{color: '#F26522', margin: "auto", textAlign:"center", display:"inline-block"}} width = "7%">Carbs</th>
+            <th style={{color: '#F26522', margin: "auto", textAlign:"center", display:"inline-block"}} width = "7%">Fiber</th>
+            <th style={{color: '#F26522', margin: "auto", textAlign:"center", display:"inline-block"}} width = "7%">Sugar</th>
+            <th style={{color: '#F26522', margin: "auto", textAlign:"center", display:"inline-block"}} width = "7%">Fats</th>
+            <th style={{color: '#F26522', margin: "auto", textAlign:"center", display:"inline-block"}} width = "7%">Sat</th>
+            <th style={{color: '#F26522', margin: "auto", textAlign:"center", display:"inline-block"}} width = "7%">Status</th>
             {/* <th style={{color: '#F26522', paddingLeft: "67px", textAlign:"center", display:"inline-block"}} ></th> */}
           </tr>
         </table>

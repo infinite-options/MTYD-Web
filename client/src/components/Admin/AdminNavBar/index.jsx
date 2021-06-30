@@ -141,7 +141,7 @@ function NavBar(props) {
               Customers
             </a>
             <a href='/admin/customers' className={styles.navLink4}>Google Analytics</a>
-            <a href='/admin/edit-meal' className={styles.navLink3}>Notifications</a>
+            <a href='/admin/notifications' className={styles.navLink3}>Notifications</a>
             <a 
               href='/admin/edit-meal' 
               className={styles.navLink2}
@@ -287,7 +287,7 @@ function NavBar(props) {
               </div>
               <div className={styles.dropdownLink}>
                 <a 
-                  href='/admin/edit-meal' 
+                  href='/admin/notifications' 
                   className={styles.navLinkDD}
                   style={props.currentPage === 'notifications' ? {color: 'black'} : {}}
                 >

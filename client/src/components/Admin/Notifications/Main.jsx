@@ -121,9 +121,14 @@ const NotificationMain = ({state, dispatch}) => {
           maxWidth: 'inherit',
         }}
       >
-        <Row>
-          <Col md="8">
-            <Table>
+        <Row style = {{
+          // width:"96%",
+          // marginLeft: "1%",
+          // marginRight: "1%",
+        }}>
+          <Col md="8" className={styles.containerList}>
+          
+            <Table >
               <TableHead>
                 <TableRow>
                   <TableCell>
@@ -139,19 +144,19 @@ const NotificationMain = ({state, dispatch}) => {
                       inputProps={{ 'aria-label': 'Select all customers' }}
                     />
                   </TableCell>
-                  <TableCell>
+                  <TableCell style = {{color: "#F26522"}}>
                     Name
                   </TableCell>
-                  <TableCell>
+                  <TableCell style = {{color: "#F26522"}}>
                     Email
                   </TableCell>
-                  <TableCell>
+                  <TableCell style = {{color: "#F26522"}}>
                     Address
                   </TableCell>
-                  <TableCell>
+                  <TableCell style = {{color: "#F26522"}}>
                     # Orders
                   </TableCell>
-                  <TableCell>
+                  <TableCell style = {{color: "#F26522"}}>
                     Last Order
                   </TableCell>
                 </TableRow>
@@ -161,35 +166,37 @@ const NotificationMain = ({state, dispatch}) => {
                   state.customerList.map(
                     (customer) => {
                       return (
-                        <TableRow
-                          key={customer.customer_uid}
-                        >
-                          <TableCell>
-                            <Checkbox
-                              checked={customerIsSelected(customer.customer_uid)}
-                              onChange={() => handleChangeSelection(customer.customer_uid)}
-                              inputProps={{
-                                'aria-label':
-                                  'Select customer id ' + customer.customer_uid,
-                              }}
-                            />
-                          </TableCell>
-                          <TableCell>
-                            {`${customer.customer_first_name} ${customer.customer_last_name}`}
-                          </TableCell>
-                          <TableCell>
-                            {`${customer.customer_email}`}
-                          </TableCell>
-                          <TableCell>
-                            {`${customer.customer_address}, ${customer.customer_city}, ${customer.customer_zip}`}
-                          </TableCell>
-                          <TableCell>
-                            {`${customer['count(purchase_id)']}`}
-                          </TableCell>
-                          <TableCell>
-                            {`${customer['max(purchase_date)'] ? customer['max(purchase_date)'] : ''}`}
-                          </TableCell>
-                        </TableRow>
+                        <>
+                          <TableRow
+                            key={customer.customer_uid}
+                          >
+                            <TableCell>
+                              <Checkbox
+                                checked={customerIsSelected(customer.customer_uid)}
+                                onChange={() => handleChangeSelection(customer.customer_uid)}
+                                inputProps={{
+                                  'aria-label':
+                                    'Select customer id ' + customer.customer_uid,
+                                }}
+                              />
+                            </TableCell>
+                            <TableCell>
+                              {`${customer.customer_first_name} ${customer.customer_last_name}`}
+                            </TableCell>
+                            <TableCell>
+                              {`${customer.customer_email}`}
+                            </TableCell>
+                            <TableCell>
+                              {`${customer.customer_address}, ${customer.customer_city}, ${customer.customer_zip}`}
+                            </TableCell>
+                            <TableCell>
+                              {`${customer['count(purchase_id)']}`}
+                            </TableCell>
+                            <TableCell>
+                              {`${customer['max(purchase_date)'] ? customer['max(purchase_date)'] : ''}`}
+                            </TableCell>
+                          </TableRow>
+                        </>
                       )
                     }
                   )
@@ -197,35 +204,46 @@ const NotificationMain = ({state, dispatch}) => {
               </TableBody>
             </Table>
           </Col>
-          <Col md="4">
-            <Row>
-              <Col>
-                <Form.Control
-                  as="textarea"
-                  rows={20}
-                  value={state.message}
-                  onChange={handleMessageChange}
-                />
-              </Col>
-            </Row>
-            <Row
-              className={styles.notificationItem}
-            >
-              <Col>
-                <Button
-                  onClick={sendNotification}
-                >
-                  Send Notifications
-                </Button>
-              </Col>
-              <Col>
-                <Button
-                  onClick={sendNotificationToAll}
-                >
-                  Send to All
-                </Button>
-              </Col>
-            </Row>
+          {/* <Col md="1"></Col> */}
+          <Col /*md="4"*/ className={styles.containerText}>
+          
+            <div>
+              <Row>
+                <Col>
+                  <Form.Control
+                    as="textarea"
+                    rows={20}
+                    value={state.message}
+                    onChange={handleMessageChange}
+                    style={{marginTop: "3%"}}
+                  />
+                </Col>
+              </Row>
+              <Row
+                className={styles.notificationItem}
+              >
+                <Col>
+                  <Button
+                    style={{backgroundColor:"#F26522", borderRadius: "15px"}}
+                    onClick={sendNotification}
+                  >
+                    Send Notifications
+                  </Button>
+                </Col>
+                <Col>
+                  <Button
+                    style={{
+                      backgroundColor:"#F26522",
+                      float:"right",
+                      borderRadius: "15px"
+                    }}
+                    onClick={sendNotificationToAll}
+                  >
+                    Send to All
+                  </Button>
+                </Col>
+              </Row>
+            </div>
           </Col>
         </Row>
       </Container>
