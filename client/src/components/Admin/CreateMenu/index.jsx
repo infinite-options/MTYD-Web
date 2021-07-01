@@ -454,9 +454,11 @@ function CreateMenu({ history, ...props }) {
   };
 
   const getMealCategories = () => {
-    const mealCategories = state.menuData.map((menuItem) => menuItem.meal_cat);
+    const mealCategories = state.menuData.map(
+      (menuItem) => menuItem.meal_category
+    );
     const mealCategoriesUnique = mealCategories.filter(
-      (elt, index) => mealCategories.indexOf(elt) === index
+      (elt, index) => mealCategories.indexOf(elt) === index && elt
     );
     return mealCategoriesUnique;
   };
@@ -466,14 +468,14 @@ function CreateMenu({ history, ...props }) {
       (menuItem) => menuItem.menu_category
     );
     const menuCategoriesUnique = menuCategories.filter(
-      (elt, index) => menuCategories.indexOf(elt) === index
+      (elt, index) => menuCategories.indexOf(elt) === index && elt
     );
     return menuCategoriesUnique;
   };
 
   const updateMenu = () => {
     axios
-      .get(`${API_URL}menu`)
+      .get(`${API_URL}meals_ordered_by_date/${state.menuDate.substring(0, 10)}`)
       .then((response) => {
         if (response.status === 200) {
           const fullMenu = response.data.result;
@@ -566,10 +568,13 @@ function CreateMenu({ history, ...props }) {
 
   // Save Upodate menu item
   const updateMenuItem = (menuItem) => {
-    if (menuItem.menu_uid) {
+    if (menuItem.meal_uid) {
       // Update previous item
       axios
-        .put(`${API_URL}menu`, menuItem)
+        .put(
+          `${API_URL}meals_ordered_by_date/${state.menuDate.substring(0, 10)}`,
+          menuItem
+        )
         .then(() => {
           updateMenu();
         })
@@ -589,12 +594,15 @@ function CreateMenu({ history, ...props }) {
         meal_price: "10",
       };
       axios
-        .post(`${API_URL}menu`, newMenuItem)
+        .post(
+          `${API_URL}meals_ordered_by_date/${state.menuDate.substring(0, 10)}`,
+          newMenuItem
+        )
         .then((response) => {
           const newMenuId = response.data.meal_uid;
           const newMenuItemId = {
             ...newMenuItem,
-            menu_uid: newMenuId,
+            meal_uid: newMenuId,
           };
           const oldIndex = state.editedMenu.indexOf(menuItem);
           const newEditedMenu = [...state.editedMenu];
@@ -614,16 +622,19 @@ function CreateMenu({ history, ...props }) {
 
   // Delete menu item
   const deleteMenuItem = (menuItem) => {
-    const menuId = menuItem.menu_uid;
+    const mealId = menuItem.meal_uid;
     const menuIndex = state.editedMenu.indexOf(menuItem);
-    if (menuId) {
+    if (mealId) {
       // Delete from database
       axios
-        .delete(`${API_URL}menu`, {
-          params: {
-            menu_uid: menuId,
-          },
-        })
+        .delete(
+          `${API_URL}meals_ordered_by_date/${state.menuDate.substring(0, 10)}`,
+          {
+            params: {
+              meal_uid: mealId,
+            },
+          }
+        )
         .then(() => {
           const newMenu = [...state.editedMenu];
           newMenu.splice(menuIndex, 1);
@@ -1462,7 +1473,7 @@ function CreateMenu({ history, ...props }) {
                 meal_price: "10",
               };
               axios
-                .post(`${API_URL}menu`, newMenuItem)
+                .post(`${API_URL}meals_ordered_by_date`, newMenuItem)
                 .then((response) => {
                   // Save New menu item with id on screen
                   const newMenuId = response.data.meal_uid;
