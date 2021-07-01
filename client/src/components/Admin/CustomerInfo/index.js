@@ -8,6 +8,9 @@ import AdminNavBar from '../AdminNavBar'
 import zIndex from '@material-ui/core/styles/zIndex';
 
 import m4me_logo from '../../../images/LOGO_NoBG_MealsForMe.png';
+import trashIcon from '../../../images/trash_icon.png';
+import editIcon from '../../../images/edit_icon.png';
+import xButton from '../../../images/x_button.png';
 
 // For choosing sorting arrow to display
 const ARROW_ID = 0;
@@ -40,7 +43,17 @@ const CELL = {
 	address_width: '12%',
 	zone_width: '12%',
 	zip_width: '10%',
-	phone_width: '12%'
+	phone_width: '12%',
+
+  meal_plan_width: '15%',
+  pur_id_width: '15%',
+  nd_date_width: '15%',
+  nd_status_width: '15%',
+  nb_date_width: '15%',
+  nb_amount_width: '15%',
+  edit_button_width: '5%',
+  delete_button_width: '5%',
+  white_space_width: '15%'
 }
 
 const ERR_VAL = <>&nbsp;<strong style={{color: 'red'}}>[NULL]</strong></>;
@@ -60,19 +73,10 @@ function CustomerInfo() {
   const [loadingUserInfo, setLoadingUserInfo] = useState(false);
 	const [currentPlan, setCurrentPlan] = useState(null);
 	const [subHistory, setSubHistory] = useState(null);
-	// const [LPLP, setLPLP] = useState(null);
 	const [uniquePlans, setUniquePlans] = useState(null);
-	const [billingInfo, setBillingInfo] = useState(null);
-
   const [searchInput, inputSearch] = useState('');
-	const [nameInput, inputName] = useState('');
-	const [idInput, inputId] = useState('');
-	const [addressInput, inputAddress] = useState('');
 	const [sortMode, setSortMode] = useState(SORT_ID);
-
-	const [initialCustomer, setInitialCustomer] = useState(false);
-
-	const [initialHeader, setInitialHeader] = useState(false);
+  const [showEditModal, toggleEditModal] = useState(false);
 
 	const [dimensions, setDimensions] = useState({ 
     height: window.innerHeight,
@@ -539,42 +543,12 @@ function CustomerInfo() {
 				console.log(err);
 			});
 
-		// console.log("(scc) calling customer_lplp on ", cust.customer_uid);
-		// axios
-		// 	.get(API_URL + 'customer_lplp?customer_uid=' + cust.customer_uid)
-		// 	.then(res => {
-		// 		console.log("(lplp) res: ", res);
-		// 		setLPLP(res.data.result);
-		// 	})
-		// 	.catch(err => {
-		// 		console.log(err);
-		// 	});
-
 		selectCustomer(cust);
 		console.log("initial customer selected!");
 	}
 
 	const sortCustomers = () => {
 		let sortedCustomers; 
-
-		// if(sortMode === SORT_ID) {
-		// 	sortedCustomers = customersById;
-		// } else if (sortMode === SORT_ID_REVERSE) {
-		// 	sortedCustomers = [...customersById];
-		// 	sortedCustomers.reverse();
-
-		// } else if (sortMode === SORT_NAME) {
-		// 	sortedCustomers = customersByName;
-		// } else if (sortMode === SORT_NAME_REVERSE) {
-		// 	sortedCustomers = [...customersByName];
-		// 	sortedCustomers.reverse();
-
-		// } else if (sortMode === SORT_ADDRESS) {
-		// 	sortedCustomers = customersByEmail;
-		// } else if (sortMode === SORT_ADDRESS_REVERSE) {
-		// 	sortedCustomers = [...customersByEmail]
-		// 	sortedCustomers.reverse();
-		// }
 
     switch(sortMode){
       case SORT_ID:
@@ -732,8 +706,9 @@ function CustomerInfo() {
 						className={styles.filterRow}
 						style={{backgroundColor: buttonColor}}
 						onClick={() => {
-							// console.log("(FC) clicked: ", cust.customer_uid);
+							// console.log("(FC) clicked: ", cust.customer_uid); foobar2
 							setCurrentCustomer(cust);
+              setCustomerDropdown(false);
 						}}
 					>
 
@@ -867,40 +842,25 @@ function CustomerInfo() {
 
 	// Display when initial information has not been loaded on first page render
 	const hideSubscribedMeals = (config) => {
-
-		// For select meal plan section
-		if(config === 'plan') {
-			return (
-				<div 
-					style={{
-						textAlign: 'center', 
-						paddingTop: '80px',
-						fontSize: '40px', 
-						fontWeight: 'bold',
-						width: '100%'
-					}}
-				>
-					Loading Subscriptions...
-				</div>
-			);
-
-		// For edit plan section
-		} else {
-			return (
-				<div 
-					style={{
-						textAlign: 'center', 
-						paddingTop: '70px',
-						fontSize: '40px', 
-						fontWeight: 'bold',
-						width: '100%',
-						marginBottom: '100px'
-					}}
-				>
-					Loading Subscriptions...
-				</div>
-			);
-		}
+    return (
+     <div 
+        style={{
+          // textAlign: 'center', 
+          // paddingTop: '80px',
+          fontSize: '40px', 
+          fontWeight: 'bold',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100%',
+          width: '100%',
+          paddingBottom: '30px',
+          // border: '1px solid lime'
+        }}
+      >
+        Loading Subscriptions...
+      </div>
+    );
 	}
 
 	const countActiveSubs = () => {
@@ -941,12 +901,6 @@ function CustomerInfo() {
       mealButtons.push(
         <div
           key={sub.purchase_uid}
-          // className={
-          //   this.state.currentPlan.id === sub.id
-          //     ? selectedMealButton
-          //     : deselectedMealButton
-          // }
-					// className={deselectedMealButton}
 					className={
             currentPlan !== null && currentPlan.purchase_uid === sub.purchase_uid
               ? selectedMealButton
@@ -958,35 +912,133 @@ function CustomerInfo() {
 						setCurrentPlan(sub);
 					}}
 				>
-          {/* <div className={styles.mealButtonEdit}>
-            
-					</div> */}
-					<div className={styles.mealButtonSection3}>
-						{/* {sub.meals} Meals, {sub.deliveries} Deliveries */}
+
+					<div 
+            className={styles.mealButtonSection}
+            style={{
+              width: CELL.meal_plan_width,
+              paddingLeft: '10px'
+            }}
+          >
 						{parseMeals(sub)} Meals, {parseDeliveries(sub)} Deliveries
 					</div>
-					<div className={styles.mealButtonSection2}>
+
+					<div 
+            className={styles.mealButtonSection}
+            style={{
+              width: CELL.pur_id_width
+            }}
+          >
 						{parseID(sub)}
 					</div>
-					<div className={styles.mealButtonSection}>
+
+					<div 
+            className={styles.mealButtonSection}
+            style={{
+              width: CELL.nd_date_width
+            }}
+          >
 						{formatDate(sub.next_delivery)}
 					</div>
-					<div className={styles.mealButtonSection}>
+
+					<div 
+            className={styles.mealButtonSection}
+            style={{
+              width: CELL.nd_status_width
+            }}
+          >
 						{sub.final_selection}
 					</div>
-					<div className={styles.mealButtonSection}>
+
+					<div 
+            className={styles.mealButtonSection}
+            style={{
+              width: CELL.nb_date_width
+            }}
+          >
 						{formatDate(sub.next_billing_date)}
 					</div>
-					<div className={styles.mealButtonSection}>
+
+					<div 
+            className={styles.mealButtonSection}
+            style={{
+              width: CELL.nb_amount_width
+            }}
+          >
 						${sub.amount_due.toFixed(2)}
 					</div>
+
+          {/* <div 
+            className={styles.mealButtonSection} 
+            style={{
+              fontWeight: 'bold', 
+              fontSize: '20px',
+              width: CELL.edit_button_width,
+              backgroundImage: `url(${editIcon})`,
+            }}
+          /> */}
+
+          <div
+            className={styles.mealButtonSection} 
+            style={{
+              fontWeight: 'bold', 
+              fontSize: '20px',
+              width: CELL.delete_button_width,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              padding: '0'
+            }}
+          >
+            <div
+              style={{
+                backgroundImage: `url(${editIcon})`,
+                backgroundSize: '100%',
+                height: '20px',
+                width: '20px',
+                // border: '1px solid'
+              }}
+              onClick={() => {
+                toggleEditModal(true)
+              }}
+            />
+          </div>
+
+          <div 
+            className={styles.mealButtonSection} 
+            style={{
+              fontWeight: 'bold', 
+              fontSize: '20px',
+              width: CELL.delete_button_width,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              padding: '0'
+            }}
+          >
+            <div
+              style={{
+                backgroundImage: `url(${trashIcon})`,
+                backgroundSize: '100%',
+                height: '20px',
+                width: '16px',
+                // border: '1px solid'
+              }}
+            />
+          </div>
+
 				</div>
 			);
 		});
 
 		// return mealButtons;
 		return(
-      <div style={{width: '100%'}}>
+      <div 
+        style={{
+          width: '100%',
+          // border: '1px solid blue'
+        }}
+      >
         {mealButtons}
       </div>
     );
@@ -1622,11 +1674,184 @@ function CustomerInfo() {
     );
 	}
 
+  const displayEditModal = () => {
+    return (
+      <div
+        style={{
+          position: 'fixed',
+          zIndex: '99',
+          top: '0',
+          left: '0',
+          backgroundColor: 'rgba(255, 255, 255, 0.5)',
+          // opacity: '0.5',
+          // scrollMarginTop: '100px',
+          width: '100vw',
+          maxWidth: '100%',
+          height: '100vh',
+          maxHeight: '100%',
+          // border: 'dashed'
+        }}
+      >
+        <AdminNavBar currentPage={'customers'}/>
+        <div
+          style={{
+            margin: '20px 20px 20px 20px',
+            // display: 'flex',
+            // flexGrow: '1',
+            // height: '96%',
+            height: 'calc(96% - 100px)',
+            maxHeight: 'calc(96% - 100px)',
+            border: '2px solid #F26522',
+            borderRadius: '15px',
+            // backgroundColor: '#F7F4E5',
+            backgroundColor: 'rgba(247, 244, 229, 1)',
+            opacity: '1',
+            // display: 'flex'
+          }}
+        >
+
+        <div
+          style={{
+            // border: 'solid lime',
+            height: '60px',
+            position: 'relative'
+          }}
+        >
+          <div
+            style={{
+              position: 'absolute',
+              right: '15px',
+              top: '15px',
+              backgroundImage: `url(${xButton})`,
+              backgroundSize: '100%',
+              height: '30px',
+              width: '30px',
+              cursor: 'pointer'
+            }}
+            onClick={() => {
+              toggleEditModal(false);
+            }}
+          />
+        </div>
+
+        <div
+          style={{
+            // border: 'solid purple',
+            borderTop: '2px solid #F26522',
+            display: 'flex',
+            width: '100%',
+            height: 'calc(100% - 60px)',
+            overflow: 'auto'
+          }}
+        >
+
+          <div
+            style={{
+              margin: '0 1% 0 0',
+              // border: 'dashed',
+              height: '100%',
+              width: '49%',
+              // overflow: 'auto'
+            }}
+          >
+            <div className={styles.sectionHeader2}>
+              Edit Plan
+            </div>
+
+            <div className={styles.boxPDleft}>
+
+              <div style={{width: 'fit-content'}}>
+
+                <div className={styles.planHeader}>
+                  Current Plan
+                </div>
+
+                <div style={{paddingBottom: '50px'}}>
+
+                  <div style={{paddingBottom: '10px'}}>
+                    MEALS
+                  </div>
+
+                  <div className={styles.iconMeals}>
+                    5
+                  </div>
+
+                </div>
+
+                <div style={{paddingBottom: '50px'}}>
+
+                  <div style={{paddingBottom: '10px'}}>
+                    DELIVERIES
+                  </div>
+
+                  <button 
+                    className={styles.deliveryButtonCurrent} 
+                    // aria-label={ariaTag} 
+                    // title={ariaTag}
+                  >
+                    <span 
+                      style={{
+                        fontSize: '35px'
+                      }}
+                    >
+                      4
+                    </span>
+
+                    <br />
+
+                    <span style={{whiteSpace: "nowrap"}}>
+                      {"(Save 5%)"}
+                    </span>
+
+                  </button>
+                </div>
+
+                <div>
+
+                  <div style={{paddingBottom: '10px'}}> 
+                    CANCEL
+                  </div>
+
+                  <div 
+                    className={styles.iconTrash}
+                    onClick={() => {
+                      // this.confirmDelete();
+                    }}
+                    tabIndex="0"
+                    // aria-label="Click here to cancel this meal plan"
+                    // title="Click here to cancel this meal plan"
+                  />
+
+                </div>
+              </div>
+            </div>
+          </div>
+        
+          <div
+            style={{
+              margin: '0px 0 0 1%',
+              // border: 'dashed',
+              height: '100%',
+              width: '49%'
+            }}
+          >
+            <div className={styles.sectionHeader2}>
+              Payment Summary
+            </div>
+          </div>
+
+        </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
 		<div 
 			style={{
 				backgroundColor: '#F26522',
-				height: '10px'
+        position: 'relative'
+				// height: '10px'
 			}}
 		>
 
@@ -1643,7 +1868,7 @@ function CustomerInfo() {
 			/>
 
 			{/* For debugging window size */}
-			{/* <span 
+			<span 
 				style={{
 					zIndex: '101',
 					position: 'fixed',
@@ -1657,7 +1882,7 @@ function CustomerInfo() {
 				Height: {dimensions.height}px
 				<br />
 				Width: {dimensions.width}px
-			</span> */}
+			</span>
 
 			{/* <span 
 				style={{
@@ -1674,7 +1899,22 @@ function CustomerInfo() {
 				cust info width: {document.getElementById("custInfo").offsetWidth}
 			</span> */}
 
-			<AdminNavBar currentPage={'customers'}/>
+			{/* <AdminNavBar currentPage={'customers'}/> */}
+
+      {showEditModal === true ? (
+        <>
+          <div 
+            style={{
+              height: '80px',
+              backgroundColor: '#F8BB17',
+              width: '100%'
+            }}
+          />
+          {displayEditModal()}
+        </>
+      ) : (
+        <AdminNavBar currentPage={'customers'}/>
+      )}
 
 			{customersById === null ? (
 				<div
@@ -1702,6 +1942,28 @@ function CustomerInfo() {
 			) : (
 				null
 			)}
+
+      {/* {showEditModal === true ? (
+        <div
+          style={{
+            position: 'relative',
+            border: 'dashed',
+            width: '100vw',
+            maxWidth: '100%',
+            height: '100vh',
+            maxHeight: '100%'
+          }}
+        >
+          {displayEditModal()}
+        </div>
+      ) : (
+        null
+      )} */}
+      {/* {showEditModal === true ? (
+        displayEditModal()
+      ) : (
+        null
+      )} */}
 
 			{console.log("Current customer info: ", selectedCustomer)}
 			{/* <div className={styles.containerCustomer}> */}
@@ -2691,52 +2953,105 @@ function CustomerInfo() {
 								All Meal Plans
 							</div>
               <div className={styles.mealButtonHeader}>
-                <div className={styles.mealButtonSection2} style={{fontWeight: 'bold', fontSize: '20px'}}>
+
+                <div 
+                  className={styles.mealButtonSection} 
+                  style={{
+                    fontWeight: 'bold', 
+                    fontSize: '20px',
+                    width: CELL.meal_plan_width
+                  }}
+                >
                   Meal Plans
                 </div>
-                <div className={styles.mealButtonSection2} style={{fontWeight: 'bold', fontSize: '20px'}}>
+
+                <div 
+                  className={styles.mealButtonSection} 
+                  style={{
+                    fontWeight: 'bold', 
+                    fontSize: '20px',
+                    width: CELL.pur_id_width
+                  }}
+                >
                   Purchase ID
                 </div>
-                <div className={styles.mealButtonSection} style={{fontWeight: 'bold', fontSize: '20px'}}>
+
+                <div 
+                  className={styles.mealButtonSection} 
+                  style={{
+                    fontWeight: 'bold', 
+                    fontSize: '20px',
+                    width: CELL.nd_date_width
+                  }}
+                >
                   Next Delivery Date
                 </div>
-                <div className={styles.mealButtonSection} style={{fontWeight: 'bold', fontSize: '20px'}}>
+
+                <div 
+                  className={styles.mealButtonSection} 
+                  style={{
+                    fontWeight: 'bold', 
+                    fontSize: '20px',
+                    width: CELL.nd_status_width
+                  }}
+                >
                   Next Delivery Status
                 </div>
-                <div className={styles.mealButtonSection} style={{fontWeight: 'bold', fontSize: '20px'}}>
+
+                <div 
+                  className={styles.mealButtonSection} 
+                  style={{
+                    fontWeight: 'bold', 
+                    fontSize: '20px',
+                    width: CELL.nb_date_width
+                  }}
+                >
                   Next Billing Date
                 </div>
-                <div className={styles.mealButtonSection} style={{fontWeight: 'bold', fontSize: '20px'}}>
+
+                <div 
+                  className={styles.mealButtonSection} 
+                  style={{
+                    fontWeight: 'bold', 
+                    fontSize: '20px',
+                    width: CELL.nb_amount_width
+                  }}
+                >
                   Next Billing Amount
                 </div>
+
+                <div 
+                  className={styles.mealButtonSection} 
+                  style={{
+                    fontWeight: 'bold', 
+                    fontSize: '20px',
+                    width: CELL.edit_button_width
+                  }}
+                />
+
+                <div 
+                  className={styles.mealButtonSection} 
+                  style={{
+                    fontWeight: 'bold', 
+                    fontSize: '20px',
+                    width: CELL.delete_button_width
+                  }}
+                />
+
               </div>
 							<div className={styles.boxScroll}>
-								{/* <div className={styles.mealButtonHeader}>
-									<div className={styles.mealButtonSection2} style={{fontWeight: 'bold', fontSize: '20px'}}>
-										Meal Plans
-									</div>
-									<div className={styles.mealButtonSection2} style={{fontWeight: 'bold', fontSize: '20px'}}>
-										Purchase ID
-									</div>
-									<div className={styles.mealButtonSection} style={{fontWeight: 'bold', fontSize: '20px'}}>
-										Next Delivery Date
-									</div>
-									<div className={styles.mealButtonSection} style={{fontWeight: 'bold', fontSize: '20px'}}>
-										Next Delivery Status
-									</div>
-									<div className={styles.mealButtonSection} style={{fontWeight: 'bold', fontSize: '20px'}}>
-										Next Billing Date
-									</div>
-									<div className={styles.mealButtonSection} style={{fontWeight: 'bold', fontSize: '20px'}}>
-										Next Billing Amount
-									</div>
-								</div> */}
 
 								{console.log("subscriptions loaded? ", subscriptionsLoaded)}
-								<div style={{display: 'flex'}}>
-									{subscriptionsList !== null
+								<div 
+                  style={{
+                    display: 'flex',
+                    height: '100%',
+                    // border: '3px solid green'
+                  }}
+                >
+									{subscriptionsList !== null && loadingUserInfo === false
 										? showSubscribedMeals() 
-										: hideSubscribedMeals('plan')}
+										: hideSubscribedMeals()}
 								</div>
 
 							</div>
