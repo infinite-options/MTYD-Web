@@ -790,7 +790,7 @@ function CreateMenu({ history, ...props }) {
           >
             <LeftArrow />
           </button>
-          <Col xs={4}>
+          <Col xs={5}>
             {state.dateIndex != null && (
               <Carousel
                 responsive={responsive}
@@ -853,7 +853,6 @@ function CreateMenu({ history, ...props }) {
           >
             <RightArrow />
           </button>
-          <Col></Col>
           <Col
             md="auto"
             className={styles.verticallyCenter}
