@@ -984,8 +984,8 @@ function OrdersIngredients({ history, ...props }) {
               </div>
             </Col>
           </Row>
-          <Row className={[styles.row2, styles.scroll].join(" ")}>
-            <div className={styles.section} style={{ marginRight: 10 }}>
+          <Row className={[styles.row2].join(" ")}>
+            <Col className={styles.section} style={{ marginRight: 10 }}>
               <div
                 className={styles.bold}
                 style={{ padding: "15px", fontSize: "18px" }}
@@ -993,7 +993,7 @@ function OrdersIngredients({ history, ...props }) {
                 Upcoming Meal Orders And Revenue:{" "}
                 {formatDisplayDate(formatToDisplayDate(state.selectedDate))}
               </div>
-              <Table>
+              <Table responsive>
                 <TableHead>
                   <TableRow>
                     <TableCell
@@ -1104,8 +1104,8 @@ function OrdersIngredients({ history, ...props }) {
                     })}
                 </TableBody>
               </Table>
-            </div>
-            <div className={styles.section} style={{ marginRight: 10 }}>
+            </Col>
+            <Col xs={4} className={styles.section} style={{ marginRight: 10 }}>
               <div
                 className={styles.bold}
                 style={{ padding: "15px", fontSize: "18px" }}
@@ -1114,7 +1114,7 @@ function OrdersIngredients({ history, ...props }) {
                 {formatDisplayDate(formatToDisplayDate(state.selectedDate))}
               </div>
 
-              <Table size="sm">
+              <Table responsive>
                 <TableHead>
                   <TableRow>
                     <TableCell
@@ -1204,8 +1204,8 @@ function OrdersIngredients({ history, ...props }) {
                     })}
                 </TableBody>
               </Table>
-            </div>
-            <div className={styles.section} style={{ width: "22%" }}>
+            </Col>
+            <Col xs={3} className={styles.section}>
               <div
                 className={styles.bold}
                 style={{ padding: "15px", fontSize: "18px" }}
@@ -1215,7 +1215,7 @@ function OrdersIngredients({ history, ...props }) {
                 {formatDisplayDate(formatToDisplayDate(state.selectedDate))}
               </div>
 
-              <Table>
+              <Table responsive>
                 <TableHead>
                   <TableCell
                     style={{
@@ -1224,7 +1224,7 @@ function OrdersIngredients({ history, ...props }) {
                       border: "none",
                     }}
                   >
-                    Name
+                    Ingredient Name
                   </TableCell>
                   <TableCell
                     style={{
@@ -1233,7 +1233,7 @@ function OrdersIngredients({ history, ...props }) {
                       border: "none",
                     }}
                   >
-                    Qty.
+                    Quantity
                   </TableCell>
                   <TableCell
                     style={{
@@ -1301,7 +1301,7 @@ function OrdersIngredients({ history, ...props }) {
                     })}
                 </TableBody>
               </Table>
-            </div>
+            </Col>
           </Row>
 
           {/* <Row>
