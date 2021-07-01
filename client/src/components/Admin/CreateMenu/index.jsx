@@ -253,17 +253,16 @@ function CreateMenu({ history, ...props }) {
             menuDate: nextMenuDate,
           },
         });
-        return axios.get(`${API_URL}menu`);
+        return axios.get(
+          `${API_URL}meals_ordered_by_date/${nextMenuDate.substring(0, 10)}`
+        );
       })
       .then((response) => {
         if (response.status === 200) {
-          const fullMenu = response.data.result;
-          const nextMenu = fullMenu.filter(
-            (item) => item.menu_date === nextMenuDate
-          );
-          if (fullMenu !== undefined) {
-            dispatch({ type: "FETCH_MENU", payload: fullMenu });
-            dispatch({ type: "EDIT_MENU", payload: nextMenu });
+          const mealsApi = response.data.result;
+          if (mealsApi !== undefined) {
+            dispatch({ type: "FETCH_MENU", payload: mealsApi });
+            dispatch({ type: "EDIT_MENU", payload: mealsApi });
           }
         }
       })
@@ -409,9 +408,34 @@ function CreateMenu({ history, ...props }) {
     return 0;
   };
 
-  const getMenuData = (date) => {
-    const curMenu = state.menuData.filter((item) => item.menu_date === date);
-    return curMenu;
+  const getMenuData = async (date) => {
+    const mealApiData = await axios.get(
+      `${API_URL}meals_ordered_by_date/${date.substring(0, 10)}`
+    );
+    const mealApiDataResult = mealApiData.data.result;
+    // await axios
+    //   .get(`${API_URL}meals_ordered_by_date/${date.substring(0, 10)}`)
+    //   .then((response) => {
+    //     mealsApi = response.data.result;
+    //   })
+    //   .then((response) => {
+    //     if (response.status === 200) {
+    //       const mealsApi = response.data.result;
+    //       if (mealsApi !== undefined) {
+    //         dispatch({ type: "FETCH_MENU", payload: mealsApi });
+    //         dispatch({ type: "EDIT_MENU", payload: mealsApi });
+    //       }
+    //     }
+    //   })
+    //   .catch((err) => {
+    //     if (err.response) {
+    //       // eslint-disable-next-line no-console
+    //       console.log(err.response);
+    //     }
+    //     // eslint-disable-next-line no-console
+    //     console.log(err);
+    //   });
+    return mealApiDataResult;
   };
 
   const getMealsByCategory = (category) => {
@@ -493,16 +517,31 @@ function CreateMenu({ history, ...props }) {
 
   // Change Date
   const changeDate = (newDate) => {
-    console.log(newDate);
     dispatch({ type: "CHANGE_DATE", payload: newDate });
-    const curMenu = getMenuData(newDate);
-    console.log(curMenu);
-    const sortedMenu = sortedArray(
-      curMenu,
-      state.sortEditMenu.field,
-      state.sortEditMenu.direction
-    );
-    dispatch({ type: "EDIT_MENU", payload: sortedMenu });
+    //const curMenu = getMenuData(newDate);
+    // curMenu.then((response) => console.log(response));
+    //console.log(curMenu);
+    getMenuData(newDate)
+      .then((curMenu) => {
+        if (curMenu) {
+          const sortedMenu = sortedArray(
+            curMenu,
+            state.sortEditMenu.field,
+            state.sortEditMenu.direction
+          );
+          dispatch({ type: "EDIT_MENU", payload: sortedMenu });
+        } else {
+          dispatch({ type: "EDIT_MENU", payload: [] });
+        }
+      })
+      .catch((err) => {
+        if (err.response) {
+          // eslint-disable-next-line no-console
+          console.log(err.response);
+        }
+        // eslint-disable-next-line no-console
+        console.log(err);
+      });
   };
 
   // useEffect(() => {
@@ -609,13 +648,27 @@ function CreateMenu({ history, ...props }) {
 
   const copyDate = (newDate) => {
     dispatch({ type: "CHANGE_DATE", payload: newDate });
-    const curMenu = getMenuData(newDate);
-    const sortedMenu = sortedArray(
-      curMenu,
-      state.sortEditMenu.field,
-      state.sortEditMenu.direction
-    );
-    dispatch({ type: "EDIT_MENU", payload: sortedMenu });
+    getMenuData(newDate)
+      .then((curMenu) => {
+        if (curMenu) {
+          const sortedMenu = sortedArray(
+            curMenu,
+            state.sortEditMenu.field,
+            state.sortEditMenu.direction
+          );
+          dispatch({ type: "EDIT_MENU", payload: sortedMenu });
+        } else {
+          dispatch({ type: "EDIT_MENU", payload: [] });
+        }
+      })
+      .catch((err) => {
+        if (err.response) {
+          // eslint-disable-next-line no-console
+          console.log(err.response);
+        }
+        // eslint-disable-next-line no-console
+        console.log(err);
+      });
   };
 
   // Toggle Add Menu modal
@@ -986,13 +1039,13 @@ function CreateMenu({ history, ...props }) {
                         color: "#f26522",
                         border: "none",
                       }}
-                      active={state.sortEditMenu.field === "meal_cat"}
+                      active={state.sortEditMenu.field === "meal_category"}
                       direction={
-                        state.sortEditMenu.field === "meal_cat"
+                        state.sortEditMenu.field === "meal_category"
                           ? state.sortEditMenu.direction
                           : "asc"
                       }
-                      onClick={() => changeSortOptions("meal_cat")}
+                      onClick={() => changeSortOptions("meal_category")}
                     >
                       Meal Category
                     </TableSortLabel>
@@ -1010,13 +1063,13 @@ function CreateMenu({ history, ...props }) {
                         color: "#f26522",
                         border: "none",
                       }}
-                      active={state.sortEditMenu.field === "menu_category"}
+                      active={state.sortEditMenu.field === "meal_category"}
                       direction={
-                        state.sortEditMenu.field === "menu_category"
+                        state.sortEditMenu.field === "meal_category"
                           ? state.sortEditMenu.direction
                           : "asc"
                       }
-                      onClick={() => changeSortOptions("menu_category")}
+                      onClick={() => changeSortOptions("meal_category")}
                     >
                       Menu Category
                     </TableSortLabel>
@@ -1067,13 +1120,13 @@ function CreateMenu({ history, ...props }) {
                         color: "#f26522",
                         border: "none",
                       }}
-                      active={state.sortEditMenu.field === ""}
+                      active={state.sortEditMenu.field === "total_qty"}
                       direction={
-                        state.sortEditMenu.field === ""
+                        state.sortEditMenu.field === "total_qty"
                           ? state.sortEditMenu.direction
                           : "asc"
                       }
-                      onClick={() => changeSortOptions("")}
+                      onClick={() => changeSortOptions("total_qty")}
                     >
                       Meals Ordered
                     </TableSortLabel>
@@ -1081,112 +1134,141 @@ function CreateMenu({ history, ...props }) {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {state.editedMenu.map((mealMenu, mealMenuIndex) => {
-                  const otherMealCategories = mealMenu.meal_category
-                    ? getMealsByCategory(mealMenu.meal_category)
-                    : state.mealData;
-                  return (
-                    <TableRow
-                      key={`${mealMenuIndex} ${mealMenu.menu_uid}`}
-                      hover
-                    >
-                      <TableCell style={{ borderBottom: "1px solid #f8bb17" }}>
-                        {mealMenu.menu_type}
-                      </TableCell>
-                      <TableCell style={{ borderBottom: "1px solid #f8bb17" }}>
-                        <Form>
-                          <Form.Control
-                            as="select"
-                            value={mealMenu.meal_uid}
-                            onChange={(event) => {
-                              const newMenu = [...state.editedMenu];
-                              const newMealId = event.target.value;
-                              const newMealInfo = state.mealData.filter(
-                                (meal) => meal.meal_uid === newMealId
-                              )[0];
-                              // const mealMenuIndex = newMenu.findIndex((elt) => elt.menu_uid === mealMenu.menu_uid);
-                              newMenu[mealMenuIndex] = {
-                                ...newMenu[mealMenuIndex],
-                                ...newMealInfo,
-                                menu_meal_id: newMealId,
-                              };
-                              dispatch({ type: "EDIT_MENU", payload: newMenu });
-                            }}
-                          >
-                            <option value="" hidden>
-                              {" "}
-                              Choose Meal{" "}
-                            </option>
-                            {otherMealCategories.map((meal) => (
-                              <option value={meal.meal_uid} key={meal.meal_uid}>
-                                {meal.meal_name}
-                              </option>
-                            ))}
-                          </Form.Control>
-                        </Form>
-                      </TableCell>
-                      <TableCell style={{ borderBottom: "1px solid #f8bb17" }}>
-                        <img
-                          src={mealMenu.meal_photo_URL}
-                          style={{ height: "60px", width: "60px" }}
-                        ></img>
-                      </TableCell>
-                      <TableCell style={{ borderBottom: "1px solid #f8bb17" }}>
-                        {getBusinessName(mealMenu.meal_business)}
-                      </TableCell>
-                      <TableCell style={{ borderBottom: "1px solid #f8bb17" }}>
-                        {mealMenu.meal_cat}
-                      </TableCell>
-                      <TableCell>{mealMenu.menu_category}</TableCell>
-                      <TableCell style={{ borderBottom: "1px solid #f8bb17" }}>
-                        <Form>
-                          <Form.Control
-                            as="select"
-                            value={mealMenu.default_meal}
-                            onChange={(event) => {
-                              const newMenu = [...state.editedMenu];
-                              const newDefaultMeal = event.target.value;
-                              // const mealMenuIndex = newMenu.findIndex((elt) => elt.menu_uid === mealMenu.menu_uid);
-                              newMenu[mealMenuIndex] = {
-                                ...newMenu[mealMenuIndex],
-                                default_meal: newDefaultMeal,
-                              };
-                              dispatch({ type: "EDIT_MENU", payload: newMenu });
-                            }}
-                          >
-                            <option value="FALSE"> FALSE </option>
-                            <option value="TRUE"> TRUE </option>
-                          </Form.Control>
-                        </Form>
-                      </TableCell>
-                      <TableCell
-                        style={{
-                          borderBottom: "1px solid #f8bb17",
-                        }}
+                {state.editedMenu
+                  .filter((item) => item.meal_name !== null)
+                  .map((mealMenu, mealMenuIndex) => {
+                    const otherMealCategories = mealMenu.meal_category
+                      ? getMealsByCategory(mealMenu.meal_category)
+                      : state.mealData;
+                    return (
+                      <TableRow
+                        key={`${mealMenuIndex} ${mealMenu.menu_uid}`}
+                        hover
                       >
-                        <button
-                          className={"icon-button"}
-                          onClick={() => {
-                            deleteMenuItem(mealMenu);
+                        <TableCell
+                          style={{ borderBottom: "1px solid #f8bb17" }}
+                        >
+                          {mealMenu.menu_type}
+                        </TableCell>
+                        <TableCell
+                          style={{ borderBottom: "1px solid #f8bb17" }}
+                        >
+                          <Form>
+                            <Form.Control
+                              as="select"
+                              value={mealMenu.meal_uid}
+                              onChange={(event) => {
+                                const newMenu = [...state.editedMenu];
+                                const newMealId = event.target.value;
+                                const newMealInfo = state.mealData.filter(
+                                  (meal) => meal.meal_uid === newMealId
+                                )[0];
+                                // const mealMenuIndex = newMenu.findIndex((elt) => elt.menu_uid === mealMenu.menu_uid);
+                                newMenu[mealMenuIndex] = {
+                                  ...newMenu[mealMenuIndex],
+                                  ...newMealInfo,
+                                  menu_meal_id: newMealId,
+                                };
+                                dispatch({
+                                  type: "EDIT_MENU",
+                                  payload: newMenu,
+                                });
+                              }}
+                            >
+                              <option value="" hidden>
+                                {" "}
+                                Choose Meal{" "}
+                              </option>
+                              {otherMealCategories.map((meal) => (
+                                <option
+                                  value={meal.meal_uid}
+                                  key={meal.meal_uid}
+                                >
+                                  {meal.meal_name}
+                                </option>
+                              ))}
+                            </Form.Control>
+                          </Form>
+                        </TableCell>
+                        <TableCell
+                          style={{ borderBottom: "1px solid #f8bb17" }}
+                        >
+                          <img
+                            src={mealMenu.meal_photo_URL}
+                            style={{ height: "60px", width: "60px" }}
+                          ></img>
+                        </TableCell>
+                        <TableCell
+                          style={{ borderBottom: "1px solid #f8bb17" }}
+                        >
+                          {getBusinessName(mealMenu.meal_business)}
+                        </TableCell>
+                        <TableCell
+                          style={{ borderBottom: "1px solid #f8bb17" }}
+                        >
+                          {mealMenu.meal_category}
+                        </TableCell>
+                        <TableCell
+                          style={{ borderBottom: "1px solid #f8bb17" }}
+                        >
+                          {mealMenu.meal_category}
+                        </TableCell>
+                        <TableCell
+                          style={{ borderBottom: "1px solid #f8bb17" }}
+                        >
+                          <Form>
+                            <Form.Control
+                              as="select"
+                              value={mealMenu.default_meal}
+                              onChange={(event) => {
+                                const newMenu = [...state.editedMenu];
+                                const newDefaultMeal = event.target.value;
+                                // const mealMenuIndex = newMenu.findIndex((elt) => elt.menu_uid === mealMenu.menu_uid);
+                                newMenu[mealMenuIndex] = {
+                                  ...newMenu[mealMenuIndex],
+                                  default_meal: newDefaultMeal,
+                                };
+                                dispatch({
+                                  type: "EDIT_MENU",
+                                  payload: newMenu,
+                                });
+                              }}
+                            >
+                              <option value="FALSE"> FALSE </option>
+                              <option value="TRUE"> TRUE </option>
+                            </Form.Control>
+                          </Form>
+                        </TableCell>
+                        <TableCell
+                          style={{
+                            borderBottom: "1px solid #f8bb17",
                           }}
                         >
-                          <FontAwesomeIcon icon={faTrashAlt} />
-                        </button>
-                        <button
-                          className={"icon-button"}
-                          onClick={() => {
-                            updateMenuItem(mealMenu);
-                          }}
+                          <button
+                            className={"icon-button"}
+                            onClick={() => {
+                              deleteMenuItem(mealMenu);
+                            }}
+                          >
+                            <FontAwesomeIcon icon={faTrashAlt} />
+                          </button>
+                          <button
+                            className={"icon-button"}
+                            onClick={() => {
+                              updateMenuItem(mealMenu);
+                            }}
+                          >
+                            <FontAwesomeIcon icon={faSave} />
+                          </button>
+                        </TableCell>
+                        <TableCell
+                          style={{ borderBottom: "1px solid #f8bb17" }}
                         >
-                          <FontAwesomeIcon icon={faSave} />
-                        </button>
-                      </TableCell>
-                      <TableCell style={{ borderBottom: "1px solid #f8bb17" }}>
-                        0
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
+                          {mealMenu.total_qty}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
               </TableBody>
             </Table>
           </Col>
