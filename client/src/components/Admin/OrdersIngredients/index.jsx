@@ -812,7 +812,7 @@ function OrdersIngredients({ history, ...props }) {
 
   return (
     <>
-      <AdminNavBar currentPage={"orders-ingredients"} />
+      <AdminNavBar currentPage={"order-ingredients"} />
       <div className={styles.root}>
         {console.log(state)}
         <Container fluid className={styles.container}>
