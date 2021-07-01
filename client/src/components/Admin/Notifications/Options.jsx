@@ -27,6 +27,7 @@ const NotificationOptions = ({state, dispatch}) => {
           >
               <Form>
                 <Form.Control
+                  className={styles.dropdown}
                   as="select"
                   value={state.notificationType}
                   onChange={changeNotificationType}

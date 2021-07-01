@@ -106,12 +106,87 @@ const NotificationMain = ({state, dispatch}) => {
   const sendNotification = () => {
     // eslint-disable-next-line
     console.log('Send notification to selected');
+    console.log(state.notificationType);
+    console.log(state.message);
+    console.log(state.customerSelected)
+
+    let uids = ""
+    for (var i = 0; i < state.customerSelected.length; i++) {
+      if (i == state.customerSelected.length - 1) {
+        uids = uids + state.customerSelected[i]
+      } else {
+        uids = uids + state.customerSelected[i] + ","
+      }
+    }
+
+    console.log(uids)
+
+    const bodyFormData = new FormData()
+
+    bodyFormData.append('uids', uids)
+    bodyFormData.append('message', state.message)
+
+    if (state.notificationType == 'Notifications') {
+      axios({
+        method: "post", url: 
+        `${API_URL}Send_Notification/customer`,
+        data: bodyFormData,
+        headers: {"Content-Type": "multipart/form-data"}
+      })
+        .then((response) => {
+          console.log(response)
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    } else if (state.notificationType == 'SMS') {
+      // SMS endpoint goes here
+      console.log("SMS endpoint not implememnted")
+    }
+
+    
+
   }
 
   // Send message to all
   const sendNotificationToAll = () => {
     // eslint-disable-next-line
     console.log('Send notification to all');
+    console.log(state.customerList)
+
+    let uids = ""
+    for (var i = 0; i < state.customerList.length; i++) {
+      if (i == state.customerList.length - 1) {
+        uids = uids + state.customerList[i].customer_uid
+      } else {
+        uids = uids + state.customerList[i].customer_uid + ","
+      }
+    }
+
+    console.log(uids)
+
+    const bodyFormData = new FormData()
+
+    bodyFormData.append('uids', uids)
+    bodyFormData.append('message', state.message)
+
+    if (state.notificationType == 'Notifications') {
+      axios({
+        method: "post", url: 
+        `${API_URL}Send_Notification/customer`,
+        data: bodyFormData,
+        headers: {"Content-Type": "multipart/form-data"}
+      })
+        .then((response) => {
+          console.log(response)
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    } else if (state.notificationType == 'SMS') {
+      // SMS endpoint goes here
+      console.log("SMS endpoint not implememnted")
+    }
   }
   
   return (
