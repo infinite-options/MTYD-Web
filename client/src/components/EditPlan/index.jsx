@@ -2384,34 +2384,7 @@ class EditPlan extends React.Component {
             null
           )}
 
-          {/* {narrowView ? (
-            <>
-              <div className={styles.sectionHeader}>
-                Edit Delivery Details
-              </div>
-            </>
-          ) : (
-            <>
-              <div style={{display: 'flex'}}>
-                <div className={styles.sectionHeaderLeft}>
-                  Edit Delivery Details
-                </div>
-                <div className={styles.sectionHeaderRight}>
-                  Payment Summary
-                </div>
-              </div>
-            </>
-          )} */}
-
           <div
-            //   style={{
-            //     visibility: 'visible',
-            //     width:'40%',
-            //     marginRight: '8%',
-            //     marginLeft: '2%',
-            //     border: 'solid'
-            //   }}
-            // > 
 
             style = {
               // narrowView 
@@ -2719,20 +2692,6 @@ class EditPlan extends React.Component {
                     ${this.state.differenceSummary.total}
                   </div>
               </div>
-
-              {/* <div className={styles.checkboxContainer}>
-                <label className={styles.checkboxLabel}>
-                  Use Previous Credit Card
-                </label>
-                <input
-                  className={styles.checkbox}
-                  type="checkbox"
-                  checked={this.state.usePreviousCard}
-                  onChange={this.handleCheck}
-                />
-              </div> */}
-
-              {/* { this.state.usePreviousCard ? null : this.showCardForm()} */}
 
 
               <button 

@@ -72,6 +72,7 @@ function CustomerInfo() {
 	const [subscriptionsList, setSubscriptionsList] = useState(null);
   const [loadingUserInfo, setLoadingUserInfo] = useState(false);
 	const [currentPlan, setCurrentPlan] = useState(null);
+  const [updatedPlan, setUpdatedPlan] = useState(null);
 	const [subHistory, setSubHistory] = useState(null);
 	const [uniquePlans, setUniquePlans] = useState(null);
   const [searchInput, inputSearch] = useState('');
@@ -910,6 +911,7 @@ function CustomerInfo() {
 						console.log("meal plan id clicked: ", sub.purchase_uid);
 						console.log("meal plan data clicked: ", sub);
 						setCurrentPlan(sub);
+            setUpdatedPlan(sub);
 					}}
 				>
 
@@ -1674,6 +1676,45 @@ function CustomerInfo() {
     );
 	}
 
+  const activeChanges = () => {
+
+    // let updatedSummary = this.state.updatedPlan.payment_summary;
+    // let currentSummary = this.state.currentPlan.payment_summary;
+
+    // if(
+    //   updatedSummary.base_amount === currentSummary.base_amount &&
+    //   updatedSummary.discount_amount === currentSummary.discount_amount &&
+    //   updatedSummary.delivery_fee === currentSummary.delivery_fee &&
+    //   updatedSummary.service_fee === currentSummary.service_fee &&
+    //   updatedSummary.driver_tip === currentSummary.driver_tip &&
+    //   updatedSummary.ambassador_discount === currentSummary.ambassador_discount &&
+    //   updatedSummary.subtotal === currentSummary.subtotal &&
+    //   updatedSummary.total === currentSummary.total &&
+    //   updatedSummary.taxes === currentSummary.taxes
+    // ) {
+    //   return false;
+    // }
+    return true;
+  }
+
+  const changeTip = (newTip) => {
+
+    console.log("in changetip");
+    // this.setState(prevState => ({
+    //   updatedPlan: {
+    //     ...prevState.updatedPlan,
+    //     payment_summary: {
+    //       ...prevState.updatedPlan.payment_summary,
+    //       driver_tip: newTip
+    //     }
+    //   }
+    // }),() => {
+    //   this.changePlans(this.state.updatedPlan.meals,this.state.updatedPlan.deliveries);
+    //   this.calculateDifference();
+    // });
+
+  }
+
   const displayEditModal = () => {
     return (
       <div
@@ -1758,6 +1799,8 @@ function CustomerInfo() {
               Edit Plan
             </div>
 
+            <div className={styles.containerSplit}>
+
             <div className={styles.boxPDleft}>
 
               <div style={{width: 'fit-content'}}>
@@ -1825,6 +1868,82 @@ function CustomerInfo() {
                 </div>
               </div>
             </div>
+
+            <div className={styles.boxPDright}>
+
+            <div className={styles.planHeader}>
+              Updated Plan
+            </div>
+
+            <div className={styles.menuSection}>
+              <div className={styles.center}>
+                <span className={styles.subHeader}>
+                  NUMBER OF MEALS PER DELIVERY
+                </span>
+              </div>
+              {/* {(()=>{
+                if(JSON.stringify(this.props.plans) !== "{}"){
+                  return(
+                    <div className={styles.buttonWrapper}>
+                      {this.mealsDelivery()}
+                    </div>
+                  );
+                }
+              })()} */}
+            </div>
+            
+            <div className={styles.menuSection}>
+              <div className={styles.center}>
+                <span className={styles.subHeader}>
+                  TOTAL NUMBER OF DELIVERIES
+                </span>
+              </div>
+              {/* {(()=>{
+                if(JSON.stringify(this.props.plans) !== "{}"){
+                  return(
+                    <div className='row' style={{marginTop: '20px'}}>
+                      {this.paymentFrequency()}
+                    </div>
+                  );
+                }
+              })()} */}
+            </div>
+
+            <div className={styles.chargeContainer}>
+              <div className={styles.chargeTotal}>
+                <div style={{display: 'inline-flex'}} tabIndex="0" >
+                  {/* {(() => {
+                    let chargeOrRefund = this.state.differenceSummary.total;
+                    if (parseFloat(chargeOrRefund) >= 0) {
+                      return (
+                        <>
+                          <div className={styles.chargeText}>
+                            {"Additional Charges "}
+                          </div>
+                          <div className={styles.chargeAmount}>
+                            ${this.state.differenceSummary.total}
+                          </div>
+                        </>
+                      );
+                    } else {
+                      return (
+                        <>
+                          <div className={styles.chargeText}>
+                            {"You will be refunded "}
+                          </div>
+                          <div className={styles.chargeAmount}>
+                            ${(-1*this.state.differenceSummary.total).toFixed(2)}
+                          </div>
+                        </>
+                      );
+                    }
+                  })()} */}
+                </div>
+              </div> 
+            </div> 
+          </div>
+          </div>
+
           </div>
         
           <div
@@ -1835,9 +1954,348 @@ function CustomerInfo() {
               width: '49%'
             }}
           >
+
+            {console.log("(render) current plan: ", currentPlan)}
+            {console.log("(render) updated plan: ", updatedPlan)}
             <div className={styles.sectionHeader2}>
               Payment Summary
             </div>
+
+            <div
+              style={{
+                width: '96%',
+                border: 'solid cyan'
+              }}
+            >
+
+            <div style={{display: 'flex', borderBottom:'solid 2px black'}}>
+
+              <div className={styles.summaryLeft} style={{fontWeight:'bold'}} />
+
+              <div className={activeChanges() ? styles.summaryRight : styles.summaryGray}>
+                {/* {this.state.updatedPlan.meals} Meals,{" "}
+                {this.state.updatedPlan.deliveries} Deliveries */}
+              </div>
+
+              <div className={styles.summaryRight}>
+                Current
+              </div>
+
+              <div className={activeChanges() ? styles.summaryRight : styles.summaryGray}>
+                Difference
+              </div>
+
+            </div>
+
+            <div style={{display: 'flex', borderBottom:'1px solid'}}>
+
+              <div className={styles.summaryLeft}>
+                Meal Subscription 
+              </div>
+
+              <div className={activeChanges() ? styles.summaryRight : styles.summaryGray}>
+                {/* ${this.state.updatedPlan.payment_summary.base_amount} */}
+                PRICE
+              </div>
+
+              <div className={styles.summaryRight}>
+                {/* ${this.state.currentPlan.payment_summary.base_amount} */}
+              </div>
+
+              <div className={activeChanges() ? styles.summaryRight : styles.summaryGray}>
+                {/* ${Math.abs(this.state.differenceSummary.base_amount).toFixed(2)} */}
+                PRICE
+              </div>
+
+            </div>
+
+            <div style={{display: 'flex', borderBottom:'1px solid'}}>
+
+              <div className={styles.summaryLeft}>
+                Discount
+              </div>
+
+              <div className={activeChanges() ? styles.summaryRight : styles.summaryGray}>
+                {/* {"-$" + this.state.updatedPlan.payment_summary.discount_amount}
+                <br />
+                {"(" + this.state.updatedPlan.payment_summary.discount_rate + "%)"} */}
+                PRICE
+              </div>
+
+              <div className={styles.summaryRight}>
+                {/* {"-$" + this.state.currentPlan.payment_summary.discount_amount}
+                <br />
+                {"(" + this.state.currentPlan.payment_summary.discount_rate + "%)"} */}
+                PRICE
+              </div>
+
+              <div className={activeChanges() ? styles.summaryRight : styles.summaryGray}>
+                {/* {"$" + Math.abs(this.state.differenceSummary.discount_amount).toFixed(2)}
+                <br />
+                {"(" + Math.abs(this.state.differenceSummary.discount_rate) + "%)"} */}
+                PRICE
+              </div>
+
+            </div>
+
+            <div style={{display: 'flex', borderBottom:'1px solid'}}>
+
+              <div className={styles.summaryLeft}>
+                Delivery Fee
+              </div>
+
+              <div className={activeChanges() ? styles.summaryRight : styles.summaryGray}>
+                {/* ${(this.state.updatedPlan.payment_summary.delivery_fee)} */}
+                PRICE
+              </div>
+
+              <div className={styles.summaryRight}>
+                {/* ${(this.state.currentPlan.payment_summary.delivery_fee)} */}
+                PRICE
+              </div>
+
+              <div className={activeChanges() ? styles.summaryRight : styles.summaryGray}>
+                {/* ${Math.abs(this.state.differenceSummary.delivery_fee).toFixed(2)} */}
+                PRICE
+              </div>
+
+            </div>
+
+            <div style={{display: 'flex', borderBottom:'1px solid'}}>
+
+              <div className={styles.summaryLeft}>
+                Service Fee
+              </div>
+
+              <div className={activeChanges() ? styles.summaryRight : styles.summaryGray}>
+                {/* ${(this.state.updatedPlan.payment_summary.service_fee)} */}
+                PRICE
+              </div>
+
+              <div className={styles.summaryRight}>
+                {/* ${(this.state.currentPlan.payment_summary.service_fee)} */}
+                PRICE
+              </div>
+
+              <div className={activeChanges() ? styles.summaryRight : styles.summaryGray}>
+                {/* ${Math.abs(this.state.differenceSummary.service_fee).toFixed(2)} */}
+                PRICE
+              </div>
+
+            </div>
+
+            <div style={{display: 'flex', borderBottom:'1px solid'}}>
+
+              <div className={styles.summaryLeft}>
+                Taxes
+              </div>
+
+              <div className={activeChanges() ? styles.summaryRight : styles.summaryGray}>
+                {/* ${(this.state.updatedPlan.payment_summary.taxes)} */}
+                PRICE
+              </div>
+
+              <div className={styles.summaryRight}>
+                {/* ${(this.state.currentPlan.payment_summary.taxes)} */}
+                PRICE
+              </div>
+
+              <div className={activeChanges() ? styles.summaryRight : styles.summaryGray}>
+                {/* ${Math.abs(this.state.differenceSummary.taxes).toFixed(2)} */}
+                PRICE
+              </div>
+
+            </div>
+
+            <div style={{display: 'flex'}}>
+
+              <div className={styles.summaryLeft}>
+                Chef and Driver Tip
+              </div>
+
+              <div className={activeChanges() ? styles.summaryRight : styles.summaryGray}>
+                {/* ${(this.state.updatedPlan.payment_summary.driver_tip)} */}
+                PRICE
+              </div>
+
+              <div className={styles.summaryRight}>
+                {/* ${(this.state.currentPlan.payment_summary.driver_tip)} */}
+                PRICE
+              </div>
+
+              <div className={activeChanges() ? styles.summaryRight : styles.summaryGray}>
+                {/* ${Math.abs(this.state.differenceSummary.driver_tip).toFixed(2)} */}
+                PRICE
+              </div>
+
+            </div>
+
+            <div style={{display: 'flex', border: 'solid pink'}}>
+
+              {updatedPlan.driver_tip === "0.00" ? (
+                <button 
+                  className={styles.tipButtonSelected} 
+                  onClick={() => changeTip("0.00")} 
+                  aria-label={"Current tip is: $" + updatedPlan.driver_tip} 
+                  title={"Current tip is: $" + updatedPlan.driver_tip}
+                >
+                  No Tip
+                </button>
+              ) : (
+                <button 
+                  className={styles.tipButton} 
+                  onClick={() => changeTip("0.00")} 
+                  aria-label={"Current tip is: $" + updatedPlan.driver_tip + ". Click here to remove tip."}
+                  title={"Current tip is: $" + updatedPlan.driver_tip + ". Click here to remove tip."}
+                >
+                  No Tip
+                </button>
+              )}
+
+              {/* {(() => {
+                if (this.state.updatedPlan.payment_summary.driver_tip === "0.00") {
+                  return (
+                    <button className={styles.tipButtonSelected} onClick={() => this.changeTip("0.00")} 
+                    aria-label={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip} 
+                    title={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip}>
+                      No Tip
+                    </button>
+                  );
+                } else {
+                  return (
+                    <button className={styles.tipButton} onClick={() => this.changeTip("0.00")} 
+                    aria-label={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip + ". Click here to remove tip."}
+                    title={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip + ". Click here to remove tip."}>
+                      No Tip
+                    </button>
+                  );
+                }
+              })()} */}
+
+              {updatedPlan.driver_tip === "2.00" ? (
+                <button 
+                  className={styles.tipButtonSelected} 
+                  onClick={() => changeTip("2.00")} 
+                  aria-label={"Current tip is: $" + updatedPlan.driver_tip} 
+                  title={"Current tip is: $" + updatedPlan.driver_tip}
+                >
+                  $2
+                </button>
+              ) : (
+                <button 
+                  className={styles.tipButton} 
+                  onClick={() => changeTip("2.00")} 
+                  aria-label={"Current tip is: $" + updatedPlan.driver_tip + ". Click here to remove tip."}
+                  title={"Current tip is: $" + updatedPlan.driver_tip + ". Click here to remove tip."}
+                >
+                  $2
+                </button>
+              )}
+
+              {/* {(() => {
+                if (this.state.updatedPlan.payment_summary.driver_tip === "2.00") {
+                  return (
+                    <button className={styles.tipButtonSelected} onClick={() => this.changeTip("2.00")} 
+                    aria-label={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip}
+                    title={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip}>
+                      $2
+                    </button>
+                  );
+                } else {
+                  return (
+                    <button className={styles.tipButton} onClick={() => this.changeTip("2.00")} 
+                    aria-label={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip + ". Click here change tip to $2."}
+                    title={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip + ". Click here to change tip to $2."}>
+                      $2
+                    </button>
+                  );
+                }
+              })()}  */}
+
+              {updatedPlan.driver_tip === "3.00" ? (
+                <button 
+                  className={styles.tipButtonSelected} 
+                  onClick={() => changeTip("3.00")} 
+                  aria-label={"Current tip is: $" + updatedPlan.driver_tip} 
+                  title={"Current tip is: $" + updatedPlan.driver_tip}
+                >
+                  $3
+                </button>
+              ) : (
+                <button 
+                  className={styles.tipButton} 
+                  onClick={() => changeTip("3.00")} 
+                  aria-label={"Current tip is: $" + updatedPlan.driver_tip + ". Click here to remove tip."}
+                  title={"Current tip is: $" + updatedPlan.driver_tip + ". Click here to remove tip."}
+                >
+                  $3
+                </button>
+              )}
+
+              {/* {(() => {
+                if (this.state.updatedPlan.payment_summary.driver_tip === "3.00") {
+                  return (
+                    <button className={styles.tipButtonSelected} onClick={() => this.changeTip("3.00")} 
+                    aria-label={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip}
+                    title={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip}>
+                      $3
+                    </button>
+                  );
+                } else {
+                  return (
+                    <button className={styles.tipButton} onClick={() => this.changeTip("3.00")} 
+                    aria-label={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip + ". Click here to change tip to $3."}
+                    title={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip + ". Click here to change tip to $3."}>
+                      $3
+                    </button>
+                  );
+                }
+              })()}  */}
+
+              {updatedPlan.driver_tip === "5.00" ? (
+                <button 
+                  className={styles.tipButtonSelected} 
+                  onClick={() => changeTip("5.00")} 
+                  aria-label={"Current tip is: $" + updatedPlan.driver_tip} 
+                  title={"Current tip is: $" + updatedPlan.driver_tip}
+                >
+                  $5
+                </button>
+              ) : (
+                <button 
+                  className={styles.tipButton} 
+                  onClick={() => changeTip("5.00")} 
+                  aria-label={"Current tip is: $" + updatedPlan.driver_tip + ". Click here to remove tip."}
+                  title={"Current tip is: $" + updatedPlan.driver_tip + ". Click here to remove tip."}
+                >
+                  $5
+                </button>
+              )}
+
+                    {/* {(() => {
+                      if (this.state.updatedPlan.payment_summary.driver_tip === "5.00") {
+                        return (
+                          <button className={styles.tipButtonSelected} onClick={() => this.changeTip("5.00")} 
+                          aria-label={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip}
+                          title={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip}>
+                            $5
+                          </button>
+                        );
+                      } else {
+                        return (
+                          <button className={styles.tipButton} onClick={() => this.changeTip("5.00")} 
+                          aria-label={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip + ". Click here to change tip to $5."}
+                          title={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip + ". Click here to change tip to $5."}>
+                            $5
+                          </button>
+                        );
+                      }
+                    })()} */}
+
+              </div>
+
+              </div>
+
           </div>
 
         </div>

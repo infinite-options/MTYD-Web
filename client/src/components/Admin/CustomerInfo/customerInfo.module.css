@@ -675,6 +675,11 @@
   /* text-decoration: underline; */
 }
 
+.containerSplit {
+  text-align: center;
+  /* display: flex; */
+}
+
 .boxPDleft {
   border: solid red;
   width: 22%;
@@ -682,6 +687,14 @@
   margin-left: 4%;
   display: flex;
   justify-content: center;
+}
+
+.boxPDright {
+  text-align: left;
+  /*border: solid;
+  border-color: red;*/
+  margin-right: 8%;
+  width: 62%;
 }
 
 .planHeader{
@@ -738,5 +751,46 @@
   height: 65px;
   width: 50px;
   cursor: pointer;
+}
+
+.summaryRight {
+  width: 22%;
+  text-align: right;
+  margin-top:10px;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+.summaryLeft {
+  width: 34%;
+  text-align: left;
+  margin: 10px 0px 10px 0px;
+  /*border: solid;
+  border-color: red;*/
+}
+.summaryGray {
+  width: 22%;
+  text-align: right;
+  margin-top:10px;
+  margin-bottom: 10px;
+  font-weight: bold;
+  color: #9c9c9c;
+}
+
+.tipButton {
+  border: solid;
+  border-color: #ff6505;
+  background-color: white;
+  border-width: 1px;
+  height: 30px;
+  width: 63px;
+  font-size: 12px;
+  font-weight: 500;
+  margin-right: 10%;
+  margin-bottom: 10px;
+  text-overflow: ellipsis;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  border-radius: 5px;
 }
 
