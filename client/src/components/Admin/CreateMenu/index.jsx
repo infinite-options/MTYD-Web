@@ -2,6 +2,9 @@ import { useEffect, useMemo, useReducer, useRef } from "react";
 import axios from "axios";
 import { API_URL } from "../../../reducers/constants";
 import { formatTime, sortedArray } from "../../../reducers/helperFuncs";
+import { ReactComponent as LeftArrow } from "./static/dateLeftArrow.svg";
+import { ReactComponent as RightArrow } from "./static/dateRightArrow.svg";
+
 import {
   Breadcrumb,
   Form,
@@ -165,6 +168,7 @@ function reducer(state, action) {
         ...state,
         allMenuDates: action.payload.menuDates,
         dateIndex: action.payload.dateIndex,
+        menuDate: action.payload.menuDate,
       };
     case "FETCH_BUSINESSES":
       return {
@@ -175,6 +179,16 @@ function reducer(state, action) {
       return {
         ...state,
         carouselLoaded: true,
+      };
+    case "INCREMENT_DATE_INDEX":
+      return {
+        ...state,
+        dateIndex: state.dateIndex + 1,
+      };
+    case "DECREMENT_DATE_INDEX":
+      return {
+        ...state,
+        dateIndex: state.dateIndex - 1,
       };
     default:
       return state;
@@ -221,16 +235,20 @@ function CreateMenu({ history, ...props }) {
     }
   }, [history]);
 
+  // Get Dates
   useEffect(() => {
     axios
       .get(`${API_URL}all_menu_dates`)
       .then((response) => {
         const datesApiResult = response.data.result;
         const closestDateIndex = getClosestDateIndex(datesApiResult);
-        console.log(closestDateIndex);
         dispatch({
           type: "FETCH_DATES",
-          payload: { menuDates: datesApiResult, dateIndex: closestDateIndex },
+          payload: {
+            menuDates: datesApiResult,
+            dateIndex: closestDateIndex,
+            menuDate: datesApiResult[closestDateIndex].menu_date,
+          },
         });
       })
       .catch((err) => {
@@ -732,32 +750,56 @@ function CreateMenu({ history, ...props }) {
       {console.log(state)}
       <Container fluid className={styles.container}>
         <Row className={styles.section}>
-          <Col md="auto">Create / Edit Menu</Col>
-          <Col xs={5}>
-            <Carousel
-              responsive={responsive}
-              ref={carouselRef}
-              // arrows
-              // customRightArrow={<CustomRight />}
-              // customLeftArrow={<CustomLeft />}
+          <Col
+            md="auto"
+            className={[styles.verticallyCenter, styles.bold].join(" ")}
+            style={{ fontSize: "20px" }}
+          >
+            Create / Edit Menu
+          </Col>
+          <Col md="auto" className={styles.verticallyCenter}>
+            <button
+              className={styles.dateCarouselArrowBtn}
+              onClick={() => {
+                carouselRef.current.previous();
+                dispatch({ type: "DECREMENT_DATE_INDEX" });
+              }}
             >
-              {menuDates.map((date) => {
-                return (
-                  <button
-                    className={[
-                      styles.datebutton,
-                      styles.datebuttonNotSelected,
-                    ].join(" ")}
-                    key={date.value}
-                    value={date.value}
-                    onClick={(e) => changeDate(e.target.value)}
-                  >
-                    {date.display.substring(0, 3)} <br />{" "}
-                    {date.display.substring(4, 10)}
-                  </button>
-                );
-              })}
-            </Carousel>
+              <LeftArrow />
+            </button>
+          </Col>
+          <Col xs={4}>
+            {state.dateIndex != null && (
+              <Carousel
+                responsive={responsive}
+                ref={carouselRef}
+                arrows={false}
+                sliderClass={styles.carouselSlider}
+                keyBoardControl
+              >
+                {menuDates.map((date) => {
+                  const dateButtonStatus =
+                    date.value === state.menuDate
+                      ? styles.datebuttonSelected
+                      : styles.datebuttonNotSelected;
+                  return (
+                    <button
+                      className={[
+                        styles.datebutton,
+                        dateButtonStatus,
+                        styles.bold,
+                      ].join(" ")}
+                      key={date.value}
+                      value={date.value}
+                      onClick={(e) => changeDate(e.target.value)}
+                    >
+                      {date.display.substring(0, 3).toUpperCase()} <br />{" "}
+                      {date.display.substring(4, 10)}
+                    </button>
+                  );
+                })}
+              </Carousel>
+            )}
             {/* <Form>
               <Form.Group as={Row}>
                 <Col sm="6">
@@ -779,9 +821,21 @@ function CreateMenu({ history, ...props }) {
               </Form.Group>
             </Form> */}
           </Col>
+          <Col md="auto" className={styles.verticallyCenter}>
+            <button
+              className={styles.dateCarouselArrowBtn}
+              onClick={() => {
+                carouselRef.current.next();
+                dispatch({ type: "INCREMENT_DATE_INDEX" });
+              }}
+            >
+              <RightArrow />
+            </button>
+          </Col>
           <Col></Col>
           <Col
             md="auto"
+            className={styles.verticallyCenter}
             style={{
               textAlign: "right",
             }}
@@ -792,16 +846,18 @@ function CreateMenu({ history, ...props }) {
           </Col>
           <Col
             md="auto"
+            className={styles.verticallyCenter}
             style={{
               textAlign: "right",
             }}
           >
-            <button onClick={toggleAddDate} className={styles.topBtn}>
+            <button onClick={toggleAddDate} className={[styles.topBtn]}>
               Add Menu Date
             </button>
           </Col>
           <Col
             md="auto"
+            className={styles.verticallyCenter}
             style={{
               textAlign: "right",
             }}
@@ -816,7 +872,13 @@ function CreateMenu({ history, ...props }) {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>
+                  <TableCell
+                    style={{
+                      fontWeight: "bold",
+                      color: "#f26522",
+                      border: "none",
+                    }}
+                  >
                     <TableSortLabel
                       active={state.sortEditMenu.field === "menu_type"}
                       direction={
@@ -829,10 +891,40 @@ function CreateMenu({ history, ...props }) {
                       Meal Type
                     </TableSortLabel>
                   </TableCell>
-                  <TableCell>Meal Name</TableCell>
-                  <TableCell>Picture</TableCell>
-                  <TableCell>Business</TableCell>
-                  <TableCell>
+                  <TableCell
+                    style={{
+                      fontWeight: "bold",
+                      color: "#f26522",
+                      border: "none",
+                    }}
+                  >
+                    Meal Name
+                  </TableCell>
+                  <TableCell
+                    style={{
+                      fontWeight: "bold",
+                      color: "#f26522",
+                      border: "none",
+                    }}
+                  >
+                    Picture
+                  </TableCell>
+                  <TableCell
+                    style={{
+                      fontWeight: "bold",
+                      color: "#f26522",
+                      border: "none",
+                    }}
+                  >
+                    Business
+                  </TableCell>
+                  <TableCell
+                    style={{
+                      fontWeight: "bold",
+                      color: "#f26522",
+                      border: "none",
+                    }}
+                  >
                     <TableSortLabel
                       active={state.sortEditMenu.field === "meal_cat"}
                       direction={
@@ -845,7 +937,13 @@ function CreateMenu({ history, ...props }) {
                       Meal Category
                     </TableSortLabel>
                   </TableCell>
-                  <TableCell>
+                  <TableCell
+                    style={{
+                      fontWeight: "bold",
+                      color: "#f26522",
+                      border: "none",
+                    }}
+                  >
                     <TableSortLabel
                       active={state.sortEditMenu.field === "menu_category"}
                       direction={
@@ -858,7 +956,13 @@ function CreateMenu({ history, ...props }) {
                       Menu Category
                     </TableSortLabel>
                   </TableCell>
-                  <TableCell>
+                  <TableCell
+                    style={{
+                      fontWeight: "bold",
+                      color: "#f26522",
+                      border: "none",
+                    }}
+                  >
                     <TableSortLabel
                       active={state.sortEditMenu.field === "default_meal"}
                       direction={
@@ -871,8 +975,24 @@ function CreateMenu({ history, ...props }) {
                       Default Meal
                     </TableSortLabel>
                   </TableCell>
-                  <TableCell>Actions</TableCell>
-                  <TableCell>Meals Ordered</TableCell>
+                  <TableCell
+                    style={{
+                      fontWeight: "bold",
+                      color: "#f26522",
+                      border: "none",
+                    }}
+                  >
+                    Actions
+                  </TableCell>
+                  <TableCell
+                    style={{
+                      fontWeight: "bold",
+                      color: "#f26522",
+                      border: "none",
+                    }}
+                  >
+                    Meals Ordered
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -885,8 +1005,10 @@ function CreateMenu({ history, ...props }) {
                       key={`${mealMenuIndex} ${mealMenu.menu_uid}`}
                       hover
                     >
-                      <TableCell>{mealMenu.menu_type}</TableCell>
-                      <TableCell>
+                      <TableCell style={{ borderBottom: "1px solid #f8bb17" }}>
+                        {mealMenu.menu_type}
+                      </TableCell>
+                      <TableCell style={{ borderBottom: "1px solid #f8bb17" }}>
                         <Form>
                           <Form.Control
                             as="select"
@@ -918,18 +1040,20 @@ function CreateMenu({ history, ...props }) {
                           </Form.Control>
                         </Form>
                       </TableCell>
-                      <TableCell>
+                      <TableCell style={{ borderBottom: "1px solid #f8bb17" }}>
                         <img
                           src={mealMenu.meal_photo_URL}
                           style={{ height: "60px", width: "60px" }}
                         ></img>
                       </TableCell>
-                      <TableCell>
+                      <TableCell style={{ borderBottom: "1px solid #f8bb17" }}>
                         {getBusinessName(mealMenu.meal_business)}
                       </TableCell>
-                      <TableCell>{mealMenu.meal_cat}</TableCell>
+                      <TableCell style={{ borderBottom: "1px solid #f8bb17" }}>
+                        {mealMenu.meal_cat}
+                      </TableCell>
                       <TableCell>{mealMenu.menu_category}</TableCell>
-                      <TableCell>
+                      <TableCell style={{ borderBottom: "1px solid #f8bb17" }}>
                         <Form>
                           <Form.Control
                             as="select"
@@ -950,7 +1074,11 @@ function CreateMenu({ history, ...props }) {
                           </Form.Control>
                         </Form>
                       </TableCell>
-                      <TableCell>
+                      <TableCell
+                        style={{
+                          borderBottom: "1px solid #f8bb17",
+                        }}
+                      >
                         <button
                           className={"icon-button"}
                           onClick={() => {
@@ -968,7 +1096,9 @@ function CreateMenu({ history, ...props }) {
                           <FontAwesomeIcon icon={faSave} />
                         </button>
                       </TableCell>
-                      <TableCell>0</TableCell>
+                      <TableCell style={{ borderBottom: "1px solid #f8bb17" }}>
+                        0
+                      </TableCell>
                     </TableRow>
                   );
                 })}

@@ -1,3 +1,9 @@
+body {
+  font: var(--unnamed-font-style-normal) normal
+    var(--unnamed-font-weight-medium) var(--unnamed-font-size-18) /
+    var(--unnamed-line-spacing-21) var(--unnamed-font-family-sf-pro-display);
+}
+
 .root {
   background-color: #f26522;
   width: 100vw;
@@ -28,7 +34,7 @@
   border-radius: 10px;
   border: none;
   color: white;
-  height: 70%;
+  padding: 12px;
 }
 
 .datebutton {
@@ -47,4 +53,25 @@
 .datebuttonSelected {
   background-color: #f8bb17;
   border: 4px solid rgb(240, 142, 31);
+}
+
+.verticallyCenter {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.carouselSlider {
+  text-align: center;
+  padding: 5px;
+}
+
+.dateCarouselArrowBtn {
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.bold {
+  font-weight: bold;
 }
