@@ -50,7 +50,7 @@ export const history = createBrowserHistory();
 
 function App() {
 
-  /*
+  /*kk
   const [auth, setAuth] = React.useState(false);
   const readCookie = () => {
     const customer = Cookies.get("customer_uid");
