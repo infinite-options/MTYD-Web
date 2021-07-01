@@ -17,6 +17,8 @@ import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import { collapseTextChangeRangesAcrossMultipleVersions } from "typescript";
 import AdminNavBar from "../AdminNavBar";
+import { ReactComponent as LeftArrow } from "./static/dateLeftArrow.svg";
+import { ReactComponent as RightArrow } from "./static/dateRightArrow.svg";
 
 const initialState = {
   mounted: false,
@@ -768,30 +770,45 @@ function OrdersIngredients({ history, ...props }) {
   //   carouselRef.current.goToSlide(state.dateIndex);
   // }
 
-  const CustomRight = ({ onClick }) => (
-    <button
-      onClick={() => {
-        onClick();
-        // dispatch({ type: "INCREMENT_DATE_INDEX" });
-      }}
-      style={{ position: "absolute", right: 0 }}
-    >
-      Right
-    </button>
-  );
-  const CustomLeft = ({ onClick }) => {
-    return (
-      <button
-        onClick={() => {
-          onClick();
-          // dispatch({ type: "DECREMENT_DATE_INDEX" });
-        }}
-        style={{ position: "absolute", left: 0 }}
-      >
-        Left
-      </button>
-    );
-  };
+  // const CustomRight = ({ onClick }) => (
+  //   <button
+  //     className={styles.dateCarouselArrowBtn}
+  //     onClick={() => {
+  //       onClick();
+  //       // dispatch({ type: "INCREMENT_DATE_INDEX" });
+  //     }}
+  //     style={{ position: "absolute", right: 0 }}
+  //   >
+  //     <RightArrow />
+  //   </button>
+  // );
+  // const CustomLeft = ({ onClick }) => {
+  //   return (
+  //     <button
+  //       className={styles.dateCarouselArrowBtn}
+  //       onClick={() => {
+  //         onClick();
+  //         // dispatch({ type: "DECREMENT_DATE_INDEX" });
+  //       }}
+  //       style={{ position: "absolute", left: 0 }}
+  //     >
+  //       <LeftArrow />
+  //     </button>
+  //   );
+  // };
+
+  // const ButtonGroup = ({ next, previous, ...rest }) => {
+  //   const {
+  //     carouselState: { currentSlide, totalItems, slidesToShow },
+  //   } = rest;
+
+  //   return (
+  //     <div className={styles.carouselButtonGroup}>
+  //       <button onClick={() => previous()}>Left</button>
+  //       <button onClick={() => next()}>Right</button>
+  //     </div>
+  //   );
+  // };
 
   return (
     <>
@@ -799,7 +816,15 @@ function OrdersIngredients({ history, ...props }) {
       <div className={styles.root}>
         {console.log(state)}
         <Container fluid className={styles.container}>
-          <Row className={[styles.section, styles.row1].join(" ")}>
+          <Row
+            className={styles.section}
+            style={{
+              paddingTop: "15px",
+              paddingBottom: "15px",
+              paddingLeft: "20px",
+              paddingRight: "20px",
+            }}
+          >
             <Col md="auto" className={styles.restaurantSelector}>
               {state.selectedBusinessID ? (
                 <img
@@ -832,83 +857,102 @@ function OrdersIngredients({ history, ...props }) {
                     </select>
                   </div>
                 </form>
-                <div className={styles.restaurantLinks}>
+                <div
+                  className={[styles.restaurantLinks, styles.bold].join(" ")}
+                >
                   <a>Send Message</a>
                   <a>Issue Coupon</a>
                 </div>
               </div>
             </Col>
-            <Col xs={6}>
-              {/* <button
+            <Col md="auto" className={styles.verticallyCenter}>
+              <button
+                style={{ transform: "translateX(30px)" }}
+                className={styles.dateCarouselArrowBtn}
                 onClick={() => {
-                  const nextSlide = state.dateIndex - 1;
-                  carouselRef.current.goToSlide(nextSlide);
+                  carouselRef.current.previous();
                   dispatch({ type: "DECREMENT_DATE_INDEX" });
                 }}
               >
-                Left
-              </button> */}
+                <LeftArrow />
+              </button>
+            </Col>
+            <Col xs={5}>
               {state.dateIndex != null && (
                 <Carousel
                   responsive={responsive}
                   ref={carouselRef}
-                  // arrows
-                  // customRightArrow={<CustomRight />}
-                  // customLeftArrow={<CustomLeft />}
+                  arrows={false}
+                  sliderClass={styles.carouselSlider}
+                  keyBoardControl
                 >
                   {console.log(carouselRef)}
                   {state.mealDates.map((date) => {
                     const displayDate = convertToDisplayDate(date.menu_date);
-
+                    const dateButtonStatus =
+                      date.menu_date === state.selectedDate
+                        ? styles.datebuttonSelected
+                        : styles.datebuttonNotSelected;
                     return (
                       <button
                         className={[
                           styles.datebutton,
-                          styles.datebuttonNotSelected,
+                          dateButtonStatus,
+                          styles.bold,
                         ].join(" ")}
                         key={date.menu_date}
                         value={date.menu_date}
                         onClick={(e) => handleDateButtonClick(e, displayDate)}
                       >
-                        {displayDate.substring(0, 3)} <br />{" "}
+                        {displayDate.substring(0, 3).toUpperCase()} <br />{" "}
                         {displayDate.substring(4, 10)}
                       </button>
                     );
                   })}
                 </Carousel>
               )}
-              {/* <button
+            </Col>
+            <Col md="auto" className={styles.verticallyCenter}>
+              <button
+                style={{ transform: "translateX(-20px)" }}
+                className={styles.dateCarouselArrowBtn}
                 onClick={() => {
-                  const nextSlide = state.dateIndex + 1;
-                  carouselRef.current.goToSlide(nextSlide);
+                  carouselRef.current.next();
                   dispatch({ type: "INCREMENT_DATE_INDEX" });
                 }}
               >
-                Right
-              </button> */}
+                <RightArrow />
+              </button>
             </Col>
+            <Col></Col>
             <Col
+              md="auto"
               style={{
                 paddingTop: "10px",
                 textAlign: "center",
               }}
             >
-              <div style={{ marginBottom: "10px", color: "#f26522" }}>
+              <div
+                className={styles.bold}
+                style={{ marginBottom: "10px", color: "#f26522" }}
+              >
                 {state.selectedBusinessID && "Contact Info"}
               </div>
               <div>{state.selectedBusinessData.business_email}</div>
               <div>{state.selectedBusinessData.business_phone_num}</div>
             </Col>
             <Col
+              md="auto"
               style={{
                 paddingTop: "10px",
                 textAlign: "center",
               }}
+              className={styles.bold}
             >
               <div style={{ marginBottom: "10px", color: "#f26522" }}>
                 No. of Meals
               </div>
-              <div>
+              <div style={{ fontSize: "30px" }}>
                 {calculateTotalMealQty(
                   filterDataByBusiness(
                     state.ordersData,
@@ -918,6 +962,8 @@ function OrdersIngredients({ history, ...props }) {
               </div>
             </Col>
             <Col
+              md="auto"
+              className={styles.bold}
               style={{
                 paddingTop: "10px",
                 textAlign: "center",
@@ -926,7 +972,7 @@ function OrdersIngredients({ history, ...props }) {
               <div style={{ marginBottom: "10px", color: "#f26522" }}>
                 Total Revenue
               </div>
-              <div>
+              <div style={{ fontSize: "30px" }}>
                 {currencyFormatter.format(
                   calculateTotalRevenue(
                     filterDataByBusiness(
@@ -938,65 +984,186 @@ function OrdersIngredients({ history, ...props }) {
               </div>
             </Col>
           </Row>
-          <Row className={styles.row2}>
+          <Row className={[styles.row2, styles.scroll].join(" ")}>
             <Col xs={5} className={styles.section} style={{ marginRight: 10 }}>
-              Upcoming Meal Orders And Revenue:{" "}
-              {formatDisplayDate(formatToDisplayDate(state.selectedDate))}
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Qty.</TableCell>
-                    <TableCell>Meal Orders</TableCell>
-                    <TableCell>Meal Pictures</TableCell>
-                    <TableCell>Meal Cost</TableCell>
-                    <TableCell>Total Cost</TableCell>
-                    <TableCell>Additional Revenue</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {state.ordersData &&
-                    filterDataByBusiness(
-                      state.ordersData,
-                      state.selectedBusinessID
-                    ).map((item) => {
-                      return (
-                        <TableRow>
-                          <TableCell>{item.total_qty}</TableCell>
-                          <TableCell>{item.jt_name}</TableCell>
-                          <TableCell>
-                            <img
-                              src={item.meal_photo_URL}
-                              className={styles.mealImg}
-                            ></img>
-                          </TableCell>
-                          <TableCell>
-                            {currencyFormatter.format(item.meal_cost)}
-                          </TableCell>
-                          <TableCell>
-                            {currencyFormatter.format(item.total_cost)}
-                          </TableCell>
-                          <TableCell>
-                            {currencyFormatter.format(
-                              item.total_profit_sharing
-                            )}
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                </TableBody>
-              </Table>
+              <div>
+                <div
+                  className={styles.bold}
+                  style={{ padding: "15px", fontSize: "18px" }}
+                >
+                  Upcoming Meal Orders And Revenue:{" "}
+                  {formatDisplayDate(formatToDisplayDate(state.selectedDate))}
+                </div>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell
+                        style={{
+                          fontWeight: "bold",
+                          color: "#f26522",
+                          border: "none",
+                        }}
+                      >
+                        Qty.
+                      </TableCell>
+                      <TableCell
+                        style={{
+                          fontWeight: "bold",
+                          color: "#f26522",
+                          border: "none",
+                        }}
+                      >
+                        Meal Orders
+                      </TableCell>
+                      <TableCell
+                        style={{
+                          fontWeight: "bold",
+                          color: "#f26522",
+                          border: "none",
+                        }}
+                      >
+                        Meal Pictures
+                      </TableCell>
+                      <TableCell
+                        style={{
+                          fontWeight: "bold",
+                          color: "#f26522",
+                          border: "none",
+                        }}
+                      >
+                        Meal Cost
+                      </TableCell>
+                      <TableCell
+                        style={{
+                          fontWeight: "bold",
+                          color: "#f26522",
+                          border: "none",
+                        }}
+                      >
+                        Total Cost
+                      </TableCell>
+                      <TableCell
+                        style={{
+                          fontWeight: "bold",
+                          color: "#f26522",
+                          border: "none",
+                        }}
+                      >
+                        Additional Revenue
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {state.ordersData &&
+                      filterDataByBusiness(
+                        state.ordersData,
+                        state.selectedBusinessID
+                      ).map((item) => {
+                        return (
+                          <TableRow>
+                            <TableCell
+                              style={{
+                                fontWeight: "bold",
+                                fontSize: "18px",
+                                borderBottom: "1px solid #f26522",
+                              }}
+                            >
+                              {item.total_qty}
+                            </TableCell>
+                            <TableCell
+                              style={{ borderBottom: "1px solid #f26522" }}
+                            >
+                              {item.jt_name}
+                            </TableCell>
+                            <TableCell
+                              style={{ borderBottom: "1px solid #f26522" }}
+                            >
+                              <img
+                                src={item.meal_photo_URL}
+                                className={styles.mealImg}
+                              ></img>
+                            </TableCell>
+                            <TableCell
+                              style={{ borderBottom: "1px solid #f26522" }}
+                            >
+                              {currencyFormatter.format(item.meal_cost)}
+                            </TableCell>
+                            <TableCell
+                              style={{ borderBottom: "1px solid #f26522" }}
+                            >
+                              {currencyFormatter.format(item.total_cost)}
+                            </TableCell>
+                            <TableCell
+                              style={{ borderBottom: "1px solid #f26522" }}
+                            >
+                              {currencyFormatter.format(
+                                item.total_profit_sharing
+                              )}
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                  </TableBody>
+                </Table>
+              </div>
             </Col>
             <Col xs={4} className={styles.section} style={{ marginRight: 10 }}>
-              Revenue:{" "}
-              {formatDisplayDate(formatToDisplayDate(state.selectedDate))}
+              <div
+                className={styles.bold}
+                style={{ padding: "15px", fontSize: "18px" }}
+              >
+                Revenue:{" "}
+                {formatDisplayDate(formatToDisplayDate(state.selectedDate))}
+              </div>
+
               <Table>
                 <TableHead>
                   <TableRow>
-                    <TableCell>Restaurant Name</TableCell>
-                    <TableCell>Total Cost</TableCell>
-                    <TableCell>Additional Revenue</TableCell>
-                    <TableCell>Total Revenue</TableCell>
-                    <TableCell>M4Me Profits</TableCell>
+                    <TableCell
+                      style={{
+                        fontWeight: "bold",
+                        color: "#f26522",
+                        border: "none",
+                      }}
+                    >
+                      Restaurant Name
+                    </TableCell>
+                    <TableCell
+                      style={{
+                        fontWeight: "bold",
+                        color: "#f26522",
+                        border: "none",
+                      }}
+                    >
+                      Total Cost
+                    </TableCell>
+                    <TableCell
+                      style={{
+                        fontWeight: "bold",
+                        color: "#f26522",
+                        border: "none",
+                      }}
+                    >
+                      Additional Revenue
+                    </TableCell>
+                    <TableCell
+                      style={{
+                        fontWeight: "bold",
+                        color: "#f26522",
+                        border: "none",
+                      }}
+                    >
+                      Total Revenue
+                    </TableCell>
+                    <TableCell
+                      style={{
+                        fontWeight: "bold",
+                        color: "#f26522",
+                        border: "none",
+                      }}
+                    >
+                      M4Me Profits
+                    </TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -1007,21 +1174,31 @@ function OrdersIngredients({ history, ...props }) {
                     ).map((item) => {
                       return (
                         <TableRow>
-                          <TableCell>
+                          <TableCell
+                            style={{ borderBottom: "1px solid #f26522" }}
+                          >
                             {getBusinessName(item.meal_business)}
                           </TableCell>
-                          <TableCell>
+                          <TableCell
+                            style={{ borderBottom: "1px solid #f26522" }}
+                          >
                             {currencyFormatter.format(item.total_cost)}
                           </TableCell>
-                          <TableCell>
+                          <TableCell
+                            style={{ borderBottom: "1px solid #f26522" }}
+                          >
                             {currencyFormatter.format(
                               item.total_profit_sharing
                             )}
                           </TableCell>
-                          <TableCell>
+                          <TableCell
+                            style={{ borderBottom: "1px solid #f26522" }}
+                          >
                             {currencyFormatter.format(item.total_revenue)}
                           </TableCell>
-                          <TableCell>
+                          <TableCell
+                            style={{ borderBottom: "1px solid #f26522" }}
+                          >
                             {currencyFormatter.format(item.total_M4ME_rev)}
                           </TableCell>
                         </TableRow>
@@ -1030,16 +1207,63 @@ function OrdersIngredients({ history, ...props }) {
                 </TableBody>
               </Table>
             </Col>
-            <Col className={styles.section}>
-              Ingredients Needed:{" "}
-              {formatDisplayDate(formatToDisplayDate(state.selectedDate))}
+            <Col xs={4} className={styles.section}>
+              <div
+                className={styles.bold}
+                style={{ padding: "15px", fontSize: "18px" }}
+              >
+                {" "}
+                Ingredients Needed:{" "}
+                {formatDisplayDate(formatToDisplayDate(state.selectedDate))}
+              </div>
+
               <Table>
                 <TableHead>
-                  <TableCell>Ingredient Name</TableCell>
-                  <TableCell>Quantity</TableCell>
-                  <TableCell>Unit</TableCell>
-                  <TableCell>Measure</TableCell>
-                  <TableCell>Cost</TableCell>
+                  <TableCell
+                    style={{
+                      fontWeight: "bold",
+                      color: "#f26522",
+                      border: "none",
+                    }}
+                  >
+                    Ingredient Name
+                  </TableCell>
+                  <TableCell
+                    style={{
+                      fontWeight: "bold",
+                      color: "#f26522",
+                      border: "none",
+                    }}
+                  >
+                    Quantity
+                  </TableCell>
+                  <TableCell
+                    style={{
+                      fontWeight: "bold",
+                      color: "#f26522",
+                      border: "none",
+                    }}
+                  >
+                    Unit
+                  </TableCell>
+                  <TableCell
+                    style={{
+                      fontWeight: "bold",
+                      color: "#f26522",
+                      border: "none",
+                    }}
+                  >
+                    Measure
+                  </TableCell>
+                  <TableCell
+                    style={{
+                      fontWeight: "bold",
+                      color: "#f26522",
+                      border: "none",
+                    }}
+                  >
+                    Cost
+                  </TableCell>
                 </TableHead>
                 <TableBody>
                   {state.ingredientsData &&
@@ -1049,11 +1273,29 @@ function OrdersIngredients({ history, ...props }) {
                     ).map((item) => {
                       return (
                         <TableRow>
-                          <TableCell>{item.ingredient_desc}</TableCell>
-                          <TableCell>{item.total_ingredient_qty}</TableCell>
-                          <TableCell>{item.package_unit}</TableCell>
-                          <TableCell>{item.package_measure}</TableCell>
-                          <TableCell>
+                          <TableCell
+                            style={{ borderBottom: "1px solid #f26522" }}
+                          >
+                            {item.ingredient_desc}
+                          </TableCell>
+                          <TableCell
+                            style={{ borderBottom: "1px solid #f26522" }}
+                          >
+                            {item.total_ingredient_qty}
+                          </TableCell>
+                          <TableCell
+                            style={{ borderBottom: "1px solid #f26522" }}
+                          >
+                            {item.package_unit}
+                          </TableCell>
+                          <TableCell
+                            style={{ borderBottom: "1px solid #f26522" }}
+                          >
+                            {item.package_measure}
+                          </TableCell>
+                          <TableCell
+                            style={{ borderBottom: "1px solid #f26522" }}
+                          >
                             {currencyFormatter.format(item.package_cost)}
                           </TableCell>
                         </TableRow>

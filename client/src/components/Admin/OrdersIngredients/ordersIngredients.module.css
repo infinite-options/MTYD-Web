@@ -1,3 +1,9 @@
+body {
+  font: var(--unnamed-font-style-normal) normal
+    var(--unnamed-font-weight-medium) var(--unnamed-font-size-18) /
+    var(--unnamed-line-spacing-21) var(--unnamed-font-family-sf-pro-display);
+}
+
 .root {
   background-color: #f26522;
   width: 100vw;
@@ -69,7 +75,6 @@
 .datebutton {
   height: 80px;
   width: 80px;
-  width: same-as-height;
   font-size: 15px;
   border: none;
 }
@@ -84,28 +89,10 @@
   border: 4px solid rgb(240, 142, 31);
 }
 
-.dateLeft {
+.dateCarouselArrowBtn {
   border: none;
-  padding: 12px 16px;
+  background-color: transparent;
   cursor: pointer;
-  width: 0px;
-  padding: 0px;
-}
-
-.dateLeft:before {
-  content: url("./static/dateLeftArrow.svg");
-}
-
-.dateRight {
-  border: none;
-  padding: 12px 16px;
-  cursor: pointer;
-  width: 0px;
-  padding: 0px;
-}
-
-.dateRight:before {
-  content: url("./static/dateRightArrow.svg");
 }
 
 .mealImg {
@@ -113,6 +100,22 @@
   width: 40px;
 }
 
-.carousel-button-group {
-  position: absolute;
+.verticallyCenter {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.carouselSlider {
+  text-align: center;
+  padding: 5px;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.scroll {
+  overflow-x: scroll;
+  overflow-y: hidden;
 }

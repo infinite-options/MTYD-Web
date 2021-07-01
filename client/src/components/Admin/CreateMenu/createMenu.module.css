@@ -1,0 +1,110 @@
+body {
+  font: var(--unnamed-font-style-normal) normal
+    var(--unnamed-font-weight-medium) var(--unnamed-font-size-18) /
+    var(--unnamed-line-spacing-21) var(--unnamed-font-family-sf-pro-display);
+}
+
+.root {
+  background-color: #f26522;
+  width: 100vw;
+  height: 100vh;
+  padding: 25px;
+  overflow: scroll;
+}
+
+.container {
+  height: 100%;
+  margin: 0px;
+}
+
+.section {
+  background-color: white;
+  border-radius: 15px;
+  padding: 15px;
+}
+
+.main {
+  margin-top: 10px;
+  height: 85%;
+  overflow: scroll;
+}
+
+.topBtn {
+  background-color: #f26522;
+  border-radius: 10px;
+  border: none;
+  color: white;
+  padding: 12px;
+}
+
+.datebutton {
+  height: 80px;
+  width: 80px;
+  width: same-as-height;
+  font-size: 15px;
+  border: none;
+}
+
+.datebuttonNotSelected {
+  box-shadow: 0 0 7px #838383;
+  background-color: white;
+}
+
+.datebuttonSelected {
+  background-color: #f8bb17;
+  border: 4px solid rgb(240, 142, 31);
+}
+
+.verticallyCenter {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.carouselSlider {
+  text-align: center;
+  padding: 5px;
+}
+
+.dateCarouselArrowBtn {
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.modalContainer div {
+  border-radius: 20px !important;
+  border: 2px, solid, #f26522 !important;
+  background: #fef7e0 !important;
+}
+
+.modalBorder {
+  border: 2px, solid, #f26522;
+}
+
+.modalBtn {
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 15px;
+  padding-left: 25px;
+  padding-right: 25px;
+  background-color: #f26522;
+  font-weight: bold;
+}
+
+.modalCloseBtnContainer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px;
+}
+
+.modalFormLabel {
+  width: 50%;
+  color: #f26522;
+  font-weight: bold;
+}
