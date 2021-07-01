@@ -1,7 +1,86 @@
 .optionItem {
-  margin: 0 1rem;
+  margin: 15px;
+  padding-top: 25px;
 }
 
 .notificationItem {
   padding: 1rem 0;
+}
+
+.containerCustomer {
+  /* text-align: center;
+  display: flex; */
+  width: 96%;
+  height: 120px;
+  z-index: 1;
+  /* border: solid; */
+  border-radius: 15px;
+  margin-top: 20px;
+  margin-left: 2%;
+  margin-right: 2%;
+  background-color: white;
+  /* display: flex; */
+}
+
+.containerList {
+  width: 97%;
+  /* height: 1200px; */
+  z-index: 1;
+  border-radius: 15px;
+  margin-top: 20px;
+  margin-left: 2%;
+  margin-right: 1%;
+  background-color: white;
+}
+
+.containerText {
+  width: 97%;
+  height: 600px;
+  z-index: 1;
+  border-radius: 15px;
+  margin-top: 20px;
+  margin-left: 1%;
+  margin-right: 2%;
+  background-color: white;
+}
+
+.dropdownSelection {
+  color: white;
+  border-radius: 15px;
+  background-color: #f26522;
+  font-size: 20px;
+  height: 40px;
+  padding-top: 5px;
+  box-shadow: 0px 5px 10px gray;
+  margin-bottom: 10px;
+  display: flex;
+  width: 40%;
+  min-width: 300px;
+  z-index: 2;
+  position: absolute;
+  cursor: pointer;
+}
+
+.whiteArrowDown {
+  background-image: url('./static/white_arrow_down.png');
+  background-size: 100%;
+  width: 24px;
+  height: 16px;
+  margin-top: 6px;
+  float: right;
+}
+
+.dropdown {
+  border: none;
+  padding: 0px;
+  padding-right: 20px;
+  color: black;
+  background-color: white;
+  width: 13vw;
+  outline: none;
+  display: inline-block;
+  appearance: none;
+  cursor: pointer;
+  background: url("./static/dropdown.svg") no-repeat;
+  background-position: right 5px top 50%;
 }

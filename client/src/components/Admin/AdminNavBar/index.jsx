@@ -232,7 +232,6 @@ function NavBar(props) {
             >
               Customers
             </a>
-
             <a 
               href='/admin/notifications' 
               className={styles.navLink}
