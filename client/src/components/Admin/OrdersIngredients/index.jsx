@@ -984,7 +984,10 @@ function OrdersIngredients({ history, ...props }) {
               </div>
             </Col>
           </Row>
-          <Row className={[styles.row2].join(" ")}>
+          <Row
+            className={[styles.row2].join(" ")}
+            style={{ overflow: "scroll" }}
+          >
             <Col className={styles.section} style={{ marginRight: 10 }}>
               <div
                 className={styles.bold}
