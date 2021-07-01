@@ -867,6 +867,7 @@ function OrdersIngredients({ history, ...props }) {
             </Col>
             <Col md="auto" className={styles.verticallyCenter}>
               <button
+                style={{ transform: "translateX(30px)" }}
                 className={styles.dateCarouselArrowBtn}
                 onClick={() => {
                   carouselRef.current.previous();
@@ -913,6 +914,7 @@ function OrdersIngredients({ history, ...props }) {
             </Col>
             <Col md="auto" className={styles.verticallyCenter}>
               <button
+                style={{ transform: "translateX(-20px)" }}
                 className={styles.dateCarouselArrowBtn}
                 onClick={() => {
                   carouselRef.current.next();

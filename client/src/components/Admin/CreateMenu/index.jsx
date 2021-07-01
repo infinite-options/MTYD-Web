@@ -4,6 +4,7 @@ import { API_URL } from "../../../reducers/constants";
 import { formatTime, sortedArray } from "../../../reducers/helperFuncs";
 import { ReactComponent as LeftArrow } from "./static/dateLeftArrow.svg";
 import { ReactComponent as RightArrow } from "./static/dateRightArrow.svg";
+import { ReactComponent as ModalCloseBtn } from "./static/modalClose.svg";
 
 import {
   Breadcrumb,
@@ -237,19 +238,34 @@ function CreateMenu({ history, ...props }) {
 
   // Get Dates
   useEffect(() => {
+    let nextMenuDate = "";
     axios
       .get(`${API_URL}all_menu_dates`)
       .then((response) => {
         const datesApiResult = response.data.result;
         const closestDateIndex = getClosestDateIndex(datesApiResult);
+        nextMenuDate = datesApiResult[closestDateIndex].menu_date;
         dispatch({
           type: "FETCH_DATES",
           payload: {
             menuDates: datesApiResult,
             dateIndex: closestDateIndex,
-            menuDate: datesApiResult[closestDateIndex].menu_date,
+            menuDate: nextMenuDate,
           },
         });
+        return axios.get(`${API_URL}menu`);
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          const fullMenu = response.data.result;
+          const nextMenu = fullMenu.filter(
+            (item) => item.menu_date === nextMenuDate
+          );
+          if (fullMenu !== undefined) {
+            dispatch({ type: "FETCH_MENU", payload: fullMenu });
+            dispatch({ type: "EDIT_MENU", payload: nextMenu });
+          }
+        }
       })
       .catch((err) => {
         if (err.response) {
@@ -453,9 +469,9 @@ function CreateMenu({ history, ...props }) {
   };
 
   // Fetch menu
-  useEffect(() => {
-    updateMenu();
-  }, []);
+  // useEffect(() => {
+  //   updateMenu();
+  // }, []);
 
   // Fetch meals
   useEffect(() => {
@@ -477,8 +493,10 @@ function CreateMenu({ history, ...props }) {
 
   // Change Date
   const changeDate = (newDate) => {
+    console.log(newDate);
     dispatch({ type: "CHANGE_DATE", payload: newDate });
     const curMenu = getMenuData(newDate);
+    console.log(curMenu);
     const sortedMenu = sortedArray(
       curMenu,
       state.sortEditMenu.field,
@@ -486,6 +504,10 @@ function CreateMenu({ history, ...props }) {
     );
     dispatch({ type: "EDIT_MENU", payload: sortedMenu });
   };
+
+  // useEffect(() => {
+  //   changeDate("2021-06-30");
+  // }, []);
 
   const changeSortOptions = (field) => {
     const isAsc =
@@ -757,17 +779,17 @@ function CreateMenu({ history, ...props }) {
           >
             Create / Edit Menu
           </Col>
-          <Col md="auto" className={styles.verticallyCenter}>
-            <button
-              className={styles.dateCarouselArrowBtn}
-              onClick={() => {
-                carouselRef.current.previous();
-                dispatch({ type: "DECREMENT_DATE_INDEX" });
-              }}
-            >
-              <LeftArrow />
-            </button>
-          </Col>
+          <Col md="auto" className={styles.verticallyCenter}></Col>
+          <button
+            style={{ transform: "translateX(10px)" }}
+            className={styles.dateCarouselArrowBtn}
+            onClick={() => {
+              carouselRef.current.previous();
+              dispatch({ type: "DECREMENT_DATE_INDEX" });
+            }}
+          >
+            <LeftArrow />
+          </button>
           <Col xs={4}>
             {state.dateIndex != null && (
               <Carousel
@@ -821,17 +843,16 @@ function CreateMenu({ history, ...props }) {
               </Form.Group>
             </Form> */}
           </Col>
-          <Col md="auto" className={styles.verticallyCenter}>
-            <button
-              className={styles.dateCarouselArrowBtn}
-              onClick={() => {
-                carouselRef.current.next();
-                dispatch({ type: "INCREMENT_DATE_INDEX" });
-              }}
-            >
-              <RightArrow />
-            </button>
-          </Col>
+          <button
+            style={{ transform: "translateX(0px)" }}
+            className={styles.dateCarouselArrowBtn}
+            onClick={() => {
+              carouselRef.current.next();
+              dispatch({ type: "INCREMENT_DATE_INDEX" });
+            }}
+          >
+            <RightArrow />
+          </button>
           <Col></Col>
           <Col
             md="auto"
@@ -880,6 +901,11 @@ function CreateMenu({ history, ...props }) {
                     }}
                   >
                     <TableSortLabel
+                      style={{
+                        fontWeight: "bold",
+                        color: "#f26522",
+                        border: "none",
+                      }}
                       active={state.sortEditMenu.field === "menu_type"}
                       direction={
                         state.sortEditMenu.field === "menu_type"
@@ -898,7 +924,22 @@ function CreateMenu({ history, ...props }) {
                       border: "none",
                     }}
                   >
-                    Meal Name
+                    <TableSortLabel
+                      style={{
+                        fontWeight: "bold",
+                        color: "#f26522",
+                        border: "none",
+                      }}
+                      active={state.sortEditMenu.field === "meal_name"}
+                      direction={
+                        state.sortEditMenu.field === "meal_name"
+                          ? state.sortEditMenu.direction
+                          : "asc"
+                      }
+                      onClick={() => changeSortOptions("meal_name")}
+                    >
+                      Meal Name
+                    </TableSortLabel>
                   </TableCell>
                   <TableCell
                     style={{
@@ -916,7 +957,22 @@ function CreateMenu({ history, ...props }) {
                       border: "none",
                     }}
                   >
-                    Business
+                    <TableSortLabel
+                      style={{
+                        fontWeight: "bold",
+                        color: "#f26522",
+                        border: "none",
+                      }}
+                      active={state.sortEditMenu.field === "meal_business"}
+                      direction={
+                        state.sortEditMenu.field === "meal_business"
+                          ? state.sortEditMenu.direction
+                          : "asc"
+                      }
+                      onClick={() => changeSortOptions("meal_business")}
+                    >
+                      Business
+                    </TableSortLabel>
                   </TableCell>
                   <TableCell
                     style={{
@@ -926,6 +982,11 @@ function CreateMenu({ history, ...props }) {
                     }}
                   >
                     <TableSortLabel
+                      style={{
+                        fontWeight: "bold",
+                        color: "#f26522",
+                        border: "none",
+                      }}
                       active={state.sortEditMenu.field === "meal_cat"}
                       direction={
                         state.sortEditMenu.field === "meal_cat"
@@ -945,6 +1006,11 @@ function CreateMenu({ history, ...props }) {
                     }}
                   >
                     <TableSortLabel
+                      style={{
+                        fontWeight: "bold",
+                        color: "#f26522",
+                        border: "none",
+                      }}
                       active={state.sortEditMenu.field === "menu_category"}
                       direction={
                         state.sortEditMenu.field === "menu_category"
@@ -964,6 +1030,11 @@ function CreateMenu({ history, ...props }) {
                     }}
                   >
                     <TableSortLabel
+                      style={{
+                        fontWeight: "bold",
+                        color: "#f26522",
+                        border: "none",
+                      }}
                       active={state.sortEditMenu.field === "default_meal"}
                       direction={
                         state.sortEditMenu.field === "default_meal"
@@ -991,7 +1062,22 @@ function CreateMenu({ history, ...props }) {
                       border: "none",
                     }}
                   >
-                    Meals Ordered
+                    <TableSortLabel
+                      style={{
+                        fontWeight: "bold",
+                        color: "#f26522",
+                        border: "none",
+                      }}
+                      active={state.sortEditMenu.field === ""}
+                      direction={
+                        state.sortEditMenu.field === ""
+                          ? state.sortEditMenu.direction
+                          : "asc"
+                      }
+                      onClick={() => changeSortOptions("")}
+                    >
+                      Meals Ordered
+                    </TableSortLabel>
                   </TableCell>
                 </TableRow>
               </TableHead>
@@ -1107,14 +1193,31 @@ function CreateMenu({ history, ...props }) {
           </Col>
         </Row>
       </Container>
-      <Modal show={state.showAddMeal} onHide={toggleAddMenu} animation={false}>
-        <Modal.Header closeButton>
-          <Modal.Title> Add Menu Item</Modal.Title>
-        </Modal.Header>
+      <Modal
+        show={state.showAddMeal}
+        onHide={toggleAddMenu}
+        animation={false}
+        dialogClassName={styles.modalContainer}
+      >
+        <div className={styles.modalCloseBtnContainer}>
+          <ModalCloseBtn
+            style={{ cursor: "pointer" }}
+            onClick={toggleAddMenu}
+          />
+        </div>
+        <div
+          style={{ border: "none", paddingLeft: "15px", fontWeight: "bold" }}
+        >
+          <Modal.Title> Add Menu Item </Modal.Title>
+        </div>
         <Modal.Body>
           <Form>
-            <Form.Group>
-              <Form.Label>Menu Date</Form.Label>
+            <Form.Group
+              style={{ display: "flex", alignItems: "center", width: "100%" }}
+            >
+              <Form.Label className={styles.modalFormLabel}>
+                Menu Date
+              </Form.Label>
               <Form.Control
                 type="date"
                 value={state.newMeal.menu_date}
@@ -1128,8 +1231,12 @@ function CreateMenu({ history, ...props }) {
                 }}
               />
             </Form.Group>
-            <Form.Group>
-              <Form.Label>Meal Type</Form.Label>
+            <Form.Group
+              style={{ display: "flex", alignItems: "center", width: "100%" }}
+            >
+              <Form.Label className={styles.modalFormLabel}>
+                Meal Type
+              </Form.Label>
               <Form.Control
                 as="select"
                 value={state.newMeal.meal_type}
@@ -1152,8 +1259,10 @@ function CreateMenu({ history, ...props }) {
                 ))}
               </Form.Control>
             </Form.Group>
-            <Form.Group>
-              <Form.Label>Meal</Form.Label>
+            <Form.Group
+              style={{ display: "flex", alignItems: "center", width: "100%" }}
+            >
+              <Form.Label className={styles.modalFormLabel}>Meal</Form.Label>
               <Form.Control
                 as="select"
                 value={state.newMeal.meal_uid}
@@ -1176,8 +1285,12 @@ function CreateMenu({ history, ...props }) {
                 ))}
               </Form.Control>
             </Form.Group>
-            <Form.Group>
-              <Form.Label>Meal Category</Form.Label>
+            <Form.Group
+              style={{ display: "flex", alignItems: "center", width: "100%" }}
+            >
+              <Form.Label className={styles.modalFormLabel}>
+                Meal Category
+              </Form.Label>
               <Form.Control
                 as="select"
                 value={state.newMeal.meal_cat}
@@ -1200,8 +1313,12 @@ function CreateMenu({ history, ...props }) {
                 ))}
               </Form.Control>
             </Form.Group>
-            <Form.Group>
-              <Form.Label>Menu Category</Form.Label>
+            <Form.Group
+              style={{ display: "flex", alignItems: "center", width: "100%" }}
+            >
+              <Form.Label className={styles.modalFormLabel}>
+                Menu Category
+              </Form.Label>
               <Form.Control
                 as="select"
                 value={state.newMeal.menu_category}
@@ -1224,8 +1341,12 @@ function CreateMenu({ history, ...props }) {
                 ))}
               </Form.Control>
             </Form.Group>
-            <Form.Group>
-              <Form.Label>Default Meal</Form.Label>
+            <Form.Group
+              style={{ display: "flex", alignItems: "center", width: "100%" }}
+            >
+              <Form.Label className={styles.modalFormLabel}>
+                Default Meal
+              </Form.Label>
               <Form.Control
                 as="select"
                 value={state.newMeal.default_meal}
@@ -1244,12 +1365,9 @@ function CreateMenu({ history, ...props }) {
             </Form.Group>
           </Form>
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={toggleAddMenu}>
-            Close
-          </Button>
-          <Button
-            variant="primary"
+        <Modal.Footer style={{ border: "none", justifyContent: "center" }}>
+          <button
+            className={styles.modalBtn}
             onClick={() => {
               const newMenuItemInfo = state.mealData.filter(
                 (meal) => meal.meal_uid === state.newMeal.meal_uid
@@ -1289,17 +1407,34 @@ function CreateMenu({ history, ...props }) {
             }}
           >
             Save Menu Item
-          </Button>
+          </button>
         </Modal.Footer>
       </Modal>
-      <Modal show={state.showAddDate} onHide={toggleAddDate} animation={false}>
-        <Modal.Header closeButton>
+      <Modal
+        show={state.showAddDate}
+        onHide={toggleAddDate}
+        animation={false}
+        dialogClassName={styles.modalContainer}
+      >
+        <div className={styles.modalCloseBtnContainer}>
+          <ModalCloseBtn
+            style={{ cursor: "pointer" }}
+            onClick={toggleAddDate}
+          />
+        </div>
+        <div
+          style={{ border: "none", paddingLeft: "15px", fontWeight: "bold" }}
+        >
           <Modal.Title> Add Menu Date </Modal.Title>
-        </Modal.Header>
+        </div>
         <Modal.Body>
           <Form>
-            <Form.Group>
-              <Form.Label>Menu Date</Form.Label>
+            <Form.Group
+              style={{ display: "flex", alignItems: "center", width: "100%" }}
+            >
+              <Form.Label className={styles.modalFormLabel}>
+                Menu Date
+              </Form.Label>
               <Form.Control
                 type="date"
                 value={state.newDate.menu_date}
@@ -1318,27 +1453,37 @@ function CreateMenu({ history, ...props }) {
             </Form.Group>
           </Form>
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={toggleAddDate}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={saveMenuTemplate}>
+        <Modal.Footer style={{ border: "none", justifyContent: "center" }}>
+          <button className={styles.modalBtn} onClick={saveMenuTemplate}>
             Save Menu Date with Template
-          </Button>
+          </button>
         </Modal.Footer>
       </Modal>
       <Modal
         show={state.showCopyDate}
         onHide={toggleCopyDate}
         animation={false}
+        dialogClassName={styles.modalContainer}
       >
-        <Modal.Header closeButton>
+        <div className={styles.modalCloseBtnContainer}>
+          <ModalCloseBtn
+            style={{ cursor: "pointer" }}
+            onClick={toggleCopyDate}
+          />
+        </div>
+        <div
+          style={{ border: "none", paddingLeft: "15px", fontWeight: "bold" }}
+        >
           <Modal.Title> Copy Menu </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
+        </div>
+        <Modal.Body style={{ border: "none" }}>
           <Form>
-            <Form.Group>
-              <Form.Label>Copy From Date</Form.Label>
+            <Form.Group
+              style={{ display: "flex", alignItems: "center", width: "100%" }}
+            >
+              <Form.Label className={styles.modalFormLabel}>
+                Copy From Date
+              </Form.Label>
               <Form.Control
                 as="select"
                 type="date"
@@ -1366,8 +1511,12 @@ function CreateMenu({ history, ...props }) {
                 ))}
               </Form.Control>
             </Form.Group>
-            <Form.Group>
-              <Form.Label>Copy To Date</Form.Label>
+            <Form.Group
+              style={{ display: "flex", alignItems: "center", width: "100%" }}
+            >
+              <Form.Label className={styles.modalFormLabel}>
+                Copy To Date
+              </Form.Label>
               <Form.Control
                 type="date"
                 value={state.copyDate.date2}
@@ -1386,12 +1535,9 @@ function CreateMenu({ history, ...props }) {
             </Form.Group>
           </Form>
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={toggleCopyDate}>
-            Close
-          </Button>
-          <Button
-            variant="primary"
+        <Modal.Footer style={{ border: "none", justifyContent: "center" }}>
+          <button
+            className={styles.modalBtn}
             // this is where i will call the endpoint to copy over date1 -> date2
             onClick={() => {
               // YYYY-MM-DD seems to work for request parameter, no need to add HH:MM:SS
@@ -1408,7 +1554,7 @@ function CreateMenu({ history, ...props }) {
             }}
           >
             Copy Menu
-          </Button>
+          </button>
         </Modal.Footer>
       </Modal>
     </div>

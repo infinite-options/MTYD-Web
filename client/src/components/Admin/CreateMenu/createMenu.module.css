@@ -75,3 +75,36 @@ body {
 .bold {
   font-weight: bold;
 }
+
+.modalContainer div {
+  border-radius: 20px !important;
+  border: 2px, solid, #f26522 !important;
+  background: #fef7e0 !important;
+}
+
+.modalBorder {
+  border: 2px, solid, #f26522;
+}
+
+.modalBtn {
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 15px;
+  padding-left: 25px;
+  padding-right: 25px;
+  background-color: #f26522;
+  font-weight: bold;
+}
+
+.modalCloseBtnContainer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px;
+}
+
+.modalFormLabel {
+  width: 50%;
+  color: #f26522;
+  font-weight: bold;
+}
