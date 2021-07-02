@@ -1763,22 +1763,8 @@ function CustomerInfo(props) {
     return true;
   }
 
-  const changeTip = (newTip) => {
-
-    console.log("in changetip");
-    // this.setState(prevState => ({
-    //   updatedPlan: {
-    //     ...prevState.updatedPlan,
-    //     payment_summary: {
-    //       ...prevState.updatedPlan.payment_summary,
-    //       driver_tip: newTip
-    //     }
-    //   }
-    // }),() => {
-    //   this.changePlans(this.state.updatedPlan.meals,this.state.updatedPlan.deliveries);
-    //   this.calculateDifference();
-    // });
-
+  const displayEditModalLoading = (showScreen) => {
+    
   }
 
   const displayEditModal = () => {

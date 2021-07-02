@@ -2051,6 +2051,7 @@ class AdminEditModal extends React.Component {
                 <img src={m4me_logo} />
               </div>
           }
+					{/* {this.showPlanDetails(this.state.windowWidth)} */}
         </div>
 
       {/* {narrowView ? ( */}
