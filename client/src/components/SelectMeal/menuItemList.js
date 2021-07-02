@@ -52,33 +52,10 @@ class MenuItemList extends Component {
       unloginPopupSkip:false,
       login_seen:false,
       signUpSeen:false,
-      mealsLoaded: false
+      mealsLoaded: false,
+      customer_uid: null
     };
   }
-
-  // const isFutureCycle = (rawDate, billDate) => {
-
-  //   console.log("raw date: ", rawDate);
-  //   console.log("bill date: ", billDate);
-
-  //   let dateElements = rawDate.split(' ');
-  //   let billDateElements = billDate.split(' ');
-
-  //   console.log("date elements: ", dateElements);
-  //   console.log("bill date elements: ", billDateElements);
-
-  //   let parsedDate = Date.parse(dateElements[0]);
-  //   let parsedBillDate = Date.parse(billDateElements[0]);
-
-  //   console.log("parsed date: ", parsedDate);
-  //   console.log("parsed bill date: ", parsedBillDate);
-
-  //   if (parsedDate > parsedBillDate) {
-  //     return true;
-  //   } else {
-  //     return false;
-  //   }
-  // }
 
   formatDate = (rawDate) => {
 
@@ -224,39 +201,49 @@ class MenuItemList extends Component {
 }
 
   async componentDidMount() {
-    this.loadMealPlans();
-    this.loadMenuItems();
-    const customer_uid = Cookies.get("customer_uid");
-    if (customer_uid && customer_uid !== "") {
-      await this.props.fetchProfileInformation(customer_uid);
-      await this.props.fetchSubscribed(customer_uid);
-    }
+    // this.loadMealPlans();
+    // this.loadMenuItems();
+    // const customer_uid = Cookies.get("customer_uid");
+    // this.setState({customer_uid});
+    // // const customer_uid = '100-000001'
+    // if (customer_uid && customer_uid !== "") {
+    //   await this.props.fetchProfileInformation(customer_uid);
+    //   await this.props.fetchSubscribed(customer_uid);
+    // }
+
+    // const customer_uid = Cookies.get("customer_uid");
+    const customer_uid = '100-000001';
+    console.log("(mount) customer_uid: ", customer_uid);
+    this.setState({
+      customer_uid
+    }, () => {
+      this.loadMealPlans();
+      this.loadMenuItems();
+      this.props.fetchProfileInformation(customer_uid);
+      this.props.fetchSubscribed(customer_uid);
+    });
+    // const customer_uid = '100-000001'
+    // if (customer_uid && customer_uid !== "") {
+    //   await this.props.fetchProfileInformation(customer_uid);
+    //   await this.props.fetchSubscribed(customer_uid);
+    // }
   }
 
 
   loadMealPlans = () => {
     // let remoteDataFetched = 0;
 
-    const customer_uid = Cookies.get("customer_uid");
+    // const customer_uid = Cookies.get("customer_uid");
 
-    fetch(`${API_URL}customer_lplp?customer_uid=${customer_uid}`)
-      .then(response => response.json())
-      .then(json => {
-        let meals = [...json.result];
+    // fetch(`${API_URL}customer_lplp?customer_uid=${this.state.customer_uid}`)
+    //   .then(response => response.json())
+    axios.get(`${API_URL}customer_lplp?customer_uid=${this.state.customer_uid}`)
+      .then(res => {
+        console.log("customer_lplp res: ", res);
+        let meals = res.data.result;
+        console.log("wtf");
         console.log("loadMealPlans: ", meals);
 
-        // this.setState({
-        //   meals: meals,
-        //   purchaseID: meals[0].purchase_id,
-        //   totalMeals: parseInt(meals[0].items.substr(23, 2))
-        // }, () => {
-        //   remoteDataFetched++;
-        //   if(remoteDataFetched === 2){
-        //     this.setState({
-        //       mealsLoaded: true
-        //     });
-        //   }
-        // });
         this.setState({
           meals: meals,
           purchaseID: meals[0].purchase_id,
@@ -267,52 +254,21 @@ class MenuItemList extends Component {
       })
       .catch(error => {
         console.error(error);
-
-        // remoteDataFetched++;
-        // if(remoteDataFetched === 2){
-        //   this.setState({
-        //     mealsLoaded: true
-        //   });
-        // }
-
       });
-
-    // axios.get(`${API_URL}predict_next_billing_date/${customer_uid}`)
-    //   .then(res => {
-    //     console.log("(MIL -- PNBD) res: ", res);
-    //     this.setState({
-    //       meals_nbd: res.data.result
-    //     }, () => {
-    //       remoteDataFetched++;
-    //       if(remoteDataFetched === 2){
-    //         this.setState({
-    //           mealsLoaded: true
-    //         });
-    //       }
-    //     });
-    //   })
-    //   .catch(err => {
-    //     console.log(err);
-    //     if(err.response) {
-    //       console.log(err.response);
-    //     }
-    //     remoteDataFetched++;
-    //     if(remoteDataFetched === 2){
-    //       this.setState({
-    //         mealsLoaded: true
-    //       });
-    //     }
-    //   });
   };
 
   loadMenuItems = () => {
-    fetch(
-      `${API_URL}upcoming_menu`
-    )
-      .then(response => response.json())
-      .then(json => {
-        // console.log("json: " + JSON.stringify(json))
-        let menuData = [...json.result];
+    // fetch(
+    //   `${API_URL}upcoming_menu`
+    // )
+    //   .then(response => response.json())
+    axios.get(`${API_URL}upcoming_menu`)
+      .then(res => {
+      // .then(json => {
+      //   console.log("json: ", json)
+        // let menuData = [...json.result];
+        console.log("upcoming_menu res: ", res);
+        let menuData = res.data.result;
         let myStr = menuData[0].delivery_days;
         let temp = myStr.replace(/[^a-zA-Z ]/g, "").split(" ");
         this.setState(
@@ -334,17 +290,19 @@ class MenuItemList extends Component {
   };
 
   selectedMeals = () => {
-    let cust_id = Cookies.get("customer_uid");
-    fetch(
-      `${API_URL}meals_selected?customer_uid=${cust_id}`
-    )
-      .then(response => response.json())
-      .then(json => {
+    // let cust_id = Cookies.get("customer_uid");
+    // fetch(
+    //   `${API_URL}meals_selected?customer_uid=${this.state.customer_uid}`
+    // )
+    //   .then(response => response.json())
+    axios.get(`${API_URL}meals_selected?customer_uid=${this.state.customer_uid}`)
+      .then(res => {
         // console.log(json)
-        let mealSelected = [...json.result];
-        this.setState({
-          mealSelected
-        });
+        // let mealSelected = [...json.result];
+        console.log("meals_selected res: ", res);
+        let mealSelected = res.data.result;
+
+        this.setState({mealSelected});
 
         let cartItemsArr = [];
         let addOnArr = [];
@@ -474,11 +432,11 @@ class MenuItemList extends Component {
 
   togglePopSignup = () => {
     this.setState({
-     signUpSeen: !this.state.signUpSeen,
-     unloginPopupShowPM:false,
-     unloginPopupSave:false,
-     unloginPopupSurprise:false,
-     unloginPopupSkip:false
+      signUpSeen: !this.state.signUpSeen,
+      unloginPopupShowPM:false,
+      unloginPopupSave:false,
+      unloginPopupSurprise:false,
+      unloginPopupSkip:false
     });
 
     if(!this.state.signUpSeen){
@@ -493,14 +451,18 @@ class MenuItemList extends Component {
     console.log("Meals on Click e is:")
     console.log(e)
 
-    let cust_id = Cookies.get("customer_uid")
+    // let cust_id = Cookies.get("customer_uid")
 
-    fetch(
-      `${API_URL}meals_selected?customer_uid=${cust_id}`
-    )
-      .then(response => response.json())
-      .then(json => {
-        let mealSelected = [...json.result];
+    // fetch(
+    //   `${API_URL}meals_selected?customer_uid=${this.state.customer_uid}`
+    // )
+    //   .then(response => response.json())
+    //   .then(json => {
+    axios.get(`${API_URL}meals_selected?customer_uid=${this.state.customer_uid}`)
+      .then(res => {
+        // let mealSelected = [...json.result];
+        console.log("meals_selected res: ", res);
+        let mealSelected = res.data.result;
         console.log("mealSelected: "+mealSelected)
 
         // console.log(mealSelected)
@@ -649,16 +611,19 @@ class MenuItemList extends Component {
   mealsOnChange = e => {
     console.log("Meals on change e is:")
     console.log(e)
-    
 
-    console.log(Cookies.get("customer_uid"))
-    let cust_id = Cookies.get("customer_uid");
-    fetch(
-      `${API_URL}meals_selected?customer_uid=${cust_id}`
-    )
-      .then(response => response.json())
-      .then(json => {
-        let mealSelected = [...json.result];
+    // console.log(Cookies.get("customer_uid"))
+    // let cust_id = Cookies.get("customer_uid");
+    // fetch(
+    //   `${API_URL}meals_selected?customer_uid=${this.state.customer_uid}`
+    // )
+    //   .then(response => response.json())
+    //   .then(json => {
+    //     let mealSelected = [...json.result];
+    axios.get(`${API_URL}meals_selected?customer_uid=${this.state.customer_uid}`)
+      .then(res => {
+        console.log("meals_selected res: ", res);
+        let mealSelected = res.data.result;
         console.log("mealSelected: "+mealSelected)
 
         // console.log(mealSelected)
@@ -829,20 +794,24 @@ class MenuItemList extends Component {
 
     event.stopPropagation();
 
-    if(Cookies.get("customer_uid")==null){
+    if(Cookies.get("customer_uid") === null){
       return this.setState({
         myDate: event.target.value,
       });
     }
 
-    let cust_id = Cookies.get("customer_uid");
+    // let cust_id = Cookies.get("customer_uid");
     // console.log(cust_id)
-    fetch(
-      `${API_URL}meals_selected?customer_uid=${cust_id}`
-    )
-      .then(response => response.json())
-      .then(json => {
-        let mealSelected = [...json.result];
+    // fetch(
+    //   `${API_URL}meals_selected?customer_uid=${this.state.customer_uid}`
+    // )
+    //   .then(response => response.json())
+    //   .then(json => {
+    //     let mealSelected = [...json.result];
+    axios.get(`${API_URL}meals_selected?customer_uid=${this.state.customer_uid}`)
+      .then(res => {
+        console.log("meals_selected res: ", res);
+        let mealSelected = res.data.result;
         this.setState({
           mealSelected
         });
@@ -1030,10 +999,10 @@ class MenuItemList extends Component {
 
   makeSelection = (e) => {
 
-    const customer_uid = Cookies.get("customer_uid");
+    // const customer_uid = Cookies.get("customer_uid");
 
 
-    if(customer_uid==null){
+    if(this.state.customer_uid==null){
       if (e.target.value === "SURPRISE"){
         return this.setState({unloginPopupSurprise:true})
       }else if(e.target.value === "SKIP"){
@@ -1550,46 +1519,66 @@ class MenuItemList extends Component {
   };
 
   prepareSurpriseArr=(uid)=>{
+    console.log("in PSA");
 
-    // console.log("PSA uid: ", uid);
+    console.log("PSA uid: ", uid);
 
     if(uid!=null){
 
       console.log("PSA in if statement");
 
-      fetch(
-        `${API_URL}meals_selected?customer_uid=${uid}`
-      )
-        .then(response => response.json())
-        .then(json => {
+      // fetch(
+      //   `${API_URL}meals_selected?customer_uid=${uid}`
+      // )
+      //   .then(response => response.json())
+      //   .then(json => {
 
           // console.log("PSA json: ", json);
 
-          let mealSelected = [...json.result];
+          // let mealSelected = [...json.result];
+      axios.get(`${API_URL}meals_selected?customer_uid=${uid}`)
+        .then(res => {
+          console.log("PSA meals_selected res: ", res);
           let tempArr = [];
+          let mealSelected = res.data.result;
+
+          console.log("PSA meals_selected (1)");
           for(const eachData of mealSelected){
-            // console.log("eachData: ", eachData);
+            console.log("PSA eachData: ", eachData);
 
-
-            // console.log("meals_selected before parse: ", eachData.meals_selected);
+            console.log("PSA meals_selected before parse: ", eachData.meals_selected);
 
             //let tempselection = JSON.parse(eachData.meal_selection);
             let tempselection = JSON.parse(eachData.meals_selected);
 
-            // console.log("tempselection: ", tempselection);
+            console.log("PSA tempselection: ", tempselection);
 
-            tempArr.push({
-              id:eachData.sel_purchase_id,
-              date:eachData.sel_menu_date,
-              selection:tempselection[0].name,
-            })
+            if(tempselection.length === 0) {
+              tempArr.push({
+                id: eachData.sel_purchase_id,
+                date: eachData.sel_menu_date,
+                selection: "ERROR",
+              })
+            } else {
+              tempArr.push({
+                id: eachData.sel_purchase_id,
+                date: eachData.sel_menu_date,
+                selection: tempselection[0].name,
+              })
+            }
+            // tempArr.push({
+            //   id: eachData.sel_purchase_id,
+            //   date: eachData.sel_menu_date,
+            //   selection: tempselection[0].name,
+            // })
           }
           this.setState({surpriseSkipSave:tempArr});
+          console.log("PSA meals_selected (2)");
 
           // console.log(this.state.surpriseSkipSave)
 
           let buttonList = [];
-          let first=null;
+          let first = null;
 
           const dates = this.state.data.map(date => date.menu_date);
           const uniqueDates = Array.from(new Set(dates));
@@ -1597,6 +1586,7 @@ class MenuItemList extends Component {
 
           // console.log(this.state.surpriseSkipSave)
 
+          console.log("PSA meals_selected (3)");
           for(const date of uniqueDates){
 
             if(lessThanTen>=10){
@@ -1678,9 +1668,10 @@ class MenuItemList extends Component {
           }
           // console.log("buttonList: ", buttonList)
 
+          console.log("(1) setting dateButtonList...");
           this.setState({
             dateButtonList: buttonList
-          })
+          });
 
           return buttonList;
 
@@ -1692,8 +1683,9 @@ class MenuItemList extends Component {
   }
 
   dateButtonArray=()=>{
+    console.log("in dateButtonArray");
 
-    const customer_uid = Cookies.get("customer_uid");
+    // const customer_uid = Cookies.get("customer_uid");
 
     const dates = this.state.data.map(date => date.menu_date);
     const uniqueDates = Array.from(new Set(dates));
@@ -1707,7 +1699,7 @@ class MenuItemList extends Component {
 
     let lessThanTen = 0;
 
-    if (customer_uid == null) {
+    if (this.state.customer_uid == null) {
       //if user  not login, show them the basic date button
       for(const date of uniqueDates){
         if(lessThanTen>=10){
@@ -1766,13 +1758,15 @@ class MenuItemList extends Component {
         first=1;
         lessThanTen++;
       }
+
+      console.log("(2) setting dateButtonList...");
       this.setState({
         dateButtonList: buttonList
       })
     }
     else{
       //if user login, fetch skip, surprise or something else on that day. 
-      buttonList = this.prepareSurpriseArr(customer_uid);
+      buttonList = this.prepareSurpriseArr(this.state.customer_uid);
     }
     return buttonList;
   }
@@ -1780,6 +1774,9 @@ class MenuItemList extends Component {
   render() {
     const dates = this.state.data.map(date => date.menu_date);
     const uniqueDates = Array.from(new Set(dates));
+
+    console.log("(render) dateButtonList: ", this.state.dateButtonList);
+    console.log("(render) mealsLoaded: ", this.state.mealsLoaded);
 
     // console.log(this.state.surpriseSkipSave)
     return (
@@ -1854,7 +1851,7 @@ class MenuItemList extends Component {
           purchaseID={this.state.purchaseID}
           mealSelected={this.state.mealSelected}
           dateButtonArray = {this.state.dateButtonList}
-          customer_uid = {Cookies.get("customer_uid")}
+          customer_uid = {this.state.customer_uid}
         />
 
         <div style = {{overflow: 'visible', height: '100vh'}}>
@@ -1870,7 +1867,7 @@ class MenuItemList extends Component {
               purchaseID={this.state.purchaseID}
               show={this.props.subscribedPlans.length}
               addon = {false}
-              customer_uid = {Cookies.get("customer_uid")}
+              customer_uid = {this.state.customer_uid}
             />
           </div>
 

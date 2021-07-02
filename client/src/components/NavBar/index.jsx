@@ -411,49 +411,30 @@ class NavBar extends React.Component {
                 Sign Up
               </button>
             </div> */}
-            {this.state.windowWidth > 900
-              ? (
-                  <div
-                    onClick={this.togglePopSignup}
-                    className={styles.signUpBtn}
-                    aria-label="Click here to sign up"
-                    title="Click here to sign up"
-                  >
-                    Sign Up
-                  </div>
-                )
-              : null}
+            {this.state.windowWidth > 900 ? (
+              <div
+                onClick={this.togglePopSignup}
+                className={styles.signUpBtn}
+                aria-label="Click here to sign up"
+                title="Click here to sign up"
+              >
+                Sign Up
+              </div>
+            ) : null}
 
             {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
 
-            {/* <div
-              style={{
-                height:'100%',
-                // display: this.state.loginNameLogoutDisplay
-              }}
-            >
-              <button 
+            {this.state.windowWidth > 900 ? (
+              <div 
                 onClick={this.togglePopLogin}
-                className={styles.signInBtn}
+                // className={styles.signInBtn}
+                className={styles.loginBtn}
                 aria-label="Click here to log in"
                 title="Click here to log in"
               >
                 Login
-              </button>
-            </div> */}
-            {this.state.windowWidth > 900
-              ? (
-                  <div 
-                    onClick={this.togglePopLogin}
-                    // className={styles.signInBtn}
-                    className={styles.loginBtn}
-                    aria-label="Click here to log in"
-                    title="Click here to log in"
-                  >
-                    Login
-                  </div>
-                )
-              : null}
+              </div>
+            ) : null}
 
             {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
 

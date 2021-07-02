@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import {Link} from "react-router-dom";
 import forkClose from '../../images/forkClose.png'
+import styles from "../NavBar/navBar.module.css";
 
 export class MenuList extends Component {
 
@@ -252,71 +253,48 @@ export class MenuList extends Component {
 
 
           <div
-          style={{
-            marginTop:'100px',
-          }}>
+            style={{
+              marginTop:'100px',
+            }}
+          >
 
             <a href='/home'
-              style ={{
-                fontSize:"26px",
-                height:"20px",
-                color:'white'
-              }}
+              className={styles.hbButton}
               aria-label="Click here to go to the homepage"
               title="Click here to go to the homepage">
               Home
             </a >
 
             <a href='/select-meal'
-              style ={{
-                fontSize:"26px",
-                height:"20px",
-                color:'white' 
-              }}
+              className={styles.hbButton}
               aria-label="Click here to select your meal"
               title="Click here to select your meal">
               Select Meals
             </a>
 
             <a href='/meal-plan'
-              style ={{
-                fontSize:"26px",
-                height:"20px",
-                color:'white'
-              }}
+              className={styles.hbButton}
               aria-label="Click here to change your meal plan"
               title="Click here to change your meal plan">
               Change Meal Plans
             </a>
 
             <a href='/choose-plan'
-              style ={{
-                fontSize:"26px",
-                height:"20px",
-                color:'white'
-              }}
+              className={styles.hbButton}
               aria-label="Click here to add a subscription"
               title="Click here to add a subscription">
               Add Subscriptions
             </a >
 
             <a href='/subscription-history'
-              style ={{
-                fontSize:"26px",
-                height:"20px",
-                color:'white'
-              }}
+              className={styles.hbButton}
               aria-label="Click here to view your subscriptions"
               title="Click here to view your subscriptions">
               Subscription History
             </a>
 
-            <a href='/'
-              style ={{
-                fontSize:"26px",
-                height:"20px",
-                color:'white'
-              }}
+            <a href='/ambassador'
+              className={styles.hbButton}
               aria-label="Click here to become an ambassador"
               title="Click here to become an ambassador">
               Become an Ambassador
@@ -324,36 +302,28 @@ export class MenuList extends Component {
 
             <a href='/meal-plan'
               style ={{
-                fontSize:"26px",
-                height:"20px",
-                color:'white',
                 display:this.state.showLogout
               }}
-              // onClick = {this.props.LogoutFunction}
-              >
+              className={styles.hbButton}
+            >
               {this.props.firstName} {this.props.lastName}
             </a>
 
             {console.log("showAdmin? ", this.state.showAdmin)}
             <a href='/admin'
               style ={{
-                fontSize:"26px",
-                height:"20px",
-                color:'white',
                 display: this.state.showAdmin
               }}
-              // onClick = {this.props.LogoutFunction}
-              >
+              className={styles.hbButton}
+            >
               Admin
             </a>
 
             <a href='/home'
               style ={{
-                fontSize:"26px",
-                height:"20px",
-                color:'white',
                 display:this.state.showLogout
               }}
+              className={styles.hbButton}
               onClick = {this.props.LogoutFunction}
               aria-label="Click here to log out"
               title="Click here to log out"
@@ -363,12 +333,10 @@ export class MenuList extends Component {
 
             <a
               style ={{
-                fontSize:"26px",
-                height:"20px",
-                color:'white',
-                display:this.state.showSigninSignup,
+                display: this.state.showSigninSignup,
                 cursor: 'pointer'
               }}
+              className={styles.hbButton}
               onClick = {this.showPopLogin}
               aria-label="Click here to log in"
               title="Click here to log in"
@@ -378,12 +346,10 @@ export class MenuList extends Component {
 
             <a
               style ={{
-                fontSize:"26px",
-                height:"20px",
-                color:'white',
                 display:this.state.showSigninSignup,
                 cursor: 'pointer'
               }}
+              className={styles.hbButton}
               onClick = {this.showPopSignup}
               aria-label="Click here to sign up"
               title="Click here to sign up"

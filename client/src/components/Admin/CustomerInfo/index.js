@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import {connect} from 'react-redux';
 import axios from 'axios';
 import { API_URL } from '../../../reducers/constants';
 import { descendingComparator } from '../../../reducers/helperFuncs';
@@ -11,6 +12,16 @@ import m4me_logo from '../../../images/LOGO_NoBG_MealsForMe.png';
 import trashIcon from '../../../images/trash_icon.png';
 import editIcon from '../../../images/edit_icon.png';
 import xButton from '../../../images/x_button.png';
+
+import EditPlan from "../../../components/EditPlan";
+
+import {
+  fetchPlans,
+  // fetchSubscribed,
+  // chooseMealsDelivery,
+  // choosePaymentOption,
+  // fetchProfileInformation
+} from "../../../reducers/actions/subscriptionActions";
 
 // For choosing sorting arrow to display
 const ARROW_ID = 0;
@@ -58,7 +69,7 @@ const CELL = {
 
 const ERR_VAL = <>&nbsp;<strong style={{color: 'red'}}>[NULL]</strong></>;
 
-function CustomerInfo() {
+function CustomerInfo(props) {
 	const [ customersByName    , setCustomersByName    ] = useState(null);
 	const [ customersById	     , setCustomersById	     ] = useState(null);
 	const [ customersByEmail   , setCustomersByEmail   ] = useState(null);
@@ -99,7 +110,14 @@ function CustomerInfo() {
 		}
   });
 
+  useEffect(() => {
+    console.log("(UE) props.plans: ", props.plans);
+  }, [props.plans])
+
 	useEffect(() => {
+
+    props.fetchPlans();
+
 		axios
       .get(`${API_URL}customer_infos`)
       .then((res) => {
@@ -1676,6 +1694,54 @@ function CustomerInfo() {
     );
 	}
 
+    // Call to render buttons for changing number of meals in updated plan
+    /*mealsDelivery = () => {
+
+      let deselectedPlateButton = styles.plateButton;
+      let selectedPlateButton =
+      styles.plateButton + " " + styles.plateButtonSelected;
+      let plateButtons = [];
+      let singleMealData;
+  
+      let mealPlans = this.props.plans;
+  
+      for (const [mealIndex, mealData] of Object.entries(mealPlans)) {
+  
+        singleMealData = mealData["1"];
+  
+        plateButtons.push(
+          <div className={styles.plateButtonWrapper} >
+          <button
+            key={mealIndex}
+            className={
+              this.state.updatedPlan.meals === mealIndex
+                ? selectedPlateButton
+                : deselectedPlateButton
+            }
+            onClick={() => {
+  
+            this.props.chooseMealsDelivery(
+              mealIndex,
+              this.state.updatedPlan.deliveries,
+              this.props.plans
+            );
+
+            this.changePlans(mealIndex, this.state.updatedPlan.deliveries);
+          }}
+          aria-label={"Click to switch to " +mealIndex+ " meals per delivery for $" + singleMealData.item_price}
+          title={"Click to switch to " +mealIndex+ " meals per delivery for $" + singleMealData.item_price}
+        >
+          {mealIndex}
+        </button>
+          <div style={{textAlign: 'center', marginTop: '10px'}}>
+            ${singleMealData.item_price}
+          </div>
+        </div>
+      );
+    }
+    return plateButtons;
+  };*/
+
   const activeChanges = () => {
 
     // let updatedSummary = this.state.updatedPlan.payment_summary;
@@ -1785,6 +1851,8 @@ function CustomerInfo() {
             overflow: 'auto'
           }}
         >
+
+          <EditPlan />
 
           <div
             style={{
@@ -2374,7 +2442,7 @@ function CustomerInfo() {
         <AdminNavBar currentPage={'customers'}/>
       )}
 
-			{customersById === null ? (
+			{customersById === null || JSON.stringify(props.plans) === '{}' ? (
 				<div
 					style={{
 						color: 'red',
@@ -3718,4 +3786,11 @@ function CustomerInfo() {
   )
 }
 
-export default withRouter(CustomerInfo);
+const mapStateToProps = state => ({
+  plans: state.subscribe.plans
+});
+
+// export default withRouter(CustomerInfo);
+export default connect(mapStateToProps, {
+  fetchPlans
+})(withRouter(CustomerInfo));

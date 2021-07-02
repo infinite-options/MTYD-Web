@@ -677,12 +677,14 @@
 
 .containerSplit {
   text-align: center;
-  /* display: flex; */
+  border: dashed;
+  display: flex;
 }
 
 .boxPDleft {
   border: solid red;
-  width: 22%;
+  width: 30%;
+  max-width: 200px;
   /* margin-left: 8%; */
   margin-left: 4%;
   display: flex;
@@ -690,11 +692,14 @@
 }
 
 .boxPDright {
+  border: solid green;
   text-align: left;
   /*border: solid;
   border-color: red;*/
-  margin-right: 8%;
-  width: 62%;
+  /* margin-right: 4%; */
+  /* width: 66%; */
+  margin-left: 4%;
+  flex-grow: 1;
 }
 
 .planHeader{
