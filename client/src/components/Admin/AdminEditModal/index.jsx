@@ -32,6 +32,7 @@ var autocomplete;
 const DEFAULT = 0;
 const CURRENT = 1;
 const UPDATED = 2;
+const FROM_PROPS = 3;
 
 class AdminEditModal extends React.Component {
   constructor() {
@@ -539,6 +540,10 @@ class AdminEditModal extends React.Component {
     subscriptions.forEach((sub, index) => {
       console.log("(loadSubscriptions) sub: ", sub);
 
+			if(setDefault === FROM_PROPS) {
+				sub = this.props.currentPlan;
+			}
+
       let subscription = {};
 
       let parsedItems = JSON.parse(sub.items)[0];
@@ -633,7 +638,6 @@ class AdminEditModal extends React.Component {
         defaultCurrentPlan["deliveries"] = parsedDeliveries;
         defaultCurrentPlan["discount"] = parsedDiscount;
         defaultCurrentPlan["next_delivery_date"] = parsedDeliveryDate;
-        // defaultCurrentPlan["next_delivery_status"] = parsedStatus;
         defaultCurrentPlan["next_delivery_status"] = sub.final_selection;
         defaultCurrentPlan["next_billing_date"] = parsedBillingDate;
         defaultCurrentPlan["next_billing_amount"] = nextBillingAmount.toFixed(2);
@@ -646,7 +650,6 @@ class AdminEditModal extends React.Component {
         defaultUpdatedPlan["deliveries"] = parsedDeliveries;
         defaultUpdatedPlan["discount"] = parsedDiscount;
         defaultUpdatedPlan["next_delivery_date"] = parsedDeliveryDate;
-        // defaultUpdatedPlan["next_delivery_status"] = parsedStatus;
         defaultUpdatedPlan["next_delivery_status"] = sub.final_selection;
         defaultUpdatedPlan["next_billing_date"] = parsedBillingDate;
         defaultUpdatedPlan["next_billing_amount"] = nextBillingAmount.toFixed(2);
@@ -791,7 +794,21 @@ class AdminEditModal extends React.Component {
       return a.load_order - b.load_order
     });
 
-    if(setDefault === DEFAULT) {
+		if(setDefault === FROM_PROPS) {
+			console.log("FROM_PROPS props: ", this.props);
+			console.log("propsCurrentPlan: ", this.props.currentPlan);
+			console.log("defaultCurrentPlan: ", defaultCurrentPlan);
+			console.log("defaultUpdatePlan: ", defaultUpdatedPlan);
+			this.setState(prevState => ({
+        subscriptionsList: newSubList,
+        subscriptionsLoaded: true,
+        currentPlan: {...defaultCurrentPlan},
+        updatedPlan: {...defaultUpdatedPlan},
+        deliveryInfo: {...defaultDeliveryInfo}
+      }), () => {
+        this.calculateDifference();
+      });
+		} else if(setDefault === DEFAULT) {
       this.setState(prevState => ({
         subscriptionsList: newSubList,
         subscriptionsLoaded: true,
@@ -1068,7 +1085,7 @@ class AdminEditModal extends React.Component {
 
 						if(fetchedSubscriptions !== null){
 							console.log("(1) load subscriptions");
-							this.loadSubscriptions(fetchedSubscriptions, fetchedDiscounts, DEFAULT);
+							this.loadSubscriptions(fetchedSubscriptions, fetchedDiscounts, FROM_PROPS);
 						}
 
 					});
@@ -1080,7 +1097,7 @@ class AdminEditModal extends React.Component {
 
 							if(fetchedDiscounts !== null){
 								console.log("(2) load subscriptions");
-								this.loadSubscriptions(fetchedSubscriptions, fetchedDiscounts, DEFAULT);
+								this.loadSubscriptions(fetchedSubscriptions, fetchedDiscounts, FROM_PROPS);
 							}
 						})
 						.catch(err => {
@@ -2018,8 +2035,8 @@ class AdminEditModal extends React.Component {
                 style={{
                   color: 'red',
                   zIndex: '99',
-                  height: '100vh',  
-                  width: '100vw',
+									height: '100vh',
+                  width: '100%',
                   // height: '50vh',
                   // width: '50vw',
                   // border: 'inset',
