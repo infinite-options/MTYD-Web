@@ -13,7 +13,7 @@ import trashIcon from '../../../images/trash_icon.png';
 import editIcon from '../../../images/edit_icon.png';
 import xButton from '../../../images/x_button.png';
 
-import EditPlan from "../../../components/EditPlan";
+import AdminEditModal from "../AdminEditModal";
 
 import {
   fetchPlans,
@@ -1851,10 +1851,9 @@ function CustomerInfo(props) {
             overflow: 'auto'
           }}
         >
+          <div><AdminEditModal currentPlan={currentPlan}/></div>
 
-          <EditPlan />
-
-          <div
+          {/* <div
             style={{
               margin: '0 1% 0 0',
               // border: 'dashed',
@@ -1949,15 +1948,6 @@ function CustomerInfo(props) {
                   NUMBER OF MEALS PER DELIVERY
                 </span>
               </div>
-              {/* {(()=>{
-                if(JSON.stringify(this.props.plans) !== "{}"){
-                  return(
-                    <div className={styles.buttonWrapper}>
-                      {this.mealsDelivery()}
-                    </div>
-                  );
-                }
-              })()} */}
             </div>
             
             <div className={styles.menuSection}>
@@ -1966,55 +1956,20 @@ function CustomerInfo(props) {
                   TOTAL NUMBER OF DELIVERIES
                 </span>
               </div>
-              {/* {(()=>{
-                if(JSON.stringify(this.props.plans) !== "{}"){
-                  return(
-                    <div className='row' style={{marginTop: '20px'}}>
-                      {this.paymentFrequency()}
-                    </div>
-                  );
-                }
-              })()} */}
             </div>
 
             <div className={styles.chargeContainer}>
               <div className={styles.chargeTotal}>
                 <div style={{display: 'inline-flex'}} tabIndex="0" >
-                  {/* {(() => {
-                    let chargeOrRefund = this.state.differenceSummary.total;
-                    if (parseFloat(chargeOrRefund) >= 0) {
-                      return (
-                        <>
-                          <div className={styles.chargeText}>
-                            {"Additional Charges "}
-                          </div>
-                          <div className={styles.chargeAmount}>
-                            ${this.state.differenceSummary.total}
-                          </div>
-                        </>
-                      );
-                    } else {
-                      return (
-                        <>
-                          <div className={styles.chargeText}>
-                            {"You will be refunded "}
-                          </div>
-                          <div className={styles.chargeAmount}>
-                            ${(-1*this.state.differenceSummary.total).toFixed(2)}
-                          </div>
-                        </>
-                      );
-                    }
-                  })()} */}
                 </div>
               </div> 
             </div> 
           </div>
           </div>
 
-          </div>
+          </div> */}
         
-          <div
+          {/* <div
             style={{
               margin: '0px 0 0 1%',
               // border: 'dashed',
@@ -2041,8 +1996,6 @@ function CustomerInfo(props) {
               <div className={styles.summaryLeft} style={{fontWeight:'bold'}} />
 
               <div className={activeChanges() ? styles.summaryRight : styles.summaryGray}>
-                {/* {this.state.updatedPlan.meals} Meals,{" "}
-                {this.state.updatedPlan.deliveries} Deliveries */}
               </div>
 
               <div className={styles.summaryRight}>
@@ -2062,16 +2015,13 @@ function CustomerInfo(props) {
               </div>
 
               <div className={activeChanges() ? styles.summaryRight : styles.summaryGray}>
-                {/* ${this.state.updatedPlan.payment_summary.base_amount} */}
                 PRICE
               </div>
 
               <div className={styles.summaryRight}>
-                {/* ${this.state.currentPlan.payment_summary.base_amount} */}
               </div>
 
               <div className={activeChanges() ? styles.summaryRight : styles.summaryGray}>
-                {/* ${Math.abs(this.state.differenceSummary.base_amount).toFixed(2)} */}
                 PRICE
               </div>
 
@@ -2084,23 +2034,14 @@ function CustomerInfo(props) {
               </div>
 
               <div className={activeChanges() ? styles.summaryRight : styles.summaryGray}>
-                {/* {"-$" + this.state.updatedPlan.payment_summary.discount_amount}
-                <br />
-                {"(" + this.state.updatedPlan.payment_summary.discount_rate + "%)"} */}
                 PRICE
               </div>
 
               <div className={styles.summaryRight}>
-                {/* {"-$" + this.state.currentPlan.payment_summary.discount_amount}
-                <br />
-                {"(" + this.state.currentPlan.payment_summary.discount_rate + "%)"} */}
                 PRICE
               </div>
 
               <div className={activeChanges() ? styles.summaryRight : styles.summaryGray}>
-                {/* {"$" + Math.abs(this.state.differenceSummary.discount_amount).toFixed(2)}
-                <br />
-                {"(" + Math.abs(this.state.differenceSummary.discount_rate) + "%)"} */}
                 PRICE
               </div>
 
@@ -2113,17 +2054,15 @@ function CustomerInfo(props) {
               </div>
 
               <div className={activeChanges() ? styles.summaryRight : styles.summaryGray}>
-                {/* ${(this.state.updatedPlan.payment_summary.delivery_fee)} */}
+
                 PRICE
               </div>
 
               <div className={styles.summaryRight}>
-                {/* ${(this.state.currentPlan.payment_summary.delivery_fee)} */}
                 PRICE
               </div>
 
               <div className={activeChanges() ? styles.summaryRight : styles.summaryGray}>
-                {/* ${Math.abs(this.state.differenceSummary.delivery_fee).toFixed(2)} */}
                 PRICE
               </div>
 
@@ -2136,17 +2075,14 @@ function CustomerInfo(props) {
               </div>
 
               <div className={activeChanges() ? styles.summaryRight : styles.summaryGray}>
-                {/* ${(this.state.updatedPlan.payment_summary.service_fee)} */}
                 PRICE
               </div>
 
               <div className={styles.summaryRight}>
-                {/* ${(this.state.currentPlan.payment_summary.service_fee)} */}
                 PRICE
               </div>
 
               <div className={activeChanges() ? styles.summaryRight : styles.summaryGray}>
-                {/* ${Math.abs(this.state.differenceSummary.service_fee).toFixed(2)} */}
                 PRICE
               </div>
 
@@ -2159,17 +2095,14 @@ function CustomerInfo(props) {
               </div>
 
               <div className={activeChanges() ? styles.summaryRight : styles.summaryGray}>
-                {/* ${(this.state.updatedPlan.payment_summary.taxes)} */}
                 PRICE
               </div>
 
               <div className={styles.summaryRight}>
-                {/* ${(this.state.currentPlan.payment_summary.taxes)} */}
                 PRICE
               </div>
 
               <div className={activeChanges() ? styles.summaryRight : styles.summaryGray}>
-                {/* ${Math.abs(this.state.differenceSummary.taxes).toFixed(2)} */}
                 PRICE
               </div>
 
@@ -2182,17 +2115,14 @@ function CustomerInfo(props) {
               </div>
 
               <div className={activeChanges() ? styles.summaryRight : styles.summaryGray}>
-                {/* ${(this.state.updatedPlan.payment_summary.driver_tip)} */}
                 PRICE
               </div>
 
               <div className={styles.summaryRight}>
-                {/* ${(this.state.currentPlan.payment_summary.driver_tip)} */}
                 PRICE
               </div>
 
               <div className={activeChanges() ? styles.summaryRight : styles.summaryGray}>
-                {/* ${Math.abs(this.state.differenceSummary.driver_tip).toFixed(2)} */}
                 PRICE
               </div>
 
@@ -2220,26 +2150,6 @@ function CustomerInfo(props) {
                 </button>
               )}
 
-              {/* {(() => {
-                if (this.state.updatedPlan.payment_summary.driver_tip === "0.00") {
-                  return (
-                    <button className={styles.tipButtonSelected} onClick={() => this.changeTip("0.00")} 
-                    aria-label={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip} 
-                    title={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip}>
-                      No Tip
-                    </button>
-                  );
-                } else {
-                  return (
-                    <button className={styles.tipButton} onClick={() => this.changeTip("0.00")} 
-                    aria-label={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip + ". Click here to remove tip."}
-                    title={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip + ". Click here to remove tip."}>
-                      No Tip
-                    </button>
-                  );
-                }
-              })()} */}
-
               {updatedPlan.driver_tip === "2.00" ? (
                 <button 
                   className={styles.tipButtonSelected} 
@@ -2259,26 +2169,6 @@ function CustomerInfo(props) {
                   $2
                 </button>
               )}
-
-              {/* {(() => {
-                if (this.state.updatedPlan.payment_summary.driver_tip === "2.00") {
-                  return (
-                    <button className={styles.tipButtonSelected} onClick={() => this.changeTip("2.00")} 
-                    aria-label={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip}
-                    title={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip}>
-                      $2
-                    </button>
-                  );
-                } else {
-                  return (
-                    <button className={styles.tipButton} onClick={() => this.changeTip("2.00")} 
-                    aria-label={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip + ". Click here change tip to $2."}
-                    title={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip + ". Click here to change tip to $2."}>
-                      $2
-                    </button>
-                  );
-                }
-              })()}  */}
 
               {updatedPlan.driver_tip === "3.00" ? (
                 <button 
@@ -2300,26 +2190,6 @@ function CustomerInfo(props) {
                 </button>
               )}
 
-              {/* {(() => {
-                if (this.state.updatedPlan.payment_summary.driver_tip === "3.00") {
-                  return (
-                    <button className={styles.tipButtonSelected} onClick={() => this.changeTip("3.00")} 
-                    aria-label={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip}
-                    title={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip}>
-                      $3
-                    </button>
-                  );
-                } else {
-                  return (
-                    <button className={styles.tipButton} onClick={() => this.changeTip("3.00")} 
-                    aria-label={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip + ". Click here to change tip to $3."}
-                    title={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip + ". Click here to change tip to $3."}>
-                      $3
-                    </button>
-                  );
-                }
-              })()}  */}
-
               {updatedPlan.driver_tip === "5.00" ? (
                 <button 
                   className={styles.tipButtonSelected} 
@@ -2340,31 +2210,11 @@ function CustomerInfo(props) {
                 </button>
               )}
 
-                    {/* {(() => {
-                      if (this.state.updatedPlan.payment_summary.driver_tip === "5.00") {
-                        return (
-                          <button className={styles.tipButtonSelected} onClick={() => this.changeTip("5.00")} 
-                          aria-label={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip}
-                          title={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip}>
-                            $5
-                          </button>
-                        );
-                      } else {
-                        return (
-                          <button className={styles.tipButton} onClick={() => this.changeTip("5.00")} 
-                          aria-label={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip + ". Click here to change tip to $5."}
-                          title={"Current tip is: $" + this.state.updatedPlan.payment_summary.driver_tip + ". Click here to change tip to $5."}>
-                            $5
-                          </button>
-                        );
-                      }
-                    })()} */}
-
               </div>
 
               </div>
 
-          </div>
+          </div> */}
 
         </div>
         </div>

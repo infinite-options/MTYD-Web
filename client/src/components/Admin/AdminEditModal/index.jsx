@@ -7,22 +7,22 @@ import {
   chooseMealsDelivery,
   choosePaymentOption,
   fetchProfileInformation
-} from "../../reducers/actions/subscriptionActions";
+} from "../../../reducers/actions/subscriptionActions";
 
 import axios from "axios";
-import {API_URL} from "../../reducers/constants";
+import {API_URL} from "../../../reducers/constants";
 import {withRouter} from "react-router";
-import styles from "./editPlan.module.css";
-import {WebNavBar} from "../NavBar";
-import {FootLink} from "../Home/homeButtons";
+import styles from "../../EditPlan/editPlan.module.css";
+import {WebNavBar} from "../../NavBar";
+import {FootLink} from "../../Home/homeButtons";
 
-import fetchDiscounts from '../../utils/FetchDiscounts';
-import fetchAddressCoordinates from '../../utils/FetchAddressCoordinates';
+import fetchDiscounts from '../../../utils/FetchDiscounts';
+import fetchAddressCoordinates from '../../../utils/FetchAddressCoordinates';
 
-import PopLogin from '../PopLogin';
-import Popsignup from '../PopSignup';
+import PopLogin from '../../PopLogin';
+import Popsignup from '../../PopSignup';
 
-import m4me_logo from '../../images/LOGO_NoBG_MealsForMe.png';
+import m4me_logo from '../../../images/LOGO_NoBG_MealsForMe.png';
 
 const google = window.google;
 
@@ -33,7 +33,7 @@ const DEFAULT = 0;
 const CURRENT = 1;
 const UPDATED = 2;
 
-class EditPlan extends React.Component {
+class AdminEditModal extends React.Component {
   constructor() {
     super();
     this.state = {
@@ -1040,148 +1040,64 @@ class EditPlan extends React.Component {
     // Clear Query parameters
     window.history.pushState({}, document.title, window.location.pathname);
 
-    if (urlParams.has("customer_uid")) {
-      let customer_uid = urlParams.get("customer_uid");
-      document.cookie = "customer_uid=" + customer_uid;
+    // Initialize customer and plan
 
-      console.log("1 edit-plan customerId: ", customer_uid);
+		let customerUid = this.props.currentPlan.pur_customer_uid;
 
-      let customerUid = customer_uid;
+		axios
+			.get(API_URL + 'Profile/' + customerUid)
+			.then(res => {
+				this.setState(prevState => ({
+					customerUid,
+					mounted: true
+				}), () => {
+					this.props.fetchProfileInformation(customerUid);
+					this.props.fetchPlans();
 
-      axios
-        .get(API_URL + 'Profile/' + customerUid)
-        .then(res => {
-          console.log("fetch profile response: ", res);
+					let fetchedDiscounts = null;
+					let fetchedSubscriptions = null;
 
-          this.setState(prevState => ({
-            customerUid,
-            mounted: true
-          }), () => {
+					fetchDiscounts((discounts) => {
+						console.log("fetchDiscounts callback: ", discounts);
 
-            this.props.fetchProfileInformation(customerUid);
-            this.props.fetchPlans();
+						fetchedDiscounts = discounts;
 
-            let fetchedDiscounts = null;
-            let fetchedSubscriptions = null;
+						this.setState({
+							discounts: fetchedDiscounts
+						});
 
-            fetchDiscounts((discounts) => {
-              console.log("fetchDiscounts callback: ", discounts);
+						if(fetchedSubscriptions !== null){
+							console.log("(1) load subscriptions");
+							this.loadSubscriptions(fetchedSubscriptions, fetchedDiscounts, DEFAULT);
+						}
 
-              fetchedDiscounts = discounts;
+					});
 
-              this.setState({
-                discounts: fetchedDiscounts
-              });
+					axios.get(API_URL + 'predict_next_billing_date/' + this.state.customerUid)
+						.then(res => {
 
-              if(fetchedSubscriptions !== null){
-                console.log("(1) load subscriptions");
-                this.loadSubscriptions(fetchedSubscriptions, fetchedDiscounts, DEFAULT);
-              }
+							fetchedSubscriptions = res.data.result;
 
-            });
+							if(fetchedDiscounts !== null){
+								console.log("(2) load subscriptions");
+								this.loadSubscriptions(fetchedSubscriptions, fetchedDiscounts, DEFAULT);
+							}
+						})
+						.catch(err => {
+							console.log(err);
+						});
+				});
 
-            axios.get(API_URL + 'predict_next_billing_date/' + this.state.customerUid)
-              .then(res => {
-                console.log("(1) next meal info res: ", res);
+			})
+			.catch(err => {
+				if (err.response) {
+					console.log(err.response);
+				} else {
+					console.log(err.toString());
+				}
+				this.props.history.push("/meal-plan");
+			});
 
-                fetchedSubscriptions = res.data.result;
-
-                if(fetchedDiscounts !== null){
-                  console.log("(1) load subscriptions");
-                  this.loadSubscriptions(fetchedSubscriptions, fetchedDiscounts, DEFAULT);
-                }
-              })
-              .catch(err => {
-                console.log(err);
-              });
-          });
-
-        })
-        .catch(err => {
-          if (err.response) {
-            console.log(err.response);
-          } else {
-            console.log(err.toString());
-          }
-          this.props.history.push("/meal-plan");
-        });
-
-    } else if (      
-      document.cookie
-        .split(";")
-        .some(item => item.trim().startsWith("customer_uid="))
-    ) {
-      let customer_uid = document.cookie
-        .split("; ")
-        .find(item => item.startsWith("customer_uid="))
-        .split("=")[1];
-
-      console.log("2 edit-plan customerId: ", customer_uid);
-
-      let customerUid = customer_uid;
-
-      axios
-        .get(API_URL + 'Profile/' + customerUid)
-        .then(res => {
-          this.setState(prevState => ({
-            customerUid,
-            mounted: true
-          }), () => {
-            this.props.fetchProfileInformation(customerUid);
-            this.props.fetchPlans();
-
-            let fetchedDiscounts = null;
-            let fetchedSubscriptions = null;
-
-            fetchDiscounts((discounts) => {
-              console.log("fetchDiscounts callback: ", discounts);
-
-              fetchedDiscounts = discounts;
-
-              this.setState({
-                discounts: fetchedDiscounts
-              });
-
-              if(fetchedSubscriptions !== null){
-                console.log("(1) load subscriptions");
-                this.loadSubscriptions(fetchedSubscriptions, fetchedDiscounts, DEFAULT);
-              }
-
-            });
-
-            axios.get(API_URL + 'predict_next_billing_date/' + this.state.customerUid)
-              .then(res => {
-
-                fetchedSubscriptions = res.data.result;
-
-                if(fetchedDiscounts !== null){
-                  console.log("(2) load subscriptions");
-                  this.loadSubscriptions(fetchedSubscriptions, fetchedDiscounts, DEFAULT);
-                }
-              })
-              .catch(err => {
-                console.log(err);
-              });
-          });
-
-        })
-        .catch(err => {
-          if (err.response) {
-            console.log(err.response);
-          } else {
-            console.log(err.toString());
-          }
-          this.props.history.push("/meal-plan");
-        });
-
-    // Not logged in
-    } else {
-      this.displayErrorModal('Hmm...', `
-        Please log in to edit your meals.
-      `, 
-        'Go Home', '/home'
-      );
-    }
   }
 
   confirmDelete = () => {
@@ -2044,6 +1960,8 @@ class EditPlan extends React.Component {
   render() {
     // const narrowView = this.state.narrowView;
 
+    console.log("(editplan -- render) props: ", this.props);
+
     return (
       <>
 
@@ -2064,78 +1982,36 @@ class EditPlan extends React.Component {
           Width: {this.state.windowWidth}px
         </span> */}
 
-        <WebNavBar 
-          poplogin = {this.togglePopLogin}
-          popSignup = {this.togglePopSignup}
-        />
-
-        {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
-        {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
-
-        <div className={styles.sectionHeaderScroll}>
-          Select Meal Plan
-        </div>
-
-        <div className={styles.containerSplit}>
-          <div className={styles.boxScroll}>
-            <div className={styles.mealButtonHeader}>
-              <div className={styles.mealButtonEdit}>
-                
-              </div>
-              <div className={styles.mealButtonPlan} style={{fontWeight: 'bold', fontSize: '20px'}}>
-                Meal Plans
-              </div>
-              <div className={styles.mealButtonSection} style={{fontWeight: 'bold', fontSize: '20px'}}>
-                Purchase ID
-              </div>
-              <div className={styles.mealButtonSection} style={{fontWeight: 'bold', fontSize: '20px'}}>
-                Next Delivery Date
-              </div>
-              <div className={styles.mealButtonSection} style={{fontWeight: 'bold', fontSize: '20px'}}>
-                Next Delivery Status
-              </div>
-              <div className={styles.mealButtonSection} style={{fontWeight: 'bold', fontSize: '20px'}}>
-                Next Billing Date
-              </div>
-              <div className={styles.mealButtonSection} style={{fontWeight: 'bold', fontSize: '20px'}}>
-                Next Billing Amount
-              </div>
-            </div>
-            <div style={{display: 'flex'}}>
-              {this.state.subscriptionsLoaded === true &&
-               typeof(this.props.plans) !== 'undefined'
-                ? this.showSubscribedMeals() 
-                : <div
-                    style={{
-                      color: 'red',
-                      zIndex: '99',
-                      height: '100vh',
-                      width: '100vw',
-                      // height: '50vh',
-                      // width: '50vw',
-                      // border: 'inset',
-                      position: 'fixed',
-                      top: '0',
-                      backgroundColor: '#F7F4E5',
-                      display: 'flex',
-                      justifyContent: 'center',
-                      alignItems: 'center'
-                    }}
-                  >
-                    <img src={m4me_logo} />
-                  </div>
-                  // : this.hideSubscribedMeals('plan')}
-              }
-            </div>
-          </div>
-
-        </div>
+        {/* {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
+        {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null} */}
 
         <div className={styles.sectionHeaderUL}>
           Edit Plan
         </div>
 
         <div className={styles.containerSplit}>
+          {/* {this.state.subscriptionsLoaded === true
+            ? this.showPlanDetails(this.state.windowWidth) 
+            : <div
+                style={{
+                  color: 'red',
+                  zIndex: '99',
+                  height: '100vh',  
+                  width: '100vw',
+                  // height: '50vh',
+                  // width: '50vw',
+                  // border: 'inset',
+                  position: 'fixed',
+                  top: '0',
+                  backgroundColor: '#F7F4E5',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }}
+              >
+                <img src={m4me_logo} />
+              </div>
+          } */}
           {this.state.subscriptionsLoaded === true
             ? this.showPlanDetails(this.state.windowWidth) 
             : <div
@@ -2157,7 +2033,6 @@ class EditPlan extends React.Component {
               >
                 <img src={m4me_logo} />
               </div>
-              // : this.hideSubscribedMeals('delivery_details')}
           }
         </div>
 
@@ -2384,34 +2259,7 @@ class EditPlan extends React.Component {
             null
           )}
 
-          {/* {narrowView ? (
-            <>
-              <div className={styles.sectionHeader}>
-                Edit Delivery Details
-              </div>
-            </>
-          ) : (
-            <>
-              <div style={{display: 'flex'}}>
-                <div className={styles.sectionHeaderLeft}>
-                  Edit Delivery Details
-                </div>
-                <div className={styles.sectionHeaderRight}>
-                  Payment Summary
-                </div>
-              </div>
-            </>
-          )} */}
-
           <div
-            //   style={{
-            //     visibility: 'visible',
-            //     width:'40%',
-            //     marginRight: '8%',
-            //     marginLeft: '2%',
-            //     border: 'solid'
-            //   }}
-            // > 
 
             style = {
               // narrowView 
@@ -2720,20 +2568,6 @@ class EditPlan extends React.Component {
                   </div>
               </div>
 
-              {/* <div className={styles.checkboxContainer}>
-                <label className={styles.checkboxLabel}>
-                  Use Previous Credit Card
-                </label>
-                <input
-                  className={styles.checkbox}
-                  type="checkbox"
-                  checked={this.state.usePreviousCard}
-                  onChange={this.handleCheck}
-                />
-              </div> */}
-
-              {/* { this.state.usePreviousCard ? null : this.showCardForm()} */}
-
 
               <button 
                 className={styles.orangeBtn2}
@@ -2971,13 +2805,12 @@ class EditPlan extends React.Component {
             }
           })()} 
 
-        <FootLink/>
       </>
     );
   }
 }
 
-EditPlan.propTypes = {
+AdminEditModal.propTypes = {
   fetchPlans: PropTypes.func.isRequired,
   fetchSubscribed: PropTypes.func.isRequired,
   chooseMealsDelivery: PropTypes.func.isRequired,
@@ -3003,4 +2836,4 @@ export default connect(mapStateToProps, {
   chooseMealsDelivery,
   choosePaymentOption,
   fetchProfileInformation
-})(withRouter(EditPlan));
+})(withRouter(AdminEditModal));
