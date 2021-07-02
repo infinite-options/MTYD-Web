@@ -70,14 +70,6 @@ const MealPlan = props => {
         props.fetchProfileInformation(customerId);
         
         console.log("useEffect customerId: " + customerId);
-        // props.fetchSubscribed(customerId)
-        //   .then(ids => {
-        //     console.log("(mount) useEffect: " + ids);
-        //     // props.fetchOrderHistory(ids)
-        //     //   .then(() => {
-        //     //     console.log("updating active/cancelled plans...");
-        //     //   });
-        //   });
 
         axios.get(API_URL + 'subscription_history/' + customerId)
           .then((res) => {
@@ -92,19 +84,6 @@ const MealPlan = props => {
             }
             console.log(err);
           });
-
-        // axios.get(API_URL + 'predict_next_billing_date/' + customerId)
-        //   .then((res) => {
-        //     console.log("(pnbd) res: ", res.data.result);
-
-        //     setBillingInfo(res.data.result);
-        //   })
-        //   .catch((err) => {
-        //     if(err.response) {
-        //       console.log(err.response);
-        //     }
-        //     console.log(err);
-        //   });
         
       } catch (err) {
         console.log(err);
