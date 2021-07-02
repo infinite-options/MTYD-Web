@@ -90,6 +90,8 @@ function CustomerInfo(props) {
 	const [sortMode, setSortMode] = useState(SORT_ID);
   const [showEditModal, toggleEditModal] = useState(false);
 
+  const [showConfirmDelete, toggleConfirmDelete] = useState(false);
+
 	const [dimensions, setDimensions] = useState({ 
     height: window.innerHeight,
     width: window.innerWidth
@@ -1044,6 +1046,10 @@ function CustomerInfo(props) {
                 width: '16px',
                 // border: '1px solid'
               }}
+              onClick={() => {
+                toggleConfirmDelete(true);
+                toggleEditModal(true);
+              }}
             />
           </div>
 
@@ -1763,10 +1769,6 @@ function CustomerInfo(props) {
     return true;
   }
 
-  const displayEditModalLoading = (showScreen) => {
-    
-  }
-
   const displayEditModal = () => {
     return (
       <div
@@ -1837,7 +1839,12 @@ function CustomerInfo(props) {
             overflow: 'auto'
           }}
         >
-          <div><AdminEditModal currentPlan={currentPlan}/></div>
+          <div>
+            <AdminEditModal 
+              currentPlan={currentPlan}
+              defaultDelete={showConfirmDelete}
+            />
+          </div>
 
           {/* <div
             style={{

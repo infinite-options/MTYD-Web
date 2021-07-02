@@ -161,6 +161,7 @@ class AdminEditModal extends React.Component {
       errorLinkText: '',
       errorHeader: '',
       showConfirmModal: false,
+			// showConfirmModal: this.props.defaultDelete,
       confirmModal: null,
       deletingPurchase: false,
       deleteSuccess: null,
@@ -804,7 +805,8 @@ class AdminEditModal extends React.Component {
         subscriptionsLoaded: true,
         currentPlan: {...defaultCurrentPlan},
         updatedPlan: {...defaultUpdatedPlan},
-        deliveryInfo: {...defaultDeliveryInfo}
+        deliveryInfo: {...defaultDeliveryInfo},
+				showConfirmModal: this.props.defaultDelete
       }), () => {
         this.calculateDifference();
       });
@@ -2002,6 +2004,30 @@ class AdminEditModal extends React.Component {
         {/* {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
         {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null} */}
 
+				{this.state.subscriptionsLoaded === true
+					? null
+					: <div
+							style={{
+								color: 'red',
+								zIndex: '99',
+								height: 'calc(96% - 166px)',
+								width: 'calc(100% - 44px)',
+								// height: '50vh',
+								// width: '50vw',
+								// border: '1px solid blue',
+								borderRadius: '0 0 15px 15px',
+								position: 'absolute',
+								top: '164px',
+								backgroundColor: '#F7F4E5',
+								display: 'flex',
+								justifyContent: 'center',
+								alignItems: 'center'
+							}}
+						>
+							<img src={m4me_logo} />
+						</div>
+				}
+
         <div className={styles.sectionHeaderUL}>
           Edit Plan
         </div>
@@ -2031,25 +2057,7 @@ class AdminEditModal extends React.Component {
           } */}
           {this.state.subscriptionsLoaded === true
             ? this.showPlanDetails(this.state.windowWidth) 
-            : <div
-                style={{
-                  color: 'red',
-                  zIndex: '99',
-									height: '100vh',
-                  width: '100%',
-                  // height: '50vh',
-                  // width: '50vw',
-                  // border: 'inset',
-                  position: 'fixed',
-                  top: '0',
-                  backgroundColor: '#F7F4E5',
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center'
-                }}
-              >
-                <img src={m4me_logo} />
-              </div>
+            : null
           }
 					{/* {this.showPlanDetails(this.state.windowWidth)} */}
         </div>
