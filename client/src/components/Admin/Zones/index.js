@@ -13,6 +13,10 @@ import {
   faEdit, 
 } from '@fortawesome/free-solid-svg-icons';
 import {withRouter} from "react-router";
+import AdminNavBar from '../AdminNavBar';
+import styles from "./zones.module.css";
+
+const google = window.google;
 
 const initialState = {
   mounted: false,
@@ -71,7 +75,7 @@ function reducer(state, action) {
     case 'TOGGLE_EDIT_ZONE':
       return {
         ...state,
-        editingZone: !state.editingZone,
+        // editingZone: !state.editingZone,
         editedZone: action.payload,
       }
     case 'EDIT_ZONE':
@@ -117,6 +121,7 @@ function Zones ({history,...props}) {
         // eslint-disable-next-line no-console
         console.log(err);
       });
+
     } else {
       // Reroute to log in page
       history.push("/");
@@ -217,264 +222,322 @@ function Zones ({history,...props}) {
     }
   }
 
+  const createDropdownZones = () => {
+    let items = []
+    for (let i = 0; i < state.zones.length; i++) {
+      // console.log(i)
+      // console.log(state.zones[i])
+      items.push(
+        <option key={i} value={i}>{state.zones[i].zone_name}</option>
+      )
+    }
+    return items
+  }
+
+  // Do google map stuff here
+
+  let map;
+
+  function initMap() {
+    if (document.getElementById("map")) {
+      map = new google.maps.Map(document.getElementById("map"), {
+        center: { lat: 37.3382, lng: -121.8863 },
+        zoom: 12,
+      });
+    } else {
+      console.log("map not found")
+    }
+  }
+
   // Fetch Zones
   useEffect(() => {
     getZone();
-  },[])
+    initMap()
+  },[]) 
 
   if (!state.mounted) {
     return null;
   }
 
   return (
-    <div>
-      <Breadcrumb>
-        <Breadcrumb.Item href="/"> Admin Site </Breadcrumb.Item>
-        <Breadcrumb.Item active> Zones </Breadcrumb.Item>
-      </Breadcrumb>
-      <Container
-        style={{
-          maxWidth: 'inherit',
-        }}
-      >
-        <Row>
-          <Col>
-            <h5>
-              Zones
-            </h5>
-          </Col>
-          <Col
-            style={{
-              textAlign: 'right'
-            }}
+    <div style={{backgroundColor: '#F26522'}}>
+
+      <AdminNavBar currentPage={'edit-meal'}/>
+
+      <div className={styles.containerCustomer}>
+        <div style = {{width: "70%", height: "100%", float: "left", fontWeight: 'bold', paddingTop: "45px", paddingLeft: "27px", }}>
+          Zones
+        </div>
+        <div style = {{width: "15%", height: "100%", float: "left", fontWeight: 'bold', color: "#F26522", textAlign: "center", marginTop: "15px",}}>
+          Total no. of Zones
+          <div style = {{color: "black", fontSize: "30px"}}>
+            {state.zones.length}
+          </div>
+        </div>
+        <div style={{width: "15%", height: "100%", float: "left", textAlign: "center"}}>
+          <div 
+            style = {{fontWeight: 'bold', marginTop: "45px"}}
+            onClick={() => {toggleEditZone(initialState.editedZone)}}
           >
-            <Button
-              onClick={() => {toggleEditZone(initialState.editedZone)}}
-            >
-              Add New Zone
-            </Button>
-          </Col>
-        </Row>
-        <Row
-          style={{
-            marginTop: '1rem'
-          }}
-        >
-          <Col>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>
-                    <TableSortLabel
-                      active={state.sortZone.field === 'zone_name'}
-                      direction={state.sortZone.field === 'zone_name' ? state.sortZone.direction : 'asc'}
-                      onClick={() => changeSortOptions('zone_name')}
-                    >
-                      Zone Name
-                    </TableSortLabel>
-                  </TableCell>
-                  <TableCell>
-                    <TableSortLabel
-                      active={state.sortZone.field === 'area'}
-                      direction={state.sortZone.field === 'area' ? state.sortZone.direction : 'asc'}
-                      onClick={() => changeSortOptions('area')}
-                    >
-                      Area
-                    </TableSortLabel>
-                  </TableCell>
-                  <TableCell>
-                    <TableSortLabel
-                      active={state.sortZone.field === 'zone'}
-                      direction={state.sortZone.field === 'zone' ? state.sortZone.direction : 'asc'}
-                      onClick={() => changeSortOptions('zone')}
-                    >
-                      Zone
-                    </TableSortLabel>
-                  </TableCell>
-                  <TableCell>
-                    <TableSortLabel
-                      active={state.sortZone.field === 'z_delivery_day'}
-                      direction={state.sortZone.field === 'z_delivery_day' ? state.sortZone.direction : 'asc'}
-                      onClick={() => changeSortOptions('z_delivery_day')}
-                    >
-                      Delivery Day
-                    </TableSortLabel>
-                  </TableCell>
-                  <TableCell>
-                    <TableSortLabel
-                      active={state.sortZone.field === 'z_delivery_time'}
-                      direction={state.sortZone.field === 'z_delivery_time' ? state.sortZone.direction : 'asc'}
-                      onClick={() => changeSortOptions('z_delivery_time')}
-                    >
-                      Delivery Time
-                    </TableSortLabel>
-                  </TableCell>
-                  <TableCell>
-                    <TableSortLabel
-                      active={state.sortZone.field === 'z_accepting_day'}
-                      direction={state.sortZone.field === 'z_accepting_day' ? state.sortZone.direction : 'asc'}
-                      onClick={() => changeSortOptions('z_accepting_day')}
-                    >
-                      Accepting Day
-                    </TableSortLabel>
-                  </TableCell>
-                  <TableCell>
-                    <TableSortLabel
-                      active={state.sortZone.field === 'z_accepting_time'}
-                      direction={state.sortZone.field === 'z_accepting_time' ? state.sortZone.direction : 'asc'}
-                      onClick={() => changeSortOptions('z_accepting_time')}
-                    >
-                      Accepting Time
-                    </TableSortLabel>
-                  </TableCell>
-                  <TableCell>
-                    <TableSortLabel
-                      active={state.sortZone.field === 'service_fee'}
-                      direction={state.sortZone.field === 'service_fee' ? state.sortZone.direction : 'asc'}
-                      onClick={() => changeSortOptions('service_fee')}
-                    >
-                      Service Fee
-                    </TableSortLabel>
-                  </TableCell>
-                  <TableCell>
-                    <TableSortLabel
-                      active={state.sortZone.field === 'delivery_fee'}
-                      direction={state.sortZone.field === 'delivery_fee' ? state.sortZone.direction : 'asc'}
-                      onClick={() => changeSortOptions('delivery_fee')}
-                    >
-                      Delivery Fee
-                    </TableSortLabel>
-                  </TableCell>
-                  <TableCell>
-                    <TableSortLabel
-                      active={state.sortZone.field === 'tax_rate'}
-                      direction={state.sortZone.field === 'tax_rate' ? state.sortZone.direction : 'asc'}
-                      onClick={() => changeSortOptions('tax_rate')}
-                    >
-                      Tax Rate
-                    </TableSortLabel>
-                  </TableCell>
-                  <TableCell>
-                    <TableSortLabel
-                      active={state.sortZone.field === 'LB_long'}
-                      direction={state.sortZone.field === 'LB_long' ? state.sortZone.direction : 'asc'}
-                      onClick={() => changeSortOptions('LB_long')}
-                    >
-                      LB long
-                    </TableSortLabel>
-                  </TableCell>
-                  <TableCell>
-                    <TableSortLabel
-                      active={state.sortZone.field === 'LB_lat'}
-                      direction={state.sortZone.field === 'LB_lat' ? state.sortZone.direction : 'asc'}
-                      onClick={() => changeSortOptions('LB_lat')}
-                    >
-                      LB lat
-                    </TableSortLabel>
-                  </TableCell>
-                  <TableCell>
-                    <TableSortLabel
-                      active={state.sortZone.field === 'LT_long'}
-                      direction={state.sortZone.field === 'LT_long' ? state.sortZone.direction : 'asc'}
-                      onClick={() => changeSortOptions('LT_long')}
-                    >
-                      LT long
-                    </TableSortLabel>
-                  </TableCell>
-                  <TableCell>
-                    <TableSortLabel
-                      active={state.sortZone.field === 'LT_lat'}
-                      direction={state.sortZone.field === 'LT_lat' ? state.sortZone.direction : 'asc'}
-                      onClick={() => changeSortOptions('LT_lat')}
-                    >
-                      LT lat
-                    </TableSortLabel>
-                  </TableCell>
-                  <TableCell>
-                    <TableSortLabel
-                      active={state.sortZone.field === 'RB_long'}
-                      direction={state.sortZone.field === 'RB_long' ? state.sortZone.direction : 'asc'}
-                      onClick={() => changeSortOptions('RB_long')}
-                    >
-                      RB long
-                    </TableSortLabel>
-                  </TableCell>
-                  <TableCell>
-                    <TableSortLabel
-                      active={state.sortZone.field === 'RB_lat'}
-                      direction={state.sortZone.field === 'RB_lat' ? state.sortZone.direction : 'asc'}
-                      onClick={() => changeSortOptions('RB_lat')}
-                    >
-                      RB lat
-                    </TableSortLabel>
-                  </TableCell>
-                  <TableCell>
-                    <TableSortLabel
-                      active={state.sortZone.field === 'RT_long'}
-                      direction={state.sortZone.field === 'RT_long' ? state.sortZone.direction : 'asc'}
-                      onClick={() => changeSortOptions('RT_long')}
-                    >
-                      RT long
-                    </TableSortLabel>
-                  </TableCell>
-                  <TableCell>
-                    <TableSortLabel
-                      active={state.sortZone.field === 'RT_lat'}
-                      direction={state.sortZone.field === 'RT_lat' ? state.sortZone.direction : 'asc'}
-                      onClick={() => changeSortOptions('RT_lat')}
-                    >
-                      RT lat
-                    </TableSortLabel>
-                  </TableCell>
-                  <TableCell> Action </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-              {
-                state.zones.map(
-                  (zone) => {
-                    return (
-                      <TableRow
-                        key={zone.zone_uid}
-                      >
-                        <TableCell> {zone.zone_name} </TableCell>
-                        <TableCell> {zone.area} </TableCell>
-                        <TableCell> {zone.zone} </TableCell>
-                        <TableCell> {zone.z_delivery_day} </TableCell>
-                        <TableCell> {zone.z_delivery_time} </TableCell>
-                        <TableCell> {zone.z_accepting_day} </TableCell>
-                        <TableCell> {zone.z_accepting_time} </TableCell>
-                        <TableCell> {zone.service_fee} </TableCell>
-                        <TableCell> {zone.delivery_fee} </TableCell>
-                        <TableCell> {zone.tax_rate} </TableCell>
-                        <TableCell> {zone.LB_long} </TableCell>
-                        <TableCell> {zone.LB_lat} </TableCell>
-                        <TableCell> {zone.LT_long} </TableCell>
-                        <TableCell> {zone.LT_lat} </TableCell>
-                        <TableCell> {zone.RB_long} </TableCell>
-                        <TableCell> {zone.RB_lat} </TableCell>
-                        <TableCell> {zone.RT_long} </TableCell>
-                        <TableCell> {zone.RT_lat} </TableCell>
-                        <TableCell>
-                          <button
-                            className={'icon-button'}
-                            onClick={() => {toggleEditZone(zone)}}
-                          >
-                            <FontAwesomeIcon
-                              icon={faEdit}
-                            />
-                          </button>
-                        </TableCell>
-                      </TableRow>
-                    )
+            Create New Zone +
+          </div>
+        </div>
+      </div>
+
+      <div
+        className={styles.containerMeals}
+        style={{
+          maxWidth: '100%',
+        }}
+      > 
+        <div style={{width: "100%", borderStyle: "dotted", minHeight: "100px"}}>
+          <div style={{width: "50%", borderStyle: "dotted", borderColor: "blue", minHeight: "100px", float: "left"}}>
+            <div className = {styles.googleMap} id="map">
+            </div>
+          </div>
+          <div style={{width: "50%", borderStyle: "dotted", borderColor: "red", float: "left"}}>
+            <div style={{width: "60%", borderStyle: "dotted", borderColor: "green", float: "left"}}>
+              <select 
+                className={styles.dropdown}
+                onChange={e => {
+                  toggleEditZone(state.zones[e.target.value])
+                  console.log(state.zones[e.target.value])
+                }}
+              >
+                {createDropdownZones()}
+              </select>
+              <div>Zone Name:</div>
+              <Form.Control
+                value={state.editedZone.zone_name}
+                onChange={
+                  (event) => {
+                    editZone('zone_name',event.target.value);
                   }
-                )
-              }
-              </TableBody>
-            </Table>
-          </Col>
-        </Row>
-      </Container>
+                }
+              />
+              <div>Define Zone Points:</div>
+              
+              <div style={{padding:"10px"}}>
+                <div style={{width: "20%", float: "left", color: "#F26522"}}>LB</div>
+                <Form.Control
+                  style={{width: "38%", float: "left"}}
+                  value={state.editedZone.LB_lat}
+                  onChange={
+                    (event) => {
+                      editZone('LB_lat',event.target.value);
+                    }
+                  }
+                />
+                <div style={{width: "4%", float: "left"}}>,</div>
+                <Form.Control
+                  style={{width: "38%", float: "left"}}
+                  value={state.editedZone.LB_long}
+                  onChange={
+                    (event) => {
+                      editZone('LB_long',event.target.value);
+                    }
+                  }
+                />
+              </div>
+              
+              <div style={{padding:"10px"}}>
+                <div style={{width: "20%", float: "left", color: "#F26522"}}>LT</div>
+                <Form.Control
+                  style={{width: "38%", float: "left"}}
+                  value={state.editedZone.LT_lat}
+                  onChange={
+                    (event) => {
+                      editZone('LT_lat',event.target.value);
+                    }
+                  }
+                />
+                <div style={{width: "4%", float: "left"}}>,</div>
+                <Form.Control
+                  style={{width: "38%", float: "left"}}
+                  value={state.editedZone.LT_long}
+                  onChange={
+                    (event) => {
+                      editZone('LT_long',event.target.value);
+                    }
+                  }
+                />
+              </div>
+              
+              <div style={{padding:"10px"}}>
+                <div style={{width: "20%", float: "left", color: "#F26522"}}>RB</div>
+                <Form.Control
+                  style={{width: "38%", float: "left"}}
+                  value={state.editedZone.RB_lat}
+                  onChange={
+                    (event) => {
+                      editZone('RB_lat',event.target.value);
+                    }
+                  }
+                />
+                <div style={{width: "4%", float: "left"}}>,</div>
+                <Form.Control
+                  style={{width: "38%", float: "left"}}
+                  value={state.editedZone.RB_long}
+                  onChange={
+                    (event) => {
+                      editZone('RB_long',event.target.value);
+                    }
+                  }
+                />
+              </div>
+              
+              <div style={{padding:"10px"}}>
+                <div style={{width: "20%", float: "left", color: "#F26522"}}>RT</div>
+                <Form.Control
+                  style={{width: "38%", float: "left"}}
+                  value={state.editedZone.RT_lat}
+                  onChange={
+                    (event) => {
+                      editZone('RT_lat',event.target.value);
+                    }
+                  }
+                />
+                <div style={{width: "4%", float: "left"}}>,</div>
+                <Form.Control
+                  style={{width: "38%", float: "left"}}
+                  value={state.editedZone.RT_long}
+                  onChange={
+                    (event) => {
+                      editZone('RT_long',event.target.value);
+                    }
+                  }
+                />
+              </div>
+              
+
+              <div style={{width: "33%", float: "left", color: "#F26522"}}>Area:</div>
+              <Form.Control
+                style={{width: "66%", float: "left"}}
+                value={state.editedZone.area}
+                onChange={
+                  (event) => {
+                    editZone('area',event.target.value);
+                  }
+                }
+              />
+              
+              <div style={{width: "33%", float: "left", color: "#F26522"}}>Zone:</div>
+              <Form.Control
+                style={{width: "66%", float: "left"}}
+                value={state.editedZone.zone}
+                onChange={
+                  (event) => {
+                    editZone('zone',event.target.value);
+                  }
+                }
+              />
+
+            </div>
+            <div style={{width: "40%", borderStyle: "dotted", borderColor: "green", minHeight: "100px", float: "left"}}>
+              <div>
+                <div>Zone UID:</div>
+                <Form.Control
+                  value={state.editedZone.zone_uid}
+                  onChange={
+                    (event) => {
+                      editZone('zone_uid',event.target.value);
+                    }
+                  }
+                />
+              </div>
+              <div>
+                <div>Business UID:</div>
+                <Form.Control
+                  value={state.editedZone.z_business_uid}
+                  onChange={
+                    (event) => {
+                      editZone('z_business_uid',event.target.value);
+                    }
+                  }
+                />
+              </div>
+              <div>
+                <div>Delivery Day</div>
+                <Form.Control
+                  value={state.editedZone.z_delivery_day}
+                  onChange={
+                    (event) => {
+                      editZone('z_delivery_day',event.target.value);
+                    }
+                  }
+                />
+              </div>
+              <div>
+                <div>Delivery Time</div>
+                <Form.Control
+                  value={state.editedZone.z_delivery_time}
+                  onChange={
+                    (event) => {
+                      editZone('z_delivery_time',event.target.value);
+                    }
+                  }
+                />
+              </div>
+              <div>
+                <div>Accepting Time</div>
+                <Form.Control
+                  value={state.editedZone.z_accepting_time}
+                  onChange={
+                    (event) => {
+                      editZone('z_accepting_time',event.target.value);
+                    }
+                  }
+                />
+              </div>
+              <div>
+                <div>Delivery Fee</div>
+                <Form.Control
+                  value={state.editedZone.delivery_fee}
+                  onChange={
+                    (event) => {
+                      editZone('delivery_fee',event.target.value);
+                    }
+                  }
+                />
+              </div>
+              <div>
+                <div>Service Fee</div>
+                <Form.Control
+                  value={state.editedZone.service_fee}
+                  onChange={
+                    (event) => {
+                      editZone('service_fee',event.target.value);
+                    }
+                  }
+                />
+              </div>
+              <div>
+                <div>Tax Rate</div>
+                <Form.Control
+                  value={state.editedZone.tax_rate}
+                  onChange={
+                    (event) => {
+                      editZone('tax_rate',event.target.value);
+                    }
+                  }
+                />
+              </div>
+            </div>
+            <div style={{textAlign: "center"}}>
+              <Button
+                style={{backgroundColor: "#F26522", borderRadius: "15px"}}
+                variant="secondary"
+                onClick={() => saveZone()}
+              >
+                Save Zone
+              </Button>
+            </div>
+            
+          </div>
+        </div>
+
+        
+      </div>
       <Modal
         show={state.editingZone}
         onHide={() => toggleEditZone(initialState.editedZone)}
