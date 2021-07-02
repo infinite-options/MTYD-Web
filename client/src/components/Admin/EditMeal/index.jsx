@@ -291,6 +291,63 @@ function EditMeal({history, ...props}) {
       });
   }
 
+  const saveEditedMealNew = () => {
+    const bodyFormData = new FormData()
+
+    bodyFormData.append('meal_category', state.editedMeal.meal_category)
+    bodyFormData.append('meal_name', state.editedMeal.meal_name)
+    bodyFormData.append('meal_desc', state.editedMeal.meal_desc)
+    bodyFormData.append('meal_hint', state.editedMeal.meal_hint)
+    bodyFormData.append('meal_photo_url', state.selectedFile)
+    bodyFormData.append('meal_calories', state.editedMeal.meal_calories)
+    bodyFormData.append('meal_protein', state.editedMeal.meal_protein)
+    bodyFormData.append('meal_carbs', state.editedMeal.meal_carbs)
+    bodyFormData.append('meal_fiber', state.editedMeal.meal_fiber)
+    bodyFormData.append('meal_sugar', state.editedMeal.meal_sugar)
+    bodyFormData.append('meal_fat', state.editedMeal.meal_fat)
+    bodyFormData.append('meal_sat', state.editedMeal.meal_sat)
+    bodyFormData.append('meal_business', activeBusiness)
+    bodyFormData.append('meal_uid', state.editedMeal.meal_uid)
+
+    // console.log(bodyFormData.values())
+    for(var pair of bodyFormData.entries()) {
+      console.log(pair[0]+ ', '+ pair[1]);
+    }
+
+    console.log(state.selectedFile)
+
+    axios({
+      method: "put", url: 
+      `${API_URL}create_update_meals`,
+      data: bodyFormData,
+      headers: {"Content-Type": "multipart/form-data"}
+    })
+      // .post(`${API_URL}create_update_meals`,bodyFormData)
+      .then((response)=>{
+        console.log(response)
+        const savedMeal = state.editedMeal
+        savedMeal.meal_business = activeBusiness
+        savedMeal.meal_uid = response.data.meal_uid
+        console.log(savedMeal)
+
+        const changedIndex = state.mealData.findIndex((meal) => meal.meal_uid === state.selectedMeal);
+        console.log("changedIndex")
+        console.log(changedIndex)
+        const newMealData = [...state.mealData];
+        console.log("newMealData")
+        console.log(newMealData)
+        newMealData[changedIndex] = state.editedMeal;
+        console.log("newMealData[changedIndex")
+        console.log(newMealData[changedIndex])
+        dispatch({ type: 'FETCH_MEALS', payload: newMealData });
+
+        state.selectedFile = null
+      })
+      .catch((err)=>{
+        console.log(err)
+      })
+  }
+
   const postNewMeal = () => {
     const bodyFormData = new FormData()
 
@@ -1294,7 +1351,7 @@ function EditMeal({history, ...props}) {
                       : null
                     } */}
                     {<div style={{textAlign: "center", marginBottom: "15px"}}><img src={state.editedMeal.meal_photo_URL} height="150px" width="150px"></img></div>}
-                    <Form.Control
+                    {/* <Form.Control
                       disabled={!state.selectedMeal}
                       value={state.editedMeal.meal_photo_URL}
                       onChange={
@@ -1302,7 +1359,17 @@ function EditMeal({history, ...props}) {
                           editMeal('meal_photo_URL', event.target.value );
                         }
                       }
+                    /> */}
+
+                    <input type="file" name="upload_file" 
+                      onChange={e => {
+                        state.selectedFile = e.target.files[0]
+                        console.log(state.selectedFile)
+                        dispatch({ type: 'SET_PREVIEW', payload: URL.createObjectURL(e.target.files[0])})
+                        editMeal('meal_photo_URL', URL.createObjectURL(e.target.files[0]))
+                      }} 
                     />
+
                   </Col>
                   </Form.Group>
   
@@ -1551,7 +1618,7 @@ function EditMeal({history, ...props}) {
                       <Button
                         variant="primary"
                         onClick={()=>{
-                          saveEditedMeal()
+                          saveEditedMealNew()
                           // toggleMealsGenerated(false)
                           // generateMealsListUpdate()
                           
@@ -2556,6 +2623,7 @@ function EditMeal({history, ...props}) {
       </div>
 
       {editBusinessBox()}
+
       
 
       <div className={styles.containerMeals}>
