@@ -2244,7 +2244,7 @@ function CustomerInfo(props) {
 			/>
 
 			{/* For debugging window size */}
-			<span 
+			{/* <span 
 				style={{
 					zIndex: '101',
 					position: 'fixed',
@@ -2258,7 +2258,7 @@ function CustomerInfo(props) {
 				Height: {dimensions.height}px
 				<br />
 				Width: {dimensions.width}px
-			</span>
+			</span> */}
 
 			{/* <span 
 				style={{
