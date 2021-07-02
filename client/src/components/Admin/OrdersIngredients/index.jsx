@@ -877,7 +877,7 @@ function OrdersIngredients({ history, ...props }) {
                 <LeftArrow />
               </button>
             </Col>
-            <Col xs={5}>
+            <Col md="auto" style={{ width: "450px" }}>
               {state.dateIndex != null && (
                 <Carousel
                   responsive={responsive}
@@ -924,12 +924,12 @@ function OrdersIngredients({ history, ...props }) {
                 <RightArrow />
               </button>
             </Col>
-            <Col></Col>
             <Col
               md="auto"
               style={{
                 paddingTop: "10px",
                 textAlign: "center",
+                width: "195px",
               }}
             >
               <div
@@ -946,13 +946,14 @@ function OrdersIngredients({ history, ...props }) {
               style={{
                 paddingTop: "10px",
                 textAlign: "center",
+                width: "125px",
               }}
               className={styles.bold}
             >
               <div style={{ marginBottom: "10px", color: "#f26522" }}>
                 No. of Meals
               </div>
-              <div style={{ fontSize: "30px" }}>
+              <div style={{ fontSize: "20px" }}>
                 {calculateTotalMealQty(
                   filterDataByBusiness(
                     state.ordersData,
@@ -967,12 +968,13 @@ function OrdersIngredients({ history, ...props }) {
               style={{
                 paddingTop: "10px",
                 textAlign: "center",
+                width: "140px",
               }}
             >
               <div style={{ marginBottom: "10px", color: "#f26522" }}>
                 Total Revenue
               </div>
-              <div style={{ fontSize: "30px" }}>
+              <div style={{ fontSize: "20px" }}>
                 {currencyFormatter.format(
                   calculateTotalRevenue(
                     filterDataByBusiness(

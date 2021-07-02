@@ -567,14 +567,12 @@ function CreateMenu({ history, ...props }) {
   };
 
   // Save Upodate menu item
+  // Save Upodate menu item
   const updateMenuItem = (menuItem) => {
-    if (menuItem.meal_uid) {
+    if (menuItem.menu_uid) {
       // Update previous item
       axios
-        .put(
-          `${API_URL}meals_ordered_by_date/${state.menuDate.substring(0, 10)}`,
-          menuItem
-        )
+        .put(`${API_URL}menu`, menuItem)
         .then(() => {
           updateMenu();
         })
@@ -594,15 +592,12 @@ function CreateMenu({ history, ...props }) {
         meal_price: "10",
       };
       axios
-        .post(
-          `${API_URL}meals_ordered_by_date/${state.menuDate.substring(0, 10)}`,
-          newMenuItem
-        )
+        .post(`${API_URL}menu`, newMenuItem)
         .then((response) => {
           const newMenuId = response.data.meal_uid;
           const newMenuItemId = {
             ...newMenuItem,
-            meal_uid: newMenuId,
+            menu_uid: newMenuId,
           };
           const oldIndex = state.editedMenu.indexOf(menuItem);
           const newEditedMenu = [...state.editedMenu];
@@ -622,19 +617,16 @@ function CreateMenu({ history, ...props }) {
 
   // Delete menu item
   const deleteMenuItem = (menuItem) => {
-    const mealId = menuItem.meal_uid;
+    const menuId = menuItem.menu_uid;
     const menuIndex = state.editedMenu.indexOf(menuItem);
-    if (mealId) {
+    if (menuId) {
       // Delete from database
       axios
-        .delete(
-          `${API_URL}meals_ordered_by_date/${state.menuDate.substring(0, 10)}`,
-          {
-            params: {
-              meal_uid: mealId,
-            },
-          }
-        )
+        .delete(`${API_URL}menu`, {
+          params: {
+            menu_uid: menuId,
+          },
+        })
         .then(() => {
           const newMenu = [...state.editedMenu];
           newMenu.splice(menuIndex, 1);
@@ -854,7 +846,7 @@ function CreateMenu({ history, ...props }) {
           >
             <LeftArrow />
           </button>
-          <Col xs={5}>
+          <Col md="auto" style={{ width: "450px" }}>
             {state.dateIndex != null && (
               <Carousel
                 responsive={responsive}
@@ -919,33 +911,20 @@ function CreateMenu({ history, ...props }) {
           </button>
           <Col
             md="auto"
-            className={styles.verticallyCenter}
             style={{
-              textAlign: "right",
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-between",
+              width: "500px",
+              alignItems: "center",
             }}
           >
             <button onClick={toggleCopyDate} className={styles.topBtn}>
               Copy Menu
             </button>
-          </Col>
-          <Col
-            md="auto"
-            className={styles.verticallyCenter}
-            style={{
-              textAlign: "right",
-            }}
-          >
             <button onClick={toggleAddDate} className={[styles.topBtn]}>
               Add Menu Date
             </button>
-          </Col>
-          <Col
-            md="auto"
-            className={styles.verticallyCenter}
-            style={{
-              textAlign: "right",
-            }}
-          >
             <button onClick={toggleAddMenu} className={styles.topBtn}>
               Add Menu Item
             </button>
@@ -1074,13 +1053,13 @@ function CreateMenu({ history, ...props }) {
                         color: "#f26522",
                         border: "none",
                       }}
-                      active={state.sortEditMenu.field === "meal_category"}
+                      active={state.sortEditMenu.field === "menu_category"}
                       direction={
-                        state.sortEditMenu.field === "meal_category"
+                        state.sortEditMenu.field === "menu_category"
                           ? state.sortEditMenu.direction
                           : "asc"
                       }
-                      onClick={() => changeSortOptions("meal_category")}
+                      onClick={() => changeSortOptions("menu_category")}
                     >
                       Menu Category
                     </TableSortLabel>
@@ -1222,7 +1201,7 @@ function CreateMenu({ history, ...props }) {
                         <TableCell
                           style={{ borderBottom: "1px solid #f8bb17" }}
                         >
-                          {mealMenu.meal_category}
+                          {mealMenu.menu_category}
                         </TableCell>
                         <TableCell
                           style={{ borderBottom: "1px solid #f8bb17" }}

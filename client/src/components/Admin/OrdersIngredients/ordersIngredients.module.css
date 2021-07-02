@@ -73,8 +73,8 @@ body {
 }
 
 .datebutton {
-  height: 80px;
-  width: 80px;
+  height: 70px;
+  width: 70px;
   font-size: 15px;
   border: none;
 }
@@ -108,7 +108,8 @@ body {
 
 .carouselSlider {
   text-align: center;
-  padding: 5px;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 .bold {
