@@ -812,7 +812,7 @@ function OrdersIngredients({ history, ...props }) {
 
   return (
     <>
-      <AdminNavBar currentPage={"orders-ingredients"} />
+      <AdminNavBar currentPage={"order-ingredients"} />
       <div className={styles.root}>
         {console.log(state)}
         <Container fluid className={styles.container}>
@@ -877,7 +877,7 @@ function OrdersIngredients({ history, ...props }) {
                 <LeftArrow />
               </button>
             </Col>
-            <Col xs={5}>
+            <Col md="auto" style={{ width: "450px" }}>
               {state.dateIndex != null && (
                 <Carousel
                   responsive={responsive}
@@ -924,12 +924,12 @@ function OrdersIngredients({ history, ...props }) {
                 <RightArrow />
               </button>
             </Col>
-            <Col></Col>
             <Col
               md="auto"
               style={{
                 paddingTop: "10px",
                 textAlign: "center",
+                width: "195px",
               }}
             >
               <div
@@ -946,13 +946,14 @@ function OrdersIngredients({ history, ...props }) {
               style={{
                 paddingTop: "10px",
                 textAlign: "center",
+                width: "125px",
               }}
               className={styles.bold}
             >
               <div style={{ marginBottom: "10px", color: "#f26522" }}>
                 No. of Meals
               </div>
-              <div style={{ fontSize: "30px" }}>
+              <div style={{ fontSize: "20px" }}>
                 {calculateTotalMealQty(
                   filterDataByBusiness(
                     state.ordersData,
@@ -967,12 +968,13 @@ function OrdersIngredients({ history, ...props }) {
               style={{
                 paddingTop: "10px",
                 textAlign: "center",
+                width: "140px",
               }}
             >
               <div style={{ marginBottom: "10px", color: "#f26522" }}>
                 Total Revenue
               </div>
-              <div style={{ fontSize: "30px" }}>
+              <div style={{ fontSize: "20px" }}>
                 {currencyFormatter.format(
                   calculateTotalRevenue(
                     filterDataByBusiness(
@@ -984,128 +986,129 @@ function OrdersIngredients({ history, ...props }) {
               </div>
             </Col>
           </Row>
-          <Row className={[styles.row2, styles.scroll].join(" ")}>
-            <Col xs={5} className={styles.section} style={{ marginRight: 10 }}>
-              <div>
-                <div
-                  className={styles.bold}
-                  style={{ padding: "15px", fontSize: "18px" }}
-                >
-                  Upcoming Meal Orders And Revenue:{" "}
-                  {formatDisplayDate(formatToDisplayDate(state.selectedDate))}
-                </div>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell
-                        style={{
-                          fontWeight: "bold",
-                          color: "#f26522",
-                          border: "none",
-                        }}
-                      >
-                        Qty.
-                      </TableCell>
-                      <TableCell
-                        style={{
-                          fontWeight: "bold",
-                          color: "#f26522",
-                          border: "none",
-                        }}
-                      >
-                        Meal Orders
-                      </TableCell>
-                      <TableCell
-                        style={{
-                          fontWeight: "bold",
-                          color: "#f26522",
-                          border: "none",
-                        }}
-                      >
-                        Meal Pictures
-                      </TableCell>
-                      <TableCell
-                        style={{
-                          fontWeight: "bold",
-                          color: "#f26522",
-                          border: "none",
-                        }}
-                      >
-                        Meal Cost
-                      </TableCell>
-                      <TableCell
-                        style={{
-                          fontWeight: "bold",
-                          color: "#f26522",
-                          border: "none",
-                        }}
-                      >
-                        Total Cost
-                      </TableCell>
-                      <TableCell
-                        style={{
-                          fontWeight: "bold",
-                          color: "#f26522",
-                          border: "none",
-                        }}
-                      >
-                        Additional Revenue
-                      </TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {state.ordersData &&
-                      filterDataByBusiness(
-                        state.ordersData,
-                        state.selectedBusinessID
-                      ).map((item) => {
-                        return (
-                          <TableRow>
-                            <TableCell
-                              style={{
-                                fontWeight: "bold",
-                                fontSize: "18px",
-                                borderBottom: "1px solid #f26522",
-                              }}
-                            >
-                              {item.total_qty}
-                            </TableCell>
-                            <TableCell
-                              style={{ borderBottom: "1px solid #f26522" }}
-                            >
-                              {item.jt_name}
-                            </TableCell>
-                            <TableCell
-                              style={{ borderBottom: "1px solid #f26522" }}
-                            >
-                              <img
-                                src={item.meal_photo_URL}
-                                className={styles.mealImg}
-                              ></img>
-                            </TableCell>
-                            <TableCell
-                              style={{ borderBottom: "1px solid #f26522" }}
-                            >
-                              {currencyFormatter.format(item.meal_cost)}
-                            </TableCell>
-                            <TableCell
-                              style={{ borderBottom: "1px solid #f26522" }}
-                            >
-                              {currencyFormatter.format(item.total_cost)}
-                            </TableCell>
-                            <TableCell
-                              style={{ borderBottom: "1px solid #f26522" }}
-                            >
-                              {currencyFormatter.format(
-                                item.total_profit_sharing
-                              )}
-                            </TableCell>
-                          </TableRow>
-                        );
-                      })}
-                  </TableBody>
-                </Table>
+          <Row
+            className={[styles.row2].join(" ")}
+            style={{ overflow: "scroll" }}
+          >
+            <Col className={styles.section} style={{ marginRight: 10 }}>
+              <div
+                className={styles.bold}
+                style={{ padding: "15px", fontSize: "18px" }}
+              >
+                Upcoming Meal Orders And Revenue:{" "}
+                {formatDisplayDate(formatToDisplayDate(state.selectedDate))}
               </div>
+              <Table responsive>
+                <TableHead>
+                  <TableRow>
+                    <TableCell
+                      style={{
+                        fontWeight: "bold",
+                        color: "#f26522",
+                        border: "none",
+                      }}
+                    >
+                      Qty.
+                    </TableCell>
+                    <TableCell
+                      style={{
+                        fontWeight: "bold",
+                        color: "#f26522",
+                        border: "none",
+                      }}
+                    >
+                      Meal Orders
+                    </TableCell>
+                    <TableCell
+                      style={{
+                        fontWeight: "bold",
+                        color: "#f26522",
+                        border: "none",
+                      }}
+                    >
+                      Meal Pictures
+                    </TableCell>
+                    <TableCell
+                      style={{
+                        fontWeight: "bold",
+                        color: "#f26522",
+                        border: "none",
+                      }}
+                    >
+                      Meal Cost
+                    </TableCell>
+                    <TableCell
+                      style={{
+                        fontWeight: "bold",
+                        color: "#f26522",
+                        border: "none",
+                      }}
+                    >
+                      Total Cost
+                    </TableCell>
+                    <TableCell
+                      style={{
+                        fontWeight: "bold",
+                        color: "#f26522",
+                        border: "none",
+                      }}
+                    >
+                      Additional Revenue
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {state.ordersData &&
+                    filterDataByBusiness(
+                      state.ordersData,
+                      state.selectedBusinessID
+                    ).map((item) => {
+                      return (
+                        <TableRow>
+                          <TableCell
+                            style={{
+                              fontWeight: "bold",
+                              fontSize: "18px",
+                              borderBottom: "1px solid #f26522",
+                            }}
+                          >
+                            {item.total_qty}
+                          </TableCell>
+                          <TableCell
+                            style={{ borderBottom: "1px solid #f26522" }}
+                          >
+                            {item.jt_name}
+                          </TableCell>
+                          <TableCell
+                            style={{ borderBottom: "1px solid #f26522" }}
+                          >
+                            <img
+                              src={item.meal_photo_URL}
+                              className={styles.mealImg}
+                            ></img>
+                          </TableCell>
+                          <TableCell
+                            style={{ borderBottom: "1px solid #f26522" }}
+                          >
+                            {currencyFormatter.format(item.meal_cost)}
+                          </TableCell>
+                          <TableCell
+                            style={{ borderBottom: "1px solid #f26522" }}
+                          >
+                            {currencyFormatter.format(item.total_cost)}
+                          </TableCell>
+                          <TableCell
+                            style={{ borderBottom: "1px solid #f26522" }}
+                          >
+                            {currencyFormatter.format(
+                              item.total_profit_sharing
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                </TableBody>
+              </Table>
             </Col>
             <Col xs={4} className={styles.section} style={{ marginRight: 10 }}>
               <div
@@ -1116,7 +1119,7 @@ function OrdersIngredients({ history, ...props }) {
                 {formatDisplayDate(formatToDisplayDate(state.selectedDate))}
               </div>
 
-              <Table>
+              <Table responsive>
                 <TableHead>
                   <TableRow>
                     <TableCell
@@ -1207,7 +1210,7 @@ function OrdersIngredients({ history, ...props }) {
                 </TableBody>
               </Table>
             </Col>
-            <Col xs={4} className={styles.section}>
+            <Col xs={3} className={styles.section}>
               <div
                 className={styles.bold}
                 style={{ padding: "15px", fontSize: "18px" }}
@@ -1217,7 +1220,7 @@ function OrdersIngredients({ history, ...props }) {
                 {formatDisplayDate(formatToDisplayDate(state.selectedDate))}
               </div>
 
-              <Table>
+              <Table responsive>
                 <TableHead>
                   <TableCell
                     style={{
