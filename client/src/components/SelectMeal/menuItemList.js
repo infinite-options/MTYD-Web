@@ -1072,9 +1072,10 @@ class MenuItemList extends Component {
         dateButtonList: this.state.dateButtonList.map((info)=>info.key===this.state.myDate?tempNewButton:info)
       })
       if (this.state.myDate !== "") {
+        console.log("(before surprise) totalMeals: ", this.state.totalMeals);
         const supriseData = [
           {
-            qty: "",
+            qty: this.state.totalMeals,
             name: "SURPRISE",
             price: "",
             item_uid: ""
@@ -1192,9 +1193,25 @@ class MenuItemList extends Component {
       this.setState({
         dateButtonList: this.state.dateButtonList.map((info)=>info.key===this.state.myDate?tempNewButton:info)
       })
+
+      // let myArr2 = [];
+      // this.state.cartItems.map(meal => {
+      //   console.log("meal: ", meal);
+      //   myArr2.push({
+      //     qty: meal.count,
+      //     name: meal.meal_name,
+      //     price: meal.meal_price,
+      //     item_uid: meal.meal_uid
+      //   });
+      //   return meal;
+      // });
+      // console.log("myArr2: ", myArr2);
+      console.log("(before skip) state: ", this.state);
+      console.log("(before skip) props: ", this.props);
+
       const skipData = [
         {
-          qty: "",
+          qty: this.state.totalMeals,
           name: "SKIP",
           price: "",
           item_uid: ""
