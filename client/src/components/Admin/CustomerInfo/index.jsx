@@ -524,6 +524,15 @@ function CustomerInfo(props) {
 		return parsedDeliveries;
 	}
 
+  const refreshPlans = (uid) => {
+    console.log("(refreshPlans) customer uid: ", uid);
+    let refreshedCustomer = customersById.find((cust) => {
+      return cust.customer_uid === uid;
+    });
+    console.log("(refreshPlans) refreshed customer: ", refreshedCustomer);
+    setCurrentCustomer(refreshedCustomer);
+  }
+
 	const setCurrentCustomer = (cust) => {
     let remoteDataFetched = 0;
     setLoadingUserInfo(true);
@@ -1009,7 +1018,9 @@ function CustomerInfo(props) {
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              padding: '0'
+              padding: '0',
+              position: 'relative',
+              // border: '1px dashed'
             }}
           >
             <div
@@ -1018,7 +1029,9 @@ function CustomerInfo(props) {
                 backgroundSize: '100%',
                 height: '20px',
                 width: '20px',
-                // border: '1px solid'
+                // border: '1px solid',
+                position: 'absolute',
+                right: '10px'
               }}
               onClick={() => {
                 toggleEditModal(true)
@@ -1035,7 +1048,10 @@ function CustomerInfo(props) {
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              padding: '0'
+              padding: '0',
+              position: 'relative',
+              // border: '1px dashed',
+              // minWidth: '35px'
             }}
           >
             <div
@@ -1044,7 +1060,9 @@ function CustomerInfo(props) {
                 backgroundSize: '100%',
                 height: '20px',
                 width: '16px',
-                // border: '1px solid'
+                // border: '1px solid',
+                position: 'absolute',
+                left: '10px'
               }}
               onClick={() => {
                 toggleConfirmDelete(true);
@@ -1428,9 +1446,6 @@ function CustomerInfo(props) {
 
 	const showHistory = () => {
 
-		// console.log("(showHistory) current customer: ", selectedCustomer);
-		// console.log("(showHistory) uniquePlans: ", uniquePlans);
-		// console.log("(showHistory) currentPlan: ", currentPlan);
 		let planHistory = uniquePlans.find((plan) => {
       return plan.id === currentPlan.purchase_uid;
     });
@@ -1843,6 +1858,7 @@ function CustomerInfo(props) {
             <AdminEditModal 
               currentPlan={currentPlan}
               defaultDelete={showConfirmDelete}
+              refreshPlans={refreshPlans}
             />
           </div>
 
@@ -2420,10 +2436,6 @@ function CustomerInfo(props) {
                         marginRight: '15px'
                       }}
                     >
-                      {/* {
-                        selectedCustomer.customer_first_name + " " + 
-                        selectedCustomer.customer_last_name
-                      } */}
                       {isInvalid(selectedCustomer.customer_first_name) ? (
                         ERR_VAL
                       ) : (

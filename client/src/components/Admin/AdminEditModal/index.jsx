@@ -995,6 +995,8 @@ class AdminEditModal extends React.Component {
             console.log(this.state.refreshingPrice);
             console.log(this.activeChanges());
 
+						console.log("(change_purchase) resetting customer: ", this.state.customerUid);
+						this.props.refreshPlans(this.state.customerUid);
             this.loadSubscriptions(fetchedSubscriptions, this.state.discounts, UPDATED);
           })
           .catch(err => {
@@ -1154,6 +1156,8 @@ class AdminEditModal extends React.Component {
                 deleteSuccess: true
               });
 
+							console.log("(cancel_purchase) resetting customer: ", this.state.customerUid);
+							this.props.refreshPlans(this.state.customerUid);
               this.loadSubscriptions(fetchedSubscriptions, this.state.discounts, DEFAULT);
             })
             .catch(err => {

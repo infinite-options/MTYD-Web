@@ -734,7 +734,7 @@
 
   .sectionHeaderUL {
     background-color: #ffba00;
-    width: 100%;
+    width: 50%;
     height: 60px;
     font-weight: bold;
     /*padding-left: 100px;*/
@@ -742,7 +742,7 @@
     padding-top: 12px;
     font-size: 25px;
     margin-bottom: 30px;
-    text-decoration: underline;
+    /* text-decoration: underline; */
   }
 
   .headerItemContainer {

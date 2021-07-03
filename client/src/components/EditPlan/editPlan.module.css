@@ -9,6 +9,12 @@
   text-align: center;
   display: flex;
 }
+.containerSplitAdmin {
+  text-align: center;
+  display: flex;
+  width: 50%;
+  border: solid purple;
+}
 
 .menuSection {
   margin: 50px 0px 0px 0px;
@@ -743,6 +749,18 @@
     font-size: 25px;
     margin-bottom: 30px;
     text-decoration: underline;
+  }
+  .sectionHeaderAdmin {
+    background-color: #ffba00;
+    width: 50%;
+    height: 60px;
+    font-weight: bold;
+    /*padding-left: 100px;*/
+    padding-left: 8%;
+    padding-top: 12px;
+    font-size: 25px;
+    margin-bottom: 30px;
+    /* text-decoration: underline; */
   }
 
   .headerItemContainer {
