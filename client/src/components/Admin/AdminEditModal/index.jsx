@@ -169,7 +169,8 @@ class AdminEditModal extends React.Component {
       windowHeight: undefined,
       windowWidth: undefined,
       refundAmount: 0,
-      refundError: 'Error attempting to refund subscription'
+      refundError: 'Error attempting to refund subscription',
+			successfulEdit: false
       // narrowView: true
     };
 
@@ -983,21 +984,25 @@ class AdminEditModal extends React.Component {
 
             let fetchedSubscriptions = res.data.result;
 
-            this.displayErrorModal('Success!', `
-              OLD MEAL PLAN: ${this.state.currentPlan.meals} meals, ${this.state.currentPlan.deliveries} deliveries
-              NEW MEAL PLAN: ${this.state.updatedPlan.meals} meals, ${this.state.updatedPlan.deliveries} deliveries
-            `, 
-              'OK', 'back'
-            );
+						this.setState({
+							successfulEdit: true
+						}, () => {
+							this.displayErrorModal('Success!', `
+								OLD MEAL PLAN: ${this.state.currentPlan.meals} meals, ${this.state.currentPlan.deliveries} deliveries
+								NEW MEAL PLAN: ${this.state.updatedPlan.meals} meals, ${this.state.updatedPlan.deliveries} deliveries
+							`, 
+								'OK', 'back'
+							);
 
-            console.log("subscriptions loaded? ", this.state.subscriptionsLoaded);
-            console.log(this.state.defaultSet === false);
-            console.log(this.state.refreshingPrice);
-            console.log(this.activeChanges());
+							console.log("subscriptions loaded? ", this.state.subscriptionsLoaded);
+							console.log(this.state.defaultSet === false);
+							console.log(this.state.refreshingPrice);
+							console.log(this.activeChanges());
 
-						console.log("(change_purchase) resetting customer: ", this.state.customerUid);
-						this.props.refreshPlans(this.state.customerUid);
-            this.loadSubscriptions(fetchedSubscriptions, this.state.discounts, UPDATED);
+							console.log("(change_purchase) resetting customer: ", this.state.customerUid);
+							this.props.refreshPlans(this.state.customerUid);
+							this.loadSubscriptions(fetchedSubscriptions, this.state.discounts, UPDATED);
+						});
           })
           .catch(err => {
             console.log(err);
@@ -1154,11 +1159,11 @@ class AdminEditModal extends React.Component {
               this.setState({
                 deletingPurchase: false,
                 deleteSuccess: true
-              });
-
-							console.log("(cancel_purchase) resetting customer: ", this.state.customerUid);
-							this.props.refreshPlans(this.state.customerUid);
-              this.loadSubscriptions(fetchedSubscriptions, this.state.discounts, DEFAULT);
+              }, () => {
+								console.log("(cancel_purchase) resetting customer: ", this.state.customerUid);
+								this.props.refreshPlans(this.state.customerUid);
+								this.loadSubscriptions(fetchedSubscriptions, this.state.discounts, DEFAULT);
+							});
             })
             .catch(err => {
               console.log("refund error: ", err);
@@ -2660,6 +2665,9 @@ class AdminEditModal extends React.Component {
                           onClick = {() => {
                             if(this.state.errorLink === 'back'){
                               this.displayErrorModal();
+															if(this.state.successfulEdit === true) {
+																this.props.toggleEditModal(false);
+															}
                             } else {
                               this.props.history.push(this.state.errorLink);
                             }
@@ -2790,6 +2798,7 @@ class AdminEditModal extends React.Component {
                               deleteSuccess: null,
                               confirmModal: styles.errorModalPopUpHide
                             });
+														this.props.toggleEditModal(false);
                           }}
                         >
                           OK

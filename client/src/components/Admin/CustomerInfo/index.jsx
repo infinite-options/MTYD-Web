@@ -531,6 +531,8 @@ function CustomerInfo(props) {
     });
     console.log("(refreshPlans) refreshed customer: ", refreshedCustomer);
     setCurrentCustomer(refreshedCustomer);
+    toggleConfirmDelete(false);
+    // toggleEditModal(false);
   }
 
 	const setCurrentCustomer = (cust) => {
@@ -1859,6 +1861,7 @@ function CustomerInfo(props) {
               currentPlan={currentPlan}
               defaultDelete={showConfirmDelete}
               refreshPlans={refreshPlans}
+              toggleEditModal={toggleEditModal}
             />
           </div>
 
