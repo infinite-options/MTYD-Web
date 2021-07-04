@@ -13,6 +13,7 @@ import axios from "axios";
 import {API_URL} from "../../../reducers/constants";
 import {withRouter} from "react-router";
 import styles from "../../EditPlan/editPlan.module.css";
+import styles_admin from "./adminEditModal.module.css";
 import {WebNavBar} from "../../NavBar";
 import {FootLink} from "../../Home/homeButtons";
 
@@ -1487,39 +1488,81 @@ class AdminEditModal extends React.Component {
         <div style={{display: 'inline-block'}}>
           <div className={styles.boxPDnarrowTop}>
 
-            <div className={styles.planHeader}>
+            <div className={styles_admin.planHeader}>
               Current Plan
             </div>
 
-            <div style={{paddingBottom: '50px'}}>
+						{/* <span className={styles.subHeader}>
+							MEALS
+						</span> */}
+            {/* <div style={{paddingBottom: '50px'}}>
               <div style={{paddingBottom: '10px'}}>
                 MEALS
               </div>
               <div className={styles.iconMeals}>
                 {this.state.currentPlan.meals}
               </div>
+            </div> */}
+						<div 
+							style={{paddingBottom: '50px'}}
+						>
+              {/* <div style={{paddingBottom: '10px'}}>
+                MEALS
+              </div> */}
+							<span className={styles_admin.subHeader2}>
+								MEALS
+							</span>
+              {/* <div className={styles.iconMeals}>
+                {this.state.currentPlan.meals}
+              </div> */}
+							<div className={styles_admin.plateButtonWrapper2} >
+								<button
+									className={styles_admin.plateButtonCurrent}
+									// aria-label={"Click to switch to " +mealIndex+ " meals per delivery for $" + singleMealData.item_price}
+									// title={"Click to switch to " +mealIndex+ " meals per delivery for $" + singleMealData.item_price}
+								>
+									{this.state.currentPlan.meals}
+								</button>
+							</div>
             </div>
 
-            <div style={{paddingBottom: '50px'}}>
-              <div style={{paddingBottom: '10px'}}>
-                DELIVERIES  
-              </div>
-              <button className={styles.deliveryButtonCurrent} aria-label={ariaTag} title={ariaTag}>
-                <span style={{fontSize: '35px'}}>
-                  {this.state.currentPlan.deliveries}
-                </span>
-                <br></br>
-                <span style={{whiteSpace: "nowrap"}}>
-                  {"(Save "+this.state.currentPlan.discount+"%)"}
-                </span>
-              </button>
-            </div>
+						<div 
+							style={{paddingBottom: '50px'}}
+						>
+						<span className={styles_admin.subHeader2}>
+							DELIVERIES
+						</span>
+						<div className={styles_admin.plateButtonWrapper2}>
+							<button
+								className={styles_admin.deliveryButtonCurrent}
+							>
+								<span style={{fontSize: '2em'}}>
+									{this.state.currentPlan.deliveries}
+								</span>
+								{/* {deliveryIndex} */}
+								<br />
+								{(() => {
+									if (typeof(this.state.currentPlan.discount) !== "undefined" && this.state.currentPlan.discount > 0) {
+										return (
+											<span
+												style={{
+													fontSize: '0.8em'
+												}}
+											>
+												(Save {this.state.currentPlan.discount}%)
+											</span>
+										);
+									}
+								})()}  
+							</button>
+						</div>
+						</div>
 
             <div>
-              <div style={{paddingBottom: '10px'}}>
-                CANCEL
-              </div>  
-              <div 
+							<span className={styles_admin.subHeader2}>
+								CANCEL
+							</span>
+              {/* <div 
                 className={styles.iconTrash}
                 onClick={() => {
                   // this.deletePurchase();
@@ -1528,14 +1571,26 @@ class AdminEditModal extends React.Component {
                 tabIndex="0"
                 aria-label="Click here to cancel this meal plan"
                 title="Click here to cancel this meal plan"
-              />
+              /> */}
+							<div className={styles_admin.plateButtonWrapper3}>
+								<div 
+									className={styles.iconTrash}
+									onClick={() => {
+										// this.deletePurchase();
+										this.confirmDelete();
+									}}
+									tabIndex="0"
+									aria-label="Click here to cancel this meal plan"
+									title="Click here to cancel this meal plan"
+								/>
+							</div>
             </div>
 
           </div>
 
           <div className={styles.boxPDnarrowBottom}>
 
-            <div className={styles.planHeader}>
+            <div className={styles_admin.planHeader}>
               Updated Plan
             </div>
 
@@ -1548,7 +1603,7 @@ class AdminEditModal extends React.Component {
               {(()=>{
                 if(JSON.stringify(this.props.plans) !== "{}"){
                   return(
-                    <div className={styles.buttonWrapper}>
+                    <div className={styles_admin.buttonWrapper}>
                       {this.mealsDelivery()}
                     </div>
                   );
@@ -1586,37 +1641,36 @@ class AdminEditModal extends React.Component {
               })()}
             </div>
 
-            <div className={styles.chargeContainerNarrow}>
-              <div className={styles.chargeTotal}>
-                <div style={{display: 'inline-flex'}} >
-                  {(() => {
-                    let chargeOrRefund = this.state.differenceSummary.total;
-                    if (parseFloat(chargeOrRefund) >= 0) {
-                      return (
-                        <>
-                          <div className={styles.chargeText}>
-                            {"Additional Charges "}
-                          </div>
-                          <div className={styles.chargeAmount}>
-                            ${this.state.differenceSummary.total}
-                          </div>
-                        </>
-                      );
-                    } else {
-                      return (
-                        <>
-                          <div className={styles.chargeText}>
-                            {"You will be refunded "}
-                          </div>
-                          <div className={styles.chargeAmount}>
-                            ${(-1*this.state.differenceSummary.total).toFixed(2)}
-                          </div>
-                        </>
-                      );
-                    }
-                  })()}
-                </div>
-              </div> 
+            <div 
+							className={styles_admin.chargeContainer}
+							tabIndex="0" 
+						>
+							{(() => {
+								let chargeOrRefund = this.state.differenceSummary.total;
+								if (parseFloat(chargeOrRefund) >= 0) {
+									return (
+										<>
+											<div className={styles_admin.chargeText}>
+												{"Additional Charges "}
+											</div>
+											<div className={styles_admin.chargeAmount}>
+												${this.state.differenceSummary.total}
+											</div>
+										</>
+									);
+								} else {
+									return (
+										<>
+											<div className={styles_admin.chargeText}>
+												{"You will be refunded "}
+											</div>
+											<div className={styles_admin.chargeAmount}>
+												${(-1*this.state.differenceSummary.total).toFixed(2)}
+											</div>
+										</>
+									);
+								}
+							})()}
             </div> 
           </div>
         </div>
@@ -1625,27 +1679,48 @@ class AdminEditModal extends React.Component {
     } else {
       return (
         <>
-          <div className={styles.boxPDleft}>
+          <div className={styles_admin.boxPDleft}>
 
-          <div style={{width: 'fit-content'}}>
-            <div className={styles.planHeader}>
+          <div 
+						style={{
+							// width: 'fit-content',
+							// border: '1px solid purple',
+							// display: 'flex',
+							// justifyContent: 'center'
+						}}
+					>
+            <div className={styles_admin.planHeader}>
               Current Plan
             </div>
 
-            <div style={{paddingBottom: '50px'}}>
-              <div style={{paddingBottom: '10px'}}>
+            <div 
+							style={{paddingBottom: '50px'}}
+						>
+              {/* <div style={{paddingBottom: '10px'}}>
                 MEALS
-              </div>
-              <div className={styles.iconMeals}>
+              </div> */}
+							<span className={styles_admin.subHeader2}>
+								MEALS
+							</span>
+              {/* <div className={styles.iconMeals}>
                 {this.state.currentPlan.meals}
-              </div>
+              </div> */}
+							<div className={styles_admin.plateButtonWrapper2} >
+								<button
+									className={styles_admin.plateButtonCurrent}
+									// aria-label={"Click to switch to " +mealIndex+ " meals per delivery for $" + singleMealData.item_price}
+									// title={"Click to switch to " +mealIndex+ " meals per delivery for $" + singleMealData.item_price}
+								>
+									{this.state.currentPlan.meals}
+								</button>
+							</div>
             </div>
 
             <div style={{paddingBottom: '50px'}}>
-              <div style={{paddingBottom: '10px'}}>
-                DELIVERIES
-              </div>
-              <button className={styles.deliveryButtonCurrent} aria-label={ariaTag} title={ariaTag}>
+							<span className={styles_admin.subHeader2}>
+								DELIVERIES
+							</span>
+              {/* <button className={styles.deliveryButtonCurrent} aria-label={ariaTag} title={ariaTag}>
                 <span style={{fontSize: '35px'}}>
                   {this.state.currentPlan.deliveries}
                 </span>
@@ -1653,14 +1728,50 @@ class AdminEditModal extends React.Component {
                 <span style={{whiteSpace: "nowrap"}}>
                   {"(Save "+this.state.currentPlan.discount+"%)"}
                 </span>
-              </button>
+              </button> */}
+							{/* <div className={styles_admin.plateButtonWrapper2} >
+								<button
+									className={styles_admin.deliveryButton}
+									style={{fontSize: '20px'}}
+									// aria-label={"Click to switch to " +mealIndex+ " meals per delivery for $" + singleMealData.item_price}
+									// title={"Click to switch to " +mealIndex+ " meals per delivery for $" + singleMealData.item_price}
+								>
+									{this.state.currentPlan.deliveries}
+								</button>
+							</div> */}
+
+							<div className={styles_admin.plateButtonWrapper2}>
+								<button
+									className={styles_admin.deliveryButtonCurrent}
+								>
+									<span style={{fontSize: '2em'}}>
+										{this.state.currentPlan.deliveries}
+									</span>
+									{/* {deliveryIndex} */}
+									<br />
+									{(() => {
+										if (typeof(this.state.currentPlan.discount) !== "undefined" && this.state.currentPlan.discount > 0) {
+											return (
+												<span
+													style={{
+														fontSize: '0.8em'
+													}}
+												>
+													(Save {this.state.currentPlan.discount}%)
+												</span>
+											);
+										}
+									})()}  
+								</button>
+							</div>
+
             </div>
 
             <div>
-              <div style={{paddingBottom: '10px'}}> 
-                CANCEL
-              </div>
-              <div 
+							<span className={styles_admin.subHeader2}>
+								CANCEL
+							</span>
+              {/* <div 
                 className={styles.iconTrash}
                 onClick={() => {
                   // this.deletePurchase();
@@ -1669,7 +1780,19 @@ class AdminEditModal extends React.Component {
                 tabIndex="0"
                 aria-label="Click here to cancel this meal plan"
                 title="Click here to cancel this meal plan"
-              />
+              /> */}
+							<div className={styles_admin.plateButtonWrapper3}>
+								<div 
+									className={styles.iconTrash}
+									onClick={() => {
+										// this.deletePurchase();
+										this.confirmDelete();
+									}}
+									tabIndex="0"
+									aria-label="Click here to cancel this meal plan"
+									title="Click here to cancel this meal plan"
+								/>
+							</div>
             </div>
 
 
@@ -1679,20 +1802,23 @@ class AdminEditModal extends React.Component {
 
           <div className={styles.boxPDright}>
 
-            <div className={styles.planHeader}>
+            <div className={styles_admin.planHeader}>
               Updated Plan
             </div>
 
-            <div className={styles.menuSection}>
-              <div className={styles.center}>
+            <div className={styles_admin.menuSection}>
+              {/* <div className={styles.center}>
                 <span className={styles.subHeader}>
                   NUMBER OF MEALS PER DELIVERY
                 </span>
-              </div>
+              </div> */}
+							<span className={styles.subHeader}>
+								NUMBER OF MEALS PER DELIVERY
+							</span>
               {(()=>{
                 if(JSON.stringify(this.props.plans) !== "{}"){
                   return(
-                    <div className={styles.buttonWrapper}>
+                    <div className={styles_admin.buttonWrapper}>
                       {this.mealsDelivery()}
                     </div>
                   );
@@ -1709,7 +1835,19 @@ class AdminEditModal extends React.Component {
               {(()=>{
                 if(JSON.stringify(this.props.plans) !== "{}"){
                   return(
-                    <div className='row' style={{marginTop: '20px'}}>
+                    <div 
+											// className='row' 
+											// style={{
+											// 	marginTop: '20px',
+											// 	border: '1px solid blue',
+											// 	display: 'flex',
+											// 	width: '100%'
+											// }}
+											className={styles_admin.buttonWrapper}
+											style={{
+												marginBottom: '50px'
+											}}
+										>
                       {this.paymentFrequency()}
                     </div>
                   );
@@ -1717,37 +1855,36 @@ class AdminEditModal extends React.Component {
               })()}
             </div>
 
-            <div className={styles.chargeContainer}>
-              <div className={styles.chargeTotal}>
-                <div style={{display: 'inline-flex'}} tabIndex="0" >
-                  {(() => {
-                    let chargeOrRefund = this.state.differenceSummary.total;
-                    if (parseFloat(chargeOrRefund) >= 0) {
-                      return (
-                        <>
-                          <div className={styles.chargeText}>
-                            {"Additional Charges "}
-                          </div>
-                          <div className={styles.chargeAmount}>
-                            ${this.state.differenceSummary.total}
-                          </div>
-                        </>
-                      );
-                    } else {
-                      return (
-                        <>
-                          <div className={styles.chargeText}>
-                            {"You will be refunded "}
-                          </div>
-                          <div className={styles.chargeAmount}>
-                            ${(-1*this.state.differenceSummary.total).toFixed(2)}
-                          </div>
-                        </>
-                      );
-                    }
-                  })()}
-                </div>
-              </div> 
+            <div 
+							className={styles_admin.chargeContainer}
+							tabIndex="0" 
+						>
+							{(() => {
+								let chargeOrRefund = this.state.differenceSummary.total;
+								if (parseFloat(chargeOrRefund) >= 0) {
+									return (
+										<>
+											<div className={styles_admin.chargeText}>
+												{"Additional Charges "}
+											</div>
+											<div className={styles_admin.chargeAmount}>
+												${this.state.differenceSummary.total}
+											</div>
+										</>
+									);
+								} else {
+									return (
+										<>
+											<div className={styles_admin.chargeText}>
+												{"You will be refunded "}
+											</div>
+											<div className={styles_admin.chargeAmount}>
+												${(-1*this.state.differenceSummary.total).toFixed(2)}
+											</div>
+										</>
+									);
+								}
+							})()}
             </div> 
           </div>
         </>
@@ -1874,9 +2011,9 @@ class AdminEditModal extends React.Component {
   // Call to render buttons for changing number of meals in updated plan
   mealsDelivery = () => {
 
-    let deselectedPlateButton = styles.plateButton;
+    let deselectedPlateButton = styles_admin.plateButton;
     let selectedPlateButton =
-    styles.plateButton + " " + styles.plateButtonSelected;
+    styles_admin.plateButton + " " + styles_admin.plateButtonSelected;
     let plateButtons = [];
     let singleMealData;
 
@@ -1887,33 +2024,50 @@ class AdminEditModal extends React.Component {
       singleMealData = mealData["1"];
 
       plateButtons.push(
-        <div className={styles.plateButtonWrapper} >
-        <button
-          key={mealIndex}
-          className={
-            this.state.updatedPlan.meals === mealIndex
-              ? selectedPlateButton
-              : deselectedPlateButton
-          }
-          onClick={() => {
+				<div>
+        <div className={styles_admin.plateButtonWrapper} >
+					<button
+						key={mealIndex}
+						className={
+							this.state.updatedPlan.meals === mealIndex
+								? selectedPlateButton
+								: deselectedPlateButton
+						}
+						onClick={() => {
 
-            this.props.chooseMealsDelivery(
-              mealIndex,
-              this.state.updatedPlan.deliveries,
-              this.props.plans
-            );
+							this.props.chooseMealsDelivery(
+								mealIndex,
+								this.state.updatedPlan.deliveries,
+								this.props.plans
+							);
 
-            this.changePlans(mealIndex, this.state.updatedPlan.deliveries);
-          }}
-          aria-label={"Click to switch to " +mealIndex+ " meals per delivery for $" + singleMealData.item_price}
-          title={"Click to switch to " +mealIndex+ " meals per delivery for $" + singleMealData.item_price}
-        >
-          {mealIndex}
-        </button>
-          <div style={{textAlign: 'center', marginTop: '10px'}}>
+							this.changePlans(mealIndex, this.state.updatedPlan.deliveries);
+						}}
+						aria-label={"Click to switch to " +mealIndex+ " meals per delivery for $" + singleMealData.item_price}
+						title={"Click to switch to " +mealIndex+ " meals per delivery for $" + singleMealData.item_price}
+					>
+						{mealIndex}
+					</button>
+          {/* <div 
+						style={{
+							textAlign: 'center', 
+							marginTop: '10px',
+							border: 'solid violet'
+						}}
+					>
+            ${singleMealData.item_price}
+          </div> */}
+        </div>
+				<div 
+						style={{
+							textAlign: 'center', 
+							// marginTop: '10px',
+							// border: '1px solid violet'
+						}}
+					>
             ${singleMealData.item_price}
           </div>
-        </div>
+				</div>
       );
     }
     return plateButtons;
@@ -1922,8 +2076,8 @@ class AdminEditModal extends React.Component {
 
   // Call to render buttons for changing number of deliveries in updated plan
   paymentFrequency = () => {
-    let deselectedPaymentOption = styles.deliveryButton;
-    let selectedPaymentOption = styles.deliveryButton + " " + styles.deliveryButtonSelected;
+    let deselectedPaymentOption = styles_admin.deliveryButton;
+    let selectedPaymentOption = styles_admin.deliveryButton + " " + styles_admin.deliveryButtonSelected;
     let paymentOptionButtons = [];
       
     var deliveryPlans = this.props.plans[2];
@@ -1946,8 +2100,16 @@ class AdminEditModal extends React.Component {
       }
 
       paymentOptionButtons.push(
-        <div className={styles.sameLine} key={deliveryIndex}>
-          <div style={{display: 'inline-block'}}>
+        <div 
+					className={styles_admin.sameLine} 
+					key={deliveryIndex}
+				>
+          {/* <div 
+						style={{
+							// display: 'inline-block',
+							border: '1px solid purple'
+						}}
+					> */}
             <button
               className={
                 this.state.updatedPlan.deliveries === deliveryIndex
@@ -1966,19 +2128,26 @@ class AdminEditModal extends React.Component {
               aria-label={ariaTag}
               title={ariaTag}
             >
-            <span style={{fontSize: '35px'}}>
-              {deliveryIndex}
-            </span>
-            <br></br>
-            {(() => {
-              if (typeof(discount) !== "undefined" && discount > 0) {
-                return (
-                  <span>(Save {discount}%)</span>
-                );
-              }
-            })()}  
+							<span style={{fontSize: '2em'}}>
+								{deliveryIndex}
+							</span>
+							{/* {deliveryIndex} */}
+							<br />
+							{(() => {
+								if (typeof(discount) !== "undefined" && discount > 0) {
+									return (
+										<span
+											style={{
+												fontSize: '0.8em'
+											}}
+										>
+											(Save {discount}%)
+										</span>
+									);
+								}
+							})()}  
             </button>
-          </div> 
+          {/* </div>  */}
         </div>
       );
     }
@@ -1992,7 +2161,6 @@ class AdminEditModal extends React.Component {
 
     return (
       <>
-
         {/* For debugging window size */}
         {/* <span 
           style={{
@@ -2017,7 +2185,7 @@ class AdminEditModal extends React.Component {
 					? null
 					: <div
 							style={{
-								color: 'red',
+								// color: 'red',
 								zIndex: '99',
 								height: 'calc(96% - 166px)',
 								width: 'calc(100% - 44px)',
@@ -2041,7 +2209,7 @@ class AdminEditModal extends React.Component {
           Edit Plan
         </div>
 
-        <div className={styles.containerSplit}>
+        <div className={styles_admin.containerSplit}>
           {/* {this.state.subscriptionsLoaded === true
             ? this.showPlanDetails(this.state.windowWidth) 
             : <div
@@ -2843,7 +3011,6 @@ class AdminEditModal extends React.Component {
               );
             }
           })()} 
-
       </>
     );
   }
