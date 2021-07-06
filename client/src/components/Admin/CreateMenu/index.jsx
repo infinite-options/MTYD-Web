@@ -481,6 +481,7 @@ function CreateMenu({ history, ...props }) {
           const fullMenu = response.data.result;
           if (fullMenu !== undefined) {
             dispatch({ type: "FETCH_MENU", payload: fullMenu });
+            dispatch({ type: "EDIT_MENU", payload: fullMenu });
           }
         }
       })
@@ -570,9 +571,20 @@ function CreateMenu({ history, ...props }) {
   // Save Upodate menu item
   const updateMenuItem = (menuItem) => {
     if (menuItem.menu_uid) {
+      const updatedMenuItem = {
+        menu_uid: menuItem.menu_uid,
+        menu_date: menuItem.menu_date.substring(0, 10) + " 00:00:00",
+        menu_category: menuItem.menu_category,
+        menu_type: menuItem.menu_type,
+        meal_cat: menuItem.meal_cat,
+        menu_meal_id: menuItem.meal_uid,
+        default_meal: menuItem.default_meal,
+        delivery_days: "[Sunday, Monday]",
+        meal_price: "10",
+      };
       // Update previous item
       axios
-        .put(`${API_URL}menu`, menuItem)
+        .put(`${API_URL}menu`, updatedMenuItem)
         .then((response) => {
           console.log(response);
           updateMenu();
@@ -582,24 +594,23 @@ function CreateMenu({ history, ...props }) {
             // eslint-disable-next-line no-console
             console.log(err.response);
           }
-          // eslint-disable-next-line no-console
-          console.log(err);
+          // eslint-disa r);
         });
     } else {
       // Saving item from template
       const newMenuItem = {
-        menu_date: menuItem.sel_menu_date,
+        menu_date: menuItem.menu_date.substring(0, 10) + " 00:00:00",
         menu_category: menuItem.menu_category,
         menu_type: menuItem.menu_type,
         meal_cat: menuItem.meal_category,
-        menu_meal_id: "",
+        menu_meal_id: menuItem.meal_uid,
         default_meal: menuItem.default_meal,
-        delivery_days: ["TEST3", "TEST3"],
+        delivery_days: "[Sunday, Monday]",
         meal_price: "10",
       };
       console.log(newMenuItem);
       axios
-        .post(`${API_URL}menu`, newMenuItem)
+        .post(`${API_URL}menu`, {})
         .then((response) => {
           console.log(response);
           const newMenuId = response.data.meal_uid;
@@ -1163,12 +1174,18 @@ function CreateMenu({ history, ...props }) {
                                 const newMealInfo = state.mealData.filter(
                                   (meal) => meal.meal_uid === newMealId
                                 )[0];
+                                console.log(newMealInfo);
                                 // const mealMenuIndex = newMenu.findIndex((elt) => elt.menu_uid === mealMenu.menu_uid);
                                 newMenu[mealMenuIndex] = {
                                   ...newMenu[mealMenuIndex],
                                   ...newMealInfo,
                                   menu_meal_id: newMealId,
+                                  business_name: getBusinessName(
+                                    newMealInfo.meal_business
+                                  ),
+                                  meal_category: newMealInfo.meal_category,
                                 };
+                                console.log(newMenu);
                                 dispatch({
                                   type: "EDIT_MENU",
                                   payload: newMenu,
@@ -1201,7 +1218,7 @@ function CreateMenu({ history, ...props }) {
                         <TableCell
                           style={{ borderBottom: "1px solid #f8bb17" }}
                         >
-                          {getBusinessName(mealMenu.meal_business)}
+                          {mealMenu.business_name}
                         </TableCell>
                         <TableCell
                           style={{ borderBottom: "1px solid #f8bb17" }}
@@ -1526,10 +1543,15 @@ function CreateMenu({ history, ...props }) {
                     (meal) => meal.meal_uid === state.newMeal.meal_uid
                   )[0];
                   // YYYY-MM-DD seems to work for request parameter, no need to add HH:MM:SS
+                  console.log(newMenuItemInfo);
+                  console.log(state.newMeal);
                   const newMenuItem = {
-                    ...state.newMeal,
-                    ...newMenuItemInfo,
+                    menu_date: state.newMeal.menu_date + " 00:00:00",
+                    menu_category: state.newMeal.menu_category,
+                    menu_type: state.newMeal.menu_type,
+                    meal_cat: state.newMeal.meal_cat,
                     menu_meal_id: state.newMeal.meal_uid,
+                    default_meal: state.newMeal.default_meal,
                     delivery_days: ["Sunday", "Monday"],
                     meal_price: "10",
                   };

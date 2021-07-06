@@ -1284,7 +1284,7 @@ function OrdersIngredients({ history, ...props }) {
                           <TableCell
                             style={{ borderBottom: "1px solid #f26522" }}
                           >
-                            {item.total_ingredient_qty}
+                            {item.total_qty}
                           </TableCell>
                           <TableCell
                             style={{ borderBottom: "1px solid #f26522" }}
