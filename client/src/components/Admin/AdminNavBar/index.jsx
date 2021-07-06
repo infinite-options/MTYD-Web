@@ -1,78 +1,77 @@
-import { useEffect, useState } from 'react';
-import { Nav, Navbar, NavDropdown } from 'react-bootstrap';
+import { useEffect, useState } from "react";
+import { Nav, Navbar, NavDropdown } from "react-bootstrap";
 import whiteLogo from "../../../images/White_logo_for_web.png";
-import {connect} from "react-redux";
-import {withRouter} from "react-router-dom";
+import { connect } from "react-redux";
+import { withRouter } from "react-router-dom";
 import { useHistory } from "react-router";
 import styles from "./adminNavBar.module.css";
-import hamburger from '../../../images/hamburger.png'
-import forkClose from '../../../images/forkClose.png'
+import hamburger from "../../../images/hamburger.png";
+import forkClose from "../../../images/forkClose.png";
 
 const LINK_WIDTH = {
-	menu: '7%',
-	orders: '8%',
-	ingredients_n_units: '16%',
-	businesses_n_meals: '16%',
-	customers: '12%',
-	notifications: '14%',
-	coupons: '9%',
-	zones: '8%',
-	analytics: '10%'
+  menu: "7%",
+  orders: "8%",
+  ingredients_n_units: "16%",
+  businesses_n_meals: "16%",
+  customers: "12%",
+  notifications: "14%",
+  coupons: "9%",
+  zones: "8%",
+  analytics: "10%",
 
   // menu: '11%',
-	// orders: '11%',
-	// ingredients_n_units: '11%',
-	// businesses_n_meals: '11%',
-	// customers: '11%',
-	// notifications: '11%',
-	// coupons: '11%',
-	// zones: '11%',
-	// analytics: '11%'
+  // orders: '11%',
+  // ingredients_n_units: '11%',
+  // businesses_n_meals: '11%',
+  // customers: '11%',
+  // notifications: '11%',
+  // coupons: '11%',
+  // zones: '11%',
+  // analytics: '11%'
 
   // menu: '9%',
-	// orders: '9%',
-	// ingredients_n_units: '16%',
-	// businesses_n_meals: '16%',
-	// customers: '11%',
-	// notifications: '11%',
-	// coupons: '9%',
-	// zones: '9%',
-	// analytics: '9%'
-}
+  // orders: '9%',
+  // ingredients_n_units: '16%',
+  // businesses_n_meals: '16%',
+  // customers: '11%',
+  // notifications: '11%',
+  // coupons: '9%',
+  // zones: '9%',
+  // analytics: '9%'
+};
 
 function NavBar(props) {
   const history = useHistory();
 
   const [showDropdown, setShowDropdown] = useState(false);
 
-  const [dimensions, setDimensions] = useState({ 
+  const [dimensions, setDimensions] = useState({
     height: window.innerHeight,
-    width: window.innerWidth
+    width: window.innerWidth,
   });
 
-	useEffect(() => {
+  useEffect(() => {
     function handleResize() {
-
-      if(dimensions.width > 1000 && showDropdown === true) {
+      if (dimensions.width > 1000 && showDropdown === true) {
         console.log("in handleResize");
         setShowDropdown(false);
       }
-			setDimensions({
+      setDimensions({
         height: window.innerHeight,
-        width: window.innerWidth
+        width: window.innerWidth,
       });
-		}
+    }
 
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
 
-		return _ => {
-      window.removeEventListener('resize', handleResize);
-		}
+    return (_) => {
+      window.removeEventListener("resize", handleResize);
+    };
   });
 
   return (
     <>
-     {/* <div
+      {/* <div
       style={{
         border: '1px solid red',
         backgroundColor: '#F8BB17',
@@ -87,7 +86,7 @@ function NavBar(props) {
     > */}
 
       {/* For debugging window size */}
-			{/* <span 
+      {/* <span 
 				style={{
 					zIndex: '101',
 					position: 'fixed',
@@ -127,181 +126,215 @@ function NavBar(props) {
         <div
           style={{
             // border: '1px solid white',
-            backgroundColor: '#F8BB17',
-            display: 'flex',
+            backgroundColor: "#F8BB17",
+            display: "flex",
             // alignItems: 'center',
-            height: '80px',
-            position: 'relative',
-            zIndex: '100',
-            width: '100vw',
-            maxWidth: '100%'
+            height: "80px",
+            position: "relative",
+            zIndex: "100",
+            width: "100vw",
+            maxWidth: "100%",
           }}
         >
           <div
             style={{
               // border: 'solid',
-              width: '200px'
+              width: "200px",
             }}
           >
-            <a 
-              href='/home' 
+            <a
+              href="/home"
               style={{
-                backgroundImage:`url(${whiteLogo})`,
-                backgroundSize:'cover',
-                marginTop: '10px',
-                marginLeft: '20px',
+                backgroundImage: `url(${whiteLogo})`,
+                backgroundSize: "cover",
+                marginTop: "10px",
+                marginLeft: "20px",
                 // marginRight: '20px',
-                width: '140px',
-                height: '70px',
+                width: "140px",
+                height: "70px",
                 // border: '1px solid'
-              }}>
-            </a>
+              }}
+            ></a>
           </div>
           <div
             style={{
-              width: '90%',
-              maxWidth: '90%',
-              display: 'flex',
-              alignItems: 'center',
-              height: '80px',
+              width: "90%",
+              maxWidth: "90%",
+              display: "flex",
+              alignItems: "center",
+              height: "80px",
               // border: '1px solid'
             }}
           >
-
-            <a 
-              href='/admin/create-menu' 
+            <a
+              href="/admin/create-menu"
               className={styles.navLink}
-              style={props.currentPage === 'create-menu' ? {
-                color: 'black',
-                width: LINK_WIDTH.menu
-              } : {
-                width: LINK_WIDTH.menu
-              }}
+              style={
+                props.currentPage === "create-menu"
+                  ? {
+                      color: "black",
+                      width: LINK_WIDTH.menu,
+                    }
+                  : {
+                      width: LINK_WIDTH.menu,
+                    }
+              }
             >
               Menu
             </a>
 
-            <a 
-              href='/admin/orders-ingredients' 
+            <a
+              href="/admin/order-ingredients"
               className={styles.navLink}
-              style={props.currentPage === 'orders-ingredients' ? {
-                color: 'black',
-                width: LINK_WIDTH.orders
-              } : {
-                width: LINK_WIDTH.orders
-              }}
-            > 
+              style={
+                props.currentPage === "order-ingredients"
+                  ? {
+                      color: "black",
+                      width: LINK_WIDTH.orders,
+                    }
+                  : {
+                      width: LINK_WIDTH.orders,
+                    }
+              }
+            >
               Orders
             </a>
 
-            <a 
-              href='/admin/ingredients-units' 
+            <a
+              href="/admin/ingredients-units"
               className={styles.navLink}
-              style={props.currentPage === 'ingredients-units' ? {
-                color: 'black',
-                width: LINK_WIDTH.ingredients_n_units
-              } : {
-                width: LINK_WIDTH.ingredients_n_units
-              }}
-            > 
+              style={
+                props.currentPage === "ingredients-units"
+                  ? {
+                      color: "black",
+                      width: LINK_WIDTH.ingredients_n_units,
+                    }
+                  : {
+                      width: LINK_WIDTH.ingredients_n_units,
+                    }
+              }
+            >
               Ingredients & Units
             </a>
 
-            <a 
-              href='/admin/businesses' 
+            <a
+              href="/admin/businesses"
               className={styles.navLink}
-              style={props.currentPage === 'businesses' ? {
-                color: 'black',
-                width: LINK_WIDTH.businesses_n_meals
-              } : {
-                width: LINK_WIDTH.businesses_n_meals
-              }}
+              style={
+                props.currentPage === "businesses"
+                  ? {
+                      color: "black",
+                      width: LINK_WIDTH.businesses_n_meals,
+                    }
+                  : {
+                      width: LINK_WIDTH.businesses_n_meals,
+                    }
+              }
             >
               Businesses & Meals
             </a>
 
-            <a 
-              href='/admin/customers' 
+            <a
+              href="/admin/customers"
               className={styles.navLink}
-              style={props.currentPage === 'customers' ? {
-                color: 'black',
-                width: LINK_WIDTH.customers
-              } : {
-                width: LINK_WIDTH.customers
-              }}
+              style={
+                props.currentPage === "customers"
+                  ? {
+                      color: "black",
+                      width: LINK_WIDTH.customers,
+                    }
+                  : {
+                      width: LINK_WIDTH.customers,
+                    }
+              }
             >
               Customers
             </a>
-            <a 
-              href='/admin/notifications' 
+            <a
+              href="/admin/notifications"
               className={styles.navLink}
-              style={props.currentPage === 'notifications' ? {
-                color: 'black',
-                width: LINK_WIDTH.notifications
-              } : {
-                width: LINK_WIDTH.notifications
-              }}
+              style={
+                props.currentPage === "notifications"
+                  ? {
+                      color: "black",
+                      width: LINK_WIDTH.notifications,
+                    }
+                  : {
+                      width: LINK_WIDTH.notifications,
+                    }
+              }
             >
               Notifications
             </a>
 
-            <a 
-              href='/admin/coupons' 
+            <a
+              href="/admin/coupons"
               className={styles.navLink}
-              style={props.currentPage === 'plans-coupons' ? {
-                color: 'black',
-                width: LINK_WIDTH.coupons
-              } : {
-                width: LINK_WIDTH.coupons
-              }}
+              style={
+                props.currentPage === "plans-coupons"
+                  ? {
+                      color: "black",
+                      width: LINK_WIDTH.coupons,
+                    }
+                  : {
+                      width: LINK_WIDTH.coupons,
+                    }
+              }
             >
               Coupons
             </a>
 
-            <a 
-              href='/admin/zones' 
+            <a
+              href="/admin/zones"
               className={styles.navLink}
-              style={props.currentPage === 'zones' ? {
-                color: 'black',
-                width: LINK_WIDTH.zones
-              } : {
-                width: LINK_WIDTH.zones
-              }}
+              style={
+                props.currentPage === "zones"
+                  ? {
+                      color: "black",
+                      width: LINK_WIDTH.zones,
+                    }
+                  : {
+                      width: LINK_WIDTH.zones,
+                    }
+              }
             >
               Zones
             </a>
 
-            <a 
-              href='/admin/google-analytics' 
+            <a
+              href="/admin/google-analytics"
               className={styles.navLink}
-              style={props.currentPage === 'google-analytics' ? {
-                color: 'black',
-                width: LINK_WIDTH.analytics
-              } : {
-                width: LINK_WIDTH.analytics
-              }}
+              style={
+                props.currentPage === "google-analytics"
+                  ? {
+                      color: "black",
+                      width: LINK_WIDTH.analytics,
+                    }
+                  : {
+                      width: LINK_WIDTH.analytics,
+                    }
+              }
             >
               Analytics
             </a>
-
           </div>
         </div>
       ) : (
         <div
           style={{
             // border: '1px solid white',
-            backgroundColor: '#F8BB17',
-            display: 'flex',
-            justifyContent: 'center',
+            backgroundColor: "#F8BB17",
+            display: "flex",
+            justifyContent: "center",
             // alignItems: 'center',
-            height: '80px',
-            position: 'relative',
-            zIndex: '100',
-            width: '100vw',
-            maxWidth: '100%'
+            height: "80px",
+            position: "relative",
+            zIndex: "100",
+            width: "100vw",
+            maxWidth: "100%",
           }}
         >
-        {/* <div
+          {/* <div
           style={{
             width: '100%',
             display: 'flex',
@@ -310,28 +343,32 @@ function NavBar(props) {
         > */}
           <div
             style={{
-              position: 'absolute',
-              left: '0',
-              height: '100%',
-              paddingLeft: '30px',
-              display: 'flex',
-              alignItems: 'center'
+              position: "absolute",
+              left: "0",
+              height: "100%",
+              paddingLeft: "30px",
+              display: "flex",
+              alignItems: "center",
             }}
           >
             <div
-              style={showDropdown ? {
-                width:"50px",
-                height:"50px",
-                backgroundImage: `url(${forkClose})`,
-                backgroundSize:'cover',
-                cursor: 'pointer',
-              } : {
-                width:"60px",
-                height:"40px",
-                backgroundImage: `url(${hamburger})`,
-                backgroundSize:'cover',
-                cursor: 'pointer',
-              }}
+              style={
+                showDropdown
+                  ? {
+                      width: "50px",
+                      height: "50px",
+                      backgroundImage: `url(${forkClose})`,
+                      backgroundSize: "cover",
+                      cursor: "pointer",
+                    }
+                  : {
+                      width: "60px",
+                      height: "40px",
+                      backgroundImage: `url(${hamburger})`,
+                      backgroundSize: "cover",
+                      cursor: "pointer",
+                    }
+              }
               onClick={() => {
                 setShowDropdown(!showDropdown);
               }}
@@ -340,122 +377,147 @@ function NavBar(props) {
           {showDropdown ? (
             <div
               style={{
-                position: 'absolute',
-                left: '0',
-                top: '80px',
-                width: '100vw',
-                height: '375px',
-                backgroundColor: '#F8BB17'
+                position: "absolute",
+                left: "0",
+                top: "80px",
+                width: "100vw",
+                height: "375px",
+                backgroundColor: "#F8BB17",
               }}
             >
               <div className={styles.dropdownLink}>
-                <a 
-                  href='/admin/edit-meal' 
+                <a
+                  href="/admin/edit-meal"
                   className={styles.navLinkDD}
-                  style={props.currentPage === 'meals-plans' ? {color: 'black'} : {}}
+                  style={
+                    props.currentPage === "meals-plans"
+                      ? { color: "black" }
+                      : {}
+                  }
                 >
                   Menu
                 </a>
               </div>
               <div className={styles.dropdownLink}>
-                <a 
-                  href='/admin/orders-ingredients' 
+                <a
+                  href="/admin/orders-ingredients"
                   className={styles.navLinkDD}
-                  style={props.currentPage === 'orders-ingredients' ? {color: 'black'} : {}}
+                  style={
+                    props.currentPage === "orders-ingredients"
+                      ? { color: "black" }
+                      : {}
+                  }
                 >
                   Orders
                 </a>
               </div>
               <div className={styles.dropdownLink}>
-                <a 
-                  href='/admin/ingredients-units' 
+                <a
+                  href="/admin/ingredients-units"
                   className={styles.navLinkDD}
-                  style={props.currentPage === 'ingredients-units' ? {color: 'black'} : {}}
+                  style={
+                    props.currentPage === "ingredients-units"
+                      ? { color: "black" }
+                      : {}
+                  }
                 >
                   Ingredients & Units
                 </a>
               </div>
               <div className={styles.dropdownLink}>
-                <a 
-                  href='/admin/businesses' 
+                <a
+                  href="/admin/businesses"
                   className={styles.navLinkDD}
-                  style={props.currentPage === 'businesses' ? {color: 'black'} : {}}
+                  style={
+                    props.currentPage === "businesses" ? { color: "black" } : {}
+                  }
                 >
                   Businesses & Meals
                 </a>
               </div>
               <div className={styles.dropdownLink}>
-                <a 
-                  href='/admin/customers'  
+                <a
+                  href="/admin/customers"
                   className={styles.navLinkDD}
-                  style={props.currentPage === 'customers' ? {color: 'black'} : {}}
+                  style={
+                    props.currentPage === "customers" ? { color: "black" } : {}
+                  }
                 >
                   Customers
                 </a>
               </div>
               <div className={styles.dropdownLink}>
-                <a 
-                  href='/admin/notifications' 
+                <a
+                  href="/admin/notifications"
                   className={styles.navLinkDD}
-                  style={props.currentPage === 'notifications' ? {color: 'black'} : {}}
+                  style={
+                    props.currentPage === "notifications"
+                      ? { color: "black" }
+                      : {}
+                  }
                 >
                   Notifications
                 </a>
               </div>
               <div className={styles.dropdownLink}>
-                <a 
-                  href='/admin/edit-meal' 
+                <a
+                  href="/admin/edit-meal"
                   className={styles.navLinkDD}
-                  style={props.currentPage === 'notifications' ? {color: 'black'} : {}}
+                  style={
+                    props.currentPage === "notifications"
+                      ? { color: "black" }
+                      : {}
+                  }
                 >
                   Coupons
                 </a>
               </div>
               <div className={styles.dropdownLink}>
-                <a 
-                  href='/admin/edit-meal' 
+                <a
+                  href="/admin/edit-meal"
                   className={styles.navLinkDD}
-                  style={props.currentPage === 'businesses' ? {color: 'black'} : {}}
+                  style={
+                    props.currentPage === "businesses" ? { color: "black" } : {}
+                  }
                 >
                   Zones
                 </a>
               </div>
               <div className={styles.dropdownLink}>
-                <a 
-                  href='/admin/edit-meal' 
+                <a
+                  href="/admin/edit-meal"
                   className={styles.navLinkDD}
-                  style={props.currentPage === 'zones' ? {color: 'black'} : {}}
+                  style={
+                    props.currentPage === "zones" ? { color: "black" } : {}
+                  }
                 >
                   Analytics
                 </a>
               </div>
             </div>
-          ) : (
-            null
-          )}
+          ) : null}
           <div
             style={{
               // border: 'dashed',
-              width: '200px'
+              width: "200px",
             }}
           >
-            <a 
-              href='/home' 
+            <a
+              href="/home"
               style={{
-                backgroundImage:`url(${whiteLogo})`,
-                backgroundSize:'cover',
-                marginTop: '10px',
-                marginLeft: '20px',
-                width: '140px',
-                height: '70px'
-              }}>
-            </a>
+                backgroundImage: `url(${whiteLogo})`,
+                backgroundSize: "cover",
+                marginTop: "10px",
+                marginLeft: "20px",
+                width: "140px",
+                height: "70px",
+              }}
+            ></a>
           </div>
         </div>
       )}
 
-
-    {/* </div> */}
+      {/* </div> */}
     </>
   );
 }
