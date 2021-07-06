@@ -573,7 +573,8 @@ function CreateMenu({ history, ...props }) {
       // Update previous item
       axios
         .put(`${API_URL}menu`, menuItem)
-        .then(() => {
+        .then((response) => {
+          console.log(response);
           updateMenu();
         })
         .catch((err) => {
@@ -587,13 +588,20 @@ function CreateMenu({ history, ...props }) {
     } else {
       // Saving item from template
       const newMenuItem = {
-        ...menuItem,
-        delivery_days: ["Sunday", "Monday"],
+        menu_date: menuItem.sel_menu_date,
+        menu_category: menuItem.menu_category,
+        menu_type: menuItem.menu_type,
+        meal_cat: menuItem.meal_category,
+        menu_meal_id: "",
+        default_meal: menuItem.default_meal,
+        delivery_days: ["TEST3", "TEST3"],
         meal_price: "10",
       };
+      console.log(newMenuItem);
       axios
         .post(`${API_URL}menu`, newMenuItem)
         .then((response) => {
+          console.log(response);
           const newMenuId = response.data.meal_uid;
           const newMenuItemId = {
             ...newMenuItem,
@@ -618,6 +626,7 @@ function CreateMenu({ history, ...props }) {
   // Delete menu item
   const deleteMenuItem = (menuItem) => {
     const menuId = menuItem.menu_uid;
+    console.log(menuId);
     const menuIndex = state.editedMenu.indexOf(menuItem);
     if (menuId) {
       // Delete from database
@@ -627,7 +636,8 @@ function CreateMenu({ history, ...props }) {
             menu_uid: menuId,
           },
         })
-        .then(() => {
+        .then((response) => {
+          console.log(response);
           const newMenu = [...state.editedMenu];
           newMenu.splice(menuIndex, 1);
           dispatch({ type: "EDIT_MENU", payload: newMenu });
@@ -1264,370 +1274,517 @@ function CreateMenu({ history, ...props }) {
           </Col>
         </Row>
       </Container>
-      <Modal
-        show={state.showAddMeal}
-        onHide={toggleAddMenu}
-        animation={false}
-        dialogClassName={styles.modalContainer}
-      >
-        <div className={styles.modalCloseBtnContainer}>
-          <ModalCloseBtn
-            style={{ cursor: "pointer" }}
-            onClick={toggleAddMenu}
-          />
-        </div>
+
+      {state.showAddMeal && (
         <div
-          style={{ border: "none", paddingLeft: "15px", fontWeight: "bold" }}
+          style={{
+            height: "100%",
+            width: "100%",
+            zIndex: "101",
+            left: "0",
+            top: "0",
+            overflow: "auto",
+            position: "fixed",
+            display: "grid",
+            backgroundColor: "rgba(255, 255, 255, 0.8)",
+          }}
         >
-          <Modal.Title> Add Menu Item </Modal.Title>
-        </div>
-        <Modal.Body>
-          <Form>
-            <Form.Group
-              style={{ display: "flex", alignItems: "center", width: "100%" }}
-            >
-              <Form.Label className={styles.modalFormLabel}>
-                Menu Date
-              </Form.Label>
-              <Form.Control
-                type="date"
-                value={state.newMeal.menu_date}
-                onChange={(event) => {
-                  const newDate = event.target.value;
-                  const newMeal = {
-                    ...state.newMeal,
-                    menu_date: newDate,
-                  };
-                  dispatch({ type: "EDIT_NEW_MEAL_MENU", payload: newMeal });
-                }}
-              />
-            </Form.Group>
-            <Form.Group
-              style={{ display: "flex", alignItems: "center", width: "100%" }}
-            >
-              <Form.Label className={styles.modalFormLabel}>
-                Meal Type
-              </Form.Label>
-              <Form.Control
-                as="select"
-                value={state.newMeal.meal_type}
-                onChange={(event) => {
-                  const newMealType = event.target.value;
-                  const newMeal = {
-                    ...state.newMeal,
-                    menu_type: newMealType,
-                  };
-                  dispatch({ type: "EDIT_NEW_MEAL_MENU", payload: newMeal });
-                }}
-              >
-                <option value="" hidden>
-                  Choose Meal Type
-                </option>
-                {getMealTypes().map((mealType) => (
-                  <option value={mealType} key={mealType}>
-                    {mealType}
-                  </option>
-                ))}
-              </Form.Control>
-            </Form.Group>
-            <Form.Group
-              style={{ display: "flex", alignItems: "center", width: "100%" }}
-            >
-              <Form.Label className={styles.modalFormLabel}>Meal</Form.Label>
-              <Form.Control
-                as="select"
-                value={state.newMeal.meal_uid}
-                onChange={(event) => {
-                  const newMealId = event.target.value;
-                  const newMeal = {
-                    ...state.newMeal,
-                    meal_uid: newMealId,
-                  };
-                  dispatch({ type: "EDIT_NEW_MEAL_MENU", payload: newMeal });
-                }}
-              >
-                <option value="" hidden>
-                  Choose Meal
-                </option>
-                {state.mealData.map((meal) => (
-                  <option value={meal.meal_uid} key={meal.meal_uid}>
-                    {meal.meal_name}
-                  </option>
-                ))}
-              </Form.Control>
-            </Form.Group>
-            <Form.Group
-              style={{ display: "flex", alignItems: "center", width: "100%" }}
-            >
-              <Form.Label className={styles.modalFormLabel}>
-                Meal Category
-              </Form.Label>
-              <Form.Control
-                as="select"
-                value={state.newMeal.meal_cat}
-                onChange={(event) => {
-                  const newMealCat = event.target.value;
-                  const newMeal = {
-                    ...state.newMeal,
-                    meal_cat: newMealCat,
-                  };
-                  dispatch({ type: "EDIT_NEW_MEAL_MENU", payload: newMeal });
-                }}
-              >
-                <option value="" hidden>
-                  Choose Meal Category
-                </option>
-                {getMealCategories().map((mealCategory) => (
-                  <option value={mealCategory} key={mealCategory}>
-                    {mealCategory}
-                  </option>
-                ))}
-              </Form.Control>
-            </Form.Group>
-            <Form.Group
-              style={{ display: "flex", alignItems: "center", width: "100%" }}
-            >
-              <Form.Label className={styles.modalFormLabel}>
-                Menu Category
-              </Form.Label>
-              <Form.Control
-                as="select"
-                value={state.newMeal.menu_category}
-                onChange={(event) => {
-                  const newMenuCategory = event.target.value;
-                  const newMeal = {
-                    ...state.newMeal,
-                    menu_category: newMenuCategory,
-                  };
-                  dispatch({ type: "EDIT_NEW_MEAL_MENU", payload: newMeal });
-                }}
-              >
-                <option value="" hidden>
-                  Choose Menu Category
-                </option>
-                {getMenuCategories().map((menuCategory) => (
-                  <option value={menuCategory} key={menuCategory}>
-                    {menuCategory}
-                  </option>
-                ))}
-              </Form.Control>
-            </Form.Group>
-            <Form.Group
-              style={{ display: "flex", alignItems: "center", width: "100%" }}
-            >
-              <Form.Label className={styles.modalFormLabel}>
-                Default Meal
-              </Form.Label>
-              <Form.Control
-                as="select"
-                value={state.newMeal.default_meal}
-                onChange={(event) => {
-                  const newDefaultMeal = event.target.value;
-                  const newMeal = {
-                    ...state.newMeal,
-                    default_meal: newDefaultMeal,
-                  };
-                  dispatch({ type: "EDIT_NEW_MEAL_MENU", payload: newMeal });
-                }}
-              >
-                <option value="FALSE"> FALSE </option>
-                <option value="TRUE"> TRUE </option>
-              </Form.Control>
-            </Form.Group>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer style={{ border: "none", justifyContent: "center" }}>
-          <button
-            className={styles.modalBtn}
-            onClick={() => {
-              const newMenuItemInfo = state.mealData.filter(
-                (meal) => meal.meal_uid === state.newMeal.meal_uid
-              )[0];
-              // YYYY-MM-DD seems to work for request parameter, no need to add HH:MM:SS
-              const newMenuItem = {
-                ...state.newMeal,
-                ...newMenuItemInfo,
-                menu_meal_id: state.newMeal.meal_uid,
-                delivery_days: ["Sunday", "Monday"],
-                meal_price: "10",
-              };
-              axios
-                .post(`${API_URL}meals_ordered_by_date`, newMenuItem)
-                .then((response) => {
-                  // Save New menu item with id on screen
-                  const newMenuId = response.data.meal_uid;
-                  const newMenuItemId = {
-                    ...newMenuItem,
-                    menu_uid: newMenuId,
-                  };
-                  const newEditedMenu = [...state.editedMenu];
-                  newEditedMenu.push(newMenuItemId);
-                  dispatch({ type: "EDIT_MENU", payload: newEditedMenu });
-                  // Save menu item after switching to different date and back
-                  updateMenu();
-                  toggleAddMenu();
-                })
-                .catch((err) => {
-                  if (err.response) {
-                    // eslint-disable-next-line no-console
-                    console.log(err.response);
-                  }
-                  // eslint-disable-next-line no-console
-                  console.log(err);
-                });
+          <div
+            style={{
+              position: "relative",
+              justifySelf: "center",
+              alignSelf: "center",
+              display: "block",
+              border: "#ff6505 solid",
+              backgroundColor: "#FEF7E0",
+              // height: "900px",
+              width: "700px",
+              zIndex: "102",
+
+              borderRadius: "20px",
             }}
           >
-            Save Menu Item
-          </button>
-        </Modal.Footer>
-      </Modal>
-      <Modal
-        show={state.showAddDate}
-        onHide={toggleAddDate}
-        animation={false}
-        dialogClassName={styles.modalContainer}
-      >
-        <div className={styles.modalCloseBtnContainer}>
-          <ModalCloseBtn
-            style={{ cursor: "pointer" }}
-            onClick={toggleAddDate}
-          />
-        </div>
-        <div
-          style={{ border: "none", paddingLeft: "15px", fontWeight: "bold" }}
-        >
-          <Modal.Title> Add Menu Date </Modal.Title>
-        </div>
-        <Modal.Body>
-          <Form>
-            <Form.Group
-              style={{ display: "flex", alignItems: "center", width: "100%" }}
-            >
-              <Form.Label className={styles.modalFormLabel}>
-                Menu Date
-              </Form.Label>
-              <Form.Control
-                type="date"
-                value={state.newDate.menu_date}
-                onChange={(event) => {
-                  const newDate = event.target.value;
-                  const newDateObject = {
-                    ...state.newDate,
-                    menu_date: newDate,
-                  };
-                  dispatch({
-                    type: "EDIT_NEW_MENU_DATE",
-                    payload: newDateObject,
-                  });
-                }}
+            <div className={styles.modalCloseBtnContainer}>
+              <ModalCloseBtn
+                style={{ cursor: "pointer" }}
+                onClick={toggleAddMenu}
               />
-            </Form.Group>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer style={{ border: "none", justifyContent: "center" }}>
-          <button className={styles.modalBtn} onClick={saveMenuTemplate}>
-            Save Menu Date with Template
-          </button>
-        </Modal.Footer>
-      </Modal>
-      <Modal
-        show={state.showCopyDate}
-        onHide={toggleCopyDate}
-        animation={false}
-        dialogClassName={styles.modalContainer}
-      >
-        <div className={styles.modalCloseBtnContainer}>
-          <ModalCloseBtn
-            style={{ cursor: "pointer" }}
-            onClick={toggleCopyDate}
-          />
-        </div>
-        <div
-          style={{ border: "none", paddingLeft: "15px", fontWeight: "bold" }}
-        >
-          <Modal.Title> Copy Menu </Modal.Title>
-        </div>
-        <Modal.Body style={{ border: "none" }}>
-          <Form>
-            <Form.Group
-              style={{ display: "flex", alignItems: "center", width: "100%" }}
+            </div>
+            <div
+              style={{
+                border: "none",
+                paddingLeft: "15px",
+                fontWeight: "bold",
+              }}
             >
-              <Form.Label className={styles.modalFormLabel}>
-                Copy From Date
-              </Form.Label>
-              <Form.Control
-                as="select"
-                type="date"
-                value={state.copyDate.date1}
-                onChange={(event) => {
-                  copyDate(event.target.value);
-                  const copyToDate = event.target.value;
-                  const newDateObject = {
-                    ...state.copyDate,
-                    date1: copyToDate,
+              <Modal.Title> Add Menu Item </Modal.Title>
+            </div>
+            <Modal.Body>
+              <Form>
+                <Form.Group
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    width: "100%",
+                  }}
+                >
+                  <Form.Label className={styles.modalFormLabel}>
+                    Menu Date
+                  </Form.Label>
+                  <Form.Control
+                    type="date"
+                    value={state.newMeal.menu_date}
+                    onChange={(event) => {
+                      const newDate = event.target.value;
+                      const newMeal = {
+                        ...state.newMeal,
+                        menu_date: newDate,
+                      };
+                      dispatch({
+                        type: "EDIT_NEW_MEAL_MENU",
+                        payload: newMeal,
+                      });
+                    }}
+                  />
+                </Form.Group>
+                <Form.Group
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    width: "100%",
+                  }}
+                >
+                  <Form.Label className={styles.modalFormLabel}>
+                    Meal Type
+                  </Form.Label>
+                  <Form.Control
+                    as="select"
+                    value={state.newMeal.meal_type}
+                    onChange={(event) => {
+                      const newMealType = event.target.value;
+                      const newMeal = {
+                        ...state.newMeal,
+                        menu_type: newMealType,
+                      };
+                      dispatch({
+                        type: "EDIT_NEW_MEAL_MENU",
+                        payload: newMeal,
+                      });
+                    }}
+                  >
+                    <option value="" hidden>
+                      Choose Meal Type
+                    </option>
+                    {getMealTypes().map((mealType) => (
+                      <option value={mealType} key={mealType}>
+                        {mealType}
+                      </option>
+                    ))}
+                  </Form.Control>
+                </Form.Group>
+                <Form.Group
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    width: "100%",
+                  }}
+                >
+                  <Form.Label className={styles.modalFormLabel}>
+                    Meal
+                  </Form.Label>
+                  <Form.Control
+                    as="select"
+                    value={state.newMeal.meal_uid}
+                    onChange={(event) => {
+                      const newMealId = event.target.value;
+                      const newMeal = {
+                        ...state.newMeal,
+                        meal_uid: newMealId,
+                      };
+                      dispatch({
+                        type: "EDIT_NEW_MEAL_MENU",
+                        payload: newMeal,
+                      });
+                    }}
+                  >
+                    <option value="" hidden>
+                      Choose Meal
+                    </option>
+                    {state.mealData.map((meal) => (
+                      <option value={meal.meal_uid} key={meal.meal_uid}>
+                        {meal.meal_name}
+                      </option>
+                    ))}
+                  </Form.Control>
+                </Form.Group>
+                <Form.Group
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    width: "100%",
+                  }}
+                >
+                  <Form.Label className={styles.modalFormLabel}>
+                    Meal Category
+                  </Form.Label>
+                  <Form.Control
+                    as="select"
+                    value={state.newMeal.meal_cat}
+                    onChange={(event) => {
+                      const newMealCat = event.target.value;
+                      const newMeal = {
+                        ...state.newMeal,
+                        meal_cat: newMealCat,
+                      };
+                      dispatch({
+                        type: "EDIT_NEW_MEAL_MENU",
+                        payload: newMeal,
+                      });
+                    }}
+                  >
+                    <option value="" hidden>
+                      Choose Meal Category
+                    </option>
+                    {getMealCategories().map((mealCategory) => (
+                      <option value={mealCategory} key={mealCategory}>
+                        {mealCategory}
+                      </option>
+                    ))}
+                  </Form.Control>
+                </Form.Group>
+                <Form.Group
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    width: "100%",
+                  }}
+                >
+                  <Form.Label className={styles.modalFormLabel}>
+                    Menu Category
+                  </Form.Label>
+                  <Form.Control
+                    as="select"
+                    value={state.newMeal.menu_category}
+                    onChange={(event) => {
+                      const newMenuCategory = event.target.value;
+                      const newMeal = {
+                        ...state.newMeal,
+                        menu_category: newMenuCategory,
+                      };
+                      dispatch({
+                        type: "EDIT_NEW_MEAL_MENU",
+                        payload: newMeal,
+                      });
+                    }}
+                  >
+                    <option value="" hidden>
+                      Choose Menu Category
+                    </option>
+                    {getMenuCategories().map((menuCategory) => (
+                      <option value={menuCategory} key={menuCategory}>
+                        {menuCategory}
+                      </option>
+                    ))}
+                  </Form.Control>
+                </Form.Group>
+                <Form.Group
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    width: "100%",
+                  }}
+                >
+                  <Form.Label className={styles.modalFormLabel}>
+                    Default Meal
+                  </Form.Label>
+                  <Form.Control
+                    as="select"
+                    value={state.newMeal.default_meal}
+                    onChange={(event) => {
+                      const newDefaultMeal = event.target.value;
+                      const newMeal = {
+                        ...state.newMeal,
+                        default_meal: newDefaultMeal,
+                      };
+                      dispatch({
+                        type: "EDIT_NEW_MEAL_MENU",
+                        payload: newMeal,
+                      });
+                    }}
+                  >
+                    <option value="FALSE"> FALSE </option>
+                    <option value="TRUE"> TRUE </option>
+                  </Form.Control>
+                </Form.Group>
+              </Form>
+            </Modal.Body>
+            <Modal.Footer style={{ border: "none", justifyContent: "center" }}>
+              <button
+                className={styles.modalBtn}
+                onClick={() => {
+                  const newMenuItemInfo = state.mealData.filter(
+                    (meal) => meal.meal_uid === state.newMeal.meal_uid
+                  )[0];
+                  // YYYY-MM-DD seems to work for request parameter, no need to add HH:MM:SS
+                  const newMenuItem = {
+                    ...state.newMeal,
+                    ...newMenuItemInfo,
+                    menu_meal_id: state.newMeal.meal_uid,
+                    delivery_days: ["Sunday", "Monday"],
+                    meal_price: "10",
                   };
-                  dispatch({
-                    type: "COPY_FROM_MENU_DATE",
-                    payload: newDateObject,
-                  });
+                  console.log(newMenuItem);
+                  axios
+                    .post(`${API_URL}menu`, newMenuItem)
+                    .then((response) => {
+                      // Save New menu item with id on screen
+                      const newMenuId = response.data.meal_uid;
+                      const newMenuItemId = {
+                        ...newMenuItem,
+                        menu_uid: newMenuId,
+                      };
+                      const newEditedMenu = [...state.editedMenu];
+                      newEditedMenu.push(newMenuItemId);
+                      dispatch({ type: "EDIT_MENU", payload: newEditedMenu });
+                      // Save menu item after switching to different date and back
+                      updateMenu();
+                      toggleAddMenu();
+                    })
+                    .catch((err) => {
+                      if (err.response) {
+                        // eslint-disable-next-line no-console
+                        console.log(err.response);
+                      }
+                      // eslint-disable-next-line no-console
+                      console.log(err);
+                    });
                 }}
               >
-                <option value="" hidden>
-                  Choose date
-                </option>
-                {menuDates.map((date) => (
-                  <option value={date.value} key={date.value}>
-                    {date.display}
-                  </option>
-                ))}
-              </Form.Control>
-            </Form.Group>
-            <Form.Group
-              style={{ display: "flex", alignItems: "center", width: "100%" }}
-            >
-              <Form.Label className={styles.modalFormLabel}>
-                Copy To Date
-              </Form.Label>
-              <Form.Control
-                type="date"
-                value={state.copyDate.date2}
-                onChange={(event) => {
-                  const copyToDate = event.target.value;
-                  const newDateObject = {
-                    ...state.copyDate,
-                    date2: copyToDate,
-                  };
-                  dispatch({
-                    type: "COPY_FROM_MENU_DATE",
-                    payload: newDateObject,
-                  });
-                }}
-              />
-            </Form.Group>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer style={{ border: "none", justifyContent: "center" }}>
-          <button
-            className={styles.modalBtn}
-            // this is where i will call the endpoint to copy over date1 -> date2
-            onClick={() => {
-              // YYYY-MM-DD seems to work for request parameter, no need to add HH:MM:SS
-              const newDateObject = {
-                ...state.copyDate,
-                date1: state.copyDate.date1,
-                date2: state.copyDate.date2,
-              };
-              axios
-                .post(`${API_URL}Copy_Menu`, newDateObject)
-                .then((response) => {
-                  toggleCopyDate();
-                });
+                Save Menu Item
+              </button>
+            </Modal.Footer>
+          </div>
+        </div>
+      )}
+
+      {state.showAddDate && (
+        <div
+          style={{
+            height: "100%",
+            width: "100%",
+            zIndex: "101",
+            left: "0",
+            top: "0",
+            overflow: "auto",
+            position: "fixed",
+            display: "grid",
+            backgroundColor: "rgba(255, 255, 255, 0.8)",
+          }}
+        >
+          <div
+            style={{
+              position: "relative",
+              justifySelf: "center",
+              alignSelf: "center",
+              display: "block",
+              border: "#ff6505 solid",
+              backgroundColor: "#FEF7E0",
+              // height: "900px",
+              width: "700px",
+              zIndex: "102",
+
+              borderRadius: "20px",
             }}
           >
-            Copy Menu
-          </button>
-        </Modal.Footer>
-      </Modal>
+            <div className={styles.modalCloseBtnContainer}>
+              <ModalCloseBtn
+                style={{ cursor: "pointer" }}
+                onClick={toggleAddDate}
+              />
+            </div>
+            <div
+              style={{
+                border: "none",
+                paddingLeft: "15px",
+                fontWeight: "bold",
+              }}
+            >
+              <Modal.Title> Add Menu Date </Modal.Title>
+            </div>
+            <Modal.Body>
+              <Form>
+                <Form.Group
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    width: "100%",
+                  }}
+                >
+                  <Form.Label className={styles.modalFormLabel}>
+                    Menu Date
+                  </Form.Label>
+                  <Form.Control
+                    type="date"
+                    value={state.newDate.menu_date}
+                    onChange={(event) => {
+                      const newDate = event.target.value;
+                      const newDateObject = {
+                        ...state.newDate,
+                        menu_date: newDate,
+                      };
+                      dispatch({
+                        type: "EDIT_NEW_MENU_DATE",
+                        payload: newDateObject,
+                      });
+                    }}
+                  />
+                </Form.Group>
+              </Form>
+            </Modal.Body>
+            <Modal.Footer style={{ border: "none", justifyContent: "center" }}>
+              <button className={styles.modalBtn} onClick={saveMenuTemplate}>
+                Save Menu Date with Template
+              </button>
+            </Modal.Footer>
+          </div>
+        </div>
+      )}
+
+      {state.showCopyDate && (
+        <div
+          style={{
+            height: "100%",
+            width: "100%",
+            zIndex: "101",
+            left: "0",
+            top: "0",
+            overflow: "auto",
+            position: "fixed",
+            display: "grid",
+            backgroundColor: "rgba(255, 255, 255, 0.8)",
+          }}
+        >
+          <div
+            style={{
+              position: "relative",
+              justifySelf: "center",
+              alignSelf: "center",
+              display: "block",
+              border: "#ff6505 solid",
+              backgroundColor: "#FEF7E0",
+              // height: "900px",
+              width: "700px",
+              zIndex: "102",
+
+              borderRadius: "20px",
+            }}
+          >
+            <div className={styles.modalCloseBtnContainer}>
+              <ModalCloseBtn
+                style={{ cursor: "pointer" }}
+                onClick={toggleCopyDate}
+              />
+            </div>
+            <div
+              style={{
+                border: "none",
+                paddingLeft: "15px",
+                fontWeight: "bold",
+              }}
+            >
+              <Modal.Title> Copy Menu </Modal.Title>
+            </div>
+            <Modal.Body style={{ border: "none" }}>
+              <Form>
+                <Form.Group
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    width: "100%",
+                  }}
+                >
+                  <Form.Label className={styles.modalFormLabel}>
+                    Copy From Date
+                  </Form.Label>
+                  <Form.Control
+                    as="select"
+                    type="date"
+                    value={state.copyDate.date1}
+                    onChange={(event) => {
+                      copyDate(event.target.value);
+                      const copyToDate = event.target.value;
+                      const newDateObject = {
+                        ...state.copyDate,
+                        date1: copyToDate,
+                      };
+                      dispatch({
+                        type: "COPY_FROM_MENU_DATE",
+                        payload: newDateObject,
+                      });
+                    }}
+                  >
+                    <option value="" hidden>
+                      Choose date
+                    </option>
+                    {menuDates.map((date) => (
+                      <option value={date.value} key={date.value}>
+                        {date.display}
+                      </option>
+                    ))}
+                  </Form.Control>
+                </Form.Group>
+                <Form.Group
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    width: "100%",
+                  }}
+                >
+                  <Form.Label className={styles.modalFormLabel}>
+                    Copy To Date
+                  </Form.Label>
+                  <Form.Control
+                    type="date"
+                    value={state.copyDate.date2}
+                    onChange={(event) => {
+                      const copyToDate = event.target.value;
+                      const newDateObject = {
+                        ...state.copyDate,
+                        date2: copyToDate,
+                      };
+                      dispatch({
+                        type: "COPY_FROM_MENU_DATE",
+                        payload: newDateObject,
+                      });
+                    }}
+                  />
+                </Form.Group>
+              </Form>
+            </Modal.Body>
+            <Modal.Footer style={{ border: "none", justifyContent: "center" }}>
+              <button
+                className={styles.modalBtn}
+                // this is where i will call the endpoint to copy over date1 -> date2
+                onClick={() => {
+                  // YYYY-MM-DD seems to work for request parameter, no need to add HH:MM:SS
+                  const newDateObject = {
+                    ...state.copyDate,
+                    date1: state.copyDate.date1,
+                    date2: state.copyDate.date2,
+                  };
+                  axios
+                    .post(`${API_URL}Copy_Menu`, newDateObject)
+                    .then((response) => {
+                      toggleCopyDate();
+                    });
+                }}
+              >
+                Copy Menu
+              </button>
+            </Modal.Footer>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
