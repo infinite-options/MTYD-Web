@@ -190,7 +190,7 @@ function Zones ({history,...props}) {
         .post(`${API_URL}update_zones/create`,newZone)
         .then(() => {
           getZone();
-          toggleEditZone(initialState.editedZone)
+          // toggleEditZone(initialState.editedZone)
         })
         .catch((err) => {
           if (err.response) {
@@ -209,7 +209,7 @@ function Zones ({history,...props}) {
           const newZones = [...state.zones];
           newZones[zoneIndex] = state.editedZone;
           dispatch({ type: 'FETCH_ZONES', payload: newZones});
-          toggleEditZone(initialState.editedZone)
+          // toggleEditZone(initialState.editedZone)
         })
         .catch((err) => {
           if (err.response) {
@@ -224,11 +224,12 @@ function Zones ({history,...props}) {
 
   const createDropdownZones = () => {
     let items = []
+    items.push(<option key={-1} value={-1}>Select Zone</option>)
     for (let i = 0; i < state.zones.length; i++) {
       // console.log(i)
       // console.log(state.zones[i])
       items.push(
-        <option key={i} value={i}>{state.zones[i].zone_name}</option>
+        <option key={i} value={i}>{state.zones[i].zone_name + ", " + state.zones[i].z_delivery_day} </option>
       )
     }
     return items
@@ -240,10 +241,54 @@ function Zones ({history,...props}) {
 
   function initMap() {
     if (document.getElementById("map")) {
+
+      let tempLat = (parseFloat(state.editedZone.LB_lat) + parseFloat(state.editedZone.LT_lat) + parseFloat(state.editedZone.RB_lat) + parseFloat(state.editedZone.RT_lat))/4
+      let tempLong = (parseFloat(state.editedZone.LB_long) + parseFloat(state.editedZone.LT_long) + parseFloat(state.editedZone.RB_long) + parseFloat(state.editedZone.RT_long))/4
+      let tempZoom = 13
+
+      if (isNaN(tempLat) || isNaN(tempLong)) {
+        tempLat = 37.2872
+        tempLong = -121.9500
+        tempZoom = 11
+      }
+
       map = new google.maps.Map(document.getElementById("map"), {
-        center: { lat: 37.3382, lng: -121.8863 },
-        zoom: 12,
+        center: { lat: tempLat, lng: tempLong },
+        zoom: tempZoom,
       });
+
+      let zonePolygons = []
+
+      for (let i = 0; i < state.zones.length; i++) {
+        zonePolygons.push(
+          [
+            { lat: parseFloat(state.zones[i].LB_lat), lng: parseFloat(state.zones[i].LB_long) },
+            { lat: parseFloat(state.zones[i].LT_lat), lng: parseFloat(state.zones[i].LT_long) },
+            { lat: parseFloat(state.zones[i].RT_lat), lng: parseFloat(state.zones[i].RT_long) },
+            { lat: parseFloat(state.zones[i].RB_lat), lng: parseFloat(state.zones[i].RB_long) }
+          ]
+        )
+      }
+
+      let polyObjects = []
+
+      for (let i = 0; i < zonePolygons.length; i++) {
+        let polyColor = state.zones[i].zone_name.split(" ")[0]
+        polyObjects.push(
+          new google.maps.Polygon({
+            path: zonePolygons[i],
+            strokeColor: polyColor,
+            strokeOpacity: 0.8,
+            strokeWeight: 2,
+            fillColor: polyColor,
+            fillOpacity: 0.35
+          })
+        )
+      }
+
+      for (let i = 0; i< polyObjects.length; i++) {
+        polyObjects[i].setMap(map)
+      }
     } else {
       console.log("map not found")
     }
@@ -252,7 +297,7 @@ function Zones ({history,...props}) {
   // Fetch Zones
   useEffect(() => {
     getZone();
-    initMap()
+    // initMap()
   },[]) 
 
   if (!state.mounted) {
@@ -260,7 +305,7 @@ function Zones ({history,...props}) {
   }
 
   return (
-    <div style={{backgroundColor: '#F26522'}}>
+    <div style={{backgroundColor: '#F26522', height: "900px"}}>
 
       <AdminNavBar currentPage={'edit-meal'}/>
 
@@ -286,22 +331,29 @@ function Zones ({history,...props}) {
 
       <div
         className={styles.containerMeals}
-        style={{
-          maxWidth: '100%',
-        }}
+        // style={{
+        //   maxWidth: '100%',
+        // }}
       > 
-        <div style={{width: "100%", borderStyle: "dotted", minHeight: "100px"}}>
-          <div style={{width: "50%", borderStyle: "dotted", borderColor: "blue", minHeight: "100px", float: "left"}}>
+        <div style={{width: "100%"}}>
+          <div style={{width: "50%", float: "left"}}>
             <div className = {styles.googleMap} id="map">
             </div>
+            {initMap()}
           </div>
-          <div style={{width: "50%", borderStyle: "dotted", borderColor: "red", float: "left"}}>
-            <div style={{width: "60%", borderStyle: "dotted", borderColor: "green", float: "left"}}>
+          <div style={{width: "50%", float: "left"}}>
+            <div style={{width: "60%", float: "left"}}>
               <select 
                 className={styles.dropdown}
                 onChange={e => {
-                  toggleEditZone(state.zones[e.target.value])
-                  console.log(state.zones[e.target.value])
+                  if( e.target.value != -1) {
+                    toggleEditZone(state.zones[e.target.value])
+                    console.log(state.zones[e.target.value])
+                  } else {
+                    toggleEditZone(initialState.editedZone)
+                  }
+                  // toggleEditZone(state.zones[e.target.value])
+                  // console.log(state.zones[e.target.value])
                 }}
               >
                 {createDropdownZones()}
@@ -433,7 +485,7 @@ function Zones ({history,...props}) {
               />
 
             </div>
-            <div style={{width: "40%", borderStyle: "dotted", borderColor: "green", minHeight: "100px", float: "left"}}>
+            <div style={{width: "40%", float: "left"}}>
               <div>
                 <div>Zone UID:</div>
                 <Form.Control
@@ -540,7 +592,7 @@ function Zones ({history,...props}) {
       </div>
       <Modal
         show={state.editingZone}
-        onHide={() => toggleEditZone(initialState.editedZone)}
+        // onHide={() => toggleEditZone(initialState.editedZone)}
         size='lg'
         animation={false}
       >
@@ -804,7 +856,7 @@ function Zones ({history,...props}) {
         <Modal.Footer>
           <Button
             variant="secondary"
-            onClick={() => toggleEditZone(initialState.editedZone)}
+            // onClick={() => toggleEditZone(initialState.editedZone)}
           >
             Close
           </Button>

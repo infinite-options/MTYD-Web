@@ -28,6 +28,7 @@ const initialState = {
     meal_sugar: '',
     meal_fat: '',
     meal_sat: '',
+    meal_status: ''
   },
   selectedFile: null,
   previewLink: ""
@@ -307,7 +308,9 @@ function EditMeal({history, ...props}) {
     bodyFormData.append('meal_fat', state.editedMeal.meal_fat)
     bodyFormData.append('meal_sat', state.editedMeal.meal_sat)
     bodyFormData.append('meal_business', activeBusiness)
+    bodyFormData.append('meal_status', state.editedMeal.meal_status)
     bodyFormData.append('meal_uid', state.editedMeal.meal_uid)
+    
 
     // console.log(bodyFormData.values())
     for(var pair of bodyFormData.entries()) {
@@ -364,6 +367,7 @@ function EditMeal({history, ...props}) {
     bodyFormData.append('meal_fat', state.editedMeal.meal_fat)
     bodyFormData.append('meal_sat', state.editedMeal.meal_sat)
     bodyFormData.append('meal_business', activeBusiness)
+    bodyFormData.append('meal_status', state.editedMeal.meal_status)
 
     // console.log(bodyFormData.values())
     for(var pair of bodyFormData.entries()) {
@@ -460,7 +464,7 @@ function EditMeal({history, ...props}) {
                 <th style={{textAlign:"center", display:"inline-block"}} width = "7%" height="45">{allMeals[index].meal_sugar}g</th>
                 <th style={{textAlign:"center", display:"inline-block"}} width = "7%" height="45">{allMeals[index].meal_fat}%</th>
                 <th style={{textAlign:"center", display:"inline-block"}} width = "7%" height="45">{allMeals[index].meal_sat}%</th>
-                <th style={{textAlign:"center", display:"inline-block"}} width = "7%" height="45">Status</th>
+                <th style={{textAlign:"center", display:"inline-block"}} width = "7%" height="45">{allMeals[index].meal_status}</th>
                 <th style={{textAlign:"center", display:"inline-block"}} width = "7%" height="45">
                   <div className={styles.editIcon}
                     onClick={() => {
@@ -1450,6 +1454,8 @@ function EditMeal({history, ...props}) {
                       />
                     </Col>
                   </Form.Group>
+
+
                   
                  
                 </Form>
@@ -1609,6 +1615,25 @@ function EditMeal({history, ...props}) {
                       />
                     </Col>
                   </Form.Group>
+
+                  <Form.Group as={Row}>
+                  <Form.Label column sm={3} style={{color: "#F26522"}}>
+                    Status
+                  </Form.Label>
+                  <Col sm={9}>
+                    <Form.Control
+                      as="textarea"
+                      value={state.editedMeal.meal_status}
+                      placeholder="Placeholder for status"
+                      onChange={
+                        (event) => {
+                          editMeal('meal_status', event.target.value );
+                        }
+                      }
+                    />
+                  </Col>
+                </Form.Group>
+
                   <Row>
                     <Col
                       style={{
@@ -2303,6 +2328,25 @@ function EditMeal({history, ...props}) {
                     />
                   </Col>
                 </Form.Group>
+                
+                <Form.Group as={Row}>
+                  <Form.Label column sm={3} style={{color: "#F26522"}}>
+                    Status
+                  </Form.Label>
+                  <Col sm={9}>
+                    <Form.Control
+                      as="textarea"
+                      
+                      placeholder="Placeholder for status"
+                      onChange={
+                        (event) => {
+                          editMeal('meal_status', event.target.value );
+                        }
+                      }
+                    />
+                  </Col>
+                </Form.Group>
+
                 <Row>
                   <Col
                     style={{
