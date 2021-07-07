@@ -161,6 +161,7 @@ class AdminEditModal extends React.Component {
       errorLinkText: '',
       errorHeader: '',
       showConfirmModal: false,
+			// showConfirmModal: this.props.defaultDelete,
       confirmModal: null,
       deletingPurchase: false,
       deleteSuccess: null,
@@ -168,7 +169,8 @@ class AdminEditModal extends React.Component {
       windowHeight: undefined,
       windowWidth: undefined,
       refundAmount: 0,
-      refundError: 'Error attempting to refund subscription'
+      refundError: 'Error attempting to refund subscription',
+			successfulEdit: false
       // narrowView: true
     };
 
@@ -804,7 +806,8 @@ class AdminEditModal extends React.Component {
         subscriptionsLoaded: true,
         currentPlan: {...defaultCurrentPlan},
         updatedPlan: {...defaultUpdatedPlan},
-        deliveryInfo: {...defaultDeliveryInfo}
+        deliveryInfo: {...defaultDeliveryInfo},
+				showConfirmModal: this.props.defaultDelete
       }), () => {
         this.calculateDifference();
       });
@@ -981,19 +984,25 @@ class AdminEditModal extends React.Component {
 
             let fetchedSubscriptions = res.data.result;
 
-            this.displayErrorModal('Success!', `
-              OLD MEAL PLAN: ${this.state.currentPlan.meals} meals, ${this.state.currentPlan.deliveries} deliveries
-              NEW MEAL PLAN: ${this.state.updatedPlan.meals} meals, ${this.state.updatedPlan.deliveries} deliveries
-            `, 
-              'OK', 'back'
-            );
+						this.setState({
+							successfulEdit: true
+						}, () => {
+							this.displayErrorModal('Success!', `
+								OLD MEAL PLAN: ${this.state.currentPlan.meals} meals, ${this.state.currentPlan.deliveries} deliveries
+								NEW MEAL PLAN: ${this.state.updatedPlan.meals} meals, ${this.state.updatedPlan.deliveries} deliveries
+							`, 
+								'OK', 'back'
+							);
 
-            console.log("subscriptions loaded? ", this.state.subscriptionsLoaded);
-            console.log(this.state.defaultSet === false);
-            console.log(this.state.refreshingPrice);
-            console.log(this.activeChanges());
+							console.log("subscriptions loaded? ", this.state.subscriptionsLoaded);
+							console.log(this.state.defaultSet === false);
+							console.log(this.state.refreshingPrice);
+							console.log(this.activeChanges());
 
-            this.loadSubscriptions(fetchedSubscriptions, this.state.discounts, UPDATED);
+							console.log("(change_purchase) resetting customer: ", this.state.customerUid);
+							this.props.refreshPlans(this.state.customerUid);
+							this.loadSubscriptions(fetchedSubscriptions, this.state.discounts, UPDATED);
+						});
           })
           .catch(err => {
             console.log(err);
@@ -1150,9 +1159,11 @@ class AdminEditModal extends React.Component {
               this.setState({
                 deletingPurchase: false,
                 deleteSuccess: true
-              });
-
-              this.loadSubscriptions(fetchedSubscriptions, this.state.discounts, DEFAULT);
+              }, () => {
+								console.log("(cancel_purchase) resetting customer: ", this.state.customerUid);
+								this.props.refreshPlans(this.state.customerUid);
+								this.loadSubscriptions(fetchedSubscriptions, this.state.discounts, DEFAULT);
+							});
             })
             .catch(err => {
               console.log("refund error: ", err);
@@ -2002,6 +2013,30 @@ class AdminEditModal extends React.Component {
         {/* {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
         {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null} */}
 
+				{this.state.subscriptionsLoaded === true
+					? null
+					: <div
+							style={{
+								color: 'red',
+								zIndex: '99',
+								height: 'calc(96% - 166px)',
+								width: 'calc(100% - 44px)',
+								// height: '50vh',
+								// width: '50vw',
+								// border: '1px solid blue',
+								borderRadius: '0 0 15px 15px',
+								position: 'absolute',
+								top: '164px',
+								backgroundColor: '#F7F4E5',
+								display: 'flex',
+								justifyContent: 'center',
+								alignItems: 'center'
+							}}
+						>
+							<img src={m4me_logo} />
+						</div>
+				}
+
         <div className={styles.sectionHeaderUL}>
           Edit Plan
         </div>
@@ -2031,25 +2066,7 @@ class AdminEditModal extends React.Component {
           } */}
           {this.state.subscriptionsLoaded === true
             ? this.showPlanDetails(this.state.windowWidth) 
-            : <div
-                style={{
-                  color: 'red',
-                  zIndex: '99',
-									height: '100vh',
-                  width: '100%',
-                  // height: '50vh',
-                  // width: '50vw',
-                  // border: 'inset',
-                  position: 'fixed',
-                  top: '0',
-                  backgroundColor: '#F7F4E5',
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center'
-                }}
-              >
-                <img src={m4me_logo} />
-              </div>
+            : null
           }
 					{/* {this.showPlanDetails(this.state.windowWidth)} */}
         </div>
@@ -2648,6 +2665,9 @@ class AdminEditModal extends React.Component {
                           onClick = {() => {
                             if(this.state.errorLink === 'back'){
                               this.displayErrorModal();
+															if(this.state.successfulEdit === true) {
+																this.props.toggleEditModal(false);
+															}
                             } else {
                               this.props.history.push(this.state.errorLink);
                             }
@@ -2778,6 +2798,7 @@ class AdminEditModal extends React.Component {
                               deleteSuccess: null,
                               confirmModal: styles.errorModalPopUpHide
                             });
+														this.props.toggleEditModal(false);
                           }}
                         >
                           OK
