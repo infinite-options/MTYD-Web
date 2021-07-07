@@ -1077,7 +1077,7 @@ function OrdersIngredients({ history, ...props }) {
                           <TableCell
                             style={{ borderBottom: "1px solid #f26522" }}
                           >
-                            {item.jt_name}
+                            {item.meal_name}
                           </TableCell>
                           <TableCell
                             style={{ borderBottom: "1px solid #f26522" }}
@@ -1180,7 +1180,7 @@ function OrdersIngredients({ history, ...props }) {
                           <TableCell
                             style={{ borderBottom: "1px solid #f26522" }}
                           >
-                            {getBusinessName(item.meal_business)}
+                            {getBusinessName(item.business_uid)}
                           </TableCell>
                           <TableCell
                             style={{ borderBottom: "1px solid #f26522" }}
@@ -1284,7 +1284,7 @@ function OrdersIngredients({ history, ...props }) {
                           <TableCell
                             style={{ borderBottom: "1px solid #f26522" }}
                           >
-                            {item.total_ingredient_qty}
+                            {item.total_qty}
                           </TableCell>
                           <TableCell
                             style={{ borderBottom: "1px solid #f26522" }}

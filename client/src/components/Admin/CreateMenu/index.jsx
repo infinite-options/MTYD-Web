@@ -5,6 +5,7 @@ import { formatTime, sortedArray } from "../../../reducers/helperFuncs";
 import { ReactComponent as LeftArrow } from "./static/dateLeftArrow.svg";
 import { ReactComponent as RightArrow } from "./static/dateRightArrow.svg";
 import { ReactComponent as ModalCloseBtn } from "./static/modalClose.svg";
+import AdminNavBar from "../AdminNavBar";
 
 import {
   Breadcrumb,
@@ -481,6 +482,7 @@ function CreateMenu({ history, ...props }) {
           const fullMenu = response.data.result;
           if (fullMenu !== undefined) {
             dispatch({ type: "FETCH_MENU", payload: fullMenu });
+            dispatch({ type: "EDIT_MENU", payload: fullMenu });
           }
         }
       })
@@ -570,10 +572,22 @@ function CreateMenu({ history, ...props }) {
   // Save Upodate menu item
   const updateMenuItem = (menuItem) => {
     if (menuItem.menu_uid) {
+      const updatedMenuItem = {
+        menu_uid: menuItem.menu_uid,
+        menu_date: menuItem.menu_date.substring(0, 10) + " 00:00:00",
+        menu_category: menuItem.menu_category,
+        menu_type: menuItem.menu_type,
+        meal_cat: menuItem.meal_cat,
+        menu_meal_id: menuItem.meal_uid,
+        default_meal: menuItem.default_meal,
+        delivery_days: "[Sunday, Monday]",
+        meal_price: "10",
+      };
       // Update previous item
       axios
-        .put(`${API_URL}menu`, menuItem)
-        .then(() => {
+        .put(`${API_URL}menu`, updatedMenuItem)
+        .then((response) => {
+          console.log(response);
           updateMenu();
         })
         .catch((err) => {
@@ -581,19 +595,25 @@ function CreateMenu({ history, ...props }) {
             // eslint-disable-next-line no-console
             console.log(err.response);
           }
-          // eslint-disable-next-line no-console
-          console.log(err);
+          // eslint-disa r);
         });
     } else {
       // Saving item from template
       const newMenuItem = {
-        ...menuItem,
-        delivery_days: ["Sunday", "Monday"],
+        menu_date: menuItem.menu_date.substring(0, 10) + " 00:00:00",
+        menu_category: menuItem.menu_category,
+        menu_type: menuItem.menu_type,
+        meal_cat: menuItem.meal_category,
+        menu_meal_id: menuItem.meal_uid,
+        default_meal: menuItem.default_meal,
+        delivery_days: "[Sunday, Monday]",
         meal_price: "10",
       };
+      console.log(newMenuItem);
       axios
-        .post(`${API_URL}menu`, newMenuItem)
+        .post(`${API_URL}menu`, {})
         .then((response) => {
+          console.log(response);
           const newMenuId = response.data.meal_uid;
           const newMenuItemId = {
             ...newMenuItem,
@@ -618,6 +638,7 @@ function CreateMenu({ history, ...props }) {
   // Delete menu item
   const deleteMenuItem = (menuItem) => {
     const menuId = menuItem.menu_uid;
+    console.log(menuId);
     const menuIndex = state.editedMenu.indexOf(menuItem);
     if (menuId) {
       // Delete from database
@@ -627,7 +648,8 @@ function CreateMenu({ history, ...props }) {
             menu_uid: menuId,
           },
         })
-        .then(() => {
+        .then((response) => {
+          console.log(response);
           const newMenu = [...state.editedMenu];
           newMenu.splice(menuIndex, 1);
           dispatch({ type: "EDIT_MENU", payload: newMenu });
@@ -824,61 +846,63 @@ function CreateMenu({ history, ...props }) {
   }
 
   return (
-    <div className={styles.root}>
-      {console.log(state)}
-      <Container fluid className={styles.container}>
-        <Row className={styles.section}>
-          <Col
-            md="auto"
-            className={[styles.verticallyCenter, styles.bold].join(" ")}
-            style={{ fontSize: "20px" }}
-          >
-            Create / Edit Menu
-          </Col>
-          <Col md="auto" className={styles.verticallyCenter}></Col>
-          <button
-            style={{ transform: "translateX(10px)" }}
-            className={styles.dateCarouselArrowBtn}
-            onClick={() => {
-              carouselRef.current.previous();
-              dispatch({ type: "DECREMENT_DATE_INDEX" });
-            }}
-          >
-            <LeftArrow />
-          </button>
-          <Col md="auto" style={{ width: "450px" }}>
-            {state.dateIndex != null && (
-              <Carousel
-                responsive={responsive}
-                ref={carouselRef}
-                arrows={false}
-                sliderClass={styles.carouselSlider}
-                keyBoardControl
-              >
-                {menuDates.map((date) => {
-                  const dateButtonStatus =
-                    date.value === state.menuDate
-                      ? styles.datebuttonSelected
-                      : styles.datebuttonNotSelected;
-                  return (
-                    <button
-                      className={[
-                        styles.datebutton,
-                        dateButtonStatus,
-                        styles.bold,
-                      ].join(" ")}
-                      key={date.value}
-                      value={date.value}
-                      onClick={(e) => changeDate(e.target.value)}
-                    >
-                      {date.display.substring(0, 3).toUpperCase()} <br />{" "}
-                      {date.display.substring(4, 10)}
-                    </button>
-                  );
-                })}
-              </Carousel>
-            )}
-            {/* <Form>
+    <>
+      <AdminNavBar currentPage={"order-ingredients"} />
+      <div className={styles.root}>
+        {console.log(state)}
+        <Container fluid className={styles.container}>
+          <Row className={styles.section}>
+            <Col
+              md="auto"
+              className={[styles.verticallyCenter, styles.bold].join(" ")}
+              style={{ fontSize: "20px" }}
+            >
+              Create / Edit Menu
+            </Col>
+            <Col md="auto" className={styles.verticallyCenter}></Col>
+            <button
+              style={{ transform: "translateX(10px)" }}
+              className={styles.dateCarouselArrowBtn}
+              onClick={() => {
+                carouselRef.current.previous();
+                dispatch({ type: "DECREMENT_DATE_INDEX" });
+              }}
+            >
+              <LeftArrow />
+            </button>
+            <Col md="auto" style={{ width: "450px" }}>
+              {state.dateIndex != null && (
+                <Carousel
+                  responsive={responsive}
+                  ref={carouselRef}
+                  arrows={false}
+                  sliderClass={styles.carouselSlider}
+                  keyBoardControl
+                >
+                  {menuDates.map((date) => {
+                    const dateButtonStatus =
+                      date.value === state.menuDate
+                        ? styles.datebuttonSelected
+                        : styles.datebuttonNotSelected;
+                    return (
+                      <button
+                        className={[
+                          styles.datebutton,
+                          dateButtonStatus,
+                          styles.bold,
+                        ].join(" ")}
+                        key={date.value}
+                        value={date.value}
+                        onClick={(e) => changeDate(e.target.value)}
+                      >
+                        {date.display.substring(0, 3).toUpperCase()} <br />{" "}
+                        {date.display.substring(4, 10)}
+                      </button>
+                    );
+                  })}
+                </Carousel>
+              )}
+              {/* <Form>
               <Form.Group as={Row}>
                 <Col sm="6">
                   <Form.Control
@@ -898,737 +922,914 @@ function CreateMenu({ history, ...props }) {
                 </Col>
               </Form.Group>
             </Form> */}
-          </Col>
-          <button
-            style={{ transform: "translateX(0px)" }}
-            className={styles.dateCarouselArrowBtn}
-            onClick={() => {
-              carouselRef.current.next();
-              dispatch({ type: "INCREMENT_DATE_INDEX" });
-            }}
-          >
-            <RightArrow />
-          </button>
-          <Col
-            md="auto"
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "space-between",
-              width: "500px",
-              alignItems: "center",
-            }}
-          >
-            <button onClick={toggleCopyDate} className={styles.topBtn}>
-              Copy Menu
+            </Col>
+            <button
+              style={{ transform: "translateX(0px)" }}
+              className={styles.dateCarouselArrowBtn}
+              onClick={() => {
+                carouselRef.current.next();
+                dispatch({ type: "INCREMENT_DATE_INDEX" });
+              }}
+            >
+              <RightArrow />
             </button>
-            <button onClick={toggleAddDate} className={[styles.topBtn]}>
-              Add Menu Date
-            </button>
-            <button onClick={toggleAddMenu} className={styles.topBtn}>
-              Add Menu Item
-            </button>
-          </Col>
-        </Row>
-        <Row className={[styles.section, styles.main].join(" ")}>
-          <Col>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell
-                    style={{
-                      fontWeight: "bold",
-                      color: "#f26522",
-                      border: "none",
-                    }}
-                  >
-                    <TableSortLabel
+            <Col
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "flex-end",
+                width: "500px",
+                alignItems: "center",
+              }}
+            >
+              <button
+                onClick={toggleCopyDate}
+                className={styles.topBtn}
+                style={{ marginRight: "20px" }}
+              >
+                Copy Menu
+              </button>
+              <button
+                onClick={toggleAddDate}
+                className={[styles.topBtn]}
+                style={{ marginRight: "20px" }}
+              >
+                Add Menu Date
+              </button>
+              <button onClick={toggleAddMenu} className={styles.topBtn}>
+                Add Menu Item
+              </button>
+            </Col>
+          </Row>
+          <Row className={[styles.section, styles.main].join(" ")}>
+            <Col>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell
                       style={{
                         fontWeight: "bold",
                         color: "#f26522",
                         border: "none",
                       }}
-                      active={state.sortEditMenu.field === "menu_type"}
-                      direction={
-                        state.sortEditMenu.field === "menu_type"
-                          ? state.sortEditMenu.direction
-                          : "asc"
-                      }
-                      onClick={() => changeSortOptions("menu_type")}
                     >
-                      Meal Type
-                    </TableSortLabel>
-                  </TableCell>
-                  <TableCell
-                    style={{
-                      fontWeight: "bold",
-                      color: "#f26522",
-                      border: "none",
-                    }}
-                  >
-                    <TableSortLabel
-                      style={{
-                        fontWeight: "bold",
-                        color: "#f26522",
-                        border: "none",
-                      }}
-                      active={state.sortEditMenu.field === "meal_name"}
-                      direction={
-                        state.sortEditMenu.field === "meal_name"
-                          ? state.sortEditMenu.direction
-                          : "asc"
-                      }
-                      onClick={() => changeSortOptions("meal_name")}
-                    >
-                      Meal Name
-                    </TableSortLabel>
-                  </TableCell>
-                  <TableCell
-                    style={{
-                      fontWeight: "bold",
-                      color: "#f26522",
-                      border: "none",
-                    }}
-                  >
-                    Picture
-                  </TableCell>
-                  <TableCell
-                    style={{
-                      fontWeight: "bold",
-                      color: "#f26522",
-                      border: "none",
-                    }}
-                  >
-                    <TableSortLabel
-                      style={{
-                        fontWeight: "bold",
-                        color: "#f26522",
-                        border: "none",
-                      }}
-                      active={state.sortEditMenu.field === "meal_business"}
-                      direction={
-                        state.sortEditMenu.field === "meal_business"
-                          ? state.sortEditMenu.direction
-                          : "asc"
-                      }
-                      onClick={() => changeSortOptions("meal_business")}
-                    >
-                      Business
-                    </TableSortLabel>
-                  </TableCell>
-                  <TableCell
-                    style={{
-                      fontWeight: "bold",
-                      color: "#f26522",
-                      border: "none",
-                    }}
-                  >
-                    <TableSortLabel
-                      style={{
-                        fontWeight: "bold",
-                        color: "#f26522",
-                        border: "none",
-                      }}
-                      active={state.sortEditMenu.field === "meal_category"}
-                      direction={
-                        state.sortEditMenu.field === "meal_category"
-                          ? state.sortEditMenu.direction
-                          : "asc"
-                      }
-                      onClick={() => changeSortOptions("meal_category")}
-                    >
-                      Meal Category
-                    </TableSortLabel>
-                  </TableCell>
-                  <TableCell
-                    style={{
-                      fontWeight: "bold",
-                      color: "#f26522",
-                      border: "none",
-                    }}
-                  >
-                    <TableSortLabel
-                      style={{
-                        fontWeight: "bold",
-                        color: "#f26522",
-                        border: "none",
-                      }}
-                      active={state.sortEditMenu.field === "menu_category"}
-                      direction={
-                        state.sortEditMenu.field === "menu_category"
-                          ? state.sortEditMenu.direction
-                          : "asc"
-                      }
-                      onClick={() => changeSortOptions("menu_category")}
-                    >
-                      Menu Category
-                    </TableSortLabel>
-                  </TableCell>
-                  <TableCell
-                    style={{
-                      fontWeight: "bold",
-                      color: "#f26522",
-                      border: "none",
-                    }}
-                  >
-                    <TableSortLabel
-                      style={{
-                        fontWeight: "bold",
-                        color: "#f26522",
-                        border: "none",
-                      }}
-                      active={state.sortEditMenu.field === "default_meal"}
-                      direction={
-                        state.sortEditMenu.field === "default_meal"
-                          ? state.sortEditMenu.direction
-                          : "asc"
-                      }
-                      onClick={() => changeSortOptions("default_meal")}
-                    >
-                      Default Meal
-                    </TableSortLabel>
-                  </TableCell>
-                  <TableCell
-                    style={{
-                      fontWeight: "bold",
-                      color: "#f26522",
-                      border: "none",
-                    }}
-                  >
-                    Actions
-                  </TableCell>
-                  <TableCell
-                    style={{
-                      fontWeight: "bold",
-                      color: "#f26522",
-                      border: "none",
-                    }}
-                  >
-                    <TableSortLabel
-                      style={{
-                        fontWeight: "bold",
-                        color: "#f26522",
-                        border: "none",
-                      }}
-                      active={state.sortEditMenu.field === "total_qty"}
-                      direction={
-                        state.sortEditMenu.field === "total_qty"
-                          ? state.sortEditMenu.direction
-                          : "asc"
-                      }
-                      onClick={() => changeSortOptions("total_qty")}
-                    >
-                      Meals Ordered
-                    </TableSortLabel>
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {state.editedMenu
-                  .filter((item) => item.meal_name !== null)
-                  .map((mealMenu, mealMenuIndex) => {
-                    const otherMealCategories = mealMenu.meal_category
-                      ? getMealsByCategory(mealMenu.meal_category)
-                      : state.mealData;
-                    return (
-                      <TableRow
-                        key={`${mealMenuIndex} ${mealMenu.menu_uid}`}
-                        hover
+                      <TableSortLabel
+                        style={{
+                          fontWeight: "bold",
+                          color: "#f26522",
+                          border: "none",
+                        }}
+                        active={state.sortEditMenu.field === "menu_type"}
+                        direction={
+                          state.sortEditMenu.field === "menu_type"
+                            ? state.sortEditMenu.direction
+                            : "asc"
+                        }
+                        onClick={() => changeSortOptions("menu_type")}
                       >
-                        <TableCell
-                          style={{ borderBottom: "1px solid #f8bb17" }}
+                        Meal Type
+                      </TableSortLabel>
+                    </TableCell>
+                    <TableCell
+                      style={{
+                        fontWeight: "bold",
+                        color: "#f26522",
+                        border: "none",
+                      }}
+                    >
+                      <TableSortLabel
+                        style={{
+                          fontWeight: "bold",
+                          color: "#f26522",
+                          border: "none",
+                        }}
+                        active={state.sortEditMenu.field === "meal_name"}
+                        direction={
+                          state.sortEditMenu.field === "meal_name"
+                            ? state.sortEditMenu.direction
+                            : "asc"
+                        }
+                        onClick={() => changeSortOptions("meal_name")}
+                      >
+                        Meal Name
+                      </TableSortLabel>
+                    </TableCell>
+                    <TableCell
+                      style={{
+                        fontWeight: "bold",
+                        color: "#f26522",
+                        border: "none",
+                      }}
+                    >
+                      Picture
+                    </TableCell>
+                    <TableCell
+                      style={{
+                        fontWeight: "bold",
+                        color: "#f26522",
+                        border: "none",
+                      }}
+                    >
+                      <TableSortLabel
+                        style={{
+                          fontWeight: "bold",
+                          color: "#f26522",
+                          border: "none",
+                        }}
+                        active={state.sortEditMenu.field === "meal_business"}
+                        direction={
+                          state.sortEditMenu.field === "meal_business"
+                            ? state.sortEditMenu.direction
+                            : "asc"
+                        }
+                        onClick={() => changeSortOptions("meal_business")}
+                      >
+                        Business
+                      </TableSortLabel>
+                    </TableCell>
+                    <TableCell
+                      style={{
+                        fontWeight: "bold",
+                        color: "#f26522",
+                        border: "none",
+                      }}
+                    >
+                      <TableSortLabel
+                        style={{
+                          fontWeight: "bold",
+                          color: "#f26522",
+                          border: "none",
+                        }}
+                        active={state.sortEditMenu.field === "meal_category"}
+                        direction={
+                          state.sortEditMenu.field === "meal_category"
+                            ? state.sortEditMenu.direction
+                            : "asc"
+                        }
+                        onClick={() => changeSortOptions("meal_category")}
+                      >
+                        Meal Category
+                      </TableSortLabel>
+                    </TableCell>
+                    <TableCell
+                      style={{
+                        fontWeight: "bold",
+                        color: "#f26522",
+                        border: "none",
+                      }}
+                    >
+                      <TableSortLabel
+                        style={{
+                          fontWeight: "bold",
+                          color: "#f26522",
+                          border: "none",
+                        }}
+                        active={state.sortEditMenu.field === "menu_category"}
+                        direction={
+                          state.sortEditMenu.field === "menu_category"
+                            ? state.sortEditMenu.direction
+                            : "asc"
+                        }
+                        onClick={() => changeSortOptions("menu_category")}
+                      >
+                        Menu Category
+                      </TableSortLabel>
+                    </TableCell>
+                    <TableCell
+                      style={{
+                        fontWeight: "bold",
+                        color: "#f26522",
+                        border: "none",
+                      }}
+                    >
+                      <TableSortLabel
+                        style={{
+                          fontWeight: "bold",
+                          color: "#f26522",
+                          border: "none",
+                        }}
+                        active={state.sortEditMenu.field === "default_meal"}
+                        direction={
+                          state.sortEditMenu.field === "default_meal"
+                            ? state.sortEditMenu.direction
+                            : "asc"
+                        }
+                        onClick={() => changeSortOptions("default_meal")}
+                      >
+                        Default Meal
+                      </TableSortLabel>
+                    </TableCell>
+                    <TableCell
+                      style={{
+                        fontWeight: "bold",
+                        color: "#f26522",
+                        border: "none",
+                      }}
+                    >
+                      Actions
+                    </TableCell>
+                    <TableCell
+                      style={{
+                        fontWeight: "bold",
+                        color: "#f26522",
+                        border: "none",
+                      }}
+                    >
+                      <TableSortLabel
+                        style={{
+                          fontWeight: "bold",
+                          color: "#f26522",
+                          border: "none",
+                        }}
+                        active={state.sortEditMenu.field === "total_qty"}
+                        direction={
+                          state.sortEditMenu.field === "total_qty"
+                            ? state.sortEditMenu.direction
+                            : "asc"
+                        }
+                        onClick={() => changeSortOptions("total_qty")}
+                      >
+                        Meals Ordered
+                      </TableSortLabel>
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {state.editedMenu
+                    .filter((item) => item.meal_name !== null)
+                    .map((mealMenu, mealMenuIndex) => {
+                      const otherMealCategories = mealMenu.meal_category
+                        ? getMealsByCategory(mealMenu.meal_category)
+                        : state.mealData;
+                      return (
+                        <TableRow
+                          key={`${mealMenuIndex} ${mealMenu.menu_uid}`}
+                          hover
                         >
-                          {mealMenu.menu_type}
-                        </TableCell>
-                        <TableCell
-                          style={{ borderBottom: "1px solid #f8bb17" }}
-                        >
-                          <Form>
-                            <Form.Control
-                              as="select"
-                              value={mealMenu.meal_uid}
-                              onChange={(event) => {
-                                const newMenu = [...state.editedMenu];
-                                const newMealId = event.target.value;
-                                const newMealInfo = state.mealData.filter(
-                                  (meal) => meal.meal_uid === newMealId
-                                )[0];
-                                // const mealMenuIndex = newMenu.findIndex((elt) => elt.menu_uid === mealMenu.menu_uid);
-                                newMenu[mealMenuIndex] = {
-                                  ...newMenu[mealMenuIndex],
-                                  ...newMealInfo,
-                                  menu_meal_id: newMealId,
-                                };
-                                dispatch({
-                                  type: "EDIT_MENU",
-                                  payload: newMenu,
-                                });
-                              }}
-                            >
-                              <option value="" hidden>
-                                {" "}
-                                Choose Meal{" "}
-                              </option>
-                              {otherMealCategories.map((meal) => (
-                                <option
-                                  value={meal.meal_uid}
-                                  key={meal.meal_uid}
-                                >
-                                  {meal.meal_name}
+                          <TableCell
+                            style={{ borderBottom: "1px solid #f8bb17" }}
+                          >
+                            {mealMenu.menu_type}
+                          </TableCell>
+                          <TableCell
+                            style={{ borderBottom: "1px solid #f8bb17" }}
+                          >
+                            <Form>
+                              <Form.Control
+                                as="select"
+                                value={mealMenu.meal_uid}
+                                onChange={(event) => {
+                                  const newMenu = [...state.editedMenu];
+                                  const newMealId = event.target.value;
+                                  const newMealInfo = state.mealData.filter(
+                                    (meal) => meal.meal_uid === newMealId
+                                  )[0];
+                                  console.log(newMealInfo);
+                                  // const mealMenuIndex = newMenu.findIndex((elt) => elt.menu_uid === mealMenu.menu_uid);
+                                  newMenu[mealMenuIndex] = {
+                                    ...newMenu[mealMenuIndex],
+                                    ...newMealInfo,
+                                    menu_meal_id: newMealId,
+                                    business_name: getBusinessName(
+                                      newMealInfo.meal_business
+                                    ),
+                                    meal_category: newMealInfo.meal_category,
+                                  };
+                                  console.log(newMenu);
+                                  dispatch({
+                                    type: "EDIT_MENU",
+                                    payload: newMenu,
+                                  });
+                                }}
+                              >
+                                <option value="" hidden>
+                                  {" "}
+                                  Choose Meal{" "}
                                 </option>
-                              ))}
-                            </Form.Control>
-                          </Form>
-                        </TableCell>
-                        <TableCell
-                          style={{ borderBottom: "1px solid #f8bb17" }}
-                        >
-                          <img
-                            src={mealMenu.meal_photo_URL}
-                            style={{ height: "60px", width: "60px" }}
-                          ></img>
-                        </TableCell>
-                        <TableCell
-                          style={{ borderBottom: "1px solid #f8bb17" }}
-                        >
-                          {getBusinessName(mealMenu.meal_business)}
-                        </TableCell>
-                        <TableCell
-                          style={{ borderBottom: "1px solid #f8bb17" }}
-                        >
-                          {mealMenu.meal_category}
-                        </TableCell>
-                        <TableCell
-                          style={{ borderBottom: "1px solid #f8bb17" }}
-                        >
-                          {mealMenu.menu_category}
-                        </TableCell>
-                        <TableCell
-                          style={{ borderBottom: "1px solid #f8bb17" }}
-                        >
-                          <Form>
-                            <Form.Control
-                              as="select"
-                              value={mealMenu.default_meal}
-                              onChange={(event) => {
-                                const newMenu = [...state.editedMenu];
-                                const newDefaultMeal = event.target.value;
-                                // const mealMenuIndex = newMenu.findIndex((elt) => elt.menu_uid === mealMenu.menu_uid);
-                                newMenu[mealMenuIndex] = {
-                                  ...newMenu[mealMenuIndex],
-                                  default_meal: newDefaultMeal,
-                                };
-                                dispatch({
-                                  type: "EDIT_MENU",
-                                  payload: newMenu,
-                                });
+                                {otherMealCategories.map((meal) => (
+                                  <option
+                                    value={meal.meal_uid}
+                                    key={meal.meal_uid}
+                                  >
+                                    {meal.meal_name}
+                                  </option>
+                                ))}
+                              </Form.Control>
+                            </Form>
+                          </TableCell>
+                          <TableCell
+                            style={{ borderBottom: "1px solid #f8bb17" }}
+                          >
+                            <img
+                              src={mealMenu.meal_photo_URL}
+                              style={{ height: "60px", width: "60px" }}
+                            ></img>
+                          </TableCell>
+                          <TableCell
+                            style={{ borderBottom: "1px solid #f8bb17" }}
+                          >
+                            {mealMenu.business_name}
+                          </TableCell>
+                          <TableCell
+                            style={{ borderBottom: "1px solid #f8bb17" }}
+                          >
+                            {mealMenu.meal_category}
+                          </TableCell>
+                          <TableCell
+                            style={{ borderBottom: "1px solid #f8bb17" }}
+                          >
+                            {mealMenu.menu_category}
+                          </TableCell>
+                          <TableCell
+                            style={{ borderBottom: "1px solid #f8bb17" }}
+                          >
+                            <Form>
+                              <Form.Control
+                                as="select"
+                                value={mealMenu.default_meal}
+                                onChange={(event) => {
+                                  const newMenu = [...state.editedMenu];
+                                  const newDefaultMeal = event.target.value;
+                                  // const mealMenuIndex = newMenu.findIndex((elt) => elt.menu_uid === mealMenu.menu_uid);
+                                  newMenu[mealMenuIndex] = {
+                                    ...newMenu[mealMenuIndex],
+                                    default_meal: newDefaultMeal,
+                                  };
+                                  dispatch({
+                                    type: "EDIT_MENU",
+                                    payload: newMenu,
+                                  });
+                                }}
+                              >
+                                <option value="FALSE"> FALSE </option>
+                                <option value="TRUE"> TRUE </option>
+                              </Form.Control>
+                            </Form>
+                          </TableCell>
+                          <TableCell
+                            style={{
+                              borderBottom: "1px solid #f8bb17",
+                            }}
+                          >
+                            <button
+                              className={"icon-button"}
+                              onClick={() => {
+                                deleteMenuItem(mealMenu);
                               }}
                             >
-                              <option value="FALSE"> FALSE </option>
-                              <option value="TRUE"> TRUE </option>
-                            </Form.Control>
-                          </Form>
-                        </TableCell>
-                        <TableCell
-                          style={{
-                            borderBottom: "1px solid #f8bb17",
-                          }}
-                        >
-                          <button
-                            className={"icon-button"}
-                            onClick={() => {
-                              deleteMenuItem(mealMenu);
-                            }}
+                              <FontAwesomeIcon icon={faTrashAlt} />
+                            </button>
+                            <button
+                              className={"icon-button"}
+                              onClick={() => {
+                                updateMenuItem(mealMenu);
+                              }}
+                            >
+                              <FontAwesomeIcon icon={faSave} />
+                            </button>
+                          </TableCell>
+                          <TableCell
+                            style={{ borderBottom: "1px solid #f8bb17" }}
                           >
-                            <FontAwesomeIcon icon={faTrashAlt} />
-                          </button>
-                          <button
-                            className={"icon-button"}
-                            onClick={() => {
-                              updateMenuItem(mealMenu);
-                            }}
-                          >
-                            <FontAwesomeIcon icon={faSave} />
-                          </button>
-                        </TableCell>
-                        <TableCell
-                          style={{ borderBottom: "1px solid #f8bb17" }}
-                        >
-                          {mealMenu.total_qty}
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-              </TableBody>
-            </Table>
-          </Col>
-        </Row>
-      </Container>
-      <Modal
-        show={state.showAddMeal}
-        onHide={toggleAddMenu}
-        animation={false}
-        dialogClassName={styles.modalContainer}
-      >
-        <div className={styles.modalCloseBtnContainer}>
-          <ModalCloseBtn
-            style={{ cursor: "pointer" }}
-            onClick={toggleAddMenu}
-          />
-        </div>
-        <div
-          style={{ border: "none", paddingLeft: "15px", fontWeight: "bold" }}
-        >
-          <Modal.Title> Add Menu Item </Modal.Title>
-        </div>
-        <Modal.Body>
-          <Form>
-            <Form.Group
-              style={{ display: "flex", alignItems: "center", width: "100%" }}
-            >
-              <Form.Label className={styles.modalFormLabel}>
-                Menu Date
-              </Form.Label>
-              <Form.Control
-                type="date"
-                value={state.newMeal.menu_date}
-                onChange={(event) => {
-                  const newDate = event.target.value;
-                  const newMeal = {
-                    ...state.newMeal,
-                    menu_date: newDate,
-                  };
-                  dispatch({ type: "EDIT_NEW_MEAL_MENU", payload: newMeal });
-                }}
-              />
-            </Form.Group>
-            <Form.Group
-              style={{ display: "flex", alignItems: "center", width: "100%" }}
-            >
-              <Form.Label className={styles.modalFormLabel}>
-                Meal Type
-              </Form.Label>
-              <Form.Control
-                as="select"
-                value={state.newMeal.meal_type}
-                onChange={(event) => {
-                  const newMealType = event.target.value;
-                  const newMeal = {
-                    ...state.newMeal,
-                    menu_type: newMealType,
-                  };
-                  dispatch({ type: "EDIT_NEW_MEAL_MENU", payload: newMeal });
-                }}
-              >
-                <option value="" hidden>
-                  Choose Meal Type
-                </option>
-                {getMealTypes().map((mealType) => (
-                  <option value={mealType} key={mealType}>
-                    {mealType}
-                  </option>
-                ))}
-              </Form.Control>
-            </Form.Group>
-            <Form.Group
-              style={{ display: "flex", alignItems: "center", width: "100%" }}
-            >
-              <Form.Label className={styles.modalFormLabel}>Meal</Form.Label>
-              <Form.Control
-                as="select"
-                value={state.newMeal.meal_uid}
-                onChange={(event) => {
-                  const newMealId = event.target.value;
-                  const newMeal = {
-                    ...state.newMeal,
-                    meal_uid: newMealId,
-                  };
-                  dispatch({ type: "EDIT_NEW_MEAL_MENU", payload: newMeal });
-                }}
-              >
-                <option value="" hidden>
-                  Choose Meal
-                </option>
-                {state.mealData.map((meal) => (
-                  <option value={meal.meal_uid} key={meal.meal_uid}>
-                    {meal.meal_name}
-                  </option>
-                ))}
-              </Form.Control>
-            </Form.Group>
-            <Form.Group
-              style={{ display: "flex", alignItems: "center", width: "100%" }}
-            >
-              <Form.Label className={styles.modalFormLabel}>
-                Meal Category
-              </Form.Label>
-              <Form.Control
-                as="select"
-                value={state.newMeal.meal_cat}
-                onChange={(event) => {
-                  const newMealCat = event.target.value;
-                  const newMeal = {
-                    ...state.newMeal,
-                    meal_cat: newMealCat,
-                  };
-                  dispatch({ type: "EDIT_NEW_MEAL_MENU", payload: newMeal });
-                }}
-              >
-                <option value="" hidden>
-                  Choose Meal Category
-                </option>
-                {getMealCategories().map((mealCategory) => (
-                  <option value={mealCategory} key={mealCategory}>
-                    {mealCategory}
-                  </option>
-                ))}
-              </Form.Control>
-            </Form.Group>
-            <Form.Group
-              style={{ display: "flex", alignItems: "center", width: "100%" }}
-            >
-              <Form.Label className={styles.modalFormLabel}>
-                Menu Category
-              </Form.Label>
-              <Form.Control
-                as="select"
-                value={state.newMeal.menu_category}
-                onChange={(event) => {
-                  const newMenuCategory = event.target.value;
-                  const newMeal = {
-                    ...state.newMeal,
-                    menu_category: newMenuCategory,
-                  };
-                  dispatch({ type: "EDIT_NEW_MEAL_MENU", payload: newMeal });
-                }}
-              >
-                <option value="" hidden>
-                  Choose Menu Category
-                </option>
-                {getMenuCategories().map((menuCategory) => (
-                  <option value={menuCategory} key={menuCategory}>
-                    {menuCategory}
-                  </option>
-                ))}
-              </Form.Control>
-            </Form.Group>
-            <Form.Group
-              style={{ display: "flex", alignItems: "center", width: "100%" }}
-            >
-              <Form.Label className={styles.modalFormLabel}>
-                Default Meal
-              </Form.Label>
-              <Form.Control
-                as="select"
-                value={state.newMeal.default_meal}
-                onChange={(event) => {
-                  const newDefaultMeal = event.target.value;
-                  const newMeal = {
-                    ...state.newMeal,
-                    default_meal: newDefaultMeal,
-                  };
-                  dispatch({ type: "EDIT_NEW_MEAL_MENU", payload: newMeal });
-                }}
-              >
-                <option value="FALSE"> FALSE </option>
-                <option value="TRUE"> TRUE </option>
-              </Form.Control>
-            </Form.Group>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer style={{ border: "none", justifyContent: "center" }}>
-          <button
-            className={styles.modalBtn}
-            onClick={() => {
-              const newMenuItemInfo = state.mealData.filter(
-                (meal) => meal.meal_uid === state.newMeal.meal_uid
-              )[0];
-              // YYYY-MM-DD seems to work for request parameter, no need to add HH:MM:SS
-              const newMenuItem = {
-                ...state.newMeal,
-                ...newMenuItemInfo,
-                menu_meal_id: state.newMeal.meal_uid,
-                delivery_days: ["Sunday", "Monday"],
-                meal_price: "10",
-              };
-              axios
-                .post(`${API_URL}meals_ordered_by_date`, newMenuItem)
-                .then((response) => {
-                  // Save New menu item with id on screen
-                  const newMenuId = response.data.meal_uid;
-                  const newMenuItemId = {
-                    ...newMenuItem,
-                    menu_uid: newMenuId,
-                  };
-                  const newEditedMenu = [...state.editedMenu];
-                  newEditedMenu.push(newMenuItemId);
-                  dispatch({ type: "EDIT_MENU", payload: newEditedMenu });
-                  // Save menu item after switching to different date and back
-                  updateMenu();
-                  toggleAddMenu();
-                })
-                .catch((err) => {
-                  if (err.response) {
-                    // eslint-disable-next-line no-console
-                    console.log(err.response);
-                  }
-                  // eslint-disable-next-line no-console
-                  console.log(err);
-                });
+                            {mealMenu.total_qty}
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                </TableBody>
+              </Table>
+            </Col>
+          </Row>
+        </Container>
+
+        {state.showAddMeal && (
+          <div
+            style={{
+              height: "100%",
+              width: "100%",
+              zIndex: "101",
+              left: "0",
+              top: "0",
+              overflow: "auto",
+              position: "fixed",
+              display: "grid",
+              backgroundColor: "rgba(255, 255, 255, 0.8)",
             }}
           >
-            Save Menu Item
-          </button>
-        </Modal.Footer>
-      </Modal>
-      <Modal
-        show={state.showAddDate}
-        onHide={toggleAddDate}
-        animation={false}
-        dialogClassName={styles.modalContainer}
-      >
-        <div className={styles.modalCloseBtnContainer}>
-          <ModalCloseBtn
-            style={{ cursor: "pointer" }}
-            onClick={toggleAddDate}
-          />
-        </div>
-        <div
-          style={{ border: "none", paddingLeft: "15px", fontWeight: "bold" }}
-        >
-          <Modal.Title> Add Menu Date </Modal.Title>
-        </div>
-        <Modal.Body>
-          <Form>
-            <Form.Group
-              style={{ display: "flex", alignItems: "center", width: "100%" }}
+            <div
+              style={{
+                position: "relative",
+                justifySelf: "center",
+                alignSelf: "center",
+                display: "block",
+                border: "#ff6505 solid",
+                backgroundColor: "#FEF7E0",
+                zIndex: "102",
+                borderRadius: "20px",
+              }}
+              className={styles.modalWidth}
             >
-              <Form.Label className={styles.modalFormLabel}>
-                Menu Date
-              </Form.Label>
-              <Form.Control
-                type="date"
-                value={state.newDate.menu_date}
-                onChange={(event) => {
-                  const newDate = event.target.value;
-                  const newDateObject = {
-                    ...state.newDate,
-                    menu_date: newDate,
-                  };
-                  dispatch({
-                    type: "EDIT_NEW_MENU_DATE",
-                    payload: newDateObject,
-                  });
-                }}
-              />
-            </Form.Group>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer style={{ border: "none", justifyContent: "center" }}>
-          <button className={styles.modalBtn} onClick={saveMenuTemplate}>
-            Save Menu Date with Template
-          </button>
-        </Modal.Footer>
-      </Modal>
-      <Modal
-        show={state.showCopyDate}
-        onHide={toggleCopyDate}
-        animation={false}
-        dialogClassName={styles.modalContainer}
-      >
-        <div className={styles.modalCloseBtnContainer}>
-          <ModalCloseBtn
-            style={{ cursor: "pointer" }}
-            onClick={toggleCopyDate}
-          />
-        </div>
-        <div
-          style={{ border: "none", paddingLeft: "15px", fontWeight: "bold" }}
-        >
-          <Modal.Title> Copy Menu </Modal.Title>
-        </div>
-        <Modal.Body style={{ border: "none" }}>
-          <Form>
-            <Form.Group
-              style={{ display: "flex", alignItems: "center", width: "100%" }}
-            >
-              <Form.Label className={styles.modalFormLabel}>
-                Copy From Date
-              </Form.Label>
-              <Form.Control
-                as="select"
-                type="date"
-                value={state.copyDate.date1}
-                onChange={(event) => {
-                  copyDate(event.target.value);
-                  const copyToDate = event.target.value;
-                  const newDateObject = {
-                    ...state.copyDate,
-                    date1: copyToDate,
-                  };
-                  dispatch({
-                    type: "COPY_FROM_MENU_DATE",
-                    payload: newDateObject,
-                  });
+              <div className={styles.modalCloseBtnContainer}>
+                <ModalCloseBtn
+                  style={{ cursor: "pointer" }}
+                  onClick={toggleAddMenu}
+                />
+              </div>
+              <div
+                style={{
+                  border: "none",
+                  paddingLeft: "15px",
+                  fontWeight: "bold",
                 }}
               >
-                <option value="" hidden>
-                  Choose date
-                </option>
-                {menuDates.map((date) => (
-                  <option value={date.value} key={date.value}>
-                    {date.display}
-                  </option>
-                ))}
-              </Form.Control>
-            </Form.Group>
-            <Form.Group
-              style={{ display: "flex", alignItems: "center", width: "100%" }}
-            >
-              <Form.Label className={styles.modalFormLabel}>
-                Copy To Date
-              </Form.Label>
-              <Form.Control
-                type="date"
-                value={state.copyDate.date2}
-                onChange={(event) => {
-                  const copyToDate = event.target.value;
-                  const newDateObject = {
-                    ...state.copyDate,
-                    date2: copyToDate,
-                  };
-                  dispatch({
-                    type: "COPY_FROM_MENU_DATE",
-                    payload: newDateObject,
-                  });
-                }}
-              />
-            </Form.Group>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer style={{ border: "none", justifyContent: "center" }}>
-          <button
-            className={styles.modalBtn}
-            // this is where i will call the endpoint to copy over date1 -> date2
-            onClick={() => {
-              // YYYY-MM-DD seems to work for request parameter, no need to add HH:MM:SS
-              const newDateObject = {
-                ...state.copyDate,
-                date1: state.copyDate.date1,
-                date2: state.copyDate.date2,
-              };
-              axios
-                .post(`${API_URL}Copy_Menu`, newDateObject)
-                .then((response) => {
-                  toggleCopyDate();
-                });
+                <Modal.Title> Add Menu Item </Modal.Title>
+              </div>
+              <Modal.Body>
+                <Form>
+                  <Form.Group
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      width: "100%",
+                    }}
+                  >
+                    <Form.Label className={styles.modalFormLabel}>
+                      Menu Date
+                    </Form.Label>
+                    <Form.Control
+                      className={styles.modalFormInput}
+                      type="date"
+                      value={state.newMeal.menu_date}
+                      onChange={(event) => {
+                        const newDate = event.target.value;
+                        const newMeal = {
+                          ...state.newMeal,
+                          menu_date: newDate,
+                        };
+                        dispatch({
+                          type: "EDIT_NEW_MEAL_MENU",
+                          payload: newMeal,
+                        });
+                      }}
+                    />
+                  </Form.Group>
+                  <Form.Group
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      width: "100%",
+                    }}
+                  >
+                    <Form.Label className={styles.modalFormLabel}>
+                      Meal Type
+                    </Form.Label>
+                    <Form.Control
+                      className={styles.modalFormInput}
+                      as="select"
+                      value={state.newMeal.meal_type}
+                      onChange={(event) => {
+                        const newMealType = event.target.value;
+                        const newMeal = {
+                          ...state.newMeal,
+                          menu_type: newMealType,
+                        };
+                        dispatch({
+                          type: "EDIT_NEW_MEAL_MENU",
+                          payload: newMeal,
+                        });
+                      }}
+                    >
+                      <option value="" hidden>
+                        Choose Meal Type
+                      </option>
+                      {getMealTypes().map((mealType) => (
+                        <option value={mealType} key={mealType}>
+                          {mealType}
+                        </option>
+                      ))}
+                    </Form.Control>
+                  </Form.Group>
+                  <Form.Group
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      width: "100%",
+                    }}
+                  >
+                    <Form.Label className={styles.modalFormLabel}>
+                      Meal
+                    </Form.Label>
+                    <Form.Control
+                      className={styles.modalFormInput}
+                      as="select"
+                      value={state.newMeal.meal_uid}
+                      onChange={(event) => {
+                        const newMealId = event.target.value;
+                        const newMeal = {
+                          ...state.newMeal,
+                          meal_uid: newMealId,
+                        };
+                        dispatch({
+                          type: "EDIT_NEW_MEAL_MENU",
+                          payload: newMeal,
+                        });
+                      }}
+                    >
+                      <option value="" hidden>
+                        Choose Meal
+                      </option>
+                      {state.mealData.map((meal) => (
+                        <option value={meal.meal_uid} key={meal.meal_uid}>
+                          {meal.meal_name}
+                        </option>
+                      ))}
+                    </Form.Control>
+                  </Form.Group>
+                  <Form.Group
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      width: "100%",
+                    }}
+                  >
+                    <Form.Label className={styles.modalFormLabel}>
+                      Meal Category
+                    </Form.Label>
+                    <Form.Control
+                      className={styles.modalFormInput}
+                      as="select"
+                      value={state.newMeal.meal_cat}
+                      onChange={(event) => {
+                        const newMealCat = event.target.value;
+                        const newMeal = {
+                          ...state.newMeal,
+                          meal_cat: newMealCat,
+                        };
+                        dispatch({
+                          type: "EDIT_NEW_MEAL_MENU",
+                          payload: newMeal,
+                        });
+                      }}
+                    >
+                      <option value="" hidden>
+                        Choose Meal Category
+                      </option>
+                      {getMealCategories().map((mealCategory) => (
+                        <option value={mealCategory} key={mealCategory}>
+                          {mealCategory}
+                        </option>
+                      ))}
+                    </Form.Control>
+                  </Form.Group>
+                  <Form.Group
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      width: "100%",
+                    }}
+                  >
+                    <Form.Label className={styles.modalFormLabel}>
+                      Menu Category
+                    </Form.Label>
+                    <Form.Control
+                      className={styles.modalFormInput}
+                      as="select"
+                      value={state.newMeal.menu_category}
+                      onChange={(event) => {
+                        const newMenuCategory = event.target.value;
+                        const newMeal = {
+                          ...state.newMeal,
+                          menu_category: newMenuCategory,
+                        };
+                        dispatch({
+                          type: "EDIT_NEW_MEAL_MENU",
+                          payload: newMeal,
+                        });
+                      }}
+                    >
+                      <option value="" hidden>
+                        Choose Menu Category
+                      </option>
+                      {getMenuCategories().map((menuCategory) => (
+                        <option value={menuCategory} key={menuCategory}>
+                          {menuCategory}
+                        </option>
+                      ))}
+                    </Form.Control>
+                  </Form.Group>
+                  <Form.Group
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      width: "100%",
+                    }}
+                  >
+                    <Form.Label className={styles.modalFormLabel}>
+                      Default Meal
+                    </Form.Label>
+                    <Form.Control
+                      className={styles.modalFormInput}
+                      as="select"
+                      value={state.newMeal.default_meal}
+                      onChange={(event) => {
+                        const newDefaultMeal = event.target.value;
+                        const newMeal = {
+                          ...state.newMeal,
+                          default_meal: newDefaultMeal,
+                        };
+                        dispatch({
+                          type: "EDIT_NEW_MEAL_MENU",
+                          payload: newMeal,
+                        });
+                      }}
+                    >
+                      <option value="FALSE"> FALSE </option>
+                      <option value="TRUE"> TRUE </option>
+                    </Form.Control>
+                  </Form.Group>
+                </Form>
+              </Modal.Body>
+              <Modal.Footer
+                style={{ border: "none", justifyContent: "center" }}
+              >
+                <button
+                  className={styles.modalBtn}
+                  onClick={() => {
+                    const newMenuItemInfo = state.mealData.filter(
+                      (meal) => meal.meal_uid === state.newMeal.meal_uid
+                    )[0];
+                    // YYYY-MM-DD seems to work for request parameter, no need to add HH:MM:SS
+                    console.log(newMenuItemInfo);
+                    console.log(state.newMeal);
+                    const newMenuItem = {
+                      menu_date: state.newMeal.menu_date + " 00:00:00",
+                      menu_category: state.newMeal.menu_category,
+                      menu_type: state.newMeal.menu_type,
+                      meal_cat: state.newMeal.meal_cat,
+                      menu_meal_id: state.newMeal.meal_uid,
+                      default_meal: state.newMeal.default_meal,
+                      delivery_days: ["Sunday", "Monday"],
+                      meal_price: "10",
+                    };
+                    console.log(newMenuItem);
+                    axios
+                      .post(`${API_URL}menu`, newMenuItem)
+                      .then((response) => {
+                        // Save New menu item with id on screen
+                        const newMenuId = response.data.meal_uid;
+                        const newMenuItemId = {
+                          ...newMenuItem,
+                          menu_uid: newMenuId,
+                        };
+                        const newEditedMenu = [...state.editedMenu];
+                        newEditedMenu.push(newMenuItemId);
+                        dispatch({ type: "EDIT_MENU", payload: newEditedMenu });
+                        // Save menu item after switching to different date and back
+                        updateMenu();
+                        toggleAddMenu();
+                      })
+                      .catch((err) => {
+                        if (err.response) {
+                          // eslint-disable-next-line no-console
+                          console.log(err.response);
+                        }
+                        // eslint-disable-next-line no-console
+                        console.log(err);
+                      });
+                  }}
+                >
+                  Save Menu Item
+                </button>
+              </Modal.Footer>
+            </div>
+          </div>
+        )}
+
+        {state.showAddDate && (
+          <div
+            style={{
+              height: "100%",
+              width: "100%",
+              zIndex: "101",
+              left: "0",
+              top: "0",
+              overflow: "auto",
+              position: "fixed",
+              display: "grid",
+              backgroundColor: "rgba(255, 255, 255, 0.8)",
             }}
           >
-            Copy Menu
-          </button>
-        </Modal.Footer>
-      </Modal>
-    </div>
+            <div
+              style={{
+                position: "relative",
+                justifySelf: "center",
+                alignSelf: "center",
+                display: "block",
+                border: "#ff6505 solid",
+                backgroundColor: "#FEF7E0",
+                zIndex: "102",
+                borderRadius: "20px",
+              }}
+              className={styles.modalWidth}
+            >
+              <div className={styles.modalCloseBtnContainer}>
+                <ModalCloseBtn
+                  style={{ cursor: "pointer" }}
+                  onClick={toggleAddDate}
+                />
+              </div>
+              <div
+                style={{
+                  border: "none",
+                  paddingLeft: "15px",
+                  fontWeight: "bold",
+                }}
+              >
+                <Modal.Title> Add Menu Date </Modal.Title>
+              </div>
+              <Modal.Body>
+                <Form>
+                  <Form.Group
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      width: "100%",
+                    }}
+                  >
+                    <Form.Label className={styles.modalFormLabel}>
+                      Menu Date
+                    </Form.Label>
+                    <Form.Control
+                      className={styles.modalFormInput}
+                      type="date"
+                      value={state.newDate.menu_date}
+                      onChange={(event) => {
+                        const newDate = event.target.value;
+                        const newDateObject = {
+                          ...state.newDate,
+                          menu_date: newDate,
+                        };
+                        dispatch({
+                          type: "EDIT_NEW_MENU_DATE",
+                          payload: newDateObject,
+                        });
+                      }}
+                    />
+                  </Form.Group>
+                </Form>
+              </Modal.Body>
+              <Modal.Footer
+                style={{ border: "none", justifyContent: "center" }}
+              >
+                <button className={styles.modalBtn} onClick={saveMenuTemplate}>
+                  Save Menu Date with Template
+                </button>
+              </Modal.Footer>
+            </div>
+          </div>
+        )}
+
+        {state.showCopyDate && (
+          <div
+            style={{
+              height: "100%",
+              width: "100%",
+              zIndex: "101",
+              left: "0",
+              top: "0",
+              overflow: "auto",
+              position: "fixed",
+              display: "grid",
+              backgroundColor: "rgba(255, 255, 255, 0.8)",
+            }}
+          >
+            <div
+              style={{
+                position: "relative",
+                justifySelf: "center",
+                alignSelf: "center",
+                display: "block",
+                border: "#ff6505 solid",
+                backgroundColor: "#FEF7E0",
+                // height: "900px",
+                zIndex: "102",
+
+                borderRadius: "20px",
+              }}
+              className={styles.modalWidth}
+            >
+              <div className={styles.modalCloseBtnContainer}>
+                <ModalCloseBtn
+                  style={{ cursor: "pointer" }}
+                  onClick={toggleCopyDate}
+                />
+              </div>
+              <div
+                style={{
+                  border: "none",
+                  paddingLeft: "15px",
+                  fontWeight: "bold",
+                }}
+              >
+                <Modal.Title> Copy Menu </Modal.Title>
+              </div>
+              <Modal.Body style={{ border: "none" }}>
+                <Form>
+                  <Form.Group
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      width: "100%",
+                    }}
+                  >
+                    <Form.Label className={styles.modalFormLabel}>
+                      Copy From Date
+                    </Form.Label>
+                    <Form.Control
+                      className={styles.modalFormInput}
+                      as="select"
+                      type="date"
+                      value={state.copyDate.date1}
+                      onChange={(event) => {
+                        copyDate(event.target.value);
+                        const copyToDate = event.target.value;
+                        const newDateObject = {
+                          ...state.copyDate,
+                          date1: copyToDate,
+                        };
+                        dispatch({
+                          type: "COPY_FROM_MENU_DATE",
+                          payload: newDateObject,
+                        });
+                      }}
+                    >
+                      <option value="" hidden>
+                        Choose date
+                      </option>
+                      {menuDates.map((date) => (
+                        <option value={date.value} key={date.value}>
+                          {date.display}
+                        </option>
+                      ))}
+                    </Form.Control>
+                  </Form.Group>
+                  <Form.Group
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      width: "100%",
+                    }}
+                  >
+                    <Form.Label className={styles.modalFormLabel}>
+                      Copy To Date
+                    </Form.Label>
+                    <Form.Control
+                      className={styles.modalFormInput}
+                      type="date"
+                      value={state.copyDate.date2}
+                      onChange={(event) => {
+                        const copyToDate = event.target.value;
+                        const newDateObject = {
+                          ...state.copyDate,
+                          date2: copyToDate,
+                        };
+                        dispatch({
+                          type: "COPY_FROM_MENU_DATE",
+                          payload: newDateObject,
+                        });
+                      }}
+                    />
+                  </Form.Group>
+                </Form>
+              </Modal.Body>
+              <Modal.Footer
+                style={{ border: "none", justifyContent: "center" }}
+              >
+                <button
+                  className={styles.modalBtn}
+                  // this is where i will call the endpoint to copy over date1 -> date2
+                  onClick={() => {
+                    // YYYY-MM-DD seems to work for request parameter, no need to add HH:MM:SS
+                    const newDateObject = {
+                      ...state.copyDate,
+                      date1: state.copyDate.date1,
+                      date2: state.copyDate.date2,
+                    };
+                    axios
+                      .post(`${API_URL}Copy_Menu`, newDateObject)
+                      .then((response) => {
+                        toggleCopyDate();
+                      });
+                  }}
+                >
+                  Copy Menu
+                </button>
+              </Modal.Footer>
+            </div>
+          </div>
+        )}
+      </div>
+    </>
   );
 }
 
