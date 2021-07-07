@@ -1856,7 +1856,12 @@ function CustomerInfo(props) {
             overflow: 'auto'
           }}
         >
-          <div>
+          <div
+            style={{
+              // border: 'dashed',
+              width: '100%'
+            }}
+          >
             <AdminEditModal 
               currentPlan={currentPlan}
               defaultDelete={showConfirmDelete}

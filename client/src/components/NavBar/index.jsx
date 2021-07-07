@@ -201,32 +201,7 @@ class NavBar extends React.Component {
         }
         console.log(err);
       });    
-      
-      // window.addEventListener('resize', this.updateDimensions);
-
-      // if(window.innerWidth<=800){
-      //   this.setState({
-      //     loginNameLogoutDisplay:'none'
-      //   })
-      // }else{
-      //   this.setState({
-      //     loginNameLogoutDisplay:'flex'
-      //   })
-      // } 
   }
-
-  // updateDimensions = () => {
-  //   if(window.innerWidth<=800){
-  //     this.setState({
-  //       loginNameLogoutDisplay:'none'
-  //     })
-  //   }else{
-  //     this.setState({
-  //       loginNameLogoutDisplay:'flex'
-  //     })
-  //   } 
-  // }
-
 
   render() {
 
@@ -387,30 +362,6 @@ class NavBar extends React.Component {
             }}
           >
 
-            {/* {this.state.windowWidth > 900
-              ? (
-                  <button 
-                    onClick={this.togglePopSignup}
-                    className={styles.nameBtn}
-                  >
-                    Sign Up
-                  </button>
-                )
-              : null} */}
-            {/* <div
-              style={{
-                height:'100%',
-              }}
-            >
-              <button 
-                onClick={this.togglePopSignup}
-                className={styles.signUpBtn}
-                aria-label="Click here to sign up"
-                title="Click here to sign up"
-              >
-                Sign Up
-              </button>
-            </div> */}
             {this.state.windowWidth > 900 ? (
               <div
                 onClick={this.togglePopSignup}
