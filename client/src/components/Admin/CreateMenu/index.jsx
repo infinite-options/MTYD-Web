@@ -979,12 +979,7 @@ function CreateMenu({ history, ...props }) {
                           color: "#f26522",
                           border: "none",
                         }}
-                        active={state.sortEditMenu.field === "menu_type"}
-                        direction={
-                          state.sortEditMenu.field === "menu_type"
-                            ? state.sortEditMenu.direction
-                            : "asc"
-                        }
+                        direction={state.sortEditMenu.direction}
                         onClick={() => changeSortOptions("menu_type")}
                       >
                         Meal Type
@@ -1003,12 +998,7 @@ function CreateMenu({ history, ...props }) {
                           color: "#f26522",
                           border: "none",
                         }}
-                        active={state.sortEditMenu.field === "meal_name"}
-                        direction={
-                          state.sortEditMenu.field === "meal_name"
-                            ? state.sortEditMenu.direction
-                            : "asc"
-                        }
+                        direction={state.sortEditMenu.direction}
                         onClick={() => changeSortOptions("meal_name")}
                       >
                         Meal Name
@@ -1036,13 +1026,8 @@ function CreateMenu({ history, ...props }) {
                           color: "#f26522",
                           border: "none",
                         }}
-                        active={state.sortEditMenu.field === "meal_business"}
-                        direction={
-                          state.sortEditMenu.field === "meal_business"
-                            ? state.sortEditMenu.direction
-                            : "asc"
-                        }
-                        onClick={() => changeSortOptions("meal_business")}
+                        direction={state.sortEditMenu.direction}
+                        onClick={() => changeSortOptions("business_name")}
                       >
                         Business
                       </TableSortLabel>
@@ -1060,12 +1045,7 @@ function CreateMenu({ history, ...props }) {
                           color: "#f26522",
                           border: "none",
                         }}
-                        active={state.sortEditMenu.field === "meal_category"}
-                        direction={
-                          state.sortEditMenu.field === "meal_category"
-                            ? state.sortEditMenu.direction
-                            : "asc"
-                        }
+                        direction={state.sortEditMenu.direction}
                         onClick={() => changeSortOptions("meal_category")}
                       >
                         Meal Category
@@ -1084,12 +1064,7 @@ function CreateMenu({ history, ...props }) {
                           color: "#f26522",
                           border: "none",
                         }}
-                        active={state.sortEditMenu.field === "menu_category"}
-                        direction={
-                          state.sortEditMenu.field === "menu_category"
-                            ? state.sortEditMenu.direction
-                            : "asc"
-                        }
+                        direction={state.sortEditMenu.direction}
                         onClick={() => changeSortOptions("menu_category")}
                       >
                         Menu Category
@@ -1108,12 +1083,7 @@ function CreateMenu({ history, ...props }) {
                           color: "#f26522",
                           border: "none",
                         }}
-                        active={state.sortEditMenu.field === "default_meal"}
-                        direction={
-                          state.sortEditMenu.field === "default_meal"
-                            ? state.sortEditMenu.direction
-                            : "asc"
-                        }
+                        direction={state.sortEditMenu.direction}
                         onClick={() => changeSortOptions("default_meal")}
                       >
                         Default Meal
@@ -1141,12 +1111,7 @@ function CreateMenu({ history, ...props }) {
                           color: "#f26522",
                           border: "none",
                         }}
-                        active={state.sortEditMenu.field === "total_qty"}
-                        direction={
-                          state.sortEditMenu.field === "total_qty"
-                            ? state.sortEditMenu.direction
-                            : "asc"
-                        }
+                        direction={state.sortEditMenu.direction}
                         onClick={() => changeSortOptions("total_qty")}
                       >
                         Meals Ordered
