@@ -5,6 +5,7 @@ import { formatTime, sortedArray } from "../../../reducers/helperFuncs";
 import { Breadcrumb, Container, Row, Col, Form } from "react-bootstrap";
 import {
   Table,
+  TableContainer,
   TableHead,
   TableSortLabel,
   TableBody,
@@ -37,7 +38,7 @@ const initialState = {
   },
   customersData: [],
   sortedCustomersData: [],
-  sortCustomers: {
+  sortRevenue: {
     field: "",
     direction: "",
   },
@@ -107,7 +108,7 @@ function reducer(state, action) {
     case "FILTER_ORDERS":
       return {
         ...state,
-        sortedOrdersData: action.payload,
+        ordersData: action.payload,
       };
     case "SORT_ORDERS":
       return {
@@ -125,7 +126,7 @@ function reducer(state, action) {
     case "FILTER_INGREDIENTS":
       return {
         ...state,
-        sortedIngredientsData: action.payload,
+        ingredientsData: action.payload,
       };
     case "SORT_INGREDIENTS":
       return {
@@ -140,15 +141,15 @@ function reducer(state, action) {
         ...state,
         customersData: action.payload,
       };
-    case "FILTER_CUSTOMERS":
+    case "FILTER_REVENUE":
       return {
         ...state,
-        sortedCustomersData: action.payload,
+        revenueData: action.payload,
       };
-    case "SORT_CUSTOMERS":
+    case "SORT_REVENUE":
       return {
         ...state,
-        sortCustomers: {
+        sortRevenue: {
           field: action.payload.field,
           direction: action.payload.direction,
         },
@@ -503,7 +504,7 @@ function OrdersIngredients({ history, ...props }) {
         direction: direction,
       },
     });
-    const sortedOrders = sortedArray(state.sortedOrdersData, field, direction);
+    const sortedOrders = sortedArray(state.ordersData, field, direction);
     dispatch({ type: "FILTER_ORDERS", payload: sortedOrders });
   };
 
@@ -520,31 +521,27 @@ function OrdersIngredients({ history, ...props }) {
       },
     });
     const sortedIngredients = sortedArray(
-      state.sortedIngredientsData,
+      state.ingredientsData,
       field,
       direction
     );
     dispatch({ type: "FILTER_INGREDIENTS", payload: sortedIngredients });
   };
 
-  const changeSortCustomer = (field) => {
+  const changeSortRevenue = (field) => {
     const isAsc =
-      state.sortCustomers.field === field &&
-      state.sortCustomers.direction === "asc";
+      state.sortRevenue.field === field &&
+      state.sortRevenue.direction === "asc";
     const direction = isAsc ? "desc" : "asc";
     dispatch({
-      type: "SORT_CUSTOMERS",
+      type: "SORT_REVENUE",
       payload: {
         field: field,
         direction: direction,
       },
     });
-    const sortedCustomers = sortedArray(
-      state.sortedCustomersData,
-      field,
-      direction
-    );
-    dispatch({ type: "FILTER_CUSTOMERS", payload: sortedCustomers });
+    const sortedRevenue = sortedArray(state.revenueData, field, direction);
+    dispatch({ type: "FILTER_REVENUE", payload: sortedRevenue });
   };
 
   // Change date
@@ -622,12 +619,12 @@ function OrdersIngredients({ history, ...props }) {
     // const newCustomers = getCustomerData(newDate);
     // const sortedCustomers = sortedArray(
     //   newCustomers,
-    //   state.sortCustomers.field,
-    //   state.sortCustomers.direction
+    //   state.sortRevenue.field,
+    //   state.sortRevenue.direction
     // );
     // dispatch({ type: "FILTER_ORDERS", payload: sortedOrders });
     // dispatch({ type: "FILTER_INGREDIENTS", payload: sortedIngredients });
-    // dispatch({ type: "FILTER_CUSTOMERS", payload: sortedCustomers });
+    // dispatch({ type: "FILTER_REVENUE", payload: sortedCustomers });
 
     state.defaultFlag = false;
   };
@@ -648,8 +645,8 @@ function OrdersIngredients({ history, ...props }) {
   //   const newCustomers = getCustomerData(closestToCurrDayVal);
   //   const sortedCustomers = sortedArray(
   //     newCustomers,
-  //     state.sortCustomers.field,
-  //     state.sortCustomers.direction
+  //     state.sortRevenue.field,
+  //     state.sortRevenue.direction
   //   );
 
   //   state.sortedOrdersData = sortedOrders;
@@ -713,7 +710,9 @@ function OrdersIngredients({ history, ...props }) {
 
   const filterDataByBusiness = (data, id) => {
     if (data && id) {
-      return data.filter((item) => item.meal_business === id);
+      return data.filter(
+        (item) => item.business_uid === id || item.meal_business === id
+      );
     }
     return data;
   };
@@ -769,46 +768,6 @@ function OrdersIngredients({ history, ...props }) {
   // ) {
   //   carouselRef.current.goToSlide(state.dateIndex);
   // }
-
-  // const CustomRight = ({ onClick }) => (
-  //   <button
-  //     className={styles.dateCarouselArrowBtn}
-  //     onClick={() => {
-  //       onClick();
-  //       // dispatch({ type: "INCREMENT_DATE_INDEX" });
-  //     }}
-  //     style={{ position: "absolute", right: 0 }}
-  //   >
-  //     <RightArrow />
-  //   </button>
-  // );
-  // const CustomLeft = ({ onClick }) => {
-  //   return (
-  //     <button
-  //       className={styles.dateCarouselArrowBtn}
-  //       onClick={() => {
-  //         onClick();
-  //         // dispatch({ type: "DECREMENT_DATE_INDEX" });
-  //       }}
-  //       style={{ position: "absolute", left: 0 }}
-  //     >
-  //       <LeftArrow />
-  //     </button>
-  //   );
-  // };
-
-  // const ButtonGroup = ({ next, previous, ...rest }) => {
-  //   const {
-  //     carouselState: { currentSlide, totalItems, slidesToShow },
-  //   } = rest;
-
-  //   return (
-  //     <div className={styles.carouselButtonGroup}>
-  //       <button onClick={() => previous()}>Left</button>
-  //       <button onClick={() => next()}>Right</button>
-  //     </div>
-  //   );
-  // };
 
   return (
     <>
@@ -925,72 +884,78 @@ function OrdersIngredients({ history, ...props }) {
               </button>
             </Col>
             <Col
-              md="auto"
               style={{
-                paddingTop: "10px",
-                textAlign: "center",
-                width: "195px",
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "flex-end",
+                width: "500px",
+                alignItems: "center",
               }}
             >
               <div
-                className={styles.bold}
-                style={{ marginBottom: "10px", color: "#f26522" }}
+                style={{
+                  marginRight: "30px",
+                  textAlign: "center",
+                }}
               >
-                {state.selectedBusinessID && "Contact Info"}
+                <div
+                  className={styles.bold}
+                  style={{ marginBottom: "10px", color: "#f26522" }}
+                >
+                  {state.selectedBusinessID && "Contact Info"}
+                </div>
+                <div>{state.selectedBusinessData.business_email}</div>
+                <div>{state.selectedBusinessData.business_phone_num}</div>
               </div>
-              <div>{state.selectedBusinessData.business_email}</div>
-              <div>{state.selectedBusinessData.business_phone_num}</div>
-            </Col>
-            <Col
-              md="auto"
-              style={{
-                paddingTop: "10px",
-                textAlign: "center",
-                width: "125px",
-              }}
-              className={styles.bold}
-            >
-              <div style={{ marginBottom: "10px", color: "#f26522" }}>
-                No. of Meals
-              </div>
-              <div style={{ fontSize: "20px" }}>
-                {calculateTotalMealQty(
-                  filterDataByBusiness(
-                    state.ordersData,
-                    state.selectedBusinessID
-                  )
-                )}
-              </div>
-            </Col>
-            <Col
-              md="auto"
-              className={styles.bold}
-              style={{
-                paddingTop: "10px",
-                textAlign: "center",
-                width: "140px",
-              }}
-            >
-              <div style={{ marginBottom: "10px", color: "#f26522" }}>
-                Total Revenue
-              </div>
-              <div style={{ fontSize: "20px" }}>
-                {currencyFormatter.format(
-                  calculateTotalRevenue(
+              <div
+                style={{
+                  marginRight: "30px",
+                  textAlign: "center",
+                }}
+                className={styles.bold}
+              >
+                <div style={{ marginBottom: "10px", color: "#f26522" }}>
+                  No. of Meals
+                </div>
+                <div style={{ fontSize: "20px" }}>
+                  {calculateTotalMealQty(
                     filterDataByBusiness(
-                      state.revenueData,
+                      state.ordersData,
                       state.selectedBusinessID
                     )
-                  )
-                )}
+                  )}
+                </div>
+              </div>
+              <div
+                style={{
+                  textAlign: "center",
+                }}
+                className={styles.bold}
+              >
+                <div style={{ marginBottom: "10px", color: "#f26522" }}>
+                  Total Revenue
+                </div>
+                <div style={{ fontSize: "20px" }}>
+                  {currencyFormatter.format(
+                    calculateTotalRevenue(
+                      filterDataByBusiness(
+                        state.revenueData,
+                        state.selectedBusinessID
+                      )
+                    )
+                  )}
+                </div>
               </div>
             </Col>
           </Row>
           <Row
             className={[styles.row2].join(" ")}
-            style={{ overflow: "scroll" }}
+            // style={{ overflow: "scroll" }}
           >
-            <Col className={styles.section} style={{ marginRight: 10 }}>
+            <Col
+              className={styles.section}
+              style={{ marginRight: 10, maxWidth: "40%" }}
+            >
               <div
                 className={styles.bold}
                 style={{ padding: "15px", fontSize: "18px" }}
@@ -998,119 +963,177 @@ function OrdersIngredients({ history, ...props }) {
                 Upcoming Meal Orders And Revenue:{" "}
                 {formatDisplayDate(formatToDisplayDate(state.selectedDate))}
               </div>
-              <Table responsive>
-                <TableHead>
-                  <TableRow>
-                    <TableCell
-                      style={{
-                        fontWeight: "bold",
-                        color: "#f26522",
-                        border: "none",
-                      }}
-                    >
-                      Qty.
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        fontWeight: "bold",
-                        color: "#f26522",
-                        border: "none",
-                      }}
-                    >
-                      Meal Orders
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        fontWeight: "bold",
-                        color: "#f26522",
-                        border: "none",
-                      }}
-                    >
-                      Meal Pictures
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        fontWeight: "bold",
-                        color: "#f26522",
-                        border: "none",
-                      }}
-                    >
-                      Meal Cost
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        fontWeight: "bold",
-                        color: "#f26522",
-                        border: "none",
-                      }}
-                    >
-                      Total Cost
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        fontWeight: "bold",
-                        color: "#f26522",
-                        border: "none",
-                      }}
-                    >
-                      Additional Revenue
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {state.ordersData &&
-                    filterDataByBusiness(
-                      state.ordersData,
-                      state.selectedBusinessID
-                    ).map((item) => {
-                      return (
-                        <TableRow>
-                          <TableCell
-                            style={{
-                              fontWeight: "bold",
-                              fontSize: "18px",
-                              borderBottom: "1px solid #f26522",
-                            }}
-                          >
-                            {item.total_qty}
-                          </TableCell>
-                          <TableCell
-                            style={{ borderBottom: "1px solid #f26522" }}
-                          >
-                            {item.meal_name}
-                          </TableCell>
-                          <TableCell
-                            style={{ borderBottom: "1px solid #f26522" }}
-                          >
-                            <img
-                              src={item.meal_photo_URL}
-                              className={styles.mealImg}
-                            ></img>
-                          </TableCell>
-                          <TableCell
-                            style={{ borderBottom: "1px solid #f26522" }}
-                          >
-                            {currencyFormatter.format(item.meal_cost)}
-                          </TableCell>
-                          <TableCell
-                            style={{ borderBottom: "1px solid #f26522" }}
-                          >
-                            {currencyFormatter.format(item.total_cost)}
-                          </TableCell>
-                          <TableCell
-                            style={{ borderBottom: "1px solid #f26522" }}
-                          >
-                            {currencyFormatter.format(
-                              item.total_profit_sharing
-                            )}
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                </TableBody>
-              </Table>
+              <TableContainer className={styles.tableContainer}>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell
+                        style={{
+                          fontWeight: "bold",
+                          color: "#f26522",
+                          border: "none",
+                        }}
+                      >
+                        <TableSortLabel
+                          style={{
+                            fontWeight: "bold",
+                            color: "#f26522",
+                            border: "none",
+                          }}
+                          direction={state.sortOrders.direction}
+                          onClick={() => changeSortOrder("total_qty")}
+                        >
+                          Qty.
+                        </TableSortLabel>
+                      </TableCell>
+                      <TableCell
+                        style={{
+                          fontWeight: "bold",
+                          color: "#f26522",
+                          border: "none",
+                        }}
+                      >
+                        <TableSortLabel
+                          style={{
+                            fontWeight: "bold",
+                            color: "#f26522",
+                            border: "none",
+                          }}
+                          direction={state.sortOrders.direction}
+                          onClick={() => changeSortOrder("meal_name")}
+                        >
+                          Meal Orders
+                        </TableSortLabel>
+                      </TableCell>
+                      <TableCell
+                        style={{
+                          fontWeight: "bold",
+                          color: "#f26522",
+                          border: "none",
+                        }}
+                      >
+                        Meal Pictures
+                      </TableCell>
+                      <TableCell
+                        style={{
+                          fontWeight: "bold",
+                          color: "#f26522",
+                          border: "none",
+                        }}
+                      >
+                        <TableSortLabel
+                          style={{
+                            fontWeight: "bold",
+                            color: "#f26522",
+                            border: "none",
+                          }}
+                          direction={state.sortOrders.direction}
+                          onClick={() => changeSortOrder("meal_cost")}
+                        >
+                          Meal Cost
+                        </TableSortLabel>
+                      </TableCell>
+                      <TableCell
+                        style={{
+                          fontWeight: "bold",
+                          color: "#f26522",
+                          border: "none",
+                        }}
+                      >
+                        <TableSortLabel
+                          style={{
+                            fontWeight: "bold",
+                            color: "#f26522",
+                            border: "none",
+                          }}
+                          direction={state.sortOrders.direction}
+                          onClick={() => changeSortOrder("total_cost")}
+                        >
+                          Total Cost
+                        </TableSortLabel>
+                      </TableCell>
+                      <TableCell
+                        style={{
+                          fontWeight: "bold",
+                          color: "#f26522",
+                          border: "none",
+                        }}
+                      >
+                        <TableSortLabel
+                          style={{
+                            fontWeight: "bold",
+                            color: "#f26522",
+                            border: "none",
+                          }}
+                          direction={state.sortOrders.direction}
+                          onClick={() =>
+                            changeSortOrder("total_profit_sharing")
+                          }
+                        >
+                          Additional Revenue
+                        </TableSortLabel>
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {state.ordersData &&
+                      filterDataByBusiness(
+                        state.ordersData,
+                        state.selectedBusinessID
+                      ).map((item) => {
+                        return (
+                          <TableRow>
+                            <TableCell
+                              style={{
+                                fontWeight: "bold",
+                                fontSize: "18px",
+                                borderBottom: "1px solid #f26522",
+                              }}
+                            >
+                              {item.total_qty}
+                            </TableCell>
+                            <TableCell
+                              style={{ borderBottom: "1px solid #f26522" }}
+                            >
+                              {item.meal_name}
+                            </TableCell>
+                            <TableCell
+                              style={{ borderBottom: "1px solid #f26522" }}
+                            >
+                              <img
+                                src={item.meal_photo_URL}
+                                className={styles.mealImg}
+                              ></img>
+                            </TableCell>
+                            <TableCell
+                              style={{ borderBottom: "1px solid #f26522" }}
+                            >
+                              {currencyFormatter.format(item.meal_cost)}
+                            </TableCell>
+                            <TableCell
+                              style={{ borderBottom: "1px solid #f26522" }}
+                            >
+                              {currencyFormatter.format(item.total_cost)}
+                            </TableCell>
+                            <TableCell
+                              style={{ borderBottom: "1px solid #f26522" }}
+                            >
+                              {currencyFormatter.format(
+                                item.total_profit_sharing
+                              )}
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                  </TableBody>
+                </Table>
+              </TableContainer>
             </Col>
-            <Col xs={4} className={styles.section} style={{ marginRight: 10 }}>
+            <Col
+              md="auto"
+              className={styles.section}
+              style={{ marginRight: 10, maxWidth: "31%" }}
+            >
               <div
                 className={styles.bold}
                 style={{ padding: "15px", fontSize: "18px" }}
@@ -1118,99 +1141,157 @@ function OrdersIngredients({ history, ...props }) {
                 Revenue:{" "}
                 {formatDisplayDate(formatToDisplayDate(state.selectedDate))}
               </div>
-
-              <Table responsive>
-                <TableHead>
-                  <TableRow>
-                    <TableCell
-                      style={{
-                        fontWeight: "bold",
-                        color: "#f26522",
-                        border: "none",
-                      }}
-                    >
-                      Restaurant Name
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        fontWeight: "bold",
-                        color: "#f26522",
-                        border: "none",
-                      }}
-                    >
-                      Total Cost
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        fontWeight: "bold",
-                        color: "#f26522",
-                        border: "none",
-                      }}
-                    >
-                      Additional Revenue
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        fontWeight: "bold",
-                        color: "#f26522",
-                        border: "none",
-                      }}
-                    >
-                      Total Revenue
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        fontWeight: "bold",
-                        color: "#f26522",
-                        border: "none",
-                      }}
-                    >
-                      M4Me Profits
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {state.revenueData &&
-                    filterDataByBusiness(
-                      state.revenueData,
-                      state.selectedBusinessID
-                    ).map((item) => {
-                      return (
-                        <TableRow>
-                          <TableCell
-                            style={{ borderBottom: "1px solid #f26522" }}
-                          >
-                            {getBusinessName(item.business_uid)}
-                          </TableCell>
-                          <TableCell
-                            style={{ borderBottom: "1px solid #f26522" }}
-                          >
-                            {currencyFormatter.format(item.total_cost)}
-                          </TableCell>
-                          <TableCell
-                            style={{ borderBottom: "1px solid #f26522" }}
-                          >
-                            {currencyFormatter.format(
-                              item.total_profit_sharing
-                            )}
-                          </TableCell>
-                          <TableCell
-                            style={{ borderBottom: "1px solid #f26522" }}
-                          >
-                            {currencyFormatter.format(item.total_revenue)}
-                          </TableCell>
-                          <TableCell
-                            style={{ borderBottom: "1px solid #f26522" }}
-                          >
-                            {currencyFormatter.format(item.total_M4ME_rev)}
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                </TableBody>
-              </Table>
+              <TableContainer className={styles.tableContainer}>
+                {" "}
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell
+                        style={{
+                          fontWeight: "bold",
+                          color: "#f26522",
+                          border: "none",
+                        }}
+                      >
+                        <TableSortLabel
+                          style={{
+                            fontWeight: "bold",
+                            color: "#f26522",
+                            border: "none",
+                          }}
+                          direction={state.sortRevenue.direction}
+                          onClick={() => changeSortRevenue("business_name")}
+                        >
+                          Restaurant Name
+                        </TableSortLabel>
+                      </TableCell>
+                      <TableCell
+                        style={{
+                          fontWeight: "bold",
+                          color: "#f26522",
+                          border: "none",
+                        }}
+                      >
+                        <TableSortLabel
+                          style={{
+                            fontWeight: "bold",
+                            color: "#f26522",
+                            border: "none",
+                          }}
+                          direction={state.sortRevenue.direction}
+                          onClick={() => changeSortRevenue("total_cost")}
+                        >
+                          Total Cost
+                        </TableSortLabel>
+                      </TableCell>
+                      <TableCell
+                        style={{
+                          fontWeight: "bold",
+                          color: "#f26522",
+                          border: "none",
+                        }}
+                      >
+                        <TableSortLabel
+                          style={{
+                            fontWeight: "bold",
+                            color: "#f26522",
+                            border: "none",
+                          }}
+                          direction={state.sortRevenue.direction}
+                          onClick={() =>
+                            changeSortRevenue("total_profit_sharing")
+                          }
+                        >
+                          Additional Revenue
+                        </TableSortLabel>
+                      </TableCell>
+                      <TableCell
+                        style={{
+                          fontWeight: "bold",
+                          color: "#f26522",
+                          border: "none",
+                        }}
+                      >
+                        <TableSortLabel
+                          style={{
+                            fontWeight: "bold",
+                            color: "#f26522",
+                            border: "none",
+                          }}
+                          direction={state.sortRevenue.direction}
+                          onClick={() => changeSortRevenue("total_revenue")}
+                        >
+                          Total Revenue
+                        </TableSortLabel>
+                      </TableCell>
+                      <TableCell
+                        style={{
+                          fontWeight: "bold",
+                          color: "#f26522",
+                          border: "none",
+                        }}
+                      >
+                        <TableSortLabel
+                          style={{
+                            fontWeight: "bold",
+                            color: "#f26522",
+                            border: "none",
+                          }}
+                          direction={state.sortRevenue.direction}
+                          onClick={() => changeSortRevenue("total_M4ME_rev")}
+                        >
+                          M4ME Profits
+                        </TableSortLabel>
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {state.revenueData &&
+                      filterDataByBusiness(
+                        state.revenueData,
+                        state.selectedBusinessID
+                      ).map((item) => {
+                        return (
+                          <TableRow>
+                            <TableCell
+                              style={{ borderBottom: "1px solid #f26522" }}
+                            >
+                              {item.business_name}
+                            </TableCell>
+                            <TableCell
+                              style={{ borderBottom: "1px solid #f26522" }}
+                            >
+                              {currencyFormatter.format(item.total_cost)}
+                            </TableCell>
+                            <TableCell
+                              style={{ borderBottom: "1px solid #f26522" }}
+                            >
+                              {currencyFormatter.format(
+                                item.total_profit_sharing
+                              )}
+                            </TableCell>
+                            <TableCell
+                              style={{ borderBottom: "1px solid #f26522" }}
+                            >
+                              {currencyFormatter.format(item.total_revenue)}
+                            </TableCell>
+                            <TableCell
+                              style={{ borderBottom: "1px solid #f26522" }}
+                            >
+                              {currencyFormatter.format(item.total_M4ME_rev)}
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                  </TableBody>
+                </Table>
+              </TableContainer>
             </Col>
-            <Col xs={3} className={styles.section}>
+            <Col
+              md="auto"
+              className={styles.section}
+              style={{ maxWidth: "29%" }}
+            >
               <div
                 className={styles.bold}
                 style={{ padding: "15px", fontSize: "18px" }}
@@ -1220,92 +1301,145 @@ function OrdersIngredients({ history, ...props }) {
                 {formatDisplayDate(formatToDisplayDate(state.selectedDate))}
               </div>
 
-              <Table responsive>
-                <TableHead>
-                  <TableCell
-                    style={{
-                      fontWeight: "bold",
-                      color: "#f26522",
-                      border: "none",
-                    }}
-                  >
-                    Ingredient Name
-                  </TableCell>
-                  <TableCell
-                    style={{
-                      fontWeight: "bold",
-                      color: "#f26522",
-                      border: "none",
-                    }}
-                  >
-                    Quantity
-                  </TableCell>
-                  <TableCell
-                    style={{
-                      fontWeight: "bold",
-                      color: "#f26522",
-                      border: "none",
-                    }}
-                  >
-                    Unit
-                  </TableCell>
-                  <TableCell
-                    style={{
-                      fontWeight: "bold",
-                      color: "#f26522",
-                      border: "none",
-                    }}
-                  >
-                    Measure
-                  </TableCell>
-                  <TableCell
-                    style={{
-                      fontWeight: "bold",
-                      color: "#f26522",
-                      border: "none",
-                    }}
-                  >
-                    Cost
-                  </TableCell>
-                </TableHead>
-                <TableBody>
-                  {state.ingredientsData &&
-                    filterDataByBusiness(
-                      state.ingredientsData,
-                      state.selectedBusinessID
-                    ).map((item) => {
-                      return (
-                        <TableRow>
-                          <TableCell
-                            style={{ borderBottom: "1px solid #f26522" }}
-                          >
-                            {item.ingredient_desc}
-                          </TableCell>
-                          <TableCell
-                            style={{ borderBottom: "1px solid #f26522" }}
-                          >
-                            {item.total_qty}
-                          </TableCell>
-                          <TableCell
-                            style={{ borderBottom: "1px solid #f26522" }}
-                          >
-                            {item.package_unit}
-                          </TableCell>
-                          <TableCell
-                            style={{ borderBottom: "1px solid #f26522" }}
-                          >
-                            {item.package_measure}
-                          </TableCell>
-                          <TableCell
-                            style={{ borderBottom: "1px solid #f26522" }}
-                          >
-                            {currencyFormatter.format(item.package_cost)}
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                </TableBody>
-              </Table>
+              <TableContainer className={styles.tableContainer}>
+                {" "}
+                <Table responsive>
+                  <TableHead>
+                    <TableCell
+                      style={{
+                        fontWeight: "bold",
+                        color: "#f26522",
+                        border: "none",
+                      }}
+                    >
+                      <TableSortLabel
+                        style={{
+                          fontWeight: "bold",
+                          color: "#f26522",
+                          border: "none",
+                        }}
+                        direction={state.sortIngredients.direction}
+                        onClick={() => changeSortIngredient("ingredient_desc")}
+                      >
+                        Ingredient Name
+                      </TableSortLabel>
+                    </TableCell>
+                    <TableCell
+                      style={{
+                        fontWeight: "bold",
+                        color: "#f26522",
+                        border: "none",
+                      }}
+                    >
+                      <TableSortLabel
+                        style={{
+                          fontWeight: "bold",
+                          color: "#f26522",
+                          border: "none",
+                        }}
+                        direction={state.sortIngredients.direction}
+                        onClick={() => changeSortIngredient("total_qty")}
+                      >
+                        Qty.
+                      </TableSortLabel>
+                    </TableCell>
+                    <TableCell
+                      style={{
+                        fontWeight: "bold",
+                        color: "#f26522",
+                        border: "none",
+                      }}
+                    >
+                      <TableSortLabel
+                        style={{
+                          fontWeight: "bold",
+                          color: "#f26522",
+                          border: "none",
+                        }}
+                        direction={state.sortIngredients.direction}
+                        onClick={() => changeSortIngredient("package_unit")}
+                      >
+                        Unit
+                      </TableSortLabel>
+                    </TableCell>
+                    <TableCell
+                      style={{
+                        fontWeight: "bold",
+                        color: "#f26522",
+                        border: "none",
+                      }}
+                    >
+                      <TableSortLabel
+                        style={{
+                          fontWeight: "bold",
+                          color: "#f26522",
+                          border: "none",
+                        }}
+                        direction={state.sortIngredients.direction}
+                        onClick={() => changeSortIngredient("package_measure")}
+                      >
+                        Measure
+                      </TableSortLabel>
+                    </TableCell>
+                    <TableCell
+                      style={{
+                        fontWeight: "bold",
+                        color: "#f26522",
+                        border: "none",
+                      }}
+                    >
+                      <TableSortLabel
+                        style={{
+                          fontWeight: "bold",
+                          color: "#f26522",
+                          border: "none",
+                        }}
+                        direction={state.sortIngredients.direction}
+                        onClick={() => changeSortIngredient("package_cost")}
+                      >
+                        Cost
+                      </TableSortLabel>
+                    </TableCell>
+                  </TableHead>
+                  <TableBody>
+                    {state.ingredientsData &&
+                      filterDataByBusiness(
+                        state.ingredientsData,
+                        state.selectedBusinessID
+                      ).map((item) => {
+                        return (
+                          <TableRow>
+                            <TableCell
+                              style={{ borderBottom: "1px solid #f26522" }}
+                            >
+                              {item.ingredient_desc}
+                            </TableCell>
+                            <TableCell
+                              style={{ borderBottom: "1px solid #f26522" }}
+                            >
+                              {item.total_qty}
+                            </TableCell>
+                            <TableCell
+                              style={{ borderBottom: "1px solid #f26522" }}
+                            >
+                              {item.package_unit}
+                            </TableCell>
+                            <TableCell
+                              style={{ borderBottom: "1px solid #f26522" }}
+                            >
+                              {item.package_measure}
+                            </TableCell>
+                            <TableCell
+                              style={{ borderBottom: "1px solid #f26522" }}
+                            >
+                              {currencyFormatter.format(item.package_cost)}
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                  </TableBody>
+                </Table>
+              </TableContainer>
             </Col>
           </Row>
 
@@ -1484,10 +1618,10 @@ function OrdersIngredients({ history, ...props }) {
                   <TableCell>Menu Date</TableCell>
                   <TableCell>
                     <TableSortLabel
-                      active={state.sortCustomers.field === "jt_name"}
+                      active={state.sortRevenue.field === "jt_name"}
                       direction={
-                        state.sortCustomers.field === "jt_name"
-                          ? state.sortCustomers.direction
+                        state.sortRevenue.field === "jt_name"
+                          ? state.sortRevenue.direction
                           : "asc"
                       }
                       onClick={() => changeSortCustomer("jt_name")}
@@ -1497,10 +1631,10 @@ function OrdersIngredients({ history, ...props }) {
                   </TableCell>
                   <TableCell>
                     <TableSortLabel
-                      active={state.sortCustomers.field === "First_Name"}
+                      active={state.sortRevenue.field === "First_Name"}
                       direction={
-                        state.sortCustomers.field === "First_Name"
-                          ? state.sortCustomers.direction
+                        state.sortRevenue.field === "First_Name"
+                          ? state.sortRevenue.direction
                           : "asc"
                       }
                       onClick={() => changeSortCustomer("First_Name")}

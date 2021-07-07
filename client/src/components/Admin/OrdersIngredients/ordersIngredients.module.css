@@ -121,3 +121,7 @@ body {
   overflow-y: hidden;
   white-space: nowrap;
 }
+
+.tableContainer {
+  max-height: 600px;
+}
