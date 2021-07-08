@@ -502,7 +502,7 @@ function CreateMenu({ history, ...props }) {
       });
   };
 
-  const updateMenuFromTemplate = (index) => {
+  const updateMenuByIndex = (index) => {
     axios
       .get(`${API_URL}meals_ordered_by_date/${state.menuDate.substring(0, 10)}`)
       .then((response) => {
@@ -595,13 +595,15 @@ function CreateMenu({ history, ...props }) {
         direction: direction,
       },
     });
-    const sortedMenu = sortedArray(state.editedMenu, field, direction);
-    dispatch({ type: "EDIT_MENU", payload: sortedMenu });
+    const sortedEditedMenu = sortedArray(state.editedMenu, field, direction);
+    const sortedFullMenu = sortedArray(state.menuData, field, direction);
+    dispatch({ type: "EDIT_MENU", payload: sortedEditedMenu });
+    dispatch({ type: "FETCH_MENU", payload: sortedFullMenu });
   };
 
   // Save Upodate menu item
   // Save Upodate menu item
-  const updateMenuItem = (menuItem) => {
+  const updateMenuItem = (menuItem, index) => {
     if (menuItem.menu_uid) {
       const updatedMenuItem = {
         menu_uid: menuItem.menu_uid,
@@ -619,7 +621,7 @@ function CreateMenu({ history, ...props }) {
         .put(`${API_URL}menu`, updatedMenuItem)
         .then((response) => {
           console.log(response);
-          updateMenu();
+          updateMenuByIndex(index);
         })
         .catch((err) => {
           if (err.response) {
@@ -645,15 +647,15 @@ function CreateMenu({ history, ...props }) {
         .post(`${API_URL}menu`, newMenuItem)
         .then((response) => {
           console.log(response);
-          const newMenuId = response.data.meal_uid;
-          const newMenuItemId = {
-            ...newMenuItem,
-            menu_uid: newMenuId,
-          };
-          const oldIndex = state.editedMenu.indexOf(menuItem);
-          const newEditedMenu = [...state.editedMenu];
-          newEditedMenu[oldIndex] = newMenuItemId;
-          updateMenuFromTemplate(oldIndex);
+          // const newMenuId = response.data.meal_uid;
+          // const newMenuItemId = {
+          //   ...newMenuItem,
+          //   menu_uid: newMenuId,
+          // };
+          // const oldIndex = state.editedMenu.indexOf(menuItem);
+          // const newEditedMenu = [...state.editedMenu];
+          // newEditedMenu[oldIndex] = newMenuItemId;
+          updateMenuByIndex(index);
           //dispatch({ type: "EDIT_MENU", payload: newEditedMenu });
         })
         .catch((err) => {
@@ -1340,7 +1342,7 @@ function CreateMenu({ history, ...props }) {
                             <button
                               className={"icon-button"}
                               onClick={() => {
-                                updateMenuItem(mealMenu);
+                                updateMenuItem(mealMenu, mealMenuIndex);
                               }}
                             >
                               <SaveBtn
