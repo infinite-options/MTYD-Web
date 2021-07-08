@@ -5,6 +5,8 @@ import { formatTime, sortedArray } from "../../../reducers/helperFuncs";
 import { ReactComponent as LeftArrow } from "./static/dateLeftArrow.svg";
 import { ReactComponent as RightArrow } from "./static/dateRightArrow.svg";
 import { ReactComponent as ModalCloseBtn } from "./static/modalClose.svg";
+import { ReactComponent as DeleteBtn } from "./static/delete.svg";
+import { ReactComponent as SaveBtn } from "./static/save.svg";
 import AdminNavBar from "../AdminNavBar";
 
 import {
@@ -159,6 +161,10 @@ function reducer(state, action) {
         copyDate: {
           ...initialState.newDate,
         },
+      };
+    case "TOGGLE_MEAL_EDITED":
+      return {
+        ...state,
       };
     case "COPY_FROM_MENU_DATE":
       return {
@@ -496,6 +502,31 @@ function CreateMenu({ history, ...props }) {
       });
   };
 
+  const updateMenuFromTemplate = (index) => {
+    axios
+      .get(`${API_URL}meals_ordered_by_date/${state.menuDate.substring(0, 10)}`)
+      .then((response) => {
+        if (response.status === 200) {
+          const fullMenu = response.data.result;
+          if (fullMenu !== undefined) {
+            //dispatch({ type: "FETCH_MENU", payload: fullMenu });
+            const updatedItem = fullMenu[index];
+            const newEditedMenu = [...state.editedMenu];
+            newEditedMenu[index] = updatedItem;
+            dispatch({ type: "EDIT_MENU", payload: newEditedMenu });
+          }
+        }
+      })
+      .catch((err) => {
+        if (err.response) {
+          // eslint-disable-next-line no-console
+          console.log(err.response);
+        }
+        // eslint-disable-next-line no-console
+        console.log(err);
+      });
+  };
+
   // Fetch menu
   // useEffect(() => {
   //   updateMenu();
@@ -611,7 +642,7 @@ function CreateMenu({ history, ...props }) {
       };
       console.log(newMenuItem);
       axios
-        .post(`${API_URL}menu`, {})
+        .post(`${API_URL}menu`, newMenuItem)
         .then((response) => {
           console.log(response);
           const newMenuId = response.data.meal_uid;
@@ -622,7 +653,8 @@ function CreateMenu({ history, ...props }) {
           const oldIndex = state.editedMenu.indexOf(menuItem);
           const newEditedMenu = [...state.editedMenu];
           newEditedMenu[oldIndex] = newMenuItemId;
-          dispatch({ type: "EDIT_MENU", payload: newEditedMenu });
+          updateMenuFromTemplate(oldIndex);
+          //dispatch({ type: "EDIT_MENU", payload: newEditedMenu });
         })
         .catch((err) => {
           if (err.response) {
@@ -710,120 +742,176 @@ function CreateMenu({ history, ...props }) {
     dispatch({ type: "TOGGLE_COPY_MENU_DATE" });
   };
 
-  const saveMenuTemplate = () => {
-    const menuDate = `${state.newDate.menu_date} 00:00:00`;
-    console.log(menuDate);
+  // newMenuDate format: YYYY-MM-DD 00:00:00
+  const addMenuDate = (menuDate) => {
     const menuDateFormatted = new Date(menuDate).toDateString();
+
+    for (let i = 0; i < menuDates.length; i++) {
+      const date = menuDates[i].value;
+      if (date.localeCompare(menuDate) === 1) {
+        menuDates.splice(i, 0, { value: menuDate, display: menuDateFormatted });
+        if (carouselRef && carouselRef.current) {
+          carouselRef.current.goToSlide(i);
+          console.log(date);
+        }
+
+        break;
+      }
+    }
+  };
+
+  const saveMenuTemplate = () => {
+    const newMenuDate = state.newDate.menu_date;
+    const menuDate = `${newMenuDate} 00:00:00`;
+    addMenuDate(menuDate);
+
     dispatch({ type: "TOGGLE_ADD_MENU_DATE" });
-    menuDates.push({
-      value: menuDate,
-      display: menuDateFormatted,
-    });
+
+    // menuDates.push({
+    //   value: menuDate,
+    //   display: menuDateFormatted,
+    // });
     const menuTemplate = [
       {
         menu_type: "Weekly Entree",
         menu_date: menuDate,
-        meal_uid: "",
+        menu_meal_id: "",
         meal_category: "Entree",
         meal_cat: "Entree",
         menu_category: "WKLY_SPCL_1",
         default_meal: "FALSE",
+        delivery_days: "[Sunday, Monday]",
+        meal_price: "10",
+        mealEdited: true,
       },
       {
         menu_type: "Weekly Salad",
         menu_date: menuDate,
-        meal_uid: "",
+        menu_meal_id: "",
         meal_category: "Salad",
         meal_cat: "Salad",
         menu_category: "WKLY_SPCL_2",
         default_meal: "FALSE",
+        delivery_days: "[Sunday, Monday]",
+        meal_price: "10",
+        mealEdited: true,
       },
       {
         menu_type: "Weekly Soup",
         menu_date: menuDate,
-        meal_uid: "",
+        menu_meal_id: "",
         meal_category: "Soup",
         meal_cat: "Soup",
         menu_category: "WKLY_SPCL_3",
         default_meal: "FALSE",
+        delivery_days: "[Sunday, Monday]",
+        meal_price: "10",
+        mealEdited: true,
       },
       {
         menu_type: "Seasonal Entree",
         menu_date: menuDate,
-        meal_uid: "",
+        menu_meal_id: "",
         meal_category: "Entree",
         meal_cat: "Entree",
         menu_category: "SEAS_FAVE_1",
         default_meal: "FALSE",
+        delivery_days: "[Sunday, Monday]",
+        meal_price: "10",
+        mealEdited: true,
       },
       {
         menu_type: "Seasonal Salad",
         menu_date: menuDate,
-        meal_uid: "",
+        menu_meal_id: "",
         meal_category: "Salad",
         meal_cat: "Salad",
         menu_category: "SEAS_FAVE_2",
         default_meal: "FALSE",
+        delivery_days: "[Sunday, Monday]",
+        meal_price: "10",
+        mealEdited: true,
       },
       {
         menu_type: "Breakfast",
         menu_date: menuDate,
-        meal_uid: "",
+        menu_meal_id: "",
         meal_category: "Breakfast",
         meal_cat: "Breakfast",
         menu_category: "SEAS_FAVE_3",
         default_meal: "FALSE",
+        delivery_days: "[Sunday, Monday]",
+        meal_price: "10",
+        mealEdited: true,
       },
       {
         menu_type: "Smoothie",
         menu_date: menuDate,
-        meal_uid: "",
+        menu_meal_id: "",
         meal_category: "Smoothie",
         meal_cat: "Smoothie",
         menu_category: "SMOOTHIE_1",
         default_meal: "FALSE",
+        delivery_days: "[Sunday, Monday]",
+        meal_price: "10",
+        mealEdited: true,
       },
       {
         menu_type: "Smoothie",
         menu_date: menuDate,
-        meal_uid: "",
+        menu_meal_id: "",
         meal_category: "Smoothie",
         meal_cat: "Smoothie",
         menu_category: "SMOOTHIE_2",
         default_meal: "FALSE",
+        delivery_days: "[Sunday, Monday]",
+        meal_price: "10",
+        mealEdited: true,
       },
       {
         menu_type: "Smoothie",
         menu_date: menuDate,
-        meal_uid: "",
+        menu_meal_id: "",
         meal_category: "Smoothie",
         meal_cat: "Smoothie",
         menu_category: "SMOOTHIE_3",
         default_meal: "FALSE",
+        delivery_days: "[Sunday, Monday]",
+        meal_price: "10",
+        mealEdited: true,
       },
       {
         menu_type: "Local Treat",
         menu_date: menuDate,
-        meal_uid: "",
+        menu_meal_id: "",
         meal_cat: "Add-On",
         menu_category: "ADD_ON_1",
         default_meal: "FALSE",
+        delivery_days: "[Sunday, Monday]",
+        meal_price: "10",
+        mealEdited: true,
       },
       {
         menu_type: "Local Treat",
         menu_date: menuDate,
-        meal_uid: "",
+        menu_meal_id: "",
         meal_cat: "Add-On",
         menu_category: "ADD_ON_2",
         default_meal: "FALSE",
+        delivery_days: "[Sunday, Monday]",
+        meal_price: "10",
+        mealEdited: true,
       },
       {
         menu_type: "Local Treat",
         menu_date: menuDate,
-        meal_uid: "",
+        menu_meal_id: "",
         meal_cat: "Add-On",
         menu_category: "ADD_ON_3",
         default_meal: "TRUE",
+        delivery_days: "[Sunday, Monday]",
+        meal_price: "10",
+        mealEdited: true,
       },
     ];
     dispatch({ type: "CHANGE_DATE", payload: menuDate });
@@ -847,7 +935,10 @@ function CreateMenu({ history, ...props }) {
 
   return (
     <>
-      <AdminNavBar currentPage={"order-ingredients"} />
+      <div style={{ minWidth: "1275px", backgroundColor: "#f8bb17" }}>
+        <AdminNavBar currentPage={"create-menu"} />
+      </div>
+
       <div className={styles.root}>
         {console.log(state)}
         <Container fluid className={styles.container}>
@@ -1159,6 +1250,7 @@ function CreateMenu({ history, ...props }) {
                                       newMealInfo.meal_business
                                     ),
                                     meal_category: newMealInfo.meal_category,
+                                    mealEdited: true,
                                   };
                                   console.log(newMenu);
                                   dispatch({
@@ -1219,6 +1311,7 @@ function CreateMenu({ history, ...props }) {
                                   newMenu[mealMenuIndex] = {
                                     ...newMenu[mealMenuIndex],
                                     default_meal: newDefaultMeal,
+                                    mealEdited: true,
                                   };
                                   dispatch({
                                     type: "EDIT_MENU",
@@ -1242,7 +1335,7 @@ function CreateMenu({ history, ...props }) {
                                 deleteMenuItem(mealMenu);
                               }}
                             >
-                              <FontAwesomeIcon icon={faTrashAlt} />
+                              <DeleteBtn className={styles.deleteBtn} />
                             </button>
                             <button
                               className={"icon-button"}
@@ -1250,7 +1343,13 @@ function CreateMenu({ history, ...props }) {
                                 updateMenuItem(mealMenu);
                               }}
                             >
-                              <FontAwesomeIcon icon={faSave} />
+                              <SaveBtn
+                                className={
+                                  mealMenu.mealEdited
+                                    ? styles.saveBtn_unsaved
+                                    : styles.saveBtn_saved
+                                }
+                              />
                             </button>
                           </TableCell>
                           <TableCell
@@ -1524,8 +1623,6 @@ function CreateMenu({ history, ...props }) {
                       (meal) => meal.meal_uid === state.newMeal.meal_uid
                     )[0];
                     // YYYY-MM-DD seems to work for request parameter, no need to add HH:MM:SS
-                    console.log(newMenuItemInfo);
-                    console.log(state.newMeal);
                     const newMenuItem = {
                       menu_date: state.newMeal.menu_date + " 00:00:00",
                       menu_category: state.newMeal.menu_category,
@@ -1776,13 +1873,19 @@ function CreateMenu({ history, ...props }) {
                   onClick={() => {
                     // YYYY-MM-DD seems to work for request parameter, no need to add HH:MM:SS
                     const newDateObject = {
-                      ...state.copyDate,
-                      date1: state.copyDate.date1,
-                      date2: state.copyDate.date2,
+                      date1:
+                        state.copyDate.date1.substring(0, 10) + " 00:00:00",
+                      date2: state.copyDate.date2 + " 00:00:00",
                     };
                     axios
                       .post(`${API_URL}Copy_Menu`, newDateObject)
                       .then((response) => {
+                        console.log(response);
+                        addMenuDate(newDateObject.date2);
+                        dispatch({
+                          type: "CHANGE_DATE",
+                          payload: newDateObject.date2,
+                        });
                         toggleCopyDate();
                       });
                   }}

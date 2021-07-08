@@ -60,7 +60,7 @@ const responsive = {
   superLargeDesktop: {
     // the naming can be any, depends on you.
     breakpoint: { max: 4000, min: 3000 },
-    items: 8,
+    items: 5,
   },
   desktop: {
     breakpoint: { max: 3000, min: 1024 },
@@ -68,11 +68,11 @@ const responsive = {
   },
   tablet: {
     breakpoint: { max: 1024, min: 464 },
-    items: 2,
+    items: 5,
   },
   mobile: {
     breakpoint: { max: 464, min: 0 },
-    items: 1,
+    items: 5,
   },
 };
 
@@ -755,23 +755,12 @@ function OrdersIngredients({ history, ...props }) {
     dispatch({ type: "LOAD_CAROUSEL" });
   }
 
-  // if (state.dateIndex && !state.carouselLoaded) {
-  //   initializeCarousel(state.dateIndex);
-  //   dispatch({ type: "LOAD_CAROUSEL" });
-  // }
-
-  // if (
-  //   carouselRef &&
-  //   carouselRef.current &&
-  //   state.dateIndex &&
-  //   !state.carouselLoaded
-  // ) {
-  //   carouselRef.current.goToSlide(state.dateIndex);
-  // }
-
   return (
     <>
-      <AdminNavBar currentPage={"order-ingredients"} />
+      <div style={{ minWidth: "1150px", backgroundColor: "#f8bb17" }}>
+        <AdminNavBar currentPage={"order-ingredients"} />
+      </div>
+
       <div className={styles.root}>
         {console.log(state)}
         <Container fluid className={styles.container}>
@@ -893,6 +882,7 @@ function OrdersIngredients({ history, ...props }) {
               }}
             >
               <div
+                className={styles.contactInfo}
                 style={{
                   marginRight: "30px",
                   textAlign: "center",
@@ -954,7 +944,7 @@ function OrdersIngredients({ history, ...props }) {
           >
             <Col
               className={styles.section}
-              style={{ marginRight: 10, maxWidth: "40%" }}
+              style={{ marginRight: 10, maxWidth: "40%", minWidth: "30%" }}
             >
               <div
                 className={styles.bold}
