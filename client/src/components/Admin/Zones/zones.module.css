@@ -18,7 +18,7 @@
     /* display: inline-block; */
     /* display: flex; */
     width: 96%;
-    height: 550px;
+    height: 750px;
     /* border: solid; */
     border-radius: 15px;
     margin-top: 20px;
@@ -46,11 +46,23 @@
 
 .googleMap {
     width: 98%;
-    height: 500px;
+    height: 725px;
     border-radius: 3px;
     border: solid;
     border-width: 1px;
     background-color: #F0F0F0;
     vertical-align: middle;
     margin: 1%;
-  }
+}
+
+.spacer {
+    width: 100%; 
+    float: left; 
+    height: 30px;
+}
+
+.spacerSmall {
+    width: 100%; 
+    float: left; 
+    height: 10px;
+}

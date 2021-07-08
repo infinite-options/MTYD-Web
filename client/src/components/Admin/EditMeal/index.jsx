@@ -31,7 +31,7 @@ const initialState = {
     meal_status: ''
   },
   selectedFile: null,
-  previewLink: ""
+  previewLink: "",
 };
 
 function useForceUpdate() {
@@ -625,7 +625,7 @@ function EditMeal({history, ...props}) {
           tempSetWedStart(getActiveBusinessHours().Wednesday[0])
           setWedFin(getActiveBusinessHours().Wednesday[1])
           tempSetThuStart(getActiveBusinessHours().Thursday[0])
-          setWedFin(getActiveBusinessHours().Thursday[1])
+          setThuFin(getActiveBusinessHours().Thursday[1])
           tempSetFriStart(getActiveBusinessHours().Friday[0])
           setFriFin(getActiveBusinessHours().Friday[1])
           tempSetSatStart(getActiveBusinessHours().Saturday[0])
@@ -634,6 +634,7 @@ function EditMeal({history, ...props}) {
           setSunFin(getActiveBusinessHours().Sunday[1])
         }
       }
+
     }
     console.log(allBusinesses)
     //setActiveBusiness(allBusinesses[1])
@@ -914,7 +915,7 @@ function EditMeal({history, ...props}) {
             // generate JSONs as text
             // parse text to JSON
             console.log("Clicked Save")
-            console.log(JSON.stringify(activeBusinessData))
+            console.log(activeBusinessData)
             let myObj = {
               "business_uid" : activeBusiness,
               "business_created_at" : activeBusinessData.business_created_at,
@@ -948,11 +949,11 @@ function EditMeal({history, ...props}) {
               "business_WAUBI" : activeBusinessData.business_WAUBI, 
               "business_license" : activeBusinessData.business_license, 
               "business_USDOT" : activeBusinessData.business_USDOT, 
-              "notification_approval" : activeBusinessData.notification_approval, 
-              "notification_device_id" : activeBusinessData.notification_device_id, 
-              "can_cancel" : activeBusinessData.can_cancel, 
-              "delivery" : activeBusinessData.delivery, 
-              "reusable" : activeBusinessData.reusable, 
+              "bus_notification_approval" : activeBusinessData.bus_notification_approval, 
+              "bus_notification_device_id" : activeBusinessData.bus_guid_device_id_notification, 
+              "can_cancel" : activeBusinessData.can_cancel.toString(), 
+              "delivery" : activeBusinessData.delivery.toString(), 
+              "reusable" : activeBusinessData.reusable.toString(), 
               "business_image" : activeBusinessData.business_image, 
               "business_password" : activeBusinessData.business_password
             }
@@ -967,6 +968,8 @@ function EditMeal({history, ...props}) {
             .catch(err => {
               console.log(err)
             })
+            getBusinessData()
+            toggleBusinessDetails(false);
             // generate time table first
             // put time table into business JSON
             // POST via axios (test via console logs before posting)
@@ -2453,6 +2456,25 @@ function EditMeal({history, ...props}) {
     }
   }
 
+  const displayBusinessHours = () => {
+    if (activeBusiness != null && tempMonStart == 'N/A') {
+      tempSetMonStart(getActiveBusinessHours().Monday[0])
+      setMonFin(getActiveBusinessHours().Monday[1])
+      tempSetTueStart(getActiveBusinessHours().Tuesday[0])
+      setTueFin(getActiveBusinessHours().Tuesday[1])
+      tempSetWedStart(getActiveBusinessHours().Wednesday[0])
+      setWedFin(getActiveBusinessHours().Wednesday[1])
+      tempSetThuStart(getActiveBusinessHours().Thursday[0])
+      setThuFin(getActiveBusinessHours().Thursday[1])
+      tempSetFriStart(getActiveBusinessHours().Friday[0])
+      setFriFin(getActiveBusinessHours().Friday[1])
+      tempSetSatStart(getActiveBusinessHours().Saturday[0])
+      setSatFin(getActiveBusinessHours().Saturday[1])
+      tempSetSunStart(getActiveBusinessHours().Sunday[0])
+      setSunFin(getActiveBusinessHours().Sunday[1])
+    }
+  }
+
   return (
     <div style={{backgroundColor: '#F26522'}}>
 
@@ -2463,6 +2485,10 @@ function EditMeal({history, ...props}) {
       {generateMealsList()}
       {generateBusinessIDs()}
       {getBusinessData()}
+
+      {console.log(activeBusiness)}
+
+      {displayBusinessHours()}
       
       {/* {getDropdownButtons()} */}
       
@@ -2534,6 +2560,7 @@ function EditMeal({history, ...props}) {
           textDecoration: "underline"
           }}
           onClick={() => {
+            console.log(activeBusiness)
             console.log(activeBusinessData)
             toggleBusinessDetails(!showBusinessDetails)
             console.log(showBusinessDetails)
@@ -2622,16 +2649,16 @@ function EditMeal({history, ...props}) {
           left: "975px",
         }}>
           <div style={{display: "block", fontSize: "12px"}}>
-            {getActiveBusinessHours().Monday[0]} - {getActiveBusinessHours().Monday[1]}
+            {tempMonStart} - {tempMonFin}
           </div>
           <div style={{display: "block", fontSize: "12px"}}>
-            {getActiveBusinessHours().Tuesday[0]} - {getActiveBusinessHours().Tuesday[1]}
+            {tempTueStart} - {tempTueFin}
           </div>
           <div style={{display: "block", fontSize: "12px"}}>
-            {getActiveBusinessHours().Wednesday[0]} - {getActiveBusinessHours().Wednesday[1]}
+            {tempWedStart} - {tempWedFin}
           </div>
           <div style={{display: "block", fontSize: "12px"}}>
-            {getActiveBusinessHours().Thursday[0]} - {getActiveBusinessHours().Thursday[1]}
+            {tempThuStart} - {tempThuFin}
           </div>
         </div>
         <div style={{
@@ -2655,13 +2682,13 @@ function EditMeal({history, ...props}) {
           left: "1200px",
         }}>
           <div style={{display: "block", fontSize: "12px"}}>
-            {getActiveBusinessHours().Friday[0]} - {getActiveBusinessHours().Friday[1]}
+            {tempFriStart} - {tempFriFin}
           </div>
           <div style={{display: "block", fontSize: "12px"}}>
-          {getActiveBusinessHours().Saturday[0]} - {getActiveBusinessHours().Saturday[1]}
+          {tempSatStart} - {tempSatFin}
           </div>
           <div style={{display: "block", fontSize: "12px"}}>
-            {getActiveBusinessHours().Sunday[0]} - {getActiveBusinessHours().Sunday[1]}
+            {tempSunStart} - {tempSunFin}
           </div>
         </div>
       </div>
@@ -2671,7 +2698,7 @@ function EditMeal({history, ...props}) {
       
 
       <div className={styles.containerMeals}>
-        <div className={styles.sectionHeader} style={{display: "inline"}}>
+        <div style={{fontSize: "32px", display: "inline", marginLeft: "27px"}}>
 					Meals Offered
 				</div>
 
