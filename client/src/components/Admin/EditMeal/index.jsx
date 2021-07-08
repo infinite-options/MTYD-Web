@@ -659,13 +659,13 @@ function EditMeal({history, ...props}) {
       tempDropdownButtons.push(
         <div
           key={allBusinesses[index]}
-          onClick={() => {
+          onClick={() => { //this is behind one
+            console.log(allBusinesses[index])
+            console.log(getBusinessDataByID(allBusinesses[index]))
             setActiveBusiness(allBusinesses[index])
             setActiveBusinessData(getBusinessDataByID(allBusinesses[index]))
-            //toggleBusinessDetails(false)
-            console.log("active business = " + activeBusiness)
+            console.log(activeBusiness)
             console.log(activeBusinessData)
-            console.log(getActiveBusinessHours())
             setTempBusinessName(activeBusinessData.business_name)
             setTempCusine(activeBusinessData.business_type)
             tempSetMonStart(getActiveBusinessHours().Monday[0])
@@ -687,9 +687,9 @@ function EditMeal({history, ...props}) {
             toggleEditMeal(false)
             toggleBusinessDetails(false)
 
-            console.log("test")
-            console.log(tempBusinessName)
-            console.log(tempCusine)
+            // console.log("test")
+            // console.log(tempBusinessName)
+            // console.log(tempCusine)
             //console.log(getBusinessDataByID(allBusinesses[index]))
             // console.log(activeBusinessData.business_hours)
           }}
@@ -969,6 +969,17 @@ function EditMeal({history, ...props}) {
               console.log(err)
             })
             getBusinessData()
+            activeBusinessData.business_type = tempCusine
+            console.log(activeBusinessData.business_accepting_hours)
+            let myObj2 = {
+              "Friday": [tempFriStart, tempFriFin], 
+              "Monday": [tempMonStart, tempMonFin], 
+              "Sunday": [tempSunStart, tempSunFin], 
+              "Tuesday": [tempTueStart, tempTueFin], 
+              "Saturday": [tempSatStart, tempSatFin], 
+              "Thursday": [tempThuStart, tempThuFin], 
+              "Wednesday": [tempWedStart, tempWedFin]}
+            activeBusinessData.business_accepting_hours = JSON.stringify(myObj2)
             toggleBusinessDetails(false);
             // generate time table first
             // put time table into business JSON
@@ -2458,6 +2469,8 @@ function EditMeal({history, ...props}) {
 
   const displayBusinessHours = () => {
     if (activeBusiness != null && tempMonStart == 'N/A') {
+      setTempBusinessName(activeBusinessData.business_name)
+      setTempCusine(activeBusinessData.business_type)
       tempSetMonStart(getActiveBusinessHours().Monday[0])
       setMonFin(getActiveBusinessHours().Monday[1])
       tempSetTueStart(getActiveBusinessHours().Tuesday[0])
@@ -2613,7 +2626,8 @@ function EditMeal({history, ...props}) {
           left: "700px",
         }}>
           {activeBusinessData.business_type}
-          {console.log(activeBusinessData)}
+          {/* {tempCusine} */}
+          {/* {console.log(activeBusinessData)} */}
         </div>
 
         <div style={{
@@ -2649,16 +2663,16 @@ function EditMeal({history, ...props}) {
           left: "975px",
         }}>
           <div style={{display: "block", fontSize: "12px"}}>
-            {tempMonStart} - {tempMonFin}
+            {getActiveBusinessHours().Monday[0]} - {getActiveBusinessHours().Monday[1]}
           </div>
           <div style={{display: "block", fontSize: "12px"}}>
-            {tempTueStart} - {tempTueFin}
+            {getActiveBusinessHours().Tuesday[0]} - {getActiveBusinessHours().Tuesday[1]}
           </div>
           <div style={{display: "block", fontSize: "12px"}}>
-            {tempWedStart} - {tempWedFin}
+            {getActiveBusinessHours().Wednesday[0]} - {getActiveBusinessHours().Wednesday[1]}
           </div>
           <div style={{display: "block", fontSize: "12px"}}>
-            {tempThuStart} - {tempThuFin}
+            {getActiveBusinessHours().Thursday[0]} - {getActiveBusinessHours().Thursday[1]}
           </div>
         </div>
         <div style={{
@@ -2682,13 +2696,13 @@ function EditMeal({history, ...props}) {
           left: "1200px",
         }}>
           <div style={{display: "block", fontSize: "12px"}}>
-            {tempFriStart} - {tempFriFin}
+            {getActiveBusinessHours().Friday[0]} - {getActiveBusinessHours().Friday[1]}
           </div>
           <div style={{display: "block", fontSize: "12px"}}>
-          {tempSatStart} - {tempSatFin}
+            {getActiveBusinessHours().Saturday[0]} - {getActiveBusinessHours().Saturday[1]}
           </div>
           <div style={{display: "block", fontSize: "12px"}}>
-            {tempSunStart} - {tempSunFin}
+            {getActiveBusinessHours().Sunday[0]} - {getActiveBusinessHours().Sunday[1]}
           </div>
         </div>
       </div>

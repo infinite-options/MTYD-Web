@@ -49,6 +49,10 @@ const initialState = {
     RB_long:'',
     RB_lat:'',
   },
+  nameSplit: {
+    colorValue: '',
+    nameValue: '',
+  },
   businesses: [],
   toggleSelectBusiness: false,
   selectedBusinesses: []
@@ -90,6 +94,11 @@ function reducer(state, action) {
       return {
         ...state,
         editedZone: action.payload,
+      }
+    case 'EDIT_NAME_SPLIT':
+      return {
+        ...state,
+        nameSplit: action.payload,
       }
     default:
       return state;
@@ -184,6 +193,14 @@ function Zones ({history,...props}) {
       [property]: value,
     }
     dispatch({ type: 'EDIT_ZONE', payload: newZone})
+  }
+
+  const editNameSplit = (property, value) => {
+    const newNameSplit = {
+      ...state.nameSplit,
+      [property]: value,
+    }
+    dispatch({type: 'EDIT_NAME_SPLIT', payload: newNameSplit})
   }
 
   const saveZone = () => {
@@ -361,7 +378,7 @@ function Zones ({history,...props}) {
                 console.log(state.selectedBusinesses)
               }}
             ></input>
-            <label for={i}>{state.businesses[i].business_name}</label><br></br>
+            <label for={i}>{state.businesses[i].business_name + ", " + state.businesses[i].business_uid}</label><br></br>
           </>
         )
       } else {
@@ -382,7 +399,7 @@ function Zones ({history,...props}) {
                 console.log(state.selectedBusinesses)
               }}
             ></input>
-            <label for={i}>{state.businesses[i].business_name}</label><br></br>
+            <label for={i}>{state.businesses[i].business_name + ", " + state.businesses[i].business_uid}</label><br></br>
             <div style={{height: "1px", width: "100%", backgroundColor: "#F8BB17", marginBottom: "5px"}}></div>
           </>
         )
@@ -486,13 +503,42 @@ function Zones ({history,...props}) {
     let temp = uids.split(", ")
     let temp2 = ''
     for (let i = 0; i < temp.length; i++) {
-      if (i == temp.length - 1) {
-        temp2 = temp2 + getBusinessDataByID(temp[i]).business_name
-      } else {
-        temp2 = temp2 + getBusinessDataByID(temp[i]).business_name + ", "
+      if (temp[i] != '') {
+        if (i == temp.length - 1) {
+          temp2 = temp2 + getBusinessDataByID(temp[i]).business_name
+        } else {
+          temp2 = temp2 + getBusinessDataByID(temp[i]).business_name + ", "
+        }
       }
+      // if (i == temp.length - 1) {
+      //   temp2 = temp2 + getBusinessDataByID(temp[i]).business_name
+      // } else {
+      //   temp2 = temp2 + getBusinessDataByID(temp[i]).business_name + ", "
+      // }
     }
     return temp2
+  }
+
+  const splitZoneName = () => {
+    if (state.nameSplit.colorValue == '' || state.nameSplit.nameValue == '')
+    // if (1==1)
+    {let temp = state.editedZone.zone_name.split(" - ")
+    console.log(temp)
+    if (temp.length >= 2) {
+      state.nameSplit.colorValue = temp[0]
+      state.nameSplit.nameValue = temp[1]
+    }
+    console.log(state.nameSplit.colorValue)
+    console.log(state.nameSplit.nameValue)}
+
+    // console.log(stitchZoneName())
+    
+  }
+
+  const stitchZoneName = () => {
+    let temp = state.nameSplit.colorValue + " - " + state.nameSplit.nameValue
+    editZone('zone_name',temp);
+    console.log(state.editedZone.zone_name)
   }
 
   return (
@@ -549,24 +595,54 @@ function Zones ({history,...props}) {
                 } else {
                   toggleEditZone(initialState.editedZone)
                 }
+                editNameSplit('nameValue','');
+                editNameSplit('colorValue','');
                 // toggleEditZone(state.zones[e.target.value])
                 console.log(state.zones[e.target.value])
+                // splitZoneName()
               }}
             >
               {createDropdownZones()}
             </select>
+            
             <div style={{width: "98%", margin: "1%", float: "left"}}>
               <div style={{color: "#F26522"}}>Zone Name:</div>
               <Form.Control
                 value={state.editedZone.zone_name}
+                // onChange={
+                //   (event) => {
+                //     editZone('zone_name',event.target.value);
+                //   }
+                // }
+            />
+            </div>
+            
+            <div style={{width: "48%", margin: "1%", float: "left"}}>
+              <div style={{color: "#F26522"}}>Zone Name1:</div>
+              <Form.Control
+                value={state.nameSplit.nameValue}
                 onChange={
                   (event) => {
-                    editZone('zone_name',event.target.value);
+                    editNameSplit('nameValue',event.target.value);
+                    // stitchZoneName()
                   }
                 }
             />
             </div>
-            
+
+            <div style={{width: "48%", margin: "1%", float: "left"}}>
+              <div style={{color: "#F26522"}}>Zone Color:</div>
+              <Form.Control
+                value={state.nameSplit.colorValue}
+                onChange={
+                  (event) => {
+                    editNameSplit('colorValue',event.target.value);
+                    // stitchZoneName()
+                  }
+                }
+            />
+            {splitZoneName()}
+            </div>
 
             <div className={styles.spacer}></div>
 
@@ -1039,9 +1115,19 @@ function Zones ({history,...props}) {
               <Button
                 style={{backgroundColor: "#F26522", borderRadius: "15px"}}
                 variant="secondary"
-                onClick={() => saveZone()}
+                onClick={() => {
+                  stitchZoneName()
+                  saveZone()
+                }}
               >
                 Save Zone
+              </Button>
+              <Button
+                style={{backgroundColor: "#F26522", borderRadius: "15px"}}
+                variant="secondary"
+                onClick={() => stitchZoneName()}
+              >
+                Test Stitch
               </Button>
             </div>
             
