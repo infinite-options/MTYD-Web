@@ -359,50 +359,108 @@ function Zones ({history,...props}) {
 
   const createCheckboxBusinesses = () => {
     let items = []
+    state.selectedBusinesses = JSON.parse(state.editedZone.z_businesses)
     for (let i = 0; i < state.businesses.length; i++) {
       if (i == state.businesses.length - 1){
-        items.push(
-          <>
-            <input 
-              type="checkbox" 
-              id={i} 
-              name={i} 
-              value={state.businesses[i].business_uid}
-              style = {{marginRight: "5px"}}
-              onClick={() => {
-                if (state.selectedBusinesses.indexOf(state.businesses[i].business_uid) == -1) {
-                  state.selectedBusinesses.push(state.businesses[i].business_uid)
-                } else {
-                  state.selectedBusinesses.splice(state.selectedBusinesses.indexOf(state.businesses[i].business_uid), 1)
-                }
-                console.log(state.selectedBusinesses)
-              }}
-            ></input>
-            <label for={i}>{state.businesses[i].business_name + ", " + state.businesses[i].business_uid}</label><br></br>
-          </>
-        )
+        if (state.selectedBusinesses.indexOf(state.businesses[i].business_uid) == -1) {
+          items.push(
+            <>
+              <input 
+                type="checkbox" 
+                id={i} 
+                name={i} 
+                value={state.businesses[i].business_uid}
+                style = {{marginRight: "5px"}}
+                onClick={() => {
+                  if (state.selectedBusinesses.indexOf(state.businesses[i].business_uid) == -1) {
+                    state.selectedBusinesses.push(state.businesses[i].business_uid)
+                    //state.editedZone.z_businesses.push(state.businesses[i].business_uid)
+                  } else {
+                    state.selectedBusinesses.splice(state.selectedBusinesses.indexOf(state.businesses[i].business_uid), 1)
+                    //state.editedZone.z_businesses.splice(state.selectedBusinesses.indexOf(state.businesses[i].business_uid), 1)
+                  }
+                  console.log(state.selectedBusinesses)
+                }}
+              ></input>
+              <label for={i}>{state.businesses[i].business_name + ", " + state.businesses[i].business_uid}</label><br></br>
+            </>
+          )
+        } else {
+          items.push(
+            <>
+              <input 
+                type="checkbox" 
+                id={i} 
+                name={i} 
+                value={state.businesses[i].business_uid}
+                style = {{marginRight: "5px"}}
+                onClick={() => {
+                  if (state.selectedBusinesses.indexOf(state.businesses[i].business_uid) == -1) {
+                    state.selectedBusinesses.push(state.businesses[i].business_uid)
+                    //state.editedZone.z_businesses.push(state.businesses[i].business_uid)
+                  } else {
+                    state.selectedBusinesses.splice(state.selectedBusinesses.indexOf(state.businesses[i].business_uid), 1)
+                    //state.editedZone.z_businesses.splice(state.selectedBusinesses.indexOf(state.businesses[i].business_uid), 1)
+                  }
+                  console.log(state.selectedBusinesses)
+                }}
+                defaultChecked="true"
+              ></input>
+              <label for={i}>{state.businesses[i].business_name + ", " + state.businesses[i].business_uid}</label><br></br>
+            </>
+          )
+        }
       } else {
-        items.push(
-          <>
-            <input 
-              type="checkbox" 
-              id={i} 
-              name={i} 
-              value={state.businesses[i].business_uid}
-              style = {{marginRight: "5px"}}
-              onClick={() => {
-                if (state.selectedBusinesses.indexOf(state.businesses[i].business_uid) == -1) {
-                  state.selectedBusinesses.push(state.businesses[i].business_uid)
-                } else {
-                  state.selectedBusinesses.splice(state.selectedBusinesses.indexOf(state.businesses[i].business_uid), 1)
-                }
-                console.log(state.selectedBusinesses)
-              }}
-            ></input>
-            <label for={i}>{state.businesses[i].business_name + ", " + state.businesses[i].business_uid}</label><br></br>
-            <div style={{height: "1px", width: "100%", backgroundColor: "#F8BB17", marginBottom: "5px"}}></div>
-          </>
-        )
+        if (state.selectedBusinesses.indexOf(state.businesses[i].business_uid) == -1) {
+          items.push(
+            <>
+              <input 
+                type="checkbox" 
+                id={i} 
+                name={i} 
+                value={state.businesses[i].business_uid}
+                style = {{marginRight: "5px"}}
+                onClick={() => {
+                  if (state.selectedBusinesses.indexOf(state.businesses[i].business_uid) == -1) {
+                    state.selectedBusinesses.push(state.businesses[i].business_uid)
+                    //state.editedZone.z_businesses.push(state.businesses[i].business_uid)
+                  } else {
+                    state.selectedBusinesses.splice(state.selectedBusinesses.indexOf(state.businesses[i].business_uid), 1)
+                    //state.editedZone.z_businesses.splice(state.selectedBusinesses.indexOf(state.businesses[i].business_uid), 1)
+                  }
+                  console.log(state.selectedBusinesses)
+                }}
+              ></input>
+              <label for={i}>{state.businesses[i].business_name + ", " + state.businesses[i].business_uid}</label><br></br>
+              <div style={{height: "1px", width: "100%", backgroundColor: "#F8BB17", marginBottom: "5px"}}></div>
+            </>
+          )
+        } else {
+          items.push(
+            <>
+              <input 
+                type="checkbox" 
+                id={i} 
+                name={i} 
+                value={state.businesses[i].business_uid}
+                style = {{marginRight: "5px"}}
+                onClick={() => {
+                  if (state.selectedBusinesses.indexOf(state.businesses[i].business_uid) == -1) {
+                    state.selectedBusinesses.push(state.businesses[i].business_uid)
+                    //state.editedZone.z_businesses.push(state.businesses[i].business_uid)
+                  } else {
+                    state.selectedBusinesses.splice(state.selectedBusinesses.indexOf(state.businesses[i].business_uid), 1)
+                    //state.editedZone.z_businesses.splice(state.selectedBusinesses.indexOf(state.businesses[i].business_uid), 1)
+                  }
+                  console.log(state.selectedBusinesses)
+                }}
+                defaultChecked="true"
+              ></input>
+              <label for={i}>{state.businesses[i].business_name + ", " + state.businesses[i].business_uid}</label><br></br>
+              <div style={{height: "1px", width: "100%", backgroundColor: "#F8BB17", marginBottom: "5px"}}></div>
+            </>
+          )
+        }
       }
     }
     return items
@@ -471,8 +529,8 @@ function Zones ({history,...props}) {
                       alert('Please select at least one business before saving')
                     } else {
                       editZone('z_business_uid', temp);
-                      // editZone('z_businesses', state.selectedBusinesses);
-                      // console.log(state.selectedBusinesses)
+                      editZone('z_businesses', JSON.stringify(state.selectedBusinesses));
+                      console.log(state.selectedBusinesses)
                       state.selectedBusinesses = []
                       dispatch({ type: 'TOGGLE_SELECT_BUSINESS', payload: false });
                     }
@@ -502,23 +560,26 @@ function Zones ({history,...props}) {
   }
 
   const convertUIDToNames = (uids) => {
-    let temp = uids.split(", ")
-    let temp2 = ''
-    for (let i = 0; i < temp.length; i++) {
-      if (temp[i] != '') {
-        if (i == temp.length - 1) {
-          temp2 = temp2 + getBusinessDataByID(temp[i]).business_name
-        } else {
-          temp2 = temp2 + getBusinessDataByID(temp[i]).business_name + ", "
+    console.log(uids)
+    if (uids != "") {
+      let temp = JSON.parse(uids)
+      let temp2 = ''
+      for (let i = 0; i < temp.length; i++) {
+        if (temp[i] != null) {
+          if (i == temp.length - 1) {
+            temp2 = temp2 + getBusinessDataByID(temp[i]).business_name
+          } else {
+            temp2 = temp2 + getBusinessDataByID(temp[i]).business_name + ", "
+          }
         }
+        // if (i == temp.length - 1) {
+        //   temp2 = temp2 + getBusinessDataByID(temp[i]).business_name
+        // } else {
+        //   temp2 = temp2 + getBusinessDataByID(temp[i]).business_name + ", "
+        // }
       }
-      // if (i == temp.length - 1) {
-      //   temp2 = temp2 + getBusinessDataByID(temp[i]).business_name
-      // } else {
-      //   temp2 = temp2 + getBusinessDataByID(temp[i]).business_name + ", "
-      // }
-    }
-    return temp2
+      return temp2
+  }
   }
 
   const splitZoneName = () => {
@@ -618,7 +679,7 @@ function Zones ({history,...props}) {
             />
             </div> */}
             
-            <div style={{width: "48%", margin: "1%", float: "left"}}>
+            <div style={{width: "31%", margin: "1%", float: "left"}}>
               <div style={{color: "#F26522"}}>Zone Name:</div>
               <Form.Control
                 value={state.nameSplit.nameValue}
@@ -632,7 +693,7 @@ function Zones ({history,...props}) {
             />
             </div>
 
-            <div style={{width: "48%", margin: "1%", float: "left"}}>
+            <div style={{width: "31%", margin: "1%", float: "left"}}>
               <div style={{color: "#F26522"}}>Zone Color:</div>
               <Form.Control
                 value={state.nameSplit.colorValue}
@@ -648,10 +709,7 @@ function Zones ({history,...props}) {
             
             </div>
 
-            <div className={styles.spacer}></div>
-
-            <div style={{width: "98%", margin: "1%", float: "left"}}>
-              <div style={{width: "25%", float: "left"}}>
+            <div style={{width: "31%", margin: "1%", float: "left"}}>
                   <div style={{color: "#F26522"}}>Zone UID:</div>
                   <Form.Control
                     value={state.editedZone.zone_uid}
@@ -661,7 +719,13 @@ function Zones ({history,...props}) {
                       }
                     }
                   />
-                </div>
+              </div>
+
+            
+
+            <div className={styles.spacer}></div>
+
+            <div style={{width: "98%", margin: "1%", float: "left"}}>
               <div style={{width: "25%", float: "left"}}>
                 <div style={{color: "#F26522"}}>Business UID:</div>
                 {/* <select
@@ -695,8 +759,9 @@ function Zones ({history,...props}) {
                   onClick={() => {
                   dispatch({ type: 'TOGGLE_SELECT_BUSINESS', payload: true });
                   console.log(state.toggleSelectBusiness)
-                }}>{convertUIDToNames(state.editedZone.z_business_uid)}</div>
+                }}>{convertUIDToNames(state.editedZone.z_businesses)}</div>
               </div>
+                {/* convertUIDToNames(state.editedZone.z_businesses) */}
               <div style={{width: "25%", float: "left"}}>
                 <div style={{color: "#F26522"}}>Delivery Day</div>
                 {/* <Form.Control
@@ -742,6 +807,53 @@ function Zones ({history,...props}) {
                   <option value="SATURDAY">Saturday</option>
                 </select>
               </div>
+
+              <div style={{width: "25%", float: "left"}}>
+                <div style={{color: "#F26522"}}>Accepting Day</div>
+                {/* <Form.Control
+                  value={state.editedZone.z_delivery_day}
+                  onChange={
+                    (event) => {
+                      editZone('z_delivery_day',event.target.value);
+                    }
+                  }
+                /> */}
+                <select
+                  className={styles.dropdown}
+                  style={{
+                    width: "100%", 
+                    float: "left",
+                    borderStyle: "solid",
+                    borderWidth: "1px",
+                    borderColor: "#CED4DA",
+                    borderRadius: ".25rem",
+                    padding: ".375rem .75rem",
+                    color: "#495057",
+                    height: "calc(1.5em + .75rem + 2px)",
+                    lineHeight: "1.5",
+                    fontSize: "1rem",
+                    fontWeight: "400",
+                    textOverflow: "ellipsis",
+                    overflow: "hidden",
+                    whiteSpace: "nowrap"
+                  }}
+                  value={state.editedZone.z_accepting_day}
+                  onChange={
+                    (event) => {
+                      editZone('z_accepting_day',event.target.value);
+                    }
+                  }
+                >
+                  <option value="SUNDAY">Sunday</option>
+                  <option value="MONDAY">Monday</option>
+                  <option value="TUESDAY">Tuesday</option>
+                  <option value="WEDNESDAY">Wednesday</option>
+                  <option value="THURSDAY">Thursday</option>
+                  <option value="FRIDAY">Friday</option>
+                  <option value="SATURDAY">Saturday</option>
+                </select>
+              </div>
+              
               <div style={{width: "25%", float: "left"}}>
                 <div style={{color: "#F26522"}}>Delivery Time</div>
                 <Form.Control
