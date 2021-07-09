@@ -471,6 +471,8 @@ function Zones ({history,...props}) {
                       alert('Please select at least one business before saving')
                     } else {
                       editZone('z_business_uid', temp);
+                      // editZone('z_businesses', state.selectedBusinesses);
+                      // console.log(state.selectedBusinesses)
                       state.selectedBusinesses = []
                       dispatch({ type: 'TOGGLE_SELECT_BUSINESS', payload: false });
                     }
@@ -598,6 +600,7 @@ function Zones ({history,...props}) {
                 // toggleEditZone(state.zones[e.target.value])
                 console.log(state.zones[e.target.value])
                 // splitZoneName()
+                console.log(state.editedZone.z_businesses)
               }}
             >
               {createDropdownZones()}
@@ -730,13 +733,13 @@ function Zones ({history,...props}) {
                     }
                   }
                 >
-                  <option value="Sunday">Sunday</option>
-                  <option value="Monday">Monday</option>
-                  <option value="Tuesday">Tuesday</option>
-                  <option value="Wednesday">Wednesday</option>
-                  <option value="Thursday">Thursday</option>
-                  <option value="Friday">Friday</option>
-                  <option value="Saturday">Saturday</option>
+                  <option value="SUNDAY">Sunday</option>
+                  <option value="MONDAY">Monday</option>
+                  <option value="TUESDAY">Tuesday</option>
+                  <option value="WEDNESDAY">Wednesday</option>
+                  <option value="THURSDAY">Thursday</option>
+                  <option value="FRIDAY">Friday</option>
+                  <option value="SATURDAY">Saturday</option>
                 </select>
               </div>
               <div style={{width: "25%", float: "left"}}>

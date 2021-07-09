@@ -166,6 +166,24 @@ function NavBar(props) {
               // border: '1px solid'
             }}
           >
+            
+            <a
+              href="/admin/order-ingredients"
+              className={styles.navLink}
+              style={
+                props.currentPage === "order-ingredients"
+                  ? {
+                      color: "black",
+                      width: LINK_WIDTH.orders,
+                    }
+                  : {
+                      width: LINK_WIDTH.orders,
+                    }
+              }
+            >
+              Orders
+            </a>
+            
             <a
               href="/admin/create-menu"
               className={styles.navLink}
@@ -184,20 +202,20 @@ function NavBar(props) {
             </a>
 
             <a
-              href="/admin/order-ingredients"
+              href="/admin/edit-meal"
               className={styles.navLink}
               style={
-                props.currentPage === "order-ingredients"
+                props.currentPage === "edit-meal"
                   ? {
                       color: "black",
-                      width: LINK_WIDTH.orders,
+                      width: LINK_WIDTH.businesses_n_meals,
                     }
                   : {
-                      width: LINK_WIDTH.orders,
+                      width: LINK_WIDTH.businesses_n_meals,
                     }
               }
             >
-              Orders
+              Businesses & Meals
             </a>
 
             <a
@@ -215,23 +233,6 @@ function NavBar(props) {
               }
             >
               Ingredients & Units
-            </a>
-
-            <a
-              href="/admin/businesses"
-              className={styles.navLink}
-              style={
-                props.currentPage === "businesses"
-                  ? {
-                      color: "black",
-                      width: LINK_WIDTH.businesses_n_meals,
-                    }
-                  : {
-                      width: LINK_WIDTH.businesses_n_meals,
-                    }
-              }
-            >
-              Businesses & Meals
             </a>
 
             <a

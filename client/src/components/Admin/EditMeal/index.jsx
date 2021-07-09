@@ -264,6 +264,7 @@ function EditMeal({history, ...props}) {
   const saveEditedMeal = () => {
     const savedMeal = state.editedMeal;
     console.log(savedMeal)
+    
     axios
       .put(`${API_URL}meals`,savedMeal)
       .then((response) => {
@@ -990,6 +991,26 @@ function EditMeal({history, ...props}) {
     )
   }
 
+  const checkForDuplicateNameInBusiness = () => {
+    for (let i = 0; i < allMeals.length; i++) {
+      if (allMeals[i].meal_name == state.editedMeal.meal_name && allMeals[i].meal_business == activeBusiness) {
+        alert("Meal of this name already exists for this business")
+        return true
+      }
+    }
+    return false
+  }
+
+  const checkForDuplicateNameInBusinessEditing = () => {
+    for (let i = 0; i < allMeals.length; i++) {
+      if (allMeals[i].meal_name == state.editedMeal.meal_name && allMeals[i].meal_business == activeBusiness && allMeals[i].meal_uid != state.editedMeal.meal_uid) {
+        alert("Meal of this name already exists for this business")
+        return true
+      }
+    }
+    return false
+  }
+
   const editMealBox = () => {
     
     if (showEditMeal == true) {
@@ -1657,18 +1678,21 @@ function EditMeal({history, ...props}) {
                       <Button
                         variant="primary"
                         onClick={()=>{
-                          saveEditedMealNew()
-                          // toggleMealsGenerated(false)
-                          // generateMealsListUpdate()
-                          
-                          console.log("pog")
-                          console.log(state.editedMeal)
-                          for (var i = 0; i < allMeals.length; i++) {
-                            if (allMeals[i].meal_uid == state.editedMeal.meal_uid) {
-                              allMeals[i] = state.editedMeal
-                              console.log("meal changed in allMeals")
+                          if (!checkForDuplicateNameInBusinessEditing()) {
+                            saveEditedMealNew()
+                            // toggleMealsGenerated(false)
+                            // generateMealsListUpdate()
+                            
+                            console.log("pog")
+                            console.log(state.editedMeal)
+                            for (var i = 0; i < allMeals.length; i++) {
+                              if (allMeals[i].meal_uid == state.editedMeal.meal_uid) {
+                                allMeals[i] = state.editedMeal
+                                console.log("meal changed in allMeals")
+                              }
                             }
                           }
+                          
     
                           forceUpdate()
                           toggleEditMeal(false)
@@ -2370,7 +2394,13 @@ function EditMeal({history, ...props}) {
                     <Button
                       variant="primary"
                       onClick={()=>{
-                        postNewMeal()
+                        if (!checkForDuplicateNameInBusiness()){
+                          postNewMeal()
+
+                          allMeals.push(state.editedMeal)
+                          dispatch({ type: 'SET_PREVIEW', payload: ''})
+                        }
+                        
 
                         console.log("edited meal data")
                         console.log(state.editedMeal)
@@ -2413,8 +2443,7 @@ function EditMeal({history, ...props}) {
                         
                         // editMeal('meal_photo_URL', state.previewLink );
 
-                        allMeals.push(state.editedMeal)
-                        dispatch({ type: 'SET_PREVIEW', payload: ''})
+                        
 
                         forceUpdate()
                         toggleNewMeal(false)
@@ -2712,7 +2741,7 @@ function EditMeal({history, ...props}) {
       
 
       <div className={styles.containerMeals}>
-        <div style={{fontSize: "32px", display: "inline", marginLeft: "27px"}}>
+        <div style={{fontSize: "24px", display: "inline", marginLeft: "27px"}}>
 					Meals Offered
 				</div>
 

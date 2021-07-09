@@ -1801,9 +1801,10 @@ class MenuItemList extends Component {
         <WebNavBar />
 
         {/* Loading Screen */}
+        {/* Loading screen does not go away */}
         {(
           this.state.dateButtonList !== null &&
-          this.state.mealsLoaded
+          !this.state.mealsLoaded
         )? (
           null
         ) : (
@@ -1827,6 +1828,7 @@ class MenuItemList extends Component {
             <img src={m4me_logo} />
           </div>
         )}
+        
         {/* <div
           style={{
             color: 'red',
