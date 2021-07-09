@@ -85,6 +85,10 @@ const initialState = {
   businessData: [],
   dateIndex: null,
   carouselLoaded: false,
+  dateValid: true,
+  mealExists: false,
+  selectedMealName: "",
+  menuCategories: [],
 };
 
 function reducer(state, action) {
@@ -197,6 +201,22 @@ function reducer(state, action) {
       return {
         ...state,
         dateIndex: state.dateIndex - 1,
+      };
+    case "SET_DATE_VALID":
+      return {
+        ...state,
+        dateValid: action.payload,
+      };
+    case "TOGGLE_MEAL_EXISTS":
+      return {
+        ...state,
+        mealExists: !state.mealExists,
+        selectedMealName: action.payload,
+      };
+    case "FETCH_MENU_CATEGORIES":
+      return {
+        ...state,
+        menuCategories: action.payload,
       };
     default:
       return state;
@@ -420,28 +440,6 @@ function CreateMenu({ history, ...props }) {
       `${API_URL}meals_ordered_by_date/${date.substring(0, 10)}`
     );
     const mealApiDataResult = mealApiData.data.result;
-    // await axios
-    //   .get(`${API_URL}meals_ordered_by_date/${date.substring(0, 10)}`)
-    //   .then((response) => {
-    //     mealsApi = response.data.result;
-    //   })
-    //   .then((response) => {
-    //     if (response.status === 200) {
-    //       const mealsApi = response.data.result;
-    //       if (mealsApi !== undefined) {
-    //         dispatch({ type: "FETCH_MENU", payload: mealsApi });
-    //         dispatch({ type: "EDIT_MENU", payload: mealsApi });
-    //       }
-    //     }
-    //   })
-    //   .catch((err) => {
-    //     if (err.response) {
-    //       // eslint-disable-next-line no-console
-    //       console.log(err.response);
-    //     }
-    //     // eslint-disable-next-line no-console
-    //     console.log(err);
-    //   });
     return mealApiDataResult;
   };
 
@@ -461,7 +459,7 @@ function CreateMenu({ history, ...props }) {
   };
 
   const getMealCategories = () => {
-    const mealCategories = state.menuData.map(
+    const mealCategories = state.mealData.map(
       (menuItem) => menuItem.meal_category
     );
     const mealCategoriesUnique = mealCategories.filter(
@@ -471,13 +469,18 @@ function CreateMenu({ history, ...props }) {
   };
 
   const getMenuCategories = () => {
-    const menuCategories = state.menuData.map(
-      (menuItem) => menuItem.menu_category
-    );
-    const menuCategoriesUnique = menuCategories.filter(
-      (elt, index) => menuCategories.indexOf(elt) === index && elt
-    );
-    return menuCategoriesUnique;
+    axios.get(`${API_URL}menu`).then((response) => {
+      const menuData = response.data.result;
+      const menuCategories = menuData.map((item) => item.menu_category);
+      const menuCategoriesUnique = menuCategories.filter(
+        (elt, index) => menuCategories.indexOf(elt) === index && elt
+      );
+      dispatch({
+        type: "FETCH_MENU_CATEGORIES",
+        payload: menuCategoriesUnique,
+      });
+      console.log(menuCategoriesUnique);
+    });
   };
 
   const updateMenu = () => {
@@ -636,7 +639,7 @@ function CreateMenu({ history, ...props }) {
         menu_date: menuItem.menu_date.substring(0, 10) + " 00:00:00",
         menu_category: menuItem.menu_category,
         menu_type: menuItem.menu_type,
-        meal_cat: menuItem.meal_category,
+        meal_cat: menuItem.meal_cat,
         menu_meal_id: menuItem.meal_uid,
         default_meal: menuItem.default_meal,
         delivery_days: "[Sunday, Monday]",
@@ -920,6 +923,20 @@ function CreateMenu({ history, ...props }) {
     dispatch({ type: "EDIT_MENU", payload: menuTemplate });
   };
 
+  const mealExists = (mealId) => {
+    const res = state.editedMenu.find(
+      (menuItem) => menuItem.meal_uid === mealId
+    );
+    return res ? true : false;
+  };
+
+  const verifyDate = (date) => {
+    const formattedDate = date + " 00-00-00";
+    return menuDates.find((dateObj) => dateObj.value === formattedDate)
+      ? false
+      : true;
+  };
+
   if (!state.mounted) {
     return null;
   }
@@ -1049,7 +1066,13 @@ function CreateMenu({ history, ...props }) {
               >
                 Add Menu Date
               </button>
-              <button onClick={toggleAddMenu} className={styles.topBtn}>
+              <button
+                onClick={() => {
+                  toggleAddMenu();
+                  getMenuCategories();
+                }}
+                className={styles.topBtn}
+              >
                 Add Menu Item
               </button>
             </Col>
@@ -1139,7 +1162,7 @@ function CreateMenu({ history, ...props }) {
                           border: "none",
                         }}
                         direction={state.sortEditMenu.direction}
-                        onClick={() => changeSortOptions("meal_category")}
+                        onClick={() => changeSortOptions("meal_cat")}
                       >
                         Meal Category
                       </TableSortLabel>
@@ -1242,23 +1265,32 @@ function CreateMenu({ history, ...props }) {
                                   const newMealInfo = state.mealData.filter(
                                     (meal) => meal.meal_uid === newMealId
                                   )[0];
-                                  console.log(newMealInfo);
+                                  // console.log("New ID: " + newMealId);
+                                  // console.log("RES: " + mealExists(newMealId));
                                   // const mealMenuIndex = newMenu.findIndex((elt) => elt.menu_uid === mealMenu.menu_uid);
-                                  newMenu[mealMenuIndex] = {
-                                    ...newMenu[mealMenuIndex],
-                                    ...newMealInfo,
-                                    menu_meal_id: newMealId,
-                                    business_name: getBusinessName(
-                                      newMealInfo.meal_business
-                                    ),
-                                    meal_category: newMealInfo.meal_category,
-                                    mealEdited: true,
-                                  };
-                                  console.log(newMenu);
-                                  dispatch({
-                                    type: "EDIT_MENU",
-                                    payload: newMenu,
-                                  });
+                                  console.log(newMealInfo);
+                                  if (mealExists(newMealId)) {
+                                    dispatch({
+                                      type: "TOGGLE_MEAL_EXISTS",
+                                      payload: newMealInfo.meal_name,
+                                    });
+                                  } else {
+                                    newMenu[mealMenuIndex] = {
+                                      ...newMenu[mealMenuIndex],
+                                      ...newMealInfo,
+                                      menu_meal_id: newMealId,
+                                      business_name: getBusinessName(
+                                        newMealInfo.meal_business
+                                      ),
+                                      meal_cat: newMealInfo.meal_category,
+                                      mealEdited: true,
+                                    };
+                                    console.log(newMenu);
+                                    dispatch({
+                                      type: "EDIT_MENU",
+                                      payload: newMenu,
+                                    });
+                                  }
                                 }}
                               >
                                 <option value="" hidden>
@@ -1292,7 +1324,7 @@ function CreateMenu({ history, ...props }) {
                           <TableCell
                             style={{ borderBottom: "1px solid #f8bb17" }}
                           >
-                            {mealMenu.meal_category}
+                            {mealMenu.meal_cat}
                           </TableCell>
                           <TableCell
                             style={{ borderBottom: "1px solid #f8bb17" }}
@@ -1576,7 +1608,7 @@ function CreateMenu({ history, ...props }) {
                       <option value="" hidden>
                         Choose Menu Category
                       </option>
-                      {getMenuCategories().map((menuCategory) => (
+                      {state.menuCategories.map((menuCategory) => (
                         <option value={menuCategory} key={menuCategory}>
                           {menuCategory}
                         </option>
@@ -1619,47 +1651,68 @@ function CreateMenu({ history, ...props }) {
                 style={{ border: "none", justifyContent: "center" }}
               >
                 <button
-                  className={styles.modalBtn}
+                  className={
+                    state.newMeal.menu_date &&
+                    state.newMeal.menu_category &&
+                    state.newMeal.menu_type &&
+                    state.newMeal.meal_cat &&
+                    state.newMeal.meal_uid &&
+                    state.newMeal.default_meal
+                      ? styles.modalBtn
+                      : styles.greyedOutBtn
+                  }
                   onClick={() => {
-                    const newMenuItemInfo = state.mealData.filter(
-                      (meal) => meal.meal_uid === state.newMeal.meal_uid
-                    )[0];
-                    // YYYY-MM-DD seems to work for request parameter, no need to add HH:MM:SS
-                    const newMenuItem = {
-                      menu_date: state.newMeal.menu_date + " 00:00:00",
-                      menu_category: state.newMeal.menu_category,
-                      menu_type: state.newMeal.menu_type,
-                      meal_cat: state.newMeal.meal_cat,
-                      menu_meal_id: state.newMeal.meal_uid,
-                      default_meal: state.newMeal.default_meal,
-                      delivery_days: ["Sunday", "Monday"],
-                      meal_price: "10",
-                    };
-                    console.log(newMenuItem);
-                    axios
-                      .post(`${API_URL}menu`, newMenuItem)
-                      .then((response) => {
-                        // Save New menu item with id on screen
-                        const newMenuId = response.data.meal_uid;
-                        const newMenuItemId = {
-                          ...newMenuItem,
-                          menu_uid: newMenuId,
-                        };
-                        const newEditedMenu = [...state.editedMenu];
-                        newEditedMenu.push(newMenuItemId);
-                        dispatch({ type: "EDIT_MENU", payload: newEditedMenu });
-                        // Save menu item after switching to different date and back
-                        updateMenu();
-                        toggleAddMenu();
-                      })
-                      .catch((err) => {
-                        if (err.response) {
+                    if (
+                      state.newMeal.menu_date &&
+                      state.newMeal.menu_category &&
+                      state.newMeal.menu_type &&
+                      state.newMeal.meal_cat &&
+                      state.newMeal.meal_uid &&
+                      state.newMeal.default_meal
+                    ) {
+                      const newMenuItemInfo = state.mealData.filter(
+                        (meal) => meal.meal_uid === state.newMeal.meal_uid
+                      )[0];
+                      // YYYY-MM-DD seems to work for request parameter, no need to add HH:MM:SS
+                      const newMenuItem = {
+                        menu_date: state.newMeal.menu_date + " 00:00:00",
+                        menu_category: state.newMeal.menu_category,
+                        menu_type: state.newMeal.menu_type,
+                        meal_cat: state.newMeal.meal_cat,
+                        menu_meal_id: state.newMeal.meal_uid,
+                        default_meal: state.newMeal.default_meal,
+                        delivery_days: ["Sunday", "Monday"],
+                        meal_price: "10",
+                      };
+                      console.log(newMenuItem);
+                      axios
+                        .post(`${API_URL}menu`, newMenuItem)
+                        .then((response) => {
+                          // Save New menu item with id on screen
+                          const newMenuId = response.data.meal_uid;
+                          const newMenuItemId = {
+                            ...newMenuItem,
+                            menu_uid: newMenuId,
+                          };
+                          const newEditedMenu = [...state.editedMenu];
+                          newEditedMenu.push(newMenuItemId);
+                          dispatch({
+                            type: "EDIT_MENU",
+                            payload: newEditedMenu,
+                          });
+                          // Save menu item after switching to different date and back
+                          updateMenu();
+                          toggleAddMenu();
+                        })
+                        .catch((err) => {
+                          if (err.response) {
+                            // eslint-disable-next-line no-console
+                            console.log(err.response);
+                          }
                           // eslint-disable-next-line no-console
-                          console.log(err.response);
-                        }
-                        // eslint-disable-next-line no-console
-                        console.log(err);
-                      });
+                          console.log(err);
+                        });
+                    }
                   }}
                 >
                   Save Menu Item
@@ -1737,15 +1790,34 @@ function CreateMenu({ history, ...props }) {
                           type: "EDIT_NEW_MENU_DATE",
                           payload: newDateObject,
                         });
+                        dispatch({
+                          type: "SET_DATE_VALID",
+                          payload: verifyDate(newDate),
+                        });
                       }}
                     />
                   </Form.Group>
                 </Form>
+                {!state.dateValid && (
+                  <div className={styles.invalidDate}>
+                    This date already exists, please choose another one.
+                  </div>
+                )}
               </Modal.Body>
               <Modal.Footer
                 style={{ border: "none", justifyContent: "center" }}
               >
-                <button className={styles.modalBtn} onClick={saveMenuTemplate}>
+                <button
+                  className={
+                    state.dateValid && state.newDate.menu_date
+                      ? styles.modalBtn
+                      : styles.greyedOutBtn
+                  }
+                  onClick={() => {
+                    if (state.dateValid && state.newDate.menu_date)
+                      saveMenuTemplate();
+                  }}
+                >
                   Save Menu Date with Template
                 </button>
               </Modal.Footer>
@@ -1861,38 +1933,120 @@ function CreateMenu({ history, ...props }) {
                           type: "COPY_FROM_MENU_DATE",
                           payload: newDateObject,
                         });
+                        console.log(verifyDate(copyToDate));
+                        dispatch({
+                          type: "SET_DATE_VALID",
+                          payload: verifyDate(copyToDate),
+                        });
+                        // if (verifyDate(copyToDate))
+                        //   dispatch({ type: "TOGGLE_DATE_VALID" });
                       }}
                     />
                   </Form.Group>
                 </Form>
+                {!state.dateValid && (
+                  <div className={styles.invalidDate}>
+                    This date already exists, please choose another one.
+                  </div>
+                )}
+              </Modal.Body>
+              <Modal.Footer
+                style={{ border: "none", justifyContent: "center" }}
+              >
+                <button
+                  className={
+                    state.dateValid &&
+                    state.copyDate.date1 &&
+                    state.copyDate.date2
+                      ? styles.modalBtn
+                      : styles.greyedOutBtn
+                  }
+                  // this is where i will call the endpoint to copy over date1 -> date2
+                  onClick={() => {
+                    // YYYY-MM-DD seems to work for request parameter, no need to add HH:MM:SS
+                    if (
+                      state.dateValid &&
+                      state.copyDate.date1 &&
+                      state.copyDate.date2
+                    ) {
+                      const newDateObject = {
+                        date1:
+                          state.copyDate.date1.substring(0, 10) + " 00:00:00",
+                        date2: state.copyDate.date2 + " 00:00:00",
+                      };
+                      axios
+                        .post(`${API_URL}Copy_Menu`, newDateObject)
+                        .then((response) => {
+                          console.log(response);
+                          addMenuDate(newDateObject.date2);
+                          dispatch({
+                            type: "CHANGE_DATE",
+                            payload: newDateObject.date2,
+                          });
+                          toggleCopyDate();
+                        });
+                    }
+                  }}
+                >
+                  Copy Menu
+                </button>
+              </Modal.Footer>
+            </div>
+          </div>
+        )}
+        {state.mealExists && (
+          <div
+            style={{
+              height: "100%",
+              width: "100%",
+              zIndex: "101",
+              left: "0",
+              top: "0",
+              overflow: "auto",
+              position: "fixed",
+              display: "grid",
+              backgroundColor: "rgba(255, 255, 255, 0.8)",
+            }}
+          >
+            <div
+              style={{
+                position: "relative",
+                justifySelf: "center",
+                alignSelf: "center",
+                display: "block",
+                border: "#ff6505 solid",
+                backgroundColor: "#FEF7E0",
+                // height: "900px",
+                zIndex: "102",
+
+                borderRadius: "20px",
+              }}
+              className={styles.modalWidth}
+            >
+              <div
+                style={{
+                  border: "none",
+                  paddingTop: "20px",
+                  fontWeight: "bold",
+                  textAlign: "center",
+                }}
+              >
+                <Modal.Title>Error</Modal.Title>
+              </div>
+              <Modal.Body>
+                <div>
+                  {state.selectedMealName} already exists. Please select
+                  another.
+                </div>
               </Modal.Body>
               <Modal.Footer
                 style={{ border: "none", justifyContent: "center" }}
               >
                 <button
                   className={styles.modalBtn}
-                  // this is where i will call the endpoint to copy over date1 -> date2
-                  onClick={() => {
-                    // YYYY-MM-DD seems to work for request parameter, no need to add HH:MM:SS
-                    const newDateObject = {
-                      date1:
-                        state.copyDate.date1.substring(0, 10) + " 00:00:00",
-                      date2: state.copyDate.date2 + " 00:00:00",
-                    };
-                    axios
-                      .post(`${API_URL}Copy_Menu`, newDateObject)
-                      .then((response) => {
-                        console.log(response);
-                        addMenuDate(newDateObject.date2);
-                        dispatch({
-                          type: "CHANGE_DATE",
-                          payload: newDateObject.date2,
-                        });
-                        toggleCopyDate();
-                      });
-                  }}
+                  onClick={() => dispatch({ type: "TOGGLE_MEAL_EXISTS" })}
                 >
-                  Copy Menu
+                  Ok
                 </button>
               </Modal.Footer>
             </div>

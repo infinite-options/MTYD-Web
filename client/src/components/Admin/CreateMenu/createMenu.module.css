@@ -102,7 +102,7 @@ body {
   font-weight: bold;
 }
 
-.hideModal {
+.hidden {
   display: none;
 }
 
@@ -127,4 +127,22 @@ body {
 
 .saveBtn_unsaved {
   fill: red !important;
+}
+
+.invalidDate {
+  color: red;
+  font-weight: bold;
+}
+
+.greyedOutBtn {
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 15px;
+  padding-left: 25px;
+  padding-right: 25px;
+  background-color: grey;
+  font-weight: bold;
+  opacity: 50%;
+  cursor: not-allowed !important;
 }
