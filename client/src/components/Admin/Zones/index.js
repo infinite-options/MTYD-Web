@@ -529,8 +529,7 @@ function Zones ({history,...props}) {
       if (temp.length >= 2) {
         state.nameSplit.colorValue = temp[0]
         state.nameSplit.nameValue = temp[1]
-        state.nameSplitPrevious.colorValue = temp[0]
-        state.nameSplitPrevious.nameValue = temp[1]
+        
       }
       console.log(state.nameSplit.colorValue)
       console.log(state.nameSplit.nameValue)
@@ -617,7 +616,7 @@ function Zones ({history,...props}) {
             </div> */}
             
             <div style={{width: "48%", margin: "1%", float: "left"}}>
-              <div style={{color: "#F26522"}}>Zone Name1:</div>
+              <div style={{color: "#F26522"}}>Zone Name:</div>
               <Form.Control
                 value={state.nameSplit.nameValue}
                 onChange={
