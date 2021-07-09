@@ -226,7 +226,7 @@ class Home extends Component {
         top:'0px'
       }}
       >
-        {this.state.login_seen? <PopLogin/>:null}
+        {this.state.login_seen? <PopLogin toggle={this.togglePopLogin}/>:null}
       </div>
 
       <div className = {styles.topBackground}>

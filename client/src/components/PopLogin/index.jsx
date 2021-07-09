@@ -127,7 +127,7 @@ export class PopLogin extends Component {
   };
 
   handleClick = () => {
-    this.props.toggle();
+    this.props.toggle(); // this.props.toggle is not a function
   };
 
   viewPassword() {

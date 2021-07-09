@@ -290,7 +290,7 @@ class NavBar extends React.Component {
                   }}
                 >
                   <div
-                    onClick={() => {this.goToLink('/admin')}}
+                    onClick={() => {this.goToLink('/admin/order-ingredients')}}
                     className={styles.adminBtn2}
                   >
                     Admin

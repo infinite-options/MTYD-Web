@@ -790,7 +790,7 @@ class PaymentDetails extends React.Component {
 
     console.log(document.getElementById("pac-input").value.split(", ")[0])
 
-    let uspsURL = 'http://production.shippingapis.com/ShippingAPI.dll?API=Verify&XML=<AddressValidateRequest USERID="400INFIN1745"><Revision>1</Revision><Address ID="0"><Address1>' + 
+    let uspsURL = 'https://production.shippingapis.com/ShippingAPI.dll?API=Verify&XML=<AddressValidateRequest USERID="400INFIN1745"><Revision>1</Revision><Address ID="0"><Address1>' + 
     document.getElementById("pac-input").value.split(", ")[0] +'</Address1><Address2>'+ 
     document.getElementById("unitNo").value +'</Address2><City>'+ 
     document.getElementById("locality").value +'</City><State>'+ 

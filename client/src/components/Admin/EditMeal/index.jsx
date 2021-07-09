@@ -28,9 +28,10 @@ const initialState = {
     meal_sugar: '',
     meal_fat: '',
     meal_sat: '',
+    meal_status: ''
   },
   selectedFile: null,
-  previewLink: ""
+  previewLink: "",
 };
 
 function useForceUpdate() {
@@ -263,6 +264,7 @@ function EditMeal({history, ...props}) {
   const saveEditedMeal = () => {
     const savedMeal = state.editedMeal;
     console.log(savedMeal)
+    
     axios
       .put(`${API_URL}meals`,savedMeal)
       .then((response) => {
@@ -307,7 +309,9 @@ function EditMeal({history, ...props}) {
     bodyFormData.append('meal_fat', state.editedMeal.meal_fat)
     bodyFormData.append('meal_sat', state.editedMeal.meal_sat)
     bodyFormData.append('meal_business', activeBusiness)
+    bodyFormData.append('meal_status', state.editedMeal.meal_status)
     bodyFormData.append('meal_uid', state.editedMeal.meal_uid)
+    
 
     // console.log(bodyFormData.values())
     for(var pair of bodyFormData.entries()) {
@@ -364,6 +368,7 @@ function EditMeal({history, ...props}) {
     bodyFormData.append('meal_fat', state.editedMeal.meal_fat)
     bodyFormData.append('meal_sat', state.editedMeal.meal_sat)
     bodyFormData.append('meal_business', activeBusiness)
+    bodyFormData.append('meal_status', state.editedMeal.meal_status)
 
     // console.log(bodyFormData.values())
     for(var pair of bodyFormData.entries()) {
@@ -460,7 +465,7 @@ function EditMeal({history, ...props}) {
                 <th style={{textAlign:"center", display:"inline-block"}} width = "7%" height="45">{allMeals[index].meal_sugar}g</th>
                 <th style={{textAlign:"center", display:"inline-block"}} width = "7%" height="45">{allMeals[index].meal_fat}%</th>
                 <th style={{textAlign:"center", display:"inline-block"}} width = "7%" height="45">{allMeals[index].meal_sat}%</th>
-                <th style={{textAlign:"center", display:"inline-block"}} width = "7%" height="45">Status</th>
+                <th style={{textAlign:"center", display:"inline-block"}} width = "7%" height="45">{allMeals[index].meal_status}</th>
                 <th style={{textAlign:"center", display:"inline-block"}} width = "7%" height="45">
                   <div className={styles.editIcon}
                     onClick={() => {
@@ -621,7 +626,7 @@ function EditMeal({history, ...props}) {
           tempSetWedStart(getActiveBusinessHours().Wednesday[0])
           setWedFin(getActiveBusinessHours().Wednesday[1])
           tempSetThuStart(getActiveBusinessHours().Thursday[0])
-          setWedFin(getActiveBusinessHours().Thursday[1])
+          setThuFin(getActiveBusinessHours().Thursday[1])
           tempSetFriStart(getActiveBusinessHours().Friday[0])
           setFriFin(getActiveBusinessHours().Friday[1])
           tempSetSatStart(getActiveBusinessHours().Saturday[0])
@@ -630,6 +635,7 @@ function EditMeal({history, ...props}) {
           setSunFin(getActiveBusinessHours().Sunday[1])
         }
       }
+
     }
     console.log(allBusinesses)
     //setActiveBusiness(allBusinesses[1])
@@ -654,13 +660,13 @@ function EditMeal({history, ...props}) {
       tempDropdownButtons.push(
         <div
           key={allBusinesses[index]}
-          onClick={() => {
+          onClick={() => { //this is behind one
+            console.log(allBusinesses[index])
+            console.log(getBusinessDataByID(allBusinesses[index]))
             setActiveBusiness(allBusinesses[index])
             setActiveBusinessData(getBusinessDataByID(allBusinesses[index]))
-            //toggleBusinessDetails(false)
-            console.log("active business = " + activeBusiness)
+            console.log(activeBusiness)
             console.log(activeBusinessData)
-            console.log(getActiveBusinessHours())
             setTempBusinessName(activeBusinessData.business_name)
             setTempCusine(activeBusinessData.business_type)
             tempSetMonStart(getActiveBusinessHours().Monday[0])
@@ -682,9 +688,9 @@ function EditMeal({history, ...props}) {
             toggleEditMeal(false)
             toggleBusinessDetails(false)
 
-            console.log("test")
-            console.log(tempBusinessName)
-            console.log(tempCusine)
+            // console.log("test")
+            // console.log(tempBusinessName)
+            // console.log(tempCusine)
             //console.log(getBusinessDataByID(allBusinesses[index]))
             // console.log(activeBusinessData.business_hours)
           }}
@@ -910,7 +916,7 @@ function EditMeal({history, ...props}) {
             // generate JSONs as text
             // parse text to JSON
             console.log("Clicked Save")
-            console.log(JSON.stringify(activeBusinessData))
+            console.log(activeBusinessData)
             let myObj = {
               "business_uid" : activeBusiness,
               "business_created_at" : activeBusinessData.business_created_at,
@@ -944,11 +950,11 @@ function EditMeal({history, ...props}) {
               "business_WAUBI" : activeBusinessData.business_WAUBI, 
               "business_license" : activeBusinessData.business_license, 
               "business_USDOT" : activeBusinessData.business_USDOT, 
-              "notification_approval" : activeBusinessData.notification_approval, 
-              "notification_device_id" : activeBusinessData.notification_device_id, 
-              "can_cancel" : activeBusinessData.can_cancel, 
-              "delivery" : activeBusinessData.delivery, 
-              "reusable" : activeBusinessData.reusable, 
+              "bus_notification_approval" : activeBusinessData.bus_notification_approval, 
+              "bus_notification_device_id" : activeBusinessData.bus_guid_device_id_notification, 
+              "can_cancel" : activeBusinessData.can_cancel.toString(), 
+              "delivery" : activeBusinessData.delivery.toString(), 
+              "reusable" : activeBusinessData.reusable.toString(), 
               "business_image" : activeBusinessData.business_image, 
               "business_password" : activeBusinessData.business_password
             }
@@ -963,6 +969,19 @@ function EditMeal({history, ...props}) {
             .catch(err => {
               console.log(err)
             })
+            getBusinessData()
+            activeBusinessData.business_type = tempCusine
+            console.log(activeBusinessData.business_accepting_hours)
+            let myObj2 = {
+              "Friday": [tempFriStart, tempFriFin], 
+              "Monday": [tempMonStart, tempMonFin], 
+              "Sunday": [tempSunStart, tempSunFin], 
+              "Tuesday": [tempTueStart, tempTueFin], 
+              "Saturday": [tempSatStart, tempSatFin], 
+              "Thursday": [tempThuStart, tempThuFin], 
+              "Wednesday": [tempWedStart, tempWedFin]}
+            activeBusinessData.business_accepting_hours = JSON.stringify(myObj2)
+            toggleBusinessDetails(false);
             // generate time table first
             // put time table into business JSON
             // POST via axios (test via console logs before posting)
@@ -970,6 +989,26 @@ function EditMeal({history, ...props}) {
         >Save</div>
       </div>
     )
+  }
+
+  const checkForDuplicateNameInBusiness = () => {
+    for (let i = 0; i < allMeals.length; i++) {
+      if (allMeals[i].meal_name == state.editedMeal.meal_name && allMeals[i].meal_business == activeBusiness) {
+        alert("Meal of this name already exists for this business")
+        return true
+      }
+    }
+    return false
+  }
+
+  const checkForDuplicateNameInBusinessEditing = () => {
+    for (let i = 0; i < allMeals.length; i++) {
+      if (allMeals[i].meal_name == state.editedMeal.meal_name && allMeals[i].meal_business == activeBusiness && allMeals[i].meal_uid != state.editedMeal.meal_uid) {
+        alert("Meal of this name already exists for this business")
+        return true
+      }
+    }
+    return false
   }
 
   const editMealBox = () => {
@@ -1450,6 +1489,8 @@ function EditMeal({history, ...props}) {
                       />
                     </Col>
                   </Form.Group>
+
+
                   
                  
                 </Form>
@@ -1609,6 +1650,25 @@ function EditMeal({history, ...props}) {
                       />
                     </Col>
                   </Form.Group>
+
+                  <Form.Group as={Row}>
+                  <Form.Label column sm={3} style={{color: "#F26522"}}>
+                    Status
+                  </Form.Label>
+                  <Col sm={9}>
+                    <Form.Control
+                      as="textarea"
+                      value={state.editedMeal.meal_status}
+                      placeholder="Placeholder for status"
+                      onChange={
+                        (event) => {
+                          editMeal('meal_status', event.target.value );
+                        }
+                      }
+                    />
+                  </Col>
+                </Form.Group>
+
                   <Row>
                     <Col
                       style={{
@@ -1618,18 +1678,21 @@ function EditMeal({history, ...props}) {
                       <Button
                         variant="primary"
                         onClick={()=>{
-                          saveEditedMealNew()
-                          // toggleMealsGenerated(false)
-                          // generateMealsListUpdate()
-                          
-                          console.log("pog")
-                          console.log(state.editedMeal)
-                          for (var i = 0; i < allMeals.length; i++) {
-                            if (allMeals[i].meal_uid == state.editedMeal.meal_uid) {
-                              allMeals[i] = state.editedMeal
-                              console.log("meal changed in allMeals")
+                          if (!checkForDuplicateNameInBusinessEditing()) {
+                            saveEditedMealNew()
+                            // toggleMealsGenerated(false)
+                            // generateMealsListUpdate()
+                            
+                            console.log("pog")
+                            console.log(state.editedMeal)
+                            for (var i = 0; i < allMeals.length; i++) {
+                              if (allMeals[i].meal_uid == state.editedMeal.meal_uid) {
+                                allMeals[i] = state.editedMeal
+                                console.log("meal changed in allMeals")
+                              }
                             }
                           }
+                          
     
                           forceUpdate()
                           toggleEditMeal(false)
@@ -2303,6 +2366,25 @@ function EditMeal({history, ...props}) {
                     />
                   </Col>
                 </Form.Group>
+                
+                <Form.Group as={Row}>
+                  <Form.Label column sm={3} style={{color: "#F26522"}}>
+                    Status
+                  </Form.Label>
+                  <Col sm={9}>
+                    <Form.Control
+                      as="textarea"
+                      
+                      placeholder="Placeholder for status"
+                      onChange={
+                        (event) => {
+                          editMeal('meal_status', event.target.value );
+                        }
+                      }
+                    />
+                  </Col>
+                </Form.Group>
+
                 <Row>
                   <Col
                     style={{
@@ -2312,7 +2394,13 @@ function EditMeal({history, ...props}) {
                     <Button
                       variant="primary"
                       onClick={()=>{
-                        postNewMeal()
+                        if (!checkForDuplicateNameInBusiness()){
+                          postNewMeal()
+
+                          allMeals.push(state.editedMeal)
+                          dispatch({ type: 'SET_PREVIEW', payload: ''})
+                        }
+                        
 
                         console.log("edited meal data")
                         console.log(state.editedMeal)
@@ -2355,8 +2443,7 @@ function EditMeal({history, ...props}) {
                         
                         // editMeal('meal_photo_URL', state.previewLink );
 
-                        allMeals.push(state.editedMeal)
-                        dispatch({ type: 'SET_PREVIEW', payload: ''})
+                        
 
                         forceUpdate()
                         toggleNewMeal(false)
@@ -2409,6 +2496,27 @@ function EditMeal({history, ...props}) {
     }
   }
 
+  const displayBusinessHours = () => {
+    if (activeBusiness != null && tempMonStart == 'N/A') {
+      setTempBusinessName(activeBusinessData.business_name)
+      setTempCusine(activeBusinessData.business_type)
+      tempSetMonStart(getActiveBusinessHours().Monday[0])
+      setMonFin(getActiveBusinessHours().Monday[1])
+      tempSetTueStart(getActiveBusinessHours().Tuesday[0])
+      setTueFin(getActiveBusinessHours().Tuesday[1])
+      tempSetWedStart(getActiveBusinessHours().Wednesday[0])
+      setWedFin(getActiveBusinessHours().Wednesday[1])
+      tempSetThuStart(getActiveBusinessHours().Thursday[0])
+      setThuFin(getActiveBusinessHours().Thursday[1])
+      tempSetFriStart(getActiveBusinessHours().Friday[0])
+      setFriFin(getActiveBusinessHours().Friday[1])
+      tempSetSatStart(getActiveBusinessHours().Saturday[0])
+      setSatFin(getActiveBusinessHours().Saturday[1])
+      tempSetSunStart(getActiveBusinessHours().Sunday[0])
+      setSunFin(getActiveBusinessHours().Sunday[1])
+    }
+  }
+
   return (
     <div style={{backgroundColor: '#F26522'}}>
 
@@ -2419,6 +2527,10 @@ function EditMeal({history, ...props}) {
       {generateMealsList()}
       {generateBusinessIDs()}
       {getBusinessData()}
+
+      {console.log(activeBusiness)}
+
+      {displayBusinessHours()}
       
       {/* {getDropdownButtons()} */}
       
@@ -2490,6 +2602,7 @@ function EditMeal({history, ...props}) {
           textDecoration: "underline"
           }}
           onClick={() => {
+            console.log(activeBusiness)
             console.log(activeBusinessData)
             toggleBusinessDetails(!showBusinessDetails)
             console.log(showBusinessDetails)
@@ -2542,7 +2655,8 @@ function EditMeal({history, ...props}) {
           left: "700px",
         }}>
           {activeBusinessData.business_type}
-          {console.log(activeBusinessData)}
+          {/* {tempCusine} */}
+          {/* {console.log(activeBusinessData)} */}
         </div>
 
         <div style={{
@@ -2614,7 +2728,7 @@ function EditMeal({history, ...props}) {
             {getActiveBusinessHours().Friday[0]} - {getActiveBusinessHours().Friday[1]}
           </div>
           <div style={{display: "block", fontSize: "12px"}}>
-          {getActiveBusinessHours().Saturday[0]} - {getActiveBusinessHours().Saturday[1]}
+            {getActiveBusinessHours().Saturday[0]} - {getActiveBusinessHours().Saturday[1]}
           </div>
           <div style={{display: "block", fontSize: "12px"}}>
             {getActiveBusinessHours().Sunday[0]} - {getActiveBusinessHours().Sunday[1]}
@@ -2627,7 +2741,7 @@ function EditMeal({history, ...props}) {
       
 
       <div className={styles.containerMeals}>
-        <div className={styles.sectionHeader} style={{display: "inline"}}>
+        <div style={{fontSize: "24px", display: "inline", marginLeft: "27px"}}>
 					Meals Offered
 				</div>
 
