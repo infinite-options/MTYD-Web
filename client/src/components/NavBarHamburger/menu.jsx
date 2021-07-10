@@ -310,7 +310,7 @@ export class MenuList extends Component {
             </a>
 
             {console.log("showAdmin? ", this.state.showAdmin)}
-            <a href='/admin'
+            <a href='/admin/order-ingredients'
               style ={{
                 display: this.state.showAdmin
               }}

@@ -49,7 +49,7 @@ export const preCallback = (customerInfo, callback) => {
       });
     callback('meal-plan');
   } else {
-    callback('admin');
+    callback('admin/order-ingredients');
   }
 };
 

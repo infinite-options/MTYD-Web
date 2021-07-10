@@ -1691,11 +1691,12 @@ function EditMeal({history, ...props}) {
                                 console.log("meal changed in allMeals")
                               }
                             }
+                            toggleEditMeal(false)
                           }
                           
     
                           forceUpdate()
-                          toggleEditMeal(false)
+                          //toggleEditMeal(false)
                         }}
                         style={{
                           backgroundColor: "#F26522",
@@ -2399,6 +2400,7 @@ function EditMeal({history, ...props}) {
 
                           allMeals.push(state.editedMeal)
                           dispatch({ type: 'SET_PREVIEW', payload: ''})
+                          toggleNewMeal(false)
                         }
                         
 
@@ -2446,7 +2448,7 @@ function EditMeal({history, ...props}) {
                         
 
                         forceUpdate()
-                        toggleNewMeal(false)
+                        // toggleNewMeal(false)
                       }}
                       style={{
                         backgroundColor: "#F26522",
