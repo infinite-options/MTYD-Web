@@ -608,7 +608,7 @@ function Zones ({history,...props}) {
 
       {selectBusinessModal()}
 
-      <AdminNavBar currentPage={'edit-meal'}/>
+      <AdminNavBar currentPage={'zones'}/>
 
       <div className={styles.containerCustomer}>
         <div style = {{width: "70%", height: "100%", float: "left", fontWeight: 'bold', paddingTop: "45px", paddingLeft: "27px", }}>

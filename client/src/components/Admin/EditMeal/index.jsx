@@ -1696,7 +1696,7 @@ function EditMeal({history, ...props}) {
                           
     
                           forceUpdate()
-                          // toggleEditMeal(false)
+                          //toggleEditMeal(false)
                         }}
                         style={{
                           backgroundColor: "#F26522",
