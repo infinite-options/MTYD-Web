@@ -256,7 +256,7 @@
   border-radius: 15px;
   font-size: 18px;
   font-weight: 500;
-  text-align: center;
+  /* text-align: center; */
   background-color: none;
   display: flex;
   justify-content: center;
@@ -434,18 +434,18 @@
   border-radius: 15px;
   font-size: 18px;
   font-weight: 500;
-  text-align: center;
-  padding-top: 4px;
+  /* text-align: center; */
+  /* padding-top: 4px; */
   background-color: none;
   display: flex;
   justify-content: center;
   align-items: center;
   border: 2px solid white;
   color: white;
-  text-overflow: ellipsis;
+  /* text-overflow: ellipsis;
   display: block;
   white-space: nowrap;
-  overflow: hidden;
+  overflow: hidden; */
   cursor: pointer;
 } 
 .adminBtn2:hover {
@@ -457,17 +457,17 @@
   font-size: 18px;
   font-weight: 500;
   text-align: center;
-  padding-top: 4px;
+  /* padding-top: 4px; */
   background-color: none;
   display: flex;
   justify-content: center;
   align-items: center;
   border: 2px solid #F8BB17;
   color: #F8BB17;
-  text-overflow: ellipsis;
+  /* text-overflow: ellipsis;
   display: block;
   white-space: nowrap;
-  overflow: hidden;
+  overflow: hidden; */
   cursor: pointer;
 } 
 
