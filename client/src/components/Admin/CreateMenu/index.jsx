@@ -9,15 +9,7 @@ import { ReactComponent as DeleteBtn } from "./static/delete.svg";
 import { ReactComponent as SaveBtn } from "./static/save.svg";
 import AdminNavBar from "../AdminNavBar";
 
-import {
-  Breadcrumb,
-  Form,
-  Button,
-  Container,
-  Row,
-  Col,
-  Modal,
-} from "react-bootstrap";
+import { Form, Container, Row, Col, Modal } from "react-bootstrap";
 import {
   Table,
   TableHead,
@@ -26,8 +18,6 @@ import {
   TableRow,
   TableCell,
 } from "@material-ui/core";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrashAlt, faSave } from "@fortawesome/free-solid-svg-icons";
 import { withRouter } from "react-router";
 import styles from "./createMenu.module.css";
 import Carousel from "react-multi-carousel";
@@ -326,6 +316,24 @@ function CreateMenu({ history, ...props }) {
       });
   }, []);
 
+  // Fetch meals
+  useEffect(() => {
+    axios
+      .get(`${API_URL}meals`)
+      .then((response) => {
+        const mealApiResult = response.data.result;
+        dispatch({ type: "FETCH_MEALS", payload: mealApiResult });
+      })
+      .catch((err) => {
+        if (err.response) {
+          // eslint-disable-next-line no-console
+          console.log(err.response);
+        }
+        // eslint-disable-next-line no-console
+        console.log(err);
+      });
+  }, []);
+
   const menuDates = useMemo(() => {
     const menuDatesFormatted = state.allMenuDates.map((item) => {
       const menuDate = item.menu_date;
@@ -351,90 +359,28 @@ function CreateMenu({ history, ...props }) {
     return "";
   };
 
-  const getClosestDateIndex = (dates) => {
-    var now = Date().toLocaleString();
-    var monthDict = [];
-
-    monthDict.push({
-      key: "Jan",
-      value: "01",
-    });
-    monthDict.push({
-      key: "Feb",
-      value: "02",
-    });
-    monthDict.push({
-      key: "Mar",
-      value: "03",
-    });
-    monthDict.push({
-      key: "Apr",
-      value: "04",
-    });
-    monthDict.push({
-      key: "May",
-      value: "05",
-    });
-    monthDict.push({
-      key: "Jun",
-      value: "06",
-    });
-    monthDict.push({
-      key: "Jul",
-      value: "07",
-    });
-    monthDict.push({
-      key: "Aug",
-      value: "08",
-    });
-    monthDict.push({
-      key: "Sep",
-      value: "09",
-    });
-    monthDict.push({
-      key: "Oct",
-      value: "10",
-    });
-    monthDict.push({
-      key: "Nov",
-      value: "11",
-    });
-    monthDict.push({
-      key: "Dec",
-      value: "12",
-    });
-
-    const currMonth = now.substring(4, 7);
-    let currMonthVal = 0;
-    const currDay = now.substring(8, 10);
-    const currYear = now.substring(11, 15);
-
-    // assign value to current month
-    for (let i = 0, l = monthDict.length; i < l; i++) {
-      if (currMonth === monthDict[i].key) {
-        currMonthVal = monthDict[i].value;
-      }
+  const getCurrentDate = () => {
+    const currentDate = new Date();
+    let day = currentDate.getDate();
+    if (day < 10) {
+      day = ["0", day].join("");
     }
+    let month = currentDate.getMonth() + 1;
+    if (month < 10) {
+      month = ["0", month].join("");
+    }
+    let year = currentDate.getFullYear();
+    return [[year, month, day].join("-"), "00-00-00"].join(" ");
+  };
 
-    let closestDateIndex = 0;
+  const getClosestDateIndex = (dates) => {
+    if (dates) {
+      let curDay = getCurrentDate();
 
-    for (let i = 0, l = dates.length; i < l; i++) {
-      var date = dates[i];
-      var year = date.menu_date.substring(0, 4);
-      var month = date.menu_date.substring(5, 7);
-      var day = date.menu_date.substring(8, 10);
-
-      if (currYear <= year) {
-        if (currMonthVal < month) {
-          if (!closestDateIndex) {
-            return (closestDateIndex = i);
-          }
-        } else if (currMonthVal == month) {
-          if (currDay <= day) {
-            if (!closestDateIndex) {
-              return (closestDateIndex = i);
-            }
-          }
+      for (let i = 0; i < dates.length; i++) {
+        const day = dates[i].menu_date;
+        if (day.localeCompare(curDay) === 1) {
+          return i - 1;
         }
       }
     }
@@ -484,6 +430,53 @@ function CreateMenu({ history, ...props }) {
       (elt, index) => menuCategories.indexOf(elt) === index && elt
     );
     return menuCategoriesUnique;
+  };
+
+  // Change Date
+  const changeDate = (newDate) => {
+    dispatch({ type: "CHANGE_DATE", payload: newDate });
+    //const curMenu = getMenuData(newDate);
+    // curMenu.then((response) => console.log(response));
+    //console.log(curMenu);
+    getMenuData(newDate)
+      .then((curMenu) => {
+        if (curMenu) {
+          const sortedMenu = sortedArray(
+            curMenu,
+            state.sortEditMenu.field,
+            state.sortEditMenu.direction
+          );
+          dispatch({ type: "EDIT_MENU", payload: sortedMenu });
+        } else {
+          dispatch({ type: "EDIT_MENU", payload: [] });
+        }
+      })
+      .catch((err) => {
+        if (err.response) {
+          // eslint-disable-next-line no-console
+          console.log(err.response);
+        }
+        // eslint-disable-next-line no-console
+        console.log(err);
+      });
+  };
+
+  const changeSortOptions = (field) => {
+    const isAsc =
+      state.sortEditMenu.field === field &&
+      state.sortEditMenu.direction === "asc";
+    const direction = isAsc ? "desc" : "asc";
+    dispatch({
+      type: "SORT_MENU",
+      payload: {
+        field: field,
+        direction: direction,
+      },
+    });
+    const sortedEditedMenu = sortedArray(state.editedMenu, field, direction);
+    const sortedFullMenu = sortedArray(state.menuDataByDate, field, direction);
+    dispatch({ type: "EDIT_MENU", payload: sortedEditedMenu });
+    dispatch({ type: "FETCH_MENU_BY_DATE", payload: sortedFullMenu });
   };
 
   const updateMenu = () => {
@@ -551,81 +544,6 @@ function CreateMenu({ history, ...props }) {
       });
   };
 
-  // Fetch menu
-  // useEffect(() => {
-  //   updateMenu();
-  // }, []);
-
-  // Fetch meals
-  useEffect(() => {
-    axios
-      .get(`${API_URL}meals`)
-      .then((response) => {
-        const mealApiResult = response.data.result;
-        dispatch({ type: "FETCH_MEALS", payload: mealApiResult });
-      })
-      .catch((err) => {
-        if (err.response) {
-          // eslint-disable-next-line no-console
-          console.log(err.response);
-        }
-        // eslint-disable-next-line no-console
-        console.log(err);
-      });
-  }, []);
-
-  // Change Date
-  const changeDate = (newDate) => {
-    dispatch({ type: "CHANGE_DATE", payload: newDate });
-    //const curMenu = getMenuData(newDate);
-    // curMenu.then((response) => console.log(response));
-    //console.log(curMenu);
-    getMenuData(newDate)
-      .then((curMenu) => {
-        if (curMenu) {
-          const sortedMenu = sortedArray(
-            curMenu,
-            state.sortEditMenu.field,
-            state.sortEditMenu.direction
-          );
-          dispatch({ type: "EDIT_MENU", payload: sortedMenu });
-        } else {
-          dispatch({ type: "EDIT_MENU", payload: [] });
-        }
-      })
-      .catch((err) => {
-        if (err.response) {
-          // eslint-disable-next-line no-console
-          console.log(err.response);
-        }
-        // eslint-disable-next-line no-console
-        console.log(err);
-      });
-  };
-
-  // useEffect(() => {
-  //   changeDate("2021-06-30");
-  // }, []);
-
-  const changeSortOptions = (field) => {
-    const isAsc =
-      state.sortEditMenu.field === field &&
-      state.sortEditMenu.direction === "asc";
-    const direction = isAsc ? "desc" : "asc";
-    dispatch({
-      type: "SORT_MENU",
-      payload: {
-        field: field,
-        direction: direction,
-      },
-    });
-    const sortedEditedMenu = sortedArray(state.editedMenu, field, direction);
-    const sortedFullMenu = sortedArray(state.menuDataByDate, field, direction);
-    dispatch({ type: "EDIT_MENU", payload: sortedEditedMenu });
-    dispatch({ type: "FETCH_MENU_BY_DATE", payload: sortedFullMenu });
-  };
-
-  // Save Upodate menu item
   // Save Upodate menu item
   const updateMenuItem = (menuItem, index) => {
     if (menuItem.menu_uid) {
