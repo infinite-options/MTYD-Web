@@ -269,7 +269,7 @@ function NavBar(props) {
             </a>
 
             <a
-              href="/admin/coupons"
+              href="/admin/plans-coupons"
               className={styles.navLink}
               style={
                 props.currentPage === "plans-coupons"
@@ -388,10 +388,23 @@ function NavBar(props) {
             >
               <div className={styles.dropdownLink}>
                 <a
-                  href="/admin/edit-meal"
+                  href="/admin/order-ingredients"
                   className={styles.navLinkDD}
                   style={
-                    props.currentPage === "meals-plans"
+                    props.currentPage === "order-ingredients"
+                      ? { color: "black" }
+                      : {}
+                  }
+                >
+                  Orders
+                </a>
+              </div>
+              <div className={styles.dropdownLink}>
+                <a
+                  href="/admin/create-menu"
+                  className={styles.navLinkDD}
+                  style={
+                    props.currentPage === "create-menu"
                       ? { color: "black" }
                       : {}
                   }
@@ -401,15 +414,13 @@ function NavBar(props) {
               </div>
               <div className={styles.dropdownLink}>
                 <a
-                  href="/admin/orders-ingredients"
+                  href="/admin/edit-meal"
                   className={styles.navLinkDD}
                   style={
-                    props.currentPage === "orders-ingredients"
-                      ? { color: "black" }
-                      : {}
+                    props.currentPage === "edit-meal" ? { color: "black" } : {}
                   }
                 >
-                  Orders
+                  Businesses & Meals
                 </a>
               </div>
               <div className={styles.dropdownLink}>
@@ -423,17 +434,6 @@ function NavBar(props) {
                   }
                 >
                   Ingredients & Units
-                </a>
-              </div>
-              <div className={styles.dropdownLink}>
-                <a
-                  href="/admin/businesses"
-                  className={styles.navLinkDD}
-                  style={
-                    props.currentPage === "businesses" ? { color: "black" } : {}
-                  }
-                >
-                  Businesses & Meals
                 </a>
               </div>
               <div className={styles.dropdownLink}>
@@ -462,10 +462,10 @@ function NavBar(props) {
               </div>
               <div className={styles.dropdownLink}>
                 <a
-                  href="/admin/edit-meal"
+                  href="/admin/plans-coupons"
                   className={styles.navLinkDD}
                   style={
-                    props.currentPage === "notifications"
+                    props.currentPage === "plans-coupons"
                       ? { color: "black" }
                       : {}
                   }
@@ -475,10 +475,10 @@ function NavBar(props) {
               </div>
               <div className={styles.dropdownLink}>
                 <a
-                  href="/admin/edit-meal"
+                  href="/admin/zones"
                   className={styles.navLinkDD}
                   style={
-                    props.currentPage === "businesses" ? { color: "black" } : {}
+                    props.currentPage === "zones" ? { color: "black" } : {}
                   }
                 >
                   Zones
@@ -486,10 +486,10 @@ function NavBar(props) {
               </div>
               <div className={styles.dropdownLink}>
                 <a
-                  href="/admin/edit-meal"
+                  href="/admin/google-analytics"
                   className={styles.navLinkDD}
                   style={
-                    props.currentPage === "zones" ? { color: "black" } : {}
+                    props.currentPage === "google-analytics" ? { color: "black" } : {}
                   }
                 >
                   Analytics
