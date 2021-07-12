@@ -1478,202 +1478,174 @@ class AdminEditModal extends React.Component {
     );
   }
 
-
   // Used to render everything in "Plan Details" section
   showPlanDetails = (width) => {
     let ariaTag = "Your current meal plan currently contains "+ this.state.currentPlan.meals + " meals per delivery and" + this.state.currentPlan.deliveries + " deliveries"
     if(width < 800) {
       return (
         <div style={{display: 'flex'}}>
-        <div style={{display: 'inline-block'}}>
-          <div className={styles.boxPDnarrowTop}>
+          <div style={{display: 'inline-block'}}>
+            <div className={styles.boxPDnarrowTop}>
 
-            <div className={styles_admin.planHeader}>
-              Current Plan
-            </div>
-
-						{/* <span className={styles.subHeader}>
-							MEALS
-						</span> */}
-            {/* <div style={{paddingBottom: '50px'}}>
-              <div style={{paddingBottom: '10px'}}>
-                MEALS
+              <div className={styles_admin.planHeader}>
+                Current Plan
               </div>
-              <div className={styles.iconMeals}>
-                {this.state.currentPlan.meals}
-              </div>
-            </div> */}
-						<div 
-							style={{paddingBottom: '50px'}}
-						>
-              {/* <div style={{paddingBottom: '10px'}}>
-                MEALS
-              </div> */}
-							<span className={styles_admin.subHeader2}>
-								MEALS
-							</span>
-              {/* <div className={styles.iconMeals}>
-                {this.state.currentPlan.meals}
-              </div> */}
-							<div className={styles_admin.plateButtonWrapper2} >
-								<button
-									className={styles_admin.plateButtonCurrent}
-									// aria-label={"Click to switch to " +mealIndex+ " meals per delivery for $" + singleMealData.item_price}
-									// title={"Click to switch to " +mealIndex+ " meals per delivery for $" + singleMealData.item_price}
-								>
-									{this.state.currentPlan.meals}
-								</button>
-							</div>
-            </div>
 
-						<div 
-							style={{paddingBottom: '50px'}}
-						>
-						<span className={styles_admin.subHeader2}>
-							DELIVERIES
-						</span>
-						<div className={styles_admin.plateButtonWrapper2}>
-							<button
-								className={styles_admin.deliveryButtonCurrent}
-							>
-								<span style={{fontSize: '2em'}}>
-									{this.state.currentPlan.deliveries}
-								</span>
-								{/* {deliveryIndex} */}
-								<br />
-								{(() => {
-									if (typeof(this.state.currentPlan.discount) !== "undefined" && this.state.currentPlan.discount > 0) {
-										return (
-											<span
-												style={{
-													fontSize: '0.8em'
-												}}
-											>
-												(Save {this.state.currentPlan.discount}%)
-											</span>
-										);
-									}
-								})()}  
-							</button>
-						</div>
-						</div>
-
-            <div>
-							<span className={styles_admin.subHeader2}>
-								CANCEL
-							</span>
-              {/* <div 
-                className={styles.iconTrash}
-                onClick={() => {
-                  // this.deletePurchase();
-                  this.confirmDelete();
-                }}
-                tabIndex="0"
-                aria-label="Click here to cancel this meal plan"
-                title="Click here to cancel this meal plan"
-              /> */}
-							<div className={styles_admin.plateButtonWrapper3}>
-								<div 
-									className={styles.iconTrash}
-									onClick={() => {
-										// this.deletePurchase();
-										this.confirmDelete();
-									}}
-									tabIndex="0"
-									aria-label="Click here to cancel this meal plan"
-									title="Click here to cancel this meal plan"
-								/>
-							</div>
-            </div>
-
-          </div>
-
-          <div className={styles.boxPDnarrowBottom}>
-
-            <div className={styles_admin.planHeader}>
-              Updated Plan
-            </div>
-
-            <div className={styles.menuSection}>
-              <div className={styles.center}>
-                <span className={styles.subHeader}>
-                  NUMBER OF MEALS PER DELIVERY
+              <div 
+                style={{paddingBottom: '50px'}}
+              >
+                <span className={styles_admin.subHeader2}>
+                  MEALS
                 </span>
+                <div className={styles_admin.plateButtonWrapper2} >
+                  <button
+                    className={styles_admin.plateButtonCurrent}
+                    // aria-label={"Click to switch to " +mealIndex+ " meals per delivery for $" + singleMealData.item_price}
+                    // title={"Click to switch to " +mealIndex+ " meals per delivery for $" + singleMealData.item_price}
+                  >
+                    {this.state.currentPlan.meals}
+                  </button>
+                </div>
               </div>
-              {(()=>{
-                if(JSON.stringify(this.props.plans) !== "{}"){
-                  return(
-                    <div className={styles_admin.buttonWrapper}>
-                      {this.mealsDelivery()}
-                    </div>
-                  );
-                }
-              })()}
+
+              <div 
+                style={{paddingBottom: '50px'}}
+              >
+                <span className={styles_admin.subHeader2}>
+                  DELIVERIES
+                </span>
+                <div className={styles_admin.plateButtonWrapper2}>
+                  <button
+                    className={styles_admin.deliveryButtonCurrent}
+                  >
+                    <span style={{fontSize: '2em'}}>
+                      {this.state.currentPlan.deliveries}
+                    </span>
+                    <br />
+                    {(() => {
+                      if (typeof(this.state.currentPlan.discount) !== "undefined" && this.state.currentPlan.discount > 0) {
+                        return (
+                          <span
+                            style={{
+                              fontSize: '0.8em'
+                            }}
+                          >
+                            (Save {this.state.currentPlan.discount}%)
+                          </span>
+                        );
+                      }
+                    })()}  
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <span className={styles_admin.subHeader2}>
+                  CANCEL
+                </span>
+                <div className={styles_admin.plateButtonWrapper3}>
+                  <div 
+                    className={styles.iconTrash}
+                    onClick={() => {
+                      this.confirmDelete();
+                    }}
+                    tabIndex="0"
+                    aria-label="Click here to cancel this meal plan"
+                    title="Click here to cancel this meal plan"
+                  />
+                </div>
+              </div>
+
             </div>
+
+            <div className={styles.boxPDnarrowBottom}>
+
+              <div className={styles_admin.planHeader}>
+                Updated Plan
+              </div>
+
+              <div className={styles.menuSection}>
+                <div className={styles.center}>
+                  <span className={styles.subHeader}>
+                    NUMBER OF MEALS PER DELIVERY
+                  </span>
+                </div>
+                {(()=>{
+                  if(JSON.stringify(this.props.plans) !== "{}"){
+                    return(
+                      <div className={styles_admin.buttonWrapper}>
+                        {this.mealsDelivery()}
+                      </div>
+                    );
+                  }
+                })()}
+              </div>
             
-            <div className={styles.menuSection}>
-              <div className={styles.center}>
-                <span className={styles.subHeader}>
-                  TOTAL NUMBER OF DELIVERIES
-                </span>
-              </div>
-              {(()=>{
-                if(JSON.stringify(this.props.plans) !== "{}"){
-                  return(
-                    <div 
-                      className='row' 
-                      style={{
-                        marginTop: '20px', 
-                        marginBottom: '30px',
-                      }}
-                    >
-                      {/* <div
+              <div className={styles.menuSection}>
+                <div className={styles.center}>
+                  <span className={styles.subHeader}>
+                    TOTAL NUMBER OF DELIVERIES
+                  </span>
+                </div>
+                {(()=>{
+                  if(JSON.stringify(this.props.plans) !== "{}"){
+                    return(
+                      <div 
+                        className='row' 
                         style={{
-                          width: 'auto',
-                          flex: '0 0 auto'
+                          marginTop: '20px', 
+                          marginBottom: '30px',
                         }}
-                      > */}
+                      >
                         {this.paymentFrequency()}
-                      {/* </div> */}
-                    </div>
-                  );
-                }
-              })()}
-            </div>
+                      </div>
+                    );
+                  }
+                })()}
+              </div>
 
-            <div 
-							className={styles_admin.chargeContainer}
-							tabIndex="0" 
-						>
-							{(() => {
-								let chargeOrRefund = this.state.differenceSummary.total;
-								if (parseFloat(chargeOrRefund) >= 0) {
-									return (
-										<>
-											<div className={styles_admin.chargeText}>
-												{"Additional Charges "}
-											</div>
-											<div className={styles_admin.chargeAmount}>
-												${this.state.differenceSummary.total}
-											</div>
-										</>
-									);
-								} else {
-									return (
-										<>
-											<div className={styles_admin.chargeText}>
-												{"You will be refunded "}
-											</div>
-											<div className={styles_admin.chargeAmount}>
-												${(-1*this.state.differenceSummary.total).toFixed(2)}
-											</div>
-										</>
-									);
-								}
-							})()}
-            </div> 
+              <div
+                style={{
+                  width: '100%',
+                  // border: 'dashed',
+                  display: 'flex',
+                  justifyContent: 'center'
+                }}
+              >
+                <div 
+                  className={styles_admin.chargeContainer}
+                  tabIndex="0" 
+                >
+                  {(() => {
+                    let chargeOrRefund = this.state.differenceSummary.total;
+                    if (parseFloat(chargeOrRefund) >= 0) {
+                      return (
+                        <>
+                          <div className={styles_admin.chargeText}>
+                            {"Additional Charges "}
+                          </div>
+                          <div className={styles_admin.chargeAmount}>
+                            ${this.state.differenceSummary.total}
+                          </div>
+                        </>
+                      );
+                    } else {
+                      return (
+                        <>
+                          <div className={styles_admin.chargeText}>
+                            {"You will be refunded "}
+                          </div>
+                          <div className={styles_admin.chargeAmount}>
+                            ${(-1*this.state.differenceSummary.total).toFixed(2)}
+                          </div>
+                        </>
+                      );
+                    }
+                  })()}
+                </div> 
+              </div>
+            </div>
           </div>
-        </div>
         </div>
       );
     } else {
@@ -1681,14 +1653,7 @@ class AdminEditModal extends React.Component {
         <>
           <div className={styles_admin.boxPDleft}>
 
-          <div 
-						style={{
-							// width: 'fit-content',
-							// border: '1px solid purple',
-							// display: 'flex',
-							// justifyContent: 'center'
-						}}
-					>
+          <div>
             <div className={styles_admin.planHeader}>
               Current Plan
             </div>
@@ -1696,15 +1661,9 @@ class AdminEditModal extends React.Component {
             <div 
 							style={{paddingBottom: '50px'}}
 						>
-              {/* <div style={{paddingBottom: '10px'}}>
-                MEALS
-              </div> */}
 							<span className={styles_admin.subHeader2}>
 								MEALS
 							</span>
-              {/* <div className={styles.iconMeals}>
-                {this.state.currentPlan.meals}
-              </div> */}
 							<div className={styles_admin.plateButtonWrapper2} >
 								<button
 									className={styles_admin.plateButtonCurrent}
@@ -1720,25 +1679,6 @@ class AdminEditModal extends React.Component {
 							<span className={styles_admin.subHeader2}>
 								DELIVERIES
 							</span>
-              {/* <button className={styles.deliveryButtonCurrent} aria-label={ariaTag} title={ariaTag}>
-                <span style={{fontSize: '35px'}}>
-                  {this.state.currentPlan.deliveries}
-                </span>
-                <br></br>
-                <span style={{whiteSpace: "nowrap"}}>
-                  {"(Save "+this.state.currentPlan.discount+"%)"}
-                </span>
-              </button> */}
-							{/* <div className={styles_admin.plateButtonWrapper2} >
-								<button
-									className={styles_admin.deliveryButton}
-									style={{fontSize: '20px'}}
-									// aria-label={"Click to switch to " +mealIndex+ " meals per delivery for $" + singleMealData.item_price}
-									// title={"Click to switch to " +mealIndex+ " meals per delivery for $" + singleMealData.item_price}
-								>
-									{this.state.currentPlan.deliveries}
-								</button>
-							</div> */}
 
 							<div className={styles_admin.plateButtonWrapper2}>
 								<button
@@ -1747,7 +1687,6 @@ class AdminEditModal extends React.Component {
 									<span style={{fontSize: '2em'}}>
 										{this.state.currentPlan.deliveries}
 									</span>
-									{/* {deliveryIndex} */}
 									<br />
 									{(() => {
 										if (typeof(this.state.currentPlan.discount) !== "undefined" && this.state.currentPlan.discount > 0) {
@@ -1785,7 +1724,6 @@ class AdminEditModal extends React.Component {
 								<div 
 									className={styles.iconTrash}
 									onClick={() => {
-										// this.deletePurchase();
 										this.confirmDelete();
 									}}
 									tabIndex="0"
@@ -1807,11 +1745,6 @@ class AdminEditModal extends React.Component {
             </div>
 
             <div className={styles_admin.menuSection}>
-              {/* <div className={styles.center}>
-                <span className={styles.subHeader}>
-                  NUMBER OF MEALS PER DELIVERY
-                </span>
-              </div> */}
 							<span className={styles.subHeader}>
 								NUMBER OF MEALS PER DELIVERY
 							</span>
@@ -1836,13 +1769,6 @@ class AdminEditModal extends React.Component {
                 if(JSON.stringify(this.props.plans) !== "{}"){
                   return(
                     <div 
-											// className='row' 
-											// style={{
-											// 	marginTop: '20px',
-											// 	border: '1px solid blue',
-											// 	display: 'flex',
-											// 	width: '100%'
-											// }}
 											className={styles_admin.buttonWrapper}
 											style={{
 												marginBottom: '50px'
@@ -2048,15 +1974,6 @@ class AdminEditModal extends React.Component {
 					>
 						{mealIndex}
 					</button>
-          {/* <div 
-						style={{
-							textAlign: 'center', 
-							marginTop: '10px',
-							border: 'solid violet'
-						}}
-					>
-            ${singleMealData.item_price}
-          </div> */}
         </div>
 				<div 
 						style={{
@@ -2104,50 +2021,41 @@ class AdminEditModal extends React.Component {
 					className={styles_admin.sameLine} 
 					key={deliveryIndex}
 				>
-          {/* <div 
-						style={{
-							// display: 'inline-block',
-							border: '1px solid purple'
-						}}
-					> */}
-            <button
-              className={
-                this.state.updatedPlan.deliveries === deliveryIndex
-                  ? selectedPaymentOption
-                  : deselectedPaymentOption
+          <button
+            className={
+              this.state.updatedPlan.deliveries === deliveryIndex
+                ? selectedPaymentOption
+                : deselectedPaymentOption
+            }
+            onClick={() => {
+              this.props.choosePaymentOption(
+                deliveryIndex,
+                this.state.updatedPlan.meals,
+                this.props.plans
+              )
+              this.changePlans(this.state.updatedPlan.meals, deliveryIndex);
+            }}
+            aria-label={ariaTag}
+            title={ariaTag}
+          >
+            <span style={{fontSize: '2em'}}>
+              {deliveryIndex}
+            </span>
+            <br />
+            {(() => {
+              if (typeof(discount) !== "undefined" && discount > 0) {
+                return (
+                  <span
+                    style={{
+                      fontSize: '0.8em'
+                    }}
+                  >
+                    (Save {discount}%)
+                  </span>
+                );
               }
-              onClick={() => {
-                this.props.choosePaymentOption(
-                  deliveryIndex,
-                  this.state.updatedPlan.meals,
-                  this.props.plans
-                )
-
-                this.changePlans(this.state.updatedPlan.meals, deliveryIndex);
-              }}
-              aria-label={ariaTag}
-              title={ariaTag}
-            >
-							<span style={{fontSize: '2em'}}>
-								{deliveryIndex}
-							</span>
-							{/* {deliveryIndex} */}
-							<br />
-							{(() => {
-								if (typeof(discount) !== "undefined" && discount > 0) {
-									return (
-										<span
-											style={{
-												fontSize: '0.8em'
-											}}
-										>
-											(Save {discount}%)
-										</span>
-									);
-								}
-							})()}  
-            </button>
-          {/* </div>  */}
+            })()}  
+          </button>
         </div>
       );
     }
@@ -2210,33 +2118,10 @@ class AdminEditModal extends React.Component {
         </div>
 
         <div className={styles_admin.containerSplit}>
-          {/* {this.state.subscriptionsLoaded === true
-            ? this.showPlanDetails(this.state.windowWidth) 
-            : <div
-                style={{
-                  color: 'red',
-                  zIndex: '99',
-                  height: '100vh',  
-                  width: '100vw',
-                  // height: '50vh',
-                  // width: '50vw',
-                  // border: 'inset',
-                  position: 'fixed',
-                  top: '0',
-                  backgroundColor: '#F7F4E5',
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center'
-                }}
-              >
-                <img src={m4me_logo} />
-              </div>
-          } */}
           {this.state.subscriptionsLoaded === true
             ? this.showPlanDetails(this.state.windowWidth) 
             : null
           }
-					{/* {this.showPlanDetails(this.state.windowWidth)} */}
         </div>
 
       {/* {narrowView ? ( */}
