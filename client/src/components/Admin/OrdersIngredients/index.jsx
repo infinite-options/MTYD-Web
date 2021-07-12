@@ -34,19 +34,19 @@ const initialState = {
   sortedOrdersData: [],
   sortOrders: {
     field: "",
-    direction: "",
+    direction: "asc",
   },
   customersData: [],
   sortedCustomersData: [],
   sortRevenue: {
     field: "",
-    direction: "",
+    direction: "asc",
   },
   ingredientsData: [],
   sortedIngredientsData: [],
   sortIngredients: {
     field: "",
-    direction: "",
+    direction: "asc",
   },
   businessData: [],
   mealDates: [],
@@ -790,7 +790,7 @@ function OrdersIngredients({ history, ...props }) {
                       onChange={filterBusiness}
                     >
                       <option key={0}>All Orders</option>
-                      {state.businessData.map((business) => {
+                      {state.businessData.map((business, index) => {
                         if (business) {
                           return (
                             <option
@@ -834,7 +834,6 @@ function OrdersIngredients({ history, ...props }) {
                   sliderClass={styles.carouselSlider}
                   keyBoardControl
                 >
-                  {console.log(carouselRef)}
                   {state.mealDates.map((date) => {
                     const displayDate = convertToDisplayDate(date.menu_date);
                     const dateButtonStatus =
@@ -1070,9 +1069,9 @@ function OrdersIngredients({ history, ...props }) {
                       filterDataByBusiness(
                         state.ordersData,
                         state.selectedBusinessID
-                      ).map((item) => {
+                      ).map((item, index) => {
                         return (
-                          <TableRow>
+                          <TableRow key={index}>
                             <TableCell
                               style={{
                                 fontWeight: "bold",
@@ -1240,9 +1239,9 @@ function OrdersIngredients({ history, ...props }) {
                       filterDataByBusiness(
                         state.revenueData,
                         state.selectedBusinessID
-                      ).map((item) => {
+                      ).map((item, index) => {
                         return (
-                          <TableRow>
+                          <TableRow key={index}>
                             <TableCell
                               style={{ borderBottom: "1px solid #f26522" }}
                             >
@@ -1293,112 +1292,118 @@ function OrdersIngredients({ history, ...props }) {
 
               <TableContainer className={styles.tableContainer}>
                 {" "}
-                <Table responsive>
+                <Table>
                   <TableHead>
-                    <TableCell
-                      style={{
-                        fontWeight: "bold",
-                        color: "#f26522",
-                        border: "none",
-                      }}
-                    >
-                      <TableSortLabel
+                    <TableRow>
+                      <TableCell
                         style={{
                           fontWeight: "bold",
                           color: "#f26522",
                           border: "none",
                         }}
-                        direction={state.sortIngredients.direction}
-                        onClick={() => changeSortIngredient("ingredient_desc")}
                       >
-                        Ingredient Name
-                      </TableSortLabel>
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        fontWeight: "bold",
-                        color: "#f26522",
-                        border: "none",
-                      }}
-                    >
-                      <TableSortLabel
+                        <TableSortLabel
+                          style={{
+                            fontWeight: "bold",
+                            color: "#f26522",
+                            border: "none",
+                          }}
+                          direction={state.sortIngredients.direction}
+                          onClick={() =>
+                            changeSortIngredient("ingredient_desc")
+                          }
+                        >
+                          Ingredient Name
+                        </TableSortLabel>
+                      </TableCell>
+                      <TableCell
                         style={{
                           fontWeight: "bold",
                           color: "#f26522",
                           border: "none",
                         }}
-                        direction={state.sortIngredients.direction}
-                        onClick={() => changeSortIngredient("total_qty")}
                       >
-                        Qty.
-                      </TableSortLabel>
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        fontWeight: "bold",
-                        color: "#f26522",
-                        border: "none",
-                      }}
-                    >
-                      <TableSortLabel
+                        <TableSortLabel
+                          style={{
+                            fontWeight: "bold",
+                            color: "#f26522",
+                            border: "none",
+                          }}
+                          direction={state.sortIngredients.direction}
+                          onClick={() => changeSortIngredient("total_qty")}
+                        >
+                          Qty.
+                        </TableSortLabel>
+                      </TableCell>
+                      <TableCell
                         style={{
                           fontWeight: "bold",
                           color: "#f26522",
                           border: "none",
                         }}
-                        direction={state.sortIngredients.direction}
-                        onClick={() => changeSortIngredient("package_unit")}
                       >
-                        Unit
-                      </TableSortLabel>
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        fontWeight: "bold",
-                        color: "#f26522",
-                        border: "none",
-                      }}
-                    >
-                      <TableSortLabel
+                        <TableSortLabel
+                          style={{
+                            fontWeight: "bold",
+                            color: "#f26522",
+                            border: "none",
+                          }}
+                          direction={state.sortIngredients.direction}
+                          onClick={() => changeSortIngredient("package_unit")}
+                        >
+                          Unit
+                        </TableSortLabel>
+                      </TableCell>
+                      <TableCell
                         style={{
                           fontWeight: "bold",
                           color: "#f26522",
                           border: "none",
                         }}
-                        direction={state.sortIngredients.direction}
-                        onClick={() => changeSortIngredient("package_measure")}
                       >
-                        Measure
-                      </TableSortLabel>
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        fontWeight: "bold",
-                        color: "#f26522",
-                        border: "none",
-                      }}
-                    >
-                      <TableSortLabel
+                        <TableSortLabel
+                          style={{
+                            fontWeight: "bold",
+                            color: "#f26522",
+                            border: "none",
+                          }}
+                          direction={state.sortIngredients.direction}
+                          onClick={() =>
+                            changeSortIngredient("package_measure")
+                          }
+                        >
+                          Measure
+                        </TableSortLabel>
+                      </TableCell>
+                      <TableCell
                         style={{
                           fontWeight: "bold",
                           color: "#f26522",
                           border: "none",
                         }}
-                        direction={state.sortIngredients.direction}
-                        onClick={() => changeSortIngredient("package_cost")}
                       >
-                        Cost
-                      </TableSortLabel>
-                    </TableCell>
+                        <TableSortLabel
+                          style={{
+                            fontWeight: "bold",
+                            color: "#f26522",
+                            border: "none",
+                          }}
+                          direction={state.sortIngredients.direction}
+                          onClick={() => changeSortIngredient("package_cost")}
+                        >
+                          Cost
+                        </TableSortLabel>
+                      </TableCell>
+                    </TableRow>
                   </TableHead>
                   <TableBody>
                     {state.ingredientsData &&
                       filterDataByBusiness(
                         state.ingredientsData,
                         state.selectedBusinessID
-                      ).map((item) => {
+                      ).map((item, index) => {
                         return (
-                          <TableRow>
+                          <TableRow key={index}>
                             <TableCell
                               style={{ borderBottom: "1px solid #f26522" }}
                             >

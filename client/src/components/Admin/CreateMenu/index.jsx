@@ -62,7 +62,7 @@ const initialState = {
   editedMenu: [],
   sortEditMenu: {
     field: "",
-    direction: "",
+    direction: "asc",
   },
   mealData: [],
   showAddMeal: false,
@@ -1267,14 +1267,7 @@ function CreateMenu({ history, ...props }) {
                                   const newMealInfo = state.mealData.filter(
                                     (meal) => meal.meal_uid === newMealId
                                   )[0];
-                                  // console.log("New ID: " + newMealId);
-                                  // console.log("RES: " + mealExists(newMealId));
-                                  // const mealMenuIndex = newMenu.findIndex((elt) => elt.menu_uid === mealMenu.menu_uid);
                                   const curMealCat = mealMenu.meal_cat;
-                                  console.log(
-                                    "Meal Exists: " +
-                                      mealExists(newMealId, curMealCat)
-                                  );
                                   if (mealExists(newMealId, curMealCat)) {
                                     dispatch({
                                       type: "TOGGLE_MEAL_EXISTS",
