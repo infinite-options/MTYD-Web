@@ -666,6 +666,8 @@ function Zones ({history,...props}) {
             >
               {createDropdownZones()}
             </select>
+
+            {splitZoneName()}
             
             {/* <div style={{width: "98%", margin: "1%", float: "left"}}>
               <div style={{color: "#F26522"}}>Zone Name:</div>
@@ -705,7 +707,7 @@ function Zones ({history,...props}) {
                   }
                 }
             />
-            {splitZoneName()}
+            
             
             </div>
 

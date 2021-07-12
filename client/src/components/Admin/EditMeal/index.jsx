@@ -270,17 +270,18 @@ function EditMeal({history, ...props}) {
       .then((response) => {
         if(response.status === 201) {
           console.log("in axios put")
-              // Make sure if saved and come back to same meal, meal is changed; no need to call API again
-              const changedIndex = state.mealData.findIndex((meal) => meal.meal_uid === state.selectedMeal);
-              console.log("changedIndex")
-              console.log(changedIndex)
-              const newMealData = [...state.mealData];
-              console.log("newMealData")
-              console.log(newMealData)
-              newMealData[changedIndex] = state.editedMeal;
-              console.log("newMealData[changedIndex")
-              console.log(newMealData[changedIndex])
-              dispatch({ type: 'FETCH_MEALS', payload: newMealData });
+          // Make sure if saved and come back to same meal, meal is changed; no need to call API again
+          const changedIndex = state.mealData.findIndex((meal) => meal.meal_uid === state.selectedMeal);
+          console.log("changedIndex")
+          console.log(changedIndex)
+          const newMealData = [...state.mealData];
+          console.log("newMealData")
+          console.log(newMealData)
+          newMealData[changedIndex] = state.editedMeal;
+          console.log("newMealData[changedIndex")
+          console.log(newMealData[changedIndex])
+          dispatch({ type: 'FETCH_MEALS', payload: newMealData });
+          state.previewLink= ""
         }
       })
       .catch((err) => {
@@ -403,6 +404,7 @@ function EditMeal({history, ...props}) {
         dispatch({ type: 'FETCH_MEALS', payload: newMealData });
 
         state.selectedFile = null
+        state.previewLink= ""
       })
       .catch((err)=>{
         console.log(err)
@@ -2748,7 +2750,10 @@ function EditMeal({history, ...props}) {
 				</div>
 
         <div style={{fontSize: "32px", display: "inline", marginLeft: "15px"}}
-          onClick={()=>{toggleNewMeal(true)}}
+          onClick={()=>{
+           
+            toggleNewMeal(true)
+          }}
         >+</div>
 
         <table width="100%">
