@@ -204,6 +204,11 @@ function reducer(state, action) {
         mealExists: !state.mealExists,
         selectedMealName: action.payload,
       };
+    case "SET_MEAL_EXISTS":
+      return {
+        ...state,
+        mealExists: action.payload,
+      };
     case "FETCH_MENU_CATEGORIES":
       return {
         ...state,
@@ -1447,16 +1452,14 @@ function CreateMenu({ history, ...props }) {
                           state.newMeal.meal_cat &&
                           mealExists(newMealId, state.newMeal.meal_cat)
                         ) {
-                          dispatch({
-                            type: "TOGGLE_MEAL_EXISTS",
-                            payload: newMealId,
-                          });
+                          dispatch({ type: "SET_MEAL_EXISTS", payload: true });
                         } else {
-                          dispatch({
-                            type: "EDIT_NEW_MEAL_MENU",
-                            payload: newMeal,
-                          });
+                          dispatch({ type: "SET_MEAL_EXISTS", payload: false });
                         }
+                        dispatch({
+                          type: "EDIT_NEW_MEAL_MENU",
+                          payload: newMeal,
+                        });
                       }}
                     >
                       <option value="" hidden>
@@ -1493,16 +1496,14 @@ function CreateMenu({ history, ...props }) {
                           state.newMeal.meal_uid &&
                           mealExists(state.newMeal.meal_uid, newMealCat)
                         ) {
-                          dispatch({
-                            type: "TOGGLE_MEAL_EXISTS",
-                            payload: state.newMeal.meal_uid,
-                          });
+                          dispatch({ type: "SET_MEAL_EXISTS", payload: true });
                         } else {
-                          dispatch({
-                            type: "EDIT_NEW_MEAL_MENU",
-                            payload: newMeal,
-                          });
+                          dispatch({ type: "SET_MEAL_EXISTS", payload: false });
                         }
+                        dispatch({
+                          type: "EDIT_NEW_MEAL_MENU",
+                          payload: newMeal,
+                        });
                       }}
                     >
                       <option value="" hidden>
@@ -1583,11 +1584,21 @@ function CreateMenu({ history, ...props }) {
                   </Form.Group>
                 </Form>
               </Modal.Body>
+              {state.mealExists && (
+                <div
+                  className={styles.invalidDate}
+                  style={{ padding: "10px", width: "400px" }}
+                >
+                  This meal already exists, please select a different meal or
+                  meal category.
+                </div>
+              )}
               <Modal.Footer
                 style={{ border: "none", justifyContent: "center" }}
               >
                 <button
                   className={
+                    !state.mealExists &&
                     state.newMeal.menu_date &&
                     state.newMeal.menu_category &&
                     state.newMeal.menu_type &&
@@ -1599,6 +1610,7 @@ function CreateMenu({ history, ...props }) {
                   }
                   onClick={() => {
                     if (
+                      !state.mealExists &&
                       state.newMeal.menu_date &&
                       state.newMeal.menu_category &&
                       state.newMeal.menu_type &&
@@ -1930,7 +1942,7 @@ function CreateMenu({ history, ...props }) {
             </div>
           </div>
         )}
-        {state.mealExists && (
+        {state.mealExists && !state.showAddMeal && (
           <div
             style={{
               height: "100%",
