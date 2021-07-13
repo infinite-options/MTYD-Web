@@ -42,11 +42,13 @@ function useForceUpdate() {
 function reducer (state, action) {
   switch(action.type) {
     case 'MOUNT':
+      console.log("in reducer MOUNT")
       return {
         ...state,
         mounted: true,
       }
     case 'FETCH_MEALS':
+      console.log("in reducer FETCH_MEALS")
       return {
         ...state,
         mealData: action.payload,
@@ -167,7 +169,10 @@ function EditMeal({history, ...props}) {
       .then((response) => {
         const role = response.data.result[0].role.toLowerCase();
         if(role === 'admin') {
+          // console.log("mounting")
+          console.log(state.mounted)
           dispatch({ type: 'MOUNT' });
+          console.log("dispatch MOUNT")
         } else {
           history.push('/meal-plan');
         }
@@ -195,52 +200,55 @@ function EditMeal({history, ...props}) {
   };
 
   // Fetch meals
-  useEffect(() => {
-    console.log("in useEffect")
-    axios
-      .get(`${API_URL}meals`)
-      .then((response) => {
-        if(response.status === 200) {
-          const mealApiResult = response.data.result;
-          // Convert property values to string and nulls to empty string
-          for(let index = 0; index < mealApiResult.length; index++) {
-            for (const property in mealApiResult[index]) {
-                const value = mealApiResult[index][property];
-                mealApiResult[index][property] = value ? value.toString() : '';
-              } 
-          }
-          // Sort by meal name
-          mealApiResult.sort((mealA, mealB) => {
-            const mealNameA = mealA.meal_name;
-            const mealNameB = mealB.meal_name;
-            if(mealNameA < mealNameB) {
-              return -1;
-            }
-            if(mealNameA > mealNameB) {
-              return 1;
-            }
-            // Use Id if same name; should not happen
-            const idA = mealA.meal_uid;
-            const idB = mealB.meal_uid;
-            return (idA < idB) ? -1 : 1;
-          });
-          dispatch({ type: 'FETCH_MEALS', payload: mealApiResult });
-          //console.log(mealApiResult)
-          allMeals = mealApiResult
-          console.log(allMeals)
-        }
-      })
-      .catch((err) => {
-        if (err.response) {
-          // eslint-disable-next-line no-console
-          console.log(err.response);
-        }
-        // eslint-disable-next-line no-console
-        console.log(err);
-      });
-    // console.log("Meals")
-    // console.log(state.mealData)
-  }, []);
+  // useEffect(() => {
+  //   console.log("in useEffect")
+  //   axios
+  //     .get(`${API_URL}meals`)
+  //     .then((response) => {
+  //       if(response.status === 200) {
+  //         const mealApiResult = response.data.result;
+  //         // Convert property values to string and nulls to empty string
+  //         for(let index = 0; index < mealApiResult.length; index++) {
+  //           for (const property in mealApiResult[index]) {
+  //               const value = mealApiResult[index][property];
+  //               mealApiResult[index][property] = value ? value.toString() : '';
+  //             } 
+  //         }
+  //         // Sort by meal name
+  //         mealApiResult.sort((mealA, mealB) => {
+  //           const mealNameA = mealA.meal_name;
+  //           const mealNameB = mealB.meal_name;
+  //           if(mealNameA < mealNameB) {
+  //             return -1;
+  //           }
+  //           if(mealNameA > mealNameB) {
+  //             return 1;
+  //           }
+  //           // Use Id if same name; should not happen
+  //           const idA = mealA.meal_uid;
+  //           const idB = mealB.meal_uid;
+  //           return (idA < idB) ? -1 : 1;
+  //         });
+  //         // console.log("fetching meals")
+  //         // console.log(state.mealData)
+  //         //dispatch({ type: 'FETCH_MEALS', payload: mealApiResult });
+  //         //console.log("dispatch FETCH_MEALS")
+  //         //console.log(mealApiResult)
+  //         allMeals = mealApiResult
+  //         // console.log(allMeals)
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       if (err.response) {
+  //         // eslint-disable-next-line no-console
+  //         console.log(err.response);
+  //       }
+  //       // eslint-disable-next-line no-console
+  //       console.log(err);
+  //     });
+  //   // console.log("Meals")
+  //   // console.log(state.mealData)
+  // }, []);
 
   const editMeal = (property, value) => {
     if (property === '') {
@@ -251,6 +259,7 @@ function EditMeal({history, ...props}) {
         )
       )[0];
       dispatch({ type: 'EDIT_MEAL', payload: newMeal })
+      console.log("dispatch EDIT_MEALS")
     } else {
       // Property is property changed, value is new value of that property
       const newMeal = {
@@ -258,6 +267,7 @@ function EditMeal({history, ...props}) {
         [property]: value,
       };
       dispatch({ type: 'EDIT_MEAL', payload: newMeal })
+      console.log("dispatch EDIT_MEALS")
     }
   }
 
@@ -269,18 +279,19 @@ function EditMeal({history, ...props}) {
       .put(`${API_URL}meals`,savedMeal)
       .then((response) => {
         if(response.status === 201) {
-          console.log("in axios put")
+          // console.log("in axios put")
           // Make sure if saved and come back to same meal, meal is changed; no need to call API again
           const changedIndex = state.mealData.findIndex((meal) => meal.meal_uid === state.selectedMeal);
-          console.log("changedIndex")
-          console.log(changedIndex)
+          // console.log("changedIndex")
+          // console.log(changedIndex)
           const newMealData = [...state.mealData];
-          console.log("newMealData")
-          console.log(newMealData)
+          // console.log("newMealData")
+          // console.log(newMealData)
           newMealData[changedIndex] = state.editedMeal;
-          console.log("newMealData[changedIndex")
-          console.log(newMealData[changedIndex])
+          // console.log("newMealData[changedIndex")
+          // console.log(newMealData[changedIndex])
           dispatch({ type: 'FETCH_MEALS', payload: newMealData });
+          console.log("dispatch FETCH_MEALS")
           state.previewLink= ""
         }
       })
@@ -316,10 +327,10 @@ function EditMeal({history, ...props}) {
 
     // console.log(bodyFormData.values())
     for(var pair of bodyFormData.entries()) {
-      console.log(pair[0]+ ', '+ pair[1]);
+      // console.log(pair[0]+ ', '+ pair[1]);
     }
 
-    console.log(state.selectedFile)
+    // console.log(state.selectedFile)
 
     axios({
       method: "put", url: 
@@ -333,20 +344,24 @@ function EditMeal({history, ...props}) {
         const savedMeal = state.editedMeal
         savedMeal.meal_business = activeBusiness
         savedMeal.meal_uid = response.data.meal_uid
-        console.log(savedMeal)
+        // console.log(savedMeal)
 
         const changedIndex = state.mealData.findIndex((meal) => meal.meal_uid === state.selectedMeal);
-        console.log("changedIndex")
-        console.log(changedIndex)
+        // console.log("changedIndex")
+        // console.log(changedIndex)
         const newMealData = [...state.mealData];
-        console.log("newMealData")
-        console.log(newMealData)
+        // console.log("newMealData")
+        // console.log(newMealData)
         newMealData[changedIndex] = state.editedMeal;
-        console.log("newMealData[changedIndex")
-        console.log(newMealData[changedIndex])
+        // console.log("newMealData[changedIndex")
+        // console.log(newMealData[changedIndex])
         dispatch({ type: 'FETCH_MEALS', payload: newMealData });
+        console.log("dispatch FETCH_MEALS")
 
-        state.selectedFile = null
+        state.selectedFile = null // state. =
+        console.log("state.selectedFile = null")
+        state.previewLink= "" // state. =
+        console.log("state.previewLink = null")
       })
       .catch((err)=>{
         console.log(err)
@@ -373,10 +388,10 @@ function EditMeal({history, ...props}) {
 
     // console.log(bodyFormData.values())
     for(var pair of bodyFormData.entries()) {
-      console.log(pair[0]+ ', '+ pair[1]);
+      // console.log(pair[0]+ ', '+ pair[1]);
     }
 
-    console.log(state.selectedFile)
+    // console.log(state.selectedFile)
 
     axios({
       method: "post", url: 
@@ -390,21 +405,23 @@ function EditMeal({history, ...props}) {
         const savedMeal = state.editedMeal
         savedMeal.meal_business = activeBusiness
         savedMeal.meal_uid = response.data.meal_uid
-        console.log(savedMeal)
+        // console.log(savedMeal)
 
         const changedIndex = state.mealData.findIndex((meal) => meal.meal_uid === state.selectedMeal);
-        console.log("changedIndex")
-        console.log(changedIndex)
+        // console.log("changedIndex")
+        // console.log(changedIndex)
         const newMealData = [...state.mealData];
-        console.log("newMealData")
-        console.log(newMealData)
+        // console.log("newMealData")
+        // console.log(newMealData)
         newMealData[changedIndex] = state.editedMeal;
-        console.log("newMealData[changedIndex")
-        console.log(newMealData[changedIndex])
+        // console.log("newMealData[changedIndex")
+        // console.log(newMealData[changedIndex])
         dispatch({ type: 'FETCH_MEALS', payload: newMealData });
-
-        state.selectedFile = null
-        state.previewLink= ""
+        console.log("dispatch FETCH_MEALS")
+        state.selectedFile = null // state. =
+        console.log("state.selectedFile = null")
+        state.previewLink= "" // state. =
+        console.log("state.previewLink = null")
       })
       .catch((err)=>{
         console.log(err)
@@ -421,8 +438,8 @@ function EditMeal({history, ...props}) {
   }
 
   const generateMealsUI = () => {
-    console.log("Generating meals")
-    console.log(allMeals.length)
+    // console.log("Generating meals")
+    // console.log(allMeals.length)
     let tempArray = []
     for (let i = 0; i < allMeals.length; i++) {
       let index = i
@@ -433,9 +450,9 @@ function EditMeal({history, ...props}) {
             <table width = "100%" key = {allMeals[index].meal_uid}
               onClick={() => {
                 if (allMeals[index] != null) {
-                  console.log("clicked on " + allMeals[index].meal_uid)
+                  // console.log("clicked on " + allMeals[index].meal_uid)
                   setSelectedMeal(allMeals[index])
-                  console.log(selectedMeal)
+                  // console.log(selectedMeal)
                   //toggleEditMeal(true)
                   //toggleMealButtonPressed(true)
                 }
@@ -471,9 +488,9 @@ function EditMeal({history, ...props}) {
                 <th style={{textAlign:"center", display:"inline-block"}} width = "7%" height="45">
                   <div className={styles.editIcon}
                     onClick={() => {
-                      console.log("clicked on " + allMeals[index].meal_uid)
+                      // console.log("clicked on " + allMeals[index].meal_uid)
                       setSelectedMeal(allMeals[index])
-                      console.log(selectedMeal)
+                      // console.log(selectedMeal)
                       toggleEditMeal(true)
                       toggleMealButtonPressed(true)
                     }}
@@ -481,10 +498,10 @@ function EditMeal({history, ...props}) {
                   
                   <div className={styles.deleteIcon}
                     onClick={() => {
-                      console.log("clicked on delete" + allMeals[index].meal_uid)
+                      // console.log("clicked on delete" + allMeals[index].meal_uid)
                       toggleDeleteButtonPressed(true)
                       setSelectedMeal(allMeals[index])
-                      console.log(selectedMeal)
+                      // console.log(selectedMeal)
                       // toggleEditMeal(true)
                       toggleMealButtonPressed(true)
                       axios
@@ -505,57 +522,13 @@ function EditMeal({history, ...props}) {
         )
       }
     }
-    console.log("Done generating meals")
+    // console.log("Done generating meals")
     return tempArray
   }
 
-  const generateMealsListUpdate = () => {
-    axios
-      .get(`${API_URL}meals`)
-      .then((response) => {
-        if(response.status === 200) {
-          const mealApiResult = response.data.result;
-          // Convert property values to string and nulls to empty string
-          for(let index = 0; index < mealApiResult.length; index++) {
-            for (const property in mealApiResult[index]) {
-                const value = mealApiResult[index][property];
-                mealApiResult[index][property] = value ? value.toString() : '';
-              } 
-          }
-          // Sort by meal name
-          mealApiResult.sort((mealA, mealB) => {
-            const mealNameA = mealA.meal_name;
-            const mealNameB = mealB.meal_name;
-            if(mealNameA < mealNameB) {
-              return -1;
-            }
-            if(mealNameA > mealNameB) {
-              return 1;
-            }
-            // Use Id if same name; should not happen
-            const idA = mealA.meal_uid;
-            const idB = mealB.meal_uid;
-            return (idA < idB) ? -1 : 1;
-          });
-          dispatch({ type: 'FETCH_MEALS', payload: mealApiResult });
-          //console.log(mealApiResult)
-          allMeals = mealApiResult
-          console.log(allMeals)
-        }
-      })
-      .catch((err) => {
-        if (err.response) {
-          // eslint-disable-next-line no-console
-          console.log(err.response);
-        }
-        // eslint-disable-next-line no-console
-        console.log(err);
-      });
-  }
-
   const generateMealsList = () => {
-    console.log(mealsGenerated)
-    if (mealsGenerated == false) {
+    // console.log(mealsGenerated)
+    if (mealsGenerated == false && state.mounted == true) {
     axios
       .get(`${API_URL}meals`)
       .then((response) => {
@@ -584,9 +557,10 @@ function EditMeal({history, ...props}) {
             return (idA < idB) ? -1 : 1;
           });
           dispatch({ type: 'FETCH_MEALS', payload: mealApiResult });
+          console.log("dispatch FETCH_MEALS")
           //console.log(mealApiResult)
           allMeals = mealApiResult
-          console.log(allMeals)
+          // console.log(allMeals)
         }
       })
       .catch((err) => {
@@ -606,8 +580,8 @@ function EditMeal({history, ...props}) {
 
   const generateBusinessIDs = () => {
     if (idsGenerated == false && mealsGenerated == true) {
-      console.log("length check")
-      console.log(allMeals.length)
+      // console.log("length check")
+      // console.log(allMeals.length)
       for (let i = 0; i < allMeals.length; i++) {
         let temp = allMeals[i].meal_business
         
@@ -639,7 +613,7 @@ function EditMeal({history, ...props}) {
       }
 
     }
-    console.log(allBusinesses)
+    // console.log(allBusinesses)
     //setActiveBusiness(allBusinesses[1])
     //setActiveBusinessData(getBusinessDataByID(allBusinesses[1]))
     
@@ -663,12 +637,12 @@ function EditMeal({history, ...props}) {
         <div
           key={allBusinesses[index]}
           onClick={() => { //this is behind one
-            console.log(allBusinesses[index])
-            console.log(getBusinessDataByID(allBusinesses[index]))
+            // console.log(allBusinesses[index])
+            // console.log(getBusinessDataByID(allBusinesses[index]))
             setActiveBusiness(allBusinesses[index])
             setActiveBusinessData(getBusinessDataByID(allBusinesses[index]))
-            console.log(activeBusiness)
-            console.log(activeBusinessData)
+            // console.log(activeBusiness)
+            // console.log(activeBusinessData)
             setTempBusinessName(activeBusinessData.business_name)
             setTempCusine(activeBusinessData.business_type)
             tempSetMonStart(getActiveBusinessHours().Monday[0])
@@ -726,7 +700,7 @@ function EditMeal({history, ...props}) {
         }}
       />
     ]
-    console.log(tempDropdownButtons.length)
+    // console.log(tempDropdownButtons.length)
     return dropdownTopMargin.concat(tempDropdownButtons)
   }
 
@@ -758,16 +732,16 @@ function EditMeal({history, ...props}) {
     )
   }
 
-  if (!state.mounted) {
-    return null;
-  }
+  // if (!state.mounted) {
+  //   return null;
+  // }
 
   const getBusinessData = () => {
     axios
       .get(`${API_URL}all_businesses`)
       .then((response) => {
-        console.log("all_businesses")
-        console.log(response.data.result)
+        // console.log("all_businesses")
+        // console.log(response.data.result)
         allBusinessData=response.data.result
       })
     
@@ -1019,6 +993,7 @@ function EditMeal({history, ...props}) {
       if (mealButtonPressed == true) {
         console.log(mealButtonPressed)
         dispatch({type: 'SELECT_MEAL', payload: selectedMeal.meal_uid})
+        console.log("dispatch SELECT_MEALS")
         editMeal('', selectedMeal.meal_uid )
         toggleMealButtonPressed(false)
       }
@@ -1275,8 +1250,7 @@ function EditMeal({history, ...props}) {
                     variant="primary"
                     onClick={()=>{
                       saveEditedMeal()
-                      // toggleMealsGenerated(false)
-                      // generateMealsListUpdate()
+                      
                       
                       console.log("pog")
                       console.log(state.editedMeal)
@@ -1317,6 +1291,7 @@ function EditMeal({history, ...props}) {
       if (mealButtonPressed == true) {
         console.log(mealButtonPressed)
         dispatch({type: 'SELECT_MEAL', payload: selectedMeal.meal_uid})
+        console.log("dispatch SELECT_MEALS")
         editMeal('', selectedMeal.meal_uid )
         toggleMealButtonPressed(false)
       }
@@ -1407,6 +1382,7 @@ function EditMeal({history, ...props}) {
                         state.selectedFile = e.target.files[0]
                         console.log(state.selectedFile)
                         dispatch({ type: 'SET_PREVIEW', payload: URL.createObjectURL(e.target.files[0])})
+                        console.log("dispatch SET_PREVIEW")
                         editMeal('meal_photo_URL', URL.createObjectURL(e.target.files[0]))
                       }} 
                     />
@@ -1682,8 +1658,7 @@ function EditMeal({history, ...props}) {
                         onClick={()=>{
                           if (!checkForDuplicateNameInBusinessEditing()) {
                             saveEditedMealNew()
-                            // toggleMealsGenerated(false)
-                            // generateMealsListUpdate()
+                            
                             
                             console.log("pog")
                             console.log(state.editedMeal)
@@ -2128,6 +2103,7 @@ function EditMeal({history, ...props}) {
                         state.selectedFile = e.target.files[0]
                         console.log(state.selectedFile)
                         dispatch({ type: 'SET_PREVIEW', payload: URL.createObjectURL(e.target.files[0])})
+                        console.log("dispatch SET_PREVIEW")
                         editMeal('meal_photo_URL', URL.createObjectURL(e.target.files[0]))
                       }} 
                     />
@@ -2402,6 +2378,7 @@ function EditMeal({history, ...props}) {
 
                           allMeals.push(state.editedMeal)
                           dispatch({ type: 'SET_PREVIEW', payload: ''})
+                          console.log("dispatch SET_PREVIEW")
                           toggleNewMeal(false)
                         }
                         
@@ -2478,6 +2455,7 @@ function EditMeal({history, ...props}) {
                       onClick={()=>{
                         toggleNewMeal(false)
                         dispatch({ type: 'SET_PREVIEW', payload: ''})
+                        console.log("dispatch SET_PREVIEW")
                       }}
                       style={{
                         backgroundColor: "#F26522",
@@ -2521,24 +2499,34 @@ function EditMeal({history, ...props}) {
     }
   }
 
+  if (!state.mounted) {
+    return null;
+  }
+
+  generateMealsList()
+  generateBusinessIDs()
+  getBusinessData()
+  displayBusinessHours()
+
   return (
     <div style={{backgroundColor: '#F26522'}}>
 
       {/*NEW CODE*/}
-      {console.log("begin render")}
-      {console.log("")}
+      {/* {console.log("begin render")}
+      {console.log("")} */}
 
-      {generateMealsList()}
+      {/* {generateMealsList()}
       {generateBusinessIDs()}
-      {getBusinessData()}
+      {getBusinessData()} */}
+      {/* {displayBusinessHours()} */}
 
-      {console.log(activeBusiness)}
+      {/* {console.log(activeBusiness)} */}
 
-      {displayBusinessHours()}
+      
       
       {/* {getDropdownButtons()} */}
       
-
+      
       <AdminNavBar currentPage={'edit-meal'}/>
 
       <div className={styles.containerCustomer}>
