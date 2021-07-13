@@ -9,15 +9,7 @@ import { ReactComponent as DeleteBtn } from "./static/delete.svg";
 import { ReactComponent as SaveBtn } from "./static/save.svg";
 import AdminNavBar from "../AdminNavBar";
 
-import {
-  Breadcrumb,
-  Form,
-  Button,
-  Container,
-  Row,
-  Col,
-  Modal,
-} from "react-bootstrap";
+import { Form, Container, Row, Col, Modal } from "react-bootstrap";
 import {
   Table,
   TableHead,
@@ -26,8 +18,6 @@ import {
   TableRow,
   TableCell,
 } from "@material-ui/core";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrashAlt, faSave } from "@fortawesome/free-solid-svg-icons";
 import { withRouter } from "react-router";
 import styles from "./createMenu.module.css";
 import Carousel from "react-multi-carousel";
@@ -55,13 +45,14 @@ const responsive = {
 
 const initialState = {
   mounted: false,
-  menuData: [],
+  menuDataByDate: [],
+  allMenuData: [],
   menuDate: "",
   allMenuDates: [],
   editedMenu: [],
   sortEditMenu: {
     field: "",
-    direction: "",
+    direction: "asc",
   },
   mealData: [],
   showAddMeal: false,
@@ -98,10 +89,10 @@ function reducer(state, action) {
         ...state,
         mounted: true,
       };
-    case "FETCH_MENU":
+    case "FETCH_MENU_BY_DATE":
       return {
         ...state,
-        menuData: action.payload,
+        menuDataByDate: action.payload,
       };
     case "CHANGE_DATE":
       return {
@@ -213,10 +204,20 @@ function reducer(state, action) {
         mealExists: !state.mealExists,
         selectedMealName: action.payload,
       };
+    case "SET_MEAL_EXISTS":
+      return {
+        ...state,
+        mealExists: action.payload,
+      };
     case "FETCH_MENU_CATEGORIES":
       return {
         ...state,
         menuCategories: action.payload,
+      };
+    case "FETCH_ALL_MENU_DATA":
+      return {
+        ...state,
+        allMenuData: action.payload,
       };
     default:
       return state;
@@ -288,7 +289,7 @@ function CreateMenu({ history, ...props }) {
         if (response.status === 200) {
           const mealsApi = response.data.result;
           if (mealsApi !== undefined) {
-            dispatch({ type: "FETCH_MENU", payload: mealsApi });
+            dispatch({ type: "FETCH_MENU_BY_DATE", payload: mealsApi });
             dispatch({ type: "EDIT_MENU", payload: mealsApi });
           }
         }
@@ -309,6 +310,24 @@ function CreateMenu({ history, ...props }) {
       .then((response) => {
         const businessApiResult = response.data.result;
         dispatch({ type: "FETCH_BUSINESSES", payload: businessApiResult });
+      })
+      .catch((err) => {
+        if (err.response) {
+          // eslint-disable-next-line no-console
+          console.log(err.response);
+        }
+        // eslint-disable-next-line no-console
+        console.log(err);
+      });
+  }, []);
+
+  // Fetch meals
+  useEffect(() => {
+    axios
+      .get(`${API_URL}meals`)
+      .then((response) => {
+        const mealApiResult = response.data.result;
+        dispatch({ type: "FETCH_MEALS", payload: mealApiResult });
       })
       .catch((err) => {
         if (err.response) {
@@ -345,90 +364,28 @@ function CreateMenu({ history, ...props }) {
     return "";
   };
 
-  const getClosestDateIndex = (dates) => {
-    var now = Date().toLocaleString();
-    var monthDict = [];
-
-    monthDict.push({
-      key: "Jan",
-      value: "01",
-    });
-    monthDict.push({
-      key: "Feb",
-      value: "02",
-    });
-    monthDict.push({
-      key: "Mar",
-      value: "03",
-    });
-    monthDict.push({
-      key: "Apr",
-      value: "04",
-    });
-    monthDict.push({
-      key: "May",
-      value: "05",
-    });
-    monthDict.push({
-      key: "Jun",
-      value: "06",
-    });
-    monthDict.push({
-      key: "Jul",
-      value: "07",
-    });
-    monthDict.push({
-      key: "Aug",
-      value: "08",
-    });
-    monthDict.push({
-      key: "Sep",
-      value: "09",
-    });
-    monthDict.push({
-      key: "Oct",
-      value: "10",
-    });
-    monthDict.push({
-      key: "Nov",
-      value: "11",
-    });
-    monthDict.push({
-      key: "Dec",
-      value: "12",
-    });
-
-    const currMonth = now.substring(4, 7);
-    let currMonthVal = 0;
-    const currDay = now.substring(8, 10);
-    const currYear = now.substring(11, 15);
-
-    // assign value to current month
-    for (let i = 0, l = monthDict.length; i < l; i++) {
-      if (currMonth === monthDict[i].key) {
-        currMonthVal = monthDict[i].value;
-      }
+  const getCurrentDate = () => {
+    const currentDate = new Date();
+    let day = currentDate.getDate();
+    if (day < 10) {
+      day = ["0", day].join("");
     }
+    let month = currentDate.getMonth() + 1;
+    if (month < 10) {
+      month = ["0", month].join("");
+    }
+    let year = currentDate.getFullYear();
+    return [[year, month, day].join("-"), "00-00-00"].join(" ");
+  };
 
-    let closestDateIndex = 0;
+  const getClosestDateIndex = (dates) => {
+    if (dates) {
+      let curDay = getCurrentDate();
 
-    for (let i = 0, l = dates.length; i < l; i++) {
-      var date = dates[i];
-      var year = date.menu_date.substring(0, 4);
-      var month = date.menu_date.substring(5, 7);
-      var day = date.menu_date.substring(8, 10);
-
-      if (currYear <= year) {
-        if (currMonthVal < month) {
-          if (!closestDateIndex) {
-            return (closestDateIndex = i);
-          }
-        } else if (currMonthVal == month) {
-          if (currDay <= day) {
-            if (!closestDateIndex) {
-              return (closestDateIndex = i);
-            }
-          }
+      for (let i = 0; i < dates.length; i++) {
+        const day = dates[i].menu_date;
+        if (day.localeCompare(curDay) === 1) {
+          return i - 1;
         }
       }
     }
@@ -451,7 +408,9 @@ function CreateMenu({ history, ...props }) {
   };
 
   const getMealTypes = () => {
-    const menuTypes = state.menuData.map((menuItem) => menuItem.menu_type);
+    const menuTypes = state.menuDataByDate.map(
+      (menuItem) => menuItem.menu_type
+    );
     const menuTypesUnique = menuTypes.filter(
       (elt, index) => menuTypes.indexOf(elt) === index
     );
@@ -459,8 +418,8 @@ function CreateMenu({ history, ...props }) {
   };
 
   const getMealCategories = () => {
-    const mealCategories = state.mealData.map(
-      (menuItem) => menuItem.meal_category
+    const mealCategories = state.allMenuData.map(
+      (menuItem) => menuItem.meal_cat
     );
     const mealCategoriesUnique = mealCategories.filter(
       (elt, index) => mealCategories.indexOf(elt) === index && elt
@@ -469,89 +428,14 @@ function CreateMenu({ history, ...props }) {
   };
 
   const getMenuCategories = () => {
-    axios.get(`${API_URL}menu`).then((response) => {
-      const menuData = response.data.result;
-      const menuCategories = menuData.map((item) => item.menu_category);
-      const menuCategoriesUnique = menuCategories.filter(
-        (elt, index) => menuCategories.indexOf(elt) === index && elt
-      );
-      dispatch({
-        type: "FETCH_MENU_CATEGORIES",
-        payload: menuCategoriesUnique,
-      });
-      console.log(menuCategoriesUnique);
-    });
+    const menuCategories = state.allMenuData.map(
+      (menuItem) => menuItem.menu_category
+    );
+    const menuCategoriesUnique = menuCategories.filter(
+      (elt, index) => menuCategories.indexOf(elt) === index && elt
+    );
+    return menuCategoriesUnique;
   };
-
-  const updateMenu = () => {
-    axios
-      .get(`${API_URL}meals_ordered_by_date/${state.menuDate.substring(0, 10)}`)
-      .then((response) => {
-        if (response.status === 200) {
-          const fullMenu = response.data.result;
-          if (fullMenu !== undefined) {
-            dispatch({ type: "FETCH_MENU", payload: fullMenu });
-            dispatch({ type: "EDIT_MENU", payload: fullMenu });
-          }
-        }
-      })
-      .catch((err) => {
-        if (err.response) {
-          // eslint-disable-next-line no-console
-          console.log(err.response);
-        }
-        // eslint-disable-next-line no-console
-        console.log(err);
-      });
-  };
-
-  const updateMenuByIndex = (index) => {
-    axios
-      .get(`${API_URL}meals_ordered_by_date/${state.menuDate.substring(0, 10)}`)
-      .then((response) => {
-        if (response.status === 200) {
-          const fullMenu = response.data.result;
-          if (fullMenu !== undefined) {
-            //dispatch({ type: "FETCH_MENU", payload: fullMenu });
-            const updatedItem = fullMenu[index];
-            const newEditedMenu = [...state.editedMenu];
-            newEditedMenu[index] = updatedItem;
-            dispatch({ type: "EDIT_MENU", payload: newEditedMenu });
-          }
-        }
-      })
-      .catch((err) => {
-        if (err.response) {
-          // eslint-disable-next-line no-console
-          console.log(err.response);
-        }
-        // eslint-disable-next-line no-console
-        console.log(err);
-      });
-  };
-
-  // Fetch menu
-  // useEffect(() => {
-  //   updateMenu();
-  // }, []);
-
-  // Fetch meals
-  useEffect(() => {
-    axios
-      .get(`${API_URL}meals`)
-      .then((response) => {
-        const mealApiResult = response.data.result;
-        dispatch({ type: "FETCH_MEALS", payload: mealApiResult });
-      })
-      .catch((err) => {
-        if (err.response) {
-          // eslint-disable-next-line no-console
-          console.log(err.response);
-        }
-        // eslint-disable-next-line no-console
-        console.log(err);
-      });
-  }, []);
 
   // Change Date
   const changeDate = (newDate) => {
@@ -582,10 +466,6 @@ function CreateMenu({ history, ...props }) {
       });
   };
 
-  // useEffect(() => {
-  //   changeDate("2021-06-30");
-  // }, []);
-
   const changeSortOptions = (field) => {
     const isAsc =
       state.sortEditMenu.field === field &&
@@ -599,12 +479,76 @@ function CreateMenu({ history, ...props }) {
       },
     });
     const sortedEditedMenu = sortedArray(state.editedMenu, field, direction);
-    const sortedFullMenu = sortedArray(state.menuData, field, direction);
+    const sortedFullMenu = sortedArray(state.menuDataByDate, field, direction);
     dispatch({ type: "EDIT_MENU", payload: sortedEditedMenu });
-    dispatch({ type: "FETCH_MENU", payload: sortedFullMenu });
+    dispatch({ type: "FETCH_MENU_BY_DATE", payload: sortedFullMenu });
   };
 
-  // Save Upodate menu item
+  const updateMenu = () => {
+    axios
+      .get(`${API_URL}meals_ordered_by_date/${state.menuDate.substring(0, 10)}`)
+      .then((response) => {
+        if (response.status === 200) {
+          const fullMenu = response.data.result;
+          if (fullMenu !== undefined) {
+            dispatch({ type: "FETCH_MENU_BY_DATE", payload: fullMenu });
+            dispatch({ type: "EDIT_MENU", payload: fullMenu });
+          }
+        }
+      })
+      .catch((err) => {
+        if (err.response) {
+          // eslint-disable-next-line no-console
+          console.log(err.response);
+        }
+        // eslint-disable-next-line no-console
+        console.log(err);
+      });
+  };
+
+  const updateAllMenuData = () => {
+    axios
+      .get(`${API_URL}menu`)
+      .then((response) => {
+        const menuApiResult = response.data.result;
+        dispatch({ type: "FETCH_ALL_MENU_DATA", payload: menuApiResult });
+      })
+      .catch((err) => {
+        if (err.response) {
+          // eslint-disable-next-line no-console
+          console.log(err.response);
+        }
+        // eslint-disable-next-line no-console
+        console.log(err);
+      });
+  };
+
+  const updateMenuByIndex = (index) => {
+    axios
+      .get(`${API_URL}meals_ordered_by_date/${state.menuDate.substring(0, 10)}`)
+      .then((response) => {
+        if (response.status === 200) {
+          const fullMenu = response.data.result;
+          if (fullMenu !== undefined) {
+            //dispatch({ type: "FETCH_MENU_BY_DATE", payload: fullMenu });
+            const updatedItem = fullMenu[index];
+            const newEditedMenu = [...state.editedMenu];
+            newEditedMenu[index] = updatedItem;
+            console.log(newEditedMenu);
+            dispatch({ type: "EDIT_MENU", payload: newEditedMenu });
+          }
+        }
+      })
+      .catch((err) => {
+        if (err.response) {
+          // eslint-disable-next-line no-console
+          console.log(err.response);
+        }
+        // eslint-disable-next-line no-console
+        console.log(err);
+      });
+  };
+
   // Save Upodate menu item
   const updateMenuItem = (menuItem, index) => {
     if (menuItem.menu_uid) {
@@ -619,6 +563,7 @@ function CreateMenu({ history, ...props }) {
         delivery_days: "[Sunday, Monday]",
         meal_price: "10",
       };
+      console.log(updatedMenuItem);
       // Update previous item
       axios
         .put(`${API_URL}menu`, updatedMenuItem)
@@ -923,11 +868,11 @@ function CreateMenu({ history, ...props }) {
     dispatch({ type: "EDIT_MENU", payload: menuTemplate });
   };
 
-  const mealExists = (mealId) => {
+  const mealExists = (mealId, mealCat) => {
     const res = state.editedMenu.find(
       (menuItem) => menuItem.meal_uid === mealId
     );
-    return res ? true : false;
+    return res ? res.meal_cat === mealCat : false;
   };
 
   const verifyDate = (date) => {
@@ -1012,26 +957,6 @@ function CreateMenu({ history, ...props }) {
                   })}
                 </Carousel>
               )}
-              {/* <Form>
-              <Form.Group as={Row}>
-                <Col sm="6">
-                  <Form.Control
-                    as="select"
-                    value={state.menuDate}
-                    onChange={(event) => changeDate(event.target.value)}
-                  >
-                    <option value="" hidden>
-                      Choose date
-                    </option>
-                    {menuDates.map((date) => (
-                      <option value={date.value} key={date.value}>
-                        {date.display}
-                      </option>
-                    ))}
-                  </Form.Control>
-                </Col>
-              </Form.Group>
-            </Form> */}
             </Col>
             <button
               style={{ transform: "translateX(0px)" }}
@@ -1069,7 +994,7 @@ function CreateMenu({ history, ...props }) {
               <button
                 onClick={() => {
                   toggleAddMenu();
-                  getMenuCategories();
+                  updateAllMenuData();
                 }}
                 className={styles.topBtn}
               >
@@ -1265,11 +1190,8 @@ function CreateMenu({ history, ...props }) {
                                   const newMealInfo = state.mealData.filter(
                                     (meal) => meal.meal_uid === newMealId
                                   )[0];
-                                  // console.log("New ID: " + newMealId);
-                                  // console.log("RES: " + mealExists(newMealId));
-                                  // const mealMenuIndex = newMenu.findIndex((elt) => elt.menu_uid === mealMenu.menu_uid);
-                                  console.log(newMealInfo);
-                                  if (mealExists(newMealId)) {
+                                  const curMealCat = mealMenu.meal_cat;
+                                  if (mealExists(newMealId, curMealCat)) {
                                     dispatch({
                                       type: "TOGGLE_MEAL_EXISTS",
                                       payload: newMealInfo.meal_name,
@@ -1282,10 +1204,8 @@ function CreateMenu({ history, ...props }) {
                                       business_name: getBusinessName(
                                         newMealInfo.meal_business
                                       ),
-                                      meal_cat: newMealInfo.meal_category,
                                       mealEdited: true,
                                     };
-                                    console.log(newMenu);
                                     dispatch({
                                       type: "EDIT_MENU",
                                       payload: newMenu,
@@ -1347,6 +1267,7 @@ function CreateMenu({ history, ...props }) {
                                     default_meal: newDefaultMeal,
                                     mealEdited: true,
                                   };
+                                  console.log(newMenu);
                                   dispatch({
                                     type: "EDIT_MENU",
                                     payload: newMenu,
@@ -1527,6 +1448,14 @@ function CreateMenu({ history, ...props }) {
                           ...state.newMeal,
                           meal_uid: newMealId,
                         };
+                        if (
+                          state.newMeal.meal_cat &&
+                          mealExists(newMealId, state.newMeal.meal_cat)
+                        ) {
+                          dispatch({ type: "SET_MEAL_EXISTS", payload: true });
+                        } else {
+                          dispatch({ type: "SET_MEAL_EXISTS", payload: false });
+                        }
                         dispatch({
                           type: "EDIT_NEW_MEAL_MENU",
                           payload: newMeal,
@@ -1563,6 +1492,14 @@ function CreateMenu({ history, ...props }) {
                           ...state.newMeal,
                           meal_cat: newMealCat,
                         };
+                        if (
+                          state.newMeal.meal_uid &&
+                          mealExists(state.newMeal.meal_uid, newMealCat)
+                        ) {
+                          dispatch({ type: "SET_MEAL_EXISTS", payload: true });
+                        } else {
+                          dispatch({ type: "SET_MEAL_EXISTS", payload: false });
+                        }
                         dispatch({
                           type: "EDIT_NEW_MEAL_MENU",
                           payload: newMeal,
@@ -1608,7 +1545,7 @@ function CreateMenu({ history, ...props }) {
                       <option value="" hidden>
                         Choose Menu Category
                       </option>
-                      {state.menuCategories.map((menuCategory) => (
+                      {getMenuCategories().map((menuCategory) => (
                         <option value={menuCategory} key={menuCategory}>
                           {menuCategory}
                         </option>
@@ -1647,11 +1584,21 @@ function CreateMenu({ history, ...props }) {
                   </Form.Group>
                 </Form>
               </Modal.Body>
+              {state.mealExists && (
+                <div
+                  className={styles.invalidDate}
+                  style={{ padding: "10px", width: "400px" }}
+                >
+                  This meal already exists, please select a different meal or
+                  meal category.
+                </div>
+              )}
               <Modal.Footer
                 style={{ border: "none", justifyContent: "center" }}
               >
                 <button
                   className={
+                    !state.mealExists &&
                     state.newMeal.menu_date &&
                     state.newMeal.menu_category &&
                     state.newMeal.menu_type &&
@@ -1663,6 +1610,7 @@ function CreateMenu({ history, ...props }) {
                   }
                   onClick={() => {
                     if (
+                      !state.mealExists &&
                       state.newMeal.menu_date &&
                       state.newMeal.menu_category &&
                       state.newMeal.menu_type &&
@@ -1994,7 +1942,7 @@ function CreateMenu({ history, ...props }) {
             </div>
           </div>
         )}
-        {state.mealExists && (
+        {state.mealExists && !state.showAddMeal && (
           <div
             style={{
               height: "100%",

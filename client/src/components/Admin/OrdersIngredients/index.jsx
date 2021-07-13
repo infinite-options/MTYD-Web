@@ -2,7 +2,7 @@ import { useEffect, useMemo, useReducer, useRef } from "react";
 import axios from "axios";
 import { API_URL } from "../../../reducers/constants";
 import { formatTime, sortedArray } from "../../../reducers/helperFuncs";
-import { Breadcrumb, Container, Row, Col, Form } from "react-bootstrap";
+import { Container, Row, Col } from "react-bootstrap";
 import {
   Table,
   TableContainer,
@@ -16,7 +16,6 @@ import { withRouter } from "react-router";
 import styles from "./ordersIngredients.module.css";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
-import { collapseTextChangeRangesAcrossMultipleVersions } from "typescript";
 import AdminNavBar from "../AdminNavBar";
 import { ReactComponent as LeftArrow } from "./static/dateLeftArrow.svg";
 import { ReactComponent as RightArrow } from "./static/dateRightArrow.svg";
@@ -34,19 +33,19 @@ const initialState = {
   sortedOrdersData: [],
   sortOrders: {
     field: "",
-    direction: "",
+    direction: "asc",
   },
   customersData: [],
   sortedCustomersData: [],
   sortRevenue: {
     field: "",
-    direction: "",
+    direction: "asc",
   },
   ingredientsData: [],
   sortedIngredientsData: [],
   sortIngredients: {
     field: "",
-    direction: "",
+    direction: "asc",
   },
   businessData: [],
   mealDates: [],
@@ -259,12 +258,8 @@ function OrdersIngredients({ history, ...props }) {
       .get(`${API_URL}all_menu_dates`)
       .then((response) => {
         const datesApi = response.data.result;
-        const curDay = getCurrentDate();
         const closestDateIndex = getClosestDateIndex(datesApi);
-        console.log(closestDateIndex);
         closestDate = datesApi[closestDateIndex].menu_date;
-
-        console.log("Dispatching...");
 
         dispatch({ type: "FETCH_MEAL_DATES", payload: datesApi });
         dispatch({
@@ -316,42 +311,6 @@ function OrdersIngredients({ history, ...props }) {
         console.log(err);
       });
   }, []);
-  // Fetch Meals
-  // useEffect(() => {
-  //   axios
-  //     .get(`${API_URL}meals_ordered_by_date/2021-06-25`)
-  //     .then((response) => {
-  //       const ordersApi = response.data.result;
-  //       dispatch({ type: "FETCH_ORDERS", payload: ordersApi });
-  //     })
-  //     .catch((err) => {
-  //       if (err.response) {
-  //         // eslint-disable-next-line no-console
-  //         console.log(err.response);
-  //       }
-  //       // eslint-disable-next-line no-console
-  //       console.log(err);
-  //     });
-  // }, []);
-
-  // Fetch Ingredients
-
-  // useEffect(() => {
-  //   axios
-  //     .get(`${API_URL}ingredients_need`)
-  //     .then((response) => {
-  //       const ingredientsApi = response.data.result;
-  //       dispatch({ type: "FETCH_INGREDIENTS", payload: ingredientsApi });
-  //     })
-  //     .catch((err) => {
-  //       if (err.response) {
-  //         // eslint-disable-next-line no-console
-  //         console.log(err.response);
-  //       }
-  //       // eslint-disable-next-line no-console
-  //       console.log(err);
-  //     });
-  // }, []);
 
   const getCurrentDate = () => {
     const currentDate = new Date();
@@ -368,89 +327,13 @@ function OrdersIngredients({ history, ...props }) {
   };
 
   const getClosestDateIndex = (dates) => {
-    var now = Date().toLocaleString();
-    var monthDict = [];
+    if (dates) {
+      let curDay = getCurrentDate();
 
-    monthDict.push({
-      key: "Jan",
-      value: "01",
-    });
-    monthDict.push({
-      key: "Feb",
-      value: "02",
-    });
-    monthDict.push({
-      key: "Mar",
-      value: "03",
-    });
-    monthDict.push({
-      key: "Apr",
-      value: "04",
-    });
-    monthDict.push({
-      key: "May",
-      value: "05",
-    });
-    monthDict.push({
-      key: "Jun",
-      value: "06",
-    });
-    monthDict.push({
-      key: "Jul",
-      value: "07",
-    });
-    monthDict.push({
-      key: "Aug",
-      value: "08",
-    });
-    monthDict.push({
-      key: "Sep",
-      value: "09",
-    });
-    monthDict.push({
-      key: "Oct",
-      value: "10",
-    });
-    monthDict.push({
-      key: "Nov",
-      value: "11",
-    });
-    monthDict.push({
-      key: "Dec",
-      value: "12",
-    });
-
-    const currMonth = now.substring(4, 7);
-    let currMonthVal = 0;
-    const currDay = now.substring(8, 10);
-    const currYear = now.substring(11, 15);
-
-    // assign value to current month
-    for (let i = 0, l = monthDict.length; i < l; i++) {
-      if (currMonth === monthDict[i].key) {
-        currMonthVal = monthDict[i].value;
-      }
-    }
-
-    let closestDateIndex = 0;
-
-    for (let i = 0, l = dates.length; i < l; i++) {
-      var date = dates[i];
-      var year = date.menu_date.substring(0, 4);
-      var month = date.menu_date.substring(5, 7);
-      var day = date.menu_date.substring(8, 10);
-
-      if (currYear <= year) {
-        if (currMonthVal < month) {
-          if (!closestDateIndex) {
-            return (closestDateIndex = i);
-          }
-        } else if (currMonthVal == month) {
-          if (currDay <= day) {
-            if (!closestDateIndex) {
-              return (closestDateIndex = i);
-            }
-          }
+      for (let i = 0; i < dates.length; i++) {
+        const day = dates[i].menu_date;
+        if (day.localeCompare(curDay) === 1) {
+          return i - 1;
         }
       }
     }
@@ -465,32 +348,6 @@ function OrdersIngredients({ history, ...props }) {
   const formatToDisplayDate = (date) => {
     let formattedDate = new Date(formatTime(date));
     return formattedDate.toDateString();
-  };
-
-  // const nowTest1 = new Date('May 06, 2021');
-  // const nowTest = nowTest1.toString();
-
-  // DEPRECATED
-  const getOrderData = (date) => {
-    const curOrders = state.ordersData.filter(
-      (order) => order.d_menu_date === date
-    );
-    return curOrders;
-  };
-
-  const getIngredientsData = (date) => {
-    const curIngredients = state.ingredientsData.filter(
-      (ingredient) => ingredient.d_menu_date === date
-    );
-    return curIngredients;
-  };
-
-  // DEPCRECATED
-  const getCustomerData = (date) => {
-    const curCustomers = state.customersData.filter(
-      (customer) => customer.d_menu_date === date
-    );
-    return curCustomers;
   };
 
   const changeSortOrder = (field) => {
@@ -604,55 +461,8 @@ function OrdersIngredients({ history, ...props }) {
       payload: { newDate: newDate, display: displayDate },
     });
 
-    // const newOrders = getOrderData(newDate);
-    // const sortedOrders = sortedArray(
-    //   newOrders,
-    //   state.sortOrders.field,
-    //   state.sortOrders.direction
-    // );
-    // const newIngredients = getIngredientsData(newDate);
-    // const sortedIngredients = sortedArray(
-    //   newIngredients,
-    //   state.sortIngredients.field,
-    //   state.sortIngredients.direction
-    // );
-    // const newCustomers = getCustomerData(newDate);
-    // const sortedCustomers = sortedArray(
-    //   newCustomers,
-    //   state.sortRevenue.field,
-    //   state.sortRevenue.direction
-    // );
-    // dispatch({ type: "FILTER_ORDERS", payload: sortedOrders });
-    // dispatch({ type: "FILTER_INGREDIENTS", payload: sortedIngredients });
-    // dispatch({ type: "FILTER_REVENUE", payload: sortedCustomers });
-
     state.defaultFlag = false;
   };
-  // display the default order/ingredient/customer data to the closest date we have in dropdown list based on todays day
-  // if (state.defaultFlag) {
-  //   const newOrders = getOrderData(closestToCurrDayVal);
-  //   const sortedOrders = sortedArray(
-  //     newOrders,
-  //     state.sortOrders.field,
-  //     state.sortOrders.direction
-  //   );
-  //   const newIngredients = getIngredientsData(closestToCurrDayVal);
-  //   const sortedIngredients = sortedArray(
-  //     newIngredients,
-  //     state.sortIngredients.field,
-  //     state.sortIngredients.direction
-  //   );
-  //   const newCustomers = getCustomerData(closestToCurrDayVal);
-  //   const sortedCustomers = sortedArray(
-  //     newCustomers,
-  //     state.sortRevenue.field,
-  //     state.sortRevenue.direction
-  //   );
-
-  //   state.sortedOrdersData = sortedOrders;
-  //   state.sortedIngredientsData = sortedIngredients;
-  //   state.sortedCustomersData = sortedCustomers;
-  // }
 
   const calculateTotalMealQty = (meals) => {
     let sum = 0;
@@ -726,19 +536,6 @@ function OrdersIngredients({ history, ...props }) {
     return displayDate.substring(4, 10) + "," + displayDate.substring(10);
   };
 
-  const getBusinessName = (id) => {
-    if (id) {
-      if (state.businessData.length > 0) {
-        return state.businessData.filter(
-          (business) => business.business_uid === id
-        )[0].business_name;
-      } else {
-        return "";
-      }
-    }
-    return "";
-  };
-
   const currencyFormatter = new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
@@ -790,7 +587,7 @@ function OrdersIngredients({ history, ...props }) {
                       onChange={filterBusiness}
                     >
                       <option key={0}>All Orders</option>
-                      {state.businessData.map((business) => {
+                      {state.businessData.map((business, index) => {
                         if (business) {
                           return (
                             <option
@@ -834,7 +631,6 @@ function OrdersIngredients({ history, ...props }) {
                   sliderClass={styles.carouselSlider}
                   keyBoardControl
                 >
-                  {console.log(carouselRef)}
                   {state.mealDates.map((date) => {
                     const displayDate = convertToDisplayDate(date.menu_date);
                     const dateButtonStatus =
@@ -1070,9 +866,9 @@ function OrdersIngredients({ history, ...props }) {
                       filterDataByBusiness(
                         state.ordersData,
                         state.selectedBusinessID
-                      ).map((item) => {
+                      ).map((item, index) => {
                         return (
-                          <TableRow>
+                          <TableRow key={index}>
                             <TableCell
                               style={{
                                 fontWeight: "bold",
@@ -1240,9 +1036,9 @@ function OrdersIngredients({ history, ...props }) {
                       filterDataByBusiness(
                         state.revenueData,
                         state.selectedBusinessID
-                      ).map((item) => {
+                      ).map((item, index) => {
                         return (
-                          <TableRow>
+                          <TableRow key={index}>
                             <TableCell
                               style={{ borderBottom: "1px solid #f26522" }}
                             >
@@ -1293,112 +1089,118 @@ function OrdersIngredients({ history, ...props }) {
 
               <TableContainer className={styles.tableContainer}>
                 {" "}
-                <Table responsive>
+                <Table>
                   <TableHead>
-                    <TableCell
-                      style={{
-                        fontWeight: "bold",
-                        color: "#f26522",
-                        border: "none",
-                      }}
-                    >
-                      <TableSortLabel
+                    <TableRow>
+                      <TableCell
                         style={{
                           fontWeight: "bold",
                           color: "#f26522",
                           border: "none",
                         }}
-                        direction={state.sortIngredients.direction}
-                        onClick={() => changeSortIngredient("ingredient_desc")}
                       >
-                        Ingredient Name
-                      </TableSortLabel>
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        fontWeight: "bold",
-                        color: "#f26522",
-                        border: "none",
-                      }}
-                    >
-                      <TableSortLabel
+                        <TableSortLabel
+                          style={{
+                            fontWeight: "bold",
+                            color: "#f26522",
+                            border: "none",
+                          }}
+                          direction={state.sortIngredients.direction}
+                          onClick={() =>
+                            changeSortIngredient("ingredient_desc")
+                          }
+                        >
+                          Ingredient Name
+                        </TableSortLabel>
+                      </TableCell>
+                      <TableCell
                         style={{
                           fontWeight: "bold",
                           color: "#f26522",
                           border: "none",
                         }}
-                        direction={state.sortIngredients.direction}
-                        onClick={() => changeSortIngredient("total_qty")}
                       >
-                        Qty.
-                      </TableSortLabel>
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        fontWeight: "bold",
-                        color: "#f26522",
-                        border: "none",
-                      }}
-                    >
-                      <TableSortLabel
+                        <TableSortLabel
+                          style={{
+                            fontWeight: "bold",
+                            color: "#f26522",
+                            border: "none",
+                          }}
+                          direction={state.sortIngredients.direction}
+                          onClick={() => changeSortIngredient("total_qty")}
+                        >
+                          Qty.
+                        </TableSortLabel>
+                      </TableCell>
+                      <TableCell
                         style={{
                           fontWeight: "bold",
                           color: "#f26522",
                           border: "none",
                         }}
-                        direction={state.sortIngredients.direction}
-                        onClick={() => changeSortIngredient("package_unit")}
                       >
-                        Unit
-                      </TableSortLabel>
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        fontWeight: "bold",
-                        color: "#f26522",
-                        border: "none",
-                      }}
-                    >
-                      <TableSortLabel
+                        <TableSortLabel
+                          style={{
+                            fontWeight: "bold",
+                            color: "#f26522",
+                            border: "none",
+                          }}
+                          direction={state.sortIngredients.direction}
+                          onClick={() => changeSortIngredient("package_unit")}
+                        >
+                          Unit
+                        </TableSortLabel>
+                      </TableCell>
+                      <TableCell
                         style={{
                           fontWeight: "bold",
                           color: "#f26522",
                           border: "none",
                         }}
-                        direction={state.sortIngredients.direction}
-                        onClick={() => changeSortIngredient("package_measure")}
                       >
-                        Measure
-                      </TableSortLabel>
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        fontWeight: "bold",
-                        color: "#f26522",
-                        border: "none",
-                      }}
-                    >
-                      <TableSortLabel
+                        <TableSortLabel
+                          style={{
+                            fontWeight: "bold",
+                            color: "#f26522",
+                            border: "none",
+                          }}
+                          direction={state.sortIngredients.direction}
+                          onClick={() =>
+                            changeSortIngredient("package_measure")
+                          }
+                        >
+                          Measure
+                        </TableSortLabel>
+                      </TableCell>
+                      <TableCell
                         style={{
                           fontWeight: "bold",
                           color: "#f26522",
                           border: "none",
                         }}
-                        direction={state.sortIngredients.direction}
-                        onClick={() => changeSortIngredient("package_cost")}
                       >
-                        Cost
-                      </TableSortLabel>
-                    </TableCell>
+                        <TableSortLabel
+                          style={{
+                            fontWeight: "bold",
+                            color: "#f26522",
+                            border: "none",
+                          }}
+                          direction={state.sortIngredients.direction}
+                          onClick={() => changeSortIngredient("package_cost")}
+                        >
+                          Cost
+                        </TableSortLabel>
+                      </TableCell>
+                    </TableRow>
                   </TableHead>
                   <TableBody>
                     {state.ingredientsData &&
                       filterDataByBusiness(
                         state.ingredientsData,
                         state.selectedBusinessID
-                      ).map((item) => {
+                      ).map((item, index) => {
                         return (
-                          <TableRow>
+                          <TableRow key={index}>
                             <TableCell
                               style={{ borderBottom: "1px solid #f26522" }}
                             >
@@ -1432,237 +1234,6 @@ function OrdersIngredients({ history, ...props }) {
               </TableContainer>
             </Col>
           </Row>
-
-          {/* <Row>
-          <Col>
-            <Form>
-              <Form.Group as={Row}>
-                <Form.Label column sm="2">
-                  Date
-                </Form.Label>
-                <Col sm="6">
-                  <Form.Control
-                    as="select"
-                    defaultValue={state.selectedDate}
-                    onChange={(event) => {
-                      changeDate(event.target.value);
-                    }}
-                  >
-                    <option value="" hidden>
-                      {closestToCurrDay}
-                    </option>
-                    {orderDates.map((date) => (
-                      <option value={date.value} key={date.value}>
-                        {date.display}
-                      </option>
-                    ))}
-                  </Form.Control>
-                </Col>
-              </Form.Group>
-            </Form>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            <h5> Meals Ordered </h5>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Menu Date</TableCell>
-                  <TableCell>
-                    <TableSortLabel
-                      active={state.sortOrders.field === "jt_name"}
-                      direction={
-                        state.sortOrders.field === "jt_name"
-                          ? state.sortOrders.direction
-                          : "asc"
-                      }
-                      onClick={() => changeSortOrder("jt_name")}
-                    >
-                      Meal Name
-                    </TableSortLabel>
-                  </TableCell>
-                  <TableCell>
-                    <TableSortLabel
-                      active={state.sortOrders.field === "sum(jt_qty)"}
-                      direction={
-                        state.sortOrders.field === "sum(jt_qty)"
-                          ? state.sortOrders.direction
-                          : "asc"
-                      }
-                      onClick={() => changeSortOrder("sum(jt_qty)")}
-                    >
-                      Quantity
-                    </TableSortLabel>
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {state.sortedOrdersData.map((order, orderIndex) => {
-                  return (
-                    <TableRow key={orderIndex} hover>
-                      <TableCell> {order.d_menu_date} </TableCell>
-                      <TableCell> {order.jt_name} </TableCell>
-                      <TableCell> {order["sum(jt_qty)"]} </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </Col>
-        </Row>
-        <Row
-          style={{
-            marginTop: "4rem",
-            marginBottom: "1rem",
-          }}
-        >
-          <Col>
-            <h5> Ingredients Needed </h5>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Menu Date</TableCell>
-                  <TableCell>
-                    <TableSortLabel
-                      active={state.sortIngredients.field === "ingredient_desc"}
-                      direction={
-                        state.sortIngredients.field === "ingredient_desc"
-                          ? state.sortIngredients.direction
-                          : "asc"
-                      }
-                      onClick={() => changeSortIngredient("ingredient_desc")}
-                    >
-                      Ingredient Name
-                    </TableSortLabel>
-                  </TableCell>
-                  <TableCell>
-                    <TableSortLabel
-                      active={state.sortIngredients.field === "sum(qty_needed)"}
-                      direction={
-                        state.sortIngredients.field === "sum(qty_needed)"
-                          ? state.sortIngredients.direction
-                          : "asc"
-                      }
-                      onClick={() => changeSortIngredient("sum(qty_needed)")}
-                    >
-                      Quantity
-                    </TableSortLabel>
-                  </TableCell>
-                  <TableCell>
-                    <TableSortLabel
-                      active={state.sortIngredients.field === "units"}
-                      direction={
-                        state.sortIngredients.field === "units"
-                          ? state.sortIngredients.direction
-                          : "asc"
-                      }
-                      onClick={() => changeSortIngredient("units")}
-                    >
-                      Unit
-                    </TableSortLabel>
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {state.sortedIngredientsData.map(
-                  (ingredient, ingredientIndex) => {
-                    return (
-                      <TableRow key={ingredientIndex} hover>
-                        <TableCell> {ingredient.d_menu_date} </TableCell>
-                        <TableCell> {ingredient.ingredient_desc} </TableCell>
-                        <TableCell> {ingredient["sum(qty_needed)"]} </TableCell>
-                        <TableCell> {ingredient.units} </TableCell>
-                      </TableRow>
-                    );
-                  }
-                )}
-              </TableBody>
-            </Table>
-          </Col>
-        </Row>
-        <Row
-          style={{
-            marginTop: "4rem",
-            marginBottom: "1rem",
-          }}
-        ></Row>
-        <Row>
-          <Col>
-            <h5> Meals Ordered By Customer </h5>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Menu Date</TableCell>
-                  <TableCell>
-                    <TableSortLabel
-                      active={state.sortRevenue.field === "jt_name"}
-                      direction={
-                        state.sortRevenue.field === "jt_name"
-                          ? state.sortRevenue.direction
-                          : "asc"
-                      }
-                      onClick={() => changeSortCustomer("jt_name")}
-                    >
-                      Meal Name
-                    </TableSortLabel>
-                  </TableCell>
-                  <TableCell>
-                    <TableSortLabel
-                      active={state.sortRevenue.field === "First_Name"}
-                      direction={
-                        state.sortRevenue.field === "First_Name"
-                          ? state.sortRevenue.direction
-                          : "asc"
-                      }
-                      onClick={() => changeSortCustomer("First_Name")}
-                    >
-                      Customer
-                    </TableSortLabel>
-                  </TableCell>
-                  <TableCell>
-                    <TableSortLabel>Customer UID</TableSortLabel>
-                  </TableCell>
-                  <TableCell>
-                    <TableSortLabel>Purchase UID</TableSortLabel>
-                  </TableCell>
-                  <TableCell>
-                    <TableSortLabel>Quantity</TableSortLabel>
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {state.sortedCustomersData.map((customer, customerIndex) => {
-                  return (
-                    <TableRow key={customerIndex} hover>
-                      <TableCell> {customer.d_menu_date} </TableCell>
-                      <TableCell> {customer.jt_name} </TableCell>
-                      <TableCell>
-                        {" "}
-                        {customer.First_Name} {customer.Last_Name}{" "}
-                      </TableCell>
-                      <TableCell> {customer.customer_uid} </TableCell>
-                      <TableCell> {customer.lplpibr_purchase_id} </TableCell>
-                      <TableCell> {customer.Qty} </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </Col>
-        </Row> */}
         </Container>
       </div>
     </>
