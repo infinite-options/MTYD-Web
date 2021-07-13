@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import {withRouter} from "react-router";
 import axios from 'axios';
 import { API_URL } from '../../../reducers/constants';
+import AdminNavBar from '../AdminNavBar';
 
 import {
   Breadcrumb, Container,
@@ -55,6 +56,7 @@ function PlansCoupons({history, ...props}) {
 
   return (
     <div>
+      <AdminNavBar currentPage={'plans-coupons'}/>
       <Breadcrumb>
         <Breadcrumb.Item href="/"> Admin Site </Breadcrumb.Item>
         <Breadcrumb.Item active> Plans & Coupons </Breadcrumb.Item>

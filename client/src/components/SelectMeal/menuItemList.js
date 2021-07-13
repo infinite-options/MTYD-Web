@@ -241,7 +241,6 @@ class MenuItemList extends Component {
       .then(res => {
         console.log("customer_lplp res: ", res);
         let meals = res.data.result;
-        console.log("wtf");
         console.log("loadMealPlans: ", meals);
 
         this.setState({
