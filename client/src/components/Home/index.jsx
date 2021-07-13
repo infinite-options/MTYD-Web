@@ -301,7 +301,7 @@ class Home extends Component {
 
       <div class = {styles.howDoesContainer}>
         <div class = {styles.howDoesText}>
-          <p style = {{marginLeft: '-90px', display:'inline', color: 'black'}}>How does<p style = {{marginLeft: '-78px', display:'inline', color: 'white'}}> MealFor.Me
+          <p style = {{marginLeft: '-90px', display:'inline', color: 'black'}}>How does<p style = {{marginLeft: '-78px', display:'inline', color: 'white'}}> MealsFor.Me
           <p style = {{marginLeft: '-78px', display:'inline', color:'black'}}> work?</p></p></p>
         </div>
       </div>
@@ -485,7 +485,7 @@ class Home extends Component {
         <div>
 		  <div class = {styles.howDoesContainer}>
               <div class = {styles.howDoesText}>
-	          <p style = {{marginLeft: '-90px',display:'inline', color: 'black'}}>Why try MealFor.Me?</p>
+	          <p style = {{marginLeft: '-90px',display:'inline', color: 'black'}}>Why try MealsFor.Me?</p>
     	  </div>
 		  </div>
        </div>
