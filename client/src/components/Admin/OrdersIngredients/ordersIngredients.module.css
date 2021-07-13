@@ -6,9 +6,10 @@ body {
 
 .root {
   background-color: #f26522;
-  width: 100vw;
   height: 93vh;
+  min-width: 1150px;
   padding: 25px;
+  overflow-x: auto;
 }
 
 .container {
@@ -120,4 +121,14 @@ body {
   overflow-x: scroll;
   overflow-y: hidden;
   white-space: nowrap;
+}
+
+.tableContainer {
+  max-height: 80%;
+}
+
+@media only screen and (max-width: 1330px) {
+  .contactInfo {
+    display: none;
+  }
 }

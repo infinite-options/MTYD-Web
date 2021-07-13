@@ -2,14 +2,15 @@ body {
   font: var(--unnamed-font-style-normal) normal
     var(--unnamed-font-weight-medium) var(--unnamed-font-size-18) /
     var(--unnamed-line-spacing-21) var(--unnamed-font-family-sf-pro-display);
+  width: 100vw;
 }
 
 .root {
   background-color: #f26522;
-  width: 100vw;
-  height: 100vh;
+  height: 93vh;
+  min-width: 1275px;
   padding: 25px;
-  overflow: scroll;
+  overflow-x: scroll;
 }
 
 .container {
@@ -101,7 +102,7 @@ body {
   font-weight: bold;
 }
 
-.hideModal {
+.hidden {
   display: none;
 }
 
@@ -111,4 +112,37 @@ body {
 
 .modalWidth {
   width: auto;
+}
+
+.deleteBtn {
+  fill: black !important;
+}
+.deleteBtn:hover {
+  fill: red !important;
+}
+
+.saveBtn_saved {
+  fill: green !important;
+}
+
+.saveBtn_unsaved {
+  fill: red !important;
+}
+
+.invalidDate {
+  color: red;
+  font-weight: bold;
+}
+
+.greyedOutBtn {
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 15px;
+  padding-left: 25px;
+  padding-right: 25px;
+  background-color: grey;
+  font-weight: bold;
+  opacity: 50%;
+  cursor: not-allowed !important;
 }
