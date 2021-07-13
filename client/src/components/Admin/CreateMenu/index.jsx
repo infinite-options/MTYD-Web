@@ -384,8 +384,11 @@ function CreateMenu({ history, ...props }) {
 
       for (let i = 0; i < dates.length; i++) {
         const day = dates[i].menu_date;
-        if (day.localeCompare(curDay) === 1) {
-          return i - 1;
+        if (
+          day.localeCompare(curDay) === 0 ||
+          day.localeCompare(curDay) === 1
+        ) {
+          return i;
         }
       }
     }

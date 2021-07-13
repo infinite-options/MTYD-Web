@@ -2733,7 +2733,7 @@ function EditMeal({history, ...props}) {
       
 
       <div className={styles.containerMeals}>
-        <div style={{fontSize: "24px", display: "inline", marginLeft: "27px"}}>
+        <div style={{fontSize: "22px", display: "inline", marginLeft: "27px", fontWeight: "bold"}}>
 					Meals Offered
 				</div>
 
