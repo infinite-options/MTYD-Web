@@ -66,14 +66,28 @@ class AddressLink extends Component {
 }
 
 class FootLink extends Component {
+
     state = {
-       seen: false,
+      seen: false,
+      windowHeight: undefined,
+      windowWidth: undefined
     };
+
     togglePop = () => {
        this.setState({
        seen: !this.state.seen
       });
     };
+
+    handleResize = () => this.setState({
+      windowHeight: window.innerHeight,
+      windowWidth: window.innerWidth
+    });
+
+    componentDidMount() {
+      this.handleResize();
+      window.addEventListener('resize', this.handleResize);
+    }
 
     render() { 
       return (		
@@ -109,11 +123,33 @@ class FootLink extends Component {
 
 
             </p>
-            <div className = {styles.footerRight}>
-              <img onClick={() => this.togglePop()} style = {{width: '320px', height:'67px'}} src = {becomeAnAmbassadorImg} style = {{marginTop: '25px'}} 
-              aria-label="click here to become an ambassador" title="click here to become an ambassador" tabIndex="0"/>		
-            </div>
-
+            {/* <div className = {styles.footerRight}> */}
+              {/* <img 
+                onClick={() => this.togglePop()} 
+                style = {{
+                  width: '320px', 
+                  height:'67px'
+                }} 
+                src = {becomeAnAmbassadorImg} 
+                // style = {{marginTop: '25px'}} 
+                aria-label="click here to become an ambassador" 
+                title="click here to become an ambassador" tabIndex="0"
+              />		 */}
+              <div
+                onClick={() => this.togglePop()} 
+                className={styles.becomeAmbassadorBtn}
+                style = {{
+                  width: '320px', 
+                  height: '60px'
+                }} 
+                // src = {becomeAnAmbassadorImg} 
+                // style = {{marginTop: '25px'}} 
+                aria-label="click here to become an ambassador" 
+                title="click here to become an ambassador" tabIndex="0"
+              >
+                Become an Ambassador
+              </div>		
+            {/* </div> */}
 
             {this.state.seen ? <BecomeAmbass toggle={this.togglePop}/> : null}
             

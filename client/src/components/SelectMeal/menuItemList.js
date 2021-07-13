@@ -26,6 +26,8 @@ import {WebNavBar} from "../NavBar";
 // import orangePlate from "./static/orange_plate.png";
 import m4me_logo from '../../images/LOGO_NoBG_MealsForMe.png';
 
+import {FootLink} from "../Home/homeButtons";
+
 class MenuItemList extends Component {
   constructor(props) {
     super();
@@ -1906,8 +1908,11 @@ class MenuItemList extends Component {
               show={this.props.subscribedPlans.length}
               addon = {true}
             />
+            {/* <FootLink/> */}
           </div>
         </div>
+
+        {/* <FootLink/>		 */}
 
         <div className = {this.state.popUp}>
           <div className = {styles.popUpContainer}>
@@ -1915,7 +1920,10 @@ class MenuItemList extends Component {
             <h6 style = {{margin: '20px 25px', fontSize:'18px', textAlign:'center'}}>{this.state.popUpText}</h6>
             <a className = {styles.popUpButton} onClick = {this.toggleDisplay}>OK</a>
           </div>
+          {/* <FootLink/>		 */}
         </div>
+
+        {/* <FootLink/>		 */}
 
         {this.state.unloginPopupShowPM ?
           <SelectMealGuestPop 
@@ -1955,7 +1963,7 @@ class MenuItemList extends Component {
 
         {this.state.signUpSeen ? 
           <Popsignup toggle={this.togglePopSignup} /> 
-        : null}
+        : null}	
 
       </>
     );

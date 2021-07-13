@@ -1,10 +1,13 @@
 import React from "react";
 import {connect} from "react-redux";
 import MenuItemList from "./menuItemList";
+import {FootLink} from "../Home/homeButtons";
 
 class SelectMeal extends React.Component {
   render() {
-    return <MenuItemList />;
+    return (
+      <MenuItemList />
+    );
   }
 }
 
