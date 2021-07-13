@@ -11,7 +11,9 @@
   font-weight: bold;
   /*padding-left: 100px;*/
   padding-left: 8%;
-  padding-top: 15px;
+  /* padding-top: 15px; */
+  display: flex;
+  align-items: center;
   font-size: 25px;
   margin-bottom: 30px;
   margin-top: 30px;

@@ -209,8 +209,9 @@ class Home extends Component {
         style={{
           zIndex: '99',
           position: 'absolute',
-          width: '100vw',
-          maxWidth: '100%'
+          // width: '100vw',
+          // maxWidth: '100%'
+          width: '100%'
         }}
       >
         <WebNavBar/>
