@@ -1354,7 +1354,10 @@ function CreateMenu({ history, ...props }) {
               <div className={styles.modalCloseBtnContainer}>
                 <ModalCloseBtn
                   style={{ cursor: "pointer" }}
-                  onClick={toggleAddMenu}
+                  onClick={() => {
+                    toggleAddMenu();
+                    dispatch({ type: "SET_MEAL_EXISTS", payload: false });
+                  }}
                 />
               </div>
               <div
@@ -1654,6 +1657,7 @@ function CreateMenu({ history, ...props }) {
                           // Save menu item after switching to different date and back
                           updateMenu();
                           toggleAddMenu();
+                          dispatch({ type: "SET_MEAL_EXISTS", payload: false });
                         })
                         .catch((err) => {
                           if (err.response) {
