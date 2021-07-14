@@ -143,6 +143,5 @@ body {
   padding-right: 25px;
   background-color: grey;
   font-weight: bold;
-  opacity: 50%;
   cursor: not-allowed !important;
 }
