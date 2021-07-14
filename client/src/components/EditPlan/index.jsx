@@ -374,7 +374,7 @@ class EditPlan extends React.Component {
 
     if (this.state.responseCode == 'Y' || this.state.responseCode == 'S') {
       console.log("address is fine")
-      this.saveEdits()
+      // this.saveEdits()
 
       if (this.state.responseCode == 'S') {
         console.log("apartment not confirmed")
@@ -408,6 +408,7 @@ class EditPlan extends React.Component {
                 console.log("Categorical Options response: ", response);
 
                 if(response.data.result.length !== 0) {
+                  this.saveEdits()
                   console.log("(VA) valid zone!");
 
                   console.log("cat options for: ", document.getElementById("pac-input").value.split(", ")[0]);
@@ -3326,7 +3327,7 @@ class EditPlan extends React.Component {
                 disabled={!this.state.subscriptionsLoaded}
                 onClick={()=>{
                   this.isValidAddress()
-                  //this.saveEdits()
+                  
                 }}
                 aria-label="Click to save delivery changes"
                 title="Click to save delivery changes"

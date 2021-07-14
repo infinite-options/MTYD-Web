@@ -156,6 +156,9 @@ export class PopLogin extends Component {
     return (
       <div          
         className="pop_content"
+        style = {{
+          zIndex: "100"
+        }}
       >
 
           <button className="close" onClick={this.handleClick} aria-label="Click here to exit Login menu" title="Click here to exit Login menu"/>
@@ -303,7 +306,7 @@ export class PopLogin extends Component {
                       marginRight: 'auto',
                       //marginBottom: '0px',
                       marginLeft: 'auto',
-                      zIndex: '2'
+                      zIndex: '100'
                     }}>
 
                       <div className={styles.errorContainer} style = {{
