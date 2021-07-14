@@ -35,6 +35,13 @@ const DEFAULT = 0;
 const CURRENT = 1;
 const UPDATED = 2;
 
+const CLOSED = -1;
+const DATA_ERROR = 0;
+const CHECKOUT_ERROR = 1;
+const AMBASSADOR_ERROR = 2;
+const EMAIL_ERROR = 3;
+const ADDRESS_ERROR = 4;
+
 class EditPlan extends React.Component {
   constructor() {
     super();
@@ -169,8 +176,11 @@ class EditPlan extends React.Component {
       windowHeight: undefined,
       windowWidth: undefined,
       refundAmount: 0,
-      refundError: 'Error attempting to refund subscription'
+      refundError: 'Error attempting to refund subscription',
       // narrowView: true
+      streetChanged: false,
+      autoCompleteClicked: false,
+      responseCode: ""
     };
 
     // this.updateView = this.updateView.bind(this);
@@ -312,6 +322,188 @@ class EditPlan extends React.Component {
       subtotal
     }
     return newSummary;
+  }
+
+  setResponseCode(responseData) {
+    this.setState({responseCode: responseData.dpv_confirmation})
+  }
+
+  isValidAddress() {
+    let responseData = ""
+
+    console.log("street address test: ")
+
+    console.log(document.getElementById("pac-input").value.split(", ")[0])
+
+    let uspsURL = 'https://production.shippingapis.com/ShippingAPI.dll?API=Verify&XML=<AddressValidateRequest USERID="400INFIN1745"><Revision>1</Revision><Address ID="0"><Address1>' + 
+    document.getElementById("pac-input").value.split(", ")[0] +'</Address1><Address2>'+ 
+    document.getElementById("unitNo").value +'</Address2><City>'+ 
+    document.getElementById("locality").value +'</City><State>'+ 
+    document.getElementById("state").value +'</State><Zip5>'+ 
+    document.getElementById("postcode").value +'</Zip5><Zip4></Zip4></Address></AddressValidateRequest>'
+
+    console.log(uspsURL)
+
+    axios
+    .get(uspsURL)
+    .then(response=>{
+      var parser = new DOMParser();
+      responseData = response.data.split("\n")[1]
+      var xmlDoc = parser.parseFromString(responseData, "text/xml")
+      this.setState({responseCode: xmlDoc.getElementsByTagName("DPVConfirmation")[0].childNodes[0].nodeValue})
+      console.log(xmlDoc.getElementsByTagName("DPVConfirmation")[0].childNodes[0].nodeValue)
+      this.validateAddress()
+    })
+
+    console.log("in isValidAddress")
+
+    console.log("this.state.responseCode: " + this.state.responseCode)
+  }
+
+  validateAddress() {
+
+    console.log("(validateAddress) before FAC");
+    console.log([document.getElementById("pac-input").value.split(", ")[0],
+    document.getElementById("locality").value,
+    document.getElementById("state").value,
+    document.getElementById("postcode").value])    
+
+    console.log("in validateAddress")
+
+    console.log("this.state.responseCode before checks: " + this.state.responseCode)
+
+    if (this.state.responseCode == 'Y' || this.state.responseCode == 'S') {
+      console.log("address is fine")
+      this.saveEdits()
+
+      if (this.state.responseCode == 'S') {
+        console.log("apartment not confirmed")
+        this.displayError(ADDRESS_ERROR, `
+          Warning! We couldn't confirm the apartment number provided. Go ahead and place your order and we will contact you for more details.
+        `);
+      }
+
+      this.setState(prevState => ({
+        fetchingFees: true,
+        showPaymentInfo: false
+      }), () => {
+        fetchAddressCoordinates(
+          document.getElementById("pac-input").value,
+          document.getElementById("locality").value,
+          document.getElementById("state").value,
+          document.getElementById("postcode").value,
+          (coords) => {
+
+            console.log("Fetched coordinates: " + JSON.stringify(coords));
+            this.setState({
+              latitude: coords.latitude,
+              longitude: coords.longitude,
+              loadingMap: false
+            });
+
+            console.log("Calling categorical options...");
+            axios
+              .get(`${API_URL}categoricalOptions/${coords.longitude},${coords.latitude}`)
+              .then((response) => {
+                console.log("Categorical Options response: ", response);
+
+                if(response.data.result.length !== 0) {
+                  console.log("(VA) valid zone!");
+
+                  console.log("cat options for: ", document.getElementById("pac-input").value.split(", ")[0]);
+                  this.setState(prevState => ({
+                    recalculatingPrice: true,
+                    paymentSummary: {
+                      ...prevState.paymentSummary,
+                      taxRate: response.data.result[1].tax_rate,
+                      serviceFee: response.data.result[1].service_fee.toFixed(2),
+                      deliveryFee: response.data.result[1].delivery_fee.toFixed(2),
+                      taxAmount: (
+                        this.props.selectedPlan.item_price *
+                        this.props.selectedPlan.num_deliveries *
+                        (1-(this.props.selectedPlan.delivery_discount*0.01)) *
+                        response.data.result[1].tax_rate * 0.01
+                      ).toFixed(2)
+                    }
+                  }), () => {
+                    
+                    // this.setTotal();
+                    console.log("(VA) proceeding to payment...");
+                    //this.proceedToPayment();
+                  });
+
+                } else {
+                  console.log("(VA) invalid zone!");
+
+                  this.displayError(ADDRESS_ERROR, `
+                    Sorry, it looks like we don't deliver to your neighborhood yet. 
+                    Enter your email address and we will let you know as soon as
+                    we come to your neighborhood.
+                  `);
+
+                  this.setState({
+                    fetchingFees: false
+                  });
+                // this.setState(prevState => ({
+                //   recalculatingPrice: true,
+                //   paymentSummary: {
+                //     ...prevState.paymentSummary,
+                //     taxRate: 0,
+                //     serviceFee: "0.00",
+                //     deliveryFee: "0.00",
+                //     taxAmount: "0.00"
+                //   }
+                // }), () => {
+                //   this.setTotal();
+                // });
+
+                }
+              })
+              .catch((err) => {
+                if (err.response) {
+                  console.log(err.response);
+                }
+                console.log(err);
+              });
+          }
+        );
+      })
+
+    }
+
+    if (this.state.responseCode == "N") {
+      console.log("address not right")
+      this.displayError(ADDRESS_ERROR, `
+        Something is not right. Please make sure that the address you entered is correct.
+      `);
+    }
+    if (this.state.responseCode == "D") {
+      console.log("apartment missing")
+      this.displayError(ADDRESS_ERROR, `
+        Something is not right. It seems that your address requires an apartment number. Please make sure to input your apartment number.
+      `);
+    }
+
+    console.log("(validateAddress) after FAC");
+  }
+
+  displayError = (type, message) => {
+
+    if(type === CLOSED) {
+      this.setState({
+        errorModal: styles.errorModalPopUpHide,
+        errorType: type,
+        errorMessage: ''
+      });
+    } else {
+      this.setState({
+        errorModal: styles.errorModalPopUpShow,
+        errorType: type,
+        errorMessage: message
+      });
+    }
+
+    console.log("\npop up error toggled to " + type + "\n\n");
   }
 
   calculateNextBillingAmount = (orders) => {
@@ -733,6 +925,11 @@ class EditPlan extends React.Component {
           marker.setPosition(place.geometry.location);
           marker.setVisible(true);
 
+          this.setState({
+            streetChanged: true,
+            autoCompleteClicked: true
+          })
+
           for (const component of place.address_components) {
             const componentType = component.types[0];
             switch (componentType) {
@@ -994,7 +1191,6 @@ class EditPlan extends React.Component {
     });
   }
 
-
   // Change state of new credit card checkbox (not currently used)
   handleCheck = (cb) => {
     console.log("clicked checkbox: ", cb);
@@ -1002,6 +1198,93 @@ class EditPlan extends React.Component {
       usePreviousCard: !this.state.usePreviousCard
     });
   }
+
+  // NEW CODE
+
+  updateMap = () => {
+    console.log([this.state.street, this.state.city, this.state.state, this.state.addressZip])
+    if (this.state.streetChanged == false) {
+      return
+    }
+      if (this.state.streetChanged == true )
+    {
+      console.log("calling fetchAddressCoordinates...");
+    
+    fetchAddressCoordinates( //(address, city, state, zip, _callback) {å
+      // this.state.street,
+      // this.state.city,
+      // this.state.state,
+      // this.state.zip,
+      document.getElementById("pac-input").value,
+        document.getElementById("locality").value,
+        document.getElementById("state").value,
+        document.getElementById("postcode").value,
+      (coords) => {
+        console.log("(mount) Fetched coordinates: " + JSON.stringify(coords));
+
+        this.setState({
+          latitude: coords.latitude,
+          longitude: coords.longitude,
+          loadingMap: false
+        });
+
+        const temp_position = {lat:parseFloat(coords.latitude), lng:parseFloat(coords.longitude)}
+
+        console.log(temp_position)
+        console.log(this.state.streetChanged)
+        console.log(this.state.autoCompleteClicked)
+
+        map.setCenter(temp_position)
+
+        if(coords.latitude !== ''){
+          
+          map.setZoom(17);
+          new google.maps.Marker({
+            position: temp_position,
+            map,
+          });
+        }
+      }
+    );
+
+    // if(JSON.stringify(this.props.selectedPlan) === '{}'){
+    //   this.displayError(DATA_ERROR, 'No plans selected. Please select a Meal Plan to proceed.');
+    // }
+
+    let temp_lat;
+    let temp_lng;
+
+    if(this.state.latitude==''){
+      temp_lat = 37.3382;
+    }
+    else{
+      temp_lat = this.state.latitude;
+    }
+
+    if(this.state.longitude==''){
+      temp_lng = -121.893028
+    }
+    else{
+      temp_lng = this.state.longitude;
+    }
+
+    const map = new google.maps.Map(document.getElementById("map"), {
+      center: { lat: temp_lat, lng: temp_lng},
+      zoom: 12,
+    });
+    this.setState({
+      streetChanged: false,
+    })
+  }
+  if(this.state.autoCompleteClicked == true) {
+    console.log("reseting click boolean")
+    this.setState({
+      autoCompleteClicked: false
+    })
+  }
+  }
+
+  // NEW CODE
 
   componentDidMount() {
 
@@ -2540,6 +2823,207 @@ class EditPlan extends React.Component {
         {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
         {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
 
+        {(() => {
+          if (this.state.errorType === EMAIL_ERROR) {
+            return (
+              <>
+                <div className = {this.state.errorModal}>
+                  <div className  = {styles.errorModalContainer}>
+                    <div
+                      className={styles.errorCancelButton}
+                      onClick = {() => {
+                        this.displayError(CLOSED, '');
+                      }} 
+                    />
+
+                    <div className={styles.errorContainer}>    
+
+                      <h6 style = {{margin: '5px', fontWeight: 'bold', fontSize: '25px'}}>Hmm..</h6>
+
+                      <div style = {{display: 'block', width: '300px', margin: '20px auto 0px'}}>
+                        {this.state.errorMessage}
+                      </div> 
+
+                      <br />
+
+                      <button 
+                        className={styles.errorBtn}
+                        onClick = {() => {
+                          console.log("go back clicked...");
+                          this.displayError(CLOSED, '');
+                        }}
+                      >
+                        Go Back
+                      </button>
+
+                      <button 
+                        className={styles.errorBtn}
+                        onClick = {() => {
+                          console.log("login clicked...");
+                          this.displayError();
+                          this.togglePopLogin(CLOSED, '');
+                        }}
+                      >
+                        Login
+                      </button>
+
+                    </div>
+                  </div>
+                </div>
+
+              </>
+            );
+          } else if (this.state.errorType === AMBASSADOR_ERROR) {
+            return (
+              <>
+                <div className = {this.state.errorModal}>
+                  <div className  = {styles.errorModalContainer}>
+
+                    <div className={styles.errorContainer}>    
+
+                      <h6 style = {{margin: '5px', fontWeight: 'bold', fontSize: '25px'}}>Hmm..</h6>
+
+                      <div style = {{display: 'block', width: '300px', margin: '20px auto 0px'}}>
+                        {this.state.errorMessage}
+                      </div> 
+
+                      <br />
+
+                      <button 
+                        className={styles.errorBtn}
+                        onClick = {() => {
+                          this.displayError(CLOSED, '');
+                        }}
+                      >
+                        OK
+                      </button>
+
+                    </div>
+                  </div>
+                </div>
+
+              </>
+            );
+          } else if (this.state.errorType === CHECKOUT_ERROR) {
+            return (
+              <>
+                <div className = {this.state.errorModal}>
+                  <div className  = {styles.errorModalContainer}>
+
+                    <div className={styles.errorContainer}>    
+
+                      <h6 style = {{margin: '5px', fontWeight: 'bold', fontSize: '25px'}}>Hmm..</h6>
+
+                      <div style = {{display: 'block', width: '300px', margin: '20px auto 0px'}}>
+                        {this.state.errorMessage}
+                      </div> 
+
+                      <br />
+
+                      <button 
+                        className={styles.errorBtn}
+                        onClick = {() => {
+                          // this.refreshStripe();
+                          this.displayError(CLOSED, '');
+                          // this.setState({
+                          //   fetchingFees: false
+                          // });
+                        }}
+                      >
+                        OK
+                      </button>
+
+                    </div>
+                  </div>
+                </div>
+
+              </>
+            );
+          } else if (this.state.errorType === DATA_ERROR) {
+            return (
+              <>
+                <div className = {this.state.errorModal}>
+                  <div className  = {styles.errorModalContainer}>
+
+                    <div className={styles.errorContainer}>    
+
+                      <h6 style = {{margin: '5px', fontWeight: 'bold', fontSize: '25px'}}>Hmm..</h6>
+
+                      <div style = {{display: 'block', width: '300px', margin: '20px auto 0px'}}>
+                        {this.state.errorMessage}
+                      </div> 
+
+                      <br />
+
+                      <button 
+                        className={styles.errorBtn}
+                        onClick = {() => {
+                          this.props.history.goBack();
+                        }}
+                      >
+                        Choose a Plan
+                      </button>
+
+                    </div>
+                  </div>
+                </div>
+
+              </>
+            );
+          } else if (this.state.errorType === ADDRESS_ERROR) {
+            return (
+              <>
+                <div className = {this.state.errorModal}>
+                  <div className  = {styles.errorModalContainer}>
+
+                    <div className={styles.errorContainer}>    
+
+                      <h6 style = {{margin: '5px', fontWeight: 'bold', fontSize: '25px'}}>Uh-Oh...</h6>
+
+                      <div style = {{display: 'block', width: '300px', margin: '20px auto 0px'}}>
+                        {this.state.errorMessage}
+                      </div> 
+
+                      <br />
+
+                      <input
+                        placeholder='Enter your email'
+                        style={{
+                          // position:'relative',
+                          // top:'140px',
+                          // left:'17px',
+                          // display: 
+                          width:'300px',
+                          height:'40px',
+                          fontSize:'18px',
+                          textAlign:'center',
+                          border:'2px solid #F26522',
+                          color:'black',
+                          // paddingTop:'10px',
+                          borderRadius:'10px',
+                          outline:'none'
+                        }}
+                      >    
+                      </input>
+
+                      <button 
+                        className={styles.errorBtn}
+                        onClick = {() => {
+                          this.displayError(CLOSED, '');
+                        }}
+                      >
+                        OK
+                      </button>
+
+                    </div>
+                  </div>
+                </div>
+
+              </>
+            );
+          }
+        })()} 
+
         <div className={styles.sectionHeaderScroll}>
           Select Meal Plan
         </div>
@@ -2758,6 +3242,13 @@ class EditPlan extends React.Component {
               id="pac-input" name="pac-input"
               aria-label="Confirm your address"
               title="Confirm your address"
+              onChange={e => {
+                this.setState({street: e.target.value.split(", ")[0]})
+                console.log(this.state.deliveryInfo.street)
+                this.setState({
+                  streetChanged: true
+                })
+              }}
             />
 
             <div style={{display: 'flex'}}>
@@ -2765,6 +3256,7 @@ class EditPlan extends React.Component {
                 type='text'
                 placeholder={"Unit"}
                 className={styles.inputContactLeft}
+                id="unitNo" name="unitNo"
                 value={this.state.deliveryInfo.unit}
                 onChange={e => {
                   this.setState(prevState => ({
@@ -2824,13 +3316,18 @@ class EditPlan extends React.Component {
               title="Confirm your delivery instructions"
             />
 
+            {this.updateMap()}
+
             <div className = {styles.googleMap} id = "map"/>     
 
             <div style={{textAlign: 'center'}}>
               <button 
                 className={styles.orangeBtn}
                 disabled={!this.state.subscriptionsLoaded}
-                onClick={()=>this.saveEdits()}
+                onClick={()=>{
+                  this.isValidAddress()
+                  //this.saveEdits()
+                }}
                 aria-label="Click to save delivery changes"
                 title="Click to save delivery changes"
               >
