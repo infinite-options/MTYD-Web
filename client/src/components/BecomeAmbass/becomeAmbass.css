@@ -22,17 +22,19 @@
 }
 
 .becomeAnAmbassadorPopupSignin {
-  position: fixed;
+  /* position: fixed; */
   z-index: 1;
   width: 540px;
   height: 666px;
-  left: 30%;
-  top: 20%;
-  bottom: 10px;
+  /* max-height: 100%;
+  overflow: auto; */
+  /* left: 30%; */
+  /* top: 20%; */
+  /* bottom: 10px; */
   border: 2px solid #F26522; 
   background-color: red;
   background-image: url('../../images/ambassadorLogin.png');
-  background-size:540px 666px;
+  /* background-size:540px 666px;
   background-position: center;
-  background-repeat: no-repeat;
+  background-repeat: no-repeat; */
 }

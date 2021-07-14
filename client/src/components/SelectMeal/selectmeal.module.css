@@ -705,15 +705,18 @@
   background-color: #F26522;
   height: 50px;
   width: 200px;
-  text-align: center;
+  /* text-align: center; */
   border-radius: 20px;
-  padding: 10px 10px 4px;
+  /* padding: 10px 10px 4px; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
   cursor: pointer;
   margin: auto;
   margin-bottom: 15px;
 }
 
 .popUpButton:hover {
-  color:white;
+  color:#ffba00;
   text-decoration: none;
 }

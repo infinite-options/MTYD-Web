@@ -102,7 +102,18 @@ export class BecomeAmbass extends Component {
   render() {
     
     return (
-      <div>
+      <div
+        style={{
+          position: 'relative',
+          // border: 'inset'
+          // border: 'green solid',
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center'
+        }}
+      >
         <div
         className="poploginsignup"
         >
@@ -187,21 +198,25 @@ export class BecomeAmbass extends Component {
 				)}else{
           return (
           <div
-          className="becomeAnAmbassadorPopupSignin"
-          style={{
-            zIndex:4
-          }}
+            className="becomeAnAmbassadorPopupSignin"
+            style={{
+              zIndex:4,
+              // border: 'dashed'
+              position: 'fixed'
+            }}
           >
             <div
               style= 
               {{
                 position:'absolute',
-                width:'50px',
-                height:'50px',
-                backgroundColor:'red',
-                top:'10px',
+                width:'37px',
+                height:'37px',
+                borderRadius: '50%',
+                // backgroundColor:'blue',
+                top:'7px',
                 right:'5px',
-                opacity:0
+                opacity: 0.5,
+                cursor: 'pointer'
               }} 
               onClick={this.handleClick}
               tabIndex="0"
