@@ -29,9 +29,15 @@ It is breaking everything.
 
 .footerBackgroundNarrow {
   background-color: #F8BB17;
-  height: 500px;
+  height: 200px;
   position: relative;
 }
+
+/* .footerBackgroundNarrow {
+  background-color: #F8BB17;
+  height: 500px;
+  position: relative;
+} */
 
 .footerLogo {
     margin: 0;
@@ -62,25 +68,50 @@ It is breaking everything.
   font-weight: medium;
   /*margin-left: 370px;	*/
 }
+.findUsNarrow {
+  /* position: absolute; */
+  /* left: 5%;
+  top: 40%;
+  margin-right: 30%; */
+  /*transform: translate(-50%, -50%);*/
+  /* height: auto; 
+  width: auto; 
+  max-width: 300px; 
+  max-height: 300px; */
+  /*font-family: -apple-system, BlinkMacSystemFont;*/
+  font: SF Pro;
+  font-size: 30px;
+  font-weight: medium;
+  /* border: 1px green solid; */
+  height: 100%;
+  color: white;
+  display: flex;
+  align-items: center;
+  width: 120px;
+  position: relative;
+  /*margin-left: 370px;	*/
+}
 .footerLogoNarrow {
-    margin: 0;
-    background: white;
-    border: solid;
-    border-color: white;
-    border-radius: 10px; 
-    top: 15%;
-    left: 50%;
-    margin-right: -50%;
-    transform: translate(-50%, -50%);
-    position: absolute;
-    height: auto; 
-    width: auto; 
-    max-width: 300px; 
-    max-height: 300px;
-    /*font-family: -apple-system, BlinkMacSystemFont;*/
-    font: SF Pro;
-	font-size: 24px;
-    font-weight:medium;	
+  margin: 0;
+  /* background: white; */
+  /* border: solid; */
+  /* border-color: white; */
+  border-radius: 10px; 
+  /* top: 15%;
+  left: 50%; */
+  left: 122px;
+  /* right: 150px; */
+  /* margin-right: -50%;
+  transform: translate(-50%, -50%); */
+  position: absolute;
+  /* height: auto; 
+  width: auto; 
+  max-width: 300px; 
+  max-height: 300px; */
+  /*font-family: -apple-system, BlinkMacSystemFont;*/
+  font: SF Pro;
+  font-size: 24px;
+  font-weight:medium;	
 }
 
 .footerLinks {
@@ -797,9 +828,10 @@ button {
   border: 2px solid #F26522; 
   background-color: red;
   background-image: url('../../images/ambassadorLogin.png');
-  background-size:540px 666px;
+  background-size: 540px 666px;
   background-position: center;
   background-repeat: no-repeat;
+  overflow: auto;
 }
 
 .becomeAmbassadorBtn {
@@ -815,4 +847,35 @@ button {
   position: absolute;
   top: 45px;
   right: 50px;
+}
+.narrowWrapper {
+  width: 100%;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* border: dashed; */
+}
+.narrowWrapper2 {
+  width: 100%;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  /* align-items: center; */
+  /* border: dashed; */
+}
+.becomeAmbassadorBtnNarrow {
+  border-radius: 15px;
+  color: white;
+  background-color: #F26522; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  /* border: dashed; */
+  /* font-weight: 500; */
+  cursor: pointer;
+  /* position: absolute;
+  top: 45px;
+  right: 50px; */
 }

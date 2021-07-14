@@ -213,8 +213,8 @@ class MenuItemList extends Component {
     //   await this.props.fetchSubscribed(customer_uid);
     // }
 
-    // const customer_uid = Cookies.get("customer_uid");
-    const customer_uid = '100-000001';
+    const customer_uid = Cookies.get("customer_uid");
+    // const customer_uid = '100-000001';
     console.log("(mount) customer_uid: ", customer_uid);
     this.setState({
       customer_uid
@@ -1892,7 +1892,15 @@ class MenuItemList extends Component {
           customer_uid = {this.state.customer_uid}
         />
 
-        <div style = {{overflow: 'visible', height: '100vh'}}>
+        {/* <FootLink /> */}
+
+        <div 
+          style = {{
+            overflow: 'visible', 
+            // height: '100vh',
+            // border: 'dashed'
+          }}
+        >
 
           <div className={styles.menuItemsWrapper}>
             <MenuItem
@@ -1927,7 +1935,7 @@ class MenuItemList extends Component {
           </div>
         </div>
 
-        {/* <FootLink/>		 */}
+        <FootLink/>		
 
         <div className = {this.state.popUp}>
           <div className = {styles.popUpContainer}>
