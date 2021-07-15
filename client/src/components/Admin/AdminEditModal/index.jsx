@@ -2613,10 +2613,13 @@ class AdminEditModal extends React.Component {
                 />
                 <button 
                   className={styles.codeButton}
+                  // disabled={
+                  //   this.state.refreshingPrice || 
+                  //   parseFloat(this.state.currentPlan.payment_summary.ambassador_discount) > 0 ||
+                  //   parseFloat(this.state.updatedPlan.payment_summary.ambassador_discount) > 0
+                  // }
                   disabled={
-                    this.state.refreshingPrice || 
-                    parseFloat(this.state.currentPlan.payment_summary.ambassador_discount) > 0 ||
-                    parseFloat(this.state.updatedPlan.payment_summary.ambassador_discount) > 0
+                    this.state.refreshingPrice
                   }
                   onClick={() => this.applyAmbassadorCode()}
                   aria-label="Click here to verify your ambassador code"
