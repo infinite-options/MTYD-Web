@@ -1156,45 +1156,48 @@ class MenuItemList extends Component {
       extraInfo = 'Skipped'
 
       let tempNewButton = (
-        <button key={this.state.myDate} 
-              value={this.state.myDate} 
-              onClick={this.filterDates}
-              className={buttonStyle} 
-              id={this.state.myDate} 
-              autoFocus>
-                <button
-                  style={{
-                    fontSize:'25px',
-                    fontWeight:'bold',
-                    lineHeight:'25px',
-                    backgroundColor:'rgba(0, 0, 0, 0)',
-                    border:'none'
-                  }}
-                  key={this.state.myDate} value={this.state.myDate} 
-                  onClick={this.filterDates} 
-                  id={this.state.myDate}
-                  tabIndex="-1"
-                  >
-                  {moment(this.state.myDate.split(" ")[0]).format("ddd")}
-                  <br/>{moment(this.state.myDate.split(" ")[0]).format("MMM") +" "+ moment(this.state.myDate.split(" ")[0]).format("D")}
-                </button>
+        <button 
+          key={this.state.myDate} 
+          value={this.state.myDate} 
+          onClick={this.filterDates}
+          className={buttonStyle} 
+          id={this.state.myDate} 
+          autoFocus
+        >
+          <button
+            style={{
+              fontSize:'25px',
+              fontWeight:'bold',
+              lineHeight:'25px',
+              backgroundColor:'rgba(0, 0, 0, 0)',
+              border:'none'
+            }}
+            key={this.state.myDate} value={this.state.myDate} 
+            onClick={this.filterDates} 
+            id={this.state.myDate}
+            tabIndex="-1"
+          >
+            {moment(this.state.myDate.split(" ")[0]).format("ddd")}
+            <br/>
+            {moment(this.state.myDate.split(" ")[0]).format("MMM") +" "+ moment(this.state.myDate.split(" ")[0]).format("D")}
+          </button>
 
-                <button
-                  style={{
-                    width:"122px",
-                    height:"48px",
-                    marginTop:"15px",
-                    fontSize:"15px",
-                    backgroundColor:'rgba(0, 0, 0, 0)',
-                    border:'none'
-                  }}
-                  key={this.state.myDate} value={this.state.myDate} 
-                  onClick={this.filterDates} 
-                  id={this.state.myDate}
-                  tabIndex="-1" 
-                >
-                  {extraInfo}
-                </button>
+          <button
+            style={{
+              width:"122px",
+              height:"48px",
+              marginTop:"15px",
+              fontSize:"15px",
+              backgroundColor:'rgba(0, 0, 0, 0)',
+              border:'none'
+            }}
+            key={this.state.myDate} value={this.state.myDate} 
+            onClick={this.filterDates} 
+            id={this.state.myDate}
+            tabIndex="-1" 
+          >
+            {extraInfo}
+          </button>
                 
         </button>
       )
@@ -1907,6 +1910,7 @@ class MenuItemList extends Component {
             // border: 'dashed'
           }}
         >
+          {console.log("(before MenuItem) customer_uid: ", this.state.customer_uid)}
 
           <div className={styles.menuItemsWrapper}>
             <MenuItem
@@ -1936,6 +1940,7 @@ class MenuItemList extends Component {
               purchaseID={this.state.purchaseID}
               show={this.props.subscribedPlans.length}
               addon = {true}
+              customer_uid = {this.state.customer_uid}
             />
             {/* <FootLink/> */}
           </div>
