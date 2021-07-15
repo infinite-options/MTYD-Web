@@ -1086,16 +1086,16 @@ class MenuItemList extends Component {
           }
         ];
 
-        const addOns = []
-        this.state.addOnItems.map(meal => {
-          addOns.push({
-            qty: meal.count,
-            name: meal.meal_name,
-            price: meal.meal_price,
-            item_uid: meal.meal_uid
-          });
-          return meal;
-        });
+        // const addOns = []
+        // this.state.addOnItems.map(meal => {
+        //   addOns.push({
+        //     qty: meal.count,
+        //     name: meal.meal_name,
+        //     price: meal.meal_price,
+        //     item_uid: meal.meal_uid
+        //   });
+        //   return meal;
+        // });
 
         const data1 = {
           is_addon: false,
@@ -1107,12 +1107,17 @@ class MenuItemList extends Component {
 
         const addOnData1 = {
           is_addon: true,
-          items: addOns,
+          // items: addOns,
+          items: [],
           purchase_id: this.state.purchaseID,
           menu_date: this.state.myDate,
           delivery_day: this.state.deliveryDay
         };
         console.log(this.state.deliveryDay)
+
+        console.log("(makeSelection) data1: ", data1);
+        // console.log("(makeSelection) addOnData1: ", addOnData1);
+        console.log("(makeSelection -- state) addOnItems: ", this.state.addOnItems);
       
         axios
           .post(
@@ -1142,7 +1147,8 @@ class MenuItemList extends Component {
 
         return this.setState({
           totalCount: 0,
-          cartItems: []
+          cartItems: [],
+          addOnItems: []
         });
       }
     } else if (e.target.value === "SKIP") {
