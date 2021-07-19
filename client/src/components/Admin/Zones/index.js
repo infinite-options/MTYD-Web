@@ -15,6 +15,9 @@ import {
 import {withRouter} from "react-router";
 import AdminNavBar from '../AdminNavBar';
 import styles from "./zones.module.css";
+import switchOn from "./static/Switch Light.svg";
+import switchOff from "./static/Switch - Off.svg";
+
 
 const google = window.google;
 
@@ -48,6 +51,7 @@ const initialState = {
     RT_lat:'',
     RB_long:'',
     RB_lat:'',
+    zone_status:"INACTIVE"
   },
   nameSplit: {
     colorValue: '',
@@ -55,7 +59,9 @@ const initialState = {
   },
   businesses: [],
   toggleSelectBusiness: false,
-  selectedBusinesses: []
+  selectedBusinesses: [],
+  zone_active: false,
+  switch_image: switchOn
 };
 
 function reducer(state, action) {
@@ -99,6 +105,11 @@ function reducer(state, action) {
       return {
         ...state,
         nameSplit: action.payload,
+      }
+    case 'TOGGLE_ACTIVE':
+      return {
+        ...state,
+        active_zone: action.payload,
       }
     default:
       return state;
@@ -204,9 +215,36 @@ function Zones ({history,...props}) {
   }
 
   const saveZone = () => {
-    if(state.editedZone.zone_uid === '') {
+    let myObj = {
+      zone_uid: state.editedZone.zone_uid,
+      z_business_uid: state.editedZone.z_business_uid,
+      area: state.editedZone.area,
+      zone: state.editedZone.zone,
+      zone_name: state.editedZone.zone_name,
+      z_businesses: state.editedZone.z_businesses,
+      z_delivery_day: state.editedZone.z_delivery_day,
+      z_delivery_time: state.editedZone.z_delivery_time,
+      z_accepting_day: state.editedZone.z_accepting_day,
+      z_accepting_time: state.editedZone.z_accepting_time,
+      service_fee: state.editedZone.service_fee,
+      delivery_fee: state.editedZone.delivery_fee,
+      tax_rate: state.editedZone.tax_rate,
+      LB_long: state.editedZone.LB_long,
+      LB_lat: state.editedZone.LB_lat,
+      LT_long: state.editedZone.LT_long,
+      LT_lat: state.editedZone.LT_lat,
+      RT_long: state.editedZone.RT_long,
+      RT_lat: state.editedZone.RT_lat,
+      RB_long: state.editedZone.RB_long,
+      RB_lat: state.editedZone.RB_lat,
+      status: state.editedZone.zone_status
+    }
+
+    console.log(myObj)
+
+    if(myObj.zone_uid === '') {
       const newZone = {
-        ...state.editedZone,
+        ...myObj,
         z_business_uid: '200-000001', 
         z_businesses: [],
       }
@@ -228,8 +266,10 @@ function Zones ({history,...props}) {
     } else {
       // Edit current zone
       axios
-        .put(`${API_URL}Update_Zone`,state.editedZone)
+        // .put(`${API_URL}Update_Zone`,myObj)
+        .post(`${API_URL}update_zones/update`,myObj)
         .then((response) => {
+          console.log(response)
           const zoneIndex = state.zones.findIndex((zone) => zone.zone_uid === state.editedZone.zone_uid);
           const newZones = [...state.zones];
           newZones[zoneIndex] = state.editedZone;
@@ -602,6 +642,15 @@ function Zones ({history,...props}) {
     
   }
 
+  const setSwitchImage = () => {
+    console.log(state.editedZone.zone_status)
+    if (state.editedZone.zone_status == "ACTIVE") {
+      state.switch_image = switchOn
+    } else {
+      state.switch_image = switchOff
+    }
+  }
+
   return (
     <div style={{backgroundColor: '#F26522', height: "1000px"}}>
       {getAllBusinesses()}
@@ -647,7 +696,7 @@ function Zones ({history,...props}) {
             {/* NEW CODE */}
 
             <select
-              style={{width: "98%", margin: "1%", float: "left"}}
+              style={{width: "78%", margin: "1%", float: "left"}}
               className={styles.dropdown}
               onChange={e => {
                 if( e.target.value != -1) {
@@ -666,6 +715,27 @@ function Zones ({history,...props}) {
             >
               {createDropdownZones()}
             </select>
+
+            {setSwitchImage()}
+
+            <div style={{width: "10%", marginTop: "2%", display: "inline-block", color: "#F26522"}}
+              >Active:</div>
+              <div style={{width: "10%", display: "inline-block"}}
+                onClick={() => {
+                  dispatch({ type: 'TOGGLE_ACTIVE', payload: !state.active_zone})
+                  console.log(state.zone_active)
+                  if (state.editedZone.zone_status == "INACTIVE") {
+                    state.switch_image = switchOn
+                    state.editedZone.zone_status = "ACTIVE"
+                    console.log(state.editedZone)
+                  } else {
+                    state.switch_image = switchOff
+                    state.editedZone.zone_status = "INACTIVE"
+                    console.log(state.editedZone)
+                  }
+                }}>
+                <img src={state.switch_image}></img>
+              </div>
 
             {splitZoneName()}
             
