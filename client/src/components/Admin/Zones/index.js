@@ -1,20 +1,31 @@
-import { useEffect, useReducer } from 'react';
-import axios from 'axios';
-import { API_URL } from '../../../reducers/constants';
-import { sortedArray } from '../../../reducers/helperFuncs';
+import { useEffect, useReducer } from "react";
+import axios from "axios";
+import { API_URL } from "../../../reducers/constants";
+import { sortedArray } from "../../../reducers/helperFuncs";
 import {
-  Breadcrumb, Container, Row, Col, Modal, Form, Button
-} from 'react-bootstrap';
-import {
-  Table, TableHead, TableSortLabel, TableBody, TableRow, TableCell
-} from '@material-ui/core';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faEdit, 
-} from '@fortawesome/free-solid-svg-icons';
-import {withRouter} from "react-router";
-import AdminNavBar from '../AdminNavBar';
+  // Breadcrumb,
+  // Container,
+  // Row,
+  Col,
+  Modal,
+  Form,
+  Button,
+} from "react-bootstrap";
+// import {
+//   Table,
+//   TableHead,
+//   TableSortLabel,
+//   TableBody,
+//   TableRow,
+//   TableCell,
+// } from "@material-ui/core";
+// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+// import { faEdit } from "@fortawesome/free-solid-svg-icons";
+import { withRouter } from "react-router";
+import AdminNavBar from "../AdminNavBar";
 import styles from "./zones.module.css";
+import switchOn from "./static/Switch Light.svg";
+import switchOff from "./static/Switch - Off.svg";
 
 const google = window.google;
 
@@ -22,90 +33,98 @@ const initialState = {
   mounted: false,
   zones: [],
   sortZone: {
-    field: '',
-    direction: '',
+    field: "",
+    direction: "",
   },
   editingZone: false,
   editedZone: {
-    zone_uid:'',
-    z_business_uid:'',
-    area:'',
-    zone:'',
-    zone_name:'',
-    z_businesses:'',
-    z_delivery_day:'',
-    z_delivery_time:'',
-    z_accepting_day:'',
-    z_accepting_time:'',
-    service_fee:'0',
-    delivery_fee:'0',
-    tax_rate:'0',
-    LB_long:'',
-    LB_lat:'',
-    LT_long:'',
-    LT_lat:'',
-    RT_long:'',
-    RT_lat:'',
-    RB_long:'',
-    RB_lat:'',
+    zone_uid: "",
+    z_business_uid: "",
+    area: "",
+    zone: "",
+    zone_name: "",
+    z_businesses: "",
+    z_delivery_day: "",
+    z_delivery_time: "",
+    z_accepting_day: "",
+    z_accepting_time: "",
+    service_fee: "0",
+    delivery_fee: "0",
+    tax_rate: "0",
+    LB_long: "",
+    LB_lat: "",
+    LT_long: "",
+    LT_lat: "",
+    RT_long: "",
+    RT_lat: "",
+    RB_long: "",
+    RB_lat: "",
+    zone_status: "INACTIVE",
   },
   nameSplit: {
-    colorValue: '',
-    nameValue: '',
+    colorValue: "",
+    nameValue: "",
   },
   businesses: [],
   toggleSelectBusiness: false,
-  selectedBusinesses: []
+  selectedBusinesses: [],
+  zone_active: false,
+  switch_image: switchOn,
 };
 
 function reducer(state, action) {
-  switch(action.type) {
-    case 'MOUNT':
+  switch (action.type) {
+    case "MOUNT":
       return {
         ...state,
         mounted: true,
-      }
-    case 'FETCH_ZONES':
+      };
+    case "FETCH_ZONES":
       return {
         ...state,
         zones: action.payload,
-      }
-    case 'SORT_ZONES':
+      };
+    case "SORT_ZONES":
       return {
         ...state,
         sortZone: {
           field: action.payload.field,
           direction: action.payload.direction,
-        }
-      }
-    case 'TOGGLE_EDIT_ZONE':
+        },
+      };
+    case "TOGGLE_EDIT_ZONE":
       return {
         ...state,
         // editingZone: !state.editingZone,
         editedZone: action.payload,
-      }
-      case 'TOGGLE_SELECT_BUSINESS':
-        return {
-          ...state,
-          // editingZone: !state.editingZone,
-          toggleSelectBusiness: action.payload,
-        }
-    case 'EDIT_ZONE':
+      };
+    case "TOGGLE_SELECT_BUSINESS":
+      return {
+        ...state,
+        // editingZone: !state.editingZone,
+        toggleSelectBusiness: action.payload,
+      };
+    case "EDIT_ZONE":
       return {
         ...state,
         editedZone: action.payload,
-      }
-    case 'EDIT_NAME_SPLIT':
+      };
+    case "EDIT_NAME_SPLIT":
       return {
         ...state,
         nameSplit: action.payload,
-      }
+      };
+    case "TOGGLE_ACTIVE":
+      return {
+        ...state,
+        active_zone: action.payload,
+      };
     default:
       return state;
   }
 }
 
-function Zones ({history,...props}) {
+function Zones({ history, ...props }) {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   // Check for log in
@@ -113,32 +132,31 @@ function Zones ({history,...props}) {
     if (
       document.cookie
         .split(";")
-        .some(item => item.trim().startsWith("customer_uid="))
+        .some((item) => item.trim().startsWith("customer_uid="))
     ) {
       // Logged in
       let customer_uid = document.cookie
         .split("; ")
-        .find(row => row.startsWith("customer_uid"))
+        .find((row) => row.startsWith("customer_uid"))
         .split("=")[1];
       axios
-      .get(`${API_URL}Profile/${customer_uid}`)
-      .then((response) => {
-        const role = response.data.result[0].role.toLowerCase();
-        if(role === 'admin') {
-          dispatch({ type: 'MOUNT' });
-        } else {
-          history.push('/meal-plan');
-        }
-      })
-      .catch((err) => {
-        if (err.response) {
+        .get(`${API_URL}Profile/${customer_uid}`)
+        .then((response) => {
+          const role = response.data.result[0].role.toLowerCase();
+          if (role === "admin") {
+            dispatch({ type: "MOUNT" });
+          } else {
+            history.push("/meal-plan");
+          }
+        })
+        .catch((err) => {
+          if (err.response) {
+            // eslint-disable-next-line no-console
+            console.log(err.response);
+          }
           // eslint-disable-next-line no-console
-          console.log(err.response);
-        }
-        // eslint-disable-next-line no-console
-        console.log(err);
-      });
-
+          console.log(err);
+        });
     } else {
       // Reroute to log in page
       history.push("/");
@@ -151,13 +169,13 @@ function Zones ({history,...props}) {
       .then((response) => {
         const zoneApiResult = response.data.result;
         // Convert property values to string and nulls to empty string
-        for(let index = 0; index < zoneApiResult.length; index++) {
+        for (let index = 0; index < zoneApiResult.length; index++) {
           for (const property in zoneApiResult[index]) {
             const value = zoneApiResult[index][property];
-            zoneApiResult[index][property] = value ? value.toString() : '';
-          } 
+            zoneApiResult[index][property] = value ? value.toString() : "";
+          }
         }
-        dispatch({ type: 'FETCH_ZONES', payload: zoneApiResult});
+        dispatch({ type: "FETCH_ZONES", payload: zoneApiResult });
       })
       .catch((err) => {
         if (err.response) {
@@ -167,52 +185,80 @@ function Zones ({history,...props}) {
         // eslint-disable-next-line no-console
         console.log(err);
       });
-  }
+  };
 
   const changeSortOptions = (field) => {
-    const isAsc = (state.sortZone.field === field && state.sortZone.direction === 'asc');
-    const direction = isAsc ? 'desc' : 'asc';
+    const isAsc =
+      state.sortZone.field === field && state.sortZone.direction === "asc";
+    const direction = isAsc ? "desc" : "asc";
     dispatch({
-      type: 'SORT_ZONES',
+      type: "SORT_ZONES",
       payload: {
         field: field,
         direction: direction,
-      }
-    })
+      },
+    });
     const sortedZone = sortedArray(state.zones, field, direction);
-    dispatch({ type: 'FETCH_ZONES', payload: sortedZone});
-  }
+    dispatch({ type: "FETCH_ZONES", payload: sortedZone });
+  };
 
   const toggleEditZone = (initialZone) => {
-    dispatch({ type: 'TOGGLE_EDIT_ZONE', payload: initialZone});
-  }
+    dispatch({ type: "TOGGLE_EDIT_ZONE", payload: initialZone });
+  };
 
   const editZone = (property, value) => {
     const newZone = {
       ...state.editedZone,
       [property]: value,
-    }
-    dispatch({ type: 'EDIT_ZONE', payload: newZone})
-  }
+    };
+    dispatch({ type: "EDIT_ZONE", payload: newZone });
+  };
 
   const editNameSplit = (property, value) => {
     const newNameSplit = {
       ...state.nameSplit,
       [property]: value,
-    }
-    dispatch({type: 'EDIT_NAME_SPLIT', payload: newNameSplit})
-  }
+    };
+    dispatch({ type: "EDIT_NAME_SPLIT", payload: newNameSplit });
+  };
 
   const saveZone = () => {
-    if(state.editedZone.zone_uid === '') {
+    let myObj = {
+      zone_uid: state.editedZone.zone_uid,
+      z_business_uid: state.editedZone.z_business_uid,
+      area: state.editedZone.area,
+      zone: state.editedZone.zone,
+      zone_name: state.editedZone.zone_name,
+      z_businesses: state.editedZone.z_businesses,
+      z_delivery_day: state.editedZone.z_delivery_day,
+      z_delivery_time: state.editedZone.z_delivery_time,
+      z_accepting_day: state.editedZone.z_accepting_day,
+      z_accepting_time: state.editedZone.z_accepting_time,
+      service_fee: state.editedZone.service_fee,
+      delivery_fee: state.editedZone.delivery_fee,
+      tax_rate: state.editedZone.tax_rate,
+      LB_long: state.editedZone.LB_long,
+      LB_lat: state.editedZone.LB_lat,
+      LT_long: state.editedZone.LT_long,
+      LT_lat: state.editedZone.LT_lat,
+      RT_long: state.editedZone.RT_long,
+      RT_lat: state.editedZone.RT_lat,
+      RB_long: state.editedZone.RB_long,
+      RB_lat: state.editedZone.RB_lat,
+      status: state.editedZone.zone_status,
+    };
+
+    console.log(myObj);
+
+    if (myObj.zone_uid === "") {
       const newZone = {
-        ...state.editedZone,
-        z_business_uid: '200-000001', 
+        ...myObj,
+        z_business_uid: "200-000001",
         z_businesses: [],
-      }
+      };
       // Add New Zone
       axios
-        .post(`${API_URL}update_zones/create`,newZone)
+        .post(`${API_URL}update_zones/create`, newZone)
         .then(() => {
           getZone();
           // toggleEditZone(initialState.editedZone)
@@ -228,12 +274,16 @@ function Zones ({history,...props}) {
     } else {
       // Edit current zone
       axios
-        .put(`${API_URL}Update_Zone`,state.editedZone)
+        // .put(`${API_URL}Update_Zone`,myObj)
+        .post(`${API_URL}update_zones/update`, myObj)
         .then((response) => {
-          const zoneIndex = state.zones.findIndex((zone) => zone.zone_uid === state.editedZone.zone_uid);
+          console.log(response);
+          const zoneIndex = state.zones.findIndex(
+            (zone) => zone.zone_uid === state.editedZone.zone_uid
+          );
           const newZones = [...state.zones];
           newZones[zoneIndex] = state.editedZone;
-          dispatch({ type: 'FETCH_ZONES', payload: newZones});
+          dispatch({ type: "FETCH_ZONES", payload: newZones });
           // toggleEditZone(initialState.editedZone)
         })
         .catch((err) => {
@@ -245,20 +295,26 @@ function Zones ({history,...props}) {
           console.log(err);
         });
     }
-  }
+  };
 
   const createDropdownZones = () => {
-    let items = []
-    items.push(<option key={-1} value={-1}>Select Zone</option>)
+    let items = [];
+    items.push(
+      <option key={-1} value={-1}>
+        Select Zone
+      </option>
+    );
     for (let i = 0; i < state.zones.length; i++) {
       // console.log(i)
       // console.log(state.zones[i])
       items.push(
-        <option key={i} value={i}>{state.zones[i].zone_name + ", " + state.zones[i].z_delivery_day} </option>
-      )
+        <option key={i} value={i}>
+          {state.zones[i].zone_name + ", " + state.zones[i].z_delivery_day}{" "}
+        </option>
+      );
     }
-    return items
-  }
+    return items;
+  };
 
   // Do google map stuff here
 
@@ -266,15 +322,24 @@ function Zones ({history,...props}) {
 
   function initMap() {
     if (document.getElementById("map")) {
-
-      let tempLat = (parseFloat(state.editedZone.LB_lat) + parseFloat(state.editedZone.LT_lat) + parseFloat(state.editedZone.RB_lat) + parseFloat(state.editedZone.RT_lat))/4
-      let tempLong = (parseFloat(state.editedZone.LB_long) + parseFloat(state.editedZone.LT_long) + parseFloat(state.editedZone.RB_long) + parseFloat(state.editedZone.RT_long))/4
-      let tempZoom = 13
+      let tempLat =
+        (parseFloat(state.editedZone.LB_lat) +
+          parseFloat(state.editedZone.LT_lat) +
+          parseFloat(state.editedZone.RB_lat) +
+          parseFloat(state.editedZone.RT_lat)) /
+        4;
+      let tempLong =
+        (parseFloat(state.editedZone.LB_long) +
+          parseFloat(state.editedZone.LT_long) +
+          parseFloat(state.editedZone.RB_long) +
+          parseFloat(state.editedZone.RT_long)) /
+        4;
+      let tempZoom = 13;
 
       if (isNaN(tempLat) || isNaN(tempLong)) {
-        tempLat = 37.2872
-        tempLong = -121.9500
-        tempZoom = 11
+        tempLat = 37.2872;
+        tempLong = -121.95;
+        tempZoom = 11;
       }
 
       map = new google.maps.Map(document.getElementById("map"), {
@@ -282,23 +347,33 @@ function Zones ({history,...props}) {
         zoom: tempZoom,
       });
 
-      let zonePolygons = []
+      let zonePolygons = [];
 
       for (let i = 0; i < state.zones.length; i++) {
-        zonePolygons.push(
-          [
-            { lat: parseFloat(state.zones[i].LB_lat), lng: parseFloat(state.zones[i].LB_long) },
-            { lat: parseFloat(state.zones[i].LT_lat), lng: parseFloat(state.zones[i].LT_long) },
-            { lat: parseFloat(state.zones[i].RT_lat), lng: parseFloat(state.zones[i].RT_long) },
-            { lat: parseFloat(state.zones[i].RB_lat), lng: parseFloat(state.zones[i].RB_long) }
-          ]
-        )
+        zonePolygons.push([
+          {
+            lat: parseFloat(state.zones[i].LB_lat),
+            lng: parseFloat(state.zones[i].LB_long),
+          },
+          {
+            lat: parseFloat(state.zones[i].LT_lat),
+            lng: parseFloat(state.zones[i].LT_long),
+          },
+          {
+            lat: parseFloat(state.zones[i].RT_lat),
+            lng: parseFloat(state.zones[i].RT_long),
+          },
+          {
+            lat: parseFloat(state.zones[i].RB_lat),
+            lng: parseFloat(state.zones[i].RB_long),
+          },
+        ]);
       }
 
-      let polyObjects = []
+      let polyObjects = [];
 
       for (let i = 0; i < zonePolygons.length; i++) {
-        let polyColor = state.zones[i].zone_name.split(" ")[0]
+        let polyColor = state.zones[i].zone_name.split(" ")[0];
         polyObjects.push(
           new google.maps.Polygon({
             path: zonePolygons[i],
@@ -306,171 +381,267 @@ function Zones ({history,...props}) {
             strokeOpacity: 0.8,
             strokeWeight: 2,
             fillColor: polyColor,
-            fillOpacity: 0.35
+            fillOpacity: 0.35,
           })
-        )
+        );
       }
 
-      let polyColor = state.editedZone.zone_name.split(" ")[0]
+      let polyColor = state.editedZone.zone_name.split(" ")[0];
 
       polyObjects.push(
         new google.maps.Polygon({
           path: [
-            { lat: parseFloat(state.editedZone.LB_lat), lng: parseFloat(state.editedZone.LB_long) },
-            { lat: parseFloat(state.editedZone.LT_lat), lng: parseFloat(state.editedZone.LT_long) },
-            { lat: parseFloat(state.editedZone.RT_lat), lng: parseFloat(state.editedZone.RT_long) },
-            { lat: parseFloat(state.editedZone.RB_lat), lng: parseFloat(state.editedZone.RB_long) }
+            {
+              lat: parseFloat(state.editedZone.LB_lat),
+              lng: parseFloat(state.editedZone.LB_long),
+            },
+            {
+              lat: parseFloat(state.editedZone.LT_lat),
+              lng: parseFloat(state.editedZone.LT_long),
+            },
+            {
+              lat: parseFloat(state.editedZone.RT_lat),
+              lng: parseFloat(state.editedZone.RT_long),
+            },
+            {
+              lat: parseFloat(state.editedZone.RB_lat),
+              lng: parseFloat(state.editedZone.RB_long),
+            },
           ],
           strokeColor: polyColor,
           strokeOpacity: 0.8,
           strokeWeight: 2,
           fillColor: polyColor,
-          fillOpacity: 0.5
+          fillOpacity: 0.5,
         })
-      )
+      );
 
-      for (let i = 0; i< polyObjects.length; i++) {
-        polyObjects[i].setMap(map)
+      for (let i = 0; i < polyObjects.length; i++) {
+        polyObjects[i].setMap(map);
       }
     } else {
-      console.log("map not found")
+      console.log("map not found");
     }
   }
 
   const getAllBusinesses = () => {
-    axios
-      .get(`${API_URL}all_businesses`)
-      .then(response => {
-        state.businesses = response.data.result
-      })
-  }
+    axios.get(`${API_URL}all_businesses`).then((response) => {
+      state.businesses = response.data.result;
+    });
+  };
 
   const createDropdownBusinesses = () => {
-    let items = []
+    let items = [];
     for (let i = 0; i < state.businesses.length; i++) {
       // console.log(i)
       // console.log(state.zones[i])
       items.push(
-        <option key={i} value={state.businesses[i].business_uid}>{state.businesses[i].business_name}</option>
-      )
+        <option key={i} value={state.businesses[i].business_uid}>
+          {state.businesses[i].business_name}
+        </option>
+      );
     }
-    return items
-  }
+    return items;
+  };
 
   const createCheckboxBusinesses = () => {
-    let items = []
-    state.selectedBusinesses = JSON.parse(state.editedZone.z_businesses)
+    let items = [];
+    state.selectedBusinesses = JSON.parse(state.editedZone.z_businesses);
     for (let i = 0; i < state.businesses.length; i++) {
-      if (i == state.businesses.length - 1){
-        if (state.selectedBusinesses.indexOf(state.businesses[i].business_uid) == -1) {
+      if (i == state.businesses.length - 1) {
+        if (
+          state.selectedBusinesses.indexOf(state.businesses[i].business_uid) ==
+          -1
+        ) {
           items.push(
             <>
-              <input 
-                type="checkbox" 
-                id={i} 
-                name={i} 
+              <input
+                type="checkbox"
+                id={i}
+                name={i}
                 value={state.businesses[i].business_uid}
-                style = {{marginRight: "5px"}}
+                style={{ marginRight: "5px" }}
                 onClick={() => {
-                  if (state.selectedBusinesses.indexOf(state.businesses[i].business_uid) == -1) {
-                    state.selectedBusinesses.push(state.businesses[i].business_uid)
+                  if (
+                    state.selectedBusinesses.indexOf(
+                      state.businesses[i].business_uid
+                    ) == -1
+                  ) {
+                    state.selectedBusinesses.push(
+                      state.businesses[i].business_uid
+                    );
                     //state.editedZone.z_businesses.push(state.businesses[i].business_uid)
                   } else {
-                    state.selectedBusinesses.splice(state.selectedBusinesses.indexOf(state.businesses[i].business_uid), 1)
+                    state.selectedBusinesses.splice(
+                      state.selectedBusinesses.indexOf(
+                        state.businesses[i].business_uid
+                      ),
+                      1
+                    );
                     //state.editedZone.z_businesses.splice(state.selectedBusinesses.indexOf(state.businesses[i].business_uid), 1)
                   }
-                  console.log(state.selectedBusinesses)
+                  console.log(state.selectedBusinesses);
                 }}
               ></input>
-              <label for={i}>{state.businesses[i].business_name + ", " + state.businesses[i].business_uid}</label><br></br>
+              <label for={i}>
+                {state.businesses[i].business_name +
+                  ", " +
+                  state.businesses[i].business_uid}
+              </label>
+              <br></br>
             </>
-          )
+          );
         } else {
           items.push(
             <>
-              <input 
-                type="checkbox" 
-                id={i} 
-                name={i} 
+              <input
+                type="checkbox"
+                id={i}
+                name={i}
                 value={state.businesses[i].business_uid}
-                style = {{marginRight: "5px"}}
+                style={{ marginRight: "5px" }}
                 onClick={() => {
-                  if (state.selectedBusinesses.indexOf(state.businesses[i].business_uid) == -1) {
-                    state.selectedBusinesses.push(state.businesses[i].business_uid)
+                  if (
+                    state.selectedBusinesses.indexOf(
+                      state.businesses[i].business_uid
+                    ) == -1
+                  ) {
+                    state.selectedBusinesses.push(
+                      state.businesses[i].business_uid
+                    );
                     //state.editedZone.z_businesses.push(state.businesses[i].business_uid)
                   } else {
-                    state.selectedBusinesses.splice(state.selectedBusinesses.indexOf(state.businesses[i].business_uid), 1)
+                    state.selectedBusinesses.splice(
+                      state.selectedBusinesses.indexOf(
+                        state.businesses[i].business_uid
+                      ),
+                      1
+                    );
                     //state.editedZone.z_businesses.splice(state.selectedBusinesses.indexOf(state.businesses[i].business_uid), 1)
                   }
-                  console.log(state.selectedBusinesses)
+                  console.log(state.selectedBusinesses);
                 }}
                 defaultChecked="true"
               ></input>
-              <label for={i}>{state.businesses[i].business_name + ", " + state.businesses[i].business_uid}</label><br></br>
+              <label for={i}>
+                {state.businesses[i].business_name +
+                  ", " +
+                  state.businesses[i].business_uid}
+              </label>
+              <br></br>
             </>
-          )
+          );
         }
       } else {
-        if (state.selectedBusinesses.indexOf(state.businesses[i].business_uid) == -1) {
+        if (
+          state.selectedBusinesses.indexOf(state.businesses[i].business_uid) ==
+          -1
+        ) {
           items.push(
             <>
-              <input 
-                type="checkbox" 
-                id={i} 
-                name={i} 
+              <input
+                type="checkbox"
+                id={i}
+                name={i}
                 value={state.businesses[i].business_uid}
-                style = {{marginRight: "5px"}}
+                style={{ marginRight: "5px" }}
                 onClick={() => {
-                  if (state.selectedBusinesses.indexOf(state.businesses[i].business_uid) == -1) {
-                    state.selectedBusinesses.push(state.businesses[i].business_uid)
+                  if (
+                    state.selectedBusinesses.indexOf(
+                      state.businesses[i].business_uid
+                    ) == -1
+                  ) {
+                    state.selectedBusinesses.push(
+                      state.businesses[i].business_uid
+                    );
                     //state.editedZone.z_businesses.push(state.businesses[i].business_uid)
                   } else {
-                    state.selectedBusinesses.splice(state.selectedBusinesses.indexOf(state.businesses[i].business_uid), 1)
+                    state.selectedBusinesses.splice(
+                      state.selectedBusinesses.indexOf(
+                        state.businesses[i].business_uid
+                      ),
+                      1
+                    );
                     //state.editedZone.z_businesses.splice(state.selectedBusinesses.indexOf(state.businesses[i].business_uid), 1)
                   }
-                  console.log(state.selectedBusinesses)
+                  console.log(state.selectedBusinesses);
                 }}
               ></input>
-              <label for={i}>{state.businesses[i].business_name + ", " + state.businesses[i].business_uid}</label><br></br>
-              <div style={{height: "1px", width: "100%", backgroundColor: "#F8BB17", marginBottom: "5px"}}></div>
+              <label for={i}>
+                {state.businesses[i].business_name +
+                  ", " +
+                  state.businesses[i].business_uid}
+              </label>
+              <br></br>
+              <div
+                style={{
+                  height: "1px",
+                  width: "100%",
+                  backgroundColor: "#F8BB17",
+                  marginBottom: "5px",
+                }}
+              ></div>
             </>
-          )
+          );
         } else {
           items.push(
             <>
-              <input 
-                type="checkbox" 
-                id={i} 
-                name={i} 
+              <input
+                type="checkbox"
+                id={i}
+                name={i}
                 value={state.businesses[i].business_uid}
-                style = {{marginRight: "5px"}}
+                style={{ marginRight: "5px" }}
                 onClick={() => {
-                  if (state.selectedBusinesses.indexOf(state.businesses[i].business_uid) == -1) {
-                    state.selectedBusinesses.push(state.businesses[i].business_uid)
+                  if (
+                    state.selectedBusinesses.indexOf(
+                      state.businesses[i].business_uid
+                    ) == -1
+                  ) {
+                    state.selectedBusinesses.push(
+                      state.businesses[i].business_uid
+                    );
                     //state.editedZone.z_businesses.push(state.businesses[i].business_uid)
                   } else {
-                    state.selectedBusinesses.splice(state.selectedBusinesses.indexOf(state.businesses[i].business_uid), 1)
+                    state.selectedBusinesses.splice(
+                      state.selectedBusinesses.indexOf(
+                        state.businesses[i].business_uid
+                      ),
+                      1
+                    );
                     //state.editedZone.z_businesses.splice(state.selectedBusinesses.indexOf(state.businesses[i].business_uid), 1)
                   }
-                  console.log(state.selectedBusinesses)
+                  console.log(state.selectedBusinesses);
                 }}
                 defaultChecked="true"
               ></input>
-              <label for={i}>{state.businesses[i].business_name + ", " + state.businesses[i].business_uid}</label><br></br>
-              <div style={{height: "1px", width: "100%", backgroundColor: "#F8BB17", marginBottom: "5px"}}></div>
+              <label for={i}>
+                {state.businesses[i].business_name +
+                  ", " +
+                  state.businesses[i].business_uid}
+              </label>
+              <br></br>
+              <div
+                style={{
+                  height: "1px",
+                  width: "100%",
+                  backgroundColor: "#F8BB17",
+                  marginBottom: "5px",
+                }}
+              ></div>
             </>
-          )
+          );
         }
       }
     }
-    return items
-  }
+    return items;
+  };
 
   // Fetch Zones
   useEffect(() => {
     getZone();
     // initMap()
-  },[]) 
+  }, []);
 
   if (!state.mounted) {
     return null;
@@ -479,33 +650,39 @@ function Zones ({history,...props}) {
   const selectBusinessModal = () => {
     if (state.toggleSelectBusiness == true) {
       return (
-        <div style={{
-          height: "100%",
-          width: "100%",
-          zIndex: "101",
-          left: "0",
-          top: "0",
-          overflow: "auto",
-          position: "fixed",
-          display: "grid",
-          backgroundColor: 'rgba(255, 255, 255, 0.8)'
-        }}>
-          <div style={{
-            position: "relative",
-            justifySelf: "center",
-            alignSelf: "center",
-            display: "block",
-            border: "#ff6505 solid",
-            backgroundColor: "#FEF7E0",
-            // height: "900px",
-            width: "20%",
-            zIndex:"102",
-            borderRadius: "20px"
-          }}>
-            <div style = {{width: "96%", margin: "2%"}}>
-              <div style={{fontWeight: "bold", marginBottom: "15px"}}>Assign businesses to this zone:</div>
+        <div
+          style={{
+            height: "100%",
+            width: "100%",
+            zIndex: "101",
+            left: "0",
+            top: "0",
+            overflow: "auto",
+            position: "fixed",
+            display: "grid",
+            backgroundColor: "rgba(255, 255, 255, 0.8)",
+          }}
+        >
+          <div
+            style={{
+              position: "relative",
+              justifySelf: "center",
+              alignSelf: "center",
+              display: "block",
+              border: "#ff6505 solid",
+              backgroundColor: "#FEF7E0",
+              // height: "900px",
+              width: "20%",
+              zIndex: "102",
+              borderRadius: "20px",
+            }}
+          >
+            <div style={{ width: "96%", margin: "2%" }}>
+              <div style={{ fontWeight: "bold", marginBottom: "15px" }}>
+                Assign businesses to this zone:
+              </div>
               {createCheckboxBusinesses()}
-              <div style={{width: "100%", textAlign: "center"}}>
+              <div style={{ width: "100%", textAlign: "center" }}>
                 <Button
                   style={{
                     backgroundColor: "#F26522",
@@ -513,63 +690,69 @@ function Zones ({history,...props}) {
                     marginTop: "15px",
                     borderRadius: "15px",
                     width: "50%",
-                    fontSize: "18px",  
+                    fontSize: "18px",
                   }}
                   onClick={() => {
-                    let temp = ''
-                    for (let i = 0; i < state.selectedBusinesses.length; i++){
+                    let temp = "";
+                    for (let i = 0; i < state.selectedBusinesses.length; i++) {
                       if (i == state.selectedBusinesses.length - 1) {
-                        temp = temp + state.selectedBusinesses[i]
+                        temp = temp + state.selectedBusinesses[i];
                       } else {
-                        temp = temp + state.selectedBusinesses[i] + ", "
+                        temp = temp + state.selectedBusinesses[i] + ", ";
                       }
                     }
-                    
-                    if (temp == '') {
-                      alert('Please select at least one business before saving')
+
+                    if (temp == "") {
+                      alert(
+                        "Please select at least one business before saving"
+                      );
                     } else {
-                      editZone('z_business_uid', temp);
-                      editZone('z_businesses', JSON.stringify(state.selectedBusinesses));
-                      console.log(state.selectedBusinesses)
-                      state.selectedBusinesses = []
-                      dispatch({ type: 'TOGGLE_SELECT_BUSINESS', payload: false });
+                      editZone("z_business_uid", temp);
+                      editZone(
+                        "z_businesses",
+                        JSON.stringify(state.selectedBusinesses)
+                      );
+                      console.log(state.selectedBusinesses);
+                      state.selectedBusinesses = [];
+                      dispatch({
+                        type: "TOGGLE_SELECT_BUSINESS",
+                        payload: false,
+                      });
                     }
-                    
                   }}
                 >
                   Save
                 </Button>
               </div>
-              
             </div>
           </div>
         </div>
-      )
+      );
     } else {
-      return null
+      return null;
     }
-  }
+  };
 
   const getBusinessDataByID = (temp) => {
     for (let i = 0; i < state.businesses.length; i++) {
       if (state.businesses[i].business_uid == temp) {
-        return state.businesses[i]
+        return state.businesses[i];
       }
     }
-    return null
-  }
+    return null;
+  };
 
   const convertUIDToNames = (uids) => {
-    console.log(uids)
+    console.log(uids);
     if (uids != "") {
-      let temp = JSON.parse(uids)
-      let temp2 = ''
+      let temp = JSON.parse(uids);
+      let temp2 = "";
       for (let i = 0; i < temp.length; i++) {
         if (temp[i] != null) {
           if (i == temp.length - 1) {
-            temp2 = temp2 + getBusinessDataByID(temp[i]).business_name
+            temp2 = temp2 + getBusinessDataByID(temp[i]).business_name;
           } else {
-            temp2 = temp2 + getBusinessDataByID(temp[i]).business_name + ", "
+            temp2 = temp2 + getBusinessDataByID(temp[i]).business_name + ", ";
           }
         }
         // if (i == temp.length - 1) {
@@ -578,52 +761,86 @@ function Zones ({history,...props}) {
         //   temp2 = temp2 + getBusinessDataByID(temp[i]).business_name + ", "
         // }
       }
-      return temp2
-  }
-  }
+      return temp2;
+    }
+  };
 
   const splitZoneName = () => {
-    if (state.nameSplit.colorValue == '' || state.nameSplit.nameValue == '')
-    // if (1==1)
-    {
-      console.log("Splitting Zone Name")
-      let temp = state.editedZone.zone_name.split(" - ")
-      console.log(temp)
+    if (state.nameSplit.colorValue == "" || state.nameSplit.nameValue == "") {
+      // if (1==1)
+      console.log("Splitting Zone Name");
+      let temp = state.editedZone.zone_name.split(" - ");
+      console.log(temp);
       if (temp.length >= 2) {
-        state.nameSplit.colorValue = temp[0]
-        state.nameSplit.nameValue = temp[1]
-        
+        state.nameSplit.colorValue = temp[0];
+        state.nameSplit.nameValue = temp[1];
       }
-      console.log(state.nameSplit.colorValue)
-      console.log(state.nameSplit.nameValue)
+      console.log(state.nameSplit.colorValue);
+      console.log(state.nameSplit.nameValue);
     }
 
     // console.log(stitchZoneName())
-    
-  }
+  };
+
+  const setSwitchImage = () => {
+    console.log(state.editedZone.zone_status);
+    if (state.editedZone.zone_status == "ACTIVE") {
+      state.switch_image = switchOn;
+    } else {
+      state.switch_image = switchOff;
+    }
+  };
 
   return (
-    <div style={{backgroundColor: '#F26522', height: "1000px"}}>
+    <div style={{ backgroundColor: "#F26522", height: "1000px" }}>
       {getAllBusinesses()}
 
       {selectBusinessModal()}
 
-      <AdminNavBar currentPage={'zones'}/>
+      <AdminNavBar currentPage={"zones"} />
 
       <div className={styles.containerCustomer}>
-        <div style = {{width: "70%", height: "100%", float: "left", fontWeight: 'bold', paddingTop: "45px", paddingLeft: "27px", }}>
+        <div
+          style={{
+            width: "70%",
+            height: "100%",
+            float: "left",
+            fontWeight: "bold",
+            paddingTop: "45px",
+            paddingLeft: "27px",
+          }}
+        >
           Zones
         </div>
-        <div style = {{width: "15%", height: "100%", float: "left", fontWeight: 'bold', color: "#F26522", textAlign: "center", marginTop: "15px",}}>
+        <div
+          style={{
+            width: "15%",
+            height: "100%",
+            float: "left",
+            fontWeight: "bold",
+            color: "#F26522",
+            textAlign: "center",
+            marginTop: "15px",
+          }}
+        >
           Total no. of Zones
-          <div style = {{color: "black", fontSize: "30px"}}>
+          <div style={{ color: "black", fontSize: "30px" }}>
             {state.zones.length}
           </div>
         </div>
-        <div style={{width: "15%", height: "100%", float: "left", textAlign: "center"}}>
-          <div 
-            style = {{fontWeight: 'bold', marginTop: "45px"}}
-            onClick={() => {toggleEditZone(initialState.editedZone)}}
+        <div
+          style={{
+            width: "15%",
+            height: "100%",
+            float: "left",
+            textAlign: "center",
+          }}
+        >
+          <div
+            style={{ fontWeight: "bold", marginTop: "45px" }}
+            onClick={() => {
+              toggleEditZone(initialState.editedZone);
+            }}
           >
             Create New Zone +
           </div>
@@ -635,40 +852,72 @@ function Zones ({history,...props}) {
         // style={{
         //   maxWidth: '100%',
         // }}
-      > 
-        <div style={{width: "100%"}}>
-          <div style={{width: "50%", float: "left"}}>
-            <div className = {styles.googleMap} id="map">
-            </div>
+      >
+        <div style={{ width: "100%" }}>
+          <div style={{ width: "50%", float: "left" }}>
+            <div className={styles.googleMap} id="map"></div>
             {initMap()}
           </div>
-          <div style={{width: "50%", float: "left"}}>
-
+          <div style={{ width: "50%", float: "left" }}>
             {/* NEW CODE */}
 
             <select
-              style={{width: "98%", margin: "1%", float: "left"}}
+              style={{ width: "78%", margin: "1%", float: "left" }}
               className={styles.dropdown}
-              onChange={e => {
-                if( e.target.value != -1) {
-                  toggleEditZone(state.zones[e.target.value])
-                  console.log(state.zones[e.target.value])
+              onChange={(e) => {
+                if (e.target.value != -1) {
+                  toggleEditZone(state.zones[e.target.value]);
+                  console.log(state.zones[e.target.value]);
                 } else {
-                  toggleEditZone(initialState.editedZone)
+                  toggleEditZone(initialState.editedZone);
                 }
-                editNameSplit('nameValue','');
-                editNameSplit('colorValue','');
+                editNameSplit("nameValue", "");
+                editNameSplit("colorValue", "");
                 // toggleEditZone(state.zones[e.target.value])
-                console.log(state.zones[e.target.value])
+                console.log(state.zones[e.target.value]);
                 // splitZoneName()
-                console.log(state.editedZone.z_businesses)
+                console.log(state.editedZone.z_businesses);
               }}
             >
               {createDropdownZones()}
             </select>
 
+            {setSwitchImage()}
+
+            <div
+              style={{
+                width: "10%",
+                marginTop: "2%",
+                display: "inline-block",
+                color: "#F26522",
+              }}
+            >
+              Active:
+            </div>
+            <div
+              style={{ width: "10%", display: "inline-block" }}
+              onClick={() => {
+                dispatch({
+                  type: "TOGGLE_ACTIVE",
+                  payload: !state.active_zone,
+                });
+                console.log(state.zone_active);
+                if (state.editedZone.zone_status == "INACTIVE") {
+                  state.switch_image = switchOn;
+                  state.editedZone.zone_status = "ACTIVE";
+                  console.log(state.editedZone);
+                } else {
+                  state.switch_image = switchOff;
+                  state.editedZone.zone_status = "INACTIVE";
+                  console.log(state.editedZone);
+                }
+              }}
+            >
+              <img src={state.switch_image}></img>
+            </div>
+
             {splitZoneName()}
-            
+
             {/* <div style={{width: "98%", margin: "1%", float: "left"}}>
               <div style={{color: "#F26522"}}>Zone Name:</div>
               <Form.Control
@@ -680,56 +929,52 @@ function Zones ({history,...props}) {
                 }
             />
             </div> */}
-            
-            <div style={{width: "31%", margin: "1%", float: "left"}}>
-              <div style={{color: "#F26522"}}>Zone Name:</div>
+
+            <div style={{ width: "31%", margin: "1%", float: "left" }}>
+              <div style={{ color: "#F26522" }}>Zone Name:</div>
               <Form.Control
                 value={state.nameSplit.nameValue}
-                onChange={
-                  (event) => {
-                    editNameSplit('nameValue',event.target.value);
-                    // stitchZoneName()
-                    editZone('zone_name', state.nameSplit.colorValue + ' - ' + event.target.value)
-                  }
-                }
-            />
+                onChange={(event) => {
+                  editNameSplit("nameValue", event.target.value);
+                  // stitchZoneName()
+                  editZone(
+                    "zone_name",
+                    state.nameSplit.colorValue + " - " + event.target.value
+                  );
+                }}
+              />
             </div>
 
-            <div style={{width: "31%", margin: "1%", float: "left"}}>
-              <div style={{color: "#F26522"}}>Zone Color:</div>
+            <div style={{ width: "31%", margin: "1%", float: "left" }}>
+              <div style={{ color: "#F26522" }}>Zone Color:</div>
               <Form.Control
                 value={state.nameSplit.colorValue}
-                onChange={
-                  (event) => {
-                    editNameSplit('colorValue',event.target.value);
-                    // stitchZoneName()
-                    editZone('zone_name', event.target.value + ' - ' + state.nameSplit.nameValue)
-                  }
-                }
-            />
-            
-            
+                onChange={(event) => {
+                  editNameSplit("colorValue", event.target.value);
+                  // stitchZoneName()
+                  editZone(
+                    "zone_name",
+                    event.target.value + " - " + state.nameSplit.nameValue
+                  );
+                }}
+              />
             </div>
 
-            <div style={{width: "31%", margin: "1%", float: "left"}}>
-                  <div style={{color: "#F26522"}}>Zone UID:</div>
-                  <Form.Control
-                    value={state.editedZone.zone_uid}
-                    onChange={
-                      (event) => {
-                        editZone('zone_uid',event.target.value);
-                      }
-                    }
-                  />
-              </div>
-
-            
+            <div style={{ width: "31%", margin: "1%", float: "left" }}>
+              <div style={{ color: "#F26522" }}>Zone UID:</div>
+              <Form.Control
+                value={state.editedZone.zone_uid}
+                onChange={(event) => {
+                  editZone("zone_uid", event.target.value);
+                }}
+              />
+            </div>
 
             <div className={styles.spacer}></div>
 
-            <div style={{width: "98%", margin: "1%", float: "left"}}>
-              <div style={{width: "25%", float: "left"}}>
-                <div style={{color: "#F26522"}}>Business UID:</div>
+            <div style={{ width: "98%", margin: "1%", float: "left" }}>
+              <div style={{ width: "25%", float: "left" }}>
+                <div style={{ color: "#F26522" }}>Business UID:</div>
                 {/* <select
                   className={styles.dropdown}
                   style={{width: "100%", float: "left"}}
@@ -742,8 +987,8 @@ function Zones ({history,...props}) {
                 >
                   {createDropdownBusinesses()}
                 </select> */}
-                <div 
-                  style = {{
+                <div
+                  style={{
                     borderStyle: "solid",
                     borderWidth: "1px",
                     borderColor: "#CED4DA",
@@ -756,16 +1001,19 @@ function Zones ({history,...props}) {
                     fontWeight: "400",
                     textOverflow: "ellipsis",
                     overflow: "hidden",
-                    whiteSpace: "nowrap"
+                    whiteSpace: "nowrap",
                   }}
                   onClick={() => {
-                  dispatch({ type: 'TOGGLE_SELECT_BUSINESS', payload: true });
-                  console.log(state.toggleSelectBusiness)
-                }}>{convertUIDToNames(state.editedZone.z_businesses)}</div>
+                    dispatch({ type: "TOGGLE_SELECT_BUSINESS", payload: true });
+                    console.log(state.toggleSelectBusiness);
+                  }}
+                >
+                  {convertUIDToNames(state.editedZone.z_businesses)}
+                </div>
               </div>
-                {/* convertUIDToNames(state.editedZone.z_businesses) */}
-              <div style={{width: "25%", float: "left"}}>
-                <div style={{color: "#F26522"}}>Delivery Day</div>
+              {/* convertUIDToNames(state.editedZone.z_businesses) */}
+              <div style={{ width: "25%", float: "left" }}>
+                <div style={{ color: "#F26522" }}>Delivery Day</div>
                 {/* <Form.Control
                   value={state.editedZone.z_delivery_day}
                   onChange={
@@ -777,7 +1025,7 @@ function Zones ({history,...props}) {
                 <select
                   className={styles.dropdown}
                   style={{
-                    width: "100%", 
+                    width: "100%",
                     float: "left",
                     borderStyle: "solid",
                     borderWidth: "1px",
@@ -791,14 +1039,12 @@ function Zones ({history,...props}) {
                     fontWeight: "400",
                     textOverflow: "ellipsis",
                     overflow: "hidden",
-                    whiteSpace: "nowrap"
+                    whiteSpace: "nowrap",
                   }}
                   value={state.editedZone.z_delivery_day}
-                  onChange={
-                    (event) => {
-                      editZone('z_delivery_day',event.target.value);
-                    }
-                  }
+                  onChange={(event) => {
+                    editZone("z_delivery_day", event.target.value);
+                  }}
                 >
                   <option value="SUNDAY">Sunday</option>
                   <option value="MONDAY">Monday</option>
@@ -810,8 +1056,8 @@ function Zones ({history,...props}) {
                 </select>
               </div>
 
-              <div style={{width: "25%", float: "left"}}>
-                <div style={{color: "#F26522"}}>Accepting Day</div>
+              <div style={{ width: "25%", float: "left" }}>
+                <div style={{ color: "#F26522" }}>Accepting Day</div>
                 {/* <Form.Control
                   value={state.editedZone.z_delivery_day}
                   onChange={
@@ -823,7 +1069,7 @@ function Zones ({history,...props}) {
                 <select
                   className={styles.dropdown}
                   style={{
-                    width: "100%", 
+                    width: "100%",
                     float: "left",
                     borderStyle: "solid",
                     borderWidth: "1px",
@@ -837,14 +1083,12 @@ function Zones ({history,...props}) {
                     fontWeight: "400",
                     textOverflow: "ellipsis",
                     overflow: "hidden",
-                    whiteSpace: "nowrap"
+                    whiteSpace: "nowrap",
                   }}
                   value={state.editedZone.z_accepting_day}
-                  onChange={
-                    (event) => {
-                      editZone('z_accepting_day',event.target.value);
-                    }
-                  }
+                  onChange={(event) => {
+                    editZone("z_accepting_day", event.target.value);
+                  }}
                 >
                   <option value="SUNDAY">Sunday</option>
                   <option value="MONDAY">Monday</option>
@@ -855,169 +1099,166 @@ function Zones ({history,...props}) {
                   <option value="SATURDAY">Saturday</option>
                 </select>
               </div>
-              
-              <div style={{width: "25%", float: "left"}}>
-                <div style={{color: "#F26522"}}>Delivery Time</div>
+
+              <div style={{ width: "25%", float: "left" }}>
+                <div style={{ color: "#F26522" }}>Delivery Time</div>
                 <Form.Control
                   value={state.editedZone.z_delivery_time}
-                  onChange={
-                    (event) => {
-                      editZone('z_delivery_time',event.target.value);
-                    }
-                  }
+                  onChange={(event) => {
+                    editZone("z_delivery_time", event.target.value);
+                  }}
                 />
-                
               </div>
 
               <div className={styles.spacerSmall}></div>
 
-              <div style={{width: "25%", float: "left"}}>
-                <div style={{color: "#F26522"}}>Accepting Time</div>
+              <div style={{ width: "25%", float: "left" }}>
+                <div style={{ color: "#F26522" }}>Accepting Time</div>
                 <Form.Control
                   value={state.editedZone.z_accepting_time}
-                  onChange={
-                    (event) => {
-                      editZone('z_accepting_time',event.target.value);
-                    }
-                  }
+                  onChange={(event) => {
+                    editZone("z_accepting_time", event.target.value);
+                  }}
                 />
               </div>
-              <div style={{width: "25%", float: "left"}}>
-                <div style={{color: "#F26522"}}>Delivery Fee</div>
+              <div style={{ width: "25%", float: "left" }}>
+                <div style={{ color: "#F26522" }}>Delivery Fee</div>
                 <Form.Control
                   value={state.editedZone.delivery_fee}
-                  onChange={
-                    (event) => {
-                      editZone('delivery_fee',event.target.value);
-                    }
-                  }
+                  onChange={(event) => {
+                    editZone("delivery_fee", event.target.value);
+                  }}
                 />
               </div>
-              <div style={{width: "25%", float: "left"}}>
-                <div style={{color: "#F26522"}}>Service Fee</div>
+              <div style={{ width: "25%", float: "left" }}>
+                <div style={{ color: "#F26522" }}>Service Fee</div>
                 <Form.Control
                   value={state.editedZone.service_fee}
-                  onChange={
-                    (event) => {
-                      editZone('service_fee',event.target.value);
-                    }
-                  }
+                  onChange={(event) => {
+                    editZone("service_fee", event.target.value);
+                  }}
                 />
               </div>
-              <div style={{width: "25%", float: "left"}}>
-                <div style={{color: "#F26522"}}>Tax Rate</div>
+              <div style={{ width: "25%", float: "left" }}>
+                <div style={{ color: "#F26522" }}>Tax Rate</div>
                 <Form.Control
                   value={state.editedZone.tax_rate}
-                  onChange={
-                    (event) => {
-                      editZone('tax_rate',event.target.value);
-                    }
-                  }
+                  onChange={(event) => {
+                    editZone("tax_rate", event.target.value);
+                  }}
                 />
               </div>
             </div>
 
             <div className={styles.spacer}></div>
 
-            <div style={{width: "98%", margin: "1%", float: "left"}}>
-              <div style={{color: "#F26522"}}>Define Zone Points:</div>
+            <div style={{ width: "98%", margin: "1%", float: "left" }}>
+              <div style={{ color: "#F26522" }}>Define Zone Points:</div>
               <div className={styles.spacerSmall}></div>
-              <div style={{width: "100%", float: "left"}}>
-                <div style={{width: "50%", float: "left"}}>
-                  <div style={{width: "100%", float: "left"}}>Leftmost Top</div>
+              <div style={{ width: "100%", float: "left" }}>
+                <div style={{ width: "50%", float: "left" }}>
+                  <div style={{ width: "100%", float: "left" }}>
+                    Leftmost Top
+                  </div>
                   <div className={styles.spacerSmall}></div>
-                  <div style={{width: "50%", float: "left"}}>Latitude (Y)</div>
-                  <div style={{width: "50%", float: "left"}}>Longitude (X)</div>
+                  <div style={{ width: "50%", float: "left" }}>
+                    Latitude (Y)
+                  </div>
+                  <div style={{ width: "50%", float: "left" }}>
+                    Longitude (X)
+                  </div>
                   <Form.Control
-                    style={{width: "50%", float: "left"}}
+                    style={{ width: "50%", float: "left" }}
                     value={state.editedZone.LT_lat}
-                    onChange={
-                      (event) => {
-                        editZone('LT_lat',event.target.value);
-                      }
-                    }
+                    onChange={(event) => {
+                      editZone("LT_lat", event.target.value);
+                    }}
                   />
                   <Form.Control
-                    style={{width: "50%", float: "left"}}
+                    style={{ width: "50%", float: "left" }}
                     value={state.editedZone.LT_long}
-                    onChange={
-                      (event) => {
-                        editZone('LT_long',event.target.value);
-                      }
-                    }
+                    onChange={(event) => {
+                      editZone("LT_long", event.target.value);
+                    }}
                   />
                 </div>
-                <div style={{width: "50%", float: "left"}}>
-                  <div style={{width: "100%", float: "left"}}>Rightmost Top</div>
+                <div style={{ width: "50%", float: "left" }}>
+                  <div style={{ width: "100%", float: "left" }}>
+                    Rightmost Top
+                  </div>
                   <div className={styles.spacerSmall}></div>
-                  <div style={{width: "50%", float: "left"}}>Latitude (Y)</div>
-                  <div style={{width: "50%", float: "left"}}>Longitude (X)</div>
+                  <div style={{ width: "50%", float: "left" }}>
+                    Latitude (Y)
+                  </div>
+                  <div style={{ width: "50%", float: "left" }}>
+                    Longitude (X)
+                  </div>
                   <Form.Control
-                    style={{width: "50%", float: "left"}}
+                    style={{ width: "50%", float: "left" }}
                     value={state.editedZone.RT_lat}
-                    onChange={
-                      (event) => {
-                        editZone('RT_lat',event.target.value);
-                      }
-                    }
+                    onChange={(event) => {
+                      editZone("RT_lat", event.target.value);
+                    }}
                   />
                   <Form.Control
-                    style={{width: "50%", float: "left"}}
+                    style={{ width: "50%", float: "left" }}
                     value={state.editedZone.RT_long}
-                    onChange={
-                      (event) => {
-                        editZone('RT_long',event.target.value);
-                      }
-                    }
+                    onChange={(event) => {
+                      editZone("RT_long", event.target.value);
+                    }}
                   />
                 </div>
                 <div className={styles.spacerSmall}></div>
-                <div style={{width: "50%", float: "left"}}>
-                  <div style={{width: "100%", float: "left"}}>Leftmost Bottom</div>
+                <div style={{ width: "50%", float: "left" }}>
+                  <div style={{ width: "100%", float: "left" }}>
+                    Leftmost Bottom
+                  </div>
                   <div className={styles.spacerSmall}></div>
-                  <div style={{width: "50%", float: "left"}}>Latitude (Y)</div>
-                  <div style={{width: "50%", float: "left"}}>Longitude (X)</div>
+                  <div style={{ width: "50%", float: "left" }}>
+                    Latitude (Y)
+                  </div>
+                  <div style={{ width: "50%", float: "left" }}>
+                    Longitude (X)
+                  </div>
                   <Form.Control
-                    style={{width: "50%", float: "left"}}
+                    style={{ width: "50%", float: "left" }}
                     value={state.editedZone.LB_lat}
-                    onChange={
-                      (event) => {
-                        editZone('LB_lat',event.target.value);
-                      }
-                    }
+                    onChange={(event) => {
+                      editZone("LB_lat", event.target.value);
+                    }}
                   />
                   <Form.Control
-                    style={{width: "50%", float: "left"}}
+                    style={{ width: "50%", float: "left" }}
                     value={state.editedZone.LB_long}
-                    onChange={
-                      (event) => {
-                        editZone('LB_long',event.target.value);
-                      }
-                    }
+                    onChange={(event) => {
+                      editZone("LB_long", event.target.value);
+                    }}
                   />
                 </div>
-                <div style={{width: "50%", float: "left"}}>
-                  <div style={{width: "100%", float: "left"}}>Rightmost Bottom</div>
+                <div style={{ width: "50%", float: "left" }}>
+                  <div style={{ width: "100%", float: "left" }}>
+                    Rightmost Bottom
+                  </div>
                   <div className={styles.spacerSmall}></div>
-                  <div style={{width: "50%", float: "left"}}>Latitude (Y)</div>
-                  <div style={{width: "50%", float: "left"}}>Longitude (X)</div>
+                  <div style={{ width: "50%", float: "left" }}>
+                    Latitude (Y)
+                  </div>
+                  <div style={{ width: "50%", float: "left" }}>
+                    Longitude (X)
+                  </div>
                   <Form.Control
-                    style={{width: "50%", float: "left"}}
+                    style={{ width: "50%", float: "left" }}
                     value={state.editedZone.RB_lat}
-                    onChange={
-                      (event) => {
-                        editZone('RB_lat',event.target.value);
-                      }
-                    }
+                    onChange={(event) => {
+                      editZone("RB_lat", event.target.value);
+                    }}
                   />
                   <Form.Control
-                    style={{width: "50%", float: "left"}}
+                    style={{ width: "50%", float: "left" }}
                     value={state.editedZone.RB_long}
-                    onChange={
-                      (event) => {
-                        editZone('RB_long',event.target.value);
-                      }
-                    }
+                    onChange={(event) => {
+                      editZone("RB_long", event.target.value);
+                    }}
                   />
                 </div>
               </div>
@@ -1027,12 +1268,12 @@ function Zones ({history,...props}) {
 
             {/* NEW CODE */}
 
-            <div style={{textAlign: "center"}}>
+            <div style={{ textAlign: "center" }}>
               <Button
-                style={{backgroundColor: "#F26522", borderRadius: "15px"}}
+                style={{ backgroundColor: "#F26522", borderRadius: "15px" }}
                 variant="secondary"
                 onClick={() => {
-                  saveZone()
+                  saveZone();
                 }}
               >
                 Save Zone
@@ -1045,16 +1286,13 @@ function Zones ({history,...props}) {
                 Test Stitch
               </Button> */}
             </div>
-            
           </div>
         </div>
-
-        
       </div>
       <Modal
         show={state.editingZone}
         // onHide={() => toggleEditZone(initialState.editedZone)}
-        size='lg'
+        size="lg"
         animation={false}
       >
         <Modal.Header closeButton>
@@ -1063,16 +1301,14 @@ function Zones ({history,...props}) {
         <Modal.Body>
           <Form>
             <Form.Row>
-              <Col md='6'>
+              <Col md="6">
                 <Form.Group>
                   <Form.Label> Zone Name </Form.Label>
                   <Form.Control
                     value={state.editedZone.zone_name}
-                    onChange={
-                      (event) => {
-                        editZone('zone_name',event.target.value);
-                      }
-                    }
+                    onChange={(event) => {
+                      editZone("zone_name", event.target.value);
+                    }}
                   />
                 </Form.Group>
               </Col>
@@ -1081,11 +1317,9 @@ function Zones ({history,...props}) {
                   <Form.Label> Area </Form.Label>
                   <Form.Control
                     value={state.editedZone.area}
-                    onChange={
-                      (event) => {
-                        editZone('area',event.target.value);
-                      }
-                    }
+                    onChange={(event) => {
+                      editZone("area", event.target.value);
+                    }}
                   />
                 </Form.Group>
               </Col>
@@ -1094,220 +1328,188 @@ function Zones ({history,...props}) {
                   <Form.Label> Zone </Form.Label>
                   <Form.Control
                     value={state.editedZone.zone}
-                    onChange={
-                      (event) => {
-                        editZone('zone',event.target.value);
-                      }
-                    }
+                    onChange={(event) => {
+                      editZone("zone", event.target.value);
+                    }}
                   />
                 </Form.Group>
               </Col>
             </Form.Row>
             <Form.Row>
-              <Col md='6'>
+              <Col md="6">
                 <Form.Group>
                   <Form.Label> Delivery Day </Form.Label>
                   <Form.Control
                     value={state.editedZone.z_delivery_day}
-                    onChange={
-                      (event) => {
-                        editZone('z_delivery_day',event.target.value);
-                      }
-                    }
+                    onChange={(event) => {
+                      editZone("z_delivery_day", event.target.value);
+                    }}
                   />
                 </Form.Group>
               </Col>
-              <Col md='6'>
+              <Col md="6">
                 <Form.Group>
                   <Form.Label> Delivery Time </Form.Label>
                   <Form.Control
                     value={state.editedZone.z_delivery_time}
-                    onChange={
-                      (event) => {
-                        editZone('z_delivery_time',event.target.value);
-                      }
-                    }
+                    onChange={(event) => {
+                      editZone("z_delivery_time", event.target.value);
+                    }}
                   />
                 </Form.Group>
               </Col>
             </Form.Row>
             <Form.Row>
-              <Col md='6'>
+              <Col md="6">
                 <Form.Group>
                   <Form.Label> Accepting Day </Form.Label>
                   <Form.Control
                     value={state.editedZone.z_accepting_day}
-                    onChange={
-                      (event) => {
-                        editZone('z_accepting_day',event.target.value);
-                      }
-                    }
+                    onChange={(event) => {
+                      editZone("z_accepting_day", event.target.value);
+                    }}
                   />
                 </Form.Group>
               </Col>
-              <Col md='6'>
+              <Col md="6">
                 <Form.Group>
                   <Form.Label> Accepting Time </Form.Label>
                   <Form.Control
                     value={state.editedZone.z_accepting_time}
-                    onChange={
-                      (event) => {
-                        editZone('z_accepting_time',event.target.value);
-                      }
-                    }
+                    onChange={(event) => {
+                      editZone("z_accepting_time", event.target.value);
+                    }}
                   />
                 </Form.Group>
               </Col>
             </Form.Row>
             <Form.Row>
-              <Col md='4'>
+              <Col md="4">
                 <Form.Group>
                   <Form.Label> Service Fee </Form.Label>
                   <Form.Control
                     value={state.editedZone.service_fee}
-                    onChange={
-                      (event) => {
-                        editZone('service_fee',event.target.value);
-                      }
-                    }
+                    onChange={(event) => {
+                      editZone("service_fee", event.target.value);
+                    }}
                   />
                 </Form.Group>
               </Col>
-              <Col md='4'>
+              <Col md="4">
                 <Form.Group>
                   <Form.Label> Delivery Fee </Form.Label>
                   <Form.Control
                     value={state.editedZone.delivery_fee}
-                    onChange={
-                      (event) => {
-                        editZone('delivery_fee',event.target.value);
-                      }
-                    }
+                    onChange={(event) => {
+                      editZone("delivery_fee", event.target.value);
+                    }}
                   />
                 </Form.Group>
               </Col>
-              <Col md='4'>
+              <Col md="4">
                 <Form.Group>
                   <Form.Label> Tax Rate </Form.Label>
                   <Form.Control
                     value={state.editedZone.tax_rate}
-                    onChange={
-                      (event) => {
-                        editZone('tax_rate',event.target.value);
-                      }
-                    }
+                    onChange={(event) => {
+                      editZone("tax_rate", event.target.value);
+                    }}
                   />
                 </Form.Group>
               </Col>
             </Form.Row>
             <Form.Row>
-              <Col md='6'>
+              <Col md="6">
                 <Form.Group>
                   <Form.Label> LT lat </Form.Label>
                   <Form.Control
                     value={state.editedZone.LT_lat}
-                    onChange={
-                      (event) => {
-                        editZone('LT_lat',event.target.value);
-                      }
-                    }
+                    onChange={(event) => {
+                      editZone("LT_lat", event.target.value);
+                    }}
                   />
                 </Form.Group>
               </Col>
-              <Col md='6'>
+              <Col md="6">
                 <Form.Group>
                   <Form.Label> RT lat </Form.Label>
                   <Form.Control
                     value={state.editedZone.RT_lat}
-                    onChange={
-                      (event) => {
-                        editZone('RT_lat',event.target.value);
-                      }
-                    }
+                    onChange={(event) => {
+                      editZone("RT_lat", event.target.value);
+                    }}
                   />
                 </Form.Group>
               </Col>
             </Form.Row>
             <Form.Row>
-              <Col md='6'>
+              <Col md="6">
                 <Form.Group>
                   <Form.Label> LT long </Form.Label>
                   <Form.Control
                     value={state.editedZone.LT_long}
-                    onChange={
-                      (event) => {
-                        editZone('LT_long',event.target.value);
-                      }
-                    }
+                    onChange={(event) => {
+                      editZone("LT_long", event.target.value);
+                    }}
                   />
                 </Form.Group>
               </Col>
-              <Col md='6'>
+              <Col md="6">
                 <Form.Group>
                   <Form.Label> RT long </Form.Label>
                   <Form.Control
                     value={state.editedZone.RT_long}
-                    onChange={
-                      (event) => {
-                        editZone('RT_long',event.target.value);
-                      }
-                    }
+                    onChange={(event) => {
+                      editZone("RT_long", event.target.value);
+                    }}
                   />
                 </Form.Group>
               </Col>
             </Form.Row>
             <Form.Row>
-              <Col md='6'>
+              <Col md="6">
                 <Form.Group>
                   <Form.Label> LB lat </Form.Label>
                   <Form.Control
                     value={state.editedZone.LB_lat}
-                    onChange={
-                      (event) => {
-                        editZone('LB_lat',event.target.value);
-                      }
-                    }
+                    onChange={(event) => {
+                      editZone("LB_lat", event.target.value);
+                    }}
                   />
                 </Form.Group>
               </Col>
-              <Col md='6'>
+              <Col md="6">
                 <Form.Group>
                   <Form.Label> RB lat </Form.Label>
                   <Form.Control
                     value={state.editedZone.RB_lat}
-                    onChange={
-                      (event) => {
-                        editZone('RB_lat',event.target.value);
-                      }
-                    }
+                    onChange={(event) => {
+                      editZone("RB_lat", event.target.value);
+                    }}
                   />
                 </Form.Group>
               </Col>
             </Form.Row>
             <Form.Row>
-              <Col md='6'>
+              <Col md="6">
                 <Form.Group>
                   <Form.Label> LB long </Form.Label>
                   <Form.Control
                     value={state.editedZone.LB_long}
-                    onChange={
-                      (event) => {
-                        editZone('LB_long',event.target.value);
-                      }
-                    }
+                    onChange={(event) => {
+                      editZone("LB_long", event.target.value);
+                    }}
                   />
                 </Form.Group>
               </Col>
-              <Col md='6'>
+              <Col md="6">
                 <Form.Group>
                   <Form.Label> RB long </Form.Label>
                   <Form.Control
                     value={state.editedZone.RB_long}
-                    onChange={
-                      (event) => {
-                        editZone('RB_long',event.target.value);
-                      }
-                    }
+                    onChange={(event) => {
+                      editZone("RB_long", event.target.value);
+                    }}
                   />
                 </Form.Group>
               </Col>
@@ -1321,16 +1523,13 @@ function Zones ({history,...props}) {
           >
             Close
           </Button>
-          <Button
-            variant="secondary"
-            onClick={() => saveZone()}
-          >
+          <Button variant="secondary" onClick={() => saveZone()}>
             Save Zone
           </Button>
         </Modal.Footer>
       </Modal>
     </div>
-  )
+  );
 }
 
 export default withRouter(Zones);
