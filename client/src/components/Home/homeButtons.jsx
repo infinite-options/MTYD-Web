@@ -74,8 +74,8 @@ class FootLink extends Component {
     };
 
     togglePop = () => {
-       this.setState({
-       seen: !this.state.seen
+      this.setState({
+        seen: !this.state.seen
       });
     };
 
@@ -90,9 +90,120 @@ class FootLink extends Component {
     }
 
     render() { 
-      return (		
-          <div className = {styles.footerBackground}>	
-            <p className = {styles.findUs}>Find us 		
+      if(this.state.windowWidth > 750) {
+        return (	
+          <>
+            <div className = {styles.footerBackground}>
+
+              {/* For debugging window size */} 
+              {/* <span 
+                style={{
+                  zIndex: '101',
+                  // position: 'fixed',
+                  backgroundColor: 'white',
+                  border: 'solid',
+                  borderWidth: '1px',
+                  borderColor: 'red',
+                  width: '150px',
+                  // zIndex: '200'
+                }}
+              >
+                Height: {this.state.windowHeight}px
+                <br />
+                Width: {this.state.windowWidth}px
+              </span> */}
+
+              <p className = {styles.findUs}>Find us 		
+
+                <img className = {styles.footerLogo} src = {facebookAndInstagramImg} alt="facebookAndInstagramImg" />
+                <a href='https://www.facebook.com/Meals-For-Me-101737768566584' target="_blank"
+                style={{
+                  position:'absolute',
+                  width:'50px',
+                  height:'50px',
+                  backgroundColor:'red',
+                  bottom:'0px',
+                  left:'200px',
+                  opacity:'0',
+                }}
+                aria-label="Check us out on facebook"
+                title="Check us out on facebook"/>
+
+                <a href='https://www.instagram.com/mealsfor.me/?hl=en' target="_blank"
+                style={{
+                  position:'absolute',
+                  width:'50px',
+                  height:'50px',
+                  backgroundColor:'red',
+                  bottom:'0px',
+                  left:'260px',
+                  opacity:'0',
+                }}
+                aria-label="Check us out on Instagram"
+                title="Check us out on Instagram"/>
+
+
+              </p>
+              {/* <div className = {styles.footerRight}> */}
+                {/* <img 
+                  onClick={() => this.togglePop()} 
+                  style = {{
+                    width: '320px', 
+                    height:'67px'
+                  }} 
+                  src = {becomeAnAmbassadorImg} 
+                  // style = {{marginTop: '25px'}} 
+                  aria-label="click here to become an ambassador" 
+                  title="click here to become an ambassador" tabIndex="0"
+                />		 */}
+                <div
+                  onClick={() => this.togglePop()} 
+                  className={styles.becomeAmbassadorBtn}
+                  style = {{
+                    width: '320px', 
+                    height: '60px'
+                  }} 
+                  // src = {becomeAnAmbassadorImg} 
+                  // style = {{marginTop: '25px'}} 
+                  aria-label="click here to become an ambassador" 
+                  title="click here to become an ambassador" tabIndex="0"
+                >
+                  Become an Ambassador
+                </div>		
+              {/* </div> */}
+
+              {this.state.seen ? (
+                <div
+                  style={{
+                    // border: 'dashed',
+                    position: 'fixed',
+                    top: '0',
+                    left: '0',
+                    width: '100vw',
+                    height: '100vh',
+                    maxWidth: '100%',
+                    maxHeight: '100%',
+                    backgroundColor: 'rgb(255,255,255,0.5)',
+                    zIndex: '50',
+                    // display: 'flex',
+                    // justifyContent: 'center'
+                    // backgroundColor: 'white',
+                    // opacity: '0.5'
+                  }}
+                >
+                  <BecomeAmbass toggle={this.togglePop}/> 
+                </div>
+              ) : null}
+              
+            </div>
+          </>
+        );
+      } else {
+        return (
+          <>
+            <div className = {styles.footerBackgroundNarrow}>
+
+            {/* <p className = {styles.findUs}>Find us 		
 
               <img className = {styles.footerLogo} src = {facebookAndInstagramImg} alt="facebookAndInstagramImg" />
               <a href='https://www.facebook.com/Meals-For-Me-101737768566584' target="_blank"
@@ -122,39 +233,118 @@ class FootLink extends Component {
               title="Check us out on Instagram"/>
 
 
-            </p>
-            {/* <div className = {styles.footerRight}> */}
-              {/* <img 
-                onClick={() => this.togglePop()} 
-                style = {{
-                  width: '320px', 
-                  height:'67px'
-                }} 
-                src = {becomeAnAmbassadorImg} 
-                // style = {{marginTop: '25px'}} 
-                aria-label="click here to become an ambassador" 
-                title="click here to become an ambassador" tabIndex="0"
-              />		 */}
-              <div
-                onClick={() => this.togglePop()} 
-                className={styles.becomeAmbassadorBtn}
-                style = {{
-                  width: '320px', 
-                  height: '60px'
-                }} 
-                // src = {becomeAnAmbassadorImg} 
-                // style = {{marginTop: '25px'}} 
-                aria-label="click here to become an ambassador" 
-                title="click here to become an ambassador" tabIndex="0"
-              >
-                Become an Ambassador
-              </div>		
-            {/* </div> */}
+              </p> */}
 
-            {this.state.seen ? <BecomeAmbass toggle={this.togglePop}/> : null}
-            
-          </div>
+              <div className={styles.narrowWrapper}>
+
+                {/* <p className = {styles.findUsNarrow}>
+                  Find uss
+                </p> */}
+                <div
+                  // style={{
+                  //   border: 'solid',
+                  //   height: '100%'
+                  // }}
+                  className = {styles.findUsNarrow}
+                >
+                  Find us
+                  <img 
+                    className = {styles.footerLogoNarrow} 
+                    src = {facebookAndInstagramImg} 
+                    alt = "facebookAndInstagramImg" 
+                  />
+                </div>
+
+                {/* <img 
+                  className = {styles.footerLogoNarrow} 
+                  src = {facebookAndInstagramImg} 
+                  alt = "facebookAndInstagramImg" 
+                /> */}
+                <a 
+                  href='https://www.facebook.com/Meals-For-Me-101737768566584' 
+                  target="_blank"
+                  style={{
+                    // position:'absolute',
+                    width:'47px',
+                    height:'47px',
+                    backgroundColor:'red',
+                    // bottom:'0px',
+                    // left:'200px',
+                    opacity:'0',
+                    border: 'solid',
+                    zIndex: '30',
+                    borderRadius: '50%'
+                  }}
+                  aria-label="Check us out on facebook"
+                  title="Check us out on facebook"
+                />
+
+                <a 
+                  href='https://www.instagram.com/mealsfor.me/?hl=en' 
+                  target="_blank"
+                  style={{
+                    // position:'absolute',
+                    width: '47px',
+                    height: '47px',
+                    backgroundColor: 'red',
+                    // bottom:'0px',
+                    // left:'260px',
+                    opacity:'0',
+                    border: 'solid',
+                    zIndex: '30',
+                    marginLeft: '13px',
+                    borderRadius: '20%'
+                  }}
+                  aria-label="Check us out on Instagram"
+                  title="Check us out on Instagram"
+                />
+
+              </div>
+
+              <div className={styles.narrowWrapper2}>
+                <div
+                  onClick={() => this.togglePop()} 
+                  className={styles.becomeAmbassadorBtnNarrow}
+                  style = {{
+                    width: '320px', 
+                    height: '60px'
+                  }} 
+                  // src = {becomeAnAmbassadorImg} 
+                  // style = {{marginTop: '25px'}} 
+                  aria-label="click here to become an ambassador" 
+                  title="click here to become an ambassador" tabIndex="0"
+                >
+                  Become an Ambassador
+                </div>
+              </div>
+
+              {this.state.seen ? (
+                <div
+                  style={{
+                    // border: 'dashed',
+                    position: 'fixed',
+                    top: '0',
+                    left: '0',
+                    width: '100vw',
+                    height: '100vh',
+                    maxWidth: '100%',
+                    maxHeight: '100%',
+                    backgroundColor: 'rgb(255,255,255,0.5)',
+                    zIndex: '50',
+                    // display: 'flex',
+                    // justifyContent: 'center'
+                    // backgroundColor: 'white',
+                    // opacity: '0.5'
+                  }}
+                >
+                  <BecomeAmbass toggle={this.togglePop}/> 
+                </div>
+              ) : null}
+
+            </div>
+          </>
         );
+      }
     }
 }
 class AmbassadorLink extends Component {

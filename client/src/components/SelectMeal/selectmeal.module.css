@@ -248,7 +248,6 @@
   width: 183px;
   height: 170px;
   box-shadow: 1px 1px #888888;
-
 }
 .menuitemIndividual {
   height: 271px;
@@ -316,7 +315,7 @@
   border: none;
   white-space: nowrap;
   vertical-align: baseline;
-  border-top:tomato 2px solid;
+  border-top: tomato 2px solid;
 }
 
 .plusElements {
@@ -325,19 +324,18 @@
   font-weight: 600;
   text-align: center !important;
   position: absolute;
-  background-color:white;
+  background-color: white;
   border: 1px;
   white-space: nowrap;
   vertical-align: baseline;
-  top:222px;
+  top: 222px;
 
-  border-top:tomato 2px solid;
-  border-left:tomato 2px solid;
-  outline:none;
-
+  border-top: tomato 2px solid;
+  border-left: tomato 2px solid;
+  outline: none;
 }
 
-.plusElements:focus{
+.plusElements:focus {
   outline: none;
 }
 
@@ -347,18 +345,18 @@
   font-weight: 600;
   text-align: center !important;
   position: absolute;
-  background-color:white;
+  background-color: white;
   border: 1px;
   white-space: nowrap;
   vertical-align: baseline;
   height: 3rem;
   width: 3rem;
-  left:0px;
+  left: 0px;
   bottom: 0px;
 
-  border-top:tomato 2px solid;
-  border-right:tomato 2px solid;
-  outline:none;
+  border-top: tomato 2px solid;
+  border-right: tomato 2px solid;
+  outline: none;
 }
 /* .minusElements {
   color: #000000;
@@ -376,15 +374,13 @@
   outline:none;
 } */
 
-.minusElements:focus{
+.minusElements:focus {
   outline: none;
 }
 
-
-
 .heartButton {
-  position:relative;
-  left:0;
+  position: relative;
+  left: 0;
   color: #000000;
   position: absolute;
   background-color: white;
@@ -407,17 +403,17 @@
 }
 
 .infoButton {
-  position:relative;
-  right:0px;
+  position: relative;
+  right: 0px;
   position: absolute;
   color: #000000;
-  font-size: 1.0rem;
+  font-size: 1rem;
   font-weight: 600;
   text-align: center !important;
   background-color: white;
   border-radius: 50%;
   border: none;
-  left:147px;
+  left: 147px;
 
   width: 37px;
   height: 37px;
@@ -426,53 +422,51 @@
   -webkit-border-radius: 0 0 0 100px;
 }
 
-.infoButton:focus{
-  outline:none;
+.infoButton:focus {
+  outline: none;
 }
 
 .datebutton {
   width: 134px;
-  height:134px;
-  border:none;
+  height: 134px;
+  border: none;
   margin-right: 20px;
   margin-left: 3px;
   margin-top: 3px;
   background-color: white;
   box-shadow: 0 0 7px #838383;
   margin-top: 10px;
-
 }
 
 .datebutton:focus {
   width: 134px;
-  height:134px;
-  border: 4px solid #f08e1f; 
-  outline:none;
+  height: 134px;
+  border: 4px solid #f08e1f;
+  outline: none;
 }
 
 .datebuttonSkip {
   width: 134px;
-  height:134px;
-  border: none; 
+  height: 134px;
+  border: none;
   margin-right: 20px;
   margin-top: 3px;
   margin-left: 3px;
-  background-color: #D9D9D9;
+  background-color: #d9d9d9;
   box-shadow: 0 0 7px #838383;
-
 }
 
 .datebuttonSkip:focus {
   width: 134px;
-  height:134px;
-  border: 4px solid #f08e1f; 
-  outline:none;
+  height: 134px;
+  border: 4px solid #f08e1f;
+  outline: none;
 }
 
 .datebuttonSurprise {
   width: 134px;
-  height:134px;
-  border:none;
+  height: 134px;
+  border: none;
   margin-right: 20px;
   margin-left: 3px;
   margin-top: 3px;
@@ -482,32 +476,32 @@
 
 .datebuttonSurprise:focus {
   width: 134px;
-  height:134px;
-  border: 4px solid #f08e1f; 
-  outline:none;
+  height: 134px;
+  border: 4px solid #f08e1f;
+  outline: none;
 }
 
 .datebuttonSave {
   width: 134px;
-  height:134px;
-  border:none;
+  height: 134px;
+  border: none;
   margin-right: 20px;
   margin-left: 3px;
   margin-top: 3px;
-  background-color: #F8BB17;
+  background-color: #f8bb17;
   box-shadow: 0 0 7px #838383;
 }
 .datebuttonSave:focus {
   width: 134px;
-  height:134px;
-  border: 4px solid #f08e1f; 
-  outline:none;
+  height: 134px;
+  border: 4px solid #f08e1f;
+  outline: none;
 }
 
-.divider{
-  width:200px;
+.divider {
+  width: 200px;
   height: 100px;
-  display:inline-block;
+  display: inline-block;
 }
 
 #mealCounter {
@@ -687,7 +681,7 @@
   justify-self: center;
   align-self: center;
   display: block;
-  border: #F26522 solid 2px;
+  border: #f26522 solid 2px;
   background-color: white;
   border-radius: 0px;
   height: max-content;
@@ -702,18 +696,21 @@
   /* font-weight: bold; */
   font-size: 20px;
   color: white;
-  background-color: #F26522;
+  background-color: #f26522;
   height: 50px;
   width: 200px;
-  text-align: center;
+  /* text-align: center; */
   border-radius: 20px;
-  padding: 10px 10px 4px;
+  /* padding: 10px 10px 4px; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
   cursor: pointer;
   margin: auto;
   margin-bottom: 15px;
 }
 
 .popUpButton:hover {
-  color:white;
+  color: #ffba00;
   text-decoration: none;
 }

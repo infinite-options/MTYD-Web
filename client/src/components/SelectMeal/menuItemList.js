@@ -1086,16 +1086,16 @@ class MenuItemList extends Component {
           }
         ];
 
-        const addOns = []
-        this.state.addOnItems.map(meal => {
-          addOns.push({
-            qty: meal.count,
-            name: meal.meal_name,
-            price: meal.meal_price,
-            item_uid: meal.meal_uid
-          });
-          return meal;
-        });
+        // const addOns = []
+        // this.state.addOnItems.map(meal => {
+        //   addOns.push({
+        //     qty: meal.count,
+        //     name: meal.meal_name,
+        //     price: meal.meal_price,
+        //     item_uid: meal.meal_uid
+        //   });
+        //   return meal;
+        // });
 
         const data1 = {
           is_addon: false,
@@ -1107,12 +1107,17 @@ class MenuItemList extends Component {
 
         const addOnData1 = {
           is_addon: true,
-          items: addOns,
+          // items: addOns,
+          items: [],
           purchase_id: this.state.purchaseID,
           menu_date: this.state.myDate,
           delivery_day: this.state.deliveryDay
         };
         console.log(this.state.deliveryDay)
+
+        console.log("(makeSelection) data1: ", data1);
+        // console.log("(makeSelection) addOnData1: ", addOnData1);
+        console.log("(makeSelection -- state) addOnItems: ", this.state.addOnItems);
       
         axios
           .post(
@@ -1142,7 +1147,8 @@ class MenuItemList extends Component {
 
         return this.setState({
           totalCount: 0,
-          cartItems: []
+          cartItems: [],
+          addOnItems: []
         });
       }
     } else if (e.target.value === "SKIP") {
@@ -1437,7 +1443,8 @@ class MenuItemList extends Component {
     const cartItems = this.state.addOnItems.slice();
     let alreadyInCart = false;
       cartItems.forEach(item => {
-        if (item.menu_uid === menuitem.menu_uid) {
+        // if (item.menu_uid === menuitem.menu_uid) {
+        if (item.meal_uid === menuitem.meal_uid) {
           item.count++;
           alreadyInCart = true;
         }
@@ -1507,13 +1514,23 @@ class MenuItemList extends Component {
   };
 
   removeAddOn = menuitem => {
+    console.log("menuitem: ", menuitem);
     const cartItems = this.state.addOnItems.slice();
     // let alreadyInCart_1 = false;
+    console.log("removeAddOn cartItems (1): ", cartItems)
+
+    let cartItemsCopy = [];
     cartItems.forEach(item => {
-        if (item.menu_uid === menuitem.menu_uid) {
+      console.log("each item: ", item);
+        // if (item.menu_uid === menuitem.menu_uid) {
+          if (item.meal_uid === menuitem.meal_uid) {
+          console.log("item.count: ", item.count);
           if (item.count !== 0) {
             // alreadyInCart_1 = true;
+            console.log("item.count before: ", item.count);
+            // item.count = item.count--;
             item.count--;
+            console.log("item.count after: ", item.count);
           }
           this.setState({
             addOnItems: cartItems,
@@ -1525,18 +1542,22 @@ class MenuItemList extends Component {
           });
         }
     });
+    console.log("removeAddOn cartItems (2): ", cartItems)
     cartItems.forEach(meal => {
+      console.log("each meal: ", meal);
       if (
-        meal.menu_uid === menuitem.menu_uid &&
+        // meal.menu_uid === menuitem.menu_uid &&
+        meal.meal_uid === menuitem.meal_uid &&
         meal.count === 0 
       ) {
         this.setState({
-          addOnItems: cartItems.filter(x => x.menu_uid !== menuitem.menu_uid),
+          // addOnItems: cartItems.filter(x => x.menu_uid !== menuitem.menu_uid),
+          addOnItems: cartItems.filter(x => x.meal_uid !== menuitem.meal_uid),
           addOnAmount: this.state.addOnAmount - 1,
         });
       }
     });
-    // console.log(cartItems)
+    console.log("removeAddOn cartItems (3): ", cartItems)
   };
 
   prepareSurpriseArr=(uid)=>{
@@ -1877,7 +1898,15 @@ class MenuItemList extends Component {
           customer_uid = {this.state.customer_uid}
         />
 
-        <div style = {{overflow: 'visible', height: '100vh'}}>
+        {/* <FootLink /> */}
+
+        <div 
+          style = {{
+            overflow: 'visible', 
+            // height: '100vh',
+            // border: 'dashed'
+          }}
+        >
 
           <div className={styles.menuItemsWrapper}>
             <MenuItem
@@ -1912,7 +1941,7 @@ class MenuItemList extends Component {
           </div>
         </div>
 
-        {/* <FootLink/>		 */}
+        <FootLink/>		
 
         <div className = {this.state.popUp}>
           <div className = {styles.popUpContainer}>
