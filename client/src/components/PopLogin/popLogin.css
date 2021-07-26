@@ -1,12 +1,12 @@
 .close {
   color: Black;
-  width:36px;
-  height:36px;
+  width: 36px;
+  height: 36px;
   opacity: 1;
-  margin:15px;
+  margin: 15px;
   text-align: center;
   border-radius: 50%;
-  background-image: url('../../images/closeIcon.png');
+  background-image: url("../../images/closeIcon.png");
   background-size: cover;
   background-position: center;
 }
@@ -15,12 +15,13 @@
   position: absolute;
   top: 85px;
   /* left: 50%; */
-  right:1%;
+  right: 1%;
   width: 549px;
   height: 732px;
   background: white;
-  border:3px solid #FF8500;
+  border: 3px solid #ff8500;
   opacity: 1;
+  z-index: 100;
 }
 
 .loginSectionItem {
@@ -28,25 +29,24 @@
   width: 428px;
   height: 50px;
   border-radius: 10px;
-  border: 2px solid #FF8500;
+  border: 2px solid #ff8500;
   margin-bottom: 14px;
   outline: none;
 }
 
 .signInBtn {
   border-radius: 8px;
-  background-color: #FF8500;
-  border:1px solid black;
-  margin-left:49px;
-  margin-top:10px;
+  background-color: #ff8500;
+  border: 1px solid black;
+  margin-left: 49px;
+  margin-top: 10px;
   width: 452px;
   height: 71px;
-  border-color: #FF8500;
-} 
+  border-color: #ff8500;
+}
 
 .inputContainer i {
   position: absolute;
-
 }
 .inputContainer {
   width: 100%;
@@ -102,7 +102,7 @@
   justify-self: center;
   align-self: center;
   display: block;
-  border:#ff6505 solid;
+  border: #ff6505 solid;
   background-color: white;
   height: 350px;
   width: 450px;
@@ -121,9 +121,9 @@
   cursor: pointer;
 }
 
-.errorModalButtonMenu:hover{
+.errorModalButtonMenu:hover {
   text-decoration: none;
-  color: #FF9400;
+  color: #ff9400;
 }
 
 .errorContainer {
@@ -134,11 +134,11 @@
   text-align: center;
 }
 
-.errorCancelButton{
-  background-image: url('../../images/x_button.png');
-  z-index: 2; 
+.errorCancelButton {
+  background-image: url("../../images/x_button.png");
+  z-index: 2;
   float: right;
-  position: absolute; 
+  position: absolute;
   top: 0px;
   left: 370px;
   background-size: 100%;
