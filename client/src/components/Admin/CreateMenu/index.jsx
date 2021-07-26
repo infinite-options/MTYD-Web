@@ -282,7 +282,7 @@ function CreateMenu({ history, ...props }) {
           },
         });
         return axios.get(
-          `${API_URL}meals_ordered_by_date/${nextMenuDate.substring(0, 10)}`
+          `${API_URL}menu_with_orders_by_date/${nextMenuDate.substring(0, 10)}`
         );
       })
       .then((response) => {
@@ -364,6 +364,36 @@ function CreateMenu({ history, ...props }) {
     return "";
   };
 
+  const getMealName = (id) => {
+    if (id && state.mealData.length > 0) {
+      const selectedMeal = state.mealData.filter(
+        (mealItem) => mealItem.meal_uid === id
+      );
+      return selectedMeal[0].meal_name;
+    }
+    return "null";
+  };
+
+  const getMealPhotoUrl = (id) => {
+    if (id && state.mealData.length > 0) {
+      const selectedMeal = state.mealData.filter(
+        (mealItem) => mealItem.meal_uid === id
+      );
+      return selectedMeal[0].meal_photo_URL;
+    }
+    return "null";
+  };
+
+  const getMealBusiness = (id) => {
+    if (id && state.mealData.length > 0) {
+      const selectedMeal = state.mealData.filter(
+        (mealItem) => mealItem.meal_uid === id
+      );
+      return getBusinessName(selectedMeal[0].meal_business);
+    }
+    return "null";
+  };
+
   const getCurrentDate = () => {
     const currentDate = new Date();
     let day = currentDate.getDate();
@@ -397,7 +427,7 @@ function CreateMenu({ history, ...props }) {
 
   const getMenuData = async (date) => {
     const mealApiData = await axios.get(
-      `${API_URL}meals_ordered_by_date/${date.substring(0, 10)}`
+      `${API_URL}menu_with_orders_by_date/${date.substring(0, 10)}`
     );
     const mealApiDataResult = mealApiData.data.result;
     return mealApiDataResult;
@@ -489,7 +519,9 @@ function CreateMenu({ history, ...props }) {
 
   const updateMenu = () => {
     axios
-      .get(`${API_URL}meals_ordered_by_date/${state.menuDate.substring(0, 10)}`)
+      .get(
+        `${API_URL}menu_with_orders_by_date/${state.menuDate.substring(0, 10)}`
+      )
       .then((response) => {
         if (response.status === 200) {
           const fullMenu = response.data.result;
@@ -528,7 +560,9 @@ function CreateMenu({ history, ...props }) {
 
   const updateMenuByIndex = (index) => {
     axios
-      .get(`${API_URL}meals_ordered_by_date/${state.menuDate.substring(0, 10)}`)
+      .get(
+        `${API_URL}menu_with_orders_by_date/${state.menuDate.substring(0, 10)}`
+      )
       .then((response) => {
         if (response.status === 200) {
           const fullMenu = response.data.result;
@@ -1186,7 +1220,7 @@ function CreateMenu({ history, ...props }) {
                             <Form>
                               <Form.Control
                                 as="select"
-                                value={mealMenu.meal_uid}
+                                value={mealMenu.menu_meal_id}
                                 onChange={(event) => {
                                   const newMenu = [...state.editedMenu];
                                   const newMealId = event.target.value;
@@ -1235,14 +1269,14 @@ function CreateMenu({ history, ...props }) {
                             style={{ borderBottom: "1px solid #f8bb17" }}
                           >
                             <img
-                              src={mealMenu.meal_photo_URL}
+                              src={getMealPhotoUrl(mealMenu.menu_meal_id)}
                               style={{ height: "60px", width: "60px" }}
                             ></img>
                           </TableCell>
                           <TableCell
                             style={{ borderBottom: "1px solid #f8bb17" }}
                           >
-                            {mealMenu.business_name}
+                            {getMealBusiness(mealMenu.menu_meal_id)}
                           </TableCell>
                           <TableCell
                             style={{ borderBottom: "1px solid #f8bb17" }}
@@ -1313,7 +1347,7 @@ function CreateMenu({ history, ...props }) {
                           <TableCell
                             style={{ borderBottom: "1px solid #f8bb17" }}
                           >
-                            {mealMenu.total_qty}
+                            {mealMenu.sum_jt_qty}
                           </TableCell>
                         </TableRow>
                       );
