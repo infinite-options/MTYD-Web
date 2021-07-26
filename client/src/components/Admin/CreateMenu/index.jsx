@@ -1190,7 +1190,7 @@ function CreateMenu({ history, ...props }) {
                           border: "none",
                         }}
                         direction={state.sortEditMenu.direction}
-                        onClick={() => changeSortOptions("total_qty")}
+                        onClick={() => changeSortOptions("sum_jt_qty")}
                       >
                         Meals Ordered
                       </TableSortLabel>
@@ -1269,14 +1269,14 @@ function CreateMenu({ history, ...props }) {
                             style={{ borderBottom: "1px solid #f8bb17" }}
                           >
                             <img
-                              src={getMealPhotoUrl(mealMenu.menu_meal_id)}
+                              src={mealMenu.meal_photo_URL}
                               style={{ height: "60px", width: "60px" }}
                             ></img>
                           </TableCell>
                           <TableCell
                             style={{ borderBottom: "1px solid #f8bb17" }}
                           >
-                            {getMealBusiness(mealMenu.menu_meal_id)}
+                            {mealMenu.business_name}
                           </TableCell>
                           <TableCell
                             style={{ borderBottom: "1px solid #f8bb17" }}
@@ -1347,7 +1347,7 @@ function CreateMenu({ history, ...props }) {
                           <TableCell
                             style={{ borderBottom: "1px solid #f8bb17" }}
                           >
-                            {mealMenu.sum_jt_qty}
+                            {mealMenu.sum_jt_qty ? mealMenu.sum_jt_qty : 0}
                           </TableCell>
                         </TableRow>
                       );
