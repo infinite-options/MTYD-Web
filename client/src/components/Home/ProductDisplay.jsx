@@ -1,49 +1,56 @@
-import React, { useState, useEffect } from 'react';
-import Carousel from 'react-multi-carousel';
-import { Box } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
-import appColors from './AppColors';
-import BusiApiReqs from './BusiApiReqs';
-import Product from './Product';
-import 'react-multi-carousel/lib/styles.css';
+import React, { useState, useEffect } from "react";
+import Carousel from "react-multi-carousel";
+import { Box } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+import appColors from "./AppColors";
+import BusiApiReqs from "./BusiApiReqs";
+import Product from "./Product";
+import "react-multi-carousel/lib/styles.css";
 
 const responsive = {
   superLargeDesktop: {
-    breakpoint: { max: 3000, min: 1430 },
+    breakpoint: { max: 3000, min: 1650 },
+    items: 8,
+  },
+  largeDesktop: {
+    breakpoint: { max: 1649, min: 1431 },
     items: 8,
   },
   desktop: {
-    breakpoint: { max: 1430, min: 1150 },
-    items: 6,
+    breakpoint: { max: 1430, min: 1300 },
+    items: 5,
   },
   tablet: {
-    breakpoint: { max: 1150, min: 800 },
+    breakpoint: { max: 1150, min: 860 },
     items: 4,
   },
   mobile: {
-    breakpoint: { max: 800, min: 0 },
-    items: 2,
+    breakpoint: { max: 860, min: 0 },
+    items: 3,
   },
 };
 
 const useStyles = makeStyles((theme) => ({
   root: {
     backgroundColor: appColors.componentBg,
-    width: '100%',
-    height: '300px',
-    paddingTop: '10px',
-	  marginBottom: '180px',
+    width: "100%",
+    paddingTop: "10px",
   },
   title: {
     color: appColors.secondary,
-    fontSize: '22px',
-    fontWeight: 'bold',
-	marginLeft:'75px',
+    fontSize: "22px",
+    fontWeight: "bold",
+    marginLeft: "75px",
   },
   bar: {
-    borderBottom: '4px solid ' + appColors.secondary,
-    marginBottom: '30px',
-    width: '230px',
+    borderBottom: "4px solid " + appColors.secondary,
+    marginBottom: "30px",
+    width: "230px",
+  },
+  carouselSlider: {
+    // textAlign: "center",
+    paddingTop: "10px",
+    paddingBottom: "10px",
   },
 }));
 
@@ -63,7 +70,7 @@ const ProductDisplay = () => {
       const _itemList = [];
       for (const item of itemsData) {
         //const uniqueItemProps = item.item_name;
-		const uniqueItemProps = item.meal_name;
+        const uniqueItemProps = item.meal_name;
         if (!itemsSet.has(uniqueItemProps)) _itemList.push(item);
         itemsSet.add(item.meal_name);
       }
@@ -82,15 +89,16 @@ const ProductDisplay = () => {
         autoPlaySpeed={1000}
         infinite={true}
         draggable={true}
+        sliderClass={classes.carouselSlider}
         responsive={responsive}
       >
         {itemsList.map((product) => {
           return (
-			  <Product
+            <Product
               img={product.meal_photo_URL}
-              name={product.meal_name}	
-              key={product.menu_uid}	  
-			  />
+              name={product.meal_name}
+              key={product.menu_uid}
+            />
           );
         })}
       </Carousel>
