@@ -19,125 +19,145 @@ import {
   CHANGE_NEW_STATE,
   CHANGE_NEW_ZIP,
   SUBMIT_SIGNUP,
-  LOAD_USER_INFO
+  LOAD_USER_INFO,
 } from "./loginTypes";
 
-import {API_URL, BING_LOCATION_API_URL} from "../constants";
-import {setAlert} from "./alertActions";
+import { API_URL, BING_LOCATION_API_URL } from "../constants";
+import { setAlert } from "./alertActions";
 
 // Auxillary functions
 
 export const preCallback = (customerInfo, callback) => {
-  console.log('Check login role',customerInfo);
+  console.log("Check login role", customerInfo);
   const loginRole = customerInfo.role;
-  console.log(customerInfo.customer_uid)
-  if(loginRole.toLowerCase() === "customer") {
+  console.log(customerInfo.customer_uid);
+  if (loginRole.toLowerCase() === "customer") {
     // Logic to change customer page based on if purchased before not needed
     fetch(`${API_URL}customer_lplp?customer_uid=${customerInfo.customer_uid}`)
-      .then(response => response.json())
-      .then(json => {
+      .then((response) => response.json())
+      .then((json) => {
         let meals = [...json.result];
-        if(meals.length==0){
-          console.log('no meal plan')
-        }else{
-          console.log('has meal plan')
-          callback('select-meal');
+        if (meals.length == 0) {
+          console.log("no meal plan");
+        } else {
+          console.log("has meal plan");
+          callback("select-meal");
         }
       })
-      .catch(error => {
+      .catch((error) => {
         console.error(error);
       });
-    callback('meal-plan');
+    // callback("meal-plan");
   } else {
-    callback('admin/order-ingredients');
+    callback("admin/order-ingredients");
   }
 };
 
-export const resetLogin = callback => dispatch => {
+export const resetLogin = (callback) => (dispatch) => {
   document.cookie = "customer_uid=1;max-age=0";
   if (typeof callback !== "undefined") {
     callback();
   }
   dispatch({
-    type: LOGOUT_LOGIN
+    type: LOGOUT_LOGIN,
   });
 };
 
 // Actions for Login Page
 
-export const changeEmail = newEmail => dispatch => {
+export const changeEmail = (newEmail) => (dispatch) => {
   dispatch({
     type: CHANGE_EMAIL,
-    payload: newEmail
+    payload: newEmail,
   });
 };
 
-export const changePassword = newPassword => dispatch => {
+export const changePassword = (newPassword) => (dispatch) => {
   dispatch({
     type: CHANGE_PASSWORD,
-    payload: newPassword
+    payload: newPassword,
   });
 };
 
-export const changeOldPassword = (customerID ,oldPassword, newPassword, confirmPassword) => dispatch => {
-  if(newPassword !== confirmPassword) {
-    dispatch(setAlert("ConfirmNewPassword", "Passwords do not match"));
-  } else {
-    axios.post(API_URL+'change_password', 
-      {
-      customer_uid: customerID,
-      old_password: oldPassword,
-      new_password: newPassword
-      }  
-    )
-    .then(res => {
-      console.log(res)
-      dispatch(setAlert("ChangePassword", "Your password has been changed"));
+export const changeOldPassword =
+  (customerID, oldPassword, newPassword, confirmPassword) => (dispatch) => {
+    if (newPassword !== confirmPassword) {
+      dispatch(setAlert("ConfirmNewPassword", "Passwords do not match"));
+    } else {
+      axios
+        .post(API_URL + "change_password", {
+          customer_uid: customerID,
+          old_password: oldPassword,
+          new_password: newPassword,
+        })
+        .then((res) => {
+          console.log(res);
+          dispatch(
+            setAlert("ChangePassword", "Your password has been changed")
+          );
+        })
+        .catch((err) => {
+          console.log(err);
+          dispatch(
+            setAlert(
+              "ChangePasswordError",
+              "An error has occured please try again later"
+            )
+          );
+        });
+    }
+  };
+
+export const forgotPassword = (email) => (dispatch) => {
+  axios
+    .get(API_URL + "reset_password?email=" + email)
+    .then((res) => {
+      //  console.log(res)
+      if (res.status === 200) {
+        //  console.log(res)
+        console.log("temp password sent");
+        dispatch(
+          setAlert(
+            "TempPassword",
+            "A temporary password has been sent to " + email
+          )
+        );
+      } else if (res.status === 204) {
+        console.log("account doesnt exist");
+        dispatch(
+          setAlert("NoAccount", "There is no account with the email " + email)
+        );
+      } else {
+        console.log("some other error");
+        dispatch(
+          setAlert(
+            "TempPasswordError",
+            "An error has occured. Please try again later."
+          )
+        );
+      }
     })
-    .catch(err => {
-      console.log(err)
-      dispatch(setAlert("ChangePasswordError", "An error has occured please try again later"));
-    })
-  }
-}
+    .catch((err) => {
+      console.log(err);
+    });
+};
 
-export const forgotPassword = (email) => dispatch => {
-  axios.get(API_URL + 'reset_password?email=' + email)
-         .then(res =>{
-            //  console.log(res)
-             if(res.status === 200) {
-              //  console.log(res)
-               console.log('temp password sent')
-               dispatch(setAlert("TempPassword", "A temporary password has been sent to " + email));
-             } else if (res.status === 204) {
-               console.log('account doesnt exist')
-              dispatch(setAlert("NoAccount", "There is no account with the email " + email));
-             } else {
-               console.log('some other error')
-               dispatch(setAlert("TempPasswordError", "An error has occured. Please try again later."));
-             }
-         })
-         .catch(err => {
-             console.log(err)
-         })
-}
+export var errMessage = "";
 
-export var errMessage = ''
-
-export function getErrMessage(){
+export function getErrMessage() {
   //console.log("getErrMessage = " + errMessage)
-  return errMessage
+  return errMessage;
 }
 
-export const loginAttempt = (email, password, callback) => dispatch => {
+export const loginAttempt = (email, password, callback) => (dispatch) => {
   // Get salt for account
-  let m = ''
-  console.log('inside login attempt')
+  let m = "";
+  console.log("inside login attempt");
   axios
     .post(API_URL + "accountsalt", {
-      email: email
+      email: email,
     })
-    .then(res => {
+    .then((res) => {
       let saltObject = res;
 
       if (!(saltObject.data.code && saltObject.data.code !== 200)) {
@@ -160,12 +180,12 @@ export const loginAttempt = (email, password, callback) => dispatch => {
           const encoder = new TextEncoder();
           const data = encoder.encode(saltedPassword);
           // Hash salted password
-          crypto.subtle.digest(hashAlg, data).then(res => {
+          crypto.subtle.digest(hashAlg, data).then((res) => {
             let hash = res;
             // Decode hash with hex digest
             let hashArray = Array.from(new Uint8Array(hash));
             let hashedPassword = hashArray
-              .map(byte => byte.toString(16).padStart(2, "0"))
+              .map((byte) => byte.toString(16).padStart(2, "0"))
               .join("");
             // console.log(hashedPassword);
             // Attempt to login
@@ -174,9 +194,9 @@ export const loginAttempt = (email, password, callback) => dispatch => {
                 email: email,
                 password: hashedPassword,
                 social_id: "",
-                signup_platform: ""
+                signup_platform: "",
               })
-              .then(res => {
+              .then((res) => {
                 // Handle successful Login
                 if (res.data.code === 200) {
                   let customerInfo = res.data.result[0];
@@ -184,7 +204,7 @@ export const loginAttempt = (email, password, callback) => dispatch => {
                   document.cookie = "customer_uid=" + customerInfo.customer_uid;
 
                   dispatch({
-                    type: SUBMIT_PASSWORD
+                    type: SUBMIT_PASSWORD,
                   });
                   preCallback(customerInfo, callback);
                 } else if (res.data.code === 406 || res.data.code === 404) {
@@ -197,7 +217,7 @@ export const loginAttempt = (email, password, callback) => dispatch => {
                   console.log("Unknown login error");
                 }
               })
-              .catch(err => {
+              .catch((err) => {
                 console.log(err);
                 if (err.response) {
                   console.log(err.response);
@@ -213,20 +233,20 @@ export const loginAttempt = (email, password, callback) => dispatch => {
               email: email,
               password: "test",
               social_id: "",
-              signup_platform: ""
+              signup_platform: "",
             })
-            .then(res => {
+            .then((res) => {
               // Don't expect success, checking for need to log in by social media
               if (res.data.code === 401) {
-                errMessage="Log in via social media"
+                errMessage = "Log in via social media";
                 console.log("Need to log in by social media");
               } else {
-                errMessage="Unknown login error"
+                errMessage = "Unknown login error";
                 console.log("Unknown login error");
               }
             })
             // Catch unkown Login errors
-            .catch(err => {
+            .catch((err) => {
               console.log(err);
               if (err.response) {
                 console.log(err.response);
@@ -236,101 +256,101 @@ export const loginAttempt = (email, password, callback) => dispatch => {
         // No information from Account Salt endpoint, probably invalid credentials
       } else {
         if (res.data?.message) {
-          errMessage=res.data.message
-          console.log(errMessage)
-          console.log(":P")
+          errMessage = res.data.message;
+          console.log(errMessage);
+          console.log(":P");
           dispatch(setAlert("LoginError", res.data.message));
-          console.log("done with dispatch")
-          //return res.data.message 
+          console.log("done with dispatch");
+          //return res.data.message
         } else {
-          errMessage="Something weird happened"
+          errMessage = "Something weird happened";
           console.log("Something weird happened.");
         }
       }
     })
     // Error for Account Salt endpoint
-    .catch(err => {
+    .catch((err) => {
       console.log(err);
       if (err.response) {
         console.log(err.response);
       }
-      
     });
-    
 };
 
-export const socialLoginAttempt = (
-  email,
-  accessToken,
-  refreshToken,
-  platform,
-  successCallback,
-  signupCallback
-) => dispatch => {
-  console.log(email, refreshToken);
-  axios
-    .post(API_URL + "login", {
-      email: email,
-      password: "",
-      social_id: refreshToken,
-      signup_platform: platform
-    })
-    .then(res => {
-      console.log(res);
-      if (!(res.data.code && res.data.code !== 200)) {
-        let customerInfo = res.data.result[0];
-        console.log(customerInfo);
-        console.log("cookie", document.cookie);
-        document.cookie = "customer_uid=" + customerInfo.customer_uid;
-        console.log("cookie", document.cookie);
-        axios
-          .post(API_URL + "token_fetch_update/update_web", {
-            uid: customerInfo.customer_uid,
-            user_access_token: accessToken,
-            user_refresh_token: "FALSE"
-          })
-          .then(res => {
-            console.log(res);
-            preCallback(customerInfo, successCallback);
-          })
-          .catch(err => {
-            if (err.response) {
-              console.log(err.response);
-            }
-            console.log(err);
-            preCallback(customerInfo, successCallback);
+export const socialLoginAttempt =
+  (
+    email,
+    accessToken,
+    refreshToken,
+    platform,
+    successCallback,
+    signupCallback
+  ) =>
+  (dispatch) => {
+    console.log(email, refreshToken);
+    axios
+      .post(API_URL + "login", {
+        email: email,
+        password: "",
+        social_id: refreshToken,
+        signup_platform: platform,
+      })
+      .then((res) => {
+        console.log(res);
+        if (!(res.data.code && res.data.code !== 200)) {
+          let customerInfo = res.data.result[0];
+          console.log(customerInfo);
+          console.log("cookie", document.cookie);
+          document.cookie = "customer_uid=" + customerInfo.customer_uid;
+          console.log("cookie", document.cookie);
+          axios
+            .post(API_URL + "token_fetch_update/update_web", {
+              uid: customerInfo.customer_uid,
+              user_access_token: accessToken,
+              user_refresh_token: "FALSE",
+            })
+            .then((res) => {
+              console.log(res);
+              preCallback(customerInfo, successCallback);
+            })
+            .catch((err) => {
+              if (err.response) {
+                console.log(err.response);
+              }
+              console.log(err);
+              preCallback(customerInfo, successCallback);
+            });
+        } else if (res.data.code === 404) {
+          dispatch({
+            type: SUBMIT_SOCIAL,
+            payload: {
+              email: email,
+              platform: platform,
+              accessToken: accessToken,
+              refreshToken: refreshToken,
+            },
           });
-      } else if (res.data.code === 404) {
-        dispatch({
-          type: SUBMIT_SOCIAL,
-          payload: {
-            email: email,
-            platform: platform,
-            accessToken: accessToken,
-            refreshToken: refreshToken
-          }
-        });
-        signupCallback();
-      } else {
-        dispatch(setAlert("LoginError", res.data.message));
-      }
-    })
-    // Catch Login endpoint error
-    .catch(err => {
-      console.log(err);
-      if (err.response) {
-        console.log(err.response);
-      }
-    });
-};
+          signupCallback();
+        } else {
+          dispatch(setAlert("LoginError", res.data.message));
+        }
+      })
+      // Catch Login endpoint error
+      .catch((err) => {
+        console.log(err);
+        if (err.response) {
+          console.log(err.response);
+        }
+      });
+  };
 
-export const bypassLogin = (email, hashedPassword, callback) => dispatch => {
+export const bypassLogin = (email, hashedPassword, callback) => (dispatch) => {
   axios
     .post(API_URL + "login", {
       email: email,
-      password: hashedPassword
+      password: hashedPassword,
     })
-    .then(res => {
+    .then((res) => {
       if (!(res.data.code && res.data.code !== 200)) {
         let customerInfo = res.data.result[0];
         console.log(customerInfo);
@@ -340,7 +360,7 @@ export const bypassLogin = (email, hashedPassword, callback) => dispatch => {
         preCallback(customerInfo, callback);
       }
     })
-    .catch(err => {
+    .catch((err) => {
       console.log(err);
       if (err.response) {
         console.log(err.response);
@@ -350,27 +370,34 @@ export const bypassLogin = (email, hashedPassword, callback) => dispatch => {
 
 // Actions for Sign Up Page
 
-export const initAppleSignUp = (newId, callback) => dispatch => {
+export const initAppleSignUp = (newId, callback) => (dispatch) => {
   axios
     .get(API_URL + "Profile/" + newId)
-    .then(res => {
+    .then((res) => {
       console.log(res);
       let newUserInfo = res.data.result[0];
       let email = newUserInfo.customer_email;
       let refreshToken = newUserInfo.user_refresh_token;
       console.log("(IASU) refresh token: ", refreshToken);
-      console.log("at initAppleSignUp: "+newUserInfo+", "+email+", "+refreshToken)
+      console.log(
+        "at initAppleSignUp: " +
+          newUserInfo +
+          ", " +
+          email +
+          ", " +
+          refreshToken
+      );
       dispatch({
         type: START_APPLE_SIGNUP,
         payload: {
           customerId: newId,
           email: email,
-          refreshToken: refreshToken
-        }
+          refreshToken: refreshToken,
+        },
       });
       callback();
     })
-    .catch(err => {
+    .catch((err) => {
       console.log(err);
       if (err.response) {
         console.log(err.response);
@@ -378,202 +405,204 @@ export const initAppleSignUp = (newId, callback) => dispatch => {
     });
 };
 
-export const changeNewEmail = newEmail => dispatch => {
+export const changeNewEmail = (newEmail) => (dispatch) => {
   dispatch({
     type: CHANGE_NEW_EMAIL,
-    payload: newEmail
+    payload: newEmail,
   });
 };
 
-export const changeNewPassword = newPassword => dispatch => {
+export const changeNewPassword = (newPassword) => (dispatch) => {
   dispatch({
     type: CHANGE_NEW_PASSWORD,
-    payload: newPassword
+    payload: newPassword,
   });
 };
 
-export const changeNewPasswordConfirm = newPassword => dispatch => {
+export const changeNewPasswordConfirm = (newPassword) => (dispatch) => {
   dispatch({
     type: CHANGE_NEW_PASSWORD_CONFIRM,
-    payload: newPassword
+    payload: newPassword,
   });
 };
 
-export const changeNewFirstName = newFirstName => dispatch => {
+export const changeNewFirstName = (newFirstName) => (dispatch) => {
   dispatch({
     type: CHANGE_NEW_FIRST_NAME,
-    payload: newFirstName
+    payload: newFirstName,
   });
 };
 
-export const changeNewLastName = newLastName => dispatch => {
+export const changeNewLastName = (newLastName) => (dispatch) => {
   dispatch({
     type: CHANGE_NEW_LAST_NAME,
-    payload: newLastName
+    payload: newLastName,
   });
 };
 
-export const changeNewPhone = newPhone => dispatch => {
+export const changeNewPhone = (newPhone) => (dispatch) => {
   dispatch({
     type: CHANGE_NEW_PHONE,
-    payload: newPhone
+    payload: newPhone,
   });
 };
 
-export const changeNewAddress = newAddress => dispatch => {
+export const changeNewAddress = (newAddress) => (dispatch) => {
   dispatch({
     type: CHANGE_NEW_STREET,
-    payload: newAddress
+    payload: newAddress,
   });
 };
 
-export const changeNewUnit = newUnit => dispatch => {
+export const changeNewUnit = (newUnit) => (dispatch) => {
   dispatch({
     type: CHANGE_NEW_UNIT,
-    payload: newUnit
+    payload: newUnit,
   });
 };
 
-export const changeNewCity = newCity => dispatch => {
+export const changeNewCity = (newCity) => (dispatch) => {
   dispatch({
     type: CHANGE_NEW_CITY,
-    payload: newCity
+    payload: newCity,
   });
 };
 
-export const changeNewState = newState => dispatch => {
+export const changeNewState = (newState) => (dispatch) => {
   dispatch({
     type: CHANGE_NEW_STATE,
-    payload: newState
+    payload: newState,
   });
 };
 
-export const changeNewZip = newZip => dispatch => {
+export const changeNewZip = (newZip) => (dispatch) => {
   dispatch({
     type: CHANGE_NEW_ZIP,
-    payload: newZip
+    payload: newZip,
   });
 };
 
-export const submitPasswordSignUp = (
-  email,
-  password,
-  passwordConfirm,
-  firstName,
-  lastName,
-  phone,
-  street,
-  unit,
-  city,
-  state,
-  zip,
-  callback
-) => dispatch => {
-  if (password === passwordConfirm) {
-    axios
-      .get(BING_LOCATION_API_URL, {
-        params: {
-          CountryRegion: "US",
-          adminDistrict: state,
-          locality: city,
-          postalCode: zip,
-          addressLine: street,
-          key: process.env.REACT_APP_BING_LOCATION_KEY
-        }
-      })
-      .then(res => {
-        console.log(state);
-        let locationApiResult = res.data;
-        if (locationApiResult.statusCode === 200) {
-          let locations = locationApiResult.resourceSets[0].resources;
-          /* Possible improvement: choose better location in case first one not desired
-           */
-          let location = locations[0];
-          let lat = location.geocodePoints[0].coordinates[0];
-          let long = location.geocodePoints[0].coordinates[1];
-          if (location.geocodePoints.length === 2) {
-            lat = location.geocodePoints[1].coordinates[0];
-            long = location.geocodePoints[1].coordinates[1];
-          }
-          let object = {
-            email: email,
-            password: password,
-            first_name: firstName,
-            last_name: lastName,
-            phone_number: phone,
-            address: street,
-            unit: unit,
-            city: city,
-            state: state,
-            zip_code: zip,
-            latitude: lat.toString(),
-            longitude: long.toString(),
-            referral_source: "WEB",
-            role: "CUSTOMER",
-            social: "FALSE",
-            social_id: "NULL",
-            user_access_token: "FALSE",
-            user_refresh_token: "FALSE",
-            mobile_access_token: "FALSE",
-            mobile_refresh_token: "FALSE"
-          };
-          console.log(JSON.stringify(object));
-          
-          axios
-            .post(API_URL + "createAccount", object)
-            .then(res => {
-              console.log(res);
-              axios.post(API_URL+'email_verification', 
-              {
-              email: object.email
-              }  
-                )
-                .then(res => {
-                  console.log(res)
-                })
-                .catch(err => {
-                  console.log(err)
-                })
-              dispatch({
-                type: SUBMIT_SIGNUP
+export const submitPasswordSignUp =
+  (
+    email,
+    password,
+    passwordConfirm,
+    firstName,
+    lastName,
+    phone,
+    street,
+    unit,
+    city,
+    state,
+    zip,
+    callback
+  ) =>
+  (dispatch) => {
+    if (password === passwordConfirm) {
+      axios
+        .get(BING_LOCATION_API_URL, {
+          params: {
+            CountryRegion: "US",
+            adminDistrict: state,
+            locality: city,
+            postalCode: zip,
+            addressLine: street,
+            key: process.env.REACT_APP_BING_LOCATION_KEY,
+          },
+        })
+        .then((res) => {
+          console.log(state);
+          let locationApiResult = res.data;
+          if (locationApiResult.statusCode === 200) {
+            let locations = locationApiResult.resourceSets[0].resources;
+            /* Possible improvement: choose better location in case first one not desired
+             */
+            let location = locations[0];
+            let lat = location.geocodePoints[0].coordinates[0];
+            let long = location.geocodePoints[0].coordinates[1];
+            if (location.geocodePoints.length === 2) {
+              lat = location.geocodePoints[1].coordinates[0];
+              long = location.geocodePoints[1].coordinates[1];
+            }
+            let object = {
+              email: email,
+              password: password,
+              first_name: firstName,
+              last_name: lastName,
+              phone_number: phone,
+              address: street,
+              unit: unit,
+              city: city,
+              state: state,
+              zip_code: zip,
+              latitude: lat.toString(),
+              longitude: long.toString(),
+              referral_source: "WEB",
+              role: "CUSTOMER",
+              social: "FALSE",
+              social_id: "NULL",
+              user_access_token: "FALSE",
+              user_refresh_token: "FALSE",
+              mobile_access_token: "FALSE",
+              mobile_refresh_token: "FALSE",
+            };
+            console.log(JSON.stringify(object));
+
+            axios
+              .post(API_URL + "createAccount", object)
+              .then((res) => {
+                console.log(res);
+                axios
+                  .post(API_URL + "email_verification", {
+                    email: object.email,
+                  })
+                  .then((res) => {
+                    console.log(res);
+                  })
+                  .catch((err) => {
+                    console.log(err);
+                  });
+                dispatch({
+                  type: SUBMIT_SIGNUP,
+                });
+                if (typeof callback !== "undefined") {
+                  callback();
+                }
+              })
+              .catch((err) => {
+                console.log(err);
+                if (err.response) {
+                  console.log(err.response);
+                }
               });
-              if (typeof callback !== "undefined") {
-                callback();
-              }
-            })
-            .catch(err => {
-              console.log(err);
-              if (err.response) {
-                console.log(err.response);
-              }
-            });
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          if (err.response) {
+            console.log(err.response);
+          }
+        });
+    } else {
+      console.log("Not matching password setting");
+    }
+  };
 
-        }
-      })
-      .catch(err => {
-        console.log(err);
-        if (err.response) {
-          console.log(err.response);
-        }
-      });
-  } else {
-    console.log("Not matching password setting");
-  }
-};
-
-export const submitGuestSignUp = (
-  email,
-  password,
-  firstName,
-  lastName,
-  phone,
-  street,
-  unit,
-  city,
-  state,
-  zip,
-  callback
-) => dispatch => {
+export const submitGuestSignUp =
+  (
+    email,
+    password,
+    firstName,
+    lastName,
+    phone,
+    street,
+    unit,
+    city,
+    state,
+    zip,
+    callback
+  ) =>
+  (dispatch) => {
     axios
       .get(BING_LOCATION_API_URL, {
         params: {
@@ -582,10 +611,10 @@ export const submitGuestSignUp = (
           locality: city,
           postalCode: zip,
           addressLine: street,
-          key: process.env.REACT_APP_BING_LOCATION_KEY
-        }
+          key: process.env.REACT_APP_BING_LOCATION_KEY,
+        },
       })
-      .then(res => {
+      .then((res) => {
         console.log(state);
         let locationApiResult = res.data;
         if (locationApiResult.statusCode === 200) {
@@ -619,176 +648,180 @@ export const submitGuestSignUp = (
             user_access_token: "FALSE",
             user_refresh_token: "FALSE",
             mobile_access_token: "FALSE",
-            mobile_refresh_token: "FALSE"
+            mobile_refresh_token: "FALSE",
           };
           console.log("Guest sign up POST data: " + JSON.stringify(object));
-          
+
           axios
             .post(API_URL + "createAccount", object)
-            .then(res => {
-              console.log("guest create account response: " + JSON.stringify(res));
-              if(res.data.code >= 400 && res.data.code <= 599){
+            .then((res) => {
+              console.log(
+                "guest create account response: " + JSON.stringify(res)
+              );
+              if (res.data.code >= 400 && res.data.code <= 599) {
                 callback(res);
               }
-              axios.post(API_URL+'email_verification', {email: object.email})
-                .then(res => {
-                  console.log(res)
+              axios
+                .post(API_URL + "email_verification", { email: object.email })
+                .then((res) => {
+                  console.log(res);
                 })
-                .catch(err => {
-                  console.log(err)
-                })
+                .catch((err) => {
+                  console.log(err);
+                });
               dispatch({
-                type: SUBMIT_SIGNUP
+                type: SUBMIT_SIGNUP,
               });
               if (typeof callback !== "undefined") {
                 callback(res);
               }
             })
-            .catch(err => {
+            .catch((err) => {
               console.log(err);
               if (err.response) {
                 console.log(err.response);
               }
             });
-
         } else {
           console.log("Not a valid location");
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
         if (err.response) {
           console.log(err.response);
         }
       });
-};
+  };
 
-export const submitSocialSignUp = (
-  isApple,
-  customerId,
-  email,
-  platform,
-  accessToken,
-  refreshToken,
-  firstName,
-  lastName,
-  phone,
-  street,
-  unit,
-  city,
-  state,
-  zip,
-  callback
-) => dispatch => {
-  axios
-    .get(BING_LOCATION_API_URL, {
-      params: {
-        CountryRegion: "US",
-        adminDistrict: state,
-        locality: city,
-        postalCode: zip,
-        addressLine: street,
-        key: process.env.REACT_APP_BING_LOCATION_KEY
-      }
-    })
-    .then(res => {
-      console.log(state);
-      let locationApiResult = res.data;
-      if (locationApiResult.statusCode === 200) {
-        let locations = locationApiResult.resourceSets[0].resources;
-        /* Possible improvement: choose better location in case first one not desired
-         */
-        let location = locations[0];
-        let lat = location.geocodePoints[0].coordinates[0];
-        let long = location.geocodePoints[0].coordinates[1];
-        if (location.geocodePoints.length === 2) {
-          lat = location.geocodePoints[1].coordinates[0];
-          long = location.geocodePoints[1].coordinates[1];
-        }
-        let object = {};
-        if (!isApple) {
-          object = {
-            email: email,
-            first_name: firstName,
-            last_name: lastName,
-            phone_number: phone,
-            address: street,
-            unit: unit,
-            city: city,
-            state: state,
-            zip_code: zip,
-            latitude: lat.toString(),
-            longitude: long.toString(),
-            referral_source: "WEB",
-            role: "CUSTOMER",
-            social: platform,
-            social_id: refreshToken,
-            user_access_token: accessToken,
-            user_refresh_token: "FALSE",
-            mobile_access_token: "FALSE",
-            mobile_refresh_token: "FALSE"
-          };
-        } else {
-          object = {
-            cust_id: customerId,
-            email: email,
-            first_name: firstName,
-            last_name: lastName,
-            phone_number: phone,
-            address: street,
-            unit: unit,
-            city: city,
-            state: state,
-            zip_code: zip,
-            latitude: lat.toString(),
-            longitude: long.toString(),
-            referral_source: "Website",
-            role: "customer",
-            social: platform,
-            referral_source: "WEB",
-            role: "CUSTOMER",
-            social: platform,
-            social_id: refreshToken,
-            user_access_token: accessToken,
-            user_refresh_token: "FALSE",
-            mobile_access_token: "FALSE",
-            mobile_refresh_token: "FALSE"
-          };
-        }
-        console.log(JSON.stringify(object));
-        axios
-          .post(API_URL + "createAccount", object)
-          .then(res => {
-            console.log(res);
-            if (customerId === "") {
-              customerId = res.data.result.customer_uid;
-            }
-            dispatch({
-              type: SUBMIT_SIGNUP
+export const submitSocialSignUp =
+  (
+    isApple,
+    customerId,
+    email,
+    platform,
+    accessToken,
+    refreshToken,
+    firstName,
+    lastName,
+    phone,
+    street,
+    unit,
+    city,
+    state,
+    zip,
+    callback
+  ) =>
+  (dispatch) => {
+    axios
+      .get(BING_LOCATION_API_URL, {
+        params: {
+          CountryRegion: "US",
+          adminDistrict: state,
+          locality: city,
+          postalCode: zip,
+          addressLine: street,
+          key: process.env.REACT_APP_BING_LOCATION_KEY,
+        },
+      })
+      .then((res) => {
+        console.log(state);
+        let locationApiResult = res.data;
+        if (locationApiResult.statusCode === 200) {
+          let locations = locationApiResult.resourceSets[0].resources;
+          /* Possible improvement: choose better location in case first one not desired
+           */
+          let location = locations[0];
+          let lat = location.geocodePoints[0].coordinates[0];
+          let long = location.geocodePoints[0].coordinates[1];
+          if (location.geocodePoints.length === 2) {
+            lat = location.geocodePoints[1].coordinates[0];
+            long = location.geocodePoints[1].coordinates[1];
+          }
+          let object = {};
+          if (!isApple) {
+            object = {
+              email: email,
+              first_name: firstName,
+              last_name: lastName,
+              phone_number: phone,
+              address: street,
+              unit: unit,
+              city: city,
+              state: state,
+              zip_code: zip,
+              latitude: lat.toString(),
+              longitude: long.toString(),
+              referral_source: "WEB",
+              role: "CUSTOMER",
+              social: platform,
+              social_id: refreshToken,
+              user_access_token: accessToken,
+              user_refresh_token: "FALSE",
+              mobile_access_token: "FALSE",
+              mobile_refresh_token: "FALSE",
+            };
+          } else {
+            object = {
+              cust_id: customerId,
+              email: email,
+              first_name: firstName,
+              last_name: lastName,
+              phone_number: phone,
+              address: street,
+              unit: unit,
+              city: city,
+              state: state,
+              zip_code: zip,
+              latitude: lat.toString(),
+              longitude: long.toString(),
+              referral_source: "Website",
+              role: "customer",
+              social: platform,
+              referral_source: "WEB",
+              role: "CUSTOMER",
+              social: platform,
+              social_id: refreshToken,
+              user_access_token: accessToken,
+              user_refresh_token: "FALSE",
+              mobile_access_token: "FALSE",
+              mobile_refresh_token: "FALSE",
+            };
+          }
+          console.log(JSON.stringify(object));
+          axios
+            .post(API_URL + "createAccount", object)
+            .then((res) => {
+              console.log(res);
+              if (customerId === "") {
+                customerId = res.data.result.customer_uid;
+              }
+              dispatch({
+                type: SUBMIT_SIGNUP,
+              });
+              console.log("cookie", document.cookie);
+              document.cookie = "customer_uid=" + customerId;
+              console.log("cookie", document.cookie);
+              callback();
+            })
+            .catch((err) => {
+              console.log(err);
+              if (err.response) {
+                console.log(err.response);
+              }
             });
-            console.log("cookie", document.cookie);
-            document.cookie = "customer_uid=" + customerId;
-            console.log("cookie", document.cookie);
-            callback();
-          })
-          .catch(err => {
-            console.log(err);
-            if (err.response) {
-              console.log(err.response);
-            }
-          });
-      }
-    })
-    .catch(err => {
-      console.log(err);
-      if (err.response) {
-        console.log(err.response);
-      }
-    });
-};
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        if (err.response) {
+          console.log(err.response);
+        }
+      });
+  };
 
-export const LoadUserInfo = customerId => dispatch => {
-  axios.get(API_URL + "Profile/" + customerId).then(res => {
+export const LoadUserInfo = (customerId) => (dispatch) => {
+  axios.get(API_URL + "Profile/" + customerId).then((res) => {
     //console.log("user info: " + JSON.stringify(res));
     if (res.data.result) {
       dispatch({
@@ -797,8 +830,8 @@ export const LoadUserInfo = customerId => dispatch => {
           customerId: res.data.result[0].customer_uid,
           firstName: res.data.result[0].customer_first_name,
           lastName: res.data.result[0].customer_last_name,
-          email: res.data.result[0].customer_email
-        }
+          email: res.data.result[0].customer_email,
+        },
       });
     }
   });
