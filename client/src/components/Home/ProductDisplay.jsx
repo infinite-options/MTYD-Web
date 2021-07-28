@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Carousel from "react-multi-carousel";
 import { Box } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
@@ -14,7 +14,7 @@ const responsive = {
   },
   largeDesktop: {
     breakpoint: { max: 1649, min: 1431 },
-    items: 8,
+    items: 7,
   },
   desktop: {
     breakpoint: { max: 1430, min: 1300 },
@@ -24,9 +24,17 @@ const responsive = {
     breakpoint: { max: 1150, min: 860 },
     items: 4,
   },
-  mobile: {
-    breakpoint: { max: 860, min: 0 },
+  smallScreen: {
+    breakpoint: { max: 860, min: 640 },
     items: 3,
+  },
+  mobile: {
+    breakpoint: { max: 639, min: 445 },
+    items: 2,
+  },
+  smallMobile: {
+    breakpoint: { max: 444, min: 0 },
+    items: 1,
   },
 };
 
@@ -77,20 +85,25 @@ const ProductDisplay = () => {
       setItemsList(_itemList);
     });
   };
+  const carouselRef = useRef();
 
   return (
     <Box className={classes.root}>
       <Carousel
-        arrows={true}
+        responsive={responsive}
+        ref={carouselRef}
+        autoPlay={true}
+        autoPlaySpeed={5000}
+        infinite={true}
         swipeable={true}
         partialVisible={true}
-        slidesToSlide={3}
-        autoplay={true}
-        autoPlaySpeed={1000}
-        infinite={true}
+        // slidesToSlide={3}
+        // autoPlay={true}
+        // autoPlaySpeed={10000}
+        // infinite={true}
         draggable={true}
         sliderClass={classes.carouselSlider}
-        responsive={responsive}
+        // responsive={responsive}
       >
         {itemsList.map((product) => {
           return (
