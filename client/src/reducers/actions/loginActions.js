@@ -36,9 +36,10 @@ export const preCallback = (customerInfo, callback) => {
     fetch(`${API_URL}customer_lplp?customer_uid=${customerInfo.customer_uid}`)
       .then((response) => response.json())
       .then((json) => {
-        let meals = [...json.result];
-        if (meals.length == 0) {
+        // let meals = [...json.result];
+        if (!json.result) {
           console.log("no meal plan");
+          callback("choose-plan");
         } else {
           console.log("has meal plan");
           callback("select-meal");
