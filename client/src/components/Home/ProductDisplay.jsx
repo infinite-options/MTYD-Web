@@ -94,7 +94,7 @@ const ProductDisplay = () => {
         responsive={responsive}
         ref={carouselRef}
         autoPlay={true}
-        autoPlaySpeed={5000}
+        autoPlaySpeed={3000}
         infinite={true}
         swipeable={true}
         partialVisible={true}
