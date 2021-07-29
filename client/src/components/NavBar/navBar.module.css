@@ -23,7 +23,7 @@
   /* border: dashed; */
   border-bottom-left-radius: 30px;
   border-bottom-right-radius: 30px;
-  background-color: #F26522;
+  background-color: #f26522;
   /* box-shadow: 0px 5px #d6d1d1; */
 }
 .navbarNarrow {
@@ -40,7 +40,7 @@
   /* border: dashed; */
   border-bottom-left-radius: 30px;
   border-bottom-right-radius: 30px;
-  background-color: #F26522;
+  background-color: #f26522;
   /* box-shadow: 0px 5px #d6d1d1; */
 }
 
@@ -92,15 +92,15 @@
   justify-content: center;
   font-weight: 500;
   font-size: 20px;
-  margin:0.25rem;
-  color:white;
+  margin: 0.25rem;
+  color: white;
   border-color: white;
   border: 2px solid;
   outline: none;
   box-shadow: none;
   padding: 0;
   margin-top: 20px;
-} 
+}
 
 .hbButton {
   /* border: 1px solid; */
@@ -118,7 +118,7 @@
   padding: 0 0 0 0 !important; */
   height: 20px;
   font-size: 26px !important;
-  color: #F8BB17 !important;
+  color: #f8bb17 !important;
 }
 
 /* .signUpBtn {
@@ -163,7 +163,6 @@
   outline: none;
   box-shadow: none;
 }  */
-
 
 /* .whiteBackBtn {
   height: 50% !important;
@@ -229,7 +228,7 @@
   white-space: nowrap;
   overflow: hidden; */
   cursor: pointer;
-} 
+}
 .loginBtn:hover {
   position: absolute;
   right: 20px;
@@ -243,14 +242,14 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 2px solid #F8BB17;
-  color: #F8BB17;
+  border: 2px solid #f8bb17;
+  color: #f8bb17;
   text-overflow: ellipsis;
   /* display: block;
   white-space: nowrap;
   overflow: hidden; */
   cursor: pointer;
-} 
+}
 
 .signUpBtn {
   position: absolute;
@@ -272,7 +271,7 @@
   white-space: nowrap;
   overflow: hidden; */
   cursor: pointer;
-} 
+}
 .signUpBtn:hover {
   position: absolute;
   right: 150px;
@@ -286,14 +285,14 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 2px solid #F8BB17;
-  color: #F8BB17;
+  border: 2px solid #f8bb17;
+  color: #f8bb17;
   text-overflow: ellipsis;
   /* display: block;
   white-space: nowrap;
   overflow: hidden; */
   cursor: pointer;
-} 
+}
 
 .nameBtn {
   position: absolute;
@@ -305,7 +304,7 @@
   font-weight: 500;
   text-align: center;
   /* padding-top: 0px; */
-  background-color: #F26522;
+  background-color: #f26522;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -316,7 +315,7 @@
   white-space: nowrap;
   overflow: hidden; */
   cursor: pointer;
-} 
+}
 .nameBtn:hover {
   position: absolute;
   right: 150px;
@@ -327,18 +326,18 @@
   font-weight: 500;
   text-align: center;
   /* padding-top: 0px; */
-  background-color: #F26522;
+  background-color: #f26522;
   display: flex;
   justify-content: center;
   align-items: center;
   /* border: 2px solid white; */
-  color: #F8BB17;
+  color: #f8bb17;
   text-overflow: ellipsis;
   /* display: block;
   white-space: nowrap;
   overflow: hidden; */
   cursor: pointer;
-} 
+}
 
 .nameBtnNarrow {
   position: absolute;
@@ -350,7 +349,7 @@
   font-weight: 500;
   text-align: center;
   /* padding-top: 4px; */
-  background-color: #F26522;
+  background-color: #f26522;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -361,7 +360,7 @@
   white-space: nowrap;
   overflow: hidden;
   cursor: pointer;
-} 
+}
 
 .logoutBtn {
   position: absolute;
@@ -397,8 +396,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 2px solid #F8BB17;
-  color: #F8BB17;
+  border: 2px solid #f8bb17;
+  color: #f8bb17;
   text-overflow: ellipsis;
   /* display: block;
   white-space: nowrap;
@@ -428,7 +427,7 @@
   white-space: nowrap;
   overflow: hidden; */
   cursor: pointer;
-} 
+}
 
 .adminBtn2 {
   /* position: absolute;
@@ -451,7 +450,7 @@
   white-space: nowrap;
   overflow: hidden; */
   cursor: pointer;
-} 
+}
 .adminBtn2:hover {
   /* position: absolute;
   right: 150px; */
@@ -466,14 +465,14 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 2px solid #F8BB17;
-  color: #F8BB17;
+  border: 2px solid #f8bb17;
+  color: #f8bb17;
   /* text-overflow: ellipsis;
   display: block;
   white-space: nowrap;
   overflow: hidden; */
   cursor: pointer;
-} 
+}
 
 .showNameBtn {
   height: 50% !important;
@@ -485,7 +484,7 @@
   justify-content: center;
   /*border:1px solid black;*/
   border: 0;
-} 
+}
 
 /* .divider{
   width:10px;
@@ -497,7 +496,7 @@
   height: 50% !important;
   border: solid;
   border-radius: 30px;
-} 
+}
 
 .navContainer {
   display: flex;
@@ -567,6 +566,23 @@
   margin-bottom: 0px;
   font-weight: bold;
   text-align: center;
+}
+
+.modalCloseBtnContainer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px;
+}
+
+.modalBtn {
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 15px;
+  padding-left: 25px;
+  padding-right: 25px;
+  background-color: #f26522;
+  font-weight: bold;
 }
 
 @media (max-width: 500px) {

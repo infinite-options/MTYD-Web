@@ -4,6 +4,8 @@ import { API_URL } from "../../reducers/constants";
 // import { Link } from "react-router-dom";
 import forkClose from "../../images/forkClose.png";
 import styles from "../NavBar/navBar.module.css";
+import { Modal } from "react-bootstrap";
+import { ReactComponent as ModalCloseBtn } from "../Admin/CreateMenu/static/modalClose.svg";
 
 export class MenuList extends Component {
   state = {
@@ -26,6 +28,8 @@ export class MenuList extends Component {
     showSigninSignup: "none",
     heightOfBlock: "330px",
     mealPlans: false,
+    showMealPlanModal: false,
+    showAccountModal: false,
   };
 
   componentDidMount() {
@@ -245,20 +249,14 @@ export class MenuList extends Component {
             });
           }
         });
-      // fetch(`${API_URL}customer_lplp?customer_uid=${customer_uid}`)
-      //   .then((response) => response.json())
-      //   .then((json) => {
-      //     let meals = [...json.result];
-      //     if (meals.length == 0) {
-      //       console.log("no meal plan");
-      //     } else {
-      //       console.log("has meal plan");
-      //     }
-      //   })
-      //   .catch((error) => {
-      //     console.error(error);
-      //   });
     }
+  };
+
+  toggleMealPlanModal = () => {
+    this.setState({
+      ...this.state,
+      showMealPlanModal: !this.state.showMealPlanModal,
+    });
   };
 
   render() {
@@ -320,9 +318,10 @@ export class MenuList extends Component {
             className={styles.hbButton}
             aria-label="Click here to change your meal plan"
             title="Click here to change your meal plan"
-            onClick={() => {
+            onClick={(e) => {
+              e.preventDefault();
               if (!this.state.mealPlans) {
-                alert("No Meal Plans Exist");
+                this.toggleMealPlanModal();
               }
             }}
           >
@@ -339,10 +338,16 @@ export class MenuList extends Component {
           </a>
 
           <a
-            href="/subscription-history"
+            href={this.state.mealPlans ? "/subscription-history" : ""}
             className={styles.hbButton}
             aria-label="Click here to view your subscriptions"
             title="Click here to view your subscriptions"
+            onClick={(e) => {
+              e.preventDefault();
+              if (!this.state.mealPlans) {
+                this.toggleMealPlanModal();
+              }
+            }}
           >
             Subscription History
           </a>
@@ -416,6 +421,78 @@ export class MenuList extends Component {
             Sign up
           </a>
         </div>
+
+        {this.state.showMealPlanModal && (
+          <div
+            style={{
+              height: "100%",
+              width: "100%",
+              zIndex: "101",
+              left: "0",
+              top: "0",
+              overflow: "auto",
+              position: "fixed",
+              display: "grid",
+              backgroundColor: "rgba(255, 255, 255, 0.8)",
+            }}
+          >
+            <div
+              style={{
+                position: "relative",
+                justifySelf: "center",
+                alignSelf: "center",
+                display: "block",
+                border: "#ff6505 solid",
+                backgroundColor: "#FEF7E0",
+                zIndex: "102",
+                borderRadius: "20px",
+              }}
+            >
+              <div className={styles.modalCloseBtnContainer}>
+                <ModalCloseBtn
+                  style={{ cursor: "pointer" }}
+                  onClick={this.toggleMealPlanModal}
+                />
+              </div>
+              <div
+                style={{
+                  border: "none",
+                  fontWeight: "bold",
+                  padding: "15px",
+                }}
+              >
+                <Modal.Title>
+                  You do not have any active meal plans{" "}
+                </Modal.Title>
+              </div>
+              <Modal.Footer
+                style={{
+                  border: "none",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                }}
+              >
+                <button
+                  className={styles.modalBtn}
+                  style={{ width: "200px" }}
+                  onClick={() => {
+                    // this.toggleMealPlanModal();
+                    window.location.href = "/choose-plan";
+                  }}
+                >
+                  Add a subscription
+                </button>
+                <button
+                  className={styles.modalBtn}
+                  style={{ width: "200px" }}
+                  onClick={this.toggleMealPlanModal}
+                >
+                  Cancel
+                </button>
+              </Modal.Footer>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
