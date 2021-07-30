@@ -30,6 +30,7 @@ export class MenuList extends Component {
     mealPlans: false,
     showMealPlanModal: false,
     showAccountModal: false,
+    login: false,
   };
 
   componentDidMount() {
@@ -53,6 +54,7 @@ export class MenuList extends Component {
       this.setState({
         ...this.state,
         mealPlans: this.props.hasMealPlans,
+        login: this.props.login,
       });
 
       if (this.props.login == true && this.props.isAdmin) {
@@ -430,7 +432,7 @@ export class MenuList extends Component {
           </a>
         </div>
 
-        {this.state.showMealPlanModal && (
+        {this.state.showMealPlanModal && this.state.login && (
           <div
             style={{
               height: "100%",
@@ -496,6 +498,74 @@ export class MenuList extends Component {
                   onClick={this.toggleMealPlanModal}
                 >
                   Cancel
+                </button>
+              </Modal.Footer>
+            </div>
+          </div>
+        )}
+        {this.state.showMealPlanModal && !this.state.login && (
+          <div
+            style={{
+              height: "100%",
+              width: "100%",
+              zIndex: "101",
+              left: "0",
+              top: "0",
+              overflow: "auto",
+              position: "fixed",
+              display: "grid",
+              backgroundColor: "rgba(255, 255, 255, 0.8)",
+            }}
+          >
+            <div
+              style={{
+                position: "relative",
+                justifySelf: "center",
+                alignSelf: "center",
+                display: "block",
+                border: "#ff6505 solid",
+                backgroundColor: "#FEF7E0",
+                zIndex: "102",
+                borderRadius: "20px",
+              }}
+            >
+              <div className={styles.modalCloseBtnContainer}>
+                <ModalCloseBtn
+                  style={{ cursor: "pointer" }}
+                  onClick={this.toggleMealPlanModal}
+                />
+              </div>
+              <div
+                style={{
+                  border: "none",
+                  fontWeight: "bold",
+                  padding: "15px",
+                }}
+              >
+                <Modal.Title>
+                  You must login before accessing this page.
+                </Modal.Title>
+              </div>
+              <Modal.Footer
+                style={{
+                  border: "none",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                }}
+              >
+                <button
+                  className={styles.modalBtn}
+                  style={{ width: "150px" }}
+                  onClick={this.showPopLogin}
+                >
+                  Login
+                </button>
+                <button
+                  className={styles.modalBtn}
+                  style={{ width: "150px" }}
+                  onClick={this.showPopSignup}
+                >
+                  Signup
                 </button>
               </Modal.Footer>
             </div>
