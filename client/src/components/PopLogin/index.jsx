@@ -53,6 +53,7 @@ export class PopLogin extends Component {
   loginClicked = false
 
   componentDidMount() {
+    console.log("(popLogin 1) apple_redirect: ", process.env.REACT_APP_APPLE_REDIRECT_URI);
     window.AppleID.auth.init({
       clientId: process.env.REACT_APP_APPLE_CLIENT_ID,
       scope: "email",
@@ -74,6 +75,7 @@ export class PopLogin extends Component {
   loginClicked = false
 
   componentDidMount() {
+    console.log("(popLogin 2) apple_redirect: ", process.env.REACT_APP_APPLE_REDIRECT_URI);
     window.AppleID.auth.init({
       clientId: process.env.REACT_APP_APPLE_CLIENT_ID,
       scope: "email",

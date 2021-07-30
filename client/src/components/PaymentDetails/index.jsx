@@ -229,6 +229,9 @@ class PaymentDetails extends React.Component {
     console.log("(mount) selectedPlan: ", this.props.selectedPlan);
     console.log("(mount) email: ", this.props.email);
 
+    console.log("window: ", window);
+    console.log("window.google: ", google);
+
     this.handleResize();
     window.addEventListener('resize', this.handleResize);
 

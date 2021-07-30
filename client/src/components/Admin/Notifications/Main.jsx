@@ -127,12 +127,15 @@ const NotificationMain = ({state, dispatch}) => {
     bodyFormData.append('message', state.message)
 
     if (state.notificationType == 'Notifications') {
-      axios({
-        method: "post", url: 
-        `${API_URL}Send_Notification/customer`,
-        data: bodyFormData,
-        headers: {"Content-Type": "multipart/form-data"}
-      })
+      // axios({
+      //   method: "post", url: 
+      //   `${API_URL}Send_Notification/customer`,
+      //   data: bodyFormData,
+      //   headers: {"Content-Type": "multipart/form-data"}
+      // })
+      console.log("(2) sending notification...");
+      axios
+        .post(API_URL + 'Send_Notification/customer', bodyFormData)
         .then((response) => {
           console.log(response)
         })
@@ -171,12 +174,15 @@ const NotificationMain = ({state, dispatch}) => {
     bodyFormData.append('message', state.message)
 
     if (state.notificationType == 'Notifications') {
-      axios({
-        method: "post", url: 
-        `${API_URL}Send_Notification/customer`,
-        data: bodyFormData,
-        headers: {"Content-Type": "multipart/form-data"}
-      })
+      // axios({
+      //   method: "post", url: 
+      //   `${API_URL}Send_Notification/customer`,
+      //   data: bodyFormData,
+      //   headers: {"Content-Type": "multipart/form-data"}
+      // })
+      console.log("(1) sending notification...");
+      axios
+        .post(API_URL + 'Send_Notification/customer', bodyFormData)
         .then((response) => {
           console.log(response)
         })

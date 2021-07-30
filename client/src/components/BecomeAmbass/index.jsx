@@ -59,12 +59,11 @@ export class BecomeAmbass extends Component {
     let email = document.getElementById("becomeAmbassadorEmail").value
     // alert(document.getElementById("becomeAmbassadorEmail").value)
     axios
-      .post(API_URL + 'brandAmbassador/create_ambassador',
-        {
-          code: email
-        }).then(res=>{
-          console.log(res)
-        })
+      .post(API_URL + 'brandAmbassador/create_ambassador', {
+        code: email
+      }).then(res=>{
+        console.log(res);
+      })
     alert('regisitered as ambassador')
     this.handleClick();
    }
@@ -122,36 +121,34 @@ export class BecomeAmbass extends Component {
         </div>
 
         {(() => {
-			  if(this.state.user_id == "not login") {
-					return (
+			    if(this.state.user_id == "not login") {
+					  return (
               <div 
                 style={{
                   opacity:this.state.hidden,
                   zIndex:4
                 }}
-              className="becomeAnAmbassadorPopup"
-
+                className="becomeAnAmbassadorPopup"
               >
 
                 <div
-                style= 
-                {{
-                  position:'absolute',
-                  width:'50px',
-                  height:'50px',
-                  backgroundColor:'red',
-                  top:'20px',
-                  right:'20px',
-                  opacity:0
-                }} 
-                onClick={this.handleClick}
-                tabIndex="0"
-                aria-label="click here to close"
-                title="click here to close"
+                  style= 
+                  {{
+                    position:'absolute',
+                    width:'50px',
+                    height:'50px',
+                    backgroundColor:'red',
+                    top:'20px',
+                    right:'20px',
+                    opacity:0
+                  }} 
+                  onClick={this.handleClick}
+                  tabIndex="0"
+                  aria-label="click here to close"
+                  title="click here to close"
                 />
                 <div
-                style= 
-                  {{
+                  style= {{
                     position:'absolute',
                     width:'430px',
                     height:'80px',
@@ -171,116 +168,114 @@ export class BecomeAmbass extends Component {
                   title="Click here to log in"
                 >
                   Login to become an ambassador
-                  </div>
+                </div>
 
                 <div 
-                style={{
-                  position:'absolute',
-                  width:'430px',
-                  height:'80px',
-                  backgroundColor:'#f26522',
-                  top:'473px',
-                  left:'78px',
-                  opacity:1,
-                  borderRadius:'15px',
-                  textAlign:'center',
-                  paddingTop:'20px',
-                  color:'white',
-                  fontSize:'25px'
-                }} 
-                onClick={() => this.togglePopSignup()}
-                tabIndex="0"
-                aria-label="Click here to sign up for meals 4 me"
-                title="Click here to sign up for meals 4 me">
+                  style={{
+                    position:'absolute',
+                    width:'430px',
+                    height:'80px',
+                    backgroundColor:'#f26522',
+                    top:'473px',
+                    left:'78px',
+                    opacity:1,
+                    borderRadius:'15px',
+                    textAlign:'center',
+                    paddingTop:'20px',
+                    color:'white',
+                    fontSize:'25px'
+                  }} 
+                  onClick={() => this.togglePopSignup()}
+                  tabIndex="0"
+                  aria-label="Click here to sign up for meals 4 me"
+                  title="Click here to sign up for meals 4 me"
+                >
                   Signup for MealsForMe    
                 </div>  
               </div>
-				)}else{
-          return (
-          <div
-            className="becomeAnAmbassadorPopupSignin"
-            style={{
-              zIndex:4,
-              // border: 'dashed'
-              position: 'fixed'
-            }}
-          >
-            <div
-              style= 
-              {{
-                position:'absolute',
-                width:'37px',
-                height:'37px',
-                borderRadius: '50%',
-                // backgroundColor:'blue',
-                top:'7px',
-                right:'5px',
-                opacity: 0.5,
-                cursor: 'pointer'
-              }} 
-              onClick={this.handleClick}
-              tabIndex="0"
-              aria-label="click here to close"
-              title="click here to close"
-            />
+            )}else{
+              return (
+                <div
+                  className="becomeAnAmbassadorPopupSignin"
+                  style={{
+                    zIndex:4,
+                    // border: 'dashed'
+                    position: 'fixed'
+                  }}
+                >
+                  <div
+                    style= 
+                    {{
+                      position:'absolute',
+                      width:'37px',
+                      height:'37px',
+                      borderRadius: '50%',
+                      // backgroundColor:'blue',
+                      top:'7px',
+                      right:'5px',
+                      opacity: 0.5,
+                      cursor: 'pointer'
+                    }} 
+                    onClick={this.handleClick}
+                    tabIndex="0"
+                    aria-label="click here to close"
+                    title="click here to close"
+                  />
 
-            <div
-              style= 
-              {{
-                position:'absolute',
-                width:'200px',
-                height:'30px',
-                backgroundColor:'white',
-                top:'390px',
-                right:'40px',
-                // opacity:0.5,
-                color:'black',
-                textAlign:'center',
-                fontSize:'18px'
-              }} 
-              // onClick={this.handleClick}
-            >
-              {this.state.username}
-            </div>
-            <input
-              style= 
-              {{
-                position:'absolute',
-                width:'385px',
-                height:'42px',
-                backgroundColor:'white',
-                top:'432px',
-                right:'74px',
-                border:'2px solid #F26522',
-                borderRadius:'15px',
-                outline:'none'
-                // opacity:0.5
-              }} 
-              id='becomeAmbassadorEmail'
-              placeholder="Enter your email here"
-            />
+                  <div
+                    style= {{
+                      position:'absolute',
+                      width:'200px',
+                      height:'30px',
+                      backgroundColor:'white',
+                      top:'390px',
+                      right:'40px',
+                      // opacity:0.5,
+                      color:'black',
+                      textAlign:'center',
+                      fontSize:'18px'
+                    }} 
+                    // onClick={this.handleClick}
+                  >
+                    {this.state.username}
+                  </div>
+                  <input
+                    style={{
+                      position:'absolute',
+                      width:'385px',
+                      height:'42px',
+                      backgroundColor:'white',
+                      top:'432px',
+                      right:'74px',
+                      border:'2px solid #F26522',
+                      borderRadius:'15px',
+                      outline:'none'
+                      // opacity:0.5
+                    }} 
+                    id='becomeAmbassadorEmail'
+                    placeholder="Enter your email here"
+                  />
 
-            <button
-              style= 
-              {{
-                position:'absolute',
-                width:'410px',
-                height:'75px',
-                backgroundColor:'red',
-                top:'560px',
-                right:'60px',
-                opacity:0
-              }} 
-              onClick={()=>this.sendAmbassadorEmail()}
-              aria-label="click here to register as an ambassador"
-              title="click here to register as an ambassador"
-            >
-            </button>
-          </div>
-          )
-
-        }
-		}) ()}
+                  <button
+                    style= 
+                    {{
+                      position:'absolute',
+                      width:'410px',
+                      height:'75px',
+                      backgroundColor:'red',
+                      top:'560px',
+                      right:'60px',
+                      opacity:0
+                    }} 
+                    onClick={()=>this.sendAmbassadorEmail()}
+                    aria-label="click here to register as an ambassador"
+                    title="click here to register as an ambassador"
+                  >
+                  </button>
+                </div>
+              )
+            }
+        }) ()}
       </div>
     )
   }

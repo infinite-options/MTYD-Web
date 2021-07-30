@@ -119,7 +119,7 @@ class ChoosePlan extends React.Component {
   // https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/delivery_weekdays
 
   componentDidMount() {
-    //console.log("choose-plan props: " + JSON.stringify(this.props));
+    console.log("choose-plan props: " + JSON.stringify(this.props));
     //console.log(this.props)
 
     // this.updateView();
@@ -134,7 +134,7 @@ class ChoosePlan extends React.Component {
     window.history.pushState({}, document.title, window.location.pathname);
 
     // Logged in from Apple
-    if (urlParams.has("customer_uid")) {
+    /*if (urlParams.has("customer_uid")) {
       let customer_uid = urlParams.get("customer_uid");
       document.cookie = "customer_uid=" + customer_uid;
       axios
@@ -186,7 +186,8 @@ class ChoosePlan extends React.Component {
         })
     }
     // Check for logged in
-    else if (
+    else if (*/
+    if (
       document.cookie
         .split(";")
         .some(item => item.trim().startsWith("customer_uid="))
@@ -195,6 +196,7 @@ class ChoosePlan extends React.Component {
         .split("; ")
         .find(item => item.startsWith("customer_uid="))
         .split("=")[1];
+      console.log("(ChoosePlan) customer_uid (1): ", customer_uid);
       this.props.fetchProfileInformation(customer_uid);
       this.props.fetchPlans();
       axios.get(API_URL + 'Profile/' + customer_uid)
@@ -226,6 +228,7 @@ class ChoosePlan extends React.Component {
     } else {
       // Reroute to log in page
       //console.log("Choose-plan NOT LOGGED IN");
+      console.log("(ChoosePlan) customer_uid (2): ", customer_uid);
       this.props.fetchPlans();
       this.setState({
         mounted: true,

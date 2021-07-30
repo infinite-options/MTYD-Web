@@ -328,7 +328,7 @@ function EditMeal({history, ...props}) {
     })
       // .post(`${API_URL}create_update_meals`,bodyFormData)
       .then((response)=>{
-        console.log(response)
+        console.log("(create_update_meals) put response: ", response)
         const savedMeal = state.editedMeal
         savedMeal.meal_business = activeBusiness
         savedMeal.meal_uid = response.data.meal_uid
@@ -348,7 +348,7 @@ function EditMeal({history, ...props}) {
         state.selectedFile = null
       })
       .catch((err)=>{
-        console.log(err)
+        console.log("(create_update_meals) put error: ", err)
       })
   }
 
@@ -385,7 +385,7 @@ function EditMeal({history, ...props}) {
     })
       // .post(`${API_URL}create_update_meals`,bodyFormData)
       .then((response)=>{
-        console.log(response)
+        console.log("(create_update_meals) post response: ",response)
         const savedMeal = state.editedMeal
         savedMeal.meal_business = activeBusiness
         savedMeal.meal_uid = response.data.meal_uid
@@ -405,7 +405,7 @@ function EditMeal({history, ...props}) {
         state.selectedFile = null
       })
       .catch((err)=>{
-        console.log(err)
+        console.log("(create_update_meals) post error: ",err)
       })
   }
 

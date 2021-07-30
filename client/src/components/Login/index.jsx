@@ -85,6 +85,7 @@ class Login extends React.Component {
           this.successLogin
         );
       } else {
+        console.log("(Login) apple_redirect: ", process.env.REACT_APP_APPLE_REDIRECT_URI);
         this.setState({
           mounted: true
         });

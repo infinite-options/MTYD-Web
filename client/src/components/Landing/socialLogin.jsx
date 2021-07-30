@@ -42,6 +42,8 @@ class SocialLogin extends Component {
       this.setState({verticalFormat:this.props.verticalFormat})
     }
 
+    console.log("(socialLogin) apple_redirect: ", process.env.REACT_APP_APPLE_REDIRECT_URI);
+
     window.AppleID.auth.init({
         clientId: process.env.REACT_APP_APPLE_CLIENT_ID,
         scope: "email",

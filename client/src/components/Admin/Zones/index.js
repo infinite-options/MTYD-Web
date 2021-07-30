@@ -150,6 +150,7 @@ function Zones ({history,...props}) {
       .get(`${API_URL}get_Zones`)
       .then((response) => {
         const zoneApiResult = response.data.result;
+        console.log("getZones response: ", zoneApiResult);
         // Convert property values to string and nulls to empty string
         for(let index = 0; index < zoneApiResult.length; index++) {
           for (const property in zoneApiResult[index]) {
@@ -228,7 +229,8 @@ function Zones ({history,...props}) {
     } else {
       // Edit current zone
       axios
-        .put(`${API_URL}Update_Zone`,state.editedZone)
+        // .put(`${API_URL}Update_Zone`,state.editedZone)
+        .post(`${API_URL}update_zones/update`,state.editedZone)
         .then((response) => {
           const zoneIndex = state.zones.findIndex((zone) => zone.zone_uid === state.editedZone.zone_uid);
           const newZones = [...state.zones];
