@@ -1,23 +1,23 @@
 import React from "react";
 import PropTypes from "prop-types";
 import Cookies from "js-cookie";
-import {connect} from "react-redux";
+import { connect } from "react-redux";
 import {
   bypassLogin,
   changeEmail,
   changePassword,
   loginAttempt,
   socialLoginAttempt,
-  forgotPassword
+  forgotPassword,
 } from "../../reducers/actions/loginActions";
-import {withRouter} from "react-router";
-import {Link} from "react-router-dom";
+import { withRouter } from "react-router";
+import { Link } from "react-router-dom";
 import GoogleLogin from "react-google-login";
 import FacebookLogin from "react-facebook-login";
 import styles from "./login.module.css";
 import Alert from "../Alert";
-import SocialLogin from "../Landing/socialLogin"
-import {WebNavBar} from "../NavBar";
+import SocialLogin from "../Landing/socialLogin";
+import { WebNavBar } from "../NavBar";
 
 class Login extends React.Component {
   constructor() {
@@ -25,28 +25,28 @@ class Login extends React.Component {
     this.state = {
       mounted: false,
       error: "",
-      loginDisplay: 'flex',
-      forgotPasswordDisplay: 'none'
+      loginDisplay: "flex",
+      forgotPasswordDisplay: "none",
     };
   }
-  
+
   toggleDisplay = () => {
-    if(this.state.loginDisplay === 'flex') {
+    if (this.state.loginDisplay === "flex") {
       this.setState({
-        loginDisplay: 'none',
-        forgotPasswordDisplay: 'flex'
-      })
+        loginDisplay: "none",
+        forgotPasswordDisplay: "flex",
+      });
     } else {
       this.setState({
-        loginDisplay: 'flex',
-        forgotPasswordDisplay: 'none'
-      })
+        loginDisplay: "flex",
+        forgotPasswordDisplay: "none",
+      });
     }
-  }
+  };
 
-  successLogin = page => {
+  successLogin = (page) => {
     this.props.history.push(`/${page}`);
-  }; 
+  };
 
   viewPassword() {
     var x = document.getElementById("password");
@@ -62,9 +62,9 @@ class Login extends React.Component {
   };
 
   componentDidMount() {
-    if(this.props.location.state !== undefined) {
+    if (this.props.location.state !== undefined) {
       // console.log('forgot Password')
-      this.toggleDisplay()
+      this.toggleDisplay();
     }
 
     // console.log(foo) // "bar"
@@ -86,18 +86,18 @@ class Login extends React.Component {
         );
       } else {
         this.setState({
-          mounted: true
+          mounted: true,
         });
         window.AppleID.auth.init({
           clientId: process.env.REACT_APP_APPLE_CLIENT_ID,
           scope: "email",
-          redirectURI: process.env.REACT_APP_APPLE_REDIRECT_URI
+          redirectURI: process.env.REACT_APP_APPLE_REDIRECT_URI,
         });
       }
     }
   }
 
-  responseGoogle = response => {
+  responseGoogle = (response) => {
     console.log(response);
     if (response.profileObj) {
       // Google Login successful, try to login to MTYD
@@ -120,7 +120,7 @@ class Login extends React.Component {
     }
   };
 
-  responseFacebook = response => {
+  responseFacebook = (response) => {
     console.log(response);
     if (response.email) {
       console.log("Facebook Login successful");
@@ -140,31 +140,33 @@ class Login extends React.Component {
       console.log("Facebook Login failed");
     }
   };
-  showError = err => {
+  showError = (err) => {
     console.log("this is error in show err: ", err);
     return (
       <div
-        style={{display: "flex", alignItem: "center", justifyContent: "center"}}
+        style={{
+          display: "flex",
+          alignItem: "center",
+          justifyContent: "center",
+        }}
       >
         <p
           style={{
             color: "red",
             fontSize: "15px",
             fontWeight: "bold",
-            padding: "10px 10px"
+            padding: "10px 10px",
           }}
         >
           {err}
         </p>
       </div>
     );
-  };   
+  };
 
   render() {
     if (!this.state.mounted) {
-      return (
-        null
-      );
+      return null;
     }
     return (
       <div className={styles.root}>
@@ -174,160 +176,200 @@ class Login extends React.Component {
           <p>LOCAL.ORGANIC.RESPONSIBLE</p>
         </div> */}
         <div className={styles.wrap_container}>
-          <div className={styles.container + " row"} style = {{display: this.state.loginDisplay}}>
-            <div className={"col-7 " + styles.userInfo} style = {{padding: '105px 7.5px'}}>            
-            <div>
-              <div className={styles.loginSectionContainer}>
-              <h5 style = {{marginLeft: '90px', fontSize: '30px', color: '#FF9E19', fontWeight: 'bold'}}>LOGIN</h5>
-                <div className={styles.loginSectionItem}>
-                  <input
-                    type='text'
-                    placeholder='USER NAME'
-                    className={styles.loginSectionInput}
-                    value={this.props.email}
-                    onChange={e => {
-                      this.props.changeEmail(e.target.value);
+          <div
+            className={styles.container + " row"}
+            style={{ display: this.state.loginDisplay }}
+          >
+            <div
+              className={"col-7 " + styles.userInfo}
+              style={{ padding: "105px 7.5px" }}
+            >
+              <div>
+                <div className={styles.loginSectionContainer}>
+                  <h5
+                    style={{
+                      marginLeft: "90px",
+                      fontSize: "30px",
+                      color: "#FF9E19",
+                      fontWeight: "bold",
                     }}
-                  />
-                </div>
-                <div className={styles.loginSectionItem}>
-                  <span className={styles.loginSectionInput}>
+                  >
+                    LOGIN
+                  </h5>
+                  <div className={styles.loginSectionItem}>
                     <input
-                      style={{marginBottom: "0px"}}
-                      type='password'
-                      id='password'
-                      placeholder='PASSWORD'
-                      value={this.props.password}
-                      onChange={e => {
-                        this.props.changePassword(e.target.value);
+                      type="text"
+                      placeholder="USER NAME"
+                      className={styles.loginSectionInput}
+                      value={this.props.email}
+                      onChange={(e) => {
+                        this.props.changeEmail(e.target.value);
                       }}
                     />
+                  </div>
+                  <div className={styles.loginSectionItem}>
+                    <span className={styles.loginSectionInput}>
+                      <input
+                        style={{ marginBottom: "0px" }}
+                        type="password"
+                        id="password"
+                        placeholder="PASSWORD"
+                        value={this.props.password}
+                        onChange={(e) => {
+                          this.props.changePassword(e.target.value);
+                        }}
+                      />
 
-                    {/* <a >
+                      {/* <a >
                       <i
                         className='far fa-eye'
                         id='togglePassword'
                         onClick={this.viewPassword}
                       ></i>
                     </a> */}
-                  </span>
+                    </span>
+                  </div>
+
+                  <a
+                    style={{ marginLeft: "90px", cursor: "pointer" }}
+                    onClick={this.toggleDisplay}
+                  >
+                    <h6
+                      style={{
+                        fontSize: "1rem",
+                        color: "black",
+                        float: "right",
+                      }}
+                    >
+                      {" "}
+                      Forgot Password?
+                    </h6>
+                  </a>
                 </div>
-                
-                <a style = {{marginLeft: '90px', cursor: 'pointer'}} onClick = {this.toggleDisplay}>
-                  <h6 style = {{ fontSize: '1rem', color: "black", float: "right"}}> Forgot Password?</h6>
-              </a>
+                <div className={styles.buttonContainer}>
+                  <button
+                    className={styles.button}
+                    onClick={() => {
+                      //console.log(this.successLogin)
+                      let a = this.props.loginAttempt(
+                        this.props.email,
+                        this.props.password,
+                        this.successLogin
+                      );
+                      console.log("test2");
+                    }}
+                  >
+                    LOGIN
+                  </button>
+                  <Link style={{ textDecoration: "none" }} to="sign-up">
+                    <button className={styles.button}>SIGNUP</button>
+                  </Link>
+                </div>
+                <hr
+                  style={{
+                    marginTop: "2rem",
+                    color: "#E392409D",
+                    width: "300px",
+                  }}
+                ></hr>
+                <p
+                  style={{
+                    color: "black",
+                    textAlign: "center",
+                    fontSize: "1rem",
+                    paddingTop: "1.2rem",
+                  }}
+                >
+                  LOGIN OR SIGNUP WITH
+                </p>
+                <div
+                  style={{
+                    marginTop: "3.7rem",
+                    display: "flex",
+                    flexDirection: "row",
+                    alignContent: "center",
+                    textAlign: "center",
+                    justifyContent: "space-between",
+                    padding: "0rem 8.5rem",
+                  }}
+                >
+                  <SocialLogin />
+                </div>
+                <Alert />
               </div>
-            <div className={styles.buttonContainer}>
-              <button
-                className={styles.button}
-                onClick={() => {
-                  //console.log(this.successLogin)
-                  let a = this.props.loginAttempt(
-                    this.props.email,
-                    this.props.password,
-                    this.successLogin
-                  );
-                  console.log("test2")
-                }}
-              >
-                LOGIN
-              </button>
-              <Link style = {{textDecoration: 'none'}} to='sign-up'>
-                <button className={styles.button}>SIGNUP</button>
-              </Link>
-            </div>
-            <hr
-              style={{marginTop: "2rem", color: "#E392409D", width: "300px"}}
-            ></hr>
-            <p
-              style={{
-                color: "black",
-                textAlign: "center",
-                fontSize: "1rem",
-                paddingTop: "1.2rem"
-              }}
-            >
-              LOGIN OR SIGNUP WITH
-            </p>
-            <div
-              style={{
-                marginTop: "3.7rem",
-                display: "flex",
-                flexDirection: "row",
-                alignContent: "center",
-                textAlign: "center",
-                justifyContent: "space-between",
-                padding: "0rem 8.5rem"
-              }}
-            >
-              <SocialLogin />
-
-            </div>
-            <Alert />
-          </div>
-
             </div>
             <div className={"col-5 " + styles.explore}>
               <div className={"row " + styles.centerBtn}>
                 <p>EXPLORE WITHOUT LOGIN</p>
-                <Link style = {{textDecoration: 'none'}} to = '/select-meal'>
-                  <button style = {{color: 'white'}}> START </button>
+                <Link style={{ textDecoration: "none" }} to="/select-meal">
+                  <button style={{ color: "white" }}> START </button>
                 </Link>
               </div>
             </div>
-              
           </div>
-          <div className={styles.container + " row"} style = {{zIndex: '1', display: this.state.forgotPasswordDisplay}}>
-
-          <div className={"col-7 " + styles.userInfo} style = {{padding: '200px 7.5px'}}>            
-            <div>
-              <div className={styles.loginSectionContainer}>
-              <h5 style = {{marginLeft: '90px', fontSize: '30px', color: '#FF9E19', fontWeight: 'bold'}}>Forgot Password</h5>
-                <div className={styles.loginSectionItem}>
-                  <input
-                    type='text'
-                    placeholder='EMAIL'
-                    className={styles.loginSectionInput}
-                    value={this.props.email}
-                    onChange={e => {
-                      this.props.changeEmail(e.target.value);
+          <div
+            className={styles.container + " row"}
+            style={{ zIndex: "1", display: this.state.forgotPasswordDisplay }}
+          >
+            <div
+              className={"col-7 " + styles.userInfo}
+              style={{ padding: "200px 7.5px" }}
+            >
+              <div>
+                <div className={styles.loginSectionContainer}>
+                  <h5
+                    style={{
+                      marginLeft: "90px",
+                      fontSize: "30px",
+                      color: "#FF9E19",
+                      fontWeight: "bold",
                     }}
-                  />
+                  >
+                    Forgot Password
+                  </h5>
+                  <div className={styles.loginSectionItem}>
+                    <input
+                      type="text"
+                      placeholder="EMAIL"
+                      className={styles.loginSectionInput}
+                      value={this.props.email}
+                      onChange={(e) => {
+                        this.props.changeEmail(e.target.value);
+                      }}
+                    />
+                  </div>
                 </div>
-                
+                <div
+                  className={styles.buttonContainer}
+                  style={{ marginBottom: "100px" }}
+                >
+                  <button
+                    className={styles.button}
+                    onClick={this.toggleDisplay}
+                  >
+                    BACK
+                  </button>
+                  <button
+                    className={styles.button}
+                    onClick={() => {
+                      this.props.forgotPassword(this.props.email);
+                    }}
+                  >
+                    SEND
+                  </button>
+                </div>
               </div>
-            <div className={styles.buttonContainer} style = {{marginBottom: '100px'}}>
-              <button
-                className={styles.button}
-                onClick = {this.toggleDisplay}
-              >
-                BACK
-              </button>
-              <button
-                className={styles.button}
-                onClick={() => {
-                  this.props.forgotPassword(
-                    this.props.email,
-                  );
-                }}
-              >
-                SEND
-              </button>
+              <Alert />
             </div>
-            
-          </div>
-          <Alert />
-            </div>
-
 
             <div className={"col-5 " + styles.explore}>
-                <div className={"row " + styles.centerBtn}>
-                  <p>EXPLORE WITHOUT LOGIN</p>
-                  <Link to = '/select-meal'>
-                    <button> START </button>
-                  </Link>
-                </div>
+              <div className={"row " + styles.centerBtn}>
+                <p>EXPLORE WITHOUT LOGIN</p>
+                <Link to="/select-meal">
+                  <button> START </button>
+                </Link>
               </div>
+            </div>
           </div>
         </div>
       </div>
@@ -343,13 +385,13 @@ Login.propTypes = {
   socialLoginAttempt: PropTypes.func.isRequired,
   forgotPassword: PropTypes.func.isRequired,
   email: PropTypes.string.isRequired,
-  password: PropTypes.string.isRequired
+  password: PropTypes.string.isRequired,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   email: state.login.email,
   password: state.login.password,
-  error: state.login.error
+  error: state.login.error,
 });
 
 const functionList = {
@@ -358,8 +400,7 @@ const functionList = {
   changePassword,
   loginAttempt,
   socialLoginAttempt,
-  forgotPassword
+  forgotPassword,
 };
-
 
 export default connect(mapStateToProps, functionList)(withRouter(Login));

@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import {connect} from "react-redux";
+import { connect } from "react-redux";
 import {
   initAppleSignUp,
   changeNewFirstName,
@@ -11,13 +11,13 @@ import {
   changeNewCity,
   changeNewState,
   changeNewZip,
-  submitSocialSignUp
+  submitSocialSignUp,
 } from "../../reducers/actions/loginActions";
-import {withRouter} from "react-router";
+import { withRouter } from "react-router";
 import styles from "../SignUp/signup.module.css";
-import {WebNavBar} from "../NavBar";
+import { WebNavBar } from "../NavBar";
 
-import axios from 'axios';
+import axios from "axios";
 
 // import styles from "./socialSignup.module.css";
 
@@ -26,18 +26,18 @@ const google = window.google;
 class SocialSignUp extends React.Component {
   constructor(props) {
     super(props);
-    this.handlePlaceSelect_signup = this.handlePlaceSelect_signup.bind(this)
-    this.autocomplete_social = null
+    this.handlePlaceSelect_signup = this.handlePlaceSelect_signup.bind(this);
+    this.autocomplete_social = null;
     this.state = {
       mounted: false,
-      name: '',
-      street_address: '',
-      city: '',
-      state: '',
-      zip_code: '',
-      lat:'',
-      lng:''
-    }
+      name: "",
+      street_address: "",
+      city: "",
+      state: "",
+      zip_code: "",
+      lat: "",
+      lng: "",
+    };
   }
 
   // initialState() {
@@ -65,38 +65,43 @@ class SocialSignUp extends React.Component {
 
       this.props.initAppleSignUp(urlParams.get("id"), () => {
         this.setState({
-          mounted: true
+          mounted: true,
         });
       });
     } else {
       console.log("(SSU) NOT initAppleSignup");
 
       this.setState({
-        mounted: true // always true?
+        mounted: true, // always true?
       });
     }
 
+    this.autocomplete_social = new google.maps.places.Autocomplete(
+      document.getElementById("ship-address-social-login"),
+      {
+        componentRestrictions: { country: ["us", "ca"] },
+      }
+    );
+    this.autocomplete_social.addListener(
+      "place_changed",
+      this.handlePlaceSelect_signup
+    );
 
-    this.autocomplete_social = new google.maps.places.Autocomplete(document.getElementById('ship-address-social-login'),{
-      componentRestrictions: { country: ["us", "ca"] },
-    })
-    this.autocomplete_social.addListener("place_changed", this.handlePlaceSelect_signup)
-
-    console.log(this.autocomplete_social)
+    console.log(this.autocomplete_social);
   }
 
   handlePlaceSelect_signup() {
-    console.log('here')
+    console.log("here");
     let address1Field = document.querySelector("#ship-address-social-login");
     let postalField = document.querySelector("#postcode");
 
-    let addressObject = this.autocomplete_social.getPlace()
+    let addressObject = this.autocomplete_social.getPlace();
     console.log(addressObject);
 
     let address1 = "";
     let postcode = "";
-    let city = '';
-    let state = '';
+    let city = "";
+    let state = "";
 
     for (const component of addressObject.address_components) {
       const componentType = component.types[0];
@@ -105,12 +110,12 @@ class SocialSignUp extends React.Component {
           address1 = `${component.long_name} ${address1}`;
           break;
         }
-  
+
         case "route": {
           address1 += component.short_name;
           break;
         }
-  
+
         case "postal_code": {
           postcode = `${component.long_name}${postcode}`;
           break;
@@ -120,13 +125,12 @@ class SocialSignUp extends React.Component {
           document.querySelector("#locality").value = component.long_name;
           city = component.long_name;
           break;
-  
+
         case "administrative_area_level_1": {
           document.querySelector("#state").value = component.short_name;
-          state= component.short_name;
+          state = component.short_name;
           break;
         }
-        
       }
     }
 
@@ -134,7 +138,7 @@ class SocialSignUp extends React.Component {
     postalField.value = postcode;
 
     console.log(address1);
-    console.log(postcode)
+    console.log(postcode);
 
     this.setState({
       name: addressObject.name,
@@ -142,18 +146,21 @@ class SocialSignUp extends React.Component {
       city: city,
       state: state,
       zip_code: postcode,
-      lat:addressObject.geometry.location.lat(),
-      lng:addressObject.geometry.location.lng(),
-    })
+      lat: addressObject.geometry.location.lat(),
+      lng: addressObject.geometry.location.lng(),
+    });
 
-    axios.get(`https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/categoricalOptions/${this.state.lng},${this.state.lat}`)
-      .then(res=>{
-        console.log(res)
-        if(res.data.result.length==0){
-          alert('cannot deliver to this address')
-          console.log('cannot deliver to this address')
-        }else{
-          console.log('we can deliver to this address')
+    axios
+      .get(
+        `https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/categoricalOptions/${this.state.lng},${this.state.lat}`
+      )
+      .then((res) => {
+        console.log(res);
+        if (res.data.result.length == 0) {
+          alert("cannot deliver to this address");
+          console.log("cannot deliver to this address");
+        } else {
+          console.log("we can deliver to this address");
         }
       })
       .catch((err) => {
@@ -163,18 +170,14 @@ class SocialSignUp extends React.Component {
         console.log(err);
       });
 
-
-
-    console.log(this.state)
+    console.log(this.state);
   }
 
-
-  signupCheck=()=>{
-
-    if(this.props.firstName==''||this.props.lastName==''){
-      alert('first name and last name is required')
-    }else{
-        this.props.submitSocialSignUp(
+  signupCheck = () => {
+    if (this.props.firstName == "" || this.props.lastName == "") {
+      alert("first name and last name is required");
+    } else {
+      this.props.submitSocialSignUp(
         this.props.AppleSignUp,
         this.props.customerId,
         this.props.email,
@@ -184,11 +187,11 @@ class SocialSignUp extends React.Component {
         this.props.firstName,
         this.props.lastName,
         this.props.phone,
-        this.state.street_address,
+        this.props.street,
         this.props.unit,
-        this.state.city,
-        this.state.state,
-        this.state.zip_code,
+        this.props.city,
+        this.props.state,
+        this.props.zip,
         this.signUpSuccess
       );
     }
@@ -212,10 +215,7 @@ class SocialSignUp extends React.Component {
     //       this.state.zip_code,
     //       this.signUpSuccess
     //     );
-
-
-
-  }
+  };
 
   signUpSuccess = () => {
     this.props.history.push("/choose-plan");
@@ -234,16 +234,19 @@ class SocialSignUp extends React.Component {
         <WebNavBar />
         <div className={styles.wrap_container}>
           <div className={styles.container + " row"}>
-            <div className={"col-7 " + styles.userInfo} style = {{padding: '110px 0px'}}>
+            <div
+              className={"col-7 " + styles.userInfo}
+              style={{ padding: "110px 0px" }}
+            >
               <h6 className={styles.subHeading}> User Information </h6>
               <div className={styles.inputContainer}>
                 <div className={styles.inputItem}>
                   <input
-                    type='text'
+                    type="text"
                     //   className={styles.input}
                     placeholder={"First name"}
                     value={this.props.firstName}
-                    onChange={e => {
+                    onChange={(e) => {
                       this.props.changeNewFirstName(e.target.value);
                     }}
                     aria-label="Enter your first name here"
@@ -251,11 +254,11 @@ class SocialSignUp extends React.Component {
                 </div>
                 <div className={styles.inputItem}>
                   <input
-                    type='text'
+                    type="text"
                     //   className={styles.input}
                     placeholder={"Last name"}
                     value={this.props.lastName}
-                    onChange={e => {
+                    onChange={(e) => {
                       this.props.changeNewLastName(e.target.value);
                     }}
                     required
@@ -264,11 +267,11 @@ class SocialSignUp extends React.Component {
                 </div>
                 <div className={styles.inputItem}>
                   <input
-                    type='text'
+                    type="text"
                     //   className={styles.input}
                     placeholder={"Phone"}
                     value={this.props.phone}
-                    onChange={e => {
+                    onChange={(e) => {
                       this.props.changeNewPhone(e.target.value);
                     }}
                     aria-label="Enter your phone number here"
@@ -281,16 +284,18 @@ class SocialSignUp extends React.Component {
                   <input
                     id="ship-address-social-login"
                     name="ship-address-social-login"
-
-                    placeholder='Street Address'
+                    placeholder="Street Address"
                     aria-label="Enter your street address"
+                    onChange={(e) => {
+                      this.props.changeNewAddress(e.target.value);
+                    }}
                   />
                 </div>
                 <div className={styles.inputItemAddress}>
                   <input
-                    placeholder='Unit'
+                    placeholder="Unit"
                     value={this.props.unit}
-                    onChange={e => {
+                    onChange={(e) => {
                       this.props.changeNewUnit(e.target.value);
                     }}
                     aria-label="Enter your unit number. Optional"
@@ -298,33 +303,47 @@ class SocialSignUp extends React.Component {
                 </div>
                 <div className={styles.inputItemAddress}>
                   <input
-                    placeholder='City'
-                    placeholder='City'
-                    id="locality" name="locality"
+                    placeholder="City"
+                    placeholder="City"
+                    id="locality"
+                    name="locality"
                     aria-label="Enter your city"
-
+                    onChange={(e) => {
+                      this.props.changeNewCity(e.target.value);
+                    }}
                   />
                 </div>
                 <div className={styles.inputItemAddress}>
                   <input
-
-                    placeholder='State'
-                    id="state" name="state"
+                    placeholder="State"
+                    id="state"
+                    name="state"
                     aria-label="Enter your state"
+                    onChange={(e) => {
+                      this.props.changeNewState(e.target.value);
+                    }}
                   />
                 </div>
                 <div className={styles.inputItemAddress}>
                   <input
-                    placeholder='Zip'
-                    placeholder='Zip'
-                    id="postcode" name="postcode"
+                    placeholder="Zip"
+                    placeholder="Zip"
+                    id="postcode"
+                    name="postcode"
                     aria-label="Enter your zip code"
-
+                    onChange={(e) => {
+                      this.props.changeNewZip(e.target.value);
+                    }}
                   />
                 </div>
               </div>
               <div className={styles.buttonContainer}>
-                <button className={styles.button + " mr-3"} aria-label="Click here to go back">BACK</button>
+                <button
+                  className={styles.button + " mr-3"}
+                  aria-label="Click here to go back"
+                >
+                  BACK
+                </button>
                 <button
                   className={styles.button + " ml-3"}
                   onClick={this.signupCheck}
@@ -337,7 +356,10 @@ class SocialSignUp extends React.Component {
             <div className={"col-5 " + styles.explore}>
               <div className={"row " + styles.centerBtn}>
                 <p>EXPLORE WITHOUT LOGIN</p>
-                <button aria-label="Click here to explore without loging in"> START </button>
+                <button aria-label="Click here to explore without loging in">
+                  {" "}
+                  START{" "}
+                </button>
               </div>
             </div>
           </div>
@@ -370,10 +392,10 @@ SocialSignUp.propTypes = {
   unit: PropTypes.string.isRequired,
   city: PropTypes.string.isRequired,
   state: PropTypes.string.isRequired,
-  zip: PropTypes.string.isRequired
+  zip: PropTypes.string.isRequired,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   AppleSignUp: state.login.newUserInfo.AppleSignUp,
   customerId: state.login.newUserInfo.customerId,
   email: state.login.newUserInfo.email,
@@ -387,7 +409,7 @@ const mapStateToProps = state => ({
   unit: state.login.newUserInfo.address.unit,
   city: state.login.newUserInfo.address.city,
   state: state.login.newUserInfo.address.state,
-  zip: state.login.newUserInfo.address.zip
+  zip: state.login.newUserInfo.address.zip,
 });
 
 const functionList = {
@@ -400,7 +422,7 @@ const functionList = {
   changeNewCity,
   changeNewState,
   changeNewZip,
-  submitSocialSignUp
+  submitSocialSignUp,
 };
 
 export default connect(mapStateToProps, functionList)(withRouter(SocialSignUp));

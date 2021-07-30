@@ -1,7 +1,7 @@
 import React from "react";
-import {Link,withRouter} from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
-import {connect} from "react-redux";
+import { connect } from "react-redux";
 import {
   changeNewEmail,
   changeNewPassword,
@@ -14,13 +14,13 @@ import {
   changeNewCity,
   changeNewState,
   changeNewZip,
-  submitPasswordSignUp
+  submitPasswordSignUp,
 } from "../../reducers/actions/loginActions";
-import {WebNavBar} from "../NavBar";
+import { WebNavBar } from "../NavBar";
 import styles from "./signup.module.css";
-import SocialSignUp from "../Landing/socialLogin"
-import {API_URL} from "../../reducers/constants";
-import axios from 'axios'
+import SocialSignUp from "../Landing/socialLogin";
+import { API_URL } from "../../reducers/constants";
+import axios from "axios";
 
 class SignUp extends React.Component {
   signUpSuccess = () => {
@@ -42,66 +42,66 @@ class SignUp extends React.Component {
               <div className={styles.inputContainer}>
                 <div className={styles.inputItem}>
                   <input
-                    type='text'
+                    type="text"
                     //   className={styles.input}
-                    placeholder='Email'
+                    placeholder="Email"
                     value={this.props.email}
-                    onChange={e => {
+                    onChange={(e) => {
                       this.props.changeNewEmail(e.target.value);
                     }}
                   />
                 </div>
                 <div className={styles.inputItem}>
                   <input
-                    type='password'
+                    type="password"
                     //   className={styles.input}
                     placeholder={"Password"}
                     value={this.props.password}
-                    onChange={e => {
+                    onChange={(e) => {
                       this.props.changeNewPassword(e.target.value);
                     }}
                   />
                 </div>
                 <div className={styles.inputItem}>
                   <input
-                    type='password'
+                    type="password"
                     //   className={styles.input}
                     placeholder={"Confirm password"}
                     value={this.props.passwordConfirm}
-                    onChange={e => {
+                    onChange={(e) => {
                       this.props.changeNewPasswordConfirm(e.target.value);
                     }}
                   />
                 </div>
                 <div className={styles.inputItem}>
                   <input
-                    type='text'
+                    type="text"
                     //   className={styles.input}
                     placeholder={"First name"}
                     value={this.props.firstName}
-                    onChange={e => {
+                    onChange={(e) => {
                       this.props.changeNewFirstName(e.target.value);
                     }}
                   />
                 </div>
                 <div className={styles.inputItem}>
                   <input
-                    type='text'
+                    type="text"
                     //   className={styles.input}
                     placeholder={"Last name"}
                     value={this.props.lastName}
-                    onChange={e => {
+                    onChange={(e) => {
                       this.props.changeNewLastName(e.target.value);
                     }}
                   />
                 </div>
                 <div className={styles.inputItem}>
                   <input
-                    type='text'
+                    type="text"
                     //   className={styles.input}
                     placeholder={"Phone"}
                     value={this.props.phone}
-                    onChange={e => {
+                    onChange={(e) => {
                       this.props.changeNewPhone(e.target.value);
                     }}
                   />
@@ -111,79 +111,83 @@ class SignUp extends React.Component {
               <div className={styles.inputContainer}>
                 <div className={styles.inputItemAddress}>
                   <input
-                    type='text'
-                    placeholder='Address'
+                    type="text"
+                    placeholder="Address"
                     //   className={styles.input}
                     value={this.props.street}
-                    onChange={e => {
+                    onChange={(e) => {
                       this.props.changeNewAddress(e.target.value);
                     }}
                   />
                 </div>
                 <div className={styles.inputItemAddress}>
                   <input
-                    type='text'
-                    placeholder='Unit'
+                    type="text"
+                    placeholder="Unit"
                     //   className={styles.input}
                     value={this.props.unit}
-                    onChange={e => {
+                    onChange={(e) => {
                       this.props.changeNewUnit(e.target.value);
                     }}
                   />
                 </div>
                 <div className={styles.inputItemAddress}>
                   <input
-                    type='text'
-                    placeholder='City'
+                    type="text"
+                    placeholder="City"
                     //   className={styles.input}
                     value={this.props.city}
-                    onChange={e => {
+                    onChange={(e) => {
                       this.props.changeNewCity(e.target.value);
                     }}
                   />
                 </div>
                 <div className={styles.inputItemAddress}>
                   <input
-                    type='text'
-                    placeholder='State'
+                    type="text"
+                    placeholder="State"
                     //   className={styles.input}
                     value={this.props.state}
-                    onChange={e => {
+                    onChange={(e) => {
                       this.props.changeNewState(e.target.value);
                     }}
                   />
                 </div>
                 <div className={styles.inputItemAddress}>
                   <input
-                    type='text'
-                    placeholder='Zip'
+                    type="text"
+                    placeholder="Zip"
                     //   className={styles.input}
                     value={this.props.zip}
-                    onChange={e => {
+                    onChange={(e) => {
                       this.props.changeNewZip(e.target.value);
                     }}
                   />
                 </div>
               </div>
               <div className={styles.buttonContainer}>
-                <Link style = {{textDecoration: 'none'}} to = "/login">
+                <Link style={{ textDecoration: "none" }} to="/login">
                   <button className={styles.button + " mr-3"}>BACK</button>
                 </Link>
                 <button
                   className={styles.button + " ml-3"}
                   onClick={() => {
-                    let nameCheck = false
-                    let emailCheck = false
-                    if(this.props.firstName == '' || this.props.lastName == ''){
-                      alert('first name and last name is required')
+                    let nameCheck = false;
+                    let emailCheck = false;
+                    if (
+                      this.props.firstName == "" ||
+                      this.props.lastName == ""
+                    ) {
+                      alert("first name and last name is required");
                     } else {
-                      nameCheck = true
+                      nameCheck = true;
                     }
-                    if(this.props.email == ''){
-                      alert('email is required')
+                    if (this.props.email == "") {
+                      alert("email is required");
                     } else {
-                      emailCheck = true
+                      emailCheck = true;
                     }
+
                     if (nameCheck == true && emailCheck == true) {
                       this.props.submitPasswordSignUp(
                         this.props.email,
@@ -204,26 +208,32 @@ class SignUp extends React.Component {
                 >
                   SIGN UP
                 </button>
-                
               </div>
               <div>
                 <hr
-                  style={{marginTop: "2rem", color: "#E392409D", width: "300px"}}
+                  style={{
+                    marginTop: "2rem",
+                    color: "#E392409D",
+                    width: "300px",
+                  }}
                 ></hr>
-                <h6 className = {styles.subHeading} style = {{textAlign: 'center', margin: '20px 0px'}}>OR SIGN UP WITH</h6>
+                <h6
+                  className={styles.subHeading}
+                  style={{ textAlign: "center", margin: "20px 0px" }}
+                >
+                  OR SIGN UP WITH
+                </h6>
                 <SocialSignUp />
               </div>
-  
             </div>
             <div className={"col-5 " + styles.explore}>
               <div className={"row " + styles.centerBtn}>
                 <p>EXPLORE WITHOUT LOGIN</p>
-                <Link style = {{textDecoration: 'none'}} to = '/select-meal'>
-                  <button style = {{color: 'white'}}> START >></button>
+                <Link style={{ textDecoration: "none" }} to="/select-meal">
+                  <button style={{ color: "white" }}>START</button>
                 </Link>
               </div>
             </div>
-  
           </div>
         </div>
       </div>
@@ -254,10 +264,10 @@ SignUp.propTypes = {
   unit: PropTypes.string.isRequired,
   city: PropTypes.string.isRequired,
   state: PropTypes.string.isRequired,
-  zip: PropTypes.string.isRequired
+  zip: PropTypes.string.isRequired,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   email: state.login.newUserInfo.email,
   password: state.login.newUserInfo.password,
   passwordConfirm: state.login.newUserInfo.passwordConfirm,
@@ -268,7 +278,7 @@ const mapStateToProps = state => ({
   unit: state.login.newUserInfo.address.unit,
   city: state.login.newUserInfo.address.city,
   state: state.login.newUserInfo.address.state,
-  zip: state.login.newUserInfo.address.zip
+  zip: state.login.newUserInfo.address.zip,
 });
 
 const functionList = {
@@ -283,7 +293,7 @@ const functionList = {
   changeNewCity,
   changeNewState,
   changeNewZip,
-  submitPasswordSignUp
+  submitPasswordSignUp,
 };
 
 export default connect(mapStateToProps, functionList)(withRouter(SignUp));

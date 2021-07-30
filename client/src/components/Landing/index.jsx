@@ -1,23 +1,23 @@
 import React from "react";
 import PropTypes from "prop-types";
 import Cookies from "js-cookie";
-import {connect} from "react-redux";
+import { connect } from "react-redux";
 import {
   bypassLogin,
   changeEmail,
   changePassword,
   loginAttempt,
   socialLoginAttempt,
-  forgotPassword
+  forgotPassword,
 } from "../../reducers/actions/loginActions";
-import {withRouter} from "react-router";
-import {Link} from "react-router-dom";
+import { withRouter } from "react-router";
+import { Link } from "react-router-dom";
 import GoogleLogin from "react-google-login";
 import FacebookLogin from "react-facebook-login";
 import styles from "./landing.module.css";
 import Alert from "../Alert";
-import SocialLogin from "./socialLogin"
-import Logo from "./Logo.svg"
+import SocialLogin from "./socialLogin";
+import Logo from "./Logo.svg";
 import { ThemeConsumer } from "react-bootstrap/esm/ThemeProvider";
 class Landing extends React.Component {
   constructor() {
@@ -28,7 +28,7 @@ class Landing extends React.Component {
     };
   }
 
-  successLogin = page => {
+  successLogin = (page) => {
     this.props.history.push(`/${page}`);
   };
 
@@ -64,18 +64,18 @@ class Landing extends React.Component {
         );
       } else {
         this.setState({
-          mounted: true
+          mounted: true,
         });
         window.AppleID.auth.init({
           clientId: process.env.REACT_APP_APPLE_CLIENT_ID,
           scope: "email",
-          redirectURI: process.env.REACT_APP_APPLE_REDIRECT_URI
+          redirectURI: process.env.REACT_APP_APPLE_REDIRECT_URI,
         });
       }
     }
   }
 
-  responseGoogle = response => {
+  responseGoogle = (response) => {
     console.log(response);
     if (response.profileObj) {
       // Google Login successful, try to login to MTYD
@@ -98,7 +98,7 @@ class Landing extends React.Component {
     }
   };
 
-  responseFacebook = response => {
+  responseFacebook = (response) => {
     console.log(response);
     if (response.email) {
       console.log("Facebook Login successful");
@@ -118,18 +118,22 @@ class Landing extends React.Component {
       console.log("Facebook Login failed");
     }
   };
-  showError = err => {
+  showError = (err) => {
     console.log("this is error in show err: ", err);
     return (
       <div
-        style={{display: "flex", alignItem: "center", justifyContent: "center"}}
+        style={{
+          display: "flex",
+          alignItem: "center",
+          justifyContent: "center",
+        }}
       >
         <p
           style={{
             color: "red",
             fontSize: "15px",
             fontWeight: "bold",
-            padding: "10px 10px"
+            padding: "10px 10px",
           }}
         >
           {err}
@@ -141,25 +145,43 @@ class Landing extends React.Component {
   render() {
     if (!this.state.mounted) {
       return (
-        <div style = {{display: 'grid', alignContent: 'center', justifyContent: 'center', margin: '100px 0px'}}>
-          <h6 style = {{textAlign: 'center'}}>You are already logged in</h6>
+        <div
+          style={{
+            display: "grid",
+            alignContent: "center",
+            justifyContent: "center",
+            margin: "100px 0px",
+          }}
+        >
+          <h6 style={{ textAlign: "center" }}>You are already logged in</h6>
           <div>
-            <h6 style = {{textAlign: 'center'}}>Click the following button to navigate to your meal plan</h6>
-            <Link to = '/meal-plan' style = {{borderRadius: '20px', backgroundColor: 'orange', width: 'fit-content', margin: 'auto', padding: '10px 15px', width: 'max-content'}}>
+            <h6 style={{ textAlign: "center" }}>
+              Click the following button to navigate to your meal plan
+            </h6>
+            <Link
+              to="/meal-plan"
+              style={{
+                borderRadius: "20px",
+                backgroundColor: "orange",
+                width: "fit-content",
+                margin: "auto",
+                padding: "10px 15px",
+                width: "max-content",
+              }}
+            >
               Meal Plan
             </Link>
           </div>
-
         </div>
       );
     }
     return (
       <div className={styles.root}>
         <div className={styles.mainLogin}>
-            {/* <h2 style = {{float: 'right' , color: '#FFBA00', transform: 'rotate(45deg)', fontSize: '45px'}}>+</h2> */}
+          {/* <h2 style = {{float: 'right' , color: '#FFBA00', transform: 'rotate(45deg)', fontSize: '45px'}}>+</h2> */}
           <div className={styles.mealHeader}>
-            <img style={{width: "65%", height:"65%"}} src={Logo}/>
-            <p style = {{color: 'black'}}>NUTRITION MADE EASY</p>
+            <img style={{ width: "65%", height: "65%" }} src={Logo} />
+            <p style={{ color: "black" }}>NUTRITION MADE EASY</p>
             <p>LOCAL.ORGANIC.RESPONSIBLE</p>
           </div>
 
@@ -167,11 +189,11 @@ class Landing extends React.Component {
             <div className={styles.loginSectionContainer}>
               <div className={styles.loginSectionItem}>
                 <input
-                  type='text'
-                  placeholder='USER NAME'
+                  type="text"
+                  placeholder="USER NAME"
                   className={styles.loginSectionInput}
                   value={this.props.email}
-                  onChange={e => {
+                  onChange={(e) => {
                     this.props.changeEmail(e.target.value);
                   }}
                 />
@@ -179,27 +201,43 @@ class Landing extends React.Component {
               <div className={styles.loginSectionItem}>
                 <span className={styles.loginSectionInput}>
                   <input
-                    style={{marginBottom: "0px"}}
-                    type='password'
-                    id='password'
-                    placeholder='PASSWORD'
+                    style={{ marginBottom: "0px" }}
+                    type="password"
+                    id="password"
+                    placeholder="PASSWORD"
                     value={this.props.password}
-                    onChange={e => {
+                    onChange={(e) => {
                       this.props.changePassword(e.target.value);
                     }}
                   />
 
                   <a className={styles.passwordShow}>
                     <i
-                      className='far fa-eye'
-                      id='togglePassword'
+                      className="far fa-eye"
+                      id="togglePassword"
                       onClick={this.viewPassword}
                     ></i>
                   </a>
                 </span>
               </div>
-              <Link style = {{margin: 'auto'}} to={{ pathname: '/login', state: { forgotPassword: 'from Home'} }}>
-                  <h6 style = {{margin: 'auto', fontSize: '1rem', color: "black", float: "right"}}> Forgot Password?</h6>
+              <Link
+                style={{ margin: "auto" }}
+                to={{
+                  pathname: "/login",
+                  state: { forgotPassword: "from Home" },
+                }}
+              >
+                <h6
+                  style={{
+                    margin: "auto",
+                    fontSize: "1rem",
+                    color: "black",
+                    float: "right",
+                  }}
+                >
+                  {" "}
+                  Forgot Password?
+                </h6>
               </Link>
             </div>
             <div className={styles.buttonContainer}>
@@ -211,24 +249,24 @@ class Landing extends React.Component {
                     this.props.password,
                     this.successLogin
                   );
-                  console.log("2")
+                  console.log("2");
                 }}
               >
                 LOGIN
               </button>
-              <Link to='sign-up'>
+              <Link to="sign-up">
                 <button className={styles.button}>SIGNUP</button>
               </Link>
             </div>
             <hr
-              style={{marginTop: "2rem", color: "#E392409D", width: "300px"}}
+              style={{ marginTop: "2rem", color: "#E392409D", width: "300px" }}
             ></hr>
             <p
               style={{
                 color: "black",
                 textAlign: "center",
                 fontSize: "1rem",
-                paddingTop: "1.2rem"
+                paddingTop: "1.2rem",
               }}
             >
               LOGIN OR SIGNUP WITH
@@ -241,11 +279,10 @@ class Landing extends React.Component {
                 alignContent: "center",
                 textAlign: "center",
                 justifyContent: "space-between",
-                padding: "0rem 8.5rem"
+                padding: "0rem 8.5rem",
               }}
             >
               <SocialLogin />
-
             </div>
             <Alert />
           </div>
@@ -263,13 +300,13 @@ Landing.propTypes = {
   socialLoginAttempt: PropTypes.func.isRequired,
   forgotPassword: PropTypes.func.isRequired,
   email: PropTypes.string.isRequired,
-  password: PropTypes.string.isRequired
+  password: PropTypes.string.isRequired,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   email: state.login.email,
   password: state.login.password,
-  error: state.login.error
+  error: state.login.error,
 });
 
 const functionList = {
@@ -278,7 +315,7 @@ const functionList = {
   changePassword,
   loginAttempt,
   socialLoginAttempt,
-  forgotPassword
+  forgotPassword,
 };
 
 export default connect(mapStateToProps, functionList)(withRouter(Landing));
