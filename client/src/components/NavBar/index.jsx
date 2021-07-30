@@ -3,44 +3,44 @@ import Subscribe from "../NavBar/subscribe.png";
 import Select from "../NavBar/select.png";
 import Profile from "../NavBar/profile.png";
 import More from "../NavBar/more.png";
-import {Link} from "react-router-dom";
-import {connect} from "react-redux";
-import {withRouter} from "react-router-dom";
-import {resetLogin, LoadUserInfo} from "../../reducers/actions/loginActions";
-import {resetProfile} from "../../reducers/actions/profileActions";
-import {resetSubscription} from "../../reducers/actions/subscriptionActions";
+import { Link } from "react-router-dom";
+import { connect } from "react-redux";
+import { withRouter } from "react-router-dom";
+import { resetLogin, LoadUserInfo } from "../../reducers/actions/loginActions";
+import { resetProfile } from "../../reducers/actions/profileActions";
+import { resetSubscription } from "../../reducers/actions/subscriptionActions";
 import store from "../../reducers/store";
 import styles from "./navBar.module.css";
 import Cookies from "js-cookie";
 import whiteLogo from "../../images/White_logo_for_web.png";
-import axios from 'axios';
-import { API_URL } from '../../reducers/constants';
+import axios from "axios";
+import { API_URL } from "../../reducers/constants";
 import PopLogin from "../PopLogin";
 import NavMenu from "../NavBarHamburger";
-import Popsignup from '../PopSignup';
+import Popsignup from "../PopSignup";
 
 class SideNavBar extends React.Component {
   render() {
     return (
       <div className={styles.root}>
         <div className={styles.navContainer}>
-          <Link to='/choose-plan'>
+          <Link to="/choose-plan">
             <div className={styles.navElt}>
-              <img src={Subscribe} alt='Subscribe' />
+              <img src={Subscribe} alt="Subscribe" />
             </div>
           </Link>
-          <Link to='/profile'>
+          <Link to="/profile">
             <div className={styles.navElt}>
-              <img src={Profile} alt='Profile' />
+              <img src={Profile} alt="Profile" />
             </div>
           </Link>
-          <Link to='/select-meal'>
+          <Link to="/select-meal">
             <div className={styles.navElt}>
-              <img src={Select} alt='Select' />
+              <img src={Select} alt="Select" />
             </div>
           </Link>
           <div className={styles.navElt}>
-            <img src={More} alt='More' />
+            <img src={More} alt="More" />
           </div>
         </div>
       </div>
@@ -51,28 +51,28 @@ class SideNavBar extends React.Component {
 class BottomNavBar extends React.Component {
   render() {
     return (
-      <div className='navbar'>
-        <div className='meal-footer'>
-          <Link to='/choose-plan'>
-            <div className='footer-icon-tray'>
-              <img src={Subscribe} alt='Subscribe' className='footer-icons' />
+      <div className="navbar">
+        <div className="meal-footer">
+          <Link to="/choose-plan">
+            <div className="footer-icon-tray">
+              <img src={Subscribe} alt="Subscribe" className="footer-icons" />
               <p>Subscribe</p>
             </div>
           </Link>
-          <Link to='/select-meal'>
-            <div className='footer-icon-tray'>
-              <img src={Select} alt='Select' className='footer-icons' />
+          <Link to="/select-meal">
+            <div className="footer-icon-tray">
+              <img src={Select} alt="Select" className="footer-icons" />
               <p>Select</p>
             </div>
           </Link>
-          <Link to='/profile'>
-            <div className='footer-icon-tray'>
-              <img src={Profile} alt='Profile' className='footer-icons' />
+          <Link to="/profile">
+            <div className="footer-icon-tray">
+              <img src={Profile} alt="Profile" className="footer-icons" />
               <p>Profile</p>
             </div>
           </Link>
-          <div className='footer-icon-tray'>
-            <img src={More} alt='More' className='footer-icons' />
+          <div className="footer-icon-tray">
+            <img src={More} alt="More" className="footer-icons" />
             <p>More</p>
           </div>
         </div>
@@ -91,45 +91,46 @@ class NavBar extends React.Component {
       lastName: "",
       customerId: "",
       profileRole: "",
-      login_seen:false,
-      signUpSeen:false,
+      login_seen: false,
+      signUpSeen: false,
       // width:window.innerWidth,
       // loginNameLogoutDisplay:'flex',
       windowHeight: undefined,
-      windowWidth: undefined
+      windowWidth: undefined,
+      hasMealPlan: false,
     };
   }
 
-  handleResize = () => this.setState({
-    windowHeight: window.innerHeight,
-    windowWidth: window.innerWidth
-  });
+  handleResize = () =>
+    this.setState({
+      windowHeight: window.innerHeight,
+      windowWidth: window.innerWidth,
+    });
 
   togglePopLogin = () => {
-
-    console.log('inside toggle pop login')
+    console.log("inside toggle pop login");
     this.setState({
-     login_seen: !this.state.login_seen,
+      login_seen: !this.state.login_seen,
     });
 
-    if(!this.state.login_seen){
+    if (!this.state.login_seen) {
       this.setState({
-        signUpSeen:false
-      })
+        signUpSeen: false,
+      });
     }
-   };
+  };
 
-   togglePopSignup = () => {
+  togglePopSignup = () => {
     this.setState({
-     signUpSeen: !this.state.signUpSeen
+      signUpSeen: !this.state.signUpSeen,
     });
 
-    if(!this.state.signUpSeen){
+    if (!this.state.signUpSeen) {
       this.setState({
-        login_seen:false
-      })
+        login_seen: false,
+      });
     }
-   };
+  };
 
   logOut = () => {
     this.props.resetProfile();
@@ -143,7 +144,7 @@ class NavBar extends React.Component {
 
   goToLink = (link) => {
     this.props.history.push(link);
-  }
+  };
 
   componentDidMount() {
     //check for logged in
@@ -152,28 +153,32 @@ class NavBar extends React.Component {
     // console.log("props: ", this.props.history.location.pathname);
 
     this.handleResize();
-    window.addEventListener('resize', this.handleResize);
+    window.addEventListener("resize", this.handleResize);
 
     if (customer_uid) {
-      this.setState({login: true});
+      this.setState({ login: true });
       this.props.LoadUserInfo(customer_uid);
       store.subscribe(() => {
         let userInfo = store.getState().login.userInfo;
         if (userInfo && userInfo.customerId !== "") {
-          if (userInfo.firstName == ''){ // check for first name
+          if (userInfo.firstName == "") {
+            // check for first name
             this.setState({
-              firstName: "No Name"
-            })
-          } 
-          if (userInfo.lastName == ''){ // check for last name
-            this.setState({
-              lastName: "No Name"
-            })
+              firstName: "No Name",
+            });
           }
-          
-          let iconName = (userInfo.firstName.charAt(0) + userInfo.lastName.charAt(0)).toUpperCase();
-          
-          this.setState(state => ({
+          if (userInfo.lastName == "") {
+            // check for last name
+            this.setState({
+              lastName: "No Name",
+            });
+          }
+
+          let iconName = (
+            userInfo.firstName.charAt(0) + userInfo.lastName.charAt(0)
+          ).toUpperCase();
+
+          this.setState((state) => ({
             ...state,
             ...userInfo,
             iconName,
@@ -183,15 +188,36 @@ class NavBar extends React.Component {
           }));
         }
       });
+
+      axios
+        .get(`${API_URL}customer_lplp`, {
+          params: {
+            customer_uid: customer_uid,
+          },
+        })
+        .then((res) => {
+          const subscriptions = res.data.result;
+          if (subscriptions) {
+            this.setState({
+              ...this.state,
+              hasMealPlan: true,
+            });
+          } else {
+            this.setState({
+              ...this.state,
+              hasMealPlan: false,
+            });
+          }
+        });
     }
-      
+
     // Get user role
     axios
       .get(`${API_URL}Profile/${customer_uid}`)
       .then((response) => {
         const role = response.data.result[0].role.toLowerCase();
         console.log("role: ", role);
-        this.setState({profileRole: role});
+        this.setState({ profileRole: role });
         // console.log("Profile role: " + this.state.profileRole);
         // console.log(response)
       })
@@ -200,13 +226,48 @@ class NavBar extends React.Component {
           console.log(err.response);
         }
         console.log(err);
-      });    
+      });
   }
 
-  render() {
+  // checkMealPlans = () => {
+  //   if (
+  //     document.cookie
+  //       .split(";")
+  //       .some((item) => item.trim().startsWith("customer_uid="))
+  //   ) {
+  //     const customer_uid = document.cookie
+  //       .split("; ")
+  //       .find((item) => item.startsWith("customer_uid="))
+  //       .split("=")[1];
 
+  //     // refactor to use axios
+  //     axios
+  //       .get(`${API_URL}customer_lplp`, {
+  //         params: {
+  //           customer_uid: customer_uid,
+  //         },
+  //       })
+  //       .then((res) => {
+  //         const subscriptions = res.data.result;
+  //         if (subscriptions) {
+  //           this.setState({
+  //             ...this.state,
+  //             hasMealPlan: true,
+  //           });
+  //         } else {
+  //           this.setState({
+  //             ...this.state,
+  //             hasMealPlan: false,
+  //           });
+  //         }
+  //       });
+  //   }
+  // };
+
+  render() {
     // const nameLength = this.state.firstName.length*14+this.state.lastName.length*14+30;
-    const nameLength = this.state.firstName.length*14+this.state.lastName.length*14 + 'px';
+    const nameLength =
+      this.state.firstName.length * 14 + this.state.lastName.length * 14 + "px";
     console.log("namelength: ", nameLength);
 
     // const nameFormat = {
@@ -217,7 +278,6 @@ class NavBar extends React.Component {
 
     return (
       <div className={styles.navbar}>
-
         {/* For debugging window size */}
         {/* <span 
           style={{
@@ -237,73 +297,71 @@ class NavBar extends React.Component {
         </span> */}
 
         <NavMenu
-          login = {this.state.login}
-          LogoutFunction = {this.logOut}
-          togglePopSignup = {this.togglePopSignup}
-          togglePopLogin = {this.togglePopLogin}
-          firstName = {this.state.firstName}
-          lastName = {this.state.lastName}
-          isAdmin = {
-            this.state.profileRole === 'admin'
-              ? true
-              : false
-          }
+          login={this.state.login}
+          LogoutFunction={this.logOut}
+          togglePopSignup={this.togglePopSignup}
+          togglePopLogin={this.togglePopLogin}
+          firstName={this.state.firstName}
+          lastName={this.state.lastName}
+          isAdmin={this.state.profileRole === "admin" ? true : false}
+          hasMealPlan={this.state.hasMealPlan}
         />
 
-        {console.log("profile role: " + this.state.profileRole + "; window height: ", this.state.windowWidth)}
-        {
-          this.state.profileRole === 'admin' && this.state.windowWidth > 900
-            ? (
-                <div
-                  style={{
-                    // border: 'inset',
-                    // width: '20%',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    position: 'absolute',
-                    left: '120px'
-                  }}
-                >
-                  <div
-                    onClick={() => {this.goToLink('/admin/order-ingredients')}}
-                    className={styles.adminBtn2}
-                  >
-                    Admin
-                  </div>
-                </div>
-              )
-            : null
-        }
+        {console.log(
+          "profile role: " + this.state.profileRole + "; window height: ",
+          this.state.windowWidth
+        )}
+        {this.state.profileRole === "admin" && this.state.windowWidth > 900 ? (
+          <div
+            style={{
+              // border: 'inset',
+              // width: '20%',
+              display: "flex",
+              justifyContent: "center",
+              position: "absolute",
+              left: "120px",
+            }}
+          >
+            <div
+              onClick={() => {
+                this.goToLink("/admin/order-ingredients");
+              }}
+              className={styles.adminBtn2}
+            >
+              Admin
+            </div>
+          </div>
+        ) : null}
 
         <div
           style={{
             // border: 'inset',
-            width: '30%',
-            minWidth: '200px',
-            display: 'flex',
-            justifyContent: 'center',
-            marginTop: '10px'
+            width: "30%",
+            minWidth: "200px",
+            display: "flex",
+            justifyContent: "center",
+            marginTop: "10px",
           }}
         >
-          <a 
-            href='/home' 
+          <a
+            href="/home"
             style={{
               // margin:0,
               // position:"absolute",
-              // width: "160px", 
+              // width: "160px",
               // height:"80px",
               // top:"5px",
               // border: 'inset',
-              backgroundImage:`url(${whiteLogo})`,
-              backgroundSize:'cover',
+              backgroundImage: `url(${whiteLogo})`,
+              backgroundSize: "cover",
               // backgroundPosition:'center',
               // left:'48%',
-              width: '160px',
-              height: '80px'
+              width: "160px",
+              height: "80px",
             }}
             aria-label="Click here to return to the homepage"
-            title="Click here to return to the homepage">
-          </a>
+            title="Click here to return to the homepage"
+          ></a>
         </div>
 
         {this.state.login ? (
@@ -311,39 +369,39 @@ class NavBar extends React.Component {
             style={{
               // border: 'inset',
               // display: 'inline-flex',
-              height: '44px',
-              width: '40%',
+              height: "44px",
+              width: "40%",
               // minWidth: '180px',
-              position: 'relative'
+              position: "relative",
             }}
           >
-
             {this.state.windowWidth > 900 ? (
               <div
-                onClick={() => {this.goToLink('/meal-plan')}}
+                onClick={() => {
+                  if (this.state.hasMealPlan) {
+                    this.goToLink("/meal-plan");
+                  } else {
+                    this.goToLink("/choose-plan");
+                  }
+                }}
                 className={styles.nameBtn}
                 // style={{width: nameLength}}
               >
                 {this.state.firstName} {this.state.lastName}
               </div>
-            ) : (
-              null
-            )}
+            ) : null}
 
-            {this.state.windowWidth > 900
-              ? (
-                  <div
-                    className={styles.logoutBtn}
-                    onClick={this.logOut}
-                    tabIndex="0"
-                    aria-label="Click here to logout"
-                    title="Click here to logout"
-                  >
-                    Logout
-                  </div>
-                )
-              : null}
-
+            {this.state.windowWidth > 900 ? (
+              <div
+                className={styles.logoutBtn}
+                onClick={this.logOut}
+                tabIndex="0"
+                aria-label="Click here to logout"
+                title="Click here to logout"
+              >
+                Logout
+              </div>
+            ) : null}
           </div>
         ) : (
           // <div
@@ -355,13 +413,12 @@ class NavBar extends React.Component {
             style={{
               // border: 'inset',
               // display: 'inline-flex',
-              height: '44px',
-              width: '40%',
+              height: "44px",
+              width: "40%",
               // minWidth: '180px',
-              position: 'relative'
+              position: "relative",
             }}
           >
-
             {this.state.windowWidth > 900 ? (
               <div
                 onClick={this.togglePopSignup}
@@ -373,10 +430,12 @@ class NavBar extends React.Component {
               </div>
             ) : null}
 
-            {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
+            {this.state.signUpSeen ? (
+              <Popsignup toggle={this.togglePopSignup} />
+            ) : null}
 
             {this.state.windowWidth > 900 ? (
-              <div 
+              <div
                 onClick={this.togglePopLogin}
                 // className={styles.signInBtn}
                 className={styles.loginBtn}
@@ -387,22 +446,22 @@ class NavBar extends React.Component {
               </div>
             ) : null}
 
-            {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
-
+            {this.state.login_seen ? (
+              <PopLogin toggle={this.togglePopLogin} />
+            ) : null}
           </div>
         )}
-
       </div>
     );
   }
 }
 
-const mapStateToProps = state => ({});
+const mapStateToProps = (state) => ({});
 const WebNavBar = connect(mapStateToProps, {
   resetLogin,
   resetProfile,
   resetSubscription,
-  LoadUserInfo
+  LoadUserInfo,
 })(withRouter(NavBar));
 
-export {WebNavBar, BottomNavBar, SideNavBar};
+export { WebNavBar, BottomNavBar, SideNavBar };

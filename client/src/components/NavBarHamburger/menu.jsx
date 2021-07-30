@@ -33,7 +33,7 @@ export class MenuList extends Component {
   };
 
   componentDidMount() {
-    this.checkMealPlans();
+    // this.checkMealPlans();
     console.log("menu props: ", this.props);
     window.addEventListener("resize", this.updateDimensions);
     if (window.innerWidth <= 900) {
@@ -50,9 +50,15 @@ export class MenuList extends Component {
       //   }
       // })
 
+      this.setState({
+        ...this.state,
+        mealPlans: this.props.hasMealPlans,
+      });
+
       if (this.props.login == true && this.props.isAdmin) {
         console.log("(mount) 1");
         this.setState({
+          ...this.state,
           showLogout: "flex",
           showAdmin: "flex",
           showSigninSignup: "none",
@@ -61,6 +67,7 @@ export class MenuList extends Component {
       } else if (this.props.login == true && !this.props.isAdmin) {
         console.log("(mount) 2");
         this.setState({
+          ...this.state,
           showLogout: "flex",
           showAdmin: "none",
           showSigninSignup: "none",
@@ -69,6 +76,7 @@ export class MenuList extends Component {
       } else {
         console.log("(mount) 3");
         this.setState({
+          ...this.state,
           showLogout: "none",
           showAdmin: "none",
           showSigninSignup: "flex",
@@ -217,40 +225,40 @@ export class MenuList extends Component {
     this.props.togglePopLogin();
   };
 
-  checkMealPlans = () => {
-    if (
-      document.cookie
-        .split(";")
-        .some((item) => item.trim().startsWith("customer_uid="))
-    ) {
-      const customer_uid = document.cookie
-        .split("; ")
-        .find((item) => item.startsWith("customer_uid="))
-        .split("=")[1];
+  // checkMealPlans = () => {
+  //   if (
+  //     document.cookie
+  //       .split(";")
+  //       .some((item) => item.trim().startsWith("customer_uid="))
+  //   ) {
+  //     const customer_uid = document.cookie
+  //       .split("; ")
+  //       .find((item) => item.startsWith("customer_uid="))
+  //       .split("=")[1];
 
-      // refactor to use axios
-      axios
-        .get(`${API_URL}customer_lplp`, {
-          params: {
-            customer_uid: customer_uid,
-          },
-        })
-        .then((res) => {
-          const subscriptions = res.data.result;
-          if (subscriptions) {
-            this.setState({
-              ...this.state,
-              mealPlans: true,
-            });
-          } else {
-            this.setState({
-              ...this.state,
-              mealPlans: false,
-            });
-          }
-        });
-    }
-  };
+  //     // refactor to use axios
+  //     axios
+  //       .get(`${API_URL}customer_lplp`, {
+  //         params: {
+  //           customer_uid: customer_uid,
+  //         },
+  //       })
+  //       .then((res) => {
+  //         const subscriptions = res.data.result;
+  //         if (subscriptions) {
+  //           this.setState({
+  //             ...this.state,
+  //             mealPlans: true,
+  //           });
+  //         } else {
+  //           this.setState({
+  //             ...this.state,
+  //             mealPlans: false,
+  //           });
+  //         }
+  //       });
+  //   }
+  // };
 
   toggleMealPlanModal = () => {
     this.setState({
