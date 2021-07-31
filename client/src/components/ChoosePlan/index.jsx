@@ -134,19 +134,27 @@ class ChoosePlan extends React.Component {
     window.history.pushState({}, document.title, window.location.pathname);
 
     // Logged in from Apple
+    // if (urlParams.has("customer_uid")) {
+    // window.location.href = "/admin/order-ingredients";
+
     if (urlParams.has("customer_uid")) {
       // window.location.href = "/admin/order-ingredients";
 
-      let encrypted_customer_uid = urlParams.get("customer_uid");
+      let hashed_customer_uid = urlParams.get("customer_uid");
+
       let customer_uid = "";
-      crypto.subtle
-        .digest("SHA-512", encrypted_customer_uid)
-        .then((res) => {
-          console.log(res);
-          customer_uid = res;
-          document.cookie = "customer_uid=" + customer_uid;
-          return axios.get(API_URL + "Profile/" + customer_uid);
-        })
+      crypto.subtle.digest("SHA-512", hashed_customer_uid).then((res) => {
+        console.log(res);
+        customer_uid = res;
+        document.cookie = "customer_uid=" + customer_uid;
+      });
+
+      customer_uid = document.cookie
+        .split("; ")
+        .find((item) => item.startsWith("customer_uid="))
+        .split("=")[1];
+      axios
+        .get(API_URL + "Profile/" + customer_uid)
         .then((res) => {
           const customerInfo = res.data.result[0];
           const successLogin = (page) => {
@@ -157,6 +165,27 @@ class ChoosePlan extends React.Component {
         .catch((err) => {
           console.log(err);
         });
+
+      // let encrypted_customer_uid = urlParams.get("customer_uid");
+      // let customer_uid = "";
+      // crypto.subtle
+      //   .digest("SHA-512", encrypted_customer_uid)
+      //   .then((res) => {
+      //     console.log(res);
+      //     customer_uid = res;
+      //     document.cookie = "customer_uid=" + customer_uid;
+      //     return axios.get(API_URL + "Profile/" + customer_uid);
+      //   })
+      //   .then((res) => {
+      //     const customerInfo = res.data.result[0];
+      //     const successLogin = (page) => {
+      //       this.props.history.push(`/${page}`);
+      //     };
+      //     preCallback(customerInfo, successLogin);
+      //   })
+      //   .catch((err) => {
+      //     console.log(err);
+      //   });
       // document.cookie = "customer_uid=" + customer_uid;
       // axios
       //   .get(API_URL + "customer_lplp", {
