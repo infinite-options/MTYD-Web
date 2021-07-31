@@ -137,13 +137,26 @@ class ChoosePlan extends React.Component {
     if (urlParams.has("customer_uid")) {
       // window.location.href = "/admin/order-ingredients";
 
-      let customer_uid = urlParams.get("customer_uid");
-      document.cookie = "customer_uid=" + customer_uid;
-      axios
-        .get(API_URL + "customer_lplp", {
-          params: {
-            customer_uid: customer_uid,
-          },
+      // Original Code
+      // let customer_uid = urlParams.get("customer_uid");
+      // document.cookie = "customer_uid=" + customer_uid;
+
+      // New Code
+      let hashed_customer_uid = urlParams.get("customer_uid");
+      console.log(hashed_customer_uid);
+
+      let customer_uid = "";
+      crypto.subtle
+        .digest("SHA-512", hashed_customer_uid)
+        .then((res) => {
+          console.log(res);
+          customer_uid = res;
+          document.cookie = "customer_uid=" + customer_uid;
+          return axios.get(API_URL + "customer_lplp", {
+            params: {
+              customer_uid: customer_uid,
+            },
+          });
         })
         .then((res) => {
           console.log(res);
@@ -157,34 +170,14 @@ class ChoosePlan extends React.Component {
             customerUid: customer_uid,
             loggedIn: true,
           });
+          return axios.get(API_URL + "Profile/" + customer_uid);
         })
-        .catch((err) => {
-          console.log(err);
-          if (err.response) {
-            console.log(err.response);
-          }
-        });
-      axios
-        .get(API_URL + "Profile/" + customer_uid)
         .then((res) => {
           const customerInfo = res.data.result[0];
           const successLogin = (page) => {
             this.props.history.push(`/${page}`);
           };
           preCallback(customerInfo, successLogin);
-
-          // console.log(res.data.result[0])
-          // let data = res.data.result[0];
-          // this.props.changeAddressFirstName(data.customer_first_name);
-          // this.props.changeAddressLastName(data.customer_last_name);
-          // this.props.changeAddressStreet(data.customer_address);
-          // this.props.changeAddressUnit(data.customer_unit);
-          // this.props.changeAddressCity(data.customer_city);
-          // this.props.changeAddressState(data.customer_state);
-          // this.props.changeAddressZip(data.customer_zip);
-          // this.props.changeAddressPhone(data.customer_phone_num);
-          //console.log("(2) choose-plan address props: " + JSON.stringify(this.props.address));
-
           this.setState({
             profileLoaded: true,
           });
@@ -192,6 +185,61 @@ class ChoosePlan extends React.Component {
         .catch((err) => {
           console.log(err);
         });
+
+      // Old Api Calls
+      // axios
+      //   .get(API_URL + "customer_lplp", {
+      //     params: {
+      //       customer_uid: customer_uid,
+      //     },
+      //   })
+      //   .then((res) => {
+      //     console.log(res);
+      //     if (res.data.result !== undefined) {
+      //       // this.props.history.push("/select-meal");
+      //       this.props.fetchProfileInformation(customer_uid);
+      //     }
+      //     this.props.fetchPlans();
+      //     this.setState({
+      //       mounted: true,
+      //       customerUid: customer_uid,
+      //       loggedIn: true,
+      //     });
+      //   })
+      //   .catch((err) => {
+      //     console.log(err);
+      //     if (err.response) {
+      //       console.log(err.response);
+      //     }
+      //   });
+      // axios
+      //   .get(API_URL + "Profile/" + customer_uid)
+      //   .then((res) => {
+      //     const customerInfo = res.data.result[0];
+      //     const successLogin = (page) => {
+      //       this.props.history.push(`/${page}`);
+      //     };
+      //     preCallback(customerInfo, successLogin);
+
+      //     // console.log(res.data.result[0])
+      //     // let data = res.data.result[0];
+      //     // this.props.changeAddressFirstName(data.customer_first_name);
+      //     // this.props.changeAddressLastName(data.customer_last_name);
+      //     // this.props.changeAddressStreet(data.customer_address);
+      //     // this.props.changeAddressUnit(data.customer_unit);
+      //     // this.props.changeAddressCity(data.customer_city);
+      //     // this.props.changeAddressState(data.customer_state);
+      //     // this.props.changeAddressZip(data.customer_zip);
+      //     // this.props.changeAddressPhone(data.customer_phone_num);
+      //     //console.log("(2) choose-plan address props: " + JSON.stringify(this.props.address));
+
+      //     this.setState({
+      //       profileLoaded: true,
+      //     });
+      //   })
+      //   .catch((err) => {
+      //     console.log(err);
+      //   });
     }
     // Check for logged in
     else if (
