@@ -141,6 +141,7 @@ class ChoosePlan extends React.Component {
       // window.location.href = "/admin/order-ingredients";
 
       let hashed_customer_uid = urlParams.get("customer_uid");
+      console.log(hashed_customer_uid);
 
       let customer_uid = "";
       crypto.subtle.digest("SHA-512", hashed_customer_uid).then((res) => {
