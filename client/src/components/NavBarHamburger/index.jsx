@@ -51,6 +51,7 @@ export class NavMenu extends Component {
             aria-label="Click here to open navigation menu"
             title="Click here to open navigation menu"
           ></div>
+          {console.log("L: " + this.props.login)}
           {this.state.popSeen ? (
             <Menu
               close={this.togglePopMenu}

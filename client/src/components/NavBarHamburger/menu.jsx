@@ -30,7 +30,6 @@ export class MenuList extends Component {
     mealPlans: false,
     showMealPlanModal: false,
     showAccountModal: false,
-    login: false,
   };
 
   componentDidMount() {
@@ -54,7 +53,6 @@ export class MenuList extends Component {
       this.setState({
         ...this.state,
         mealPlans: this.props.hasMealPlans,
-        login: this.props.login,
       });
 
       if (this.props.login == true && this.props.isAdmin) {
@@ -282,7 +280,7 @@ export class MenuList extends Component {
         }}
       >
         {/* <span>Window size: {this.state.width} x {this.state.height}</span> */}
-
+        {console.log("Logged In: " + this.props.login)}
         <div
           style={{
             width: "44px",
@@ -432,7 +430,7 @@ export class MenuList extends Component {
           </a>
         </div>
 
-        {this.state.showMealPlanModal && this.state.login && (
+        {this.state.showMealPlanModal && this.props.login && (
           <div
             style={{
               height: "100%",
@@ -503,7 +501,7 @@ export class MenuList extends Component {
             </div>
           </div>
         )}
-        {this.state.showMealPlanModal && !this.state.login && (
+        {this.state.showMealPlanModal && !this.props.login && (
           <div
             style={{
               height: "100%",
@@ -565,7 +563,7 @@ export class MenuList extends Component {
                   style={{ width: "150px" }}
                   onClick={this.showPopSignup}
                 >
-                  Signup
+                  Sign Up
                 </button>
               </Modal.Footer>
             </div>
