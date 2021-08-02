@@ -155,6 +155,7 @@ class ChoosePlan extends React.Component {
       console.log(hashed_customer_uid);
 
       let customer_uid = this.convertHexToString(hashed_customer_uid);
+      document.cookie = "customer_uid=" + customer_uid;
       console.log(customer_uid);
 
       // Old Api Calls
