@@ -1669,7 +1669,7 @@ function CreateMenu({ history, ...props }) {
                         meal_cat: state.newMeal.meal_cat,
                         menu_meal_id: state.newMeal.meal_uid,
                         default_meal: state.newMeal.default_meal,
-                        delivery_days: ["Sunday", "Monday"],
+                        delivery_days: "[Sunday, Monday]",
                         meal_price: "10",
                       };
                       console.log(newMenuItem);
