@@ -127,8 +127,24 @@ body {
   max-height: 80%;
 }
 
+.carouselCol {
+  width: 700px;
+}
+
 @media only screen and (max-width: 1330px) {
   .contactInfo {
     display: none;
+  }
+}
+
+@media screen and (max-width: 1639px) {
+  .carouselCol {
+    width: 550px;
+  }
+}
+
+@media screen and (max-width: 1539px) {
+  .carouselCol {
+    width: 450px;
   }
 }

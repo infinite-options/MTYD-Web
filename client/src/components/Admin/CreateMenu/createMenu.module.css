@@ -69,6 +69,10 @@ body {
   padding-bottom: 5px;
 }
 
+.carouselCol {
+  width: 700px;
+}
+
 .dateCarouselArrowBtn {
   border: none;
   background-color: transparent;
@@ -144,4 +148,16 @@ body {
   background-color: grey;
   font-weight: bold;
   cursor: not-allowed !important;
+}
+
+@media screen and (max-width: 1539px) {
+  .carouselCol {
+    width: 550px;
+  }
+}
+
+@media screen and (max-width: 1380px) {
+  .carouselCol {
+    width: 400px;
+  }
 }

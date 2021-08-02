@@ -57,20 +57,19 @@ const initialState = {
 
 const responsive = {
   superLargeDesktop: {
-    // the naming can be any, depends on you.
     breakpoint: { max: 4000, min: 3000 },
-    items: 5,
+    items: 8,
   },
   desktop: {
-    breakpoint: { max: 3000, min: 1024 },
-    items: 5,
+    breakpoint: { max: 3000, min: 1640 },
+    items: 8,
+  },
+  smallDesktop: {
+    breakpoint: { max: 1639, min: 1540 },
+    items: 6,
   },
   tablet: {
-    breakpoint: { max: 1024, min: 464 },
-    items: 5,
-  },
-  mobile: {
-    breakpoint: { max: 464, min: 0 },
+    breakpoint: { max: 1539, min: 464 },
     items: 5,
   },
 };
@@ -625,7 +624,7 @@ function OrdersIngredients({ history, ...props }) {
                 <LeftArrow />
               </button>
             </Col>
-            <Col md="auto" style={{ width: "450px" }}>
+            <Col md="auto" className={styles.carouselCol}>
               {state.dateIndex != null && (
                 <Carousel
                   responsive={responsive}
