@@ -1200,9 +1200,12 @@ function CreateMenu({ history, ...props }) {
                   {state.editedMenu
                     .filter((item) => item.meal_name !== null)
                     .map((mealMenu, mealMenuIndex) => {
-                      const otherMealCategories = mealMenu.meal_category
-                        ? getMealsByCategory(mealMenu.meal_category)
+                      const otherMealCategories = mealMenu.meal_cat
+                        ? getMealsByCategory(mealMenu.meal_cat)
                         : state.mealData;
+                      console.log(
+                        "otherMealCategories: " + mealMenu.meal_category
+                      );
                       return (
                         <TableRow
                           key={`${mealMenuIndex} ${mealMenu.menu_uid}`}
