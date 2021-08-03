@@ -1250,7 +1250,38 @@ function CreateMenu({ history, ...props }) {
                           <TableCell
                             style={{ borderBottom: "1px solid #f8bb17" }}
                           >
-                            {mealMenu.meal_cat}
+                            <Form style={{ width: "200px" }}>
+                              <Form.Control
+                                as="select"
+                                value={mealMenu.meal_cat}
+                                onChange={(event) => {
+                                  const newMenu = [...state.editedMenu];
+                                  const newMealCat = event.target.value;
+
+                                  newMenu[mealMenuIndex] = {
+                                    ...newMenu[mealMenuIndex],
+                                    meal_cat: newMealCat,
+                                    mealEdited: true,
+                                  };
+                                  dispatch({
+                                    type: "EDIT_MENU",
+                                    payload: newMenu,
+                                  });
+                                }}
+                              >
+                                <option value="" hidden>
+                                  {" "}
+                                  Choose Meal Category{" "}
+                                </option>
+                                {getMealCategories().map((meal_cat, index) => {
+                                  return (
+                                    <option value={meal_cat} key={index}>
+                                      {meal_cat}
+                                    </option>
+                                  );
+                                })}
+                              </Form.Control>
+                            </Form>
                           </TableCell>
                           <TableCell
                             style={{ borderBottom: "1px solid #f8bb17" }}
