@@ -1,12 +1,14 @@
 import { Component } from "react";
 import Menu from "./menu";
 import hamburger from "../../images/hamburger.png";
+import BecomeAmbass from "../BecomeAmbass";
 
 export class NavMenu extends Component {
   state = {
     popSeen: false,
     width: window.innerWidth,
     height: window.innerHeight,
+    showAmbass: false,
   };
 
   togglePopMenu = () => {
@@ -25,6 +27,12 @@ export class NavMenu extends Component {
 
   updateDimensions = () => {
     this.setState({ width: window.innerWidth, height: window.innerHeight });
+  };
+
+  toggleAmbass = () => {
+    this.setState({
+      showAmbass: !this.state.showAmbass,
+    });
   };
 
   render() {
@@ -51,7 +59,6 @@ export class NavMenu extends Component {
             aria-label="Click here to open navigation menu"
             title="Click here to open navigation menu"
           ></div>
-          {console.log("L: " + this.props.login)}
           {this.state.popSeen ? (
             <Menu
               close={this.togglePopMenu}
@@ -63,7 +70,30 @@ export class NavMenu extends Component {
               lastName={this.props.lastName}
               isAdmin={this.props.isAdmin}
               hasMealPlan={this.props.hasMealPlan}
+              toggleAmbass={this.toggleAmbass}
             />
+          ) : null}
+          {this.state.showAmbass ? (
+            <div
+              style={{
+                // border: 'dashed',
+                position: "fixed",
+                top: "0",
+                left: "0",
+                width: "100vw",
+                height: "100vh",
+                maxWidth: "100%",
+                maxHeight: "100%",
+                backgroundColor: "rgb(255,255,255,0.5)",
+                zIndex: "50",
+                // display: 'flex',
+                // justifyContent: 'center'
+                // backgroundColor: 'white',
+                // opacity: '0.5'
+              }}
+            >
+              <BecomeAmbass toggle={this.toggleAmbass} />
+            </div>
           ) : null}
         </div>
       </div>

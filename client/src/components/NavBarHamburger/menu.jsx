@@ -225,41 +225,6 @@ export class MenuList extends Component {
     this.props.togglePopLogin();
   };
 
-  // checkMealPlans = () => {
-  //   if (
-  //     document.cookie
-  //       .split(";")
-  //       .some((item) => item.trim().startsWith("customer_uid="))
-  //   ) {
-  //     const customer_uid = document.cookie
-  //       .split("; ")
-  //       .find((item) => item.startsWith("customer_uid="))
-  //       .split("=")[1];
-
-  //     // refactor to use axios
-  //     axios
-  //       .get(`${API_URL}customer_lplp`, {
-  //         params: {
-  //           customer_uid: customer_uid,
-  //         },
-  //       })
-  //       .then((res) => {
-  //         const subscriptions = res.data.result;
-  //         if (subscriptions) {
-  //           this.setState({
-  //             ...this.state,
-  //             mealPlans: true,
-  //           });
-  //         } else {
-  //           this.setState({
-  //             ...this.state,
-  //             mealPlans: false,
-  //           });
-  //         }
-  //       });
-  //   }
-  // };
-
   toggleMealPlanModal = () => {
     this.setState({
       ...this.state,
@@ -361,10 +326,14 @@ export class MenuList extends Component {
           </a>
 
           <a
-            href="/ambassador"
             className={styles.hbButton}
             aria-label="Click here to become an ambassador"
             title="Click here to become an ambassador"
+            onClick={(e) => {
+              //this.toggleAmbass();
+              this.props.toggleAmbass();
+              this.props.close();
+            }}
           >
             Become an Ambassador
           </a>
