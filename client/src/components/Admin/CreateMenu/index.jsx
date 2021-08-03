@@ -1043,7 +1043,7 @@ function CreateMenu({ history, ...props }) {
               <Table>
                 <TableHead>
                   <TableRow>
-                    <TableCell
+                    {/* <TableCell
                       style={{
                         fontWeight: "bold",
                         color: "#f26522",
@@ -1059,9 +1059,9 @@ function CreateMenu({ history, ...props }) {
                         direction={state.sortEditMenu.direction}
                         onClick={() => changeSortOptions("menu_type")}
                       >
-                        Meal Type
+                        Menu Type
                       </TableSortLabel>
-                    </TableCell>
+                    </TableCell> */}
                     <TableCell
                       style={{
                         fontWeight: "bold",
@@ -1211,11 +1211,11 @@ function CreateMenu({ history, ...props }) {
                           key={`${mealMenuIndex} ${mealMenu.menu_uid}`}
                           hover
                         >
-                          <TableCell
+                          {/* <TableCell
                             style={{ borderBottom: "1px solid #f8bb17" }}
                           >
                             {mealMenu.menu_type}
-                          </TableCell>
+                          </TableCell> */}
                           <TableCell
                             style={{ borderBottom: "1px solid #f8bb17" }}
                           >
