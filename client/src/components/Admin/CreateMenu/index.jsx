@@ -450,23 +450,35 @@ function CreateMenu({ history, ...props }) {
   };
 
   const getMealCategories = () => {
-    const mealCategories = state.allMenuData.map(
-      (menuItem) => menuItem.meal_cat
-    );
-    const mealCategoriesUnique = mealCategories.filter(
-      (elt, index) => mealCategories.indexOf(elt) === index && elt
-    );
-    return mealCategoriesUnique;
+    // const mealCategories = state.allMenuData.map(
+    //   (menuItem) => menuItem.meal_cat
+    // );
+    // const mealCategoriesUnique = mealCategories.filter(
+    //   (elt, index) => mealCategories.indexOf(elt) === index && elt
+    // );
+    // return mealCategoriesUnique;
+
+    return ["Entree", "Salad", "Soup", "Dessert", "Add-On", "Other"];
   };
 
   const getMenuCategories = () => {
-    const menuCategories = state.allMenuData.map(
-      (menuItem) => menuItem.menu_category
-    );
-    const menuCategoriesUnique = menuCategories.filter(
-      (elt, index) => menuCategories.indexOf(elt) === index && elt
-    );
-    return menuCategoriesUnique;
+    // const menuCategories = state.allMenuData.map(
+    //   (menuItem) => menuItem.menu_category
+    // );
+    // const menuCategoriesUnique = menuCategories.filter(
+    //   (elt, index) => menuCategories.indexOf(elt) === index && elt
+    // );
+    // return menuCategoriesUnique;
+    return [
+      "WKLY_SPCL_1",
+      "WKLY_SPCL_2",
+      "SEAS_FAVE_1",
+      "SEAS_FAVE_2",
+      "ADD_ON_1",
+      "ADD_ON_2",
+      "OTHER_1",
+      "OTHER_2",
+    ];
   };
 
   // Change Date
@@ -1397,7 +1409,7 @@ function CreateMenu({ history, ...props }) {
                     }}
                   >
                     <Form.Label className={styles.modalFormLabel}>
-                      Meal Type
+                      Menu Type
                     </Form.Label>
                     <Form.Control
                       className={styles.modalFormInput}
@@ -1506,11 +1518,13 @@ function CreateMenu({ history, ...props }) {
                       <option value="" hidden>
                         Choose Meal Category
                       </option>
-                      {getMealCategories().map((mealCategory) => (
-                        <option value={mealCategory} key={mealCategory}>
-                          {mealCategory}
-                        </option>
-                      ))}
+                      {getMealCategories().map((meal_cat, index) => {
+                        return (
+                          <option value={meal_cat} key={index}>
+                            {meal_cat}
+                          </option>
+                        );
+                      })}
                     </Form.Control>
                   </Form.Group>
                   <Form.Group
@@ -1542,11 +1556,13 @@ function CreateMenu({ history, ...props }) {
                       <option value="" hidden>
                         Choose Menu Category
                       </option>
-                      {getMenuCategories().map((menuCategory) => (
-                        <option value={menuCategory} key={menuCategory}>
-                          {menuCategory}
-                        </option>
-                      ))}
+                      {getMenuCategories().map((menu_category, index) => {
+                        return (
+                          <option value={menu_category} key={index}>
+                            {menu_category}
+                          </option>
+                        );
+                      })}
                     </Form.Control>
                   </Form.Group>
                   <Form.Group
