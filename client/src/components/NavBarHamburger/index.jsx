@@ -92,7 +92,11 @@ export class NavMenu extends Component {
                 // opacity: '0.5'
               }}
             >
-              <BecomeAmbass toggle={this.toggleAmbass} />
+              <BecomeAmbass
+                toggle={this.toggleAmbass}
+                togglePopSignup={this.props.togglePopSignup}
+                togglePopLogin={this.props.togglePopLogin}
+              />
             </div>
           ) : null}
         </div>

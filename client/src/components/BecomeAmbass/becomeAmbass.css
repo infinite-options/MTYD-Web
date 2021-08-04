@@ -15,7 +15,8 @@
   left: 30%;
   top: 20%;
   bottom: 10px;
-  background-image: url("../../images/ambassadorNotLogin.png");
+  /* background-image: url("../../images/ambassadorNotLogin.png"); */
+  background-color: white;
   background-size: 1600px 800px;
   background-position: center;
   background-repeat: no-repeat;
@@ -25,15 +26,15 @@
   /* position: fixed; */
   z-index: 1;
   width: 540px;
-  height: 666px;
+  height: "auto";
   /* max-height: 100%;
   overflow: auto; */
   /* left: 30%; */
   /* top: 20%; */
   /* bottom: 10px; */
   border: 2px solid #f26522;
-  background-color: red;
-  background-image: url("../../images/ambassadorLogin.png");
+  background-color: white;
+  /* background-image: url("../../images/ambassadorLogin.png"); */
   /* background-size:540px 666px;
   background-position: center;
   background-repeat: no-repeat; */
