@@ -579,7 +579,7 @@ function CreateMenu({ history, ...props }) {
       });
   };
 
-  const updateMenuByIndex = (index) => {
+  const updateMenuByIndex = (index, id) => {
     axios
       .get(
         `${API_URL}menu_with_orders_by_date/${state.menuDate.substring(0, 10)}`
@@ -587,10 +587,11 @@ function CreateMenu({ history, ...props }) {
       .then((response) => {
         if (response.status === 200) {
           const fullMenu = response.data.result;
-          console.log(index);
           if (fullMenu !== undefined) {
             //dispatch({ type: "FETCH_MENU_BY_DATE", payload: fullMenu });
-            const updatedItem = fullMenu[index];
+            const updatedItem = fullMenu.filter(
+              (item) => item.menu_uid === id
+            )[0];
             const newEditedMenu = [...state.editedMenu];
             newEditedMenu[index] = updatedItem;
             console.log(newEditedMenu);
@@ -627,8 +628,8 @@ function CreateMenu({ history, ...props }) {
       axios
         .put(`${API_URL}menu`, updatedMenuItem)
         .then((response) => {
-          console.log(response);
-          updateMenuByIndex(index);
+          const menu_uid = response.data.menu_uid;
+          updateMenuByIndex(index, menu_uid);
         })
         .catch((err) => {
           if (err.response) {
@@ -653,7 +654,7 @@ function CreateMenu({ history, ...props }) {
       axios
         .post(`${API_URL}menu`, newMenuItem)
         .then((response) => {
-          console.log(response);
+          const new_menu_uid = response.data.menu_uid;
           // const newMenuId = response.data.meal_uid;
           // const newMenuItemId = {
           //   ...newMenuItem,
@@ -662,7 +663,7 @@ function CreateMenu({ history, ...props }) {
           // const oldIndex = state.editedMenu.indexOf(menuItem);
           // const newEditedMenu = [...state.editedMenu];
           // newEditedMenu[oldIndex] = newMenuItemId;
-          updateMenuByIndex(index);
+          updateMenuByIndex(index, new_menu_uid);
           //dispatch({ type: "EDIT_MENU", payload: newEditedMenu });
         })
         .catch((err) => {
