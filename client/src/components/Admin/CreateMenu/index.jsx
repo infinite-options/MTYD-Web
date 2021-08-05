@@ -762,11 +762,16 @@ function CreateMenu({ history, ...props }) {
         menuDates.splice(i, 0, { value: menuDate, display: menuDateFormatted });
         if (carouselRef && carouselRef.current) {
           carouselRef.current.goToSlide(i);
-          console.log(date);
         }
 
-        break;
+        return;
       }
+    }
+
+    const lastSlideIndex = menuDates.length;
+    menuDates.push({ value: menuDate, display: menuDateFormatted });
+    if (carouselRef && carouselRef.current) {
+      carouselRef.current.goToSlide(lastSlideIndex);
     }
   };
 
