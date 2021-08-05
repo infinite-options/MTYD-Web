@@ -79,6 +79,7 @@ const initialState = {
   mealExists: false,
   selectedMealName: "",
   menuCategories: [],
+  selectMealCatError: false,
 };
 
 function reducer(state, action) {
@@ -217,6 +218,11 @@ function reducer(state, action) {
       return {
         ...state,
         allMenuData: action.payload,
+      };
+    case "SET_MEAL_CAT_ERROR":
+      return {
+        ...state,
+        selectMealCatError: action.payload,
       };
     default:
       return state;
@@ -433,10 +439,14 @@ function CreateMenu({ history, ...props }) {
   };
 
   const getMealsByCategory = (category) => {
-    const mealList = state.mealData.filter(
-      (meal) => meal.meal_category === category
-    );
-    return mealList;
+    if (category === "Add-On") {
+      return state.mealData;
+    } else {
+      const mealList = state.mealData.filter(
+        (meal) => meal.meal_category === category
+      );
+      return mealList;
+    }
   };
 
   const getMealTypes = () => {
@@ -1167,10 +1177,9 @@ function CreateMenu({ history, ...props }) {
                   {state.editedMenu
                     .filter((item) => item.meal_name !== null)
                     .map((mealMenu, mealMenuIndex) => {
-                      const otherMealCategories =
-                        mealMenu.meal_cat && mealMenu.meal_cat !== "Add-On"
-                          ? getMealsByCategory(mealMenu.meal_cat)
-                          : state.mealData;
+                      const otherMealCategories = getMealsByCategory(
+                        mealMenu.meal_cat
+                      );
                       console.log(
                         "otherMealCategories: " + mealMenu.meal_category
                       );
@@ -1392,6 +1401,10 @@ function CreateMenu({ history, ...props }) {
                   onClick={() => {
                     toggleAddMenu();
                     dispatch({ type: "SET_MEAL_EXISTS", payload: false });
+                    dispatch({
+                      type: "SET_MEAL_CAT_ERROR",
+                      payload: false,
+                    });
                   }}
                 />
               </div>
@@ -1477,96 +1490,6 @@ function CreateMenu({ history, ...props }) {
                     }}
                   >
                     <Form.Label className={styles.modalFormLabel}>
-                      Meal
-                    </Form.Label>
-                    <Form.Control
-                      className={styles.modalFormInput}
-                      as="select"
-                      value={state.newMeal.meal_uid}
-                      onChange={(event) => {
-                        const newMealId = event.target.value;
-                        const newMeal = {
-                          ...state.newMeal,
-                          meal_uid: newMealId,
-                        };
-                        if (
-                          state.newMeal.meal_cat &&
-                          mealExists(newMealId, state.newMeal.meal_cat)
-                        ) {
-                          dispatch({ type: "SET_MEAL_EXISTS", payload: true });
-                        } else {
-                          dispatch({ type: "SET_MEAL_EXISTS", payload: false });
-                        }
-                        dispatch({
-                          type: "EDIT_NEW_MEAL_MENU",
-                          payload: newMeal,
-                        });
-                      }}
-                    >
-                      <option value="" hidden>
-                        Choose Meal
-                      </option>
-                      {state.mealData.map((meal) => (
-                        <option value={meal.meal_uid} key={meal.meal_uid}>
-                          {meal.meal_name}
-                        </option>
-                      ))}
-                    </Form.Control>
-                  </Form.Group>
-                  <Form.Group
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      width: "100%",
-                    }}
-                  >
-                    <Form.Label className={styles.modalFormLabel}>
-                      Meal Category
-                    </Form.Label>
-                    <Form.Control
-                      className={styles.modalFormInput}
-                      as="select"
-                      value={state.newMeal.meal_cat}
-                      onChange={(event) => {
-                        const newMealCat = event.target.value;
-                        const newMeal = {
-                          ...state.newMeal,
-                          meal_cat: newMealCat,
-                        };
-                        if (
-                          state.newMeal.meal_uid &&
-                          mealExists(state.newMeal.meal_uid, newMealCat)
-                        ) {
-                          dispatch({ type: "SET_MEAL_EXISTS", payload: true });
-                        } else {
-                          dispatch({ type: "SET_MEAL_EXISTS", payload: false });
-                        }
-                        dispatch({
-                          type: "EDIT_NEW_MEAL_MENU",
-                          payload: newMeal,
-                        });
-                      }}
-                    >
-                      <option value="" hidden>
-                        Choose Meal Category
-                      </option>
-                      {getMealCategories().map((meal_cat, index) => {
-                        return (
-                          <option value={meal_cat} key={index}>
-                            {meal_cat}
-                          </option>
-                        );
-                      })}
-                    </Form.Control>
-                  </Form.Group>
-                  <Form.Group
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      width: "100%",
-                    }}
-                  >
-                    <Form.Label className={styles.modalFormLabel}>
                       Menu Category
                     </Form.Label>
                     <Form.Control
@@ -1605,6 +1528,113 @@ function CreateMenu({ history, ...props }) {
                     }}
                   >
                     <Form.Label className={styles.modalFormLabel}>
+                      Meal Category
+                    </Form.Label>
+                    <Form.Control
+                      className={styles.modalFormInput}
+                      as="select"
+                      value={state.newMeal.meal_cat}
+                      onChange={(event) => {
+                        const newMealCat = event.target.value;
+                        const newMeal = {
+                          ...state.newMeal,
+                          meal_cat: newMealCat,
+                        };
+                        if (
+                          state.newMeal.meal_uid &&
+                          mealExists(state.newMeal.meal_uid, newMealCat)
+                        ) {
+                          dispatch({ type: "SET_MEAL_EXISTS", payload: true });
+                        } else {
+                          dispatch({ type: "SET_MEAL_EXISTS", payload: false });
+                        }
+                        if (state.selectMealCatError) {
+                          dispatch({
+                            type: "SET_MEAL_CAT_ERROR",
+                            payload: false,
+                          });
+                        }
+                        dispatch({
+                          type: "EDIT_NEW_MEAL_MENU",
+                          payload: newMeal,
+                        });
+                      }}
+                    >
+                      <option value="" hidden>
+                        Choose Meal Category
+                      </option>
+                      {getMealCategories().map((meal_cat, index) => {
+                        return (
+                          <option value={meal_cat} key={index}>
+                            {meal_cat}
+                          </option>
+                        );
+                      })}
+                    </Form.Control>
+                  </Form.Group>
+                  <Form.Group
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      width: "100%",
+                    }}
+                  >
+                    <Form.Label className={styles.modalFormLabel}>
+                      Meal
+                    </Form.Label>
+                    <Form.Control
+                      className={styles.modalFormInput}
+                      as="select"
+                      value={state.newMeal.meal_uid}
+                      onClick={() => {
+                        if (!state.newMeal.meal_cat) {
+                          dispatch({
+                            type: "SET_MEAL_CAT_ERROR",
+                            payload: true,
+                          });
+                        }
+                      }}
+                      onChange={(event) => {
+                        const newMealId = event.target.value;
+                        const newMeal = {
+                          ...state.newMeal,
+                          meal_uid: newMealId,
+                        };
+                        if (
+                          state.newMeal.meal_cat &&
+                          mealExists(newMealId, state.newMeal.meal_cat)
+                        ) {
+                          dispatch({ type: "SET_MEAL_EXISTS", payload: true });
+                        } else {
+                          dispatch({ type: "SET_MEAL_EXISTS", payload: false });
+                        }
+                        dispatch({
+                          type: "EDIT_NEW_MEAL_MENU",
+                          payload: newMeal,
+                        });
+                      }}
+                    >
+                      <option value="" hidden>
+                        Choose Meal
+                      </option>
+                      {getMealsByCategory(state.newMeal.meal_cat).map(
+                        (meal) => (
+                          <option value={meal.meal_uid} key={meal.meal_uid}>
+                            {meal.meal_name}
+                          </option>
+                        )
+                      )}
+                    </Form.Control>
+                  </Form.Group>
+
+                  <Form.Group
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      width: "100%",
+                    }}
+                  >
+                    <Form.Label className={styles.modalFormLabel}>
                       Default Meal
                     </Form.Label>
                     <Form.Control
@@ -1632,12 +1662,29 @@ function CreateMenu({ history, ...props }) {
               {state.mealExists && (
                 <div
                   className={styles.invalidDate}
-                  style={{ padding: "10px", width: "400px" }}
+                  style={{
+                    paddingBottom: "10px",
+                    width: "400px",
+                    textAlign: "center",
+                  }}
                 >
                   This meal already exists, please select a different meal or
                   meal category.
                 </div>
               )}
+              {state.selectMealCatError && (
+                <div
+                  className={styles.invalidDate}
+                  style={{
+                    paddingBottom: "10px",
+                    width: "400px",
+                    textAlign: "center",
+                  }}
+                >
+                  Please Select a Meal Category First
+                </div>
+              )}
+
               <Modal.Footer
                 style={{ border: "none", justifyContent: "center" }}
               >
