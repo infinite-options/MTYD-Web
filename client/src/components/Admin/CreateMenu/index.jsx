@@ -587,6 +587,7 @@ function CreateMenu({ history, ...props }) {
       .then((response) => {
         if (response.status === 200) {
           const fullMenu = response.data.result;
+          console.log(index);
           if (fullMenu !== undefined) {
             //dispatch({ type: "FETCH_MENU_BY_DATE", payload: fullMenu });
             const updatedItem = fullMenu[index];
@@ -1174,194 +1175,193 @@ function CreateMenu({ history, ...props }) {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {state.editedMenu
-                    .filter((item) => item.meal_name !== null)
-                    .map((mealMenu, mealMenuIndex) => {
-                      const otherMealCategories = getMealsByCategory(
-                        mealMenu.meal_cat
-                      );
-                      console.log(
-                        "otherMealCategories: " + mealMenu.meal_category
-                      );
-                      return (
-                        <TableRow
-                          key={`${mealMenuIndex} ${mealMenu.menu_uid}`}
-                          hover
-                        >
-                          {/* <TableCell
+                  {console.log(state.editedMenu)}
+                  {state.editedMenu.map((mealMenu, mealMenuIndex) => {
+                    const otherMealCategories = getMealsByCategory(
+                      mealMenu.meal_cat
+                    );
+                    console.log(
+                      "otherMealCategories: " + mealMenu.meal_category
+                    );
+                    return (
+                      <TableRow
+                        key={`${mealMenuIndex} ${mealMenu.menu_uid}`}
+                        hover
+                      >
+                        {/* <TableCell
                             style={{ borderBottom: "1px solid #f8bb17" }}
                           >
                             {mealMenu.menu_type}
                           </TableCell> */}
-                          <TableCell
-                            style={{ borderBottom: "1px solid #f8bb17" }}
-                          >
-                            <Form>
-                              <Form.Control
-                                as="select"
-                                value={mealMenu.menu_meal_id}
-                                onChange={(event) => {
-                                  const newMenu = [...state.editedMenu];
-                                  const newMealId = event.target.value;
-                                  const newMealInfo = state.mealData.filter(
-                                    (meal) => meal.meal_uid === newMealId
-                                  )[0];
-                                  const curMealCat = mealMenu.meal_cat;
-                                  if (mealExists(newMealId, curMealCat)) {
-                                    dispatch({
-                                      type: "TOGGLE_MEAL_EXISTS",
-                                      payload: newMealInfo.meal_name,
-                                    });
-                                  } else {
-                                    newMenu[mealMenuIndex] = {
-                                      ...newMenu[mealMenuIndex],
-                                      ...newMealInfo,
-                                      menu_meal_id: newMealId,
-                                      business_name: getBusinessName(
-                                        newMealInfo.meal_business
-                                      ),
-                                      mealEdited: true,
-                                    };
-                                    dispatch({
-                                      type: "EDIT_MENU",
-                                      payload: newMenu,
-                                    });
-                                  }
-                                }}
-                              >
-                                <option value="" hidden>
-                                  {" "}
-                                  Choose Meal{" "}
+                        <TableCell
+                          style={{ borderBottom: "1px solid #f8bb17" }}
+                        >
+                          <Form>
+                            <Form.Control
+                              as="select"
+                              value={mealMenu.menu_meal_id}
+                              onChange={(event) => {
+                                const newMenu = [...state.editedMenu];
+                                const newMealId = event.target.value;
+                                const newMealInfo = state.mealData.filter(
+                                  (meal) => meal.meal_uid === newMealId
+                                )[0];
+                                const curMealCat = mealMenu.meal_cat;
+                                if (mealExists(newMealId, curMealCat)) {
+                                  dispatch({
+                                    type: "TOGGLE_MEAL_EXISTS",
+                                    payload: newMealInfo.meal_name,
+                                  });
+                                } else {
+                                  newMenu[mealMenuIndex] = {
+                                    ...newMenu[mealMenuIndex],
+                                    ...newMealInfo,
+                                    menu_meal_id: newMealId,
+                                    business_name: getBusinessName(
+                                      newMealInfo.meal_business
+                                    ),
+                                    mealEdited: true,
+                                  };
+                                  dispatch({
+                                    type: "EDIT_MENU",
+                                    payload: newMenu,
+                                  });
+                                }
+                              }}
+                            >
+                              <option value="" hidden>
+                                {" "}
+                                Choose Meal{" "}
+                              </option>
+                              {otherMealCategories.map((meal) => (
+                                <option
+                                  value={meal.meal_uid}
+                                  key={meal.meal_uid}
+                                >
+                                  {meal.meal_name}
                                 </option>
-                                {otherMealCategories.map((meal) => (
-                                  <option
-                                    value={meal.meal_uid}
-                                    key={meal.meal_uid}
-                                  >
-                                    {meal.meal_name}
-                                  </option>
-                                ))}
-                              </Form.Control>
-                            </Form>
-                          </TableCell>
-                          <TableCell
-                            style={{ borderBottom: "1px solid #f8bb17" }}
-                          >
-                            <img
-                              src={mealMenu.meal_photo_URL}
-                              style={{ height: "60px", width: "60px" }}
-                            ></img>
-                          </TableCell>
-                          <TableCell
-                            style={{ borderBottom: "1px solid #f8bb17" }}
-                          >
-                            {mealMenu.business_name}
-                          </TableCell>
-                          <TableCell
-                            style={{ borderBottom: "1px solid #f8bb17" }}
-                          >
-                            <Form style={{ width: "200px" }}>
-                              <Form.Control
-                                as="select"
-                                value={mealMenu.meal_cat}
-                                onChange={(event) => {
-                                  const newMenu = [...state.editedMenu];
-                                  const newMealCat = event.target.value;
+                              ))}
+                            </Form.Control>
+                          </Form>
+                        </TableCell>
+                        <TableCell
+                          style={{ borderBottom: "1px solid #f8bb17" }}
+                        >
+                          <img
+                            src={mealMenu.meal_photo_URL}
+                            style={{ height: "60px", width: "60px" }}
+                          ></img>
+                        </TableCell>
+                        <TableCell
+                          style={{ borderBottom: "1px solid #f8bb17" }}
+                        >
+                          {mealMenu.business_name}
+                        </TableCell>
+                        <TableCell
+                          style={{ borderBottom: "1px solid #f8bb17" }}
+                        >
+                          <Form style={{ width: "200px" }}>
+                            <Form.Control
+                              as="select"
+                              value={mealMenu.meal_cat}
+                              onChange={(event) => {
+                                const newMenu = [...state.editedMenu];
+                                const newMealCat = event.target.value;
 
-                                  newMenu[mealMenuIndex] = {
-                                    ...newMenu[mealMenuIndex],
-                                    meal_cat: newMealCat,
-                                    mealEdited: true,
-                                  };
-                                  dispatch({
-                                    type: "EDIT_MENU",
-                                    payload: newMenu,
-                                  });
-                                }}
-                              >
-                                <option value="" hidden>
-                                  {" "}
-                                  Choose Meal Category{" "}
-                                </option>
-                                {getMealCategories().map((meal_cat, index) => {
-                                  return (
-                                    <option value={meal_cat} key={index}>
-                                      {meal_cat}
-                                    </option>
-                                  );
-                                })}
-                              </Form.Control>
-                            </Form>
-                          </TableCell>
-                          <TableCell
-                            style={{ borderBottom: "1px solid #f8bb17" }}
-                          >
-                            {mealMenu.menu_category}
-                          </TableCell>
-                          <TableCell
-                            style={{ borderBottom: "1px solid #f8bb17" }}
-                          >
-                            <Form>
-                              <Form.Control
-                                as="select"
-                                value={mealMenu.default_meal}
-                                onChange={(event) => {
-                                  const newMenu = [...state.editedMenu];
-                                  const newDefaultMeal = event.target.value;
-                                  // const mealMenuIndex = newMenu.findIndex((elt) => elt.menu_uid === mealMenu.menu_uid);
-                                  newMenu[mealMenuIndex] = {
-                                    ...newMenu[mealMenuIndex],
-                                    default_meal: newDefaultMeal,
-                                    mealEdited: true,
-                                  };
-                                  console.log(newMenu);
-                                  dispatch({
-                                    type: "EDIT_MENU",
-                                    payload: newMenu,
-                                  });
-                                }}
-                              >
-                                <option value="FALSE"> FALSE </option>
-                                <option value="TRUE"> TRUE </option>
-                              </Form.Control>
-                            </Form>
-                          </TableCell>
-                          <TableCell
-                            style={{
-                              borderBottom: "1px solid #f8bb17",
+                                newMenu[mealMenuIndex] = {
+                                  ...newMenu[mealMenuIndex],
+                                  meal_cat: newMealCat,
+                                  mealEdited: true,
+                                };
+                                dispatch({
+                                  type: "EDIT_MENU",
+                                  payload: newMenu,
+                                });
+                              }}
+                            >
+                              <option value="" hidden>
+                                {" "}
+                                Choose Meal Category{" "}
+                              </option>
+                              {getMealCategories().map((meal_cat, index) => {
+                                return (
+                                  <option value={meal_cat} key={index}>
+                                    {meal_cat}
+                                  </option>
+                                );
+                              })}
+                            </Form.Control>
+                          </Form>
+                        </TableCell>
+                        <TableCell
+                          style={{ borderBottom: "1px solid #f8bb17" }}
+                        >
+                          {mealMenu.menu_category}
+                        </TableCell>
+                        <TableCell
+                          style={{ borderBottom: "1px solid #f8bb17" }}
+                        >
+                          <Form>
+                            <Form.Control
+                              as="select"
+                              value={mealMenu.default_meal}
+                              onChange={(event) => {
+                                const newMenu = [...state.editedMenu];
+                                const newDefaultMeal = event.target.value;
+                                // const mealMenuIndex = newMenu.findIndex((elt) => elt.menu_uid === mealMenu.menu_uid);
+                                newMenu[mealMenuIndex] = {
+                                  ...newMenu[mealMenuIndex],
+                                  default_meal: newDefaultMeal,
+                                  mealEdited: true,
+                                };
+                                console.log(newMenu);
+                                dispatch({
+                                  type: "EDIT_MENU",
+                                  payload: newMenu,
+                                });
+                              }}
+                            >
+                              <option value="FALSE"> FALSE </option>
+                              <option value="TRUE"> TRUE </option>
+                            </Form.Control>
+                          </Form>
+                        </TableCell>
+                        <TableCell
+                          style={{
+                            borderBottom: "1px solid #f8bb17",
+                          }}
+                        >
+                          <button
+                            className={"icon-button"}
+                            onClick={() => {
+                              deleteMenuItem(mealMenu);
                             }}
                           >
-                            <button
-                              className={"icon-button"}
-                              onClick={() => {
-                                deleteMenuItem(mealMenu);
-                              }}
-                            >
-                              <DeleteBtn className={styles.deleteBtn} />
-                            </button>
-                            <button
-                              className={"icon-button"}
-                              onClick={() => {
-                                updateMenuItem(mealMenu, mealMenuIndex);
-                              }}
-                            >
-                              <SaveBtn
-                                className={
-                                  mealMenu.mealEdited
-                                    ? styles.saveBtn_unsaved
-                                    : styles.saveBtn_saved
-                                }
-                              />
-                            </button>
-                          </TableCell>
-                          <TableCell
-                            style={{ borderBottom: "1px solid #f8bb17" }}
+                            <DeleteBtn className={styles.deleteBtn} />
+                          </button>
+                          <button
+                            className={"icon-button"}
+                            onClick={() => {
+                              updateMenuItem(mealMenu, mealMenuIndex);
+                            }}
                           >
-                            {mealMenu.sum_jt_qty ? mealMenu.sum_jt_qty : 0}
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
+                            <SaveBtn
+                              className={
+                                mealMenu.mealEdited
+                                  ? styles.saveBtn_unsaved
+                                  : styles.saveBtn_saved
+                              }
+                            />
+                          </button>
+                        </TableCell>
+                        <TableCell
+                          style={{ borderBottom: "1px solid #f8bb17" }}
+                        >
+                          {mealMenu.sum_jt_qty ? mealMenu.sum_jt_qty : 0}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
                 </TableBody>
               </Table>
             </Col>
