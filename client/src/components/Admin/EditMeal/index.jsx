@@ -7,6 +7,7 @@ import AdminNavBar from "../AdminNavBar";
 import styles from "./editMeal.module.css";
 import { act } from "react-dom/test-utils";
 import testImage from "./static/test.jpeg";
+import { ReactComponent as ModalCloseBtn } from "./static/modalClose.svg";
 
 const initialState = {
   mounted: false,
@@ -33,6 +34,7 @@ const initialState = {
   ingredientsData: [],
   editedMealIngredients: [],
   measureUnitsData: [],
+  showIngredients: false,
 };
 
 function useForceUpdate() {
@@ -83,6 +85,16 @@ function reducer(state, action) {
       return {
         ...state,
         editedMealIngredients: action.payload,
+      };
+    case "TOGGLE_SHOW_INGREDIENTS":
+      return {
+        ...state,
+        showIngredients: !state.showIngredients,
+      };
+    case "RESET_EDITED_MEAL_INGREDIENTS":
+      return {
+        ...state,
+        editedMealIngredients: [],
       };
     default:
       return state;
@@ -487,6 +499,78 @@ function EditMeal({ history, ...props }) {
       .catch((err) => {
         console.log(err);
       });
+  };
+
+  const postNewMealAndIngredients = () => {
+    const bodyFormData = new FormData();
+
+    bodyFormData.append("meal_category", state.editedMeal.meal_category);
+    bodyFormData.append("meal_name", state.editedMeal.meal_name);
+    bodyFormData.append("meal_desc", state.editedMeal.meal_desc);
+    bodyFormData.append("meal_hint", state.editedMeal.meal_hint);
+    bodyFormData.append("meal_photo_url", state.selectedFile);
+    bodyFormData.append("meal_calories", state.editedMeal.meal_calories);
+    bodyFormData.append("meal_protein", state.editedMeal.meal_protein);
+    bodyFormData.append("meal_carbs", state.editedMeal.meal_carbs);
+    bodyFormData.append("meal_fiber", state.editedMeal.meal_fiber);
+    bodyFormData.append("meal_sugar", state.editedMeal.meal_sugar);
+    bodyFormData.append("meal_fat", state.editedMeal.meal_fat);
+    bodyFormData.append("meal_sat", state.editedMeal.meal_sat);
+    bodyFormData.append("meal_business", activeBusiness);
+    bodyFormData.append("meal_status", state.editedMeal.meal_status);
+    console.log(bodyFormData);
+    axios({
+      method: "post",
+      url: `${API_URL}create_update_meals`,
+      data: bodyFormData,
+      headers: { "Content-Type": "multipart/form-data" },
+    })
+      .then((response) => {
+        console.log(response);
+        const savedMeal = state.editedMeal;
+        const newMealID = response.data.meal_uid;
+        savedMeal.meal_business = activeBusiness;
+        savedMeal.meal_uid = newMealID;
+
+        const changedIndex = state.mealData.findIndex(
+          (meal) => meal.meal_uid === state.selectedMeal
+        );
+        const newMealData = [...state.mealData];
+        newMealData[changedIndex] = state.editedMeal;
+        dispatch({ type: "FETCH_MEALS", payload: newMealData });
+        state.selectedFile = null;
+        state.previewLink = "";
+
+        return axios.all(
+          state.editedMealIngredients.map((ingredient) => {
+            const ingredientObj = {
+              meal_id: response.data.meal_uid,
+              ingredient_id: ingredient.ingredient_uid,
+              ingredient_qty: ingredient.recipe_ingredient_qty,
+              measure_id: ingredient.measure_unit_uid,
+            };
+            axios.post(`${API_URL}mealcreation`, ingredientObj);
+          })
+        );
+      })
+      .then((res) => console.log(res))
+      .catch((err) => {
+        console.log(err);
+      });
+
+    // axios.all(
+    //   state.editedMealIngredients.map((ingredient) => {
+    //     const ingredientObj = {
+    //       meal_id: "",
+    //       ingredient_id: ingredient.ingredient_uid,
+    //       ingredient_qty: ingredient.recipe_ingredient_qty,
+    //       measure_id: ingredient.measure_unit_uid,
+    //     };
+    //     axios.post(`${API_URL}mealcreation`, ingredientObj).then((res) => {
+    //       console.log(res);
+    //     });
+    //   })
+    // );
   };
 
   const getActiveBusinessHours = () => {
@@ -2303,13 +2387,24 @@ function EditMeal({ history, ...props }) {
               display: "block",
               border: "#ff6505 solid",
               backgroundColor: "#FEF7E0",
-              // height: "900px",
+              height: "715px",
               width: "auto",
               zIndex: "102",
 
               borderRadius: "20px",
             }}
           >
+            <div style={{ float: "right", padding: "10px 10px 0px 0px" }}>
+              <ModalCloseBtn
+                style={{ cursor: "pointer" }}
+                onClick={() => {
+                  toggleNewMeal(false);
+                  if (state.showIngredients)
+                    dispatch({ type: "TOGGLE_SHOW_INGREDIENTS" });
+                  dispatch({ type: "RESET_EDITED_MEAL_INGREDIENTS" });
+                }}
+              />
+            </div>
             <Form
               style={{
                 position: "relative",
@@ -2462,14 +2557,14 @@ function EditMeal({ history, ...props }) {
                 display: "block",
                 // border: "#ff6505 solid",
                 backgroundColor: "#F8BB17",
-                height: "620px",
+                height: "635px",
                 width: "2px",
                 zIndex: "102",
+                margin: "0px 0px 30px 0px",
                 // paddingRight: "50px",
                 // paddingTop: "50px",
                 // paddingBottom: "50px",
                 // borderRadius: "20px",
-                marginTop: "5%",
                 float: "left",
               }}
             ></Form>
@@ -2685,7 +2780,7 @@ function EditMeal({ history, ...props }) {
                       fontSize: "18px",
                     }}
                   >
-                    Save
+                    Save Meal
                   </Button>
                 </Col>
               </Row>
@@ -2695,207 +2790,249 @@ function EditMeal({ history, ...props }) {
                     textAlign: "center",
                   }}
                 >
+                  {!state.showIngredients && (
+                    <Button
+                      variant="primary"
+                      onClick={() => {
+                        dispatch({ type: "TOGGLE_SHOW_INGREDIENTS" });
+                      }}
+                      style={{
+                        backgroundColor: "#F26522",
+                        borderRadius: "15px",
+                        width: "200px",
+                        fontSize: "18px",
+                      }}
+                    >
+                      Add Ingredients
+                    </Button>
+                  )}
+                </Col>
+              </Row>
+            </Form>
+            {state.showIngredients && (
+              <div style={{ float: "left" }}>
+                <Form
+                  style={{
+                    position: "relative",
+                    // justifySelf: "center",
+                    // alignSelf: "center",
+                    display: "block",
+                    // border: "#ff6505 solid",
+                    backgroundColor: "#F8BB17",
+                    height: "620px",
+                    width: "2px",
+                    zIndex: "102",
+                    // paddingRight: "50px",
+                    // paddingTop: "50px",
+                    // paddingBottom: "50px",
+                    // borderRadius: "20px",
+
+                    float: "left",
+                  }}
+                ></Form>
+                <Form
+                  style={{
+                    position: "relative",
+                    display: "block",
+                    width: "495px",
+                    zIndex: "102",
+                    paddingRight: "50px",
+                    paddingTop: "50px",
+                    paddingBottom: "50px",
+                    paddingLeft: "25px",
+                    borderRadius: "20px",
+                    float: "left",
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: "20px",
+                      fontWeight: "bold",
+                      marginBottom: "10px",
+                    }}
+                  >
+                    Ingredients Needed:
+                  </div>
+                  <Form.Group as={Row}>
+                    <Form.Label column md="auto" style={{ color: "#F26522" }}>
+                      For how many servings
+                    </Form.Label>
+                    <Col md="auto" style={{ width: "100px" }}>
+                      <Form.Control type="number" />
+                    </Col>
+                  </Form.Group>
+                  <Row>
+                    <Col>Ingredient Name</Col>
+                    <Col>Quantity</Col>
+                    <Col>Unit</Col>
+                  </Row>
+                  {console.log(state)}
+                  <div
+                    style={{
+                      height: "354px",
+                      overflow: "scroll",
+                      padding: "10px 0px 10px 0px",
+                    }}
+                  >
+                    {state.editedMealIngredients.map(
+                      (ingredient, ingredientIndex) => {
+                        return (
+                          <Row key={ingredientIndex}>
+                            <Col md="auto" style={{ width: "150px" }}>
+                              <Form.Control
+                                as="select"
+                                value={ingredient.ingredient_uid}
+                                onChange={(event) => {
+                                  const newRecipe = [
+                                    ...state.editedMealIngredients,
+                                  ];
+                                  const newIngredientId = event.target.value;
+                                  const newIngredientInfo =
+                                    state.ingredientsData.filter(
+                                      (allIngredients) =>
+                                        allIngredients.ingredient_uid ===
+                                        newIngredientId
+                                    )[0];
+                                  const ingredientIndex = newRecipe.findIndex(
+                                    (elt) =>
+                                      elt.ingredient_uid ===
+                                      ingredient.ingredient_uid
+                                  );
+                                  newRecipe[ingredientIndex] = {
+                                    ...newRecipe[ingredientIndex],
+                                    ...newIngredientInfo,
+                                  };
+                                  dispatch({
+                                    type: "EDIT_MEAL_INGREDIENTS",
+                                    payload: newRecipe,
+                                  });
+                                }}
+                              >
+                                <option value="" hidden>
+                                  Select an Ingredient
+                                </option>
+                                {state.ingredientsData.map((allIngredients) => (
+                                  <option
+                                    value={allIngredients.ingredient_uid}
+                                    key={allIngredients.ingredient_uid}
+                                  >
+                                    {allIngredients.ingredient_desc}
+                                  </option>
+                                ))}
+                              </Form.Control>
+                            </Col>
+                            <Col md="auto" style={{ width: "150px" }}>
+                              <Form.Control
+                                type="number"
+                                value={ingredient.recipe_ingredient_qty}
+                                onChange={(event) => {
+                                  const newRecipe = [
+                                    ...state.editedMealIngredients,
+                                  ];
+                                  const newQuantity = event.target.value;
+                                  const ingredientIndex = newRecipe.findIndex(
+                                    (elt) =>
+                                      elt.ingredient_uid ===
+                                      ingredient.ingredient_uid
+                                  );
+                                  newRecipe[ingredientIndex] = {
+                                    ...newRecipe[ingredientIndex],
+                                    recipe_ingredient_qty: newQuantity,
+                                  };
+                                  dispatch({
+                                    type: "EDIT_MEAL_INGREDIENTS",
+                                    payload: newRecipe,
+                                  });
+                                }}
+                              />
+                            </Col>
+                            <Col md="auto" style={{ width: "150px" }}>
+                              <Form.Control
+                                as="select"
+                                value={ingredient.measure_unit_uid}
+                                onChange={(event) => {
+                                  const newRecipe = [
+                                    ...state.editedMealIngredients,
+                                  ];
+                                  const newMeasureUnitId = event.target.value;
+                                  const newMeasureUnitInfo =
+                                    state.measureUnitsData.filter(
+                                      (allMeasureUnits) =>
+                                        allMeasureUnits.measure_unit_uid ===
+                                        newMeasureUnitId
+                                    )[0];
+                                  const ingredientIndex = newRecipe.findIndex(
+                                    (elt) =>
+                                      elt.ingredient_uid ===
+                                      ingredient.ingredient_uid
+                                  );
+                                  newRecipe[ingredientIndex] = {
+                                    ...newRecipe[ingredientIndex],
+                                    ...newMeasureUnitInfo,
+                                  };
+                                  dispatch({
+                                    type: "EDIT_MEAL_INGREDIENTS",
+                                    payload: newRecipe,
+                                  });
+                                }}
+                              >
+                                <option value="" hidden>
+                                  Select a Measure Unit
+                                </option>
+                                {state.measureUnitsData.map(
+                                  (allMeasureUnits) => (
+                                    <option
+                                      value={allMeasureUnits.measure_unit_uid}
+                                      key={allMeasureUnits.measure_unit_uid}
+                                    >
+                                      {allMeasureUnits.recipe_unit}
+                                    </option>
+                                  )
+                                )}
+                              </Form.Control>
+                            </Col>
+                          </Row>
+                        );
+                      }
+                    )}
+                  </div>
+
+                  <div
+                    style={{ fontSize: "32px" }}
+                    onClick={() => {
+                      const newRecipe = [...state.editedMealIngredients];
+                      newRecipe.push({
+                        ingredient_uid: "",
+                        recipe_ingredient_qty: "",
+                        measure_unit_uid: "",
+                      });
+                      dispatch({
+                        type: "EDIT_MEAL_INGREDIENTS",
+                        payload: newRecipe,
+                      });
+                    }}
+                  >
+                    +
+                  </div>
                   <Button
                     variant="primary"
-                    onClick={() => {
-                      toggleNewMeal(false);
-                    }}
                     style={{
                       backgroundColor: "#F26522",
                       borderRadius: "15px",
-                      width: "200px",
+                      width: "auto",
                       fontSize: "18px",
                     }}
+                    onClick={() => {
+                      postNewMealAndIngredients();
+                      dispatch({ type: "RESET_EDITED_MEAL_INGREDIENTS" });
+                      toggleNewMeal(false);
+                    }}
                   >
-                    Add Ingredients
+                    Save Meal and Ingredients
                   </Button>
-                </Col>
-              </Row>
-            </Form>
-            <Form
-              style={{
-                position: "relative",
-                // justifySelf: "center",
-                // alignSelf: "center",
-                display: "block",
-                // border: "#ff6505 solid",
-                backgroundColor: "#F8BB17",
-                height: "620px",
-                width: "2px",
-                zIndex: "102",
-                // paddingRight: "50px",
-                // paddingTop: "50px",
-                // paddingBottom: "50px",
-                // borderRadius: "20px",
-                marginTop: "5%",
-                float: "left",
-              }}
-            ></Form>
-            <Form
-              style={{
-                position: "relative",
-                display: "block",
-                width: "495px",
-                zIndex: "102",
-                paddingRight: "50px",
-                paddingTop: "50px",
-                paddingBottom: "50px",
-                paddingLeft: "25px",
-                borderRadius: "20px",
-                float: "left",
-              }}
-            >
-              <div
-                style={{
-                  fontSize: "20px",
-                  fontWeight: "bold",
-                  marginBottom: "10px",
-                }}
-              >
-                Ingredients Needed:
+                </Form>
               </div>
-              <Form.Group as={Row}>
-                <Form.Label column sm={3} style={{ color: "#F26522" }}>
-                  For how many servings
-                </Form.Label>
-                <Col sm={9}>
-                  <Form.Control type="number" />
-                </Col>
-              </Form.Group>
-              <Row>
-                <Col>Ingredient Name</Col>
-                <Col>Quantity</Col>
-                <Col>Unit</Col>
-              </Row>
-              {console.log(state.editedMealIngredients)}
-              {state.editedMealIngredients.map(
-                (ingredient, ingredientIndex) => {
-                  return (
-                    <Row key={ingredientIndex}>
-                      <Col md="auto" style={{ width: "150px" }}>
-                        <Form.Control
-                          as="select"
-                          value={ingredient.ingredient_uid}
-                          onChange={(event) => {
-                            const newRecipe = [...state.editedMealIngredients];
-                            const newIngredientId = event.target.value;
-                            const newIngredientInfo =
-                              state.ingredientsData.filter(
-                                (allIngredients) =>
-                                  allIngredients.ingredient_uid ===
-                                  newIngredientId
-                              )[0];
-                            const ingredientIndex = newRecipe.findIndex(
-                              (elt) =>
-                                elt.ingredient_uid === ingredient.ingredient_uid
-                            );
-                            newRecipe[ingredientIndex] = {
-                              ...newRecipe[ingredientIndex],
-                              ...newIngredientInfo,
-                            };
-                            dispatch({
-                              type: "EDIT_MEAL_INGREDIENTS",
-                              payload: newRecipe,
-                            });
-                          }}
-                        >
-                          <option value="" hidden>
-                            Select an Ingredient
-                          </option>
-                          {state.ingredientsData.map((allIngredients) => (
-                            <option
-                              value={allIngredients.ingredient_uid}
-                              key={allIngredients.ingredient_uid}
-                            >
-                              {allIngredients.ingredient_desc}
-                            </option>
-                          ))}
-                        </Form.Control>
-                      </Col>
-                      <Col md="auto" style={{ width: "150px" }}>
-                        <Form.Control
-                          type="number"
-                          value={ingredient.recipe_ingredient_qty}
-                          onChange={(event) => {
-                            const newRecipe = [...state.editedMealIngredients];
-                            const newQuantity = event.target.value;
-                            const ingredientIndex = newRecipe.findIndex(
-                              (elt) =>
-                                elt.ingredient_uid === ingredient.ingredient_uid
-                            );
-                            newRecipe[ingredientIndex] = {
-                              ...newRecipe[ingredientIndex],
-                              recipe_ingredient_qty: newQuantity,
-                            };
-                            dispatch({
-                              type: "EDIT_MEAL_INGREDIENTS",
-                              payload: newRecipe,
-                            });
-                          }}
-                        />
-                      </Col>
-                      <Col md="auto" style={{ width: "150px" }}>
-                        <Form.Control
-                          as="select"
-                          value={ingredient.measure_unit_uid}
-                          onChange={(event) => {
-                            const newRecipe = [...state.editedMealIngredients];
-                            const newMeasureUnitId = event.target.value;
-                            const newMeasureUnitInfo =
-                              state.measureUnitsData.filter(
-                                (allMeasureUnits) =>
-                                  allMeasureUnits.measure_unit_uid ===
-                                  newMeasureUnitId
-                              )[0];
-                            const ingredientIndex = newRecipe.findIndex(
-                              (elt) =>
-                                elt.ingredient_uid === ingredient.ingredient_uid
-                            );
-                            newRecipe[ingredientIndex] = {
-                              ...newRecipe[ingredientIndex],
-                              ...newMeasureUnitInfo,
-                            };
-                            dispatch({
-                              type: "EDIT_MEAL_INGREDIENTS",
-                              payload: newRecipe,
-                            });
-                          }}
-                        >
-                          <option value="" hidden>
-                            Select a Measure Unit
-                          </option>
-                          {state.measureUnitsData.map((allMeasureUnits) => (
-                            <option
-                              value={allMeasureUnits.measure_unit_uid}
-                              key={allMeasureUnits.measure_unit_uid}
-                            >
-                              {allMeasureUnits.recipe_unit}
-                            </option>
-                          ))}
-                        </Form.Control>
-                      </Col>
-                    </Row>
-                  );
-                }
-              )}
-              <div
-                style={{ fontSize: "32px" }}
-                onClick={() => {
-                  const newRecipe = [...state.editedMealIngredients];
-                  newRecipe.push({
-                    ingredient_uid: "",
-                    recipe_ingredient_qty: "",
-                    measure_unit_uid: "",
-                  });
-                  dispatch({
-                    type: "EDIT_MEAL_INGREDIENTS",
-                    payload: newRecipe,
-                  });
-                }}
-              >
-                +
-              </div>
-            </Form>
+            )}
           </div>
         </div>
       );
