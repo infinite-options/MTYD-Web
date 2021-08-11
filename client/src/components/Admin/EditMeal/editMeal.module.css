@@ -700,6 +700,10 @@ button:focus {
   transition: 0.4s;
 }
 
+.modalForm {
+  padding: 10px 30px 10px 30px;
+}
+
 input:checked + .slider {
   background-color: #2196f3;
 }
