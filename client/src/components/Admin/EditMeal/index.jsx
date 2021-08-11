@@ -40,7 +40,8 @@ const initialState = {
   showCreateEditMealModal: false,
   modalMode: "",
   ingredientsModified: false,
-  servings: 0,
+  servings: 1,
+  modalError: false,
 };
 
 function useForceUpdate() {
@@ -150,6 +151,41 @@ function reducer(state, action) {
       return {
         ...state,
         servings: action.payload,
+      };
+    case "SET_MODAL_ERROR":
+      return {
+        ...state,
+        modalError: action.payload,
+      };
+
+    case "CLOSE_MODAL":
+      return {
+        ...state,
+        previewLink: "",
+        showCreateEditMealModal: false,
+        modalMode: "",
+        showIngredients: false,
+        modalError: false,
+        ingredientsModified: false,
+        servings: 1,
+        selectedFile: null,
+        editedMeal: {
+          meal_uid: "",
+          meal_desc: "",
+          meal_category: "",
+          meal_name: "",
+          meal_hint: "",
+          meal_photo_URL: "",
+          meal_calories: "",
+          meal_protein: "",
+          meal_carbs: "",
+          meal_fiber: "",
+          meal_sugar: "",
+          meal_fat: "",
+          meal_sat: "",
+          meal_status: "",
+        },
+        editedMealIngredients: [],
       };
     default:
       return state;
@@ -382,75 +418,24 @@ function EditMeal({ history, ...props }) {
     return bodyFormData;
   };
 
+  const verifyModalData = () => {
+    if (
+      !state.editedMeal.meal_name ||
+      !state.editedMeal.meal_category ||
+      !state.servings
+    ) {
+      dispatch({ type: "SET_MODAL_ERROR", payload: true });
+      return false;
+    }
+    dispatch({ type: "SET_MODAL_ERROR", payload: false });
+    return true;
+  };
+
   const handleSaveMealNew = () => {
     const requestType = state.modalMode === "NEW" ? "post" : "put";
-
     const bodyFormData = getEditedMealData(requestType);
 
-    if (state.showIngredients && state.ingredientsModified) {
-      console.log("POSTING MEAL + INGREDIENTS");
-    } else {
-      console.log("POSTING MEAL");
-    }
-
-    // axios({
-    //   method: requestType,
-    //   url: `${API_URL}create_update_meals`,
-    //   data: bodyFormData,
-    //   headers: { "Content-Type": "multipart/form-data" },
-    // })
-    //   .then((response) => {
-    //     const ingredientList = state.editedMealIngredients.map((ingredient) => {
-    //       return {
-    //         ingredient_id: ingredient.ingredient_uid,
-    //         ingredient_qty: ingredient.recipe_ingredient_qty / state.servings,
-    //         measure_id: ingredient.measure_unit_uid,
-    //       };
-    //     });
-
-    //     const recipeData = {
-    //       meal_id: response.data.meal_uid,
-    //       ingredients: ingredientList,
-    //     };
-    //     console.log(recipeData);
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
-
-    state.selectedFile = "No file";
-    state.previewLink = "";
-  };
-
-  const handleSaveMeal = () => {
-    const requestType = state.modalMode === "NEW" ? "post" : "put";
-
-    const bodyFormData = getEditedMealData(requestType);
-
-    console.log(requestType);
-    console.log(bodyFormData);
-
-    axios({
-      method: requestType,
-      url: `${API_URL}create_update_meals`,
-      data: bodyFormData,
-      headers: { "Content-Type": "multipart/form-data" },
-    }).catch((err) => {
-      console.log(err);
-    });
-    dispatch({ type: "SET_INGREDIENTS_MODIFIED", payload: false });
-    state.selectedFile = "No file"; // state. =
-    state.previewLink = ""; // state. =
-  };
-
-  const handleSaveMealIngredients = () => {
-    const requestType = state.modalMode === "NEW" ? "post" : "put";
-
-    const bodyFormData = getEditedMealData(requestType);
-
-    console.log(requestType);
-    console.log(bodyFormData);
-    console.log(state.editedMealIngredients);
+    let mealStatusCode = "";
 
     axios({
       method: requestType,
@@ -459,193 +444,53 @@ function EditMeal({ history, ...props }) {
       headers: { "Content-Type": "multipart/form-data" },
     })
       .then((response) => {
-        // NEW API REQUEST
-        const ingredientList = state.editedMealIngredients.map((ingredient) => {
-          return {
-            ingredient_id: ingredient.ingredient_uid,
-            ingredient_qty: ingredient.recipe_ingredient_qty,
-            measure_id: ingredient.measure_unit_uid,
+        mealStatusCode = response.status;
+        if (
+          state.showIngredients &&
+          state.ingredientsModified &&
+          !state.modalError
+        ) {
+          console.log("POSTING MEAL + INGREDIENTS");
+          const ingredientList = state.editedMealIngredients.map(
+            (ingredient) => {
+              return {
+                ingredient_id: ingredient.ingredient_uid,
+                ingredient_qty:
+                  ingredient.recipe_ingredient_qty / state.servings,
+                measure_id: ingredient.measure_unit_uid,
+              };
+            }
+          );
+
+          const recipeData = {
+            meal_id: response.data.meal_uid,
+            servings: state.servings,
+            ingredients: ingredientList,
           };
-        });
-
-        const recipeData = {
-          meal_id: response.data.meal_uid,
-          ingredients: ingredientList,
-        };
-        console.log(recipeData);
-
-        // OLD API REQUEST
-        // if (requestType === "post") {
-        //   return axios.all(
-        //     state.editedMealIngredients.map((ingredient) => {
-        //       const ingredientObj = {
-        //         meal_id: response.data.meal_uid,
-        //         ingredient_id: ingredient.ingredient_uid,
-        //         ingredient_qty: ingredient.recipe_ingredient_qty,
-        //         measure_id: ingredient.measure_unit_uid,
-        //       };
-        //       if (ingredient.status === "NEW") {
-        //         axios.post(`${API_URL}mealcreation`, ingredientObj);
-        //       } else if (ingredient.status === "EDITED") {
-        //         //PUT REQUEST
-        //       }
-        //     })
-        //   );
-        // }
+          console.log(recipeData);
+          return axios.put(`${API_URL}create_recipe`, recipeData);
+        } else {
+          console.log("POSTING MEAL");
+        }
       })
-      .catch((err) => {
-        console.log(err);
-      });
-
-    state.selectedFile = "No file";
-    state.previewLink = "";
-  };
-
-  const saveEditedMealNew = () => {
-    const bodyFormData = new FormData();
-
-    bodyFormData.append("meal_category", state.editedMeal.meal_category);
-    bodyFormData.append("meal_name", state.editedMeal.meal_name);
-    bodyFormData.append("meal_desc", state.editedMeal.meal_desc);
-    bodyFormData.append("meal_hint", state.editedMeal.meal_hint);
-    bodyFormData.append("meal_photo_url", state.selectedFile);
-    bodyFormData.append("meal_calories", state.editedMeal.meal_calories);
-    bodyFormData.append("meal_protein", state.editedMeal.meal_protein);
-    bodyFormData.append("meal_carbs", state.editedMeal.meal_carbs);
-    bodyFormData.append("meal_fiber", state.editedMeal.meal_fiber);
-    bodyFormData.append("meal_sugar", state.editedMeal.meal_sugar);
-    bodyFormData.append("meal_fat", state.editedMeal.meal_fat);
-    bodyFormData.append("meal_sat", state.editedMeal.meal_sat);
-    bodyFormData.append("meal_business", activeBusiness);
-    bodyFormData.append("meal_status", state.editedMeal.meal_status);
-    bodyFormData.append("meal_uid", state.editedMeal.meal_uid);
-
-    axios({
-      method: "put",
-      url: `${API_URL}create_update_meals`,
-      data: bodyFormData,
-      headers: { "Content-Type": "multipart/form-data" },
-    })
       .then((response) => {
-        const savedMeal = state.editedMeal;
-        savedMeal.meal_business = activeBusiness;
-        savedMeal.meal_uid = response.data.meal_uid;
+        // TODO - ADD STATUS CODE CHECK FOR INGREDIENTS API
 
-        const changedIndex = state.mealData.findIndex(
-          (meal) => meal.meal_uid === state.selectedMeal
-        );
-        const newMealData = [...state.mealData];
-        newMealData[changedIndex] = state.editedMeal;
-        dispatch({ type: "FETCH_MEALS", payload: newMealData });
-
-        state.selectedFile = null; // state. =
-        state.previewLink = ""; // state. =
+        if (mealStatusCode === 201) dispatch({ type: "CLOSE_MODAL" });
       })
       .catch((err) => {
         console.log(err);
       });
-  };
 
-  const postNewMeal = () => {
-    const bodyFormData = new FormData();
+    // OLD dispatch to clean up modal and close
+    // dispatch({ type: "SET_PREVIEW", payload: "" });
+    // dispatch({
+    //   type: "SHOW_CREATE_EDIT_MEAL_MODAL",
+    //   payload: { show: false, mode: "" },
+    // });
 
-    bodyFormData.append("meal_category", state.editedMeal.meal_category);
-    bodyFormData.append("meal_name", state.editedMeal.meal_name);
-    bodyFormData.append("meal_desc", state.editedMeal.meal_desc);
-    bodyFormData.append("meal_hint", state.editedMeal.meal_hint);
-    bodyFormData.append("meal_photo_url", state.selectedFile);
-    bodyFormData.append("meal_calories", state.editedMeal.meal_calories);
-    bodyFormData.append("meal_protein", state.editedMeal.meal_protein);
-    bodyFormData.append("meal_carbs", state.editedMeal.meal_carbs);
-    bodyFormData.append("meal_fiber", state.editedMeal.meal_fiber);
-    bodyFormData.append("meal_sugar", state.editedMeal.meal_sugar);
-    bodyFormData.append("meal_fat", state.editedMeal.meal_fat);
-    bodyFormData.append("meal_sat", state.editedMeal.meal_sat);
-    bodyFormData.append("meal_business", activeBusiness);
-    bodyFormData.append("meal_status", state.editedMeal.meal_status);
-
-    axios({
-      method: "post",
-      url: `${API_URL}create_update_meals`,
-      data: bodyFormData,
-      headers: { "Content-Type": "multipart/form-data" },
-    })
-      .then((response) => {
-        const savedMeal = state.editedMeal;
-        savedMeal.meal_business = activeBusiness;
-        savedMeal.meal_uid = response.data.meal_uid;
-
-        const changedIndex = state.mealData.findIndex(
-          (meal) => meal.meal_uid === state.selectedMeal
-        );
-
-        const newMealData = [...state.mealData];
-
-        newMealData[changedIndex] = state.editedMeal;
-
-        dispatch({ type: "FETCH_MEALS", payload: newMealData });
-        state.selectedFile = null; // state. =
-        state.previewLink = ""; // state. =
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-  const postNewMealAndIngredients = () => {
-    const bodyFormData = new FormData();
-
-    bodyFormData.append("meal_category", state.editedMeal.meal_category);
-    bodyFormData.append("meal_name", state.editedMeal.meal_name);
-    bodyFormData.append("meal_desc", state.editedMeal.meal_desc);
-    bodyFormData.append("meal_hint", state.editedMeal.meal_hint);
-    bodyFormData.append("meal_photo_url", state.selectedFile);
-    bodyFormData.append("meal_calories", state.editedMeal.meal_calories);
-    bodyFormData.append("meal_protein", state.editedMeal.meal_protein);
-    bodyFormData.append("meal_carbs", state.editedMeal.meal_carbs);
-    bodyFormData.append("meal_fiber", state.editedMeal.meal_fiber);
-    bodyFormData.append("meal_sugar", state.editedMeal.meal_sugar);
-    bodyFormData.append("meal_fat", state.editedMeal.meal_fat);
-    bodyFormData.append("meal_sat", state.editedMeal.meal_sat);
-    bodyFormData.append("meal_business", activeBusiness);
-    bodyFormData.append("meal_status", state.editedMeal.meal_status);
-    axios({
-      method: "post",
-      url: `${API_URL}create_update_meals`,
-      data: bodyFormData,
-      headers: { "Content-Type": "multipart/form-data" },
-    })
-      .then((response) => {
-        const savedMeal = state.editedMeal;
-        const newMealID = response.data.meal_uid;
-        savedMeal.meal_business = activeBusiness;
-        savedMeal.meal_uid = newMealID;
-
-        const changedIndex = state.mealData.findIndex(
-          (meal) => meal.meal_uid === state.selectedMeal
-        );
-        const newMealData = [...state.mealData];
-        newMealData[changedIndex] = state.editedMeal;
-        dispatch({ type: "FETCH_MEALS", payload: newMealData });
-        state.selectedFile = null;
-        state.previewLink = "";
-
-        return axios.all(
-          state.editedMealIngredients.map((ingredient) => {
-            const ingredientObj = {
-              meal_id: response.data.meal_uid,
-              ingredient_id: ingredient.ingredient_uid,
-              ingredient_qty: ingredient.recipe_ingredient_qty,
-              measure_id: ingredient.measure_unit_uid,
-            };
-            axios.post(`${API_URL}mealcreation`, ingredientObj);
-          })
-        );
-      })
-      .then((res) => console.log(res))
-      .catch((err) => {
-        console.log(err);
-      });
+    // state.selectedFile = null;
+    // state.previewLink = "";
   };
 
   const getActiveBusinessHours = () => {
@@ -949,1105 +794,6 @@ function EditMeal({ history, ...props }) {
       }
     }
     return false;
-  };
-
-  const editMealBoxNew = () => {
-    if (showEditMeal == true) {
-      if (mealButtonPressed == true) {
-        dispatch({ type: "SELECT_MEAL", payload: selectedMeal.meal_uid });
-        editMeal("", selectedMeal.meal_uid);
-        toggleMealButtonPressed(false);
-      }
-      return (
-        <div
-          style={{
-            height: "100%",
-            width: "100%",
-            zIndex: "101",
-            left: "0",
-            top: "0",
-            overflow: "auto",
-            position: "fixed",
-            display: "grid",
-            backgroundColor: "rgba(255, 255, 255, 0.8)",
-          }}
-        >
-          <div
-            style={{
-              position: "relative",
-              justifySelf: "center",
-              alignSelf: "center",
-              display: "block",
-              border: "#ff6505 solid",
-              backgroundColor: "#FEF7E0",
-              // height: "900px",
-              width: "1002px",
-              zIndex: "102",
-
-              borderRadius: "20px",
-            }}
-          >
-            <Form
-              style={{
-                position: "relative",
-                // justifySelf: "center",
-                // alignSelf: "center",
-                display: "block",
-                // border: "#ff6505 solid",
-                // backgroundColor: "#FEF7E0",
-                // height: "900px",
-                width: "495px",
-                zIndex: "102",
-                paddingLeft: "50px",
-                paddingRight: "25px",
-                paddingTop: "50px",
-                paddingBottom: "50px",
-                borderRadius: "20px",
-                float: "left",
-              }}
-            >
-              <div
-                style={{
-                  fontSize: "20px",
-                  fontWeight: "bold",
-                  marginBottom: "25px",
-                }}
-              >
-                Meal:
-              </div>
-              <Form.Group as={Row}>
-                <Form.Label column sm={3} style={{ color: "#F26522" }}>
-                  Meal Name
-                </Form.Label>
-                <Col sm={9}>
-                  <Form.Control
-                    as="textarea"
-                    value={state.editedMeal.meal_name}
-                    placeholder="Enter Meal Name"
-                    onChange={(event) => {
-                      editMeal("meal_name", event.target.value);
-                    }}
-                  />
-                </Col>
-              </Form.Group>
-
-              <Form.Group as={Row}>
-                <Form.Label column sm={3} style={{ color: "#F26522" }}>
-                  Picture URL
-                </Form.Label>
-                <Col sm={9}>
-                  {/* {state.editedMeal.meal_photo_URL
-                      ? <div style={{textAlign: "center", marginBottom: "15px"}}><img src={state.editedMeal.meal_photo_URL} height="150px" width="150px"></img></div>
-                      : null
-                    } */}
-                  {
-                    <div style={{ textAlign: "center", marginBottom: "15px" }}>
-                      <img
-                        src={state.editedMeal.meal_photo_URL}
-                        height="150px"
-                        width="150px"
-                      ></img>
-                    </div>
-                  }
-                  {/* <Form.Control
-                      disabled={!state.selectedMeal}
-                      value={state.editedMeal.meal_photo_URL}
-                      onChange={
-                        (event) => {
-                          editMeal('meal_photo_URL', event.target.value );
-                        }
-                      }
-                    /> */}
-
-                  <input
-                    type="file"
-                    name="upload_file"
-                    onChange={(e) => {
-                      state.selectedFile = e.target.files[0];
-                      dispatch({
-                        type: "SET_PREVIEW",
-                        payload: URL.createObjectURL(e.target.files[0]),
-                      });
-                      editMeal(
-                        "meal_photo_URL",
-                        URL.createObjectURL(e.target.files[0])
-                      );
-                    }}
-                  />
-                </Col>
-              </Form.Group>
-
-              {/* <div>Business {activeBusinessData.business_name}</div> */}
-              <Form.Group as={Row}>
-                <Form.Label column sm={3} style={{ color: "#F26522" }}>
-                  Business
-                </Form.Label>
-                <Form.Label column sm={9}>
-                  {activeBusinessData.business_name}
-                </Form.Label>
-              </Form.Group>
-
-              <Form.Group as={Row}>
-                <Form.Label column sm={3} style={{ color: "#F26522" }}>
-                  Category
-                </Form.Label>
-                <Col sm={9}>
-                  <Form.Control
-                    as="select"
-                    value={state.editedMeal.meal_category}
-                    onChange={(event) => {
-                      editMeal("meal_category", event.target.value);
-                    }}
-                  >
-                    <option value="" hidden>
-                      {" "}
-                      Select Meal Category{" "}
-                    </option>
-                    {getMealCategories().map((category) => (
-                      <option value={category} key={category}>
-                        {category}
-                      </option>
-                    ))}
-                  </Form.Control>
-                </Col>
-              </Form.Group>
-
-              <Form.Group as={Row}>
-                <Form.Label column sm={3} style={{ color: "#F26522" }}>
-                  Description
-                </Form.Label>
-                <Col sm={9}>
-                  <Form.Control
-                    as="textarea"
-                    rows={3}
-                    value={state.editedMeal.meal_desc}
-                    placeholder="Enter Meal Description"
-                    onChange={(event) => {
-                      editMeal("meal_desc", event.target.value);
-                    }}
-                  />
-                </Col>
-              </Form.Group>
-
-              <Form.Group as={Row}>
-                <Form.Label column sm={3} style={{ color: "#F26522" }}>
-                  Hint
-                </Form.Label>
-                <Col sm={9}>
-                  <Form.Control
-                    value={state.editedMeal.meal_hint}
-                    placeholder="Enter Meal Hint"
-                    onChange={(event) => {
-                      editMeal("meal_hint", event.target.value);
-                    }}
-                  />
-                </Col>
-              </Form.Group>
-            </Form>
-            <Form
-              style={{
-                position: "relative",
-                // justifySelf: "center",
-                // alignSelf: "center",
-                display: "block",
-                // border: "#ff6505 solid",
-                backgroundColor: "#F8BB17",
-                minHeight: "620px",
-
-                width: "2px",
-                zIndex: "102",
-                // paddingRight: "50px",
-                // paddingTop: "50px",
-                // paddingBottom: "50px",
-                // borderRadius: "20px",
-                marginTop: "5%",
-                float: "left",
-              }}
-            ></Form>
-
-            <Form
-              style={{
-                position: "relative",
-                // justifySelf: "center",
-                // alignSelf: "center",
-                display: "block",
-                // border: "#ff6505 solid",
-                // backgroundColor: "#FEF7E0",
-                // height: "900px",
-                width: "495px",
-                zIndex: "102",
-                paddingRight: "50px",
-                paddingTop: "50px",
-                paddingBottom: "50px",
-                paddingLeft: "25px",
-                borderRadius: "20px",
-                float: "left",
-              }}
-            >
-              <div
-                style={{
-                  fontSize: "20px",
-                  fontWeight: "bold",
-                  marginBottom: "10px",
-                }}
-              >
-                Nutritional Facts:
-              </div>
-              <Form.Group as={Row}>
-                <Form.Label column sm={3} style={{ color: "#F26522" }}>
-                  Calories
-                </Form.Label>
-                <Col sm={9}>
-                  <Form.Control
-                    type="number"
-                    min="0"
-                    value={state.editedMeal.meal_calories}
-                    placeholder="Enter Calories"
-                    onChange={(event) => {
-                      editMeal("meal_calories", event.target.value);
-                    }}
-                  />
-                </Col>
-              </Form.Group>
-              <Form.Group as={Row}>
-                <Form.Label column sm={3} style={{ color: "#F26522" }}>
-                  Protein
-                </Form.Label>
-                <Col sm={9}>
-                  <Form.Control
-                    type="number"
-                    min="0"
-                    value={state.editedMeal.meal_protein}
-                    placeholder="Enter Protein Amount"
-                    onChange={(event) => {
-                      editMeal("meal_protein", event.target.value);
-                    }}
-                  />
-                </Col>
-              </Form.Group>
-              <Form.Group as={Row}>
-                <Form.Label column sm={3} style={{ color: "#F26522" }}>
-                  Carbs
-                </Form.Label>
-                <Col sm={9}>
-                  <Form.Control
-                    type="number"
-                    min="0"
-                    value={state.editedMeal.meal_carbs}
-                    placeholder="Enter Carb Amount"
-                    onChange={(event) => {
-                      editMeal("meal_carbs", event.target.value);
-                    }}
-                  />
-                </Col>
-              </Form.Group>
-              <Form.Group as={Row}>
-                <Form.Label column sm={3} style={{ color: "#F26522" }}>
-                  Fiber
-                </Form.Label>
-                <Col sm={9}>
-                  <Form.Control
-                    type="number"
-                    min="0"
-                    value={state.editedMeal.meal_fiber}
-                    placeholder="Enter Fiber Amount"
-                    onChange={(event) => {
-                      editMeal("meal_fiber", event.target.value);
-                    }}
-                  />
-                </Col>
-              </Form.Group>
-              <Form.Group as={Row}>
-                <Form.Label column sm={3} style={{ color: "#F26522" }}>
-                  Sugar
-                </Form.Label>
-                <Col sm={9}>
-                  <Form.Control
-                    type="number"
-                    min="0"
-                    value={state.editedMeal.meal_sugar}
-                    placeholder="Enter Sugar Amount"
-                    onChange={(event) => {
-                      editMeal("meal_sugar", event.target.value);
-                    }}
-                  />
-                </Col>
-              </Form.Group>
-              <Form.Group as={Row}>
-                <Form.Label column sm={3} style={{ color: "#F26522" }}>
-                  Fat
-                </Form.Label>
-                <Col sm={9}>
-                  <Form.Control
-                    type="number"
-                    min="0"
-                    value={state.editedMeal.meal_fat}
-                    placeholder="Enter Fat Amount"
-                    onChange={(event) => {
-                      editMeal("meal_fat", event.target.value);
-                    }}
-                  />
-                </Col>
-              </Form.Group>
-              <Form.Group as={Row}>
-                <Form.Label column sm={3} style={{ color: "#F26522" }}>
-                  Sat
-                </Form.Label>
-                <Col sm={9}>
-                  <Form.Control
-                    type="number"
-                    min="0"
-                    value={state.editedMeal.meal_sat}
-                    placeholder="Enter Saturated Fat Amount"
-                    onChange={(event) => {
-                      editMeal("meal_sat", event.target.value);
-                    }}
-                  />
-                </Col>
-              </Form.Group>
-
-              <Form.Group as={Row}>
-                <Form.Label column sm={3} style={{ color: "#F26522" }}>
-                  Status
-                </Form.Label>
-                <Col sm={9}>
-                  <Form.Control
-                    as="textarea"
-                    value={state.editedMeal.meal_status}
-                    placeholder="Placeholder for status"
-                    onChange={(event) => {
-                      editMeal("meal_status", event.target.value);
-                    }}
-                  />
-                </Col>
-              </Form.Group>
-
-              <Row>
-                <Col
-                  style={{
-                    textAlign: "center",
-                  }}
-                >
-                  <Button
-                    variant="primary"
-                    onClick={() => {
-                      if (!checkForDuplicateNameInBusinessEditing()) {
-                        saveEditedMealNew();
-
-                        for (var i = 0; i < allMeals.length; i++) {
-                          if (
-                            allMeals[i].meal_uid == state.editedMeal.meal_uid
-                          ) {
-                            allMeals[i] = state.editedMeal;
-                          }
-                        }
-                        dispatch({
-                          type: "SHOW_CREATE_EDIT_MEAL_MODAL",
-                          payload: { show: false, mode: "" },
-                        });
-                      }
-
-                      forceUpdate();
-                      //toggleEditMeal(false)
-                    }}
-                    style={{
-                      backgroundColor: "#F26522",
-                      marginBottom: "30px",
-                      marginTop: "30px",
-                      borderRadius: "15px",
-                      width: "200px",
-                      fontSize: "18px",
-                    }}
-                  >
-                    Save
-                  </Button>
-                </Col>
-              </Row>
-              <Row>
-                <Col
-                  style={{
-                    textAlign: "center",
-                  }}
-                >
-                  <Button
-                    variant="primary"
-                    onClick={() => {
-                      dispatch({
-                        type: "SHOW_CREATE_EDIT_MEAL_MODAL",
-                        payload: { show: false, mode: "" },
-                      });
-                    }}
-                    style={{
-                      backgroundColor: "#F26522",
-                      borderRadius: "15px",
-                      width: "200px",
-                      fontSize: "18px",
-                    }}
-                  >
-                    Cancel
-                  </Button>
-                </Col>
-              </Row>
-            </Form>
-          </div>
-        </div>
-      );
-    } else {
-      return null;
-    }
-  };
-
-  const newMealBoxNew = () => {
-    if (showNewMeal == true) {
-      return (
-        <div
-          style={{
-            height: "100%",
-            width: "100%",
-            zIndex: "101",
-            left: "0",
-            top: "0",
-            overflow: "auto",
-            position: "fixed",
-            display: "grid",
-            backgroundColor: "rgba(255, 255, 255, 0.8)",
-          }}
-        >
-          <div
-            style={{
-              position: "relative",
-              justifySelf: "center",
-              alignSelf: "center",
-              display: "block",
-              border: "#ff6505 solid",
-              backgroundColor: "#FEF7E0",
-              height: "auto",
-              width: "auto",
-              zIndex: "102",
-
-              borderRadius: "20px",
-            }}
-          >
-            <div style={{ float: "right", padding: "10px 10px 0px 0px" }}>
-              <ModalCloseBtn
-                style={{ cursor: "pointer" }}
-                onClick={() => {
-                  dispatch({
-                    type: "SHOW_CREATE_EDIT_MEAL_MODAL",
-                    payload: { show: false, mode: "" },
-                  });
-                  if (state.showIngredients)
-                    dispatch({ type: "TOGGLE_SHOW_INGREDIENTS" });
-                  dispatch({ type: "RESET_EDITED_MEAL_INGREDIENTS" });
-                  dispatch({ type: "RESET_EDITED_MEAL" });
-                }}
-              />
-            </div>
-            <Form
-              style={{
-                position: "relative",
-                // justifySelf: "center",
-                // alignSelf: "center",
-                display: "block",
-                // border: "#ff6505 solid",
-                // backgroundColor: "#FEF7E0",
-                // height: "900px",
-                width: "495px",
-                zIndex: "102",
-                paddingLeft: "50px",
-                paddingRight: "25px",
-                paddingTop: "50px",
-                paddingBottom: "50px",
-                borderRadius: "20px",
-                float: "left",
-              }}
-            >
-              <div
-                style={{
-                  fontSize: "20px",
-                  fontWeight: "bold",
-                  marginBottom: "25px",
-                }}
-              >
-                Meal:
-              </div>
-              <Form.Group as={Row}>
-                <Form.Label column sm={3} style={{ color: "#F26522" }}>
-                  Meal Name
-                </Form.Label>
-                <Col sm={9}>
-                  <Form.Control
-                    as="input"
-                    placeholder="Enter Meal Name"
-                    onChange={(event) => {
-                      editMeal("meal_name", event.target.value);
-                    }}
-                  />
-                </Col>
-              </Form.Group>
-
-              <Form.Group as={Row}>
-                <Form.Label column sm={3} style={{ color: "#F26522" }}>
-                  Picture
-                </Form.Label>
-                <Col sm={9}>
-                  <div style={{ textAlign: "center", marginBottom: "15px" }}>
-                    {state.previewLink && (
-                      <img
-                        src={state.previewLink}
-                        height="150px"
-                        width="150px"
-                      ></img>
-                    )}
-                  </div>
-
-                  <input
-                    type="file"
-                    name="upload_file"
-                    onChange={(e) => {
-                      state.selectedFile = e.target.files[0];
-                      dispatch({
-                        type: "SET_PREVIEW",
-                        payload: URL.createObjectURL(e.target.files[0]),
-                      });
-                      editMeal(
-                        "meal_photo_URL",
-                        URL.createObjectURL(e.target.files[0])
-                      );
-                    }}
-                  />
-                </Col>
-              </Form.Group>
-
-              {/* <div>Business {activeBusinessData.business_name}</div> */}
-              <Form.Group as={Row}>
-                <Form.Label column sm={3} style={{ color: "#F26522" }}>
-                  Business
-                </Form.Label>
-                <Form.Label column sm={9}>
-                  {activeBusinessData.business_name}
-                </Form.Label>
-              </Form.Group>
-
-              <Form.Group as={Row}>
-                <Form.Label column sm={3} style={{ color: "#F26522" }}>
-                  Category
-                </Form.Label>
-                <Col sm={9}>
-                  <Form.Control
-                    as="select"
-                    value={state.editedMeal.meal_category}
-                    onChange={(event) => {
-                      editMeal("meal_category", event.target.value);
-                    }}
-                  >
-                    <option value="" hidden>
-                      {" "}
-                      Select Meal Category{" "}
-                    </option>
-                    {getMealCategories().map((category) => (
-                      <option value={category} key={category}>
-                        {category}
-                      </option>
-                    ))}
-                  </Form.Control>
-                </Col>
-              </Form.Group>
-
-              <Form.Group as={Row}>
-                <Form.Label column sm={3} style={{ color: "#F26522" }}>
-                  Description
-                </Form.Label>
-                <Col sm={9}>
-                  <Form.Control
-                    as="textarea"
-                    rows={3}
-                    placeholder="Enter Meal Description"
-                    onChange={(event) => {
-                      editMeal("meal_desc", event.target.value);
-                    }}
-                  />
-                </Col>
-              </Form.Group>
-
-              <Form.Group as={Row}>
-                <Form.Label column sm={3} style={{ color: "#F26522" }}>
-                  Hint
-                </Form.Label>
-                <Col sm={9}>
-                  <Form.Control
-                    placeholder="Enter Meal Hint"
-                    onChange={(event) => {
-                      editMeal("meal_hint", event.target.value);
-                    }}
-                  />
-                </Col>
-              </Form.Group>
-            </Form>
-            <Form
-              style={{
-                position: "relative",
-                // justifySelf: "center",
-                // alignSelf: "center",
-                display: "block",
-                // border: "#ff6505 solid",
-                backgroundColor: "#F8BB17",
-                height: "635px",
-                width: "2px",
-                zIndex: "102",
-                margin: "0px 0px 30px 0px",
-                // paddingRight: "50px",
-                // paddingTop: "50px",
-                // paddingBottom: "50px",
-                // borderRadius: "20px",
-                float: "left",
-              }}
-            ></Form>
-
-            <Form
-              style={{
-                position: "relative",
-                // justifySelf: "center",
-                // alignSelf: "center",
-                display: "block",
-                // border: "#ff6505 solid",
-                // backgroundColor: "#FEF7E0",
-                // height: "900px",
-                width: "495px",
-                zIndex: "102",
-                paddingRight: "50px",
-                paddingTop: "50px",
-                paddingBottom: "50px",
-                paddingLeft: "25px",
-                borderRadius: "20px",
-                float: "left",
-              }}
-            >
-              <div
-                style={{
-                  fontSize: "20px",
-                  fontWeight: "bold",
-                  marginBottom: "10px",
-                }}
-              >
-                Nutritional Facts:
-              </div>
-              <Form.Group as={Row}>
-                <Form.Label column sm={3} style={{ color: "#F26522" }}>
-                  Calories
-                </Form.Label>
-                <Col sm={9}>
-                  <Form.Control
-                    type="number"
-                    min="0"
-                    placeholder="Enter Calories"
-                    onChange={(event) => {
-                      editMeal("meal_calories", event.target.value);
-                    }}
-                  />
-                </Col>
-              </Form.Group>
-              <Form.Group as={Row}>
-                <Form.Label column sm={3} style={{ color: "#F26522" }}>
-                  Protein
-                </Form.Label>
-                <Col sm={9}>
-                  <Form.Control
-                    type="number"
-                    min="0"
-                    placeholder="Enter Protein Amount"
-                    onChange={(event) => {
-                      editMeal("meal_protein", event.target.value);
-                    }}
-                  />
-                </Col>
-              </Form.Group>
-              <Form.Group as={Row}>
-                <Form.Label column sm={3} style={{ color: "#F26522" }}>
-                  Carbs
-                </Form.Label>
-                <Col sm={9}>
-                  <Form.Control
-                    type="number"
-                    min="0"
-                    placeholder="Enter Carb Amount"
-                    onChange={(event) => {
-                      editMeal("meal_carbs", event.target.value);
-                    }}
-                  />
-                </Col>
-              </Form.Group>
-              <Form.Group as={Row}>
-                <Form.Label column sm={3} style={{ color: "#F26522" }}>
-                  Fiber
-                </Form.Label>
-                <Col sm={9}>
-                  <Form.Control
-                    type="number"
-                    min="0"
-                    placeholder="Enter Fiber Amount"
-                    onChange={(event) => {
-                      editMeal("meal_fiber", event.target.value);
-                    }}
-                  />
-                </Col>
-              </Form.Group>
-              <Form.Group as={Row}>
-                <Form.Label column sm={3} style={{ color: "#F26522" }}>
-                  Sugar
-                </Form.Label>
-                <Col sm={9}>
-                  <Form.Control
-                    type="number"
-                    min="0"
-                    placeholder="Enter Sugar Amount"
-                    onChange={(event) => {
-                      editMeal("meal_sugar", event.target.value);
-                    }}
-                  />
-                </Col>
-              </Form.Group>
-              <Form.Group as={Row}>
-                <Form.Label column sm={3} style={{ color: "#F26522" }}>
-                  Fat
-                </Form.Label>
-                <Col sm={9}>
-                  <Form.Control
-                    type="number"
-                    min="0"
-                    placeholder="Enter Fat Amount"
-                    onChange={(event) => {
-                      editMeal("meal_fat", event.target.value);
-                    }}
-                  />
-                </Col>
-              </Form.Group>
-              <Form.Group as={Row}>
-                <Form.Label column sm={3} style={{ color: "#F26522" }}>
-                  Sat
-                </Form.Label>
-                <Col sm={9}>
-                  <Form.Control
-                    type="number"
-                    min="0"
-                    placeholder="Enter Saturated Fat Amount"
-                    onChange={(event) => {
-                      editMeal("meal_sat", event.target.value);
-                    }}
-                  />
-                </Col>
-              </Form.Group>
-
-              <Form.Group as={Row}>
-                <Form.Label column sm={3} style={{ color: "#F26522" }}>
-                  Status
-                </Form.Label>
-                <Col sm={9}>
-                  <Form.Control
-                    as="input"
-                    placeholder="Enter Status"
-                    onChange={(event) => {
-                      editMeal("meal_status", event.target.value);
-                    }}
-                  />
-                </Col>
-              </Form.Group>
-
-              <Row>
-                <Col
-                  style={{
-                    textAlign: "center",
-                  }}
-                >
-                  <Button
-                    variant="primary"
-                    onClick={() => {
-                      if (!checkForDuplicateNameInBusiness()) {
-                        postNewMeal();
-
-                        allMeals.push(state.editedMeal);
-                        dispatch({ type: "SET_PREVIEW", payload: "" });
-                        dispatch({
-                          type: "SHOW_CREATE_EDIT_MEAL_MODAL",
-                          payload: { show: false, mode: "" },
-                        });
-                      }
-
-                      forceUpdate();
-                      // toggleNewMeal(false)
-                    }}
-                    style={{
-                      backgroundColor: "#F26522",
-                      marginBottom: "30px",
-                      marginTop: "30px",
-                      borderRadius: "15px",
-                      width: "200px",
-                      fontSize: "18px",
-                    }}
-                  >
-                    Save Meal
-                  </Button>
-                </Col>
-              </Row>
-              <Row>
-                <Col
-                  style={{
-                    textAlign: "center",
-                  }}
-                >
-                  {!state.showIngredients && (
-                    <Button
-                      variant="primary"
-                      onClick={() => {
-                        dispatch({ type: "TOGGLE_SHOW_INGREDIENTS" });
-                      }}
-                      style={{
-                        backgroundColor: "#F26522",
-                        borderRadius: "15px",
-                        width: "200px",
-                        fontSize: "18px",
-                      }}
-                    >
-                      Add Ingredients
-                    </Button>
-                  )}
-                </Col>
-              </Row>
-            </Form>
-            {state.showIngredients && (
-              <div style={{ float: "left" }}>
-                <Form
-                  style={{
-                    position: "relative",
-                    // justifySelf: "center",
-                    // alignSelf: "center",
-                    display: "block",
-                    // border: "#ff6505 solid",
-                    backgroundColor: "#F8BB17",
-                    height: "620px",
-                    width: "2px",
-                    zIndex: "102",
-                    // paddingRight: "50px",
-                    // paddingTop: "50px",
-                    // paddingBottom: "50px",
-                    // borderRadius: "20px",
-
-                    float: "left",
-                  }}
-                ></Form>
-                <Form
-                  style={{
-                    position: "relative",
-                    display: "block",
-                    width: "495px",
-                    zIndex: "102",
-                    paddingRight: "50px",
-                    paddingTop: "50px",
-                    paddingBottom: "50px",
-                    paddingLeft: "25px",
-                    borderRadius: "20px",
-                    float: "left",
-                  }}
-                >
-                  <div
-                    style={{
-                      fontSize: "20px",
-                      fontWeight: "bold",
-                      marginBottom: "10px",
-                    }}
-                  >
-                    Ingredients Needed:
-                  </div>
-                  <Form.Group as={Row}>
-                    <Form.Label column md="auto" style={{ color: "#F26522" }}>
-                      For how many servings
-                    </Form.Label>
-                    <Col md="auto" style={{ width: "100px" }}>
-                      <Form.Control type="number" min="0" />
-                    </Col>
-                  </Form.Group>
-                  <Row>
-                    <Col>Ingredient Name</Col>
-                    <Col>Quantity</Col>
-                    <Col>Unit</Col>
-                  </Row>
-                  <div
-                    style={{
-                      height: "354px",
-                      overflow: "scroll",
-                      padding: "10px 0px 10px 0px",
-                    }}
-                  >
-                    {state.editedMealIngredients.map(
-                      (ingredient, ingredientIndex) => {
-                        return (
-                          <Row key={ingredientIndex}>
-                            <Col md="auto" style={{ width: "150px" }}>
-                              <Form.Control
-                                as="select"
-                                value={ingredient.ingredient_uid}
-                                onChange={(event) => {
-                                  const newRecipe = [
-                                    ...state.editedMealIngredients,
-                                  ];
-                                  const newIngredientId = event.target.value;
-                                  const newIngredientInfo =
-                                    state.ingredientsData.filter(
-                                      (allIngredients) =>
-                                        allIngredients.ingredient_uid ===
-                                        newIngredientId
-                                    )[0];
-                                  const ingredientIndex = newRecipe.findIndex(
-                                    (elt) =>
-                                      elt.ingredient_uid ===
-                                      ingredient.ingredient_uid
-                                  );
-                                  newRecipe[ingredientIndex] = {
-                                    ...newRecipe[ingredientIndex],
-                                    ...newIngredientInfo,
-                                  };
-                                  dispatch({
-                                    type: "EDIT_MEAL_INGREDIENTS",
-                                    payload: newRecipe,
-                                  });
-                                }}
-                              >
-                                <option value="" hidden>
-                                  Select an Ingredient
-                                </option>
-                                {state.ingredientsData.map((allIngredients) => (
-                                  <option
-                                    value={allIngredients.ingredient_uid}
-                                    key={allIngredients.ingredient_uid}
-                                  >
-                                    {allIngredients.ingredient_desc}
-                                  </option>
-                                ))}
-                              </Form.Control>
-                            </Col>
-                            <Col md="auto" style={{ width: "150px" }}>
-                              <Form.Control
-                                type="number"
-                                min="0"
-                                value={ingredient.recipe_ingredient_qty}
-                                onChange={(event) => {
-                                  const newRecipe = [
-                                    ...state.editedMealIngredients,
-                                  ];
-                                  const newQuantity = event.target.value;
-                                  const ingredientIndex = newRecipe.findIndex(
-                                    (elt) =>
-                                      elt.ingredient_uid ===
-                                      ingredient.ingredient_uid
-                                  );
-                                  newRecipe[ingredientIndex] = {
-                                    ...newRecipe[ingredientIndex],
-                                    recipe_ingredient_qty: newQuantity,
-                                  };
-                                  dispatch({
-                                    type: "EDIT_MEAL_INGREDIENTS",
-                                    payload: newRecipe,
-                                  });
-                                }}
-                              />
-                            </Col>
-                            <Col md="auto" style={{ width: "150px" }}>
-                              <Form.Control
-                                as="select"
-                                value={ingredient.measure_unit_uid}
-                                onChange={(event) => {
-                                  const newRecipe = [
-                                    ...state.editedMealIngredients,
-                                  ];
-                                  const newMeasureUnitId = event.target.value;
-                                  const newMeasureUnitInfo =
-                                    state.measureUnitsData.filter(
-                                      (allMeasureUnits) =>
-                                        allMeasureUnits.measure_unit_uid ===
-                                        newMeasureUnitId
-                                    )[0];
-                                  const ingredientIndex = newRecipe.findIndex(
-                                    (elt) =>
-                                      elt.ingredient_uid ===
-                                      ingredient.ingredient_uid
-                                  );
-                                  newRecipe[ingredientIndex] = {
-                                    ...newRecipe[ingredientIndex],
-                                    ...newMeasureUnitInfo,
-                                  };
-                                  dispatch({
-                                    type: "EDIT_MEAL_INGREDIENTS",
-                                    payload: newRecipe,
-                                  });
-                                }}
-                              >
-                                <option value="" hidden>
-                                  Select a Measure Unit
-                                </option>
-                                {state.measureUnitsData.map(
-                                  (allMeasureUnits) => (
-                                    <option
-                                      value={allMeasureUnits.measure_unit_uid}
-                                      key={allMeasureUnits.measure_unit_uid}
-                                    >
-                                      {allMeasureUnits.recipe_unit}
-                                    </option>
-                                  )
-                                )}
-                              </Form.Control>
-                            </Col>
-                          </Row>
-                        );
-                      }
-                    )}
-                  </div>
-
-                  <div
-                    style={{ fontSize: "32px" }}
-                    onClick={() => {
-                      const newRecipe = [...state.editedMealIngredients];
-                      newRecipe.push({
-                        ingredient_uid: "",
-                        recipe_ingredient_qty: "",
-                        measure_unit_uid: "",
-                      });
-                      dispatch({
-                        type: "EDIT_MEAL_INGREDIENTS",
-                        payload: newRecipe,
-                      });
-                    }}
-                  >
-                    +
-                  </div>
-                  <Button
-                    variant="primary"
-                    style={{
-                      backgroundColor: "#F26522",
-                      borderRadius: "15px",
-                      width: "auto",
-                      fontSize: "18px",
-                    }}
-                    onClick={() => {
-                      //handleSaveMealIngredients();
-                      handleSaveMealNew();
-                      dispatch({ type: "RESET_EDITED_MEAL_INGREDIENTS" });
-                      dispatch({
-                        type: "SHOW_CREATE_EDIT_MEAL_MODAL",
-                        payload: { show: false, mode: "" },
-                      });
-                    }}
-                  >
-                    Save Meal and Ingredients
-                  </Button>
-                </Form>
-              </div>
-            )}
-          </div>
-        </div>
-      );
-    } else {
-      return null;
-    }
   };
 
   const displayBusinessHours = () => {
@@ -2776,6 +1522,17 @@ function EditMeal({ history, ...props }) {
             >
               Status
             </th>
+            <th
+              style={{
+                color: "#F26522",
+                margin: "auto",
+                textAlign: "center",
+                display: "inline-block",
+              }}
+              width="7%"
+            >
+              Actions
+            </th>
             {/* <th style={{color: '#F26522', paddingLeft: "67px", textAlign:"center", display:"inline-block"}} ></th> */}
           </tr>
         </table>
@@ -2830,18 +1587,19 @@ function EditMeal({ history, ...props }) {
               <ModalCloseBtn
                 style={{ cursor: "pointer" }}
                 onClick={() => {
-                  dispatch({
-                    type: "SET_INGREDIENTS_MODIFIED",
-                    payload: false,
-                  });
-                  dispatch({
-                    type: "SHOW_CREATE_EDIT_MEAL_MODAL",
-                    payload: { show: false, mode: "" },
-                  });
-                  if (state.showIngredients)
-                    dispatch({ type: "TOGGLE_SHOW_INGREDIENTS" });
-                  dispatch({ type: "RESET_EDITED_MEAL_INGREDIENTS" });
-                  dispatch({ type: "RESET_EDITED_MEAL" });
+                  dispatch({ type: "CLOSE_MODAL" });
+                  // dispatch({
+                  //   type: "SET_INGREDIENTS_MODIFIED",
+                  //   payload: false,
+                  // });
+                  // dispatch({
+                  //   type: "SHOW_CREATE_EDIT_MEAL_MODAL",
+                  //   payload: { show: false, mode: "" },
+                  // });
+                  // if (state.showIngredients)
+                  //   dispatch({ type: "TOGGLE_SHOW_INGREDIENTS" });
+                  // dispatch({ type: "RESET_EDITED_MEAL_INGREDIENTS" });
+                  // dispatch({ type: "RESET_EDITED_MEAL" });
                 }}
               />
             </div>
@@ -2868,6 +1626,11 @@ function EditMeal({ history, ...props }) {
                       onChange={(event) => {
                         editMeal("meal_name", event.target.value);
                       }}
+                      className={
+                        state.modalError && state.editedMeal.meal_name === ""
+                          ? styles.modalError
+                          : ""
+                      }
                     />
                   </Col>
                 </Form.Group>
@@ -2927,6 +1690,12 @@ function EditMeal({ history, ...props }) {
                       onChange={(event) => {
                         editMeal("meal_category", event.target.value);
                       }}
+                      className={
+                        state.modalError &&
+                        state.editedMeal.meal_category === ""
+                          ? styles.modalError
+                          : ""
+                      }
                     >
                       <option value="" hidden>
                         {" "}
@@ -3138,7 +1907,8 @@ function EditMeal({ history, ...props }) {
                     <Col md="auto" style={{ width: "100px" }}>
                       <Form.Control
                         type="number"
-                        min="0"
+                        min="1"
+                        value={state.servings}
                         onChange={(event) => {
                           dispatch({
                             type: "SET_SERVINGS",
@@ -3339,6 +2109,11 @@ function EditMeal({ history, ...props }) {
                 padding: "50px",
               }}
             >
+              {state.modalError && (
+                <p style={{ color: "red", fontSize: "20px" }}>
+                  Please fill in missing data
+                </p>
+              )}
               {!state.showIngredients && (
                 <Button
                   variant="primary"
@@ -3358,25 +2133,17 @@ function EditMeal({ history, ...props }) {
                     outline: "none",
                   }}
                 >
-                  Add Ingredients +
+                  {state.modalMode === "NEW"
+                    ? "Add Ingredients +"
+                    : "Edit Ingredients +"}
                 </Button>
               )}
               <Button
                 variant="primary"
                 onClick={() => {
-                  // postNewMeal();
-                  //handleSaveMeal();
-                  handleSaveMealNew();
-
-                  allMeals.push(state.editedMeal);
-                  dispatch({ type: "SET_PREVIEW", payload: "" });
-                  dispatch({
-                    type: "SHOW_CREATE_EDIT_MEAL_MODAL",
-                    payload: { show: false, mode: "" },
-                  });
+                  if (verifyModalData()) handleSaveMealNew();
 
                   forceUpdate();
-                  // toggleNewMeal(false)
                 }}
                 style={{
                   backgroundColor: "#F26522",
