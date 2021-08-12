@@ -2,17 +2,25 @@ import { useEffect, useReducer, useState } from "react";
 import axios from "axios";
 import { API_URL } from "../../../reducers/constants";
 import { Breadcrumb, Container, Row, Col, Form, Button } from "react-bootstrap";
+import {
+  Table,
+  TableHead,
+  TableSortLabel,
+  TableBody,
+  TableRow,
+  TableCell,
+} from "@material-ui/core";
 import { withRouter } from "react-router";
 import AdminNavBar from "../AdminNavBar";
 import styles from "./editMeal.module.css";
 import { act } from "react-dom/test-utils";
 import testImage from "./static/test.jpeg";
 import { ReactComponent as ModalCloseBtn } from "./static/modalClose.svg";
+import { sortedArray } from "../../../reducers/helperFuncs";
 
 const initialState = {
   mounted: false,
   mealData: [],
-  selectedMeal: "",
   editedMeal: {
     meal_uid: "",
     meal_desc: "",
@@ -42,6 +50,11 @@ const initialState = {
   ingredientsModified: false,
   servings: 1,
   modalError: false,
+  sortMeals: {
+    field: "",
+    direction: "asc",
+  },
+  filteredMeals: [],
 };
 
 function useForceUpdate() {
@@ -60,11 +73,6 @@ function reducer(state, action) {
       return {
         ...state,
         mealData: action.payload,
-      };
-    case "SELECT_MEAL":
-      return {
-        ...state,
-        selectedMeal: action.payload,
       };
     case "EDIT_MEAL":
       return {
@@ -101,31 +109,6 @@ function reducer(state, action) {
         ...state,
         showIngredients: !state.showIngredients,
       };
-    case "RESET_EDITED_MEAL":
-      return {
-        ...state,
-        editedMeal: {
-          meal_uid: "",
-          meal_desc: "",
-          meal_category: "",
-          meal_name: "",
-          meal_hint: "",
-          meal_photo_URL: "",
-          meal_calories: "",
-          meal_protein: "",
-          meal_carbs: "",
-          meal_fiber: "",
-          meal_sugar: "",
-          meal_fat: "",
-          meal_sat: "",
-          meal_status: "",
-        },
-      };
-    case "RESET_EDITED_MEAL_INGREDIENTS":
-      return {
-        ...state,
-        editedMealIngredients: [],
-      };
     case "FETCH_ALL_BUSINESS_DATA":
       return {
         ...state,
@@ -134,7 +117,8 @@ function reducer(state, action) {
     case "CHANGE_ACTIVE_BUSINESS":
       return {
         ...state,
-        activeBusiness: action.payload,
+        activeBusiness: action.payload.id,
+        filteredMeals: action.payload.meals,
       };
     case "SHOW_CREATE_EDIT_MEAL_MODAL":
       return {
@@ -186,6 +170,19 @@ function reducer(state, action) {
           meal_status: "",
         },
         editedMealIngredients: [],
+      };
+    case "SORT_MEALS":
+      return {
+        ...state,
+        sortMeals: {
+          field: action.payload.field,
+          direction: action.payload.direction,
+        },
+      };
+    case "UPDATE_FILTERED_MEALS":
+      return {
+        ...state,
+        filteredMeals: action.payload,
       };
     default:
       return state;
@@ -827,7 +824,13 @@ function EditMeal({ history, ...props }) {
 
   const changeActiveBusiness = (selectedBusinessID) => {
     setActiveBusiness(selectedBusinessID);
-    dispatch({ type: "CHANGE_ACTIVE_BUSINESS", payload: selectedBusinessID });
+    dispatch({
+      type: "CHANGE_ACTIVE_BUSINESS",
+      payload: {
+        id: selectedBusinessID,
+        meals: getMealsByBusiness(selectedBusinessID),
+      },
+    });
     setActiveBusinessData(getBusinessDataByID(selectedBusinessID));
     setTempBusinessName(activeBusinessData.business_name);
     setTempCusine(activeBusinessData.business_type);
@@ -917,6 +920,26 @@ function EditMeal({ history, ...props }) {
     };
     activeBusinessData.business_accepting_hours = JSON.stringify(myObj2);
     toggleBusinessDetails(false);
+  };
+
+  const getMealsByBusiness = (id) => {
+    return state.mealData.filter((meal) => meal.meal_business === id);
+  };
+
+  const changeSortOptions = (field) => {
+    const isAsc =
+      state.sortMeals.field === field && state.sortMeals.direction === "asc";
+    const direction = isAsc ? "desc" : "asc";
+    dispatch({
+      type: "SORT_MEALS",
+      payload: {
+        field: field,
+        direction: direction,
+      },
+    });
+    const sortedMeals = sortedArray(state.filteredMeals, field, direction);
+    console.log(sortedMeals);
+    dispatch({ type: "UPDATE_FILTERED_MEALS", payload: sortedMeals });
   };
 
   return (
@@ -1376,8 +1399,8 @@ function EditMeal({ history, ...props }) {
         >
           +
         </div>
-
-        <table width="100%">
+        {/* Old Table */}
+        {/* <table width="100%">
           <tr width="100%">
             <th
               style={{
@@ -1388,7 +1411,13 @@ function EditMeal({ history, ...props }) {
               }}
               width="7%"
             >
-              Meal Name
+              <TableSortLabel
+                style={{ color: "F26522" }}
+                // direction={}
+                // onClick={() => changeSortOptions("meal_name")}
+              >
+                Meal Name
+              </TableSortLabel>
             </th>
             <th
               style={{
@@ -1533,20 +1562,448 @@ function EditMeal({ history, ...props }) {
             >
               Actions
             </th>
-            {/* <th style={{color: '#F26522', paddingLeft: "67px", textAlign:"center", display:"inline-block"}} ></th> */}
           </tr>
-        </table>
+          {state.activeBusiness &&
+            getMealsByActiveBusiness().map((meal, index) => {
+              return <tr key={meal.meal_uid}></tr>;
+            })}
+        </table> */}
 
-        <div
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell
+                style={{
+                  fontWeight: "bold",
+                  color: "#f26522",
+                  border: "none",
+                  textAlign: "center",
+                  fontSize: "15px",
+                }}
+              >
+                <TableSortLabel
+                  style={{
+                    fontWeight: "bold",
+                    color: "#f26522",
+                    border: "none",
+                  }}
+                  direction={state.sortMeals.direction}
+                  onClick={() => changeSortOptions("meal_name")}
+                >
+                  Meal Name
+                </TableSortLabel>
+              </TableCell>
+              <TableCell
+                style={{
+                  fontWeight: "bold",
+                  color: "#f26522",
+                  border: "none",
+                  textAlign: "center",
+                  fontSize: "15px",
+                }}
+              >
+                Picture
+              </TableCell>
+              <TableCell
+                style={{
+                  fontWeight: "bold",
+                  color: "#f26522",
+                  border: "none",
+                  textAlign: "center",
+                  fontSize: "15px",
+                }}
+              >
+                Meal Description
+              </TableCell>
+              <TableCell
+                style={{
+                  fontWeight: "bold",
+                  color: "#f26522",
+                  border: "none",
+                  textAlign: "center",
+                  fontSize: "15px",
+                }}
+              >
+                <TableSortLabel
+                  style={{
+                    fontWeight: "bold",
+                    color: "#f26522",
+                    border: "none",
+                  }}
+                  direction={state.sortMeals.direction}
+                  onClick={() => changeSortOptions("meal_category")}
+                >
+                  Meal Category
+                </TableSortLabel>
+              </TableCell>
+              <TableCell
+                style={{
+                  fontWeight: "bold",
+                  color: "#f26522",
+                  border: "none",
+                  textAlign: "center",
+                  fontSize: "15px",
+                }}
+              >
+                <TableSortLabel
+                  style={{
+                    fontWeight: "bold",
+                    color: "#f26522",
+                    border: "none",
+                  }}
+                  direction={state.sortMeals.direction}
+                  onClick={() => changeSortOptions("meal_hint")}
+                >
+                  Meal Hint
+                </TableSortLabel>
+              </TableCell>
+              <TableCell
+                style={{
+                  fontWeight: "bold",
+                  color: "#f26522",
+                  border: "none",
+                  textAlign: "center",
+                  fontSize: "15px",
+                }}
+              >
+                <TableSortLabel
+                  style={{
+                    fontWeight: "bold",
+                    color: "#f26522",
+                    border: "none",
+                  }}
+                  direction={state.sortMeals.direction}
+                  onClick={() => changeSortOptions("meal_calories")}
+                >
+                  Calories
+                </TableSortLabel>
+              </TableCell>
+              <TableCell
+                style={{
+                  fontWeight: "bold",
+                  color: "#f26522",
+                  border: "none",
+                  textAlign: "center",
+                  fontSize: "15px",
+                }}
+              >
+                <TableSortLabel
+                  style={{
+                    fontWeight: "bold",
+                    color: "#f26522",
+                    border: "none",
+                  }}
+                  direction={state.sortMeals.direction}
+                  onClick={() => changeSortOptions("meal_protein")}
+                >
+                  Protein
+                </TableSortLabel>
+              </TableCell>
+              <TableCell
+                style={{
+                  fontWeight: "bold",
+                  color: "#f26522",
+                  border: "none",
+                  textAlign: "center",
+                  fontSize: "15px",
+                }}
+              >
+                <TableSortLabel
+                  style={{
+                    fontWeight: "bold",
+                    color: "#f26522",
+                    border: "none",
+                  }}
+                  direction={state.sortMeals.direction}
+                  onClick={() => changeSortOptions("meal_carbs")}
+                >
+                  Carbs
+                </TableSortLabel>
+              </TableCell>
+              <TableCell
+                style={{
+                  fontWeight: "bold",
+                  color: "#f26522",
+                  border: "none",
+                  textAlign: "center",
+                  fontSize: "15px",
+                }}
+              >
+                <TableSortLabel
+                  style={{
+                    fontWeight: "bold",
+                    color: "#f26522",
+                    border: "none",
+                  }}
+                  direction={state.sortMeals.direction}
+                  onClick={() => changeSortOptions("meal_fiber")}
+                >
+                  Fiber
+                </TableSortLabel>
+              </TableCell>
+              <TableCell
+                style={{
+                  fontWeight: "bold",
+                  color: "#f26522",
+                  border: "none",
+                  textAlign: "center",
+                  fontSize: "15px",
+                }}
+              >
+                <TableSortLabel
+                  style={{
+                    fontWeight: "bold",
+                    color: "#f26522",
+                    border: "none",
+                  }}
+                  direction={state.sortMeals.direction}
+                  onClick={() => changeSortOptions("meal_sugar")}
+                >
+                  Sugar
+                </TableSortLabel>
+              </TableCell>
+              <TableCell
+                style={{
+                  fontWeight: "bold",
+                  color: "#f26522",
+                  border: "none",
+                  textAlign: "center",
+                  fontSize: "15px",
+                }}
+              >
+                <TableSortLabel
+                  style={{
+                    fontWeight: "bold",
+                    color: "#f26522",
+                    border: "none",
+                  }}
+                  direction={state.sortMeals.direction}
+                  onClick={() => changeSortOptions("meal_fat")}
+                >
+                  Fats
+                </TableSortLabel>
+              </TableCell>
+              <TableCell
+                style={{
+                  fontWeight: "bold",
+                  color: "#f26522",
+                  border: "none",
+                  textAlign: "center",
+                  fontSize: "15px",
+                }}
+              >
+                <TableSortLabel
+                  style={{
+                    fontWeight: "bold",
+                    color: "#f26522",
+                    border: "none",
+                  }}
+                  direction={state.sortMeals.direction}
+                  onClick={() => changeSortOptions("meal_sat")}
+                >
+                  Sat
+                </TableSortLabel>
+              </TableCell>
+              <TableCell
+                style={{
+                  fontWeight: "bold",
+                  color: "#f26522",
+                  border: "none",
+                  textAlign: "center",
+                  fontSize: "15px",
+                }}
+              >
+                Status
+              </TableCell>
+              <TableCell
+                style={{
+                  fontWeight: "bold",
+                  color: "#f26522",
+                  border: "none",
+                  textAlign: "center",
+                  fontSize: "15px",
+                }}
+              ></TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {state.filteredMeals &&
+              state.filteredMeals.map((meal, index) => {
+                return (
+                  <TableRow key={index} hover>
+                    <TableCell
+                      style={{
+                        borderBottom: "1px solid #f8bb17",
+                        textAlign: "center",
+                        fontSize: "15px",
+                      }}
+                    >
+                      {meal.meal_name}
+                    </TableCell>
+                    <TableCell
+                      style={{
+                        borderBottom: "1px solid #f8bb17",
+                        textAlign: "center",
+                      }}
+                    >
+                      <img
+                        src={meal.meal_photo_URL}
+                        height="45"
+                        width="45"
+                      ></img>
+                    </TableCell>
+                    <TableCell
+                      style={{
+                        borderBottom: "1px solid #f8bb17",
+                        textAlign: "center",
+                        width: "300px",
+                        fontSize: "15px",
+                      }}
+                    >
+                      {meal.meal_desc}
+                    </TableCell>
+                    <TableCell
+                      style={{
+                        borderBottom: "1px solid #f8bb17",
+                        textAlign: "center",
+                        fontSize: "15px",
+                      }}
+                    >
+                      {meal.meal_category}
+                    </TableCell>
+                    <TableCell
+                      style={{
+                        borderBottom: "1px solid #f8bb17",
+                        textAlign: "center",
+                        fontSize: "15px",
+                      }}
+                    >
+                      {meal.meal_hint}
+                    </TableCell>
+                    <TableCell
+                      style={{
+                        borderBottom: "1px solid #f8bb17",
+                        textAlign: "center",
+                        fontSize: "15px",
+                      }}
+                    >
+                      {meal.meal_calories ? meal.meal_calories + " Cal" : ""}
+                    </TableCell>
+                    <TableCell
+                      style={{
+                        borderBottom: "1px solid #f8bb17",
+                        textAlign: "center",
+                        fontSize: "15px",
+                      }}
+                    >
+                      {meal.meal_protein ? meal.meal_protein + "g" : ""}
+                    </TableCell>
+                    <TableCell
+                      style={{
+                        borderBottom: "1px solid #f8bb17",
+                        textAlign: "center",
+                        fontSize: "15px",
+                      }}
+                    >
+                      {meal.meal_carbs ? meal.meal_carbs + "g" : ""}
+                    </TableCell>
+                    <TableCell
+                      style={{
+                        borderBottom: "1px solid #f8bb17",
+                        textAlign: "center",
+                        fontSize: "15px",
+                      }}
+                    >
+                      {meal.meal_fiber ? meal.meal_fiber + "g" : ""}
+                    </TableCell>
+                    <TableCell
+                      style={{
+                        borderBottom: "1px solid #f8bb17",
+                        textAlign: "center",
+                        fontSize: "15px",
+                      }}
+                    >
+                      {meal.meal_sugar ? meal.meal_sugar + "g" : ""}
+                    </TableCell>
+                    <TableCell
+                      style={{
+                        borderBottom: "1px solid #f8bb17",
+                        textAlign: "center",
+                        fontSize: "15px",
+                      }}
+                    >
+                      {meal.meal_fat ? meal.meal_fat + "%" : ""}
+                    </TableCell>
+                    <TableCell
+                      style={{
+                        borderBottom: "1px solid #f8bb17",
+                        textAlign: "center",
+                        fontSize: "15px",
+                      }}
+                    >
+                      {meal.meal_sat ? meal.meal_sat + "%" : ""}
+                    </TableCell>
+                    <TableCell
+                      style={{
+                        borderBottom: "1px solid #f8bb17",
+                        textAlign: "center",
+                        fontSize: "15px",
+                      }}
+                    >
+                      TOGGLE
+                    </TableCell>
+                    <TableCell
+                      style={{
+                        borderBottom: "1px solid #f8bb17",
+                        textAlign: "center",
+                        fontSize: "15px",
+                      }}
+                    >
+                      <div
+                        className={styles.editIcon}
+                        onClick={() => {
+                          dispatch({ type: "EDIT_MEAL", payload: meal });
+                          setSelectedMeal(meal);
+                          dispatch({
+                            type: "SHOW_CREATE_EDIT_MEAL_MODAL",
+                            payload: { show: true, mode: "EDIT" },
+                          });
+                          toggleMealButtonPressed(true);
+                        }}
+                      ></div>
+
+                      <div
+                        className={styles.deleteIcon}
+                        onClick={() => {
+                          toggleDeleteButtonPressed(true);
+                          setSelectedMeal(allMeals[index]);
+                          toggleMealButtonPressed(true);
+                          axios
+                            .delete(API_URL + "meals?meal_uid=" + meal.meal_uid)
+                            .then((response) => {
+                              console.log(response);
+                            });
+                        }}
+                      ></div>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+          </TableBody>
+        </Table>
+
+        {/* TODO - Remove */}
+
+        {/* <div
           width="100%"
           style={{
             backgroundColor: "white",
             display: "block",
             minHeight: "25px",
           }}
-        ></div>
+        ></div> */}
 
-        {generateMealsUI()}
+        {/* {generateMealsUI()} */}
       </div>
 
       <br />
