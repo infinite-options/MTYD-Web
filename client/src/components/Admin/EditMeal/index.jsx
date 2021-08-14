@@ -16,7 +16,13 @@ import styles from "./editMeal.module.css";
 import { act } from "react-dom/test-utils";
 import testImage from "./static/test.jpeg";
 import { ReactComponent as ModalCloseBtn } from "./static/modalClose.svg";
+import { ReactComponent as GlobeIcon } from "./static/globe.svg";
+import { ReactComponent as FacebookIcon } from "./static/facebook.svg";
+import { ReactComponent as InstagramIcon } from "./static/instagram.svg";
+import { ReactComponent as TwitterIcon } from "./static/twitter.svg";
 import { sortedArray } from "../../../reducers/helperFuncs";
+import ToggleSwitch from "./toggleSwitch.jsx";
+import { convertTypeAcquisitionFromJson } from "typescript";
 
 const initialState = {
   mounted: false,
@@ -44,6 +50,32 @@ const initialState = {
   measureUnitsData: [],
   showIngredients: false,
   allBusinessData: [],
+  editedBusinessData: {
+    business_accepting_hours: "",
+    business_address: "",
+    business_city: "",
+    business_contact_first_name: "",
+    business_contact_last_name: "",
+    business_desc: "",
+    business_email: "",
+    business_image: "",
+    business_name: "",
+    business_phone_num: "",
+    business_phone_num2: "",
+    business_state: "",
+    business_status: "",
+    business_type: "",
+    business_uid: "",
+    business_unit: "",
+    business_zip: "",
+    can_cancel: 0,
+    delivery: 0,
+    platform_fee: 0,
+    profit_sharing: 0,
+    reusable: 0,
+    revenue_sharing: 0,
+    transaction_fee: 0,
+  },
   activeBusiness: "",
   showCreateEditMealModal: false,
   modalMode: "",
@@ -55,6 +87,7 @@ const initialState = {
     direction: "asc",
   },
   filteredMeals: [],
+  editBusinessDetails: false,
 };
 
 function useForceUpdate() {
@@ -112,13 +145,15 @@ function reducer(state, action) {
     case "FETCH_ALL_BUSINESS_DATA":
       return {
         ...state,
-        allBusinessData: action.payload,
+        allBusinessData: action.payload.data,
+        activeBusiness: action.payload.active,
       };
     case "CHANGE_ACTIVE_BUSINESS":
       return {
         ...state,
         activeBusiness: action.payload.id,
         filteredMeals: action.payload.meals,
+        editedBusinessData: action.payload.business,
       };
     case "SHOW_CREATE_EDIT_MEAL_MODAL":
       return {
@@ -183,6 +218,16 @@ function reducer(state, action) {
       return {
         ...state,
         filteredMeals: action.payload,
+      };
+    case "TOGGLE_EDIT_BUSINESS":
+      return {
+        ...state,
+        editBusinessDetails: !state.editBusinessDetails,
+      };
+    case "EDIT_BUSINESS_DATA":
+      return {
+        ...state,
+        editedBusinessData: action.payload,
       };
     default:
       return state;
@@ -367,6 +412,22 @@ function EditMeal({ history, ...props }) {
     }
   };
 
+  const editBusiness = (property, value) => {
+    if (property === "") {
+      console.log("TEST");
+      const newBusiness = state.allBusinessData.filter(
+        (business) => business.business_uid === value
+      )[0];
+      dispatch({ type: "EDIT_BUSINESS_DATA", payload: newBusiness });
+    } else {
+      const newBusiness = {
+        ...state.editedBusinessData,
+        [property]: value,
+      };
+      dispatch({ type: "EDIT_BUSINESS_DATA", payload: newBusiness });
+    }
+  };
+
   const getMealIngredients = () => {
     if (state.editedMeal.meal_uid !== "") {
       axios
@@ -428,7 +489,7 @@ function EditMeal({ history, ...props }) {
     return true;
   };
 
-  const handleSaveMealNew = () => {
+  const handleSaveMeal = () => {
     const requestType = state.modalMode === "NEW" ? "post" : "put";
     const bodyFormData = getEditedMealData(requestType);
 
@@ -478,228 +539,18 @@ function EditMeal({ history, ...props }) {
       .catch((err) => {
         console.log(err);
       });
-
-    // OLD dispatch to clean up modal and close
-    // dispatch({ type: "SET_PREVIEW", payload: "" });
-    // dispatch({
-    //   type: "SHOW_CREATE_EDIT_MEAL_MODAL",
-    //   payload: { show: false, mode: "" },
-    // });
-
-    // state.selectedFile = null;
-    // state.previewLink = "";
   };
 
   const getActiveBusinessHours = () => {
     if (
-      activeBusinessData.business_accepting_hours == "" ||
-      activeBusinessData.business_accepting_hours == null
+      state.editedBusinessData.business_accepting_hours == "" ||
+      state.editedBusinessData.business_accepting_hours == null
     ) {
       return JSON.parse(
         '{"Friday": ["N/A", "N/A"], "Monday": ["N/A", "N/A"], "Sunday": ["N/A", "N/A"], "Tuesday": ["N/A", "N/A"], "Saturday": ["N/A0", "N/A"], "Thursday": ["N/A", "N/A"], "Wednesday": ["N/A", "N/A"]}'
       );
     }
     return JSON.parse(activeBusinessData.business_accepting_hours);
-  };
-
-  const generateMealsUI = () => {
-    let tempArray = [];
-    for (let i = 0; i < allMeals.length; i++) {
-      let index = i;
-
-      if (allMeals[index].meal_business == activeBusiness) {
-        tempArray.push(
-          <div>
-            <table
-              width="100%"
-              key={allMeals[index].meal_uid}
-              onClick={() => {
-                if (allMeals[index] != null) {
-                  dispatch({ type: "EDIT_MEAL", payload: allMeals[index] });
-                  setSelectedMeal(allMeals[index]);
-                }
-              }}
-              style={{
-                backgroundColor:
-                  selectedMeal == allMeals[index] ? "#FEF7E0" : "white",
-                borderStyle: "solid",
-                borderColor:
-                  selectedMeal == allMeals[index] ? "#F26522" : "white",
-                borderRadius: "10px",
-                // marginLeft: "2%",
-                // marginRight: "2%"
-              }}
-            >
-              <tr width="100%">
-                <th
-                  style={{
-                    marginLeft: "27px",
-                    textAlign: "center",
-                    display: "inline-block",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                  }}
-                  width="7%"
-                >
-                  {allMeals[index].meal_name}
-                </th>
-                <th
-                  style={{ textAlign: "center", display: "inline-block" }}
-                  width="7%"
-                >
-                  <img
-                    src={allMeals[index].meal_photo_URL}
-                    height="45"
-                    width="45"
-                  ></img>
-                </th>
-                <th
-                  style={{
-                    textAlign: "center",
-                    display: "inline-block",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                  }}
-                  width="7%"
-                  height="45"
-                >
-                  {allMeals[index].meal_desc}
-                </th>
-                <th
-                  style={{ textAlign: "center", display: "inline-block" }}
-                  width="7%"
-                  height="45"
-                >
-                  {allMeals[index].meal_category}
-                </th>
-                <th
-                  style={{
-                    textAlign: "center",
-                    display: "inline-block",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                  }}
-                  width="7%"
-                  height="45"
-                >
-                  {allMeals[index].meal_hint}
-                </th>
-                <th
-                  style={{ textAlign: "center", display: "inline-block" }}
-                  width="7%"
-                  height="45"
-                >
-                  {allMeals[index].meal_calories} Cal
-                </th>
-                <th
-                  style={{ textAlign: "center", display: "inline-block" }}
-                  width="7%"
-                  height="45"
-                >
-                  {allMeals[index].meal_protein}g
-                </th>
-                <th
-                  style={{ textAlign: "center", display: "inline-block" }}
-                  width="7%"
-                  height="45"
-                >
-                  {allMeals[index].meal_carbs}g
-                </th>
-                <th
-                  style={{ textAlign: "center", display: "inline-block" }}
-                  width="7%"
-                  height="45"
-                >
-                  {allMeals[index].meal_fiber}g
-                </th>
-                <th
-                  style={{ textAlign: "center", display: "inline-block" }}
-                  width="7%"
-                  height="45"
-                >
-                  {allMeals[index].meal_sugar}g
-                </th>
-                <th
-                  style={{ textAlign: "center", display: "inline-block" }}
-                  width="7%"
-                  height="45"
-                >
-                  {allMeals[index].meal_fat}%
-                </th>
-                <th
-                  style={{ textAlign: "center", display: "inline-block" }}
-                  width="7%"
-                  height="45"
-                >
-                  {allMeals[index].meal_sat}%
-                </th>
-                <th
-                  style={{ textAlign: "center", display: "inline-block" }}
-                  width="7%"
-                  height="45"
-                >
-                  {allMeals[index].meal_status}
-                </th>
-                <th
-                  style={{ textAlign: "center", display: "inline-block" }}
-                  width="7%"
-                  height="45"
-                >
-                  <div
-                    className={styles.editIcon}
-                    onClick={() => {
-                      console.log(allMeals[index]);
-                      dispatch({ type: "EDIT_MEAL", payload: allMeals[index] });
-                      setSelectedMeal(allMeals[index]);
-                      dispatch({
-                        type: "SHOW_CREATE_EDIT_MEAL_MODAL",
-                        payload: { show: true, mode: "EDIT" },
-                      });
-                      toggleMealButtonPressed(true);
-                    }}
-                  ></div>
-
-                  <div
-                    className={styles.deleteIcon}
-                    onClick={() => {
-                      toggleDeleteButtonPressed(true);
-                      setSelectedMeal(allMeals[index]);
-                      toggleMealButtonPressed(true);
-                      axios
-                        .delete(
-                          API_URL + "meals?meal_uid=" + allMeals[index].meal_uid
-                        )
-                        .then((response) => {
-                          console.log(response);
-                        });
-                      allMeals.splice(index, 1);
-                    }}
-                  ></div>
-                </th>
-              </tr>
-            </table>
-            <div
-              width="100%"
-              style={{
-                backgroundColor: "white",
-                display: "block",
-                minHeight: "25px",
-              }}
-            ></div>
-            <div
-              width="100%"
-              style={{
-                backgroundColor: "#F8BB17",
-                display: "block",
-                minHeight: "2px",
-                marginBottom: "25px",
-              }}
-            ></div>
-          </div>
-        );
-      }
-    }
-    return tempArray;
   };
 
   const generateMealsList = () => {
@@ -754,13 +605,21 @@ function EditMeal({ history, ...props }) {
         return state.allBusinessData[i];
       }
     }
-    return "Business not found";
+    return null;
   };
 
   const getBusinessData = () => {
-    axios.get(`${API_URL}all_businesses`).then((response) => {
+    axios.get(`${API_URL}all_businesses_brandon`).then((response) => {
       const allBusinessData = response.data.result;
-      dispatch({ type: "FETCH_ALL_BUSINESS_DATA", payload: allBusinessData });
+      if (allBusinessData.length > 0) {
+        dispatch({
+          type: "FETCH_ALL_BUSINESS_DATA",
+          payload: {
+            data: allBusinessData,
+            active: allBusinessData[0].business_uid,
+          },
+        });
+      }
     });
 
     return null;
@@ -828,6 +687,7 @@ function EditMeal({ history, ...props }) {
       type: "CHANGE_ACTIVE_BUSINESS",
       payload: {
         id: selectedBusinessID,
+        business: getBusinessDataByID(selectedBusinessID),
         meals: getMealsByBusiness(selectedBusinessID),
       },
     });
@@ -922,6 +782,24 @@ function EditMeal({ history, ...props }) {
     toggleBusinessDetails(false);
   };
 
+  const updateBusinessNew = () => {
+    const businessData = {
+      ...state.editedBusinessData,
+      can_cancel: state.editedBusinessData.can_cancel.toString(),
+      delivery: state.editedBusinessData.delivery.toString(),
+      reusable: state.editedBusinessData.reusable.toString(),
+    };
+
+    axios
+      .post(API_URL + "business_details_update_brandon/Post", businessData)
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   const getMealsByBusiness = (id) => {
     return state.mealData.filter((meal) => meal.meal_business === id);
   };
@@ -940,6 +818,22 @@ function EditMeal({ history, ...props }) {
     const sortedMeals = sortedArray(state.filteredMeals, field, direction);
     console.log(sortedMeals);
     dispatch({ type: "UPDATE_FILTERED_MEALS", payload: sortedMeals });
+  };
+
+  const changeMealStatus = (mealInfo, mealIndex) => {
+    const allMeals = [...state.filteredMeals];
+    const updatedMeal = {
+      ...mealInfo,
+    };
+    if (mealInfo.meal_status === "" || mealInfo.meal_status === "0") {
+      console.log("activating meal");
+      updatedMeal.meal_status = "1";
+    } else {
+      console.log("deactivating meal");
+      updatedMeal.meal_status = "0";
+    }
+    allMeals[mealIndex] = updatedMeal;
+    dispatch({ type: "UPDATE_FILTERED_MEALS", payload: allMeals });
   };
 
   return (
@@ -990,7 +884,8 @@ function EditMeal({ history, ...props }) {
             textDecoration: "underline",
           }}
           onClick={() => {
-            toggleBusinessDetails(!showBusinessDetails);
+            // toggleBusinessDetails(!showBusinessDetails);
+            dispatch({ type: "TOGGLE_EDIT_BUSINESS" });
           }}
         >
           Edit Details
@@ -1375,641 +1270,957 @@ function EditMeal({ history, ...props }) {
           </div>
         </div>
       )}
+      {state.editBusinessDetails && (
+        <div className={styles.editBusiness}>
+          <div className={styles.editBusinessFormContainer}>
+            <div style={{ width: "300px" }}>
+              <Form.Group>
+                <img
+                  height="150px"
+                  width="150px"
+                  src={state.editedBusinessData.business_imgage}
+                ></img>
+                <input type="file" name="upload_file" />
+              </Form.Group>
+              <Form.Group>
+                <Form.Label style={{ color: "#F26522" }}>
+                  Business Name
+                </Form.Label>
+                <Form.Control
+                  as="input"
+                  placeholder="Enter Business Name"
+                  value={state.editedBusinessData.business_name}
+                  onChange={(event) =>
+                    editBusiness("business_name", event.target.value)
+                  }
+                />
+              </Form.Group>
+              <Form.Group>
+                <Form.Label style={{ color: "#F26522" }}>
+                  Business Type
+                </Form.Label>
+                <Form.Control
+                  as="input"
+                  placeholder="Enter Business Type"
+                  value={state.editedBusinessData.business_type}
+                  onChange={(event) =>
+                    editBusiness("business_type", event.target.value)
+                  }
+                />
+              </Form.Group>
+              <Form.Group>
+                <Form.Label style={{ color: "#F26522" }}>
+                  Business Description
+                </Form.Label>
+                <Form.Control
+                  as="textarea"
+                  placeholder="Enter Business Description"
+                  value={state.editedBusinessData.business_desc}
+                  onChange={(event) =>
+                    editBusiness("business_desc", event.target.value)
+                  }
+                />
+              </Form.Group>
+            </div>
 
-      <div className={styles.containerMeals}>
-        <div
-          style={{
-            fontSize: "22px",
-            display: "inline",
-            marginLeft: "27px",
-            fontWeight: "bold",
-          }}
-        >
-          Meals Offered
+            <div style={{ borderLeft: "2px solid #F8BB17", display: "flex" }} />
+
+            <div>
+              <Row style={{ margin: "0px" }}>
+                <Form.Group>
+                  <Form.Label style={{ color: "#F26522" }}>
+                    First Name
+                  </Form.Label>
+                  <Form.Control
+                    as="input"
+                    placeholder="Enter First Name"
+                    value={state.editedBusinessData.business_contact_first_name}
+                    onChange={(event) =>
+                      editBusiness(
+                        "business_contact_first_name",
+                        event.target.value
+                      )
+                    }
+                  />
+                </Form.Group>
+                <Form.Group>
+                  <Form.Label style={{ color: "#F26522" }}>
+                    Last Name
+                  </Form.Label>
+                  <Form.Control
+                    as="input"
+                    placeholder="Enter Last Name"
+                    value={state.editedBusinessData.business_contact_last_name}
+                    onChange={(event) =>
+                      editBusiness(
+                        "business_contact_last_name",
+                        event.target.value
+                      )
+                    }
+                  />
+                </Form.Group>
+              </Row>
+              <Row style={{ margin: "0px" }}>
+                <Form.Group>
+                  <Form.Label style={{ color: "#F26522" }}>
+                    Phone Number 1
+                  </Form.Label>
+                  <Form.Control
+                    as="input"
+                    placeholder="Enter Phone Number"
+                    value={state.editedBusinessData.business_phone_num}
+                    onChange={(event) =>
+                      editBusiness("business_phone_num", event.target.value)
+                    }
+                  />
+                </Form.Group>
+                <Form.Group>
+                  <Form.Label style={{ color: "#F26522" }}>
+                    Phone Number 2
+                  </Form.Label>
+                  <Form.Control
+                    as="input"
+                    placeholder="Enter Phone Number"
+                    value={state.editedBusinessData.business_phone_num2}
+                    onChange={(event) =>
+                      editBusiness("business_phone_num2", event.target.value)
+                    }
+                  />
+                </Form.Group>
+              </Row>
+              <Row style={{ margin: "0px" }}>
+                <Form.Group>
+                  <Form.Label style={{ color: "#F26522" }}>Street</Form.Label>
+                  <Form.Control
+                    as="input"
+                    placeholder="Enter Street Address"
+                    value={state.editedBusinessData.business_address}
+                    onChange={(event) =>
+                      editBusiness("business_address", event.target.value)
+                    }
+                  />
+                </Form.Group>
+                <Form.Group>
+                  <Form.Label style={{ color: "#F26522" }}>Unit</Form.Label>
+                  <Form.Control
+                    as="input"
+                    placeholder="Enter Unit No."
+                    value={state.editedBusinessData.business_unit}
+                    onChange={(event) =>
+                      editBusiness("business_unit", event.target.value)
+                    }
+                  />
+                </Form.Group>
+              </Row>
+              <Form.Group>
+                <Form.Label style={{ color: "#F26522" }}>City</Form.Label>
+                <Form.Control
+                  as="input"
+                  placeholder="Enter City"
+                  value={state.editedBusinessData.business_city}
+                  onChange={(event) =>
+                    editBusiness("business_city", event.target.value)
+                  }
+                />
+              </Form.Group>
+              <Row style={{ margin: "0px" }}>
+                <Form.Group>
+                  <Form.Label style={{ color: "#F26522" }}>State</Form.Label>
+                  <Form.Control
+                    as="input"
+                    placeholder="Enter State"
+                    value={state.editedBusinessData.business_state}
+                    onChange={(event) =>
+                      editBusiness("business_state", event.target.value)
+                    }
+                  />
+                </Form.Group>
+                <Form.Group>
+                  <Form.Label style={{ color: "#F26522" }}>Zip</Form.Label>
+                  <Form.Control
+                    as="input"
+                    placeholder="Enter Zip"
+                    value={state.editedBusinessData.business_zip}
+                    onChange={(event) =>
+                      editBusiness("business_zip", event.target.value)
+                    }
+                  />
+                </Form.Group>
+              </Row>
+            </div>
+
+            <div style={{ borderLeft: "2px solid #F8BB17", display: "flex" }} />
+
+            <div>
+              <Form.Group>
+                <Form.Label style={{ color: "#F26522" }}>
+                  Platform Fee
+                </Form.Label>
+                <Form.Control
+                  as="input"
+                  placeholder="Enter Platform Fee"
+                  value={state.editedBusinessData.platform_fee}
+                  onChange={(event) =>
+                    editBusiness("platform_fee", event.target.value)
+                  }
+                />
+              </Form.Group>
+              <Form.Group>
+                <Form.Label style={{ color: "#F26522" }}>
+                  Transaction Fee
+                </Form.Label>
+                <Form.Control
+                  as="input"
+                  placeholder="Enter Transaction Fee"
+                  value={state.editedBusinessData.transaction_fee}
+                  onChange={(event) =>
+                    editBusiness("transaction_fee", event.target.value)
+                  }
+                />
+              </Form.Group>
+              <Form.Group>
+                <Form.Label style={{ color: "#F26522" }}>
+                  Revenue Sharing
+                </Form.Label>
+                <Form.Control
+                  as="input"
+                  placeholder="Enter Revenue Sharing"
+                  value={state.editedBusinessData.revenue_sharing}
+                  onChange={(event) =>
+                    editBusiness("revenue_sharing", event.target.value)
+                  }
+                />
+              </Form.Group>
+              <Form.Group>
+                <Form.Label style={{ color: "#F26522" }}>
+                  Profit Sharing
+                </Form.Label>
+                <Form.Control
+                  as="input"
+                  placeholder="Enter Profit Sharing"
+                  value={state.editedBusinessData.profit_sharing}
+                  onChange={(event) =>
+                    editBusiness("profit_sharing", event.target.value)
+                  }
+                />
+              </Form.Group>
+            </div>
+
+            <div style={{ borderLeft: "2px solid #F8BB17", display: "flex" }} />
+
+            <div>
+              <Form.Group>
+                <Form.Label style={{ color: "#F26522" }}>Storage</Form.Label>
+                <br />
+                <input
+                  type="radio"
+                  id="reusable"
+                  name="storage"
+                  value={1}
+                  checked={state.editedBusinessData.reusable === 1}
+                  onChange={(event) =>
+                    editBusiness("reusable", Number(event.target.value))
+                  }
+                />
+                <label for="reusable">Reusable</label>
+                <br />
+                <input
+                  type="radio"
+                  id="disposable"
+                  name="storage"
+                  value={0}
+                  checked={state.editedBusinessData.reusable === 0}
+                  onChange={(event) =>
+                    editBusiness("reusable", Number(event.target.value))
+                  }
+                />
+                <label for="disposable">Disposable</label>
+              </Form.Group>
+              <Form.Group>
+                <Form.Label style={{ color: "#F26522" }}>
+                  Cancellation
+                </Form.Label>
+                <br />
+                <input
+                  type="radio"
+                  id="can_cancel"
+                  name="cancellation"
+                  value={1}
+                  checked={state.editedBusinessData.can_cancel === 1}
+                  onChange={(event) =>
+                    editBusiness("can_cancel", Number(event.target.value))
+                  }
+                />
+                <label for="can_cancel">
+                  Allow cancellation within ordering hours
+                </label>
+                <br />
+                <input
+                  type="radio"
+                  id="no_cancel"
+                  name="cancellation"
+                  value={0}
+                  checked={state.editedBusinessData.can_cancel === 0}
+                  onChange={(event) =>
+                    editBusiness("can_cancel", Number(event.target.value))
+                  }
+                />
+                <label for="no_cancel">Cancellations not allowed</label>
+              </Form.Group>
+              <Form.Group>
+                <Form.Label style={{ color: "#F26522" }}>
+                  Business Status
+                </Form.Label>
+                <br />
+                <input
+                  type="radio"
+                  id="active"
+                  name="businessStatus"
+                  value={"ACTIVE"}
+                  checked={
+                    state.editedBusinessData.business_status === "ACTIVE"
+                  }
+                  onChange={(event) =>
+                    editBusiness("business_status", event.target.value)
+                  }
+                />
+                <label for="active">Active</label>
+                <br />
+                <input
+                  type="radio"
+                  id="Inactive"
+                  name="businessStatus"
+                  value={"INACTIVE"}
+                  checked={
+                    state.editedBusinessData.business_status === "INACTIVE"
+                  }
+                  onChange={(event) =>
+                    editBusiness("business_status", event.target.value)
+                  }
+                />
+                <label for="Inactive">Inactive</label>
+              </Form.Group>
+            </div>
+
+            <div style={{ borderLeft: "2px solid #F8BB17", display: "flex" }} />
+
+            <div>
+              <Form.Group>
+                <Form.Label style={{ color: "#F26522" }}>
+                  Business Hours
+                </Form.Label>
+                <Row style={{ margin: "0px" }}>
+                  <div style={{ width: "100px" }}>Monday</div>
+                  <Form.Control
+                    as="input"
+                    style={{ width: "100px" }}
+                    value={getActiveBusinessHours().Monday[0]}
+                  />{" "}
+                  -
+                  <Form.Control
+                    as="input"
+                    style={{ width: "100px" }}
+                    value={getActiveBusinessHours().Monday[1]}
+                  />
+                </Row>
+                <Row style={{ margin: "0px" }}>
+                  <div style={{ width: "100px" }}>Tuesday</div>
+                  <Form.Control
+                    as="input"
+                    style={{ width: "100px" }}
+                    value={getActiveBusinessHours().Tuesday[0]}
+                  />{" "}
+                  -
+                  <Form.Control
+                    as="input"
+                    style={{ width: "100px" }}
+                    value={getActiveBusinessHours().Tuesday[1]}
+                  />
+                </Row>
+                <Row style={{ margin: "0px" }}>
+                  <div style={{ width: "100px" }}>Wednesday</div>
+                  <Form.Control
+                    as="input"
+                    style={{ width: "100px" }}
+                    value={getActiveBusinessHours().Wednesday[0]}
+                  />{" "}
+                  -
+                  <Form.Control
+                    as="input"
+                    style={{ width: "100px" }}
+                    value={getActiveBusinessHours().Wednesday[1]}
+                  />
+                </Row>
+                <Row style={{ margin: "0px" }}>
+                  <div style={{ width: "100px" }}>Thursday</div>
+                  <Form.Control
+                    as="input"
+                    style={{ width: "100px" }}
+                    value={getActiveBusinessHours().Thursday[0]}
+                  />{" "}
+                  -
+                  <Form.Control
+                    as="input"
+                    style={{ width: "100px" }}
+                    value={getActiveBusinessHours().Thursday[1]}
+                  />
+                </Row>
+                <Row style={{ margin: "0px" }}>
+                  <div style={{ width: "100px" }}>Friday</div>{" "}
+                  <Form.Control
+                    as="input"
+                    style={{ width: "100px" }}
+                    value={getActiveBusinessHours().Friday[0]}
+                  />{" "}
+                  -
+                  <Form.Control
+                    as="input"
+                    style={{ width: "100px" }}
+                    value={getActiveBusinessHours().Friday[1]}
+                  />
+                </Row>
+                <Row style={{ margin: "0px" }}>
+                  <div style={{ width: "100px" }}>Saturday</div>
+                  <Form.Control
+                    as="input"
+                    style={{ width: "100px" }}
+                    value={getActiveBusinessHours().Saturday[0]}
+                  />{" "}
+                  -
+                  <Form.Control
+                    as="input"
+                    style={{ width: "100px" }}
+                    value={getActiveBusinessHours().Saturday[1]}
+                  />
+                </Row>
+                <Row style={{ margin: "0px" }}>
+                  <div style={{ width: "100px" }}>Sunday</div>{" "}
+                  <Form.Control
+                    as="input"
+                    style={{ width: "100px" }}
+                    value={getActiveBusinessHours().Sunday[0]}
+                  />{" "}
+                  -
+                  <Form.Control
+                    as="input"
+                    style={{ width: "100px" }}
+                    value={getActiveBusinessHours().Sunday[1]}
+                  />
+                </Row>
+              </Form.Group>
+
+              <Form.Group>
+                <Form.Label style={{ color: "#F26522" }}>
+                  <FacebookIcon />
+                </Form.Label>
+                <Form.Control as="input" placeholder="Enter Facebook URL" />
+
+                <Form.Label style={{ color: "#F26522" }}>
+                  <InstagramIcon />
+                </Form.Label>
+                <Form.Control as="input" placeholder="Enter Instagram URL" />
+
+                <Form.Label style={{ color: "#F26522" }}>
+                  <TwitterIcon />
+                </Form.Label>
+                <Form.Control as="input" placeholder="Enter Twitter URL" />
+
+                <Form.Label style={{ color: "#F26522" }}>
+                  <GlobeIcon />
+                </Form.Label>
+                <Form.Control
+                  as="input"
+                  placeholder="Enter Business Website URL"
+                />
+              </Form.Group>
+            </div>
+          </div>
+          <div style={{ textAlign: "center" }}>
+            <Button
+              variant="primary"
+              style={{
+                backgroundColor: "#F26522",
+                borderRadius: "15px",
+                width: "257px",
+                height: "48px",
+                fontSize: "18px",
+                margin: "5px",
+                border: "2px solid #F26522",
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="primary"
+              style={{
+                backgroundColor: "#F26522",
+                borderRadius: "15px",
+                width: "257px",
+                height: "48px",
+                fontSize: "18px",
+                margin: "5px",
+                border: "2px solid #F26522",
+              }}
+              onClick={() => updateBusinessNew()}
+            >
+              Save Changes
+            </Button>
+          </div>
         </div>
+      )}
+      {!state.editBusinessDetails && (
+        <div className={styles.containerMeals}>
+          <div
+            style={{
+              fontSize: "22px",
+              display: "inline",
+              marginLeft: "27px",
+              fontWeight: "bold",
+            }}
+          >
+            Meals Offered
+          </div>
 
-        <div
-          style={{ fontSize: "32px", display: "inline", marginLeft: "15px" }}
-          onClick={() => {
-            dispatch({
-              type: "SHOW_CREATE_EDIT_MEAL_MODAL",
-              payload: { show: true, mode: "NEW" },
-            });
-          }}
-        >
-          +
-        </div>
-        {/* Old Table */}
-        {/* <table width="100%">
-          <tr width="100%">
-            <th
-              style={{
-                color: "#F26522",
-                marginLeft: "27px",
-                textAlign: "center",
-                display: "inline-block",
-              }}
-              width="7%"
-            >
-              <TableSortLabel
-                style={{ color: "F26522" }}
-                // direction={}
-                // onClick={() => changeSortOptions("meal_name")}
-              >
-                Meal Name
-              </TableSortLabel>
-            </th>
-            <th
-              style={{
-                color: "#F26522",
-                margin: "auto",
-                textAlign: "center",
-                display: "inline-block",
-              }}
-              width="7%"
-            >
-              Picture
-            </th>
-            <th
-              style={{
-                color: "#F26522",
-                margin: "auto",
-                textAlign: "center",
-                display: "inline-block",
-              }}
-              width="7%"
-            >
-              Meal Description
-            </th>
-            <th
-              style={{
-                color: "#F26522",
-                margin: "auto",
-                textAlign: "center",
-                display: "inline-block",
-              }}
-              width="7%"
-            >
-              Meal Category
-            </th>
-            <th
-              style={{
-                color: "#F26522",
-                margin: "auto",
-                textAlign: "center",
-                display: "inline-block",
-              }}
-              width="7%"
-            >
-              Meal Hint
-            </th>
-            <th
-              style={{
-                color: "#F26522",
-                margin: "auto",
-                textAlign: "center",
-                display: "inline-block",
-              }}
-              width="7%"
-            >
-              Calories
-            </th>
-            <th
-              style={{
-                color: "#F26522",
-                margin: "auto",
-                textAlign: "center",
-                display: "inline-block",
-              }}
-              width="7%"
-            >
-              Protein
-            </th>
-            <th
-              style={{
-                color: "#F26522",
-                margin: "auto",
-                textAlign: "center",
-                display: "inline-block",
-              }}
-              width="7%"
-            >
-              Carbs
-            </th>
-            <th
-              style={{
-                color: "#F26522",
-                margin: "auto",
-                textAlign: "center",
-                display: "inline-block",
-              }}
-              width="7%"
-            >
-              Fiber
-            </th>
-            <th
-              style={{
-                color: "#F26522",
-                margin: "auto",
-                textAlign: "center",
-                display: "inline-block",
-              }}
-              width="7%"
-            >
-              Sugar
-            </th>
-            <th
-              style={{
-                color: "#F26522",
-                margin: "auto",
-                textAlign: "center",
-                display: "inline-block",
-              }}
-              width="7%"
-            >
-              Fats
-            </th>
-            <th
-              style={{
-                color: "#F26522",
-                margin: "auto",
-                textAlign: "center",
-                display: "inline-block",
-              }}
-              width="7%"
-            >
-              Sat
-            </th>
-            <th
-              style={{
-                color: "#F26522",
-                margin: "auto",
-                textAlign: "center",
-                display: "inline-block",
-              }}
-              width="7%"
-            >
-              Status
-            </th>
-            <th
-              style={{
-                color: "#F26522",
-                margin: "auto",
-                textAlign: "center",
-                display: "inline-block",
-              }}
-              width="7%"
-            >
-              Actions
-            </th>
-          </tr>
-          {state.activeBusiness &&
-            getMealsByActiveBusiness().map((meal, index) => {
-              return <tr key={meal.meal_uid}></tr>;
-            })}
-        </table> */}
-
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell
-                style={{
-                  fontWeight: "bold",
-                  color: "#f26522",
-                  border: "none",
-                  textAlign: "center",
-                  fontSize: "15px",
-                }}
-              >
-                <TableSortLabel
+          <div
+            style={{ fontSize: "32px", display: "inline", marginLeft: "15px" }}
+            onClick={() => {
+              dispatch({
+                type: "SHOW_CREATE_EDIT_MEAL_MODAL",
+                payload: { show: true, mode: "NEW" },
+              });
+            }}
+          >
+            +
+          </div>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell
                   style={{
                     fontWeight: "bold",
                     color: "#f26522",
                     border: "none",
+                    textAlign: "center",
+                    fontSize: "15px",
                   }}
-                  direction={state.sortMeals.direction}
-                  onClick={() => changeSortOptions("meal_name")}
                 >
-                  Meal Name
-                </TableSortLabel>
-              </TableCell>
-              <TableCell
-                style={{
-                  fontWeight: "bold",
-                  color: "#f26522",
-                  border: "none",
-                  textAlign: "center",
-                  fontSize: "15px",
-                }}
-              >
-                Picture
-              </TableCell>
-              <TableCell
-                style={{
-                  fontWeight: "bold",
-                  color: "#f26522",
-                  border: "none",
-                  textAlign: "center",
-                  fontSize: "15px",
-                }}
-              >
-                Meal Description
-              </TableCell>
-              <TableCell
-                style={{
-                  fontWeight: "bold",
-                  color: "#f26522",
-                  border: "none",
-                  textAlign: "center",
-                  fontSize: "15px",
-                }}
-              >
-                <TableSortLabel
+                  <TableSortLabel
+                    style={{
+                      fontWeight: "bold",
+                      color: "#f26522",
+                      border: "none",
+                    }}
+                    direction={state.sortMeals.direction}
+                    onClick={() => changeSortOptions("meal_name")}
+                  >
+                    Meal Name
+                  </TableSortLabel>
+                </TableCell>
+                <TableCell
                   style={{
                     fontWeight: "bold",
                     color: "#f26522",
                     border: "none",
+                    textAlign: "center",
+                    fontSize: "15px",
                   }}
-                  direction={state.sortMeals.direction}
-                  onClick={() => changeSortOptions("meal_category")}
                 >
-                  Meal Category
-                </TableSortLabel>
-              </TableCell>
-              <TableCell
-                style={{
-                  fontWeight: "bold",
-                  color: "#f26522",
-                  border: "none",
-                  textAlign: "center",
-                  fontSize: "15px",
-                }}
-              >
-                <TableSortLabel
+                  Picture
+                </TableCell>
+                <TableCell
                   style={{
                     fontWeight: "bold",
                     color: "#f26522",
                     border: "none",
+                    textAlign: "center",
+                    fontSize: "15px",
                   }}
-                  direction={state.sortMeals.direction}
-                  onClick={() => changeSortOptions("meal_hint")}
                 >
-                  Meal Hint
-                </TableSortLabel>
-              </TableCell>
-              <TableCell
-                style={{
-                  fontWeight: "bold",
-                  color: "#f26522",
-                  border: "none",
-                  textAlign: "center",
-                  fontSize: "15px",
-                }}
-              >
-                <TableSortLabel
+                  Meal Description
+                </TableCell>
+                <TableCell
                   style={{
                     fontWeight: "bold",
                     color: "#f26522",
                     border: "none",
+                    textAlign: "center",
+                    fontSize: "15px",
                   }}
-                  direction={state.sortMeals.direction}
-                  onClick={() => changeSortOptions("meal_calories")}
                 >
-                  Calories
-                </TableSortLabel>
-              </TableCell>
-              <TableCell
-                style={{
-                  fontWeight: "bold",
-                  color: "#f26522",
-                  border: "none",
-                  textAlign: "center",
-                  fontSize: "15px",
-                }}
-              >
-                <TableSortLabel
+                  <TableSortLabel
+                    style={{
+                      fontWeight: "bold",
+                      color: "#f26522",
+                      border: "none",
+                    }}
+                    direction={state.sortMeals.direction}
+                    onClick={() => changeSortOptions("meal_category")}
+                  >
+                    Meal Category
+                  </TableSortLabel>
+                </TableCell>
+                <TableCell
                   style={{
                     fontWeight: "bold",
                     color: "#f26522",
                     border: "none",
+                    textAlign: "center",
+                    fontSize: "15px",
                   }}
-                  direction={state.sortMeals.direction}
-                  onClick={() => changeSortOptions("meal_protein")}
                 >
-                  Protein
-                </TableSortLabel>
-              </TableCell>
-              <TableCell
-                style={{
-                  fontWeight: "bold",
-                  color: "#f26522",
-                  border: "none",
-                  textAlign: "center",
-                  fontSize: "15px",
-                }}
-              >
-                <TableSortLabel
+                  <TableSortLabel
+                    style={{
+                      fontWeight: "bold",
+                      color: "#f26522",
+                      border: "none",
+                    }}
+                    direction={state.sortMeals.direction}
+                    onClick={() => changeSortOptions("meal_hint")}
+                  >
+                    Meal Hint
+                  </TableSortLabel>
+                </TableCell>
+                <TableCell
                   style={{
                     fontWeight: "bold",
                     color: "#f26522",
                     border: "none",
+                    textAlign: "center",
+                    fontSize: "15px",
                   }}
-                  direction={state.sortMeals.direction}
-                  onClick={() => changeSortOptions("meal_carbs")}
                 >
-                  Carbs
-                </TableSortLabel>
-              </TableCell>
-              <TableCell
-                style={{
-                  fontWeight: "bold",
-                  color: "#f26522",
-                  border: "none",
-                  textAlign: "center",
-                  fontSize: "15px",
-                }}
-              >
-                <TableSortLabel
+                  <TableSortLabel
+                    style={{
+                      fontWeight: "bold",
+                      color: "#f26522",
+                      border: "none",
+                    }}
+                    direction={state.sortMeals.direction}
+                    onClick={() => changeSortOptions("meal_calories")}
+                  >
+                    Calories
+                  </TableSortLabel>
+                </TableCell>
+                <TableCell
                   style={{
                     fontWeight: "bold",
                     color: "#f26522",
                     border: "none",
+                    textAlign: "center",
+                    fontSize: "15px",
                   }}
-                  direction={state.sortMeals.direction}
-                  onClick={() => changeSortOptions("meal_fiber")}
                 >
-                  Fiber
-                </TableSortLabel>
-              </TableCell>
-              <TableCell
-                style={{
-                  fontWeight: "bold",
-                  color: "#f26522",
-                  border: "none",
-                  textAlign: "center",
-                  fontSize: "15px",
-                }}
-              >
-                <TableSortLabel
+                  <TableSortLabel
+                    style={{
+                      fontWeight: "bold",
+                      color: "#f26522",
+                      border: "none",
+                    }}
+                    direction={state.sortMeals.direction}
+                    onClick={() => changeSortOptions("meal_protein")}
+                  >
+                    Protein
+                  </TableSortLabel>
+                </TableCell>
+                <TableCell
                   style={{
                     fontWeight: "bold",
                     color: "#f26522",
                     border: "none",
+                    textAlign: "center",
+                    fontSize: "15px",
                   }}
-                  direction={state.sortMeals.direction}
-                  onClick={() => changeSortOptions("meal_sugar")}
                 >
-                  Sugar
-                </TableSortLabel>
-              </TableCell>
-              <TableCell
-                style={{
-                  fontWeight: "bold",
-                  color: "#f26522",
-                  border: "none",
-                  textAlign: "center",
-                  fontSize: "15px",
-                }}
-              >
-                <TableSortLabel
+                  <TableSortLabel
+                    style={{
+                      fontWeight: "bold",
+                      color: "#f26522",
+                      border: "none",
+                    }}
+                    direction={state.sortMeals.direction}
+                    onClick={() => changeSortOptions("meal_carbs")}
+                  >
+                    Carbs
+                  </TableSortLabel>
+                </TableCell>
+                <TableCell
                   style={{
                     fontWeight: "bold",
                     color: "#f26522",
                     border: "none",
+                    textAlign: "center",
+                    fontSize: "15px",
                   }}
-                  direction={state.sortMeals.direction}
-                  onClick={() => changeSortOptions("meal_fat")}
                 >
-                  Fats
-                </TableSortLabel>
-              </TableCell>
-              <TableCell
-                style={{
-                  fontWeight: "bold",
-                  color: "#f26522",
-                  border: "none",
-                  textAlign: "center",
-                  fontSize: "15px",
-                }}
-              >
-                <TableSortLabel
+                  <TableSortLabel
+                    style={{
+                      fontWeight: "bold",
+                      color: "#f26522",
+                      border: "none",
+                    }}
+                    direction={state.sortMeals.direction}
+                    onClick={() => changeSortOptions("meal_fiber")}
+                  >
+                    Fiber
+                  </TableSortLabel>
+                </TableCell>
+                <TableCell
                   style={{
                     fontWeight: "bold",
                     color: "#f26522",
                     border: "none",
+                    textAlign: "center",
+                    fontSize: "15px",
                   }}
-                  direction={state.sortMeals.direction}
-                  onClick={() => changeSortOptions("meal_sat")}
                 >
-                  Sat
-                </TableSortLabel>
-              </TableCell>
-              <TableCell
-                style={{
-                  fontWeight: "bold",
-                  color: "#f26522",
-                  border: "none",
-                  textAlign: "center",
-                  fontSize: "15px",
-                }}
-              >
-                Status
-              </TableCell>
-              <TableCell
-                style={{
-                  fontWeight: "bold",
-                  color: "#f26522",
-                  border: "none",
-                  textAlign: "center",
-                  fontSize: "15px",
-                }}
-              ></TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {state.filteredMeals &&
-              state.filteredMeals.map((meal, index) => {
-                return (
-                  <TableRow key={index} hover>
-                    <TableCell
-                      style={{
-                        borderBottom: "1px solid #f8bb17",
-                        textAlign: "center",
-                        fontSize: "15px",
-                      }}
-                    >
-                      {meal.meal_name}
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        borderBottom: "1px solid #f8bb17",
-                        textAlign: "center",
-                      }}
-                    >
-                      <img
-                        src={meal.meal_photo_URL}
-                        height="45"
-                        width="45"
-                      ></img>
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        borderBottom: "1px solid #f8bb17",
-                        textAlign: "center",
-                        width: "300px",
-                        fontSize: "15px",
-                      }}
-                    >
-                      {meal.meal_desc}
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        borderBottom: "1px solid #f8bb17",
-                        textAlign: "center",
-                        fontSize: "15px",
-                      }}
-                    >
-                      {meal.meal_category}
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        borderBottom: "1px solid #f8bb17",
-                        textAlign: "center",
-                        fontSize: "15px",
-                      }}
-                    >
-                      {meal.meal_hint}
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        borderBottom: "1px solid #f8bb17",
-                        textAlign: "center",
-                        fontSize: "15px",
-                      }}
-                    >
-                      {meal.meal_calories ? meal.meal_calories + " Cal" : ""}
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        borderBottom: "1px solid #f8bb17",
-                        textAlign: "center",
-                        fontSize: "15px",
-                      }}
-                    >
-                      {meal.meal_protein ? meal.meal_protein + "g" : ""}
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        borderBottom: "1px solid #f8bb17",
-                        textAlign: "center",
-                        fontSize: "15px",
-                      }}
-                    >
-                      {meal.meal_carbs ? meal.meal_carbs + "g" : ""}
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        borderBottom: "1px solid #f8bb17",
-                        textAlign: "center",
-                        fontSize: "15px",
-                      }}
-                    >
-                      {meal.meal_fiber ? meal.meal_fiber + "g" : ""}
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        borderBottom: "1px solid #f8bb17",
-                        textAlign: "center",
-                        fontSize: "15px",
-                      }}
-                    >
-                      {meal.meal_sugar ? meal.meal_sugar + "g" : ""}
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        borderBottom: "1px solid #f8bb17",
-                        textAlign: "center",
-                        fontSize: "15px",
-                      }}
-                    >
-                      {meal.meal_fat ? meal.meal_fat + "%" : ""}
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        borderBottom: "1px solid #f8bb17",
-                        textAlign: "center",
-                        fontSize: "15px",
-                      }}
-                    >
-                      {meal.meal_sat ? meal.meal_sat + "%" : ""}
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        borderBottom: "1px solid #f8bb17",
-                        textAlign: "center",
-                        fontSize: "15px",
-                      }}
-                    >
-                      TOGGLE
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        borderBottom: "1px solid #f8bb17",
-                        textAlign: "center",
-                        fontSize: "15px",
-                      }}
-                    >
-                      <div
-                        className={styles.editIcon}
-                        onClick={() => {
-                          dispatch({ type: "EDIT_MEAL", payload: meal });
-                          setSelectedMeal(meal);
-                          dispatch({
-                            type: "SHOW_CREATE_EDIT_MEAL_MODAL",
-                            payload: { show: true, mode: "EDIT" },
-                          });
-                          toggleMealButtonPressed(true);
+                  <TableSortLabel
+                    style={{
+                      fontWeight: "bold",
+                      color: "#f26522",
+                      border: "none",
+                    }}
+                    direction={state.sortMeals.direction}
+                    onClick={() => changeSortOptions("meal_sugar")}
+                  >
+                    Sugar
+                  </TableSortLabel>
+                </TableCell>
+                <TableCell
+                  style={{
+                    fontWeight: "bold",
+                    color: "#f26522",
+                    border: "none",
+                    textAlign: "center",
+                    fontSize: "15px",
+                  }}
+                >
+                  <TableSortLabel
+                    style={{
+                      fontWeight: "bold",
+                      color: "#f26522",
+                      border: "none",
+                    }}
+                    direction={state.sortMeals.direction}
+                    onClick={() => changeSortOptions("meal_fat")}
+                  >
+                    Fats
+                  </TableSortLabel>
+                </TableCell>
+                <TableCell
+                  style={{
+                    fontWeight: "bold",
+                    color: "#f26522",
+                    border: "none",
+                    textAlign: "center",
+                    fontSize: "15px",
+                  }}
+                >
+                  <TableSortLabel
+                    style={{
+                      fontWeight: "bold",
+                      color: "#f26522",
+                      border: "none",
+                    }}
+                    direction={state.sortMeals.direction}
+                    onClick={() => changeSortOptions("meal_sat")}
+                  >
+                    Sat
+                  </TableSortLabel>
+                </TableCell>
+                <TableCell
+                  style={{
+                    fontWeight: "bold",
+                    color: "#f26522",
+                    border: "none",
+                    textAlign: "center",
+                    fontSize: "15px",
+                  }}
+                >
+                  Status
+                </TableCell>
+                <TableCell
+                  style={{
+                    fontWeight: "bold",
+                    color: "#f26522",
+                    border: "none",
+                    textAlign: "center",
+                    fontSize: "15px",
+                  }}
+                ></TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {state.filteredMeals &&
+                state.filteredMeals.map((meal, index) => {
+                  return (
+                    <TableRow key={index} hover>
+                      <TableCell
+                        style={{
+                          borderBottom: "1px solid #f8bb17",
+                          textAlign: "center",
+                          fontSize: "15px",
                         }}
-                      ></div>
-
-                      <div
-                        className={styles.deleteIcon}
-                        onClick={() => {
-                          toggleDeleteButtonPressed(true);
-                          setSelectedMeal(allMeals[index]);
-                          toggleMealButtonPressed(true);
-                          axios
-                            .delete(API_URL + "meals?meal_uid=" + meal.meal_uid)
-                            .then((response) => {
-                              console.log(response);
+                      >
+                        {meal.meal_name}
+                      </TableCell>
+                      <TableCell
+                        style={{
+                          borderBottom: "1px solid #f8bb17",
+                          textAlign: "center",
+                        }}
+                      >
+                        <img
+                          src={meal.meal_photo_URL}
+                          height="45"
+                          width="45"
+                        ></img>
+                      </TableCell>
+                      <TableCell
+                        style={{
+                          borderBottom: "1px solid #f8bb17",
+                          textAlign: "center",
+                          width: "300px",
+                          fontSize: "15px",
+                        }}
+                      >
+                        {meal.meal_desc}
+                      </TableCell>
+                      <TableCell
+                        style={{
+                          borderBottom: "1px solid #f8bb17",
+                          textAlign: "center",
+                          fontSize: "15px",
+                        }}
+                      >
+                        {meal.meal_category}
+                      </TableCell>
+                      <TableCell
+                        style={{
+                          borderBottom: "1px solid #f8bb17",
+                          textAlign: "center",
+                          fontSize: "15px",
+                        }}
+                      >
+                        {meal.meal_hint}
+                      </TableCell>
+                      <TableCell
+                        style={{
+                          borderBottom: "1px solid #f8bb17",
+                          textAlign: "center",
+                          fontSize: "15px",
+                        }}
+                      >
+                        {meal.meal_calories ? meal.meal_calories + " Cal" : ""}
+                      </TableCell>
+                      <TableCell
+                        style={{
+                          borderBottom: "1px solid #f8bb17",
+                          textAlign: "center",
+                          fontSize: "15px",
+                        }}
+                      >
+                        {meal.meal_protein ? meal.meal_protein + "g" : ""}
+                      </TableCell>
+                      <TableCell
+                        style={{
+                          borderBottom: "1px solid #f8bb17",
+                          textAlign: "center",
+                          fontSize: "15px",
+                        }}
+                      >
+                        {meal.meal_carbs ? meal.meal_carbs + "g" : ""}
+                      </TableCell>
+                      <TableCell
+                        style={{
+                          borderBottom: "1px solid #f8bb17",
+                          textAlign: "center",
+                          fontSize: "15px",
+                        }}
+                      >
+                        {meal.meal_fiber ? meal.meal_fiber + "g" : ""}
+                      </TableCell>
+                      <TableCell
+                        style={{
+                          borderBottom: "1px solid #f8bb17",
+                          textAlign: "center",
+                          fontSize: "15px",
+                        }}
+                      >
+                        {meal.meal_sugar ? meal.meal_sugar + "g" : ""}
+                      </TableCell>
+                      <TableCell
+                        style={{
+                          borderBottom: "1px solid #f8bb17",
+                          textAlign: "center",
+                          fontSize: "15px",
+                        }}
+                      >
+                        {meal.meal_fat ? meal.meal_fat + "%" : ""}
+                      </TableCell>
+                      <TableCell
+                        style={{
+                          borderBottom: "1px solid #f8bb17",
+                          textAlign: "center",
+                          fontSize: "15px",
+                        }}
+                      >
+                        {meal.meal_sat ? meal.meal_sat + "%" : ""}
+                      </TableCell>
+                      <TableCell
+                        style={{
+                          borderBottom: "1px solid #f8bb17",
+                          textAlign: "center",
+                          fontSize: "15px",
+                        }}
+                      >
+                        <ToggleSwitch
+                          active={Number(meal.meal_status)}
+                          handleChange={() => changeMealStatus(meal, index)}
+                        />
+                      </TableCell>
+                      <TableCell
+                        style={{
+                          borderBottom: "1px solid #f8bb17",
+                          textAlign: "center",
+                          fontSize: "15px",
+                        }}
+                      >
+                        <div
+                          className={styles.editIcon}
+                          onClick={() => {
+                            dispatch({ type: "EDIT_MEAL", payload: meal });
+                            setSelectedMeal(meal);
+                            dispatch({
+                              type: "SHOW_CREATE_EDIT_MEAL_MODAL",
+                              payload: { show: true, mode: "EDIT" },
                             });
-                        }}
-                      ></div>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-          </TableBody>
-        </Table>
+                            toggleMealButtonPressed(true);
+                          }}
+                        ></div>
 
-        {/* TODO - Remove */}
-
-        {/* <div
-          width="100%"
-          style={{
-            backgroundColor: "white",
-            display: "block",
-            minHeight: "25px",
-          }}
-        ></div> */}
-
-        {/* {generateMealsUI()} */}
-      </div>
-
-      <br />
-
-      {/* {editMealBoxNew()}
-      {newMealBoxNew()} */}
+                        <div
+                          className={styles.deleteIcon}
+                          onClick={() => {
+                            toggleDeleteButtonPressed(true);
+                            setSelectedMeal(allMeals[index]);
+                            toggleMealButtonPressed(true);
+                            axios
+                              .delete(
+                                API_URL + "meals?meal_uid=" + meal.meal_uid
+                              )
+                              .then((response) => {
+                                console.log(response);
+                              });
+                          }}
+                        ></div>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+            </TableBody>
+          </Table>
+        </div>
+      )}
 
       {state.showCreateEditMealModal && (
         <div
@@ -2598,7 +2809,7 @@ function EditMeal({ history, ...props }) {
               <Button
                 variant="primary"
                 onClick={() => {
-                  if (verifyModalData()) handleSaveMealNew();
+                  if (verifyModalData()) handleSaveMeal();
 
                   forceUpdate();
                 }}
