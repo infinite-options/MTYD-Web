@@ -50,8 +50,9 @@ const initialState = {
   measureUnitsData: [],
   showIngredients: false,
   allBusinessData: [],
+  activeBusinessData: null,
   editedBusinessData: {
-    business_accepting_hours: "",
+    business_accepting_hours: null,
     business_address: "",
     business_city: "",
     business_contact_first_name: "",
@@ -146,7 +147,8 @@ function reducer(state, action) {
       return {
         ...state,
         allBusinessData: action.payload.data,
-        activeBusiness: action.payload.active,
+        // activeBusiness: action.payload.active,
+        // activeBusinessData: action.payload.activeData,
       };
     case "CHANGE_ACTIVE_BUSINESS":
       return {
@@ -154,6 +156,7 @@ function reducer(state, action) {
         activeBusiness: action.payload.id,
         filteredMeals: action.payload.meals,
         editedBusinessData: action.payload.business,
+        activeBusinessData: action.payload.active,
       };
     case "SHOW_CREATE_EDIT_MEAL_MODAL":
       return {
@@ -414,7 +417,6 @@ function EditMeal({ history, ...props }) {
 
   const editBusiness = (property, value) => {
     if (property === "") {
-      console.log("TEST");
       const newBusiness = state.allBusinessData.filter(
         (business) => business.business_uid === value
       )[0];
@@ -542,15 +544,49 @@ function EditMeal({ history, ...props }) {
   };
 
   const getActiveBusinessHours = () => {
-    if (
-      state.editedBusinessData.business_accepting_hours == "" ||
-      state.editedBusinessData.business_accepting_hours == null
-    ) {
-      return JSON.parse(
-        '{"Friday": ["N/A", "N/A"], "Monday": ["N/A", "N/A"], "Sunday": ["N/A", "N/A"], "Tuesday": ["N/A", "N/A"], "Saturday": ["N/A0", "N/A"], "Thursday": ["N/A", "N/A"], "Wednesday": ["N/A", "N/A"]}'
-      );
-    }
-    return JSON.parse(activeBusinessData.business_accepting_hours);
+    // if (
+    //   state.editedBusinessData.business_accepting_hours == "" ||
+    //   state.editedBusinessData.business_accepting_hours == null
+    // ) {
+    // return JSON.parse(
+    //   '{"Friday": ["N/A", "N/A"], "Monday": ["N/A", "N/A"], "Sunday": ["N/A", "N/A"], "Tuesday": ["N/A", "N/A"], "Saturday": ["N/A", "N/A"], "Thursday": ["N/A", "N/A"], "Wednesday": ["N/A", "N/A"]}'
+    // );
+    // }
+    // return JSON.parse(state.editedBusinessData.business_accepting_hours);
+
+    return JSON.parse(
+      '{"Friday": ["N/A", "N/A"], "Monday": ["N/A", "N/A"], "Sunday": ["N/A", "N/A"], "Tuesday": ["N/A", "N/A"], "Saturday": ["N/A", "N/A"], "Thursday": ["N/A", "N/A"], "Wednesday": ["N/A", "N/A"]}'
+    );
+  };
+
+  const getEditedBusinessHours = () => {
+    if (state.editedBusinessData.business_accepting_hours)
+      return state.editedBusinessData.business_accepting_hours;
+    else
+      return {
+        Friday: ["N/A", "N/A"],
+        Monday: ["N/A", "N/A"],
+        Sunday: ["N/A", "N/A"],
+        Tuesday: ["N/A", "N/A"],
+        Saturday: ["N/A", "N/A"],
+        Thursday: ["N/A", "N/A"],
+        Wednesday: ["N/A", "N/A"],
+      };
+  };
+
+  const getBusinessHours = () => {
+    if (state.activeBusinessData) {
+      return state.activeBusinessData.business_accepting_hours;
+    } else
+      return {
+        Friday: ["N/A", "N/A"],
+        Monday: ["N/A", "N/A"],
+        Sunday: ["N/A", "N/A"],
+        Tuesday: ["N/A", "N/A"],
+        Saturday: ["N/A", "N/A"],
+        Thursday: ["N/A", "N/A"],
+        Wednesday: ["N/A", "N/A"],
+      };
   };
 
   const generateMealsList = () => {
@@ -567,21 +603,7 @@ function EditMeal({ history, ...props }) {
                 mealApiResult[index][property] = value ? value.toString() : "";
               }
             }
-            // Sort by meal name
-            mealApiResult.sort((mealA, mealB) => {
-              const mealNameA = mealA.meal_name;
-              const mealNameB = mealB.meal_name;
-              if (mealNameA < mealNameB) {
-                return -1;
-              }
-              if (mealNameA > mealNameB) {
-                return 1;
-              }
-              // Use Id if same name; should not happen
-              const idA = mealA.meal_uid;
-              const idB = mealB.meal_uid;
-              return idA < idB ? -1 : 1;
-            });
+
             dispatch({ type: "FETCH_MEALS", payload: mealApiResult });
             allMeals = mealApiResult;
           }
@@ -599,24 +621,59 @@ function EditMeal({ history, ...props }) {
     return null;
   };
 
-  const getBusinessDataByID = (temp) => {
-    for (let i = 0; i < state.allBusinessData.length; i++) {
-      if (state.allBusinessData[i].business_uid == temp) {
-        return state.allBusinessData[i];
-      }
+  const getBusinessDataByID = (id) => {
+    return state.allBusinessData.filter(
+      (business) => business.business_uid === id
+    )[0];
+
+    // for (let i = 0; i < state.allBusinessData.length; i++) {
+    //   if (state.allBusinessData[i].business_uid == temp) {
+    //     return state.allBusinessData[i];
+    //   }
+    // }
+    // return null;
+  };
+
+  const parseBusinessHours = (hours) => {
+    console.log(hours);
+    if (hours) {
+      return JSON.parse(hours);
     }
-    return null;
+    return JSON.parse(
+      '{"Friday": ["N/A", "N/A"], "Monday": ["N/A", "N/A"], "Sunday": ["N/A", "N/A"], "Tuesday": ["N/A", "N/A"], "Saturday": ["N/A", "N/A"], "Thursday": ["N/A", "N/A"], "Wednesday": ["N/A", "N/A"]}'
+    );
+  };
+
+  const getMealsByBusiness = (id) => {
+    return state.mealData.filter((meal) => meal.meal_business === id);
   };
 
   const getBusinessData = () => {
     axios.get(`${API_URL}all_businesses_brandon`).then((response) => {
       const allBusinessData = response.data.result;
       if (allBusinessData.length > 0) {
+        const activeBusinessData = {
+          ...allBusinessData[0],
+          business_accepting_hours: parseBusinessHours(
+            allBusinessData[0].business_accepting_hours
+          ),
+        };
+
         dispatch({
           type: "FETCH_ALL_BUSINESS_DATA",
           payload: {
             data: allBusinessData,
-            active: allBusinessData[0].business_uid,
+            // active: activeBusinessData.business_uid,
+            // activeData: activeBusinessData,
+          },
+        });
+        dispatch({
+          type: "CHANGE_ACTIVE_BUSINESS",
+          payload: {
+            id: activeBusinessData.business_uid,
+            business: activeBusinessData,
+            meals: getMealsByBusiness(activeBusinessData.business_uid),
+            active: activeBusinessData,
           },
         });
       }
@@ -652,62 +709,32 @@ function EditMeal({ history, ...props }) {
     return false;
   };
 
-  const displayBusinessHours = () => {
-    if (activeBusiness != null && tempMonStart == "N/A") {
-      setTempBusinessName(activeBusinessData.business_name);
-      setTempCusine(activeBusinessData.business_type);
-      tempSetMonStart(getActiveBusinessHours().Monday[0]);
-      setMonFin(getActiveBusinessHours().Monday[1]);
-      tempSetTueStart(getActiveBusinessHours().Tuesday[0]);
-      setTueFin(getActiveBusinessHours().Tuesday[1]);
-      tempSetWedStart(getActiveBusinessHours().Wednesday[0]);
-      setWedFin(getActiveBusinessHours().Wednesday[1]);
-      tempSetThuStart(getActiveBusinessHours().Thursday[0]);
-      setThuFin(getActiveBusinessHours().Thursday[1]);
-      tempSetFriStart(getActiveBusinessHours().Friday[0]);
-      setFriFin(getActiveBusinessHours().Friday[1]);
-      tempSetSatStart(getActiveBusinessHours().Saturday[0]);
-      setSatFin(getActiveBusinessHours().Saturday[1]);
-      tempSetSunStart(getActiveBusinessHours().Sunday[0]);
-      setSunFin(getActiveBusinessHours().Sunday[1]);
-    }
-  };
-
   if (!state.mounted) {
     return null;
   }
 
   generateMealsList();
 
-  displayBusinessHours();
+  //displayBusinessHours();
 
   const changeActiveBusiness = (selectedBusinessID) => {
-    setActiveBusiness(selectedBusinessID);
+    const businessData = {
+      ...getBusinessDataByID(selectedBusinessID),
+    };
+    const businessHours = parseBusinessHours(
+      businessData.business_accepting_hours
+    );
+    businessData.business_accepting_hours = businessHours;
+
     dispatch({
       type: "CHANGE_ACTIVE_BUSINESS",
       payload: {
         id: selectedBusinessID,
-        business: getBusinessDataByID(selectedBusinessID),
+        business: businessData,
         meals: getMealsByBusiness(selectedBusinessID),
+        active: businessData,
       },
     });
-    setActiveBusinessData(getBusinessDataByID(selectedBusinessID));
-    setTempBusinessName(activeBusinessData.business_name);
-    setTempCusine(activeBusinessData.business_type);
-    tempSetMonStart(getActiveBusinessHours().Monday[0]);
-    setMonFin(getActiveBusinessHours().Monday[1]);
-    tempSetTueStart(getActiveBusinessHours().Tuesday[0]);
-    setTueFin(getActiveBusinessHours().Tuesday[1]);
-    tempSetWedStart(getActiveBusinessHours().Wednesday[0]);
-    setWedFin(getActiveBusinessHours().Wednesday[1]);
-    tempSetThuStart(getActiveBusinessHours().Thursday[0]);
-    setThuFin(getActiveBusinessHours().Thursday[1]);
-    tempSetFriStart(getActiveBusinessHours().Friday[0]);
-    setFriFin(getActiveBusinessHours().Friday[1]);
-    tempSetSatStart(getActiveBusinessHours().Saturday[0]);
-    setSatFin(getActiveBusinessHours().Saturday[1]);
-    tempSetSunStart(getActiveBusinessHours().Sunday[0]);
-    setSunFin(getActiveBusinessHours().Sunday[1]);
   };
 
   const updateBusiness = () => {
@@ -800,10 +827,6 @@ function EditMeal({ history, ...props }) {
       });
   };
 
-  const getMealsByBusiness = (id) => {
-    return state.mealData.filter((meal) => meal.meal_business === id);
-  };
-
   const changeSortOptions = (field) => {
     const isAsc =
       state.sortMeals.field === field && state.sortMeals.direction === "asc";
@@ -836,6 +859,16 @@ function EditMeal({ history, ...props }) {
     dispatch({ type: "UPDATE_FILTERED_MEALS", payload: allMeals });
   };
 
+  const changeBusinessHours = (day, startTime, endTime) => {
+    const newHours = {
+      ...state.editedBusinessData.business_accepting_hours,
+      [day]: [startTime, endTime],
+    };
+
+    // hours[day][arrayIndex] = newTime;
+    editBusiness("business_accepting_hours", newHours);
+  };
+
   return (
     <div style={{ backgroundColor: "#F26522" }}>
       {console.log(state)}
@@ -843,8 +876,173 @@ function EditMeal({ history, ...props }) {
       <AdminNavBar currentPage={"edit-meal"} />
 
       <div className={styles.containerCustomer}>
-        <img
-          src={activeBusinessData.business_image}
+        <Row>
+          <Col md="auto">
+            <img
+              src={state.editedBusinessData.business_image}
+              alt="profile image"
+              height="90"
+              width="90"
+              style={{ marginTop: "15px", marginLeft: "15px" }}
+            ></img>
+          </Col>
+          <Col md="auto">
+            <Row>
+              <form>
+                <select
+                  onChange={(event) => {
+                    const selectedBusinessID = event.target.value;
+                    changeActiveBusiness(selectedBusinessID);
+                  }}
+                >
+                  {state.allBusinessData.map((business, index) => {
+                    return (
+                      <option key={index} value={business.business_uid}>
+                        {business.business_name}
+                      </option>
+                    );
+                  })}
+                </select>
+              </form>
+            </Row>
+            <Row>
+              <Col>
+                <div
+                  style={{
+                    color: "#F26522",
+                    textDecoration: "underline",
+                  }}
+                  onClick={() => {
+                    // toggleBusinessDetails(!showBusinessDetails);
+                    dispatch({ type: "TOGGLE_EDIT_BUSINESS" });
+                  }}
+                >
+                  Edit Details
+                  <img className={styles.editIconSmall}></img>
+                </div>
+              </Col>
+              <Col>
+                <div
+                  style={{
+                    color: "#F26522",
+                    textDecoration: "underline",
+                  }}
+                >
+                  Send Message
+                </div>
+              </Col>
+            </Row>
+          </Col>
+          <Col></Col>
+          <Col>
+            <div>
+              <div>Contact</div>
+              <div>
+                {state.activeBusinessData
+                  ? state.activeBusinessData.business_contact_first_name +
+                    " " +
+                    state.activeBusinessData.business_contact_last_name
+                  : ""}
+              </div>
+              <div>
+                {state.activeBusinessData
+                  ? state.activeBusinessData.business_email
+                  : ""}
+              </div>
+              <div>
+                {state.activeBusinessData
+                  ? state.activeBusinessData.business_phone_num
+                  : ""}
+              </div>
+            </div>
+          </Col>
+          <Col>
+            <div>
+              <div>Address</div>
+              <div>
+                {state.activeBusinessData
+                  ? state.activeBusinessData.business_address
+                  : ""}
+                {state.activeBusinessData &&
+                state.activeBusinessData.business_unit
+                  ? ", Unit " + state.activeBusinessData.business_unit + ", "
+                  : ","}
+              </div>
+              <div>
+                {state.activeBusinessData
+                  ? state.activeBusinessData.business_city +
+                    ", " +
+                    state.activeBusinessData.business_state +
+                    ", " +
+                    state.activeBusinessData.business_zip
+                  : ""}
+              </div>
+            </div>
+          </Col>
+          <Col>
+            <div>
+              <div>Business Type</div>
+              <div>
+                {state.activeBusinessData
+                  ? state.activeBusinessData.business_type
+                  : ""}
+              </div>
+            </div>
+          </Col>
+          <Col md="auto">
+            <Row>
+              <Col>Business Hours</Col>
+            </Row>
+            <Row>
+              <Col md="auto">
+                <div>Monday</div>
+                <div>Tuesday</div>
+                <div>Wednesday</div>
+                <div>Thursday</div>
+              </Col>
+              <Col md="auto">
+                <div>{getBusinessHours().Monday[0]}</div>
+                <div>{getBusinessHours().Tuesday[0]}</div>
+                <div>{getBusinessHours().Wednesday[0]}</div>
+                <div>{getBusinessHours().Thursday[0]}</div>
+              </Col>
+              <Col md="auto">
+                <div>-</div>
+                <div>-</div>
+                <div>-</div>
+                <div>-</div>
+              </Col>
+              <Col md="auto">
+                <div>{getBusinessHours().Monday[1]}</div>
+                <div>{getBusinessHours().Tuesday[1]}</div>
+                <div>{getBusinessHours().Wednesday[1]}</div>
+                <div>{getBusinessHours().Thursday[1]}</div>
+              </Col>
+              <Col md="auto">
+                <div>Friday</div>
+                <div>Saturday</div>
+                <div>Sunday</div>
+              </Col>
+              <Col md="auto">
+                <div>{getBusinessHours().Friday[0]}</div>
+                <div>{getBusinessHours().Saturday[0]}</div>
+                <div>{getBusinessHours().Sunday[0]}</div>
+              </Col>
+              <Col md="auto">
+                <div>-</div>
+                <div>-</div>
+                <div>-</div>
+              </Col>
+              <Col>
+                <div>{getBusinessHours().Friday[1]}</div>
+                <div>{getBusinessHours().Saturday[1]}</div>
+                <div>{getBusinessHours().Sunday[1]}</div>
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+        {/* <img
+          src={state.editedBusinessData.business_image}
           alt="profile image"
           height="90"
           width="90"
@@ -901,107 +1099,28 @@ function EditMeal({ history, ...props }) {
           }}
         >
           Send Message
-        </div>
+        </div> */}
 
-        <div
-          style={{
-            position: "absolute",
-            top: "125px",
-            left: "700px",
-            color: "#F26522",
-          }}
-        >
-          Cusines
-        </div>
-
-        <div
-          style={{
-            position: "absolute",
-            top: "145px",
-            left: "700px",
-          }}
-        >
-          {activeBusinessData.business_type}
-        </div>
-
-        <div
-          style={{
-            position: "absolute",
-            top: "125px",
-            left: "900px",
-            color: "#F26522",
-          }}
-        >
-          Business Hours
-        </div>
-
-        <div
-          style={{
-            position: "absolute",
-            top: "145px",
-            left: "900px",
-          }}
-        >
-          <div style={{ display: "block", fontSize: "12px" }}>Monday</div>
-          <div style={{ display: "block", fontSize: "12px" }}>Tuesday</div>
-          <div style={{ display: "block", fontSize: "12px" }}>Wednesday</div>
-          <div style={{ display: "block", fontSize: "12px" }}>Thursday</div>
-        </div>
-        <div
-          style={{
-            position: "absolute",
-            top: "145px",
-            left: "975px",
-          }}
-        >
-          <div style={{ display: "block", fontSize: "12px" }}>
-            {getActiveBusinessHours().Monday[0]} -{" "}
-            {getActiveBusinessHours().Monday[1]}
+        {/* <div className={styles.businessHeader}>
+          <div>
+            <div>Contact</div>
+            <div>First Last</div>
+            <div>Email</div>
+            <div>phone</div>
           </div>
-          <div style={{ display: "block", fontSize: "12px" }}>
-            {getActiveBusinessHours().Tuesday[0]} -{" "}
-            {getActiveBusinessHours().Tuesday[1]}
+          <div>
+            <div>Address</div>
+            <div>Street, Unit</div>
+            <div>City, State, Zip</div>
           </div>
-          <div style={{ display: "block", fontSize: "12px" }}>
-            {getActiveBusinessHours().Wednesday[0]} -{" "}
-            {getActiveBusinessHours().Wednesday[1]}
+          <div>
+            <div>Business Type</div>
+            <div>info</div>
           </div>
-          <div style={{ display: "block", fontSize: "12px" }}>
-            {getActiveBusinessHours().Thursday[0]} -{" "}
-            {getActiveBusinessHours().Thursday[1]}
+          <div>
+            <div>Business Hours</div>
           </div>
-        </div>
-        <div
-          style={{
-            position: "absolute",
-            top: "145px",
-            left: "1125px",
-          }}
-        >
-          <div style={{ display: "block", fontSize: "12px" }}>Friday</div>
-          <div style={{ display: "block", fontSize: "12px" }}>Saturday</div>
-          <div style={{ display: "block", fontSize: "12px" }}>Sunday</div>
-        </div>
-        <div
-          style={{
-            position: "absolute",
-            top: "145px",
-            left: "1200px",
-          }}
-        >
-          <div style={{ display: "block", fontSize: "12px" }}>
-            {getActiveBusinessHours().Friday[0]} -{" "}
-            {getActiveBusinessHours().Friday[1]}
-          </div>
-          <div style={{ display: "block", fontSize: "12px" }}>
-            {getActiveBusinessHours().Saturday[0]} -{" "}
-            {getActiveBusinessHours().Saturday[1]}
-          </div>
-          <div style={{ display: "block", fontSize: "12px" }}>
-            {getActiveBusinessHours().Sunday[0]} -{" "}
-            {getActiveBusinessHours().Sunday[1]}
-          </div>
-        </div>
+        </div> */}
       </div>
 
       {showBusinessDetails && (
@@ -1263,7 +1382,7 @@ function EditMeal({ history, ...props }) {
               marginLeft: "60px",
             }}
             onClick={() => {
-              updateBusiness();
+              //updateBusiness();
             }}
           >
             Save
@@ -1614,13 +1733,27 @@ function EditMeal({ history, ...props }) {
                   <Form.Control
                     as="input"
                     style={{ width: "100px" }}
-                    value={getActiveBusinessHours().Monday[0]}
+                    value={getEditedBusinessHours().Monday[0]}
+                    onChange={(event) => {
+                      changeBusinessHours(
+                        "Monday",
+                        event.target.value,
+                        getEditedBusinessHours().Monday[1]
+                      );
+                    }}
                   />{" "}
                   -
                   <Form.Control
                     as="input"
                     style={{ width: "100px" }}
-                    value={getActiveBusinessHours().Monday[1]}
+                    value={getEditedBusinessHours().Monday[1]}
+                    onChange={(event) => {
+                      changeBusinessHours(
+                        "Monday",
+                        getEditedBusinessHours().Monday[0],
+                        event.target.value
+                      );
+                    }}
                   />
                 </Row>
                 <Row style={{ margin: "0px" }}>
@@ -1628,13 +1761,27 @@ function EditMeal({ history, ...props }) {
                   <Form.Control
                     as="input"
                     style={{ width: "100px" }}
-                    value={getActiveBusinessHours().Tuesday[0]}
+                    value={getEditedBusinessHours().Tuesday[0]}
+                    onChange={(event) => {
+                      changeBusinessHours(
+                        "Tuesday",
+                        event.target.value,
+                        getEditedBusinessHours().Tuesday[1]
+                      );
+                    }}
                   />{" "}
                   -
                   <Form.Control
                     as="input"
                     style={{ width: "100px" }}
-                    value={getActiveBusinessHours().Tuesday[1]}
+                    value={getEditedBusinessHours().Tuesday[1]}
+                    onChange={(event) => {
+                      changeBusinessHours(
+                        "Tuesday",
+                        getEditedBusinessHours().Tuesday[0],
+                        event.target.value
+                      );
+                    }}
                   />
                 </Row>
                 <Row style={{ margin: "0px" }}>
@@ -1642,13 +1789,27 @@ function EditMeal({ history, ...props }) {
                   <Form.Control
                     as="input"
                     style={{ width: "100px" }}
-                    value={getActiveBusinessHours().Wednesday[0]}
+                    value={getEditedBusinessHours().Wednesday[0]}
+                    onChange={(event) => {
+                      changeBusinessHours(
+                        "Wednesday",
+                        event.target.value,
+                        getEditedBusinessHours().Wednesday[1]
+                      );
+                    }}
                   />{" "}
                   -
                   <Form.Control
                     as="input"
                     style={{ width: "100px" }}
-                    value={getActiveBusinessHours().Wednesday[1]}
+                    value={getEditedBusinessHours().Wednesday[1]}
+                    onChange={(event) => {
+                      changeBusinessHours(
+                        "Wednesday",
+                        getEditedBusinessHours().Wednesday[0],
+                        event.target.value
+                      );
+                    }}
                   />
                 </Row>
                 <Row style={{ margin: "0px" }}>
@@ -1656,13 +1817,27 @@ function EditMeal({ history, ...props }) {
                   <Form.Control
                     as="input"
                     style={{ width: "100px" }}
-                    value={getActiveBusinessHours().Thursday[0]}
+                    value={getEditedBusinessHours().Thursday[0]}
+                    onChange={(event) => {
+                      changeBusinessHours(
+                        "Thursday",
+                        event.target.value,
+                        getEditedBusinessHours().Thursday[1]
+                      );
+                    }}
                   />{" "}
                   -
                   <Form.Control
                     as="input"
                     style={{ width: "100px" }}
-                    value={getActiveBusinessHours().Thursday[1]}
+                    value={getEditedBusinessHours().Thursday[1]}
+                    onChange={(event) => {
+                      changeBusinessHours(
+                        "Thursday",
+                        getEditedBusinessHours().Thursday[0],
+                        event.target.value
+                      );
+                    }}
                   />
                 </Row>
                 <Row style={{ margin: "0px" }}>
@@ -1670,13 +1845,27 @@ function EditMeal({ history, ...props }) {
                   <Form.Control
                     as="input"
                     style={{ width: "100px" }}
-                    value={getActiveBusinessHours().Friday[0]}
+                    value={getEditedBusinessHours().Friday[0]}
+                    onChange={(event) => {
+                      changeBusinessHours(
+                        "Friday",
+                        event.target.value,
+                        getEditedBusinessHours().Friday[1]
+                      );
+                    }}
                   />{" "}
                   -
                   <Form.Control
                     as="input"
                     style={{ width: "100px" }}
-                    value={getActiveBusinessHours().Friday[1]}
+                    value={getEditedBusinessHours().Friday[1]}
+                    onChange={(event) => {
+                      changeBusinessHours(
+                        "Friday",
+                        getEditedBusinessHours().Friday[0],
+                        event.target.value
+                      );
+                    }}
                   />
                 </Row>
                 <Row style={{ margin: "0px" }}>
@@ -1684,13 +1873,27 @@ function EditMeal({ history, ...props }) {
                   <Form.Control
                     as="input"
                     style={{ width: "100px" }}
-                    value={getActiveBusinessHours().Saturday[0]}
+                    value={getEditedBusinessHours().Saturday[0]}
+                    onChange={(event) => {
+                      changeBusinessHours(
+                        "Saturday",
+                        event.target.value,
+                        getEditedBusinessHours().Saturday[1]
+                      );
+                    }}
                   />{" "}
                   -
                   <Form.Control
                     as="input"
                     style={{ width: "100px" }}
-                    value={getActiveBusinessHours().Saturday[1]}
+                    value={getEditedBusinessHours().Saturday[1]}
+                    onChange={(event) => {
+                      changeBusinessHours(
+                        "Saturday",
+                        getEditedBusinessHours().Saturday[0],
+                        event.target.value
+                      );
+                    }}
                   />
                 </Row>
                 <Row style={{ margin: "0px" }}>
@@ -1698,13 +1901,27 @@ function EditMeal({ history, ...props }) {
                   <Form.Control
                     as="input"
                     style={{ width: "100px" }}
-                    value={getActiveBusinessHours().Sunday[0]}
+                    value={getEditedBusinessHours().Sunday[0]}
+                    onChange={(event) => {
+                      changeBusinessHours(
+                        "Sunday",
+                        event.target.value,
+                        getEditedBusinessHours().Sunday[1]
+                      );
+                    }}
                   />{" "}
                   -
                   <Form.Control
                     as="input"
                     style={{ width: "100px" }}
-                    value={getActiveBusinessHours().Sunday[1]}
+                    value={getEditedBusinessHours().Sunday[1]}
+                    onChange={(event) => {
+                      changeBusinessHours(
+                        "Sunday",
+                        getEditedBusinessHours().Sunday[0],
+                        event.target.value
+                      );
+                    }}
                   />
                 </Row>
               </Form.Group>
@@ -2343,7 +2560,7 @@ function EditMeal({ history, ...props }) {
                     Business
                   </Form.Label>
                   <Form.Label column sm={9}>
-                    {activeBusinessData.business_name}
+                    {state.editedBusinessData.business_name}
                   </Form.Label>
                 </Form.Group>
 

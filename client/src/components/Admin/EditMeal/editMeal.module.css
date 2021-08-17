@@ -733,3 +733,8 @@ input:checked + .slider:before {
 .modalError {
   border: 2px solid red;
 }
+
+.businessHeader {
+  display: flex;
+  justify-content: right;
+}
