@@ -22,6 +22,7 @@ export default function StripeElement(props) {
         fetchingFees={props.fetchingFees}
         displayError={props.displayError}
         dpvCode={props.dpvCode}
+        ambassadorCode={props.ambassadorCode}
       />
       {/* <button
         style={{border: 'solid'}}

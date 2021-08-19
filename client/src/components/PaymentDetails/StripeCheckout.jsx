@@ -241,6 +241,7 @@ const StripeCheckout = (props) => {
                 // if(props.customerUid !== 'GUEST') {
                 console.log("STRIPE CHECKOUT (1) -- not a guest");
                 console.log("STRIPE CHECKOUT (1) -- amount_due: " + props.paymentSummary.total);
+                console.log("(StripeCheckout) ambassador_code for checkout: ", props.ambassadorCode);
         
                 checkoutItems(
                   {
@@ -277,7 +278,7 @@ const StripeCheckout = (props) => {
                     tip: props.paymentSummary.tip,
                     tax: props.paymentSummary.taxAmount,
                     subtotal: props.paymentSummary.mealSubPrice,
-                    amb: props.paymentSummary.ambassadorDiscount
+                    ambassador_code: props.ambassadorCode
                   },
                   (res, checkout_success) => {
 

@@ -1980,6 +1980,7 @@ class PaymentDetails extends React.Component {
                         fetchingFees={this.state.fetchingFees}
                         displayError={this.displayError}
                         dpvCode={this.state.responseCode}
+                        ambassadorCode={this.state.ambassadorCode}
                       />
                     </div>
                   </div>
@@ -2027,6 +2028,7 @@ class PaymentDetails extends React.Component {
                     phone={this.state.phone}
                     fetchingFees={this.state.fetchingFees}
                     displayError={this.displayError}
+                    ambassadorCode={this.state.ambassadorCode}
                   />
                 </div>
               </div>
