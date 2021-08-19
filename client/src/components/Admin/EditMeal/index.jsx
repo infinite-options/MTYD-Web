@@ -23,6 +23,7 @@ import { ReactComponent as TwitterIcon } from "./static/twitter.svg";
 import { sortedArray } from "../../../reducers/helperFuncs";
 import ToggleSwitch from "./toggleSwitch.jsx";
 import { convertTypeAcquisitionFromJson } from "typescript";
+import { style } from "@material-ui/system";
 
 const initialState = {
   mounted: false,
@@ -76,6 +77,10 @@ const initialState = {
     reusable: 0,
     revenue_sharing: 0,
     transaction_fee: 0,
+    business_facebook_url: "",
+    business_instagram_url: "",
+    business_twitter_url: "",
+    business_website_url: "",
   },
   activeBusiness: "",
   showCreateEditMealModal: false,
@@ -245,75 +250,6 @@ var idsGenerated = false;
 
 function EditMeal({ history, ...props }) {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const [showDropdown, toggleShowDropdown] = useState(false);
-  const [activeBusiness, setActiveBusiness] = useState(null);
-  const [activeBusinessData, setActiveBusinessData] = useState({
-    bus_guid_device_id_notification: "",
-    bus_notification_approval: "",
-    business_EIN: "",
-    business_USDOT: "",
-    business_WAUBI: "",
-    business_accepting_hours: "",
-    business_address: "",
-    business_association: "",
-    business_city: "",
-    business_contact_first_name: "",
-    business_contact_last_name: "",
-    business_created_at: "",
-    business_delivery_hours: "",
-    business_desc: "",
-    business_email: "",
-    business_hours: "",
-    business_image: "",
-    business_latitude: "",
-    business_license: "",
-    business_longitude: "",
-    business_name: "",
-    business_password: "",
-    business_phone_num: "",
-    business_phone_num2: "",
-    business_state: "",
-    business_status: "",
-    business_type: "",
-    business_uid: "",
-    business_unit: "",
-    business_zip: "",
-    can_cancel: 0,
-    delivery: 0,
-    platform_fee: 0,
-    profit_sharing: 0,
-    reusable: 0,
-    revenue_sharing: 0,
-    transaction_fee: 0,
-  });
-  const [showBusinessDetails, toggleBusinessDetails] = useState(false);
-
-  const [tempBusinessName, setTempBusinessName] = useState("");
-  const [tempCusine, setTempCusine] = useState("");
-  const [tempMonStart, tempSetMonStart] = useState("");
-  const [tempMonFin, setMonFin] = useState("");
-  const [tempTueStart, tempSetTueStart] = useState("");
-  const [tempTueFin, setTueFin] = useState("");
-  const [tempWedStart, tempSetWedStart] = useState("");
-  const [tempWedFin, setWedFin] = useState("");
-  const [tempThuStart, tempSetThuStart] = useState("");
-  const [tempThuFin, setThuFin] = useState("");
-  const [tempFriStart, tempSetFriStart] = useState("");
-  const [tempFriFin, setFriFin] = useState("");
-  const [tempSatStart, tempSetSatStart] = useState("");
-  const [tempSatFin, setSatFin] = useState("");
-  const [tempSunStart, tempSetSunStart] = useState("");
-  const [tempSunFin, setSunFin] = useState("");
-
-  const [selectedMeal, setSelectedMeal] = useState({});
-  const [showEditMeal, toggleEditMeal] = useState(false);
-  const [showNewMeal, toggleNewMeal] = useState(false);
-  const [mealButtonPressed, toggleMealButtonPressed] = useState(false);
-  const [deleteButtonPressed, toggleDeleteButtonPressed] = useState(false);
-
-  const [mealsGenerated, toggleMealsGenerated] = useState(false);
-
-  const forceUpdate = useForceUpdate();
 
   // Check for log in
   useEffect(() => {
@@ -390,9 +326,139 @@ function EditMeal({ history, ...props }) {
       });
   }, []);
 
+  // Fetch all meals and business data
+
   useEffect(() => {
-    getBusinessData();
+    let mealApiResult = null;
+    axios
+      .get(`${API_URL}meals`)
+      .then((response) => {
+        if (response.status === 200) {
+          mealApiResult = response.data.result;
+          for (let index = 0; index < mealApiResult.length; index++) {
+            for (const property in mealApiResult[index]) {
+              const value = mealApiResult[index][property];
+              mealApiResult[index][property] = value ? value.toString() : "";
+            }
+          }
+          dispatch({ type: "FETCH_MEALS", payload: mealApiResult });
+          return axios.get(`${API_URL}all_businesses`);
+        }
+      })
+      .then((response) => {
+        const allBusinessData = response.data.result;
+        let activeBusinessData = null;
+        if (allBusinessData.length > 0) {
+          if (
+            document.cookie
+              .split(";")
+              .some((item) => item.trim().startsWith("last_active_business="))
+          ) {
+            // Get last used business
+            const saved_business_uid = document.cookie
+              .split("; ")
+              .find((row) => row.startsWith("last_active_business="))
+              .split("=")[1];
+
+            const savedBusinessData = allBusinessData.filter(
+              (business) => business.business_uid === saved_business_uid
+            )[0];
+            activeBusinessData = {
+              ...savedBusinessData,
+              business_accepting_hours: parseBusinessHours(
+                savedBusinessData.business_accepting_hours
+              ),
+            };
+          } else {
+            // use first business as active business
+            activeBusinessData = {
+              ...allBusinessData[0],
+              business_accepting_hours: parseBusinessHours(
+                allBusinessData[0].business_accepting_hours
+              ),
+            };
+          }
+          dispatch({
+            type: "FETCH_ALL_BUSINESS_DATA",
+            payload: {
+              data: allBusinessData,
+            },
+          });
+          dispatch({
+            type: "CHANGE_ACTIVE_BUSINESS",
+            payload: {
+              id: activeBusinessData.business_uid,
+              business: activeBusinessData,
+              meals: getMealsByBusiness(
+                activeBusinessData.business_uid,
+                mealApiResult
+              ),
+              active: activeBusinessData,
+            },
+          });
+        }
+      })
+      .catch((err) => {
+        if (err.response) {
+          // eslint-disable-next-line no-console
+          console.log(err.response);
+        }
+        // eslint-disable-next-line no-console
+        console.log(err);
+      });
   }, []);
+
+  const updateMealData = (updatedMealId, action) => {
+    axios
+      .get(`${API_URL}meals`)
+      .then((response) => {
+        if (response.status === 200) {
+          const mealApiResult = response.data.result;
+          for (let index = 0; index < mealApiResult.length; index++) {
+            for (const property in mealApiResult[index]) {
+              const value = mealApiResult[index][property];
+              mealApiResult[index][property] = value ? value.toString() : "";
+            }
+          }
+
+          const updatedMealData = [...state.filteredMeals];
+
+          // get updated meal info from api if put or post
+          const updatedMeal =
+            action !== "delete"
+              ? mealApiResult.filter(
+                  (meal) => meal.meal_uid === updatedMealId
+                )[0]
+              : null;
+
+          // get index of meal that was edited
+          const mealIndex = state.filteredMeals.findIndex(
+            (meal) => meal.meal_uid === updatedMealId
+          );
+          // Meal exists - find it and update it
+          if (action === "put") {
+            updatedMealData[mealIndex] = updatedMeal;
+          } else if (action === "post") {
+            // meal does not exist - add it to list
+            updatedMealData.push(updatedMeal);
+          } else {
+            // meal was deleted - remove from state
+            updatedMealData.splice(mealIndex, 1);
+          }
+
+          dispatch({ type: "FETCH_MEALS", payload: mealApiResult });
+          dispatch({ type: "UPDATE_FILTERED_MEALS", payload: updatedMealData });
+        }
+      })
+      .catch((err) => {
+        if (err.response) {
+          // eslint-disable-next-line no-console
+          console.log(err.response);
+        }
+        // eslint-disable-next-line no-console
+        console.log(err);
+      });
+  };
 
   const getMealCategories = () => {
     return ["Entree", "Salad", "Soup", "Dessert", "Other"];
@@ -454,26 +520,26 @@ function EditMeal({ history, ...props }) {
     }
   };
 
-  const getEditedMealData = (requestType) => {
+  const getMealFormData = (requestType, meal) => {
     const bodyFormData = new FormData();
 
-    bodyFormData.append("meal_category", state.editedMeal.meal_category);
-    bodyFormData.append("meal_name", state.editedMeal.meal_name);
-    bodyFormData.append("meal_desc", state.editedMeal.meal_desc);
-    bodyFormData.append("meal_hint", state.editedMeal.meal_hint);
+    bodyFormData.append("meal_category", meal.meal_category);
+    bodyFormData.append("meal_name", meal.meal_name);
+    bodyFormData.append("meal_desc", meal.meal_desc);
+    bodyFormData.append("meal_hint", meal.meal_hint);
     bodyFormData.append("meal_photo_url", state.selectedFile);
-    bodyFormData.append("meal_calories", state.editedMeal.meal_calories);
-    bodyFormData.append("meal_protein", state.editedMeal.meal_protein);
-    bodyFormData.append("meal_carbs", state.editedMeal.meal_carbs);
-    bodyFormData.append("meal_fiber", state.editedMeal.meal_fiber);
-    bodyFormData.append("meal_sugar", state.editedMeal.meal_sugar);
-    bodyFormData.append("meal_fat", state.editedMeal.meal_fat);
-    bodyFormData.append("meal_sat", state.editedMeal.meal_sat);
-    bodyFormData.append("meal_business", activeBusiness);
-    bodyFormData.append("meal_status", state.editedMeal.meal_status);
+    bodyFormData.append("meal_calories", meal.meal_calories);
+    bodyFormData.append("meal_protein", meal.meal_protein);
+    bodyFormData.append("meal_carbs", meal.meal_carbs);
+    bodyFormData.append("meal_fiber", meal.meal_fiber);
+    bodyFormData.append("meal_sugar", meal.meal_sugar);
+    bodyFormData.append("meal_fat", meal.meal_fat);
+    bodyFormData.append("meal_sat", meal.meal_sat);
+    bodyFormData.append("meal_business", state.activeBusiness);
+    bodyFormData.append("meal_status", meal.meal_status);
 
     if (requestType === "put") {
-      bodyFormData.append("meal_uid", state.editedMeal.meal_uid);
+      bodyFormData.append("meal_uid", meal.meal_uid);
     }
     return bodyFormData;
   };
@@ -491,12 +557,12 @@ function EditMeal({ history, ...props }) {
     return true;
   };
 
-  const handleSaveMeal = () => {
+  const handleSaveMeal = (mealData = state.editedMeal) => {
     const requestType = state.modalMode === "NEW" ? "post" : "put";
-    const bodyFormData = getEditedMealData(requestType);
+    const bodyFormData = getMealFormData(requestType, mealData);
 
     let mealStatusCode = "";
-
+    let mealId = "";
     axios({
       method: requestType,
       url: `${API_URL}create_update_meals`,
@@ -505,6 +571,7 @@ function EditMeal({ history, ...props }) {
     })
       .then((response) => {
         mealStatusCode = response.status;
+        mealId = response.data.meal_uid;
         if (
           state.showIngredients &&
           state.ingredientsModified &&
@@ -523,7 +590,7 @@ function EditMeal({ history, ...props }) {
           );
 
           const recipeData = {
-            meal_id: response.data.meal_uid,
+            meal_id: mealId,
             servings: state.servings,
             ingredients: ingredientList,
           };
@@ -536,27 +603,14 @@ function EditMeal({ history, ...props }) {
       .then((response) => {
         // TODO - ADD STATUS CODE CHECK FOR INGREDIENTS API
 
-        if (mealStatusCode === 201) dispatch({ type: "CLOSE_MODAL" });
+        if (mealStatusCode === 201) {
+          dispatch({ type: "CLOSE_MODAL" });
+          updateMealData(mealId, requestType);
+        }
       })
       .catch((err) => {
         console.log(err);
       });
-  };
-
-  const getActiveBusinessHours = () => {
-    // if (
-    //   state.editedBusinessData.business_accepting_hours == "" ||
-    //   state.editedBusinessData.business_accepting_hours == null
-    // ) {
-    // return JSON.parse(
-    //   '{"Friday": ["N/A", "N/A"], "Monday": ["N/A", "N/A"], "Sunday": ["N/A", "N/A"], "Tuesday": ["N/A", "N/A"], "Saturday": ["N/A", "N/A"], "Thursday": ["N/A", "N/A"], "Wednesday": ["N/A", "N/A"]}'
-    // );
-    // }
-    // return JSON.parse(state.editedBusinessData.business_accepting_hours);
-
-    return JSON.parse(
-      '{"Friday": ["N/A", "N/A"], "Monday": ["N/A", "N/A"], "Sunday": ["N/A", "N/A"], "Tuesday": ["N/A", "N/A"], "Saturday": ["N/A", "N/A"], "Thursday": ["N/A", "N/A"], "Wednesday": ["N/A", "N/A"]}'
-    );
   };
 
   const getEditedBusinessHours = () => {
@@ -574,68 +628,27 @@ function EditMeal({ history, ...props }) {
       };
   };
 
-  const getBusinessHours = () => {
+  const displayBusinessHours = (day, type) => {
+    const index = type === "start" ? 0 : 1;
     if (state.activeBusinessData) {
-      return state.activeBusinessData.business_accepting_hours;
-    } else
-      return {
-        Friday: ["N/A", "N/A"],
-        Monday: ["N/A", "N/A"],
-        Sunday: ["N/A", "N/A"],
-        Tuesday: ["N/A", "N/A"],
-        Saturday: ["N/A", "N/A"],
-        Thursday: ["N/A", "N/A"],
-        Wednesday: ["N/A", "N/A"],
-      };
-  };
-
-  const generateMealsList = () => {
-    if (mealsGenerated == false && state.mounted == true) {
-      axios
-        .get(`${API_URL}meals`)
-        .then((response) => {
-          if (response.status === 200) {
-            const mealApiResult = response.data.result;
-            // Convert property values to string and nulls to empty string
-            for (let index = 0; index < mealApiResult.length; index++) {
-              for (const property in mealApiResult[index]) {
-                const value = mealApiResult[index][property];
-                mealApiResult[index][property] = value ? value.toString() : "";
-              }
-            }
-
-            dispatch({ type: "FETCH_MEALS", payload: mealApiResult });
-            allMeals = mealApiResult;
-          }
-        })
-        .catch((err) => {
-          if (err.response) {
-            // eslint-disable-next-line no-console
-            console.log(err.response);
-          }
-          // eslint-disable-next-line no-console
-          console.log(err);
-        });
-      toggleMealsGenerated(true);
+      const time =
+        state.activeBusinessData.business_accepting_hours[day][index];
+      if (time === "") {
+        return "N/A";
+      } else {
+        return time;
+      }
     }
-    return null;
+    return "N/A";
   };
 
   const getBusinessDataByID = (id) => {
     return state.allBusinessData.filter(
       (business) => business.business_uid === id
     )[0];
-
-    // for (let i = 0; i < state.allBusinessData.length; i++) {
-    //   if (state.allBusinessData[i].business_uid == temp) {
-    //     return state.allBusinessData[i];
-    //   }
-    // }
-    // return null;
   };
 
   const parseBusinessHours = (hours) => {
-    console.log(hours);
     if (hours) {
       return JSON.parse(hours);
     }
@@ -644,27 +657,25 @@ function EditMeal({ history, ...props }) {
     );
   };
 
-  const getMealsByBusiness = (id) => {
-    return state.mealData.filter((meal) => meal.meal_business === id);
+  const getMealsByBusiness = (id, mealData) => {
+    return mealData.filter((meal) => meal.meal_business === id);
   };
 
-  const getBusinessData = () => {
+  const getBusinessData = (id) => {
     axios.get(`${API_URL}all_businesses`).then((response) => {
       const allBusinessData = response.data.result;
       if (allBusinessData.length > 0) {
-        const activeBusinessData = {
-          ...allBusinessData[0],
-          business_accepting_hours: parseBusinessHours(
-            allBusinessData[0].business_accepting_hours
-          ),
-        };
+        const activeBusinessData = allBusinessData.filter(
+          (business) => business.business_uid === id
+        )[0];
+        activeBusinessData.business_accepting_hours = parseBusinessHours(
+          activeBusinessData.business_accepting_hours
+        );
 
         dispatch({
           type: "FETCH_ALL_BUSINESS_DATA",
           payload: {
             data: allBusinessData,
-            // active: activeBusinessData.business_uid,
-            // activeData: activeBusinessData,
           },
         });
         dispatch({
@@ -672,7 +683,10 @@ function EditMeal({ history, ...props }) {
           payload: {
             id: activeBusinessData.business_uid,
             business: activeBusinessData,
-            meals: getMealsByBusiness(activeBusinessData.business_uid),
+            meals: getMealsByBusiness(
+              activeBusinessData.business_uid,
+              state.mealData
+            ),
             active: activeBusinessData,
           },
         });
@@ -682,40 +696,9 @@ function EditMeal({ history, ...props }) {
     return null;
   };
 
-  const checkForDuplicateNameInBusiness = () => {
-    for (let i = 0; i < allMeals.length; i++) {
-      if (
-        allMeals[i].meal_name == state.editedMeal.meal_name &&
-        allMeals[i].meal_business == activeBusiness
-      ) {
-        alert("Meal of this name already exists for this business");
-        return true;
-      }
-    }
-    return false;
-  };
-
-  const checkForDuplicateNameInBusinessEditing = () => {
-    for (let i = 0; i < allMeals.length; i++) {
-      if (
-        allMeals[i].meal_name == state.editedMeal.meal_name &&
-        allMeals[i].meal_business == activeBusiness &&
-        allMeals[i].meal_uid != state.editedMeal.meal_uid
-      ) {
-        alert("Meal of this name already exists for this business");
-        return true;
-      }
-    }
-    return false;
-  };
-
   if (!state.mounted) {
     return null;
   }
-
-  generateMealsList();
-
-  //displayBusinessHours();
 
   const changeActiveBusiness = (selectedBusinessID) => {
     const businessData = {
@@ -726,101 +709,82 @@ function EditMeal({ history, ...props }) {
     );
     businessData.business_accepting_hours = businessHours;
 
+    document.cookie = `last_active_business = ${selectedBusinessID}`;
+
     dispatch({
       type: "CHANGE_ACTIVE_BUSINESS",
       payload: {
         id: selectedBusinessID,
         business: businessData,
-        meals: getMealsByBusiness(selectedBusinessID),
+        meals: getMealsByBusiness(selectedBusinessID, state.mealData),
         active: businessData,
       },
     });
   };
 
-  const updateBusiness = () => {
-    let myObj = {
-      business_uid: activeBusiness,
-      business_created_at: activeBusinessData.business_created_at,
-      business_name: tempBusinessName,
-      business_type: tempCusine,
-      business_desc: activeBusinessData.business_desc,
-      business_association: activeBusinessData.business_association,
-      business_contact_first_name:
-        activeBusinessData.business_contact_first_name,
-      business_contact_last_name: activeBusinessData.business_contact_last_name,
-      business_phone_num: activeBusinessData.business_phone_num,
-      business_phone_num2: activeBusinessData.business_phone_num2,
-      business_email: activeBusinessData.business_email,
-      business_hours: JSON.parse(activeBusinessData.business_hours),
-      business_accepting_hours: {
-        Friday: [tempFriStart, tempFriFin],
-        Monday: [tempMonStart, tempMonFin],
-        Sunday: [tempSunStart, tempSunFin],
-        Tuesday: [tempTueStart, tempTueFin],
-        Saturday: [tempSatStart, tempSatFin],
-        Thursday: [tempThuStart, tempThuFin],
-        Wednesday: [tempWedStart, tempWedFin],
-      },
-      business_delivery_hours: JSON.parse(
-        activeBusinessData.business_delivery_hours
-      ),
-      business_address: activeBusinessData.business_address,
-      business_unit: activeBusinessData.business_unit,
-      business_city: activeBusinessData.business_city,
-      business_state: activeBusinessData.business_state,
-      business_zip: activeBusinessData.business_zip,
-      business_longitude: activeBusinessData.business_longitude,
-      business_latitude: activeBusinessData.business_latitude,
-      business_EIN: activeBusinessData.business_EIN,
-      business_WAUBI: activeBusinessData.business_WAUBI,
-      business_license: activeBusinessData.business_license,
-      business_USDOT: activeBusinessData.business_USDOT,
-      bus_notification_approval: activeBusinessData.bus_notification_approval,
-      bus_notification_device_id:
-        activeBusinessData.bus_guid_device_id_notification,
-      can_cancel: activeBusinessData.can_cancel.toString(),
-      delivery: activeBusinessData.delivery.toString(),
-      reusable: activeBusinessData.reusable.toString(),
-      business_image: activeBusinessData.business_image,
-      business_password: activeBusinessData.business_password,
-    };
+  const getEditedBusinessData = (requestType) => {
+    const bodyFormData = new FormData();
 
-    axios
-      .post(API_URL + "business_details_update/Post", myObj)
-      .then((response) => {
-        console.log(response.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    getBusinessData();
-    activeBusinessData.business_type = tempCusine;
+    const data = state.editedBusinessData;
 
-    let myObj2 = {
-      Friday: [tempFriStart, tempFriFin],
-      Monday: [tempMonStart, tempMonFin],
-      Sunday: [tempSunStart, tempSunFin],
-      Tuesday: [tempTueStart, tempTueFin],
-      Saturday: [tempSatStart, tempSatFin],
-      Thursday: [tempThuStart, tempThuFin],
-      Wednesday: [tempWedStart, tempWedFin],
-    };
-    activeBusinessData.business_accepting_hours = JSON.stringify(myObj2);
-    toggleBusinessDetails(false);
+    bodyFormData.append(
+      "business_accepting_hours",
+      JSON.stringify(state.editedBusinessData.business_accepting_hours)
+    );
+    bodyFormData.append("business_address", data.business_address);
+    bodyFormData.append("business_city", data.business_city);
+    bodyFormData.append(
+      "business_contact_first_name",
+      data.business_contact_first_name
+    );
+    bodyFormData.append(
+      "business_contact_last_name",
+      data.business_contact_last_name
+    );
+    bodyFormData.append("business_desc", data.business_desc);
+    bodyFormData.append("business_email", data.business_email);
+    bodyFormData.append("business_image", state.selectedFile);
+    bodyFormData.append("business_name", data.business_name);
+    bodyFormData.append("business_phone_num", data.business_phone_num);
+    bodyFormData.append("business_phone_num2", data.business_phone_num2);
+    bodyFormData.append("business_state", data.business_state);
+    bodyFormData.append("business_status", data.business_status);
+    bodyFormData.append("business_type", data.business_type);
+    bodyFormData.append("business_uid", data.business_uid);
+    bodyFormData.append("business_unit", data.business_unit);
+    bodyFormData.append("business_zip", data.business_zip);
+    bodyFormData.append("can_cancel", data.can_cancel.toString());
+    bodyFormData.append("delivery", data.delivery.toString());
+    bodyFormData.append("platform_fee", data.platform_fee);
+    bodyFormData.append("profit_sharing", data.profit_sharing);
+    bodyFormData.append("reusable", data.reusable.toString());
+    bodyFormData.append("revenue_sharing", data.revenue_sharing);
+    bodyFormData.append("transaction_fee", data.transaction_fee);
+    bodyFormData.append("business_facebook_url", data.business_facebook_url);
+    bodyFormData.append("business_instagram_url", data.business_instagram_url);
+    bodyFormData.append("business_twitter_url", data.business_twitter_url);
+    bodyFormData.append("business_website_url", data.business_website_url);
+
+    return bodyFormData;
   };
 
-  const updateBusinessNew = () => {
-    const businessData = {
-      ...state.editedBusinessData,
-      can_cancel: state.editedBusinessData.can_cancel.toString(),
-      delivery: state.editedBusinessData.delivery.toString(),
-      reusable: state.editedBusinessData.reusable.toString(),
-    };
+  const saveBusinessData = () => {
+    const businessFormData = getEditedBusinessData();
 
-    axios
-      .post(API_URL + "business_details", businessData)
+    axios({
+      method: "post",
+      url: `${API_URL}business_details`,
+      data: businessFormData,
+      headers: { "Content-Type": "multipart/form-data" },
+    })
       .then((response) => {
         console.log(response.data);
+        if (response.status === 200) {
+          // exit modal
+          dispatch({ type: "TOGGLE_EDIT_BUSINESS" });
+          // get updated business info from api
+          getBusinessData(state.editedBusinessData.business_uid);
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -855,7 +819,9 @@ function EditMeal({ history, ...props }) {
       console.log("deactivating meal");
       updatedMeal.meal_status = "0";
     }
+    console.log(updatedMeal);
     allMeals[mealIndex] = updatedMeal;
+    handleSaveMeal(updatedMeal);
     dispatch({ type: "UPDATE_FILTERED_MEALS", payload: allMeals });
   };
 
@@ -869,1576 +835,1570 @@ function EditMeal({ history, ...props }) {
     editBusiness("business_accepting_hours", newHours);
   };
 
+  const getActiveBusinessData = (field) => {
+    if (state.activeBusinessData) {
+      return state.activeBusinessData[field];
+    } else return "";
+  };
+
+  const goToLink = (link) => {
+    if (link.startsWith("http://") || link.startsWith("http://")) {
+      window.open(link, "_blank");
+    } else {
+      window.open(`http://${link}`, "_blank");
+    }
+  };
+
+  const deleteItem = (id) => {
+    axios.delete(API_URL + "meals?meal_uid=" + id).then((response) => {
+      updateMealData(id, "delete");
+    });
+  };
+
   return (
     <div style={{ backgroundColor: "#F26522" }}>
       {console.log(state)}
 
       <AdminNavBar currentPage={"edit-meal"} />
 
-      <div className={styles.containerCustomer}>
-        <Row>
-          <Col md="auto">
-            <img
-              src={state.editedBusinessData.business_image}
-              alt="profile image"
-              height="90"
-              width="90"
-              style={{ marginTop: "15px", marginLeft: "15px" }}
-            ></img>
-          </Col>
-          <Col md="auto">
-            <Row>
-              <form>
-                <select
-                  onChange={(event) => {
-                    const selectedBusinessID = event.target.value;
-                    changeActiveBusiness(selectedBusinessID);
+      <div className={styles.pageBody}>
+        <div className={styles.containerCustomer}>
+          <Row>
+            <Col md="auto">
+              <img
+                src={
+                  state.activeBusinessData
+                    ? state.activeBusinessData.business_image
+                    : ""
+                }
+                alt="profile image"
+                height="90"
+                width="90"
+                style={{ marginTop: "15px", marginLeft: "15px" }}
+              ></img>
+            </Col>
+            <Col md="auto" style={{ marginTop: "auto", marginBottom: "auto" }}>
+              <Row>
+                <form>
+                  <div className={styles.dropdownArrow}>
+                    <select
+                      className={styles.dropdown}
+                      value={state.activeBusiness ? state.activeBusiness : " "}
+                      onChange={(event) => {
+                        const selectedBusinessID = event.target.value;
+                        changeActiveBusiness(selectedBusinessID);
+                      }}
+                    >
+                      {state.allBusinessData.map((business, index) => {
+                        return (
+                          <option key={index} value={business.business_uid}>
+                            {business.business_name}
+                          </option>
+                        );
+                      })}
+                    </select>
+                  </div>
+                </form>
+              </Row>
+              <Row>
+                <Col md="auto" style={{ padding: "0px" }}>
+                  <div
+                    style={{
+                      color: "#F26522",
+                      textDecoration: "underline",
+                    }}
+                    onClick={() => {
+                      // toggleBusinessDetails(!showBusinessDetails);
+                      dispatch({ type: "TOGGLE_EDIT_BUSINESS" });
+                    }}
+                  >
+                    Edit Details
+                    <img className={styles.editIconSmall}></img>
+                  </div>
+                </Col>
+                <Col md="auto" style={{ padding: "0px", marginLeft: "auto" }}>
+                  <div
+                    style={{
+                      color: "#F26522",
+                      textDecoration: "underline",
+                    }}
+                  >
+                    Send Message
+                  </div>
+                </Col>
+              </Row>
+            </Col>
+            <Col></Col>
+            <Col>
+              <div>
+                <div className={styles.headerText}>Contact</div>
+                <div>
+                  {state.activeBusinessData
+                    ? state.activeBusinessData.business_contact_first_name +
+                      " " +
+                      state.activeBusinessData.business_contact_last_name
+                    : ""}
+                </div>
+                <div>
+                  {state.activeBusinessData
+                    ? state.activeBusinessData.business_email
+                    : ""}
+                </div>
+                <div>
+                  {state.activeBusinessData
+                    ? state.activeBusinessData.business_phone_num
+                    : ""}
+                </div>
+              </div>
+            </Col>
+            <Col>
+              <div>
+                <div className={styles.headerText}>Address</div>
+                <div>
+                  {state.activeBusinessData
+                    ? state.activeBusinessData.business_address
+                    : ""}
+                  {state.activeBusinessData &&
+                  state.activeBusinessData.business_unit
+                    ? ", Unit " + state.activeBusinessData.business_unit + ", "
+                    : ","}
+                </div>
+                <div>
+                  {state.activeBusinessData
+                    ? state.activeBusinessData.business_city +
+                      ", " +
+                      state.activeBusinessData.business_state +
+                      ", " +
+                      state.activeBusinessData.business_zip
+                    : ""}
+                </div>
+              </div>
+            </Col>
+            <Col>
+              <div>
+                <div className={styles.headerText}>Business Type</div>
+                <div>
+                  {state.activeBusinessData
+                    ? state.activeBusinessData.business_type
+                    : ""}
+                </div>
+              </div>
+            </Col>
+            <Col md="auto">
+              <Row>
+                <Col className={styles.headerText}>Business Hours</Col>
+              </Row>
+              <Row>
+                <Col md="auto">
+                  <div>Monday</div>
+                  <div>Tuesday</div>
+                  <div>Wednesday</div>
+                  <div>Thursday</div>
+                </Col>
+                <Col md="auto" className={styles.businessHours}>
+                  <div className={styles.businessHoursText}>
+                    {displayBusinessHours("Monday", "start")}
+                  </div>
+                  <div className={styles.businessHoursText}>
+                    {displayBusinessHours("Tuesday", "start")}
+                  </div>
+                  <div className={styles.businessHoursText}>
+                    {displayBusinessHours("Wednesday", "start")}
+                  </div>
+                  <div className={styles.businessHoursText}>
+                    {displayBusinessHours("Thursday", "start")}
+                  </div>
+                </Col>
+                <Col md="auto" style={{ padding: "0px 5px 0px 5px" }}>
+                  <div>-</div>
+                  <div>-</div>
+                  <div>-</div>
+                  <div>-</div>
+                </Col>
+                <Col md="auto" className={styles.businessHours}>
+                  <div className={styles.businessHoursText}>
+                    {displayBusinessHours("Monday", "end")}
+                  </div>
+                  <div className={styles.businessHoursText}>
+                    {displayBusinessHours("Tuesday", "end")}
+                  </div>
+                  <div className={styles.businessHoursText}>
+                    {displayBusinessHours("Wednesday", "end")}
+                  </div>
+                  <div className={styles.businessHoursText}>
+                    {displayBusinessHours("Thursday", "end")}
+                  </div>
+                </Col>
+                <Col md="auto">
+                  <div>Friday</div>
+                  <div>Saturday</div>
+                  <div>Sunday</div>
+                </Col>
+                <Col md="auto" className={styles.businessHours}>
+                  <div className={styles.businessHoursText}>
+                    {displayBusinessHours("Friday", "start")}
+                  </div>
+                  <div className={styles.businessHoursText}>
+                    {displayBusinessHours("Saturday", "start")}
+                  </div>
+                  <div className={styles.businessHoursText}>
+                    {displayBusinessHours("Sunday", "start")}
+                  </div>
+                </Col>
+                <Col md="auto" style={{ padding: "0px 5px 0px 5px" }}>
+                  <div>-</div>
+                  <div>-</div>
+                  <div>-</div>
+                </Col>
+                <Col className={styles.businessHours}>
+                  <div className={styles.businessHoursText}>
+                    {displayBusinessHours("Friday", "end")}
+                  </div>
+                  <div className={styles.businessHoursText}>
+                    {displayBusinessHours("Saturday", "end")}
+                  </div>
+                  <div className={styles.businessHoursText}>
+                    {displayBusinessHours("Sunday", "end")}
+                  </div>
+                </Col>
+              </Row>
+            </Col>
+            <Col md="auto">
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                <FacebookIcon
+                  style={{ margin: "2px" }}
+                  onClick={() =>
+                    goToLink(getActiveBusinessData("business_facebook_url"))
+                  }
+                />
+                <InstagramIcon
+                  style={{ margin: "2px" }}
+                  onClick={() =>
+                    goToLink(getActiveBusinessData("business_instagram_url"))
+                  }
+                />
+                <GlobeIcon
+                  style={{ margin: "2px" }}
+                  onClick={() =>
+                    goToLink(getActiveBusinessData("business_website_url"))
+                  }
+                />
+                <TwitterIcon
+                  style={{ margin: "2px" }}
+                  onClick={() =>
+                    goToLink(getActiveBusinessData("business_twitter_url"))
+                  }
+                />
+              </div>
+            </Col>
+          </Row>
+        </div>
+
+        {state.editBusinessDetails && (
+          <div className={styles.editBusiness}>
+            <div className={styles.editBusinessFormContainer}>
+              <div style={{ width: "300px" }}>
+                <Form.Group
+                  style={{
+                    width: "80%",
+                    marginLeft: "auto",
+                    marginRight: "auto",
                   }}
                 >
-                  {state.allBusinessData.map((business, index) => {
+                  <img
+                    height="150px"
+                    width="150px"
+                    src={state.editedBusinessData.business_image}
+                  ></img>
+                  <input
+                    type="file"
+                    name="upload_file"
+                    onChange={(e) => {
+                      state.selectedFile = e.target.files[0];
+                      editBusiness(
+                        "business_image",
+                        URL.createObjectURL(e.target.files[0])
+                      );
+                    }}
+                  />
+                </Form.Group>
+                <Form.Group
+                  style={{
+                    width: "80%",
+                    marginLeft: "auto",
+                    marginRight: "auto",
+                  }}
+                >
+                  <Form.Label style={{ color: "#F26522" }}>
+                    Business Name
+                  </Form.Label>
+                  <Form.Control
+                    as="input"
+                    placeholder="Enter Business Name"
+                    value={state.editedBusinessData.business_name}
+                    onChange={(event) =>
+                      editBusiness("business_name", event.target.value)
+                    }
+                  />
+                </Form.Group>
+                <Form.Group
+                  style={{
+                    width: "80%",
+                    marginLeft: "auto",
+                    marginRight: "auto",
+                  }}
+                >
+                  <Form.Label style={{ color: "#F26522" }}>
+                    Business Type
+                  </Form.Label>
+                  <Form.Control
+                    as="input"
+                    placeholder="Enter Business Type"
+                    value={state.editedBusinessData.business_type}
+                    onChange={(event) =>
+                      editBusiness("business_type", event.target.value)
+                    }
+                  />
+                </Form.Group>
+                <Form.Group
+                  style={{
+                    width: "80%",
+                    marginLeft: "auto",
+                    marginRight: "auto",
+                  }}
+                >
+                  <Form.Label style={{ color: "#F26522" }}>
+                    Business Description
+                  </Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    placeholder="Enter Business Description"
+                    value={state.editedBusinessData.business_desc}
+                    onChange={(event) =>
+                      editBusiness("business_desc", event.target.value)
+                    }
+                  />
+                </Form.Group>
+              </div>
+
+              <div
+                style={{ borderLeft: "2px solid #F8BB17", display: "flex" }}
+              />
+
+              <div>
+                <Row style={{ margin: "0px", justifyContent: "center" }}>
+                  <Form.Group style={{ width: "45%" }}>
+                    <Form.Label style={{ color: "#F26522" }}>
+                      First Name
+                    </Form.Label>
+                    <Form.Control
+                      as="input"
+                      placeholder="Enter First Name"
+                      value={
+                        state.editedBusinessData.business_contact_first_name
+                      }
+                      onChange={(event) =>
+                        editBusiness(
+                          "business_contact_first_name",
+                          event.target.value
+                        )
+                      }
+                    />
+                  </Form.Group>
+                  <Form.Group style={{ width: "45%" }}>
+                    <Form.Label style={{ color: "#F26522" }}>
+                      Last Name
+                    </Form.Label>
+                    <Form.Control
+                      as="input"
+                      placeholder="Enter Last Name"
+                      value={
+                        state.editedBusinessData.business_contact_last_name
+                      }
+                      onChange={(event) =>
+                        editBusiness(
+                          "business_contact_last_name",
+                          event.target.value
+                        )
+                      }
+                    />
+                  </Form.Group>
+                </Row>
+                <Row style={{ margin: "0px", justifyContent: "center" }}>
+                  <Form.Group style={{ width: "45%" }}>
+                    <Form.Label style={{ color: "#F26522" }}>
+                      Phone Number 1
+                    </Form.Label>
+                    <Form.Control
+                      as="input"
+                      placeholder="Enter Phone Number"
+                      value={state.editedBusinessData.business_phone_num}
+                      onChange={(event) =>
+                        editBusiness("business_phone_num", event.target.value)
+                      }
+                    />
+                  </Form.Group>
+                  <Form.Group style={{ width: "45%" }}>
+                    <Form.Label style={{ color: "#F26522" }}>
+                      Phone Number 2
+                    </Form.Label>
+                    <Form.Control
+                      as="input"
+                      placeholder="Enter Phone Number"
+                      value={state.editedBusinessData.business_phone_num2}
+                      onChange={(event) =>
+                        editBusiness("business_phone_num2", event.target.value)
+                      }
+                    />
+                  </Form.Group>
+                </Row>
+                <Row style={{ margin: "0px", justifyContent: "center" }}>
+                  <Form.Group style={{ width: "60%" }}>
+                    <Form.Label style={{ color: "#F26522" }}>Street</Form.Label>
+                    <Form.Control
+                      as="input"
+                      placeholder="Enter Street Address"
+                      value={state.editedBusinessData.business_address}
+                      onChange={(event) =>
+                        editBusiness("business_address", event.target.value)
+                      }
+                    />
+                  </Form.Group>
+                  <Form.Group style={{ width: "30%" }}>
+                    <Form.Label style={{ color: "#F26522" }}>Unit</Form.Label>
+                    <Form.Control
+                      as="input"
+                      placeholder="Enter Unit No."
+                      value={state.editedBusinessData.business_unit}
+                      onChange={(event) =>
+                        editBusiness("business_unit", event.target.value)
+                      }
+                    />
+                  </Form.Group>
+                </Row>
+                <Form.Group
+                  style={{
+                    width: "90%",
+                    marginLeft: "auto",
+                    marginRight: "auto",
+                  }}
+                >
+                  <Form.Label style={{ color: "#F26522" }}>City</Form.Label>
+                  <Form.Control
+                    as="input"
+                    placeholder="Enter City"
+                    value={state.editedBusinessData.business_city}
+                    onChange={(event) =>
+                      editBusiness("business_city", event.target.value)
+                    }
+                  />
+                </Form.Group>
+                <Row style={{ margin: "0px", justifyContent: "center" }}>
+                  <Form.Group style={{ width: "45%" }}>
+                    <Form.Label style={{ color: "#F26522" }}>State</Form.Label>
+                    <Form.Control
+                      as="input"
+                      placeholder="Enter State"
+                      value={state.editedBusinessData.business_state}
+                      onChange={(event) =>
+                        editBusiness("business_state", event.target.value)
+                      }
+                    />
+                  </Form.Group>
+                  <Form.Group style={{ width: "45%" }}>
+                    <Form.Label style={{ color: "#F26522" }}>Zip</Form.Label>
+                    <Form.Control
+                      as="input"
+                      placeholder="Enter Zip"
+                      value={state.editedBusinessData.business_zip}
+                      onChange={(event) =>
+                        editBusiness("business_zip", event.target.value)
+                      }
+                    />
+                  </Form.Group>
+                </Row>
+              </div>
+
+              <div
+                style={{ borderLeft: "2px solid #F8BB17", display: "flex" }}
+              />
+
+              <div>
+                <Form.Group
+                  style={{
+                    width: "90%",
+                    marginLeft: "auto",
+                    marginRight: "auto",
+                  }}
+                >
+                  <Form.Label style={{ color: "#F26522" }}>
+                    Platform Fee
+                  </Form.Label>
+                  <Form.Control
+                    as="input"
+                    placeholder="Enter Platform Fee"
+                    value={state.editedBusinessData.platform_fee}
+                    onChange={(event) =>
+                      editBusiness("platform_fee", event.target.value)
+                    }
+                  />
+                </Form.Group>
+                <Form.Group
+                  style={{
+                    width: "90%",
+                    marginLeft: "auto",
+                    marginRight: "auto",
+                  }}
+                >
+                  <Form.Label style={{ color: "#F26522" }}>
+                    Transaction Fee
+                  </Form.Label>
+                  <Form.Control
+                    as="input"
+                    placeholder="Enter Transaction Fee"
+                    value={state.editedBusinessData.transaction_fee}
+                    onChange={(event) =>
+                      editBusiness("transaction_fee", event.target.value)
+                    }
+                  />
+                </Form.Group>
+                <Form.Group
+                  style={{
+                    width: "90%",
+                    marginLeft: "auto",
+                    marginRight: "auto",
+                  }}
+                >
+                  <Form.Label style={{ color: "#F26522" }}>
+                    Revenue Sharing
+                  </Form.Label>
+                  <Form.Control
+                    as="input"
+                    placeholder="Enter Revenue Sharing"
+                    value={state.editedBusinessData.revenue_sharing}
+                    onChange={(event) =>
+                      editBusiness("revenue_sharing", event.target.value)
+                    }
+                  />
+                </Form.Group>
+                <Form.Group
+                  style={{
+                    width: "90%",
+                    marginLeft: "auto",
+                    marginRight: "auto",
+                  }}
+                >
+                  <Form.Label style={{ color: "#F26522" }}>
+                    Profit Sharing
+                  </Form.Label>
+                  <Form.Control
+                    as="input"
+                    placeholder="Enter Profit Sharing"
+                    value={state.editedBusinessData.profit_sharing}
+                    onChange={(event) =>
+                      editBusiness("profit_sharing", event.target.value)
+                    }
+                  />
+                </Form.Group>
+              </div>
+
+              <div
+                style={{ borderLeft: "2px solid #F8BB17", display: "flex" }}
+              />
+
+              <div>
+                <Form.Group
+                  style={{
+                    width: "90%",
+                    marginLeft: "auto",
+                    marginRight: "auto",
+                  }}
+                >
+                  <Form.Label style={{ color: "#F26522" }}>Storage</Form.Label>
+                  <br />
+                  <input
+                    type="radio"
+                    id="reusable"
+                    name="storage"
+                    value={1}
+                    checked={state.editedBusinessData.reusable === 1}
+                    onChange={(event) =>
+                      editBusiness("reusable", Number(event.target.value))
+                    }
+                  />{" "}
+                  Reusable
+                  <br />
+                  <input
+                    type="radio"
+                    id="disposable"
+                    name="storage"
+                    value={0}
+                    checked={state.editedBusinessData.reusable === 0}
+                    onChange={(event) =>
+                      editBusiness("reusable", Number(event.target.value))
+                    }
+                  />{" "}
+                  Disposable
+                </Form.Group>
+                <Form.Group
+                  style={{
+                    width: "90%",
+                    marginLeft: "auto",
+                    marginRight: "auto",
+                  }}
+                >
+                  <Form.Label style={{ color: "#F26522" }}>
+                    Cancellation
+                  </Form.Label>
+                  <br />
+                  <input
+                    type="radio"
+                    id="can_cancel"
+                    name="cancellation"
+                    value={1}
+                    checked={state.editedBusinessData.can_cancel === 1}
+                    onChange={(event) =>
+                      editBusiness("can_cancel", Number(event.target.value))
+                    }
+                  />{" "}
+                  Allow cancellation within ordering hours
+                  <br />
+                  <input
+                    type="radio"
+                    id="no_cancel"
+                    name="cancellation"
+                    value={0}
+                    checked={state.editedBusinessData.can_cancel === 0}
+                    onChange={(event) =>
+                      editBusiness("can_cancel", Number(event.target.value))
+                    }
+                  />{" "}
+                  Cancellations not allowed
+                </Form.Group>
+                <Form.Group
+                  style={{
+                    width: "90%",
+                    marginLeft: "auto",
+                    marginRight: "auto",
+                  }}
+                >
+                  <Form.Label style={{ color: "#F26522" }}>
+                    Business Status
+                  </Form.Label>
+                  <br />
+                  <input
+                    type="radio"
+                    id="active"
+                    name="businessStatus"
+                    value={"ACTIVE"}
+                    checked={
+                      state.editedBusinessData.business_status === "ACTIVE"
+                    }
+                    onChange={(event) =>
+                      editBusiness("business_status", event.target.value)
+                    }
+                  />{" "}
+                  Active
+                  <br />
+                  <input
+                    type="radio"
+                    id="Inactive"
+                    name="businessStatus"
+                    value={"INACTIVE"}
+                    checked={
+                      state.editedBusinessData.business_status === "INACTIVE"
+                    }
+                    onChange={(event) =>
+                      editBusiness("business_status", event.target.value)
+                    }
+                  />{" "}
+                  Inactive
+                </Form.Group>
+              </div>
+
+              <div
+                style={{ borderLeft: "2px solid #F8BB17", display: "flex" }}
+              />
+
+              <div>
+                <Form.Group
+                  style={{
+                    width: "90%",
+                    marginLeft: "auto",
+                    marginRight: "auto",
+                  }}
+                >
+                  <Form.Label style={{ color: "#F26522" }}>
+                    Business Hours
+                  </Form.Label>
+                  <Row style={{ margin: "0px", padding: "5px 0px 5px 0px" }}>
+                    <div
+                      style={{
+                        width: "100px",
+                        marginTop: "auto",
+                        marginBottom: "auto",
+                      }}
+                    >
+                      Monday
+                    </div>
+                    <Form.Control
+                      as="input"
+                      style={{ width: "30%" }}
+                      value={getEditedBusinessHours().Monday[0]}
+                      placeholder="HH:MM:SS"
+                      onChange={(event) => {
+                        changeBusinessHours(
+                          "Monday",
+                          event.target.value,
+                          getEditedBusinessHours().Monday[1]
+                        );
+                      }}
+                    />{" "}
+                    <div
+                      style={{
+                        marginTop: "auto",
+                        marginBottom: "auto",
+                        padding: "5px",
+                      }}
+                    >
+                      -
+                    </div>
+                    <Form.Control
+                      as="input"
+                      style={{ width: "30%" }}
+                      value={getEditedBusinessHours().Monday[1]}
+                      placeholder="HH:MM:SS"
+                      onChange={(event) => {
+                        changeBusinessHours(
+                          "Monday",
+                          getEditedBusinessHours().Monday[0],
+                          event.target.value
+                        );
+                      }}
+                    />
+                  </Row>
+                  <Row style={{ margin: "0px", padding: "5px 0px 5px 0px" }}>
+                    <div
+                      style={{
+                        width: "100px",
+                        marginTop: "auto",
+                        marginBottom: "auto",
+                      }}
+                    >
+                      Tuesday
+                    </div>
+                    <Form.Control
+                      as="input"
+                      style={{ width: "30%" }}
+                      value={getEditedBusinessHours().Tuesday[0]}
+                      placeholder="HH:MM:SS"
+                      onChange={(event) => {
+                        changeBusinessHours(
+                          "Tuesday",
+                          event.target.value,
+                          getEditedBusinessHours().Tuesday[1]
+                        );
+                      }}
+                    />{" "}
+                    <div
+                      style={{
+                        marginTop: "auto",
+                        marginBottom: "auto",
+                        padding: "5px",
+                      }}
+                    >
+                      -
+                    </div>
+                    <Form.Control
+                      as="input"
+                      style={{ width: "30%" }}
+                      value={getEditedBusinessHours().Tuesday[1]}
+                      placeholder="HH:MM:SS"
+                      onChange={(event) => {
+                        changeBusinessHours(
+                          "Tuesday",
+                          getEditedBusinessHours().Tuesday[0],
+                          event.target.value
+                        );
+                      }}
+                    />
+                  </Row>
+                  <Row style={{ margin: "0px", padding: "5px 0px 5px 0px" }}>
+                    <div
+                      style={{
+                        width: "100px",
+                        marginTop: "auto",
+                        marginBottom: "auto",
+                      }}
+                    >
+                      Wednesday
+                    </div>
+                    <Form.Control
+                      as="input"
+                      style={{ width: "30%" }}
+                      value={getEditedBusinessHours().Wednesday[0]}
+                      placeholder="HH:MM:SS"
+                      onChange={(event) => {
+                        changeBusinessHours(
+                          "Wednesday",
+                          event.target.value,
+                          getEditedBusinessHours().Wednesday[1]
+                        );
+                      }}
+                    />{" "}
+                    <div
+                      style={{
+                        marginTop: "auto",
+                        marginBottom: "auto",
+                        padding: "5px",
+                      }}
+                    >
+                      -
+                    </div>
+                    <Form.Control
+                      as="input"
+                      style={{ width: "30%" }}
+                      value={getEditedBusinessHours().Wednesday[1]}
+                      placeholder="HH:MM:SS"
+                      onChange={(event) => {
+                        changeBusinessHours(
+                          "Wednesday",
+                          getEditedBusinessHours().Wednesday[0],
+                          event.target.value
+                        );
+                      }}
+                    />
+                  </Row>
+                  <Row style={{ margin: "0px", padding: "5px 0px 5px 0px" }}>
+                    <div
+                      style={{
+                        width: "100px",
+                        marginTop: "auto",
+                        marginBottom: "auto",
+                      }}
+                    >
+                      Thursday
+                    </div>
+                    <Form.Control
+                      as="input"
+                      style={{ width: "30%" }}
+                      value={getEditedBusinessHours().Thursday[0]}
+                      placeholder="HH:MM:SS"
+                      onChange={(event) => {
+                        changeBusinessHours(
+                          "Thursday",
+                          event.target.value,
+                          getEditedBusinessHours().Thursday[1]
+                        );
+                      }}
+                    />{" "}
+                    <div
+                      style={{
+                        marginTop: "auto",
+                        marginBottom: "auto",
+                        padding: "5px",
+                      }}
+                    >
+                      -
+                    </div>
+                    <Form.Control
+                      as="input"
+                      style={{ width: "30%" }}
+                      value={getEditedBusinessHours().Thursday[1]}
+                      placeholder="HH:MM:SS"
+                      onChange={(event) => {
+                        changeBusinessHours(
+                          "Thursday",
+                          getEditedBusinessHours().Thursday[0],
+                          event.target.value
+                        );
+                      }}
+                    />
+                  </Row>
+                  <Row style={{ margin: "0px", padding: "5px 0px 5px 0px" }}>
+                    <div
+                      style={{
+                        width: "100px",
+                        marginTop: "auto",
+                        marginBottom: "auto",
+                      }}
+                    >
+                      Friday
+                    </div>{" "}
+                    <Form.Control
+                      as="input"
+                      style={{ width: "30%" }}
+                      value={getEditedBusinessHours().Friday[0]}
+                      placeholder="HH:MM:SS"
+                      onChange={(event) => {
+                        changeBusinessHours(
+                          "Friday",
+                          event.target.value,
+                          getEditedBusinessHours().Friday[1]
+                        );
+                      }}
+                    />{" "}
+                    <div
+                      style={{
+                        marginTop: "auto",
+                        marginBottom: "auto",
+                        padding: "5px",
+                      }}
+                    >
+                      -
+                    </div>
+                    <Form.Control
+                      as="input"
+                      style={{ width: "30%" }}
+                      value={getEditedBusinessHours().Friday[1]}
+                      placeholder="HH:MM:SS"
+                      onChange={(event) => {
+                        changeBusinessHours(
+                          "Friday",
+                          getEditedBusinessHours().Friday[0],
+                          event.target.value
+                        );
+                      }}
+                    />
+                  </Row>
+                  <Row style={{ margin: "0px", padding: "5px 0px 5px 0px" }}>
+                    <div
+                      style={{
+                        width: "100px",
+                        marginTop: "auto",
+                        marginBottom: "auto",
+                      }}
+                    >
+                      Saturday
+                    </div>
+                    <Form.Control
+                      as="input"
+                      style={{ width: "30%" }}
+                      value={getEditedBusinessHours().Saturday[0]}
+                      placeholder="HH:MM:SS"
+                      onChange={(event) => {
+                        changeBusinessHours(
+                          "Saturday",
+                          event.target.value,
+                          getEditedBusinessHours().Saturday[1]
+                        );
+                      }}
+                    />{" "}
+                    <div
+                      style={{
+                        marginTop: "auto",
+                        marginBottom: "auto",
+                        padding: "5px",
+                      }}
+                    >
+                      -
+                    </div>
+                    <Form.Control
+                      as="input"
+                      style={{ width: "30%" }}
+                      value={getEditedBusinessHours().Saturday[1]}
+                      placeholder="HH:MM:SS"
+                      onChange={(event) => {
+                        changeBusinessHours(
+                          "Saturday",
+                          getEditedBusinessHours().Saturday[0],
+                          event.target.value
+                        );
+                      }}
+                    />
+                  </Row>
+                  <Row style={{ margin: "0px", padding: "5px 0px 5px 0px" }}>
+                    <div
+                      style={{
+                        width: "100px",
+                        marginTop: "auto",
+                        marginBottom: "auto",
+                      }}
+                    >
+                      Sunday
+                    </div>{" "}
+                    <Form.Control
+                      as="input"
+                      style={{ width: "30%" }}
+                      value={getEditedBusinessHours().Sunday[0]}
+                      placeholder="HH:MM:SS"
+                      onChange={(event) => {
+                        changeBusinessHours(
+                          "Sunday",
+                          event.target.value,
+                          getEditedBusinessHours().Sunday[1]
+                        );
+                      }}
+                    />{" "}
+                    <div
+                      style={{
+                        marginTop: "auto",
+                        marginBottom: "auto",
+                        padding: "5px",
+                      }}
+                    >
+                      -
+                    </div>
+                    <Form.Control
+                      as="input"
+                      style={{ width: "30%" }}
+                      value={getEditedBusinessHours().Sunday[1]}
+                      placeholder="HH:MM:SS"
+                      onChange={(event) => {
+                        changeBusinessHours(
+                          "Sunday",
+                          getEditedBusinessHours().Sunday[0],
+                          event.target.value
+                        );
+                      }}
+                    />
+                  </Row>
+                </Form.Group>
+
+                <Form.Group
+                  style={{
+                    width: "90%",
+                    marginLeft: "auto",
+                    marginRight: "auto",
+                  }}
+                >
+                  <Row style={{ padding: "5px 0px 5px 0px" }}>
+                    <FacebookIcon style={{ fill: "#F26522", margin: "5px" }} />
+                    <Form.Control
+                      as="input"
+                      placeholder="Enter Facebook URL"
+                      value={state.editedBusinessData.business_facebook_url}
+                      style={{ width: "80%" }}
+                      onChange={(event) =>
+                        editBusiness(
+                          "business_facebook_url",
+                          event.target.value
+                        )
+                      }
+                    />
+                  </Row>
+                  <Row style={{ padding: "5px 0px 5px 0px" }}>
+                    <InstagramIcon style={{ fill: "#F26522", margin: "5px" }} />
+                    <Form.Control
+                      as="input"
+                      placeholder="Enter Instagram URL"
+                      value={state.editedBusinessData.business_instagram_url}
+                      style={{ width: "80%" }}
+                      onChange={(event) =>
+                        editBusiness(
+                          "business_instagram_url",
+                          event.target.value
+                        )
+                      }
+                    />
+                  </Row>
+                  <Row style={{ padding: "5px 0px 5px 0px" }}>
+                    <TwitterIcon style={{ fill: "#F26522", margin: "5px" }} />
+                    <Form.Control
+                      as="input"
+                      placeholder="Enter Twitter URL"
+                      value={state.editedBusinessData.business_twitter_url}
+                      style={{ width: "80%" }}
+                      onChange={(event) =>
+                        editBusiness("business_twitter_url", event.target.value)
+                      }
+                    />
+                  </Row>
+                  <Row style={{ padding: "5px 0px 5px 0px" }}>
+                    <GlobeIcon style={{ color: "#F26522", margin: "5px" }} />
+                    <Form.Control
+                      as="input"
+                      placeholder="Enter Business Website URL"
+                      value={state.editedBusinessData.business_website_url}
+                      style={{ width: "80%" }}
+                      onChange={(event) =>
+                        editBusiness("business_website_url", event.target.value)
+                      }
+                    />
+                  </Row>
+                </Form.Group>
+              </div>
+            </div>
+            <div style={{ textAlign: "center", paddingBottom: "10px" }}>
+              <Button
+                variant="primary"
+                style={{
+                  backgroundColor: "#F26522",
+                  borderRadius: "15px",
+                  width: "257px",
+                  height: "48px",
+                  fontSize: "18px",
+                  margin: "5px",
+                  border: "2px solid #F26522",
+                }}
+                onClick={() => dispatch({ type: "TOGGLE_EDIT_BUSINESS" })}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="primary"
+                style={{
+                  backgroundColor: "#F26522",
+                  borderRadius: "15px",
+                  width: "257px",
+                  height: "48px",
+                  fontSize: "18px",
+                  margin: "5px",
+                  border: "2px solid #F26522",
+                }}
+                onClick={() => saveBusinessData()}
+              >
+                Save Changes
+              </Button>
+            </div>
+          </div>
+        )}
+        {!state.editBusinessDetails && (
+          <div className={styles.containerMeals}>
+            <div
+              style={{
+                fontSize: "22px",
+                display: "inline",
+                marginLeft: "27px",
+                fontWeight: "bold",
+              }}
+            >
+              Meals Offered
+            </div>
+
+            <div
+              style={{
+                fontSize: "32px",
+                display: "inline",
+                marginLeft: "15px",
+              }}
+              onClick={() => {
+                dispatch({
+                  type: "SHOW_CREATE_EDIT_MEAL_MODAL",
+                  payload: { show: true, mode: "NEW" },
+                });
+              }}
+            >
+              +
+            </div>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell
+                    style={{
+                      fontWeight: "bold",
+                      color: "#f26522",
+                      border: "none",
+                      textAlign: "center",
+                      fontSize: "15px",
+                    }}
+                  >
+                    <TableSortLabel
+                      style={{
+                        fontWeight: "bold",
+                        color: "#f26522",
+                        border: "none",
+                      }}
+                      direction={state.sortMeals.direction}
+                      onClick={() => changeSortOptions("meal_name")}
+                    >
+                      Meal Name
+                    </TableSortLabel>
+                  </TableCell>
+                  <TableCell
+                    style={{
+                      fontWeight: "bold",
+                      color: "#f26522",
+                      border: "none",
+                      textAlign: "center",
+                      fontSize: "15px",
+                    }}
+                  >
+                    Picture
+                  </TableCell>
+                  <TableCell
+                    style={{
+                      fontWeight: "bold",
+                      color: "#f26522",
+                      border: "none",
+                      textAlign: "center",
+                      fontSize: "15px",
+                    }}
+                  >
+                    Meal Description
+                  </TableCell>
+                  <TableCell
+                    style={{
+                      fontWeight: "bold",
+                      color: "#f26522",
+                      border: "none",
+                      textAlign: "center",
+                      fontSize: "15px",
+                    }}
+                  >
+                    <TableSortLabel
+                      style={{
+                        fontWeight: "bold",
+                        color: "#f26522",
+                        border: "none",
+                      }}
+                      direction={state.sortMeals.direction}
+                      onClick={() => changeSortOptions("meal_category")}
+                    >
+                      Meal Category
+                    </TableSortLabel>
+                  </TableCell>
+                  <TableCell
+                    style={{
+                      fontWeight: "bold",
+                      color: "#f26522",
+                      border: "none",
+                      textAlign: "center",
+                      fontSize: "15px",
+                    }}
+                  >
+                    <TableSortLabel
+                      style={{
+                        fontWeight: "bold",
+                        color: "#f26522",
+                        border: "none",
+                      }}
+                      direction={state.sortMeals.direction}
+                      onClick={() => changeSortOptions("meal_hint")}
+                    >
+                      Meal Hint
+                    </TableSortLabel>
+                  </TableCell>
+                  <TableCell
+                    style={{
+                      fontWeight: "bold",
+                      color: "#f26522",
+                      border: "none",
+                      textAlign: "center",
+                      fontSize: "15px",
+                    }}
+                  >
+                    <TableSortLabel
+                      style={{
+                        fontWeight: "bold",
+                        color: "#f26522",
+                        border: "none",
+                      }}
+                      direction={state.sortMeals.direction}
+                      onClick={() => changeSortOptions("meal_calories")}
+                    >
+                      Calories
+                    </TableSortLabel>
+                  </TableCell>
+                  <TableCell
+                    style={{
+                      fontWeight: "bold",
+                      color: "#f26522",
+                      border: "none",
+                      textAlign: "center",
+                      fontSize: "15px",
+                    }}
+                  >
+                    <TableSortLabel
+                      style={{
+                        fontWeight: "bold",
+                        color: "#f26522",
+                        border: "none",
+                      }}
+                      direction={state.sortMeals.direction}
+                      onClick={() => changeSortOptions("meal_protein")}
+                    >
+                      Protein
+                    </TableSortLabel>
+                  </TableCell>
+                  <TableCell
+                    style={{
+                      fontWeight: "bold",
+                      color: "#f26522",
+                      border: "none",
+                      textAlign: "center",
+                      fontSize: "15px",
+                    }}
+                  >
+                    <TableSortLabel
+                      style={{
+                        fontWeight: "bold",
+                        color: "#f26522",
+                        border: "none",
+                      }}
+                      direction={state.sortMeals.direction}
+                      onClick={() => changeSortOptions("meal_carbs")}
+                    >
+                      Carbs
+                    </TableSortLabel>
+                  </TableCell>
+                  <TableCell
+                    style={{
+                      fontWeight: "bold",
+                      color: "#f26522",
+                      border: "none",
+                      textAlign: "center",
+                      fontSize: "15px",
+                    }}
+                  >
+                    <TableSortLabel
+                      style={{
+                        fontWeight: "bold",
+                        color: "#f26522",
+                        border: "none",
+                      }}
+                      direction={state.sortMeals.direction}
+                      onClick={() => changeSortOptions("meal_fiber")}
+                    >
+                      Fiber
+                    </TableSortLabel>
+                  </TableCell>
+                  <TableCell
+                    style={{
+                      fontWeight: "bold",
+                      color: "#f26522",
+                      border: "none",
+                      textAlign: "center",
+                      fontSize: "15px",
+                    }}
+                  >
+                    <TableSortLabel
+                      style={{
+                        fontWeight: "bold",
+                        color: "#f26522",
+                        border: "none",
+                      }}
+                      direction={state.sortMeals.direction}
+                      onClick={() => changeSortOptions("meal_sugar")}
+                    >
+                      Sugar
+                    </TableSortLabel>
+                  </TableCell>
+                  <TableCell
+                    style={{
+                      fontWeight: "bold",
+                      color: "#f26522",
+                      border: "none",
+                      textAlign: "center",
+                      fontSize: "15px",
+                    }}
+                  >
+                    <TableSortLabel
+                      style={{
+                        fontWeight: "bold",
+                        color: "#f26522",
+                        border: "none",
+                      }}
+                      direction={state.sortMeals.direction}
+                      onClick={() => changeSortOptions("meal_fat")}
+                    >
+                      Fats
+                    </TableSortLabel>
+                  </TableCell>
+                  <TableCell
+                    style={{
+                      fontWeight: "bold",
+                      color: "#f26522",
+                      border: "none",
+                      textAlign: "center",
+                      fontSize: "15px",
+                    }}
+                  >
+                    <TableSortLabel
+                      style={{
+                        fontWeight: "bold",
+                        color: "#f26522",
+                        border: "none",
+                      }}
+                      direction={state.sortMeals.direction}
+                      onClick={() => changeSortOptions("meal_sat")}
+                    >
+                      Sat
+                    </TableSortLabel>
+                  </TableCell>
+                  <TableCell
+                    style={{
+                      fontWeight: "bold",
+                      color: "#f26522",
+                      border: "none",
+                      textAlign: "center",
+                      fontSize: "15px",
+                    }}
+                  >
+                    Status
+                  </TableCell>
+                  <TableCell
+                    style={{
+                      fontWeight: "bold",
+                      color: "#f26522",
+                      border: "none",
+                      textAlign: "center",
+                      fontSize: "15px",
+                    }}
+                  ></TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {state.filteredMeals &&
+                  state.filteredMeals.map((meal, index) => {
                     return (
-                      <option key={index} value={business.business_uid}>
-                        {business.business_name}
-                      </option>
+                      <TableRow key={index} hover>
+                        <TableCell
+                          style={{
+                            borderBottom: "1px solid #f8bb17",
+                            textAlign: "center",
+                            fontSize: "15px",
+                          }}
+                        >
+                          {meal.meal_name}
+                        </TableCell>
+                        <TableCell
+                          style={{
+                            borderBottom: "1px solid #f8bb17",
+                            textAlign: "center",
+                          }}
+                        >
+                          <img
+                            src={meal.meal_photo_URL}
+                            height="45"
+                            width="45"
+                          ></img>
+                        </TableCell>
+                        <TableCell
+                          style={{
+                            borderBottom: "1px solid #f8bb17",
+                            textAlign: "center",
+                            width: "300px",
+                            fontSize: "15px",
+                          }}
+                        >
+                          {meal.meal_desc}
+                        </TableCell>
+                        <TableCell
+                          style={{
+                            borderBottom: "1px solid #f8bb17",
+                            textAlign: "center",
+                            fontSize: "15px",
+                          }}
+                        >
+                          {meal.meal_category}
+                        </TableCell>
+                        <TableCell
+                          style={{
+                            borderBottom: "1px solid #f8bb17",
+                            textAlign: "center",
+                            fontSize: "15px",
+                          }}
+                        >
+                          {meal.meal_hint}
+                        </TableCell>
+                        <TableCell
+                          style={{
+                            borderBottom: "1px solid #f8bb17",
+                            textAlign: "center",
+                            fontSize: "15px",
+                          }}
+                        >
+                          {meal.meal_calories
+                            ? meal.meal_calories + " Cal"
+                            : ""}
+                        </TableCell>
+                        <TableCell
+                          style={{
+                            borderBottom: "1px solid #f8bb17",
+                            textAlign: "center",
+                            fontSize: "15px",
+                          }}
+                        >
+                          {meal.meal_protein ? meal.meal_protein + "g" : ""}
+                        </TableCell>
+                        <TableCell
+                          style={{
+                            borderBottom: "1px solid #f8bb17",
+                            textAlign: "center",
+                            fontSize: "15px",
+                          }}
+                        >
+                          {meal.meal_carbs ? meal.meal_carbs + "g" : ""}
+                        </TableCell>
+                        <TableCell
+                          style={{
+                            borderBottom: "1px solid #f8bb17",
+                            textAlign: "center",
+                            fontSize: "15px",
+                          }}
+                        >
+                          {meal.meal_fiber ? meal.meal_fiber + "g" : ""}
+                        </TableCell>
+                        <TableCell
+                          style={{
+                            borderBottom: "1px solid #f8bb17",
+                            textAlign: "center",
+                            fontSize: "15px",
+                          }}
+                        >
+                          {meal.meal_sugar ? meal.meal_sugar + "g" : ""}
+                        </TableCell>
+                        <TableCell
+                          style={{
+                            borderBottom: "1px solid #f8bb17",
+                            textAlign: "center",
+                            fontSize: "15px",
+                          }}
+                        >
+                          {meal.meal_fat ? meal.meal_fat + "%" : ""}
+                        </TableCell>
+                        <TableCell
+                          style={{
+                            borderBottom: "1px solid #f8bb17",
+                            textAlign: "center",
+                            fontSize: "15px",
+                          }}
+                        >
+                          {meal.meal_sat ? meal.meal_sat + "%" : ""}
+                        </TableCell>
+                        <TableCell
+                          style={{
+                            borderBottom: "1px solid #f8bb17",
+                            textAlign: "center",
+                            fontSize: "15px",
+                          }}
+                        >
+                          <ToggleSwitch
+                            active={Number(meal.meal_status)}
+                            handleChange={() => changeMealStatus(meal, index)}
+                          />
+                        </TableCell>
+                        <TableCell
+                          style={{
+                            borderBottom: "1px solid #f8bb17",
+                            textAlign: "center",
+                            fontSize: "15px",
+                          }}
+                        >
+                          <div
+                            className={styles.editIcon}
+                            onClick={() => {
+                              dispatch({ type: "EDIT_MEAL", payload: meal });
+                              dispatch({
+                                type: "SHOW_CREATE_EDIT_MEAL_MODAL",
+                                payload: { show: true, mode: "EDIT" },
+                              });
+                            }}
+                          ></div>
+                          <div
+                            className={styles.deleteIcon}
+                            onClick={() => deleteItem(meal.meal_uid)}
+                          ></div>
+                        </TableCell>
+                      </TableRow>
                     );
                   })}
-                </select>
-              </form>
-            </Row>
-            <Row>
-              <Col>
-                <div
-                  style={{
-                    color: "#F26522",
-                    textDecoration: "underline",
-                  }}
-                  onClick={() => {
-                    // toggleBusinessDetails(!showBusinessDetails);
-                    dispatch({ type: "TOGGLE_EDIT_BUSINESS" });
-                  }}
-                >
-                  Edit Details
-                  <img className={styles.editIconSmall}></img>
-                </div>
-              </Col>
-              <Col>
-                <div
-                  style={{
-                    color: "#F26522",
-                    textDecoration: "underline",
-                  }}
-                >
-                  Send Message
-                </div>
-              </Col>
-            </Row>
-          </Col>
-          <Col></Col>
-          <Col>
-            <div>
-              <div>Contact</div>
-              <div>
-                {state.activeBusinessData
-                  ? state.activeBusinessData.business_contact_first_name +
-                    " " +
-                    state.activeBusinessData.business_contact_last_name
-                  : ""}
-              </div>
-              <div>
-                {state.activeBusinessData
-                  ? state.activeBusinessData.business_email
-                  : ""}
-              </div>
-              <div>
-                {state.activeBusinessData
-                  ? state.activeBusinessData.business_phone_num
-                  : ""}
-              </div>
-            </div>
-          </Col>
-          <Col>
-            <div>
-              <div>Address</div>
-              <div>
-                {state.activeBusinessData
-                  ? state.activeBusinessData.business_address
-                  : ""}
-                {state.activeBusinessData &&
-                state.activeBusinessData.business_unit
-                  ? ", Unit " + state.activeBusinessData.business_unit + ", "
-                  : ","}
-              </div>
-              <div>
-                {state.activeBusinessData
-                  ? state.activeBusinessData.business_city +
-                    ", " +
-                    state.activeBusinessData.business_state +
-                    ", " +
-                    state.activeBusinessData.business_zip
-                  : ""}
-              </div>
-            </div>
-          </Col>
-          <Col>
-            <div>
-              <div>Business Type</div>
-              <div>
-                {state.activeBusinessData
-                  ? state.activeBusinessData.business_type
-                  : ""}
-              </div>
-            </div>
-          </Col>
-          <Col md="auto">
-            <Row>
-              <Col>Business Hours</Col>
-            </Row>
-            <Row>
-              <Col md="auto">
-                <div>Monday</div>
-                <div>Tuesday</div>
-                <div>Wednesday</div>
-                <div>Thursday</div>
-              </Col>
-              <Col md="auto">
-                <div>{getBusinessHours().Monday[0]}</div>
-                <div>{getBusinessHours().Tuesday[0]}</div>
-                <div>{getBusinessHours().Wednesday[0]}</div>
-                <div>{getBusinessHours().Thursday[0]}</div>
-              </Col>
-              <Col md="auto">
-                <div>-</div>
-                <div>-</div>
-                <div>-</div>
-                <div>-</div>
-              </Col>
-              <Col md="auto">
-                <div>{getBusinessHours().Monday[1]}</div>
-                <div>{getBusinessHours().Tuesday[1]}</div>
-                <div>{getBusinessHours().Wednesday[1]}</div>
-                <div>{getBusinessHours().Thursday[1]}</div>
-              </Col>
-              <Col md="auto">
-                <div>Friday</div>
-                <div>Saturday</div>
-                <div>Sunday</div>
-              </Col>
-              <Col md="auto">
-                <div>{getBusinessHours().Friday[0]}</div>
-                <div>{getBusinessHours().Saturday[0]}</div>
-                <div>{getBusinessHours().Sunday[0]}</div>
-              </Col>
-              <Col md="auto">
-                <div>-</div>
-                <div>-</div>
-                <div>-</div>
-              </Col>
-              <Col>
-                <div>{getBusinessHours().Friday[1]}</div>
-                <div>{getBusinessHours().Saturday[1]}</div>
-                <div>{getBusinessHours().Sunday[1]}</div>
-              </Col>
-            </Row>
-          </Col>
-        </Row>
-        {/* <img
-          src={state.editedBusinessData.business_image}
-          alt="profile image"
-          height="90"
-          width="90"
-          style={{ marginTop: "15px", marginLeft: "15px" }}
-        ></img>
-        <div
-          style={{
-            position: "absolute",
-            top: "145px",
-            left: "166px",
-            height: showDropdown ? 60 + allBusinesses.length * 42 : 60,
-          }}
-        >
-          <form>
-            <select
-              onChange={(event) => {
-                const selectedBusinessID = event.target.value;
-                changeActiveBusiness(selectedBusinessID);
-              }}
-            >
-              {state.allBusinessData.map((business, index) => {
-                return (
-                  <option key={index} value={business.business_uid}>
-                    {business.business_name}
-                  </option>
-                );
-              })}
-            </select>
-          </form>
-        </div>
-        <div
-          style={{
-            position: "absolute",
-            top: "185px",
-            left: "176px",
-            color: "#F26522",
-            textDecoration: "underline",
-          }}
-          onClick={() => {
-            // toggleBusinessDetails(!showBusinessDetails);
-            dispatch({ type: "TOGGLE_EDIT_BUSINESS" });
-          }}
-        >
-          Edit Details
-          <img className={styles.editIconSmall}></img>
-        </div>
-        <div
-          style={{
-            position: "absolute",
-            top: "185px",
-            left: "296px",
-            color: "#F26522",
-            textDecoration: "underline",
-          }}
-        >
-          Send Message
-        </div> */}
-
-        {/* <div className={styles.businessHeader}>
-          <div>
-            <div>Contact</div>
-            <div>First Last</div>
-            <div>Email</div>
-            <div>phone</div>
+              </TableBody>
+            </Table>
           </div>
-          <div>
-            <div>Address</div>
-            <div>Street, Unit</div>
-            <div>City, State, Zip</div>
-          </div>
-          <div>
-            <div>Business Type</div>
-            <div>info</div>
-          </div>
-          <div>
-            <div>Business Hours</div>
-          </div>
-        </div> */}
+        )}
       </div>
-
-      {showBusinessDetails && (
-        <div className={styles.containerEditBusiness}>
-          <div
-            style={{
-              display: "inline-block",
-              color: "#F26522",
-              marginLeft: "27px",
-              width: "200px",
-              textAlign: "center",
-              verticalAlign: "top",
-              marginTop: "15px",
-            }}
-          >
-            <div>Restaurant Name</div>
-            <input
-              value={tempBusinessName}
-              onChange={(e) => {
-                setTempBusinessName(e.target.value);
-              }}
-            ></input>
-          </div>
-          <div
-            style={{
-              display: "inline-block",
-              color: "#F26522",
-              width: "200px",
-              textAlign: "center",
-              verticalAlign: "top",
-              marginTop: "15px",
-            }}
-          >
-            <div>Cusine</div>
-            <input
-              value={tempCusine}
-              onChange={(e) => {
-                setTempCusine(e.target.value);
-              }}
-            ></input>
-          </div>
-          <div
-            style={{
-              display: "inline-block",
-              color: "#F26522",
-              width: "650px",
-              textAlign: "center",
-              marginTop: "15px",
-              marginBottom: "15px",
-            }}
-          >
-            <div style={{ display: "inline-block", width: "325px" }}>
-              Business Hours
-            </div>
-            <div
-              style={{
-                display: "inline-block",
-                width: "100px",
-                color: "black",
-              }}
-            >
-              Thursday
-            </div>
-            <input
-              style={{ display: "inline-block", width: "100px" }}
-              value={tempThuStart}
-              onChange={(e) => {
-                tempSetThuStart(e.target.value);
-              }}
-            ></input>
-            <div
-              style={{ display: "inline-block", width: "25px", color: "black" }}
-            >
-              -
-            </div>
-            <input
-              style={{ display: "inline-block", width: "100px" }}
-              value={tempThuFin}
-              onChange={(e) => {
-                setThuFin(e.target.value);
-              }}
-            ></input>
-            <div
-              style={{
-                display: "inline-block",
-                width: "100px",
-                color: "black",
-              }}
-            >
-              Monday
-            </div>
-            <input
-              style={{ display: "inline-block", width: "100px" }}
-              value={tempMonStart}
-              onChange={(e) => {
-                tempSetMonStart(e.target.value);
-              }}
-            ></input>
-            <div
-              style={{ display: "inline-block", width: "25px", color: "black" }}
-            >
-              -
-            </div>
-            <input
-              style={{ display: "inline-block", width: "100px" }}
-              value={tempMonFin}
-              onChange={(e) => {
-                setMonFin(e.target.value);
-              }}
-            ></input>
-            <div
-              style={{
-                display: "inline-block",
-                width: "100px",
-                color: "black",
-              }}
-            >
-              Friday
-            </div>
-            <input
-              style={{ display: "inline-block", width: "100px" }}
-              value={tempFriStart}
-              onChange={(e) => {
-                tempSetFriStart(e.target.value);
-              }}
-            ></input>
-            <div
-              style={{ display: "inline-block", width: "25px", color: "black" }}
-            >
-              -
-            </div>
-            <input
-              style={{ display: "inline-block", width: "100px" }}
-              value={tempFriFin}
-              onChange={(e) => {
-                setFriFin(e.target.value);
-              }}
-            ></input>
-            <div
-              style={{
-                display: "inline-block",
-                width: "100px",
-                color: "black",
-              }}
-            >
-              Tuesday
-            </div>
-            <input
-              style={{ display: "inline-block", width: "100px" }}
-              value={tempTueStart}
-              onChange={(e) => {
-                tempSetTueStart(e.target.value);
-              }}
-            ></input>
-            <div
-              style={{ display: "inline-block", width: "25px", color: "black" }}
-            >
-              -
-            </div>
-            <input
-              style={{ display: "inline-block", width: "100px" }}
-              value={tempTueFin}
-              onChange={(e) => {
-                setTueFin(e.target.value);
-              }}
-            ></input>
-            <div
-              style={{
-                display: "inline-block",
-                width: "100px",
-                color: "black",
-              }}
-            >
-              Saturday
-            </div>
-            <input
-              style={{ display: "inline-block", width: "100px" }}
-              value={tempSatStart}
-              onChange={(e) => {
-                tempSetSatStart(e.target.value);
-              }}
-            ></input>
-            <div
-              style={{ display: "inline-block", width: "25px", color: "black" }}
-            >
-              -
-            </div>
-            <input
-              style={{ display: "inline-block", width: "100px" }}
-              value={tempSatFin}
-              onChange={(e) => {
-                setSatFin(e.target.value);
-              }}
-            ></input>
-            <div
-              style={{
-                display: "inline-block",
-                width: "100px",
-                color: "black",
-              }}
-            >
-              Wednesday
-            </div>
-            <input
-              style={{ display: "inline-block", width: "100px" }}
-              value={tempWedStart}
-              onChange={(e) => {
-                tempSetWedStart(e.target.value);
-              }}
-            ></input>
-            <div
-              style={{ display: "inline-block", width: "25px", color: "black" }}
-            >
-              -
-            </div>
-            <input
-              style={{ display: "inline-block", width: "100px" }}
-              value={tempWedFin}
-              onChange={(e) => {
-                setWedFin(e.target.value);
-              }}
-            ></input>
-            <div
-              style={{
-                display: "inline-block",
-                width: "100px",
-                color: "black",
-              }}
-            >
-              Sunday
-            </div>
-            <input
-              style={{ display: "inline-block", width: "100px" }}
-              value={tempSunStart}
-              onChange={(e) => {
-                tempSetSunStart(e.target.value);
-              }}
-            ></input>
-            <div
-              style={{ display: "inline-block", width: "25px", color: "black" }}
-            >
-              -
-            </div>
-            <input
-              style={{ display: "inline-block", width: "100px" }}
-              value={tempSunFin}
-              onChange={(e) => {
-                setSunFin(e.target.value);
-              }}
-            ></input>
-          </div>
-          <div
-            style={{
-              display: "inline-block",
-              color: "#F26522",
-              textDecoration: "underline",
-              verticalAlign: "top",
-              marginTop: "60px",
-              marginLeft: "60px",
-            }}
-            onClick={() => {
-              //updateBusiness();
-            }}
-          >
-            Save
-          </div>
-        </div>
-      )}
-      {state.editBusinessDetails && (
-        <div className={styles.editBusiness}>
-          <div className={styles.editBusinessFormContainer}>
-            <div style={{ width: "300px" }}>
-              <Form.Group>
-                <img
-                  height="150px"
-                  width="150px"
-                  src={state.editedBusinessData.business_imgage}
-                ></img>
-                <input type="file" name="upload_file" />
-              </Form.Group>
-              <Form.Group>
-                <Form.Label style={{ color: "#F26522" }}>
-                  Business Name
-                </Form.Label>
-                <Form.Control
-                  as="input"
-                  placeholder="Enter Business Name"
-                  value={state.editedBusinessData.business_name}
-                  onChange={(event) =>
-                    editBusiness("business_name", event.target.value)
-                  }
-                />
-              </Form.Group>
-              <Form.Group>
-                <Form.Label style={{ color: "#F26522" }}>
-                  Business Type
-                </Form.Label>
-                <Form.Control
-                  as="input"
-                  placeholder="Enter Business Type"
-                  value={state.editedBusinessData.business_type}
-                  onChange={(event) =>
-                    editBusiness("business_type", event.target.value)
-                  }
-                />
-              </Form.Group>
-              <Form.Group>
-                <Form.Label style={{ color: "#F26522" }}>
-                  Business Description
-                </Form.Label>
-                <Form.Control
-                  as="textarea"
-                  placeholder="Enter Business Description"
-                  value={state.editedBusinessData.business_desc}
-                  onChange={(event) =>
-                    editBusiness("business_desc", event.target.value)
-                  }
-                />
-              </Form.Group>
-            </div>
-
-            <div style={{ borderLeft: "2px solid #F8BB17", display: "flex" }} />
-
-            <div>
-              <Row style={{ margin: "0px" }}>
-                <Form.Group>
-                  <Form.Label style={{ color: "#F26522" }}>
-                    First Name
-                  </Form.Label>
-                  <Form.Control
-                    as="input"
-                    placeholder="Enter First Name"
-                    value={state.editedBusinessData.business_contact_first_name}
-                    onChange={(event) =>
-                      editBusiness(
-                        "business_contact_first_name",
-                        event.target.value
-                      )
-                    }
-                  />
-                </Form.Group>
-                <Form.Group>
-                  <Form.Label style={{ color: "#F26522" }}>
-                    Last Name
-                  </Form.Label>
-                  <Form.Control
-                    as="input"
-                    placeholder="Enter Last Name"
-                    value={state.editedBusinessData.business_contact_last_name}
-                    onChange={(event) =>
-                      editBusiness(
-                        "business_contact_last_name",
-                        event.target.value
-                      )
-                    }
-                  />
-                </Form.Group>
-              </Row>
-              <Row style={{ margin: "0px" }}>
-                <Form.Group>
-                  <Form.Label style={{ color: "#F26522" }}>
-                    Phone Number 1
-                  </Form.Label>
-                  <Form.Control
-                    as="input"
-                    placeholder="Enter Phone Number"
-                    value={state.editedBusinessData.business_phone_num}
-                    onChange={(event) =>
-                      editBusiness("business_phone_num", event.target.value)
-                    }
-                  />
-                </Form.Group>
-                <Form.Group>
-                  <Form.Label style={{ color: "#F26522" }}>
-                    Phone Number 2
-                  </Form.Label>
-                  <Form.Control
-                    as="input"
-                    placeholder="Enter Phone Number"
-                    value={state.editedBusinessData.business_phone_num2}
-                    onChange={(event) =>
-                      editBusiness("business_phone_num2", event.target.value)
-                    }
-                  />
-                </Form.Group>
-              </Row>
-              <Row style={{ margin: "0px" }}>
-                <Form.Group>
-                  <Form.Label style={{ color: "#F26522" }}>Street</Form.Label>
-                  <Form.Control
-                    as="input"
-                    placeholder="Enter Street Address"
-                    value={state.editedBusinessData.business_address}
-                    onChange={(event) =>
-                      editBusiness("business_address", event.target.value)
-                    }
-                  />
-                </Form.Group>
-                <Form.Group>
-                  <Form.Label style={{ color: "#F26522" }}>Unit</Form.Label>
-                  <Form.Control
-                    as="input"
-                    placeholder="Enter Unit No."
-                    value={state.editedBusinessData.business_unit}
-                    onChange={(event) =>
-                      editBusiness("business_unit", event.target.value)
-                    }
-                  />
-                </Form.Group>
-              </Row>
-              <Form.Group>
-                <Form.Label style={{ color: "#F26522" }}>City</Form.Label>
-                <Form.Control
-                  as="input"
-                  placeholder="Enter City"
-                  value={state.editedBusinessData.business_city}
-                  onChange={(event) =>
-                    editBusiness("business_city", event.target.value)
-                  }
-                />
-              </Form.Group>
-              <Row style={{ margin: "0px" }}>
-                <Form.Group>
-                  <Form.Label style={{ color: "#F26522" }}>State</Form.Label>
-                  <Form.Control
-                    as="input"
-                    placeholder="Enter State"
-                    value={state.editedBusinessData.business_state}
-                    onChange={(event) =>
-                      editBusiness("business_state", event.target.value)
-                    }
-                  />
-                </Form.Group>
-                <Form.Group>
-                  <Form.Label style={{ color: "#F26522" }}>Zip</Form.Label>
-                  <Form.Control
-                    as="input"
-                    placeholder="Enter Zip"
-                    value={state.editedBusinessData.business_zip}
-                    onChange={(event) =>
-                      editBusiness("business_zip", event.target.value)
-                    }
-                  />
-                </Form.Group>
-              </Row>
-            </div>
-
-            <div style={{ borderLeft: "2px solid #F8BB17", display: "flex" }} />
-
-            <div>
-              <Form.Group>
-                <Form.Label style={{ color: "#F26522" }}>
-                  Platform Fee
-                </Form.Label>
-                <Form.Control
-                  as="input"
-                  placeholder="Enter Platform Fee"
-                  value={state.editedBusinessData.platform_fee}
-                  onChange={(event) =>
-                    editBusiness("platform_fee", event.target.value)
-                  }
-                />
-              </Form.Group>
-              <Form.Group>
-                <Form.Label style={{ color: "#F26522" }}>
-                  Transaction Fee
-                </Form.Label>
-                <Form.Control
-                  as="input"
-                  placeholder="Enter Transaction Fee"
-                  value={state.editedBusinessData.transaction_fee}
-                  onChange={(event) =>
-                    editBusiness("transaction_fee", event.target.value)
-                  }
-                />
-              </Form.Group>
-              <Form.Group>
-                <Form.Label style={{ color: "#F26522" }}>
-                  Revenue Sharing
-                </Form.Label>
-                <Form.Control
-                  as="input"
-                  placeholder="Enter Revenue Sharing"
-                  value={state.editedBusinessData.revenue_sharing}
-                  onChange={(event) =>
-                    editBusiness("revenue_sharing", event.target.value)
-                  }
-                />
-              </Form.Group>
-              <Form.Group>
-                <Form.Label style={{ color: "#F26522" }}>
-                  Profit Sharing
-                </Form.Label>
-                <Form.Control
-                  as="input"
-                  placeholder="Enter Profit Sharing"
-                  value={state.editedBusinessData.profit_sharing}
-                  onChange={(event) =>
-                    editBusiness("profit_sharing", event.target.value)
-                  }
-                />
-              </Form.Group>
-            </div>
-
-            <div style={{ borderLeft: "2px solid #F8BB17", display: "flex" }} />
-
-            <div>
-              <Form.Group>
-                <Form.Label style={{ color: "#F26522" }}>Storage</Form.Label>
-                <br />
-                <input
-                  type="radio"
-                  id="reusable"
-                  name="storage"
-                  value={1}
-                  checked={state.editedBusinessData.reusable === 1}
-                  onChange={(event) =>
-                    editBusiness("reusable", Number(event.target.value))
-                  }
-                />
-                <label for="reusable">Reusable</label>
-                <br />
-                <input
-                  type="radio"
-                  id="disposable"
-                  name="storage"
-                  value={0}
-                  checked={state.editedBusinessData.reusable === 0}
-                  onChange={(event) =>
-                    editBusiness("reusable", Number(event.target.value))
-                  }
-                />
-                <label for="disposable">Disposable</label>
-              </Form.Group>
-              <Form.Group>
-                <Form.Label style={{ color: "#F26522" }}>
-                  Cancellation
-                </Form.Label>
-                <br />
-                <input
-                  type="radio"
-                  id="can_cancel"
-                  name="cancellation"
-                  value={1}
-                  checked={state.editedBusinessData.can_cancel === 1}
-                  onChange={(event) =>
-                    editBusiness("can_cancel", Number(event.target.value))
-                  }
-                />
-                <label for="can_cancel">
-                  Allow cancellation within ordering hours
-                </label>
-                <br />
-                <input
-                  type="radio"
-                  id="no_cancel"
-                  name="cancellation"
-                  value={0}
-                  checked={state.editedBusinessData.can_cancel === 0}
-                  onChange={(event) =>
-                    editBusiness("can_cancel", Number(event.target.value))
-                  }
-                />
-                <label for="no_cancel">Cancellations not allowed</label>
-              </Form.Group>
-              <Form.Group>
-                <Form.Label style={{ color: "#F26522" }}>
-                  Business Status
-                </Form.Label>
-                <br />
-                <input
-                  type="radio"
-                  id="active"
-                  name="businessStatus"
-                  value={"ACTIVE"}
-                  checked={
-                    state.editedBusinessData.business_status === "ACTIVE"
-                  }
-                  onChange={(event) =>
-                    editBusiness("business_status", event.target.value)
-                  }
-                />
-                <label for="active">Active</label>
-                <br />
-                <input
-                  type="radio"
-                  id="Inactive"
-                  name="businessStatus"
-                  value={"INACTIVE"}
-                  checked={
-                    state.editedBusinessData.business_status === "INACTIVE"
-                  }
-                  onChange={(event) =>
-                    editBusiness("business_status", event.target.value)
-                  }
-                />
-                <label for="Inactive">Inactive</label>
-              </Form.Group>
-            </div>
-
-            <div style={{ borderLeft: "2px solid #F8BB17", display: "flex" }} />
-
-            <div>
-              <Form.Group>
-                <Form.Label style={{ color: "#F26522" }}>
-                  Business Hours
-                </Form.Label>
-                <Row style={{ margin: "0px" }}>
-                  <div style={{ width: "100px" }}>Monday</div>
-                  <Form.Control
-                    as="input"
-                    style={{ width: "100px" }}
-                    value={getEditedBusinessHours().Monday[0]}
-                    onChange={(event) => {
-                      changeBusinessHours(
-                        "Monday",
-                        event.target.value,
-                        getEditedBusinessHours().Monday[1]
-                      );
-                    }}
-                  />{" "}
-                  -
-                  <Form.Control
-                    as="input"
-                    style={{ width: "100px" }}
-                    value={getEditedBusinessHours().Monday[1]}
-                    onChange={(event) => {
-                      changeBusinessHours(
-                        "Monday",
-                        getEditedBusinessHours().Monday[0],
-                        event.target.value
-                      );
-                    }}
-                  />
-                </Row>
-                <Row style={{ margin: "0px" }}>
-                  <div style={{ width: "100px" }}>Tuesday</div>
-                  <Form.Control
-                    as="input"
-                    style={{ width: "100px" }}
-                    value={getEditedBusinessHours().Tuesday[0]}
-                    onChange={(event) => {
-                      changeBusinessHours(
-                        "Tuesday",
-                        event.target.value,
-                        getEditedBusinessHours().Tuesday[1]
-                      );
-                    }}
-                  />{" "}
-                  -
-                  <Form.Control
-                    as="input"
-                    style={{ width: "100px" }}
-                    value={getEditedBusinessHours().Tuesday[1]}
-                    onChange={(event) => {
-                      changeBusinessHours(
-                        "Tuesday",
-                        getEditedBusinessHours().Tuesday[0],
-                        event.target.value
-                      );
-                    }}
-                  />
-                </Row>
-                <Row style={{ margin: "0px" }}>
-                  <div style={{ width: "100px" }}>Wednesday</div>
-                  <Form.Control
-                    as="input"
-                    style={{ width: "100px" }}
-                    value={getEditedBusinessHours().Wednesday[0]}
-                    onChange={(event) => {
-                      changeBusinessHours(
-                        "Wednesday",
-                        event.target.value,
-                        getEditedBusinessHours().Wednesday[1]
-                      );
-                    }}
-                  />{" "}
-                  -
-                  <Form.Control
-                    as="input"
-                    style={{ width: "100px" }}
-                    value={getEditedBusinessHours().Wednesday[1]}
-                    onChange={(event) => {
-                      changeBusinessHours(
-                        "Wednesday",
-                        getEditedBusinessHours().Wednesday[0],
-                        event.target.value
-                      );
-                    }}
-                  />
-                </Row>
-                <Row style={{ margin: "0px" }}>
-                  <div style={{ width: "100px" }}>Thursday</div>
-                  <Form.Control
-                    as="input"
-                    style={{ width: "100px" }}
-                    value={getEditedBusinessHours().Thursday[0]}
-                    onChange={(event) => {
-                      changeBusinessHours(
-                        "Thursday",
-                        event.target.value,
-                        getEditedBusinessHours().Thursday[1]
-                      );
-                    }}
-                  />{" "}
-                  -
-                  <Form.Control
-                    as="input"
-                    style={{ width: "100px" }}
-                    value={getEditedBusinessHours().Thursday[1]}
-                    onChange={(event) => {
-                      changeBusinessHours(
-                        "Thursday",
-                        getEditedBusinessHours().Thursday[0],
-                        event.target.value
-                      );
-                    }}
-                  />
-                </Row>
-                <Row style={{ margin: "0px" }}>
-                  <div style={{ width: "100px" }}>Friday</div>{" "}
-                  <Form.Control
-                    as="input"
-                    style={{ width: "100px" }}
-                    value={getEditedBusinessHours().Friday[0]}
-                    onChange={(event) => {
-                      changeBusinessHours(
-                        "Friday",
-                        event.target.value,
-                        getEditedBusinessHours().Friday[1]
-                      );
-                    }}
-                  />{" "}
-                  -
-                  <Form.Control
-                    as="input"
-                    style={{ width: "100px" }}
-                    value={getEditedBusinessHours().Friday[1]}
-                    onChange={(event) => {
-                      changeBusinessHours(
-                        "Friday",
-                        getEditedBusinessHours().Friday[0],
-                        event.target.value
-                      );
-                    }}
-                  />
-                </Row>
-                <Row style={{ margin: "0px" }}>
-                  <div style={{ width: "100px" }}>Saturday</div>
-                  <Form.Control
-                    as="input"
-                    style={{ width: "100px" }}
-                    value={getEditedBusinessHours().Saturday[0]}
-                    onChange={(event) => {
-                      changeBusinessHours(
-                        "Saturday",
-                        event.target.value,
-                        getEditedBusinessHours().Saturday[1]
-                      );
-                    }}
-                  />{" "}
-                  -
-                  <Form.Control
-                    as="input"
-                    style={{ width: "100px" }}
-                    value={getEditedBusinessHours().Saturday[1]}
-                    onChange={(event) => {
-                      changeBusinessHours(
-                        "Saturday",
-                        getEditedBusinessHours().Saturday[0],
-                        event.target.value
-                      );
-                    }}
-                  />
-                </Row>
-                <Row style={{ margin: "0px" }}>
-                  <div style={{ width: "100px" }}>Sunday</div>{" "}
-                  <Form.Control
-                    as="input"
-                    style={{ width: "100px" }}
-                    value={getEditedBusinessHours().Sunday[0]}
-                    onChange={(event) => {
-                      changeBusinessHours(
-                        "Sunday",
-                        event.target.value,
-                        getEditedBusinessHours().Sunday[1]
-                      );
-                    }}
-                  />{" "}
-                  -
-                  <Form.Control
-                    as="input"
-                    style={{ width: "100px" }}
-                    value={getEditedBusinessHours().Sunday[1]}
-                    onChange={(event) => {
-                      changeBusinessHours(
-                        "Sunday",
-                        getEditedBusinessHours().Sunday[0],
-                        event.target.value
-                      );
-                    }}
-                  />
-                </Row>
-              </Form.Group>
-
-              <Form.Group>
-                <Form.Label style={{ color: "#F26522" }}>
-                  <FacebookIcon />
-                </Form.Label>
-                <Form.Control as="input" placeholder="Enter Facebook URL" />
-
-                <Form.Label style={{ color: "#F26522" }}>
-                  <InstagramIcon />
-                </Form.Label>
-                <Form.Control as="input" placeholder="Enter Instagram URL" />
-
-                <Form.Label style={{ color: "#F26522" }}>
-                  <TwitterIcon />
-                </Form.Label>
-                <Form.Control as="input" placeholder="Enter Twitter URL" />
-
-                <Form.Label style={{ color: "#F26522" }}>
-                  <GlobeIcon />
-                </Form.Label>
-                <Form.Control
-                  as="input"
-                  placeholder="Enter Business Website URL"
-                />
-              </Form.Group>
-            </div>
-          </div>
-          <div style={{ textAlign: "center" }}>
-            <Button
-              variant="primary"
-              style={{
-                backgroundColor: "#F26522",
-                borderRadius: "15px",
-                width: "257px",
-                height: "48px",
-                fontSize: "18px",
-                margin: "5px",
-                border: "2px solid #F26522",
-              }}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="primary"
-              style={{
-                backgroundColor: "#F26522",
-                borderRadius: "15px",
-                width: "257px",
-                height: "48px",
-                fontSize: "18px",
-                margin: "5px",
-                border: "2px solid #F26522",
-              }}
-              onClick={() => updateBusinessNew()}
-            >
-              Save Changes
-            </Button>
-          </div>
-        </div>
-      )}
-      {!state.editBusinessDetails && (
-        <div className={styles.containerMeals}>
-          <div
-            style={{
-              fontSize: "22px",
-              display: "inline",
-              marginLeft: "27px",
-              fontWeight: "bold",
-            }}
-          >
-            Meals Offered
-          </div>
-
-          <div
-            style={{ fontSize: "32px", display: "inline", marginLeft: "15px" }}
-            onClick={() => {
-              dispatch({
-                type: "SHOW_CREATE_EDIT_MEAL_MODAL",
-                payload: { show: true, mode: "NEW" },
-              });
-            }}
-          >
-            +
-          </div>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell
-                  style={{
-                    fontWeight: "bold",
-                    color: "#f26522",
-                    border: "none",
-                    textAlign: "center",
-                    fontSize: "15px",
-                  }}
-                >
-                  <TableSortLabel
-                    style={{
-                      fontWeight: "bold",
-                      color: "#f26522",
-                      border: "none",
-                    }}
-                    direction={state.sortMeals.direction}
-                    onClick={() => changeSortOptions("meal_name")}
-                  >
-                    Meal Name
-                  </TableSortLabel>
-                </TableCell>
-                <TableCell
-                  style={{
-                    fontWeight: "bold",
-                    color: "#f26522",
-                    border: "none",
-                    textAlign: "center",
-                    fontSize: "15px",
-                  }}
-                >
-                  Picture
-                </TableCell>
-                <TableCell
-                  style={{
-                    fontWeight: "bold",
-                    color: "#f26522",
-                    border: "none",
-                    textAlign: "center",
-                    fontSize: "15px",
-                  }}
-                >
-                  Meal Description
-                </TableCell>
-                <TableCell
-                  style={{
-                    fontWeight: "bold",
-                    color: "#f26522",
-                    border: "none",
-                    textAlign: "center",
-                    fontSize: "15px",
-                  }}
-                >
-                  <TableSortLabel
-                    style={{
-                      fontWeight: "bold",
-                      color: "#f26522",
-                      border: "none",
-                    }}
-                    direction={state.sortMeals.direction}
-                    onClick={() => changeSortOptions("meal_category")}
-                  >
-                    Meal Category
-                  </TableSortLabel>
-                </TableCell>
-                <TableCell
-                  style={{
-                    fontWeight: "bold",
-                    color: "#f26522",
-                    border: "none",
-                    textAlign: "center",
-                    fontSize: "15px",
-                  }}
-                >
-                  <TableSortLabel
-                    style={{
-                      fontWeight: "bold",
-                      color: "#f26522",
-                      border: "none",
-                    }}
-                    direction={state.sortMeals.direction}
-                    onClick={() => changeSortOptions("meal_hint")}
-                  >
-                    Meal Hint
-                  </TableSortLabel>
-                </TableCell>
-                <TableCell
-                  style={{
-                    fontWeight: "bold",
-                    color: "#f26522",
-                    border: "none",
-                    textAlign: "center",
-                    fontSize: "15px",
-                  }}
-                >
-                  <TableSortLabel
-                    style={{
-                      fontWeight: "bold",
-                      color: "#f26522",
-                      border: "none",
-                    }}
-                    direction={state.sortMeals.direction}
-                    onClick={() => changeSortOptions("meal_calories")}
-                  >
-                    Calories
-                  </TableSortLabel>
-                </TableCell>
-                <TableCell
-                  style={{
-                    fontWeight: "bold",
-                    color: "#f26522",
-                    border: "none",
-                    textAlign: "center",
-                    fontSize: "15px",
-                  }}
-                >
-                  <TableSortLabel
-                    style={{
-                      fontWeight: "bold",
-                      color: "#f26522",
-                      border: "none",
-                    }}
-                    direction={state.sortMeals.direction}
-                    onClick={() => changeSortOptions("meal_protein")}
-                  >
-                    Protein
-                  </TableSortLabel>
-                </TableCell>
-                <TableCell
-                  style={{
-                    fontWeight: "bold",
-                    color: "#f26522",
-                    border: "none",
-                    textAlign: "center",
-                    fontSize: "15px",
-                  }}
-                >
-                  <TableSortLabel
-                    style={{
-                      fontWeight: "bold",
-                      color: "#f26522",
-                      border: "none",
-                    }}
-                    direction={state.sortMeals.direction}
-                    onClick={() => changeSortOptions("meal_carbs")}
-                  >
-                    Carbs
-                  </TableSortLabel>
-                </TableCell>
-                <TableCell
-                  style={{
-                    fontWeight: "bold",
-                    color: "#f26522",
-                    border: "none",
-                    textAlign: "center",
-                    fontSize: "15px",
-                  }}
-                >
-                  <TableSortLabel
-                    style={{
-                      fontWeight: "bold",
-                      color: "#f26522",
-                      border: "none",
-                    }}
-                    direction={state.sortMeals.direction}
-                    onClick={() => changeSortOptions("meal_fiber")}
-                  >
-                    Fiber
-                  </TableSortLabel>
-                </TableCell>
-                <TableCell
-                  style={{
-                    fontWeight: "bold",
-                    color: "#f26522",
-                    border: "none",
-                    textAlign: "center",
-                    fontSize: "15px",
-                  }}
-                >
-                  <TableSortLabel
-                    style={{
-                      fontWeight: "bold",
-                      color: "#f26522",
-                      border: "none",
-                    }}
-                    direction={state.sortMeals.direction}
-                    onClick={() => changeSortOptions("meal_sugar")}
-                  >
-                    Sugar
-                  </TableSortLabel>
-                </TableCell>
-                <TableCell
-                  style={{
-                    fontWeight: "bold",
-                    color: "#f26522",
-                    border: "none",
-                    textAlign: "center",
-                    fontSize: "15px",
-                  }}
-                >
-                  <TableSortLabel
-                    style={{
-                      fontWeight: "bold",
-                      color: "#f26522",
-                      border: "none",
-                    }}
-                    direction={state.sortMeals.direction}
-                    onClick={() => changeSortOptions("meal_fat")}
-                  >
-                    Fats
-                  </TableSortLabel>
-                </TableCell>
-                <TableCell
-                  style={{
-                    fontWeight: "bold",
-                    color: "#f26522",
-                    border: "none",
-                    textAlign: "center",
-                    fontSize: "15px",
-                  }}
-                >
-                  <TableSortLabel
-                    style={{
-                      fontWeight: "bold",
-                      color: "#f26522",
-                      border: "none",
-                    }}
-                    direction={state.sortMeals.direction}
-                    onClick={() => changeSortOptions("meal_sat")}
-                  >
-                    Sat
-                  </TableSortLabel>
-                </TableCell>
-                <TableCell
-                  style={{
-                    fontWeight: "bold",
-                    color: "#f26522",
-                    border: "none",
-                    textAlign: "center",
-                    fontSize: "15px",
-                  }}
-                >
-                  Status
-                </TableCell>
-                <TableCell
-                  style={{
-                    fontWeight: "bold",
-                    color: "#f26522",
-                    border: "none",
-                    textAlign: "center",
-                    fontSize: "15px",
-                  }}
-                ></TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {state.filteredMeals &&
-                state.filteredMeals.map((meal, index) => {
-                  return (
-                    <TableRow key={index} hover>
-                      <TableCell
-                        style={{
-                          borderBottom: "1px solid #f8bb17",
-                          textAlign: "center",
-                          fontSize: "15px",
-                        }}
-                      >
-                        {meal.meal_name}
-                      </TableCell>
-                      <TableCell
-                        style={{
-                          borderBottom: "1px solid #f8bb17",
-                          textAlign: "center",
-                        }}
-                      >
-                        <img
-                          src={meal.meal_photo_URL}
-                          height="45"
-                          width="45"
-                        ></img>
-                      </TableCell>
-                      <TableCell
-                        style={{
-                          borderBottom: "1px solid #f8bb17",
-                          textAlign: "center",
-                          width: "300px",
-                          fontSize: "15px",
-                        }}
-                      >
-                        {meal.meal_desc}
-                      </TableCell>
-                      <TableCell
-                        style={{
-                          borderBottom: "1px solid #f8bb17",
-                          textAlign: "center",
-                          fontSize: "15px",
-                        }}
-                      >
-                        {meal.meal_category}
-                      </TableCell>
-                      <TableCell
-                        style={{
-                          borderBottom: "1px solid #f8bb17",
-                          textAlign: "center",
-                          fontSize: "15px",
-                        }}
-                      >
-                        {meal.meal_hint}
-                      </TableCell>
-                      <TableCell
-                        style={{
-                          borderBottom: "1px solid #f8bb17",
-                          textAlign: "center",
-                          fontSize: "15px",
-                        }}
-                      >
-                        {meal.meal_calories ? meal.meal_calories + " Cal" : ""}
-                      </TableCell>
-                      <TableCell
-                        style={{
-                          borderBottom: "1px solid #f8bb17",
-                          textAlign: "center",
-                          fontSize: "15px",
-                        }}
-                      >
-                        {meal.meal_protein ? meal.meal_protein + "g" : ""}
-                      </TableCell>
-                      <TableCell
-                        style={{
-                          borderBottom: "1px solid #f8bb17",
-                          textAlign: "center",
-                          fontSize: "15px",
-                        }}
-                      >
-                        {meal.meal_carbs ? meal.meal_carbs + "g" : ""}
-                      </TableCell>
-                      <TableCell
-                        style={{
-                          borderBottom: "1px solid #f8bb17",
-                          textAlign: "center",
-                          fontSize: "15px",
-                        }}
-                      >
-                        {meal.meal_fiber ? meal.meal_fiber + "g" : ""}
-                      </TableCell>
-                      <TableCell
-                        style={{
-                          borderBottom: "1px solid #f8bb17",
-                          textAlign: "center",
-                          fontSize: "15px",
-                        }}
-                      >
-                        {meal.meal_sugar ? meal.meal_sugar + "g" : ""}
-                      </TableCell>
-                      <TableCell
-                        style={{
-                          borderBottom: "1px solid #f8bb17",
-                          textAlign: "center",
-                          fontSize: "15px",
-                        }}
-                      >
-                        {meal.meal_fat ? meal.meal_fat + "%" : ""}
-                      </TableCell>
-                      <TableCell
-                        style={{
-                          borderBottom: "1px solid #f8bb17",
-                          textAlign: "center",
-                          fontSize: "15px",
-                        }}
-                      >
-                        {meal.meal_sat ? meal.meal_sat + "%" : ""}
-                      </TableCell>
-                      <TableCell
-                        style={{
-                          borderBottom: "1px solid #f8bb17",
-                          textAlign: "center",
-                          fontSize: "15px",
-                        }}
-                      >
-                        <ToggleSwitch
-                          active={Number(meal.meal_status)}
-                          handleChange={() => changeMealStatus(meal, index)}
-                        />
-                      </TableCell>
-                      <TableCell
-                        style={{
-                          borderBottom: "1px solid #f8bb17",
-                          textAlign: "center",
-                          fontSize: "15px",
-                        }}
-                      >
-                        <div
-                          className={styles.editIcon}
-                          onClick={() => {
-                            dispatch({ type: "EDIT_MEAL", payload: meal });
-                            setSelectedMeal(meal);
-                            dispatch({
-                              type: "SHOW_CREATE_EDIT_MEAL_MODAL",
-                              payload: { show: true, mode: "EDIT" },
-                            });
-                            toggleMealButtonPressed(true);
-                          }}
-                        ></div>
-
-                        <div
-                          className={styles.deleteIcon}
-                          onClick={() => {
-                            toggleDeleteButtonPressed(true);
-                            setSelectedMeal(allMeals[index]);
-                            toggleMealButtonPressed(true);
-                            axios
-                              .delete(
-                                API_URL + "meals?meal_uid=" + meal.meal_uid
-                              )
-                              .then((response) => {
-                                console.log(response);
-                              });
-                          }}
-                        ></div>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-            </TableBody>
-          </Table>
-        </div>
-      )}
-
       {state.showCreateEditMealModal && (
         <div
           style={{
@@ -2473,18 +2433,6 @@ function EditMeal({ history, ...props }) {
                 style={{ cursor: "pointer" }}
                 onClick={() => {
                   dispatch({ type: "CLOSE_MODAL" });
-                  // dispatch({
-                  //   type: "SET_INGREDIENTS_MODIFIED",
-                  //   payload: false,
-                  // });
-                  // dispatch({
-                  //   type: "SHOW_CREATE_EDIT_MEAL_MODAL",
-                  //   payload: { show: false, mode: "" },
-                  // });
-                  // if (state.showIngredients)
-                  //   dispatch({ type: "TOGGLE_SHOW_INGREDIENTS" });
-                  // dispatch({ type: "RESET_EDITED_MEAL_INGREDIENTS" });
-                  // dispatch({ type: "RESET_EDITED_MEAL" });
                 }}
               />
             </div>
@@ -3027,8 +2975,6 @@ function EditMeal({ history, ...props }) {
                 variant="primary"
                 onClick={() => {
                   if (verifyModalData()) handleSaveMeal();
-
-                  forceUpdate();
                 }}
                 style={{
                   backgroundColor: "#F26522",
