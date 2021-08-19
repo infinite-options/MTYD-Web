@@ -250,75 +250,6 @@ var idsGenerated = false;
 
 function EditMeal({ history, ...props }) {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const [showDropdown, toggleShowDropdown] = useState(false);
-  const [activeBusiness, setActiveBusiness] = useState(null);
-  const [activeBusinessData, setActiveBusinessData] = useState({
-    bus_guid_device_id_notification: "",
-    bus_notification_approval: "",
-    business_EIN: "",
-    business_USDOT: "",
-    business_WAUBI: "",
-    business_accepting_hours: "",
-    business_address: "",
-    business_association: "",
-    business_city: "",
-    business_contact_first_name: "",
-    business_contact_last_name: "",
-    business_created_at: "",
-    business_delivery_hours: "",
-    business_desc: "",
-    business_email: "",
-    business_hours: "",
-    business_image: "",
-    business_latitude: "",
-    business_license: "",
-    business_longitude: "",
-    business_name: "",
-    business_password: "",
-    business_phone_num: "",
-    business_phone_num2: "",
-    business_state: "",
-    business_status: "",
-    business_type: "",
-    business_uid: "",
-    business_unit: "",
-    business_zip: "",
-    can_cancel: 0,
-    delivery: 0,
-    platform_fee: 0,
-    profit_sharing: 0,
-    reusable: 0,
-    revenue_sharing: 0,
-    transaction_fee: 0,
-  });
-  const [showBusinessDetails, toggleBusinessDetails] = useState(false);
-
-  const [tempBusinessName, setTempBusinessName] = useState("");
-  const [tempCusine, setTempCusine] = useState("");
-  const [tempMonStart, tempSetMonStart] = useState("");
-  const [tempMonFin, setMonFin] = useState("");
-  const [tempTueStart, tempSetTueStart] = useState("");
-  const [tempTueFin, setTueFin] = useState("");
-  const [tempWedStart, tempSetWedStart] = useState("");
-  const [tempWedFin, setWedFin] = useState("");
-  const [tempThuStart, tempSetThuStart] = useState("");
-  const [tempThuFin, setThuFin] = useState("");
-  const [tempFriStart, tempSetFriStart] = useState("");
-  const [tempFriFin, setFriFin] = useState("");
-  const [tempSatStart, tempSetSatStart] = useState("");
-  const [tempSatFin, setSatFin] = useState("");
-  const [tempSunStart, tempSetSunStart] = useState("");
-  const [tempSunFin, setSunFin] = useState("");
-
-  const [selectedMeal, setSelectedMeal] = useState({});
-  const [showEditMeal, toggleEditMeal] = useState(false);
-  const [showNewMeal, toggleNewMeal] = useState(false);
-  const [mealButtonPressed, toggleMealButtonPressed] = useState(false);
-  const [deleteButtonPressed, toggleDeleteButtonPressed] = useState(false);
-
-  const [mealsGenerated, toggleMealsGenerated] = useState(false);
-
-  const forceUpdate = useForceUpdate();
 
   // Check for log in
   useEffect(() => {
@@ -697,19 +628,18 @@ function EditMeal({ history, ...props }) {
       };
   };
 
-  const getBusinessHours = () => {
+  const displayBusinessHours = (day, type) => {
+    const index = type === "start" ? 0 : 1;
     if (state.activeBusinessData) {
-      return state.activeBusinessData.business_accepting_hours;
-    } else
-      return {
-        Friday: ["N/A", "N/A"],
-        Monday: ["N/A", "N/A"],
-        Sunday: ["N/A", "N/A"],
-        Tuesday: ["N/A", "N/A"],
-        Saturday: ["N/A", "N/A"],
-        Thursday: ["N/A", "N/A"],
-        Wednesday: ["N/A", "N/A"],
-      };
+      const time =
+        state.activeBusinessData.business_accepting_hours[day][index];
+      if (time === "") {
+        return "N/A";
+      } else {
+        return time;
+      }
+    }
+    return "N/A";
   };
 
   const getBusinessDataByID = (id) => {
@@ -764,33 +694,6 @@ function EditMeal({ history, ...props }) {
     });
 
     return null;
-  };
-
-  const checkForDuplicateNameInBusiness = () => {
-    for (let i = 0; i < allMeals.length; i++) {
-      if (
-        allMeals[i].meal_name == state.editedMeal.meal_name &&
-        allMeals[i].meal_business == activeBusiness
-      ) {
-        alert("Meal of this name already exists for this business");
-        return true;
-      }
-    }
-    return false;
-  };
-
-  const checkForDuplicateNameInBusinessEditing = () => {
-    for (let i = 0; i < allMeals.length; i++) {
-      if (
-        allMeals[i].meal_name == state.editedMeal.meal_name &&
-        allMeals[i].meal_business == activeBusiness &&
-        allMeals[i].meal_uid != state.editedMeal.meal_uid
-      ) {
-        alert("Meal of this name already exists for this business");
-        return true;
-      }
-    }
-    return false;
   };
 
   if (!state.mounted) {
@@ -1093,22 +996,38 @@ function EditMeal({ history, ...props }) {
                   <div>Thursday</div>
                 </Col>
                 <Col md="auto" className={styles.businessHours}>
-                  <div>{getBusinessHours().Monday[0]}</div>
-                  <div>{getBusinessHours().Tuesday[0]}</div>
-                  <div>{getBusinessHours().Wednesday[0]}</div>
-                  <div>{getBusinessHours().Thursday[0]}</div>
+                  <div className={styles.businessHoursText}>
+                    {displayBusinessHours("Monday", "start")}
+                  </div>
+                  <div className={styles.businessHoursText}>
+                    {displayBusinessHours("Tuesday", "start")}
+                  </div>
+                  <div className={styles.businessHoursText}>
+                    {displayBusinessHours("Wednesday", "start")}
+                  </div>
+                  <div className={styles.businessHoursText}>
+                    {displayBusinessHours("Thursday", "start")}
+                  </div>
                 </Col>
-                <Col md="auto">
+                <Col md="auto" style={{ padding: "0px 5px 0px 5px" }}>
                   <div>-</div>
                   <div>-</div>
                   <div>-</div>
                   <div>-</div>
                 </Col>
                 <Col md="auto" className={styles.businessHours}>
-                  <div>{getBusinessHours().Monday[1]}</div>
-                  <div>{getBusinessHours().Tuesday[1]}</div>
-                  <div>{getBusinessHours().Wednesday[1]}</div>
-                  <div>{getBusinessHours().Thursday[1]}</div>
+                  <div className={styles.businessHoursText}>
+                    {displayBusinessHours("Monday", "end")}
+                  </div>
+                  <div className={styles.businessHoursText}>
+                    {displayBusinessHours("Tuesday", "end")}
+                  </div>
+                  <div className={styles.businessHoursText}>
+                    {displayBusinessHours("Wednesday", "end")}
+                  </div>
+                  <div className={styles.businessHoursText}>
+                    {displayBusinessHours("Thursday", "end")}
+                  </div>
                 </Col>
                 <Col md="auto">
                   <div>Friday</div>
@@ -1116,19 +1035,31 @@ function EditMeal({ history, ...props }) {
                   <div>Sunday</div>
                 </Col>
                 <Col md="auto" className={styles.businessHours}>
-                  <div>{getBusinessHours().Friday[0]}</div>
-                  <div>{getBusinessHours().Saturday[0]}</div>
-                  <div>{getBusinessHours().Sunday[0]}</div>
+                  <div className={styles.businessHoursText}>
+                    {displayBusinessHours("Friday", "start")}
+                  </div>
+                  <div className={styles.businessHoursText}>
+                    {displayBusinessHours("Saturday", "start")}
+                  </div>
+                  <div className={styles.businessHoursText}>
+                    {displayBusinessHours("Sunday", "start")}
+                  </div>
                 </Col>
-                <Col md="auto">
+                <Col md="auto" style={{ padding: "0px 5px 0px 5px" }}>
                   <div>-</div>
                   <div>-</div>
                   <div>-</div>
                 </Col>
                 <Col className={styles.businessHours}>
-                  <div>{getBusinessHours().Friday[1]}</div>
-                  <div>{getBusinessHours().Saturday[1]}</div>
-                  <div>{getBusinessHours().Sunday[1]}</div>
+                  <div className={styles.businessHoursText}>
+                    {displayBusinessHours("Friday", "end")}
+                  </div>
+                  <div className={styles.businessHoursText}>
+                    {displayBusinessHours("Saturday", "end")}
+                  </div>
+                  <div className={styles.businessHoursText}>
+                    {displayBusinessHours("Sunday", "end")}
+                  </div>
                 </Col>
               </Row>
             </Col>
@@ -1167,7 +1098,13 @@ function EditMeal({ history, ...props }) {
           <div className={styles.editBusiness}>
             <div className={styles.editBusinessFormContainer}>
               <div style={{ width: "300px" }}>
-                <Form.Group>
+                <Form.Group
+                  style={{
+                    width: "80%",
+                    marginLeft: "auto",
+                    marginRight: "auto",
+                  }}
+                >
                   <img
                     height="150px"
                     width="150px"
@@ -1185,7 +1122,13 @@ function EditMeal({ history, ...props }) {
                     }}
                   />
                 </Form.Group>
-                <Form.Group>
+                <Form.Group
+                  style={{
+                    width: "80%",
+                    marginLeft: "auto",
+                    marginRight: "auto",
+                  }}
+                >
                   <Form.Label style={{ color: "#F26522" }}>
                     Business Name
                   </Form.Label>
@@ -1198,7 +1141,13 @@ function EditMeal({ history, ...props }) {
                     }
                   />
                 </Form.Group>
-                <Form.Group>
+                <Form.Group
+                  style={{
+                    width: "80%",
+                    marginLeft: "auto",
+                    marginRight: "auto",
+                  }}
+                >
                   <Form.Label style={{ color: "#F26522" }}>
                     Business Type
                   </Form.Label>
@@ -1211,7 +1160,13 @@ function EditMeal({ history, ...props }) {
                     }
                   />
                 </Form.Group>
-                <Form.Group>
+                <Form.Group
+                  style={{
+                    width: "80%",
+                    marginLeft: "auto",
+                    marginRight: "auto",
+                  }}
+                >
                   <Form.Label style={{ color: "#F26522" }}>
                     Business Description
                   </Form.Label>
@@ -1231,8 +1186,8 @@ function EditMeal({ history, ...props }) {
               />
 
               <div>
-                <Row style={{ margin: "0px" }}>
-                  <Form.Group>
+                <Row style={{ margin: "0px", justifyContent: "center" }}>
+                  <Form.Group style={{ width: "45%" }}>
                     <Form.Label style={{ color: "#F26522" }}>
                       First Name
                     </Form.Label>
@@ -1250,7 +1205,7 @@ function EditMeal({ history, ...props }) {
                       }
                     />
                   </Form.Group>
-                  <Form.Group>
+                  <Form.Group style={{ width: "45%" }}>
                     <Form.Label style={{ color: "#F26522" }}>
                       Last Name
                     </Form.Label>
@@ -1269,8 +1224,8 @@ function EditMeal({ history, ...props }) {
                     />
                   </Form.Group>
                 </Row>
-                <Row style={{ margin: "0px" }}>
-                  <Form.Group>
+                <Row style={{ margin: "0px", justifyContent: "center" }}>
+                  <Form.Group style={{ width: "45%" }}>
                     <Form.Label style={{ color: "#F26522" }}>
                       Phone Number 1
                     </Form.Label>
@@ -1283,7 +1238,7 @@ function EditMeal({ history, ...props }) {
                       }
                     />
                   </Form.Group>
-                  <Form.Group>
+                  <Form.Group style={{ width: "45%" }}>
                     <Form.Label style={{ color: "#F26522" }}>
                       Phone Number 2
                     </Form.Label>
@@ -1297,8 +1252,8 @@ function EditMeal({ history, ...props }) {
                     />
                   </Form.Group>
                 </Row>
-                <Row style={{ margin: "0px" }}>
-                  <Form.Group>
+                <Row style={{ margin: "0px", justifyContent: "center" }}>
+                  <Form.Group style={{ width: "60%" }}>
                     <Form.Label style={{ color: "#F26522" }}>Street</Form.Label>
                     <Form.Control
                       as="input"
@@ -1309,7 +1264,7 @@ function EditMeal({ history, ...props }) {
                       }
                     />
                   </Form.Group>
-                  <Form.Group>
+                  <Form.Group style={{ width: "30%" }}>
                     <Form.Label style={{ color: "#F26522" }}>Unit</Form.Label>
                     <Form.Control
                       as="input"
@@ -1321,7 +1276,13 @@ function EditMeal({ history, ...props }) {
                     />
                   </Form.Group>
                 </Row>
-                <Form.Group>
+                <Form.Group
+                  style={{
+                    width: "90%",
+                    marginLeft: "auto",
+                    marginRight: "auto",
+                  }}
+                >
                   <Form.Label style={{ color: "#F26522" }}>City</Form.Label>
                   <Form.Control
                     as="input"
@@ -1332,8 +1293,8 @@ function EditMeal({ history, ...props }) {
                     }
                   />
                 </Form.Group>
-                <Row style={{ margin: "0px" }}>
-                  <Form.Group>
+                <Row style={{ margin: "0px", justifyContent: "center" }}>
+                  <Form.Group style={{ width: "45%" }}>
                     <Form.Label style={{ color: "#F26522" }}>State</Form.Label>
                     <Form.Control
                       as="input"
@@ -1344,7 +1305,7 @@ function EditMeal({ history, ...props }) {
                       }
                     />
                   </Form.Group>
-                  <Form.Group>
+                  <Form.Group style={{ width: "45%" }}>
                     <Form.Label style={{ color: "#F26522" }}>Zip</Form.Label>
                     <Form.Control
                       as="input"
@@ -1363,7 +1324,13 @@ function EditMeal({ history, ...props }) {
               />
 
               <div>
-                <Form.Group>
+                <Form.Group
+                  style={{
+                    width: "90%",
+                    marginLeft: "auto",
+                    marginRight: "auto",
+                  }}
+                >
                   <Form.Label style={{ color: "#F26522" }}>
                     Platform Fee
                   </Form.Label>
@@ -1376,7 +1343,13 @@ function EditMeal({ history, ...props }) {
                     }
                   />
                 </Form.Group>
-                <Form.Group>
+                <Form.Group
+                  style={{
+                    width: "90%",
+                    marginLeft: "auto",
+                    marginRight: "auto",
+                  }}
+                >
                   <Form.Label style={{ color: "#F26522" }}>
                     Transaction Fee
                   </Form.Label>
@@ -1389,7 +1362,13 @@ function EditMeal({ history, ...props }) {
                     }
                   />
                 </Form.Group>
-                <Form.Group>
+                <Form.Group
+                  style={{
+                    width: "90%",
+                    marginLeft: "auto",
+                    marginRight: "auto",
+                  }}
+                >
                   <Form.Label style={{ color: "#F26522" }}>
                     Revenue Sharing
                   </Form.Label>
@@ -1402,7 +1381,13 @@ function EditMeal({ history, ...props }) {
                     }
                   />
                 </Form.Group>
-                <Form.Group>
+                <Form.Group
+                  style={{
+                    width: "90%",
+                    marginLeft: "auto",
+                    marginRight: "auto",
+                  }}
+                >
                   <Form.Label style={{ color: "#F26522" }}>
                     Profit Sharing
                   </Form.Label>
@@ -1422,7 +1407,13 @@ function EditMeal({ history, ...props }) {
               />
 
               <div>
-                <Form.Group>
+                <Form.Group
+                  style={{
+                    width: "90%",
+                    marginLeft: "auto",
+                    marginRight: "auto",
+                  }}
+                >
                   <Form.Label style={{ color: "#F26522" }}>Storage</Form.Label>
                   <br />
                   <input
@@ -1434,8 +1425,8 @@ function EditMeal({ history, ...props }) {
                     onChange={(event) =>
                       editBusiness("reusable", Number(event.target.value))
                     }
-                  />
-                  <label for="reusable">Reusable</label>
+                  />{" "}
+                  Reusable
                   <br />
                   <input
                     type="radio"
@@ -1446,10 +1437,16 @@ function EditMeal({ history, ...props }) {
                     onChange={(event) =>
                       editBusiness("reusable", Number(event.target.value))
                     }
-                  />
-                  <label for="disposable">Disposable</label>
+                  />{" "}
+                  Disposable
                 </Form.Group>
-                <Form.Group>
+                <Form.Group
+                  style={{
+                    width: "90%",
+                    marginLeft: "auto",
+                    marginRight: "auto",
+                  }}
+                >
                   <Form.Label style={{ color: "#F26522" }}>
                     Cancellation
                   </Form.Label>
@@ -1463,10 +1460,8 @@ function EditMeal({ history, ...props }) {
                     onChange={(event) =>
                       editBusiness("can_cancel", Number(event.target.value))
                     }
-                  />
-                  <label for="can_cancel">
-                    Allow cancellation within ordering hours
-                  </label>
+                  />{" "}
+                  Allow cancellation within ordering hours
                   <br />
                   <input
                     type="radio"
@@ -1477,10 +1472,16 @@ function EditMeal({ history, ...props }) {
                     onChange={(event) =>
                       editBusiness("can_cancel", Number(event.target.value))
                     }
-                  />
-                  <label for="no_cancel">Cancellations not allowed</label>
+                  />{" "}
+                  Cancellations not allowed
                 </Form.Group>
-                <Form.Group>
+                <Form.Group
+                  style={{
+                    width: "90%",
+                    marginLeft: "auto",
+                    marginRight: "auto",
+                  }}
+                >
                   <Form.Label style={{ color: "#F26522" }}>
                     Business Status
                   </Form.Label>
@@ -1496,8 +1497,8 @@ function EditMeal({ history, ...props }) {
                     onChange={(event) =>
                       editBusiness("business_status", event.target.value)
                     }
-                  />
-                  <label for="active">Active</label>
+                  />{" "}
+                  Active
                   <br />
                   <input
                     type="radio"
@@ -1510,8 +1511,8 @@ function EditMeal({ history, ...props }) {
                     onChange={(event) =>
                       editBusiness("business_status", event.target.value)
                     }
-                  />
-                  <label for="Inactive">Inactive</label>
+                  />{" "}
+                  Inactive
                 </Form.Group>
               </div>
 
@@ -1520,16 +1521,31 @@ function EditMeal({ history, ...props }) {
               />
 
               <div>
-                <Form.Group>
+                <Form.Group
+                  style={{
+                    width: "90%",
+                    marginLeft: "auto",
+                    marginRight: "auto",
+                  }}
+                >
                   <Form.Label style={{ color: "#F26522" }}>
                     Business Hours
                   </Form.Label>
-                  <Row style={{ margin: "0px" }}>
-                    <div style={{ width: "100px" }}>Monday</div>
+                  <Row style={{ margin: "0px", padding: "5px 0px 5px 0px" }}>
+                    <div
+                      style={{
+                        width: "100px",
+                        marginTop: "auto",
+                        marginBottom: "auto",
+                      }}
+                    >
+                      Monday
+                    </div>
                     <Form.Control
                       as="input"
-                      style={{ width: "100px" }}
+                      style={{ width: "30%" }}
                       value={getEditedBusinessHours().Monday[0]}
+                      placeholder="HH:MM:SS"
                       onChange={(event) => {
                         changeBusinessHours(
                           "Monday",
@@ -1538,11 +1554,20 @@ function EditMeal({ history, ...props }) {
                         );
                       }}
                     />{" "}
-                    -
+                    <div
+                      style={{
+                        marginTop: "auto",
+                        marginBottom: "auto",
+                        padding: "5px",
+                      }}
+                    >
+                      -
+                    </div>
                     <Form.Control
                       as="input"
-                      style={{ width: "100px" }}
+                      style={{ width: "30%" }}
                       value={getEditedBusinessHours().Monday[1]}
+                      placeholder="HH:MM:SS"
                       onChange={(event) => {
                         changeBusinessHours(
                           "Monday",
@@ -1552,12 +1577,21 @@ function EditMeal({ history, ...props }) {
                       }}
                     />
                   </Row>
-                  <Row style={{ margin: "0px" }}>
-                    <div style={{ width: "100px" }}>Tuesday</div>
+                  <Row style={{ margin: "0px", padding: "5px 0px 5px 0px" }}>
+                    <div
+                      style={{
+                        width: "100px",
+                        marginTop: "auto",
+                        marginBottom: "auto",
+                      }}
+                    >
+                      Tuesday
+                    </div>
                     <Form.Control
                       as="input"
-                      style={{ width: "100px" }}
+                      style={{ width: "30%" }}
                       value={getEditedBusinessHours().Tuesday[0]}
+                      placeholder="HH:MM:SS"
                       onChange={(event) => {
                         changeBusinessHours(
                           "Tuesday",
@@ -1566,11 +1600,20 @@ function EditMeal({ history, ...props }) {
                         );
                       }}
                     />{" "}
-                    -
+                    <div
+                      style={{
+                        marginTop: "auto",
+                        marginBottom: "auto",
+                        padding: "5px",
+                      }}
+                    >
+                      -
+                    </div>
                     <Form.Control
                       as="input"
-                      style={{ width: "100px" }}
+                      style={{ width: "30%" }}
                       value={getEditedBusinessHours().Tuesday[1]}
+                      placeholder="HH:MM:SS"
                       onChange={(event) => {
                         changeBusinessHours(
                           "Tuesday",
@@ -1580,12 +1623,21 @@ function EditMeal({ history, ...props }) {
                       }}
                     />
                   </Row>
-                  <Row style={{ margin: "0px" }}>
-                    <div style={{ width: "100px" }}>Wednesday</div>
+                  <Row style={{ margin: "0px", padding: "5px 0px 5px 0px" }}>
+                    <div
+                      style={{
+                        width: "100px",
+                        marginTop: "auto",
+                        marginBottom: "auto",
+                      }}
+                    >
+                      Wednesday
+                    </div>
                     <Form.Control
                       as="input"
-                      style={{ width: "100px" }}
+                      style={{ width: "30%" }}
                       value={getEditedBusinessHours().Wednesday[0]}
+                      placeholder="HH:MM:SS"
                       onChange={(event) => {
                         changeBusinessHours(
                           "Wednesday",
@@ -1594,11 +1646,20 @@ function EditMeal({ history, ...props }) {
                         );
                       }}
                     />{" "}
-                    -
+                    <div
+                      style={{
+                        marginTop: "auto",
+                        marginBottom: "auto",
+                        padding: "5px",
+                      }}
+                    >
+                      -
+                    </div>
                     <Form.Control
                       as="input"
-                      style={{ width: "100px" }}
+                      style={{ width: "30%" }}
                       value={getEditedBusinessHours().Wednesday[1]}
+                      placeholder="HH:MM:SS"
                       onChange={(event) => {
                         changeBusinessHours(
                           "Wednesday",
@@ -1608,12 +1669,21 @@ function EditMeal({ history, ...props }) {
                       }}
                     />
                   </Row>
-                  <Row style={{ margin: "0px" }}>
-                    <div style={{ width: "100px" }}>Thursday</div>
+                  <Row style={{ margin: "0px", padding: "5px 0px 5px 0px" }}>
+                    <div
+                      style={{
+                        width: "100px",
+                        marginTop: "auto",
+                        marginBottom: "auto",
+                      }}
+                    >
+                      Thursday
+                    </div>
                     <Form.Control
                       as="input"
-                      style={{ width: "100px" }}
+                      style={{ width: "30%" }}
                       value={getEditedBusinessHours().Thursday[0]}
+                      placeholder="HH:MM:SS"
                       onChange={(event) => {
                         changeBusinessHours(
                           "Thursday",
@@ -1622,11 +1692,20 @@ function EditMeal({ history, ...props }) {
                         );
                       }}
                     />{" "}
-                    -
+                    <div
+                      style={{
+                        marginTop: "auto",
+                        marginBottom: "auto",
+                        padding: "5px",
+                      }}
+                    >
+                      -
+                    </div>
                     <Form.Control
                       as="input"
-                      style={{ width: "100px" }}
+                      style={{ width: "30%" }}
                       value={getEditedBusinessHours().Thursday[1]}
+                      placeholder="HH:MM:SS"
                       onChange={(event) => {
                         changeBusinessHours(
                           "Thursday",
@@ -1636,12 +1715,21 @@ function EditMeal({ history, ...props }) {
                       }}
                     />
                   </Row>
-                  <Row style={{ margin: "0px" }}>
-                    <div style={{ width: "100px" }}>Friday</div>{" "}
+                  <Row style={{ margin: "0px", padding: "5px 0px 5px 0px" }}>
+                    <div
+                      style={{
+                        width: "100px",
+                        marginTop: "auto",
+                        marginBottom: "auto",
+                      }}
+                    >
+                      Friday
+                    </div>{" "}
                     <Form.Control
                       as="input"
-                      style={{ width: "100px" }}
+                      style={{ width: "30%" }}
                       value={getEditedBusinessHours().Friday[0]}
+                      placeholder="HH:MM:SS"
                       onChange={(event) => {
                         changeBusinessHours(
                           "Friday",
@@ -1650,11 +1738,20 @@ function EditMeal({ history, ...props }) {
                         );
                       }}
                     />{" "}
-                    -
+                    <div
+                      style={{
+                        marginTop: "auto",
+                        marginBottom: "auto",
+                        padding: "5px",
+                      }}
+                    >
+                      -
+                    </div>
                     <Form.Control
                       as="input"
-                      style={{ width: "100px" }}
+                      style={{ width: "30%" }}
                       value={getEditedBusinessHours().Friday[1]}
+                      placeholder="HH:MM:SS"
                       onChange={(event) => {
                         changeBusinessHours(
                           "Friday",
@@ -1664,12 +1761,21 @@ function EditMeal({ history, ...props }) {
                       }}
                     />
                   </Row>
-                  <Row style={{ margin: "0px" }}>
-                    <div style={{ width: "100px" }}>Saturday</div>
+                  <Row style={{ margin: "0px", padding: "5px 0px 5px 0px" }}>
+                    <div
+                      style={{
+                        width: "100px",
+                        marginTop: "auto",
+                        marginBottom: "auto",
+                      }}
+                    >
+                      Saturday
+                    </div>
                     <Form.Control
                       as="input"
-                      style={{ width: "100px" }}
+                      style={{ width: "30%" }}
                       value={getEditedBusinessHours().Saturday[0]}
+                      placeholder="HH:MM:SS"
                       onChange={(event) => {
                         changeBusinessHours(
                           "Saturday",
@@ -1678,11 +1784,20 @@ function EditMeal({ history, ...props }) {
                         );
                       }}
                     />{" "}
-                    -
+                    <div
+                      style={{
+                        marginTop: "auto",
+                        marginBottom: "auto",
+                        padding: "5px",
+                      }}
+                    >
+                      -
+                    </div>
                     <Form.Control
                       as="input"
-                      style={{ width: "100px" }}
+                      style={{ width: "30%" }}
                       value={getEditedBusinessHours().Saturday[1]}
+                      placeholder="HH:MM:SS"
                       onChange={(event) => {
                         changeBusinessHours(
                           "Saturday",
@@ -1692,12 +1807,21 @@ function EditMeal({ history, ...props }) {
                       }}
                     />
                   </Row>
-                  <Row style={{ margin: "0px" }}>
-                    <div style={{ width: "100px" }}>Sunday</div>{" "}
+                  <Row style={{ margin: "0px", padding: "5px 0px 5px 0px" }}>
+                    <div
+                      style={{
+                        width: "100px",
+                        marginTop: "auto",
+                        marginBottom: "auto",
+                      }}
+                    >
+                      Sunday
+                    </div>{" "}
                     <Form.Control
                       as="input"
-                      style={{ width: "100px" }}
+                      style={{ width: "30%" }}
                       value={getEditedBusinessHours().Sunday[0]}
+                      placeholder="HH:MM:SS"
                       onChange={(event) => {
                         changeBusinessHours(
                           "Sunday",
@@ -1706,11 +1830,20 @@ function EditMeal({ history, ...props }) {
                         );
                       }}
                     />{" "}
-                    -
+                    <div
+                      style={{
+                        marginTop: "auto",
+                        marginBottom: "auto",
+                        padding: "5px",
+                      }}
+                    >
+                      -
+                    </div>
                     <Form.Control
                       as="input"
-                      style={{ width: "100px" }}
+                      style={{ width: "30%" }}
                       value={getEditedBusinessHours().Sunday[1]}
+                      placeholder="HH:MM:SS"
                       onChange={(event) => {
                         changeBusinessHours(
                           "Sunday",
@@ -1722,7 +1855,13 @@ function EditMeal({ history, ...props }) {
                   </Row>
                 </Form.Group>
 
-                <Form.Group>
+                <Form.Group
+                  style={{
+                    width: "90%",
+                    marginLeft: "auto",
+                    marginRight: "auto",
+                  }}
+                >
                   <Row style={{ padding: "5px 0px 5px 0px" }}>
                     <FacebookIcon style={{ fill: "#F26522", margin: "5px" }} />
                     <Form.Control
@@ -1780,7 +1919,7 @@ function EditMeal({ history, ...props }) {
                 </Form.Group>
               </div>
             </div>
-            <div style={{ textAlign: "center" }}>
+            <div style={{ textAlign: "center", paddingBottom: "10px" }}>
               <Button
                 variant="primary"
                 style={{
@@ -2836,8 +2975,6 @@ function EditMeal({ history, ...props }) {
                 variant="primary"
                 onClick={() => {
                   if (verifyModalData()) handleSaveMeal();
-
-                  forceUpdate();
                 }}
                 style={{
                   backgroundColor: "#F26522",
