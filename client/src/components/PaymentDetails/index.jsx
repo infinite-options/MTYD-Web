@@ -871,21 +871,21 @@ class PaymentDetails extends React.Component {
                 loadingMap: false,
               });
 
-              console.log("Calling categorical options...");
+              // console.log("Calling categorical options...");
               axios
                 .get(
                   `${API_URL}categoricalOptions/${coords.longitude},${coords.latitude}`
                 )
                 .then((response) => {
-                  console.log("Categorical Options response: ", response);
+                  // console.log("Categorical Options response: ", response);
 
                   if (response.data.result.length !== 0) {
-                    console.log("(VA) valid zone!");
+                    // console.log("(VA) valid zone!");
 
-                    console.log(
-                      "cat options for: ",
-                      document.getElementById("pac-input").value.split(", ")[0]
-                    );
+                    // console.log(
+                    //   "cat options for: ",
+                    //   document.getElementById("pac-input").value.split(", ")[0]
+                    // );
                     this.setState(
                       (prevState) => ({
                         recalculatingPrice: true,
@@ -909,12 +909,12 @@ class PaymentDetails extends React.Component {
                       }),
                       () => {
                         this.setTotal();
-                        console.log("(VA) proceeding to payment...");
+                        // console.log("(VA) proceeding to payment...");
                         this.proceedToPayment();
                       }
                     );
                   } else {
-                    console.log("(VA) invalid zone!");
+                    // console.log("(VA) invalid zone!");
 
                     this.displayError(
                       ADDRESS_ERROR,
@@ -943,29 +943,29 @@ class PaymentDetails extends React.Component {
     }
 
     if (this.state.responseCode == "N") {
-      console.log("address not right");
+      // console.log("address not right");
       this.displayError(
         ADDRESS_ERROR,
         `
-        Something is not right. Please make sure that the address you entered is correct.
-      `
+          Something is not right. Please make sure that the address you entered is correct.
+        `
       );
     }
     if (this.state.responseCode == "D") {
-      console.log("apartment missing");
+      // console.log("apartment missing");
       this.displayError(
         ADDRESS_ERROR,
         `
-        Something is not right. It seems that your address requires an apartment number. Please make sure to input your apartment number.
-      `
+          Something is not right. It seems that your address requires an apartment number. Please make sure to input your apartment number.
+        `
       );
     }
 
-    console.log("(validateAddress) after FAC");
+    // console.log("(validateAddress) after FAC");
   }
 
   proceedToPayment() {
-    console.log("in proceedToPayment...");
+    // console.log("in proceedToPayment...");
 
     // Save delivery details (address, contact info, etc.)
     this.saveDeliveryDetails();
@@ -975,7 +975,7 @@ class PaymentDetails extends React.Component {
     // Show payment info
     // If guest, create guest account
     if (this.state.customerUid === "GUEST") {
-      console.log("Before createGuestAccount");
+      // console.log("Before createGuestAccount");
       createGuestAccount(
         {
           email: this.state.email,
@@ -1043,16 +1043,16 @@ class PaymentDetails extends React.Component {
     // Fetch either test or live Stripe key
     if (this.state.instructions === "M4METEST") {
       // Fetch public key
-      console.log("(m4metest) fetching stripe key");
+      // console.log("(m4metest) fetching stripe key");
 
       axios
         .get(
           "https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/stripe_key/M4METEST"
         )
         .then((result) => {
-          console.log("(m4metest) key: ", result.data.publicKey);
+          // console.log("(m4metest) key: ", result.data.publicKey);
           let stripePromise = loadStripe(result.data.publicKey);
-          console.log("(m4metest) stripe promise: ", stripePromise);
+          // console.log("(m4metest) stripe promise: ", stripePromise);
           this.setState({
             stripeKey: result.data.publicKey,
             stripePromise: stripePromise,
@@ -1071,20 +1071,21 @@ class PaymentDetails extends React.Component {
             console.log(
               "(m4metest) stripe_key error: " + JSON.stringify(err.response)
             );
+            // console.log("stripe_key error")
           }
         });
     } else {
       // Fetch public key live
-      console.log("(live) fetching stripe key");
+      // console.log("(live) fetching stripe key");
 
       axios
         .get(
           "https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/stripe_key/LIVE"
         )
         .then((result) => {
-          console.log("(live) key: ", result.data.publicKey);
+          // console.log("(live) key: ", result.data.publicKey);
           let stripePromise = loadStripe(result.data.publicKey);
-          console.log("(live) stripe promise: ", stripePromise);
+          // console.log("(live) stripe promise: ", stripePromise);
           this.setState({
             stripeKey: result.data.publicKey,
             stripePromise: stripePromise,
@@ -1100,9 +1101,9 @@ class PaymentDetails extends React.Component {
         .catch((err) => {
           console.log(err);
           if (err.response) {
-            console.log(
-              "(live) stripe_key error: " + JSON.stringify(err.response)
-            );
+            // console.log(
+            //   "(live) stripe_key error: " + JSON.stringify(err.response)
+            // );
           }
         });
     }
@@ -1185,7 +1186,7 @@ class PaymentDetails extends React.Component {
                       <button
                         className={styles.errorBtn}
                         onClick={() => {
-                          console.log("go back clicked...");
+                          // console.log("go back clicked...");
                           this.displayError(CLOSED, "");
                         }}
                       >
@@ -1195,7 +1196,7 @@ class PaymentDetails extends React.Component {
                       <button
                         className={styles.errorBtn}
                         onClick={() => {
-                          console.log("login clicked...");
+                          // console.log("login clicked...");
                           this.displayError();
                           this.togglePopLogin(CLOSED, "");
                         }}
@@ -1320,7 +1321,8 @@ class PaymentDetails extends React.Component {
                       <button
                         className={styles.errorBtn}
                         onClick={() => {
-                          this.props.history.goBack();
+                          // this.props.history.goBack();
+                          this.props.history.push('/choose-plan');
                         }}
                       >
                         Choose a Plan
@@ -1510,7 +1512,7 @@ class PaymentDetails extends React.Component {
               autoComplete="chrome-off"
               onChange={(e) => {
                 this.setState({ street: e.target.value.split(", ")[0] });
-                console.log(this.state.street);
+                // console.log(this.state.street);
                 this.setState({
                   streetChanged: true,
                 });

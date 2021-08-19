@@ -649,7 +649,7 @@ function EditMeal({ history, ...props }) {
   };
 
   const getBusinessData = () => {
-    axios.get(`${API_URL}all_businesses_brandon`).then((response) => {
+    axios.get(`${API_URL}all_businesses`).then((response) => {
       const allBusinessData = response.data.result;
       if (allBusinessData.length > 0) {
         const activeBusinessData = {
@@ -818,7 +818,7 @@ function EditMeal({ history, ...props }) {
     };
 
     axios
-      .post(API_URL + "business_details_update_brandon/Post", businessData)
+      .post(API_URL + "business_details", businessData)
       .then((response) => {
         console.log(response.data);
       })
