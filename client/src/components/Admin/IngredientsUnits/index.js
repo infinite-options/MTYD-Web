@@ -1,12 +1,9 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { API_URL } from '../../../reducers/constants';
-import { descendingComparator } from '../../../reducers/helperFuncs';
 import { withRouter } from "react-router";
 import styles from "./ingredientsUnits.module.css";
 import AdminNavBar from '../AdminNavBar'
-import zIndex from '@material-ui/core/styles/zIndex';
-import trashIcon from '../../../images/trash_icon.png';
 import xButton from '../../../images/x_button.png';
 // import editIcon from '../../../images/edit_icon.png';
 

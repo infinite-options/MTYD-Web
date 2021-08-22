@@ -36,7 +36,6 @@ import {
   RESET_USER_INFO,
   SET_CURRENT_PURCHASE,
 } from '../actions/subscriptionTypes';
-import {LOAD_USER_INFO} from '../actions/loginTypes';
 
 import {API_URL, BING_LOCATION_API_URL} from '../constants';
 

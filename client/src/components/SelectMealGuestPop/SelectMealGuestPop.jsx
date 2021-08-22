@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import { Component } from 'react'
 import {withRouter} from 'react-router-dom';
 import negativeSign from '../../images/Group 504.png';
 import positiveSign from '../../images/Group 505.png';

@@ -12,8 +12,6 @@ import {
 } from "../../reducers/actions/loginActions";
 import { withRouter } from "react-router";
 import { Link } from "react-router-dom";
-import GoogleLogin from "react-google-login";
-import FacebookLogin from "react-facebook-login";
 import styles from "./login.module.css";
 import Alert from "../Alert";
 import SocialLogin from "../Landing/socialLogin";

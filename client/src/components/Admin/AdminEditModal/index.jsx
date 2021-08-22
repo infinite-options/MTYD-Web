@@ -14,14 +14,9 @@ import {API_URL} from "../../../reducers/constants";
 import {withRouter} from "react-router";
 import styles from "../../EditPlan/editPlan.module.css";
 import styles_admin from "./adminEditModal.module.css";
-import {WebNavBar} from "../../NavBar";
-import {FootLink} from "../../Home/homeButtons";
 
 import fetchDiscounts from '../../../utils/FetchDiscounts';
 import fetchAddressCoordinates from '../../../utils/FetchAddressCoordinates';
-
-import PopLogin from '../../PopLogin';
-import Popsignup from '../../PopSignup';
 
 import m4me_logo from '../../../images/LOGO_NoBG_MealsForMe.png';
 

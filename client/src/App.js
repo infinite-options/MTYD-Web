@@ -36,7 +36,6 @@ import AdminCreateMeal from './components/Admin/CreateMeal';
 import AdminEditMealRecipe from './components/Admin/EditMealRecipe';
 import AdminPlansCoupons from './components/Admin/PlansCoupons';
 import AdminOrderIngredients from './components/Admin/OrdersIngredients';
-import AdminCustomers from './components/Admin/Customers';
 import AdminGoogleAnalytics from './components/Admin/GoogleAnalytics';
 import AdminNotfications from './components/Admin/Notifications';
 import AdminZones from './components/Admin/Zones';

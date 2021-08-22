@@ -1,7 +1,7 @@
 import { useEffect, useReducer, useState } from "react";
 import axios from "axios";
 import { API_URL } from "../../../reducers/constants";
-import { Breadcrumb, Container, Row, Col, Form, Button } from "react-bootstrap";
+import { Row, Col, Form, Button } from "react-bootstrap";
 import {
   Table,
   TableHead,
@@ -13,8 +13,6 @@ import {
 import { withRouter } from "react-router";
 import AdminNavBar from "../AdminNavBar";
 import styles from "./editMeal.module.css";
-import { act } from "react-dom/test-utils";
-import testImage from "./static/test.jpeg";
 import { ReactComponent as ModalCloseBtn } from "./static/modalClose.svg";
 import { ReactComponent as GlobeIcon } from "./static/globe.svg";
 import { ReactComponent as FacebookIcon } from "./static/facebook.svg";
@@ -22,7 +20,6 @@ import { ReactComponent as InstagramIcon } from "./static/instagram.svg";
 import { ReactComponent as TwitterIcon } from "./static/twitter.svg";
 import { sortedArray } from "../../../reducers/helperFuncs";
 import ToggleSwitch from "./toggleSwitch.jsx";
-import { convertTypeAcquisitionFromJson } from "typescript";
 
 const initialState = {
   mounted: false,

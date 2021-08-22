@@ -1,9 +1,6 @@
 import { useEffect, useReducer } from 'react';
 import axios from 'axios';
 import { API_URL } from '../../../reducers/constants';
-import {
-  Breadcrumb,
-} from 'react-bootstrap';
 
 import { NotificationContext } from './notificationsContext';
 import NotificationOptions from './Options';

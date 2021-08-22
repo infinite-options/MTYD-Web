@@ -1,7 +1,5 @@
-import React, { Component } from 'react';
-// import {Link} from "react-router-dom";
+import { Component } from 'react';
 import {WebNavBar} from "../NavBar";
-// import Menu from "../Menu";
 import styles from "./about.module.css"
 import ponoHawaiian from "./PONOHAWAIIAN_LOGO.png"
 import PopLogin from '../PopLogin';

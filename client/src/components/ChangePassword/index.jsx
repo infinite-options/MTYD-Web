@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 import PropTypes from "prop-types";
 import {connect} from "react-redux";
 import {withRouter} from "react-router";
@@ -7,7 +7,6 @@ import {
   } from "../../reducers/actions/loginActions";
 import Alert from '../Alert'
 import styles from "./changePassword.module.css";
-import { ThemeConsumer } from 'react-bootstrap/esm/ThemeProvider';
 
 class ChangePassword extends Component {
     constructor() {

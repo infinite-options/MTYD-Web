@@ -1,11 +1,8 @@
-import React, { Component } from 'react'
-import PropTypes from 'prop-types'
+import { Component } from 'react'
 import {WebNavBar} from "../NavBar";
 import Cookies from "js-cookie";
 import axios from 'axios';
 import { API_URL } from '../../reducers/constants';
-import {Link} from "react-router-dom";
-import SocialLogin from "../Landing/socialLogin"
 import styles from "../Home/home.module.css"
 import PopLogin from '../PopLogin';
 import Popsignup from '../PopSignup';

@@ -1,4 +1,4 @@
-import React, {Component} from "react";
+import {Component} from "react";
 import MenuItem from "./menuItem";
 import axios from "axios";
 import Header from "./header";
@@ -20,7 +20,7 @@ import {UnloginSurprise} from "../SelectMealGuestPop/UnloginSurprise"
 import {UnloginSkip} from "../SelectMealGuestPop/UnloginSkip"
 
 import PopLogin from "../PopLogin";
-import Popsignup, { PopSignup } from '../PopSignup';
+import Popsignup from '../PopSignup';
 
 import {WebNavBar} from "../NavBar";
 // import orangePlate from "./static/orange_plate.png";

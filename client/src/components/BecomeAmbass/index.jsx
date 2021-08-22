@@ -1,10 +1,9 @@
-import React, { Component } from "react";
+import { Component } from "react";
 import axios from "axios";
 import { API_URL } from "../../reducers/constants";
 import Cookies from "js-cookie";
 import PopLogin from "../PopLogin";
 import Popsignup from "../PopSignup";
-import style from "./becomeAmbass.css";
 import { ReactComponent as CloseBtn } from "./static/closeBtn.svg";
 
 export class BecomeAmbass extends Component {

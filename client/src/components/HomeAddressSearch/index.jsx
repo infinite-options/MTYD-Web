@@ -1,10 +1,7 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
+import { Component } from "react";
 import axios from "axios";
 import Popsignup from "../PopSignup";
-import { Redirect, withRouter } from "react-router-dom";
-import close from "../../images/closeIcon.png";
-import { OutlinedInput } from "@material-ui/core";
+import { withRouter } from "react-router-dom";
 
 const google = window.google;
 

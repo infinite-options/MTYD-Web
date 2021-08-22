@@ -1,5 +1,5 @@
 import React from "react";
-import {WebNavBar, BottomNavBar} from "../NavBar";
+import {WebNavBar} from "../NavBar";
 
 class Congratulations extends React.Component {
   render(){
