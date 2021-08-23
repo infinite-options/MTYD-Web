@@ -15,6 +15,7 @@ import PopLogin from '../PopLogin';
 import Popsignup from '../PopSignup';
 import loginButton from '../../images/Group 479.png';
 import signupButton from '../../images/Group 480.png';
+import continueExploring from '../../images/Group 575.png'
 import heartImage from '../../images/Icon ionic-ios-heart.png'
 import continueWithApple from '../../images/Group 539.png'
 import continueWithFacebook from '../../images/Group 537.png'

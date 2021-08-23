@@ -566,7 +566,7 @@
 }
 
 #mealPlanPicker {
-  background-image: url("../Menu/static/lunch.svg");
+  background-image: url("../../images/lunch.svg");
   background-origin: content-box;
   background-position: left;
   background-repeat: no-repeat;
@@ -575,7 +575,7 @@
 }
 
 #date {
-  background-image: url("../Menu/static/Calendar.svg");
+  background-image: url("../../images/Calendar.svg");
   background-origin: content-box;
   background-position: left;
   background-repeat: no-repeat;

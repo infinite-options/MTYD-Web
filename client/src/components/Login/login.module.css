@@ -134,7 +134,7 @@
 }
 
 .googleBtn::before {
-  content: url(./google-plus.svg);
+  content: url(../../images/google-plus.svg);
 }
 
 .appleLogin {

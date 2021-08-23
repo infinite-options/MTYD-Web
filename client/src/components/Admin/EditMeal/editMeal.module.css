@@ -68,7 +68,7 @@ button:focus {
 }
 
 .deleteIcon {
-  background-image: url("static/Icon\ material-delete.svg");
+  background-image: url("../../../images/Icon\ material-delete.svg");
   background-size: 100%;
   width: 18px;
   height: 18px;
@@ -78,7 +78,7 @@ button:focus {
 }
 
 .editIcon {
-  background-image: url("static/Icon\ material-edit.svg");
+  background-image: url("../../../images/Icon\ material-edit.svg");
   background-size: 100%;
   width: 18px;
   height: 18px;
@@ -88,7 +88,7 @@ button:focus {
 }
 
 .editIconSmall {
-  background-image: url("static/Icon\ material-edit.svg");
+  background-image: url("../../../images/Icon\ material-edit.svg");
   background-size: 100%;
   width: 16px;
   height: 16px;

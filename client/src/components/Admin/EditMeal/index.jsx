@@ -16,8 +16,8 @@ import styles from "./editMeal.module.css";
 import { ReactComponent as ModalCloseBtn } from "../../../images/modalClose.svg";
 import { ReactComponent as GlobeIcon } from "../../../images/globe.svg";
 import { ReactComponent as FacebookIcon } from "../../../images/facebook.svg";
-import { ReactComponent as InstagramIcon } from "../../../instagram.svg";
-import { ReactComponent as TwitterIcon } from "../../../twitter.svg";
+import { ReactComponent as InstagramIcon } from "../../../images/instagram.svg";
+import { ReactComponent as TwitterIcon } from "../../../images/twitter.svg";
 import { sortedArray } from "../../../reducers/helperFuncs";
 import ToggleSwitch from "./toggleSwitch.jsx";
 

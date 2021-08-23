@@ -15,7 +15,7 @@ import MealPlan from "./components/MealPlan";
 import PaymentDetails from "./components/PaymentDetails";
 import Profile from "./components/Profile";
 import SelectMeal from "./components/SelectMeal";
-import Congratulations from "./components/Congratulations";
+// import Congratulations from "./components/Congratulations";
 import About from "./components/About";
 import NotFound from "./components/NotFound";
 import Home from "./components/Home";
@@ -98,11 +98,11 @@ function App() {
             />
             <AppliedRoute exact path="/profile" component={Profile} />
             <AppliedRoute exact path="/select-meal" component={SelectMeal} />
-            <AppliedRoute
+            {/* <AppliedRoute
               exact
               path="/congratulations"
               component={Congratulations}
-            />
+            /> */}
             <AppliedRoute exact path="/login" component={Login} />
             <AppliedRoute
               exact
