@@ -135,17 +135,17 @@ class PaymentDetails extends React.Component {
   };
 
   updateMap = () => {
-    console.log([
-      this.state.street,
-      this.state.city,
-      this.state.state,
-      this.state.addressZip,
-    ]);
+    // console.log([
+    //   this.state.street,
+    //   this.state.city,
+    //   this.state.state,
+    //   this.state.addressZip,
+    // ]);
     if (this.state.streetChanged == false) {
       return;
     }
     if (this.state.streetChanged == true) {
-      console.log("calling fetchAddressCoordinates...");
+      // console.log("calling fetchAddressCoordinates...");
 
       fetchAddressCoordinates(
         //(address, city, state, zip, _callback) {å
@@ -158,7 +158,7 @@ class PaymentDetails extends React.Component {
         document.getElementById("state").value,
         document.getElementById("postcode").value,
         (coords) => {
-          console.log("(mount) Fetched coordinates: " + JSON.stringify(coords));
+          // console.log("(mount) Fetched coordinates: " + JSON.stringify(coords));
 
           this.setState({
             latitude: coords.latitude,
@@ -171,9 +171,9 @@ class PaymentDetails extends React.Component {
             lng: parseFloat(coords.longitude),
           };
 
-          console.log(temp_position);
-          console.log(this.state.streetChanged);
-          console.log(this.state.autoCompleteClicked);
+          // console.log(temp_position);
+          // console.log(this.state.streetChanged);
+          // console.log(this.state.autoCompleteClicked);
 
           map.setCenter(temp_position);
 
@@ -218,7 +218,7 @@ class PaymentDetails extends React.Component {
       });
     }
     if (this.state.autoCompleteClicked == true) {
-      console.log("reseting click boolean");
+      // console.log("reseting click boolean");
       this.setState({
         autoCompleteClicked: false,
       });
@@ -232,9 +232,9 @@ class PaymentDetails extends React.Component {
       state: this.props.state,
       city: this.props.city,
     });
-    console.log("(mount) props: ", this.props);
-    console.log("(mount) selectedPlan: ", this.props.selectedPlan);
-    console.log("(mount) email: ", this.props.email);
+    // console.log("(mount) props: ", this.props);
+    // console.log("(mount) selectedPlan: ", this.props.selectedPlan);
+    // console.log("(mount) email: ", this.props.email);
 
     this.handleResize();
     window.addEventListener("resize", this.handleResize);
@@ -244,7 +244,7 @@ class PaymentDetails extends React.Component {
     document.getElementById("pac-input").value = this.props.street;
     document.getElementById("postcode").value = this.props.zip;
 
-    console.log("calling fetchAddressCoordinates...");
+    // console.log("calling fetchAddressCoordinates...");
 
     fetchAddressCoordinates(
       //(address, city, state, zip, _callback) {å
@@ -257,7 +257,7 @@ class PaymentDetails extends React.Component {
       // this.state.state,
       // this.state.zip,
       (coords) => {
-        console.log("(mount) Fetched coordinates: " + JSON.stringify(coords));
+        // console.log("(mount) Fetched coordinates: " + JSON.stringify(coords));
 
         this.setState({
           latitude: coords.latitude,
@@ -270,7 +270,7 @@ class PaymentDetails extends React.Component {
           lng: parseFloat(coords.longitude),
         };
 
-        console.log(temp_position);
+        // console.log(temp_position);
 
         map.setCenter(temp_position);
 
@@ -338,7 +338,7 @@ class PaymentDetails extends React.Component {
 
       marker.setVisible(false);
       const place = autocomplete.getPlace();
-      console.log(place);
+      // console.log(place);
 
       if (!place.geometry || !place.geometry.location) {
         // User entered the name of a Place that was not suggested and
@@ -348,10 +348,10 @@ class PaymentDetails extends React.Component {
       }
 
       if (place.geometry.viewport) {
-        console.log("here");
+        // console.log("here");
         map.fitBounds(place.geometry.viewport);
       } else {
-        console.log("there");
+        // console.log("there");
         map.setCenter(place.geometry.location);
       }
 
@@ -421,8 +421,8 @@ class PaymentDetails extends React.Component {
         .find((item) => item.startsWith("customer_uid="))
         .split("=")[1];
 
-      console.log("(mount) customer uid: " + customerUid);
-      console.log("(mount) email: " + this.props.email);
+      // console.log("(mount) customer uid: " + customerUid);
+      // console.log("(mount) email: " + this.props.email);
 
       this.setState(
         (prevState) => ({
@@ -464,7 +464,7 @@ class PaymentDetails extends React.Component {
       );
     } else {
       // Reroute to log in page
-      console.log("Payment-details NOT LOGGED IN");
+      // console.log("Payment-details NOT LOGGED IN");
 
       this.setState(
         (prevState) => ({
@@ -510,16 +510,16 @@ class PaymentDetails extends React.Component {
       }),
       () => {
         this.setTotal();
-        console.log(
-          "changeTip new paymentSummary: ",
-          this.state.paymentSummary
-        );
+        // console.log(
+        //   "changeTip new paymentSummary: ",
+        //   this.state.paymentSummary
+        // );
       }
     );
   }
 
   saveDeliveryDetails() {
-    console.log("Saving delivery details...");
+    // console.log("Saving delivery details...");
 
     this.setState({
       fetchingFees: true,
@@ -540,9 +540,9 @@ class PaymentDetails extends React.Component {
         noti: "false",
       };
 
-      console.log(
-        "(saveDeliveryDetails) updateProfile object: " + JSON.stringify(object)
-      );
+      // console.log(
+      //   "(saveDeliveryDetails) updateProfile object: " + JSON.stringify(object)
+      // );
 
       axios
         .post(API_URL + "UpdateProfile", object)
@@ -557,7 +557,7 @@ class PaymentDetails extends React.Component {
         });
     }
 
-    console.log("(2) Saving delivery details");
+    // console.log("(2) Saving delivery details");
 
     this.props.changeDeliveryDetails({
       street: document.getElementById("pac-input").value.split(", ")[0],
@@ -570,7 +570,7 @@ class PaymentDetails extends React.Component {
   }
 
   savePaymentDetails() {
-    console.log("Saving payment details...");
+    // console.log("Saving payment details...");
     this.props.changePaymentDetails({
       name: this.state.name,
       number: this.state.number,
@@ -582,7 +582,7 @@ class PaymentDetails extends React.Component {
   }
 
   applyAmbassadorCode() {
-    console.log("amb code: ", this.state.ambassadorCode);
+    // console.log("amb code: ", this.state.ambassadorCode);
 
     this.setState(
       {
@@ -604,10 +604,10 @@ class PaymentDetails extends React.Component {
               IsGuest: "TRUE",
             })
             .then((res) => {
-              console.log("(GUEST) ambassador code response: ", res);
+              // console.log("(GUEST) ambassador code response: ", res);
 
               if (res.data.code !== 200) {
-                console.log("(GUEST) Invalid code");
+                // console.log("(GUEST) Invalid code");
 
                 this.displayError(AMBASSADOR_ERROR, res.data.message);
 
@@ -623,9 +623,9 @@ class PaymentDetails extends React.Component {
                   }
                 );
               } else {
-                console.log("(GUEST) Valid code");
+                // console.log("(GUEST) Valid code");
 
-                console.log("(GUEST) result: ", res.data);
+                // console.log("(GUEST) result: ", res.data);
 
                 this.setState(
                   (prevState) => ({
@@ -657,7 +657,7 @@ class PaymentDetails extends React.Component {
               console.log("(CUST) ambassador code response: ", res);
 
               if (res.data.code !== 200) {
-                console.log("(CUST) Invalid code");
+                // console.log("(CUST) Invalid code");
 
                 this.displayError(AMBASSADOR_ERROR, res.data.message);
 
@@ -673,9 +673,9 @@ class PaymentDetails extends React.Component {
                   }
                 );
               } else {
-                console.log("(CUST) Valid code");
+                // console.log("(CUST) Valid code");
 
-                console.log("(CUST) result: ", res.data);
+                // console.log("(CUST) result: ", res.data);
 
                 this.setState(
                   (prevState) => ({
@@ -716,13 +716,13 @@ class PaymentDetails extends React.Component {
       });
     }
 
-    console.log("\npop up error toggled to " + type + "\n\n");
+    // console.log("\npop up error toggled to " + type + "\n\n");
   };
 
   refreshStripe() {
-    console.log("refreshing stripe...");
+    // console.log("refreshing stripe...");
     let stripePromise = loadStripe(this.state.stripeKey);
-    console.log("(refreshStripe) stripe promise: ", stripePromise);
+    // console.log("(refreshStripe) stripe promise: ", stripePromise);
     this.setState({
       stripePromise: stripePromise,
       fetchingFees: false,
@@ -784,7 +784,7 @@ class PaymentDetails extends React.Component {
   isValidAddress() {
     let responseData = "";
 
-    console.log("street address test: ");
+    // console.log("street address test: ");
 
     console.log(document.getElementById("pac-input").value.split(", ")[0]);
 
@@ -801,7 +801,7 @@ class PaymentDetails extends React.Component {
       document.getElementById("postcode").value +
       "</Zip5><Zip4></Zip4></Address></AddressValidateRequest>";
 
-    console.log(uspsURL);
+    // console.log(uspsURL);
 
     axios.get(uspsURL).then((response) => {
       var parser = new DOMParser();
@@ -819,31 +819,31 @@ class PaymentDetails extends React.Component {
       this.validateAddress();
     });
 
-    console.log("in isValidAddress");
+    // console.log("in isValidAddress");
 
-    console.log("this.state.responseCode: " + this.state.responseCode);
+    // console.log("this.state.responseCode: " + this.state.responseCode);
   }
 
   validateAddress() {
-    console.log("(validateAddress) before FAC");
-    console.log([
-      document.getElementById("pac-input").value.split(", ")[0],
-      document.getElementById("locality").value,
-      document.getElementById("state").value,
-      document.getElementById("postcode").value,
-    ]);
+    // console.log("(validateAddress) before FAC");
+    // console.log([
+    //   document.getElementById("pac-input").value.split(", ")[0],
+    //   document.getElementById("locality").value,
+    //   document.getElementById("state").value,
+    //   document.getElementById("postcode").value,
+    // ]);
 
-    console.log("in validateAddress");
+    // console.log("in validateAddress");
 
-    console.log(
-      "this.state.responseCode before checks: " + this.state.responseCode
-    );
+    // console.log(
+    //   "this.state.responseCode before checks: " + this.state.responseCode
+    // );
 
     if (this.state.responseCode == "Y" || this.state.responseCode == "S") {
-      console.log("address is fine");
+      // console.log("address is fine");
 
       if (this.state.responseCode == "S") {
-        console.log("apartment not confirmed");
+        // console.log("apartment not confirmed");
         this.displayError(
           ADDRESS_ERROR,
           `
@@ -864,7 +864,7 @@ class PaymentDetails extends React.Component {
             document.getElementById("state").value,
             document.getElementById("postcode").value,
             (coords) => {
-              console.log("Fetched coordinates: " + JSON.stringify(coords));
+              // console.log("Fetched coordinates: " + JSON.stringify(coords));
               this.setState({
                 latitude: coords.latitude,
                 longitude: coords.longitude,

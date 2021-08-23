@@ -100,7 +100,7 @@ const useOptions = () => {
 };
 
 const StripeCheckout = (props) => {
-  console.log("StripeCheckout props: ", props);
+  // console.log("StripeCheckout props: ", props);
 
   const elements = useElements();
   const stripe = useStripe();
@@ -122,7 +122,7 @@ const StripeCheckout = (props) => {
 
   // Change state of new credit card checkbox (not currently used)
   const handleCheck = (cb) => {
-    console.log("clicked checkbox: ", cb);
+    // console.log("clicked checkbox: ", cb);
     checkTerms(!termsAccepted);
   }
 
@@ -130,8 +130,8 @@ const StripeCheckout = (props) => {
 
     changeLoadingState(true);
 
-    console.log("=== pay()");
-    console.log("cardholderName from state: " + cardholderName);
+    // console.log("=== pay()");
+    // console.log("cardholderName from state: " + cardholderName);
     var data = {
       billing_details: {}
     };
@@ -155,7 +155,7 @@ const StripeCheckout = (props) => {
     orderData.delivery_discount = props.selectedPlan.delivery_discount;
     orderData.payment_summary = props.paymentSummary;
 
-    console.log("==> payment_summary: ", props.paymentSummary);
+    // console.log("==> payment_summary: ", props.paymentSummary);
 
     // Possibly solve ambassador change/cancel problem?
     orderData.payment_summary.subtotal = props.paymentSummary.mealSubPrice;
@@ -164,15 +164,15 @@ const StripeCheckout = (props) => {
 
     var clientSecret;
 
-    console.log("===> orderData: ", JSON.stringify(orderData));
+    // console.log("===> orderData: ", JSON.stringify(orderData));
 
     await axios.post("https://huo8rhh76i.execute-api.us-west-1.amazonaws.com/dev/api/v2/createPaymentIntent", orderData)
     .then(function(result) {
-      console.log("createPaymentIntent result: " + JSON.stringify(result));
-      console.log("clientSecret from createPaymentIntent: " + result.data);
+      // console.log("createPaymentIntent result: " + JSON.stringify(result));
+      // console.log("clientSecret from createPaymentIntent: " + result.data);
       clientSecret = result.data;
 
-      console.log("calling createPaymentMethod...");
+      // console.log("calling createPaymentMethod...");
 
       const paymentMethod = stripe.createPaymentMethod({
         type: 'card',
@@ -181,7 +181,7 @@ const StripeCheckout = (props) => {
       })
       .then(function(res) {
 
-        console.log("createPaymentMethod res: ", res);
+        // console.log("createPaymentMethod res: ", res);
 
         if(res.hasOwnProperty('error')){
           console.log("createPaymentMethod error: ", res.error);
@@ -194,7 +194,7 @@ const StripeCheckout = (props) => {
 
         } else {
 
-          console.log("calling confirmedCardPayment...");
+          // console.log("calling confirmedCardPayment...");
 
           try{
             
@@ -203,10 +203,10 @@ const StripeCheckout = (props) => {
               // payment_method: 'testid', setup_future_usage: 'off_session'
             })
             .then(function(result) {
-              console.log("confirmedCardPayment result: ", result);
+              // console.log("confirmedCardPayment result: ", result);
 
               if(res.hasOwnProperty('error')){
-                console.log("confirmedCardPayment error: ", res.error);
+                // console.log("confirmedCardPayment error: ", res.error);
       
                 props.displayError(
                   CHECKOUT_ERROR, ('CHECKOUT ERROR: ' + res.error.message)
@@ -216,7 +216,7 @@ const StripeCheckout = (props) => {
 
               } else {
 
-                console.log("retrieving info for id: ", result.paymentIntent.id);
+                // console.log("retrieving info for id: ", result.paymentIntent.id);
 
                 // console.log("stripe: ", stripe);
                 // console.log("stripe.charges: ", stripe.charges);
@@ -236,12 +236,12 @@ const StripeCheckout = (props) => {
                   itm_business_uid: props.selectedPlan.itm_business_uid
                 }];
 
-                console.log("customerUid before checkout: ", props.customerUid);
+                // console.log("customerUid before checkout: ", props.customerUid);
 
                 // if(props.customerUid !== 'GUEST') {
-                console.log("STRIPE CHECKOUT (1) -- not a guest");
-                console.log("STRIPE CHECKOUT (1) -- amount_due: " + props.paymentSummary.total);
-                console.log("(StripeCheckout) ambassador_code for checkout: ", props.ambassadorCode);
+                // console.log("STRIPE CHECKOUT (1) -- not a guest");
+                // console.log("STRIPE CHECKOUT (1) -- amount_due: " + props.paymentSummary.total);
+                // console.log("(StripeCheckout) ambassador_code for checkout: ", props.ambassadorCode);
         
                 checkoutItems(
                   {
@@ -282,7 +282,7 @@ const StripeCheckout = (props) => {
                   },
                   (res, checkout_success) => {
 
-                    console.log("(SC) checkout items response: ", res);
+                    // console.log("(SC) checkout items response: ", res);
 
                     if(!checkout_success) {
                       props.displayError(
@@ -307,7 +307,7 @@ const StripeCheckout = (props) => {
 
             })
             .catch(err => {
-              console.log("confirmedCardPayment error: ", err);
+              // console.log("confirmedCardPayment error: ", err);
 
               props.displayError(
                 CHECKOUT_ERROR, ('CHECKOUT ERROR: ' + err)

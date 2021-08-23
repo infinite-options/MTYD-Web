@@ -1,5 +1,4 @@
-import React, { useRef, useState, useContext, useEffect } from 'react';
-import axios from 'axios';
+import { useState, useEffect } from 'react';
 //import Cookies from 'universal-cookie';
 import { PayPalButton } from 'react-paypal-button-v2';
 import { useHistory } from "react-router";

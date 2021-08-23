@@ -13,12 +13,10 @@
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
     "axios": "^0.21.1",
-    "google-map-react": "^2.1.10",
     "js-cookie": "^2.2.1",
     "moment": "^2.29.1",
     "prop-types": "^15.7.2",
     "react": "^17.0.1",
-    "react-apple-login": "^1.0.14",
     "react-bootstrap": "^1.4.0",
     "react-burger-menu": "^2.8.0",
     "react-card-flip": "^1.1.1",
@@ -26,7 +24,6 @@
     "react-facebook-login": "^4.1.1",
     "react-google-login": "^5.1.21",
     "react-google-maps": "^9.4.5",
-    "react-google-places-autocomplete": "^3.3.0",
     "react-moment": "^1.1.1",
     "react-multi-carousel": "^2.6.2",
     "react-paypal-button-v2": "^2.6.3",
@@ -37,8 +34,7 @@
     "redux-thunk": "^2.3.0",
     "stripe": "^8.135.0",
     "typescript": "^4.2.4",
-    "universal-cookie": "^4.0.4",
-    "usps-webtools": "^1.0.5"
+    "universal-cookie": "^4.0.4"
   },
   "scripts": {
     "start": "react-scripts start",

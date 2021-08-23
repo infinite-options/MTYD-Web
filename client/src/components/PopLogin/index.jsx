@@ -1,25 +1,20 @@
-import React, { Component, useState } from 'react'
-import PropTypes from 'prop-types'
+import { Component } from 'react'
 import styles from "./popLogin.css"
 import SocialLogin from "../Landing/socialLogin"
 import {
   loginAttempt,
   changeEmail,
   changePassword,
-  errMessage,
   getErrMessage,
   socialLoginAttempt
 } from "../../reducers/actions/loginActions";
 
-import { Route , withRouter} from 'react-router-dom';
-import closeIcon from '../../images/closeIcon.png'
+import { withRouter} from 'react-router-dom';
 import GoogleLogin from "react-google-login";
 import FacebookLogin from "react-facebook-login";
 
 
 import {connect} from "react-redux";
-import { Grid, Paper, Button, Typography, Box } from '@material-ui/core';
-import { text } from '@fortawesome/fontawesome-svg-core';
 
 import socialG from "../../images/socialGoogle.png"
 import socialF from "../../images/socialFb.png"
