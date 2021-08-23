@@ -4,7 +4,7 @@ import { API_URL } from "../../reducers/constants";
 import Cookies from "js-cookie";
 import PopLogin from "../PopLogin";
 import Popsignup from "../PopSignup";
-import { ReactComponent as CloseBtn } from "./static/closeBtn.svg";
+import { ReactComponent as CloseBtn } from "../../images/closeBtn.svg";
 
 export class BecomeAmbass extends Component {
   constructor(props) {

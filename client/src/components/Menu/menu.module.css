@@ -202,7 +202,7 @@ select {
 }
 
 .whiteArrowDown {
-  background-image: url('./static/white_arrow_down.png');
+  background-image: url('../../images/white_arrow_down.png');
   background-size: 100%;
   width: 24px;
   height: 16px;

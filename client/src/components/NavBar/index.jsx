@@ -1,8 +1,8 @@
 import React from "react";
-import Subscribe from "../NavBar/subscribe.png";
-import Select from "../NavBar/select.png";
-import Profile from "../NavBar/profile.png";
-import More from "../NavBar/more.png";
+import Subscribe from "../../images/subscribe.png";
+import Select from "../../images/selected.png";
+import Profile from "../../images/profile.png";
+import More from "../../images/more.png";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";

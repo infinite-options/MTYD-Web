@@ -107,7 +107,7 @@
   width: 50px;
   height: 50px;
   border-style: none;
-  background: url("../ChoosePlan/Group 2016.svg");
+  background: url("../../images/Group 2016.svg");
   background-size: 50px;
   background-repeat: no-repeat;
 }
@@ -309,27 +309,7 @@
   border-top: 20px solid white;
 }
 
-/* .orangeArrow {
-  color: #ffffff;
-  border: 1px solid #e4e4e4;
-  background-color: #ffffff;
-  border-radius: 50%;
-  padding: 0.75rem 0.75rem;
-  margin-top: 15px;
-  align-content: center;
-  flex: 1;
-  min-width: 20%;
-  font-size: 30px;
-  font-weight: 600;
-  outline: 0;
-  width: 100%;
-  height: 100%;
-  background-image: url('./static/yellow_plate.png');
-  background-size: 100%;
-} */
-
 .orangeArrowUp {
-  /* background-image: url('./static/orange_arrow_up.png'); */
   background-image: url('../../images/orange_arrow_up.png');
   background-size: 100%;
   width: 12px;
@@ -337,7 +317,6 @@
 }
 
 .orangeArrowDown {
-  /* background-image: url('./static/orange_arrow_down.png'); */
   background-image: url('../../images/orange_arrow_down.png');
   background-size: 100%;
   width: 12px;
@@ -345,7 +324,6 @@
 }
 
 .whiteArrowDown {
-  /* background-image: url('./static/white_arrow_down.png'); */
   background-image: url('../../images/white_arrow_down.png');
   background-size: 100%;
   width: 24px;

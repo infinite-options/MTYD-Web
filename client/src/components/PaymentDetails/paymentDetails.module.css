@@ -933,19 +933,6 @@ select {
   text-align: center;
 }
 
-/* .chargeCancelButton{
-  background-image: url('./static/x_button.png');
-  z-index: 2; 
-  float: right;
-  position: absolute; 
-  top: 0px;
-  left: 370px;
-  background-size: 100%;
-  width: 40px;
-  height: 40px;
-  margin-top: 20px;
-  cursor: pointer;
-} */
 .errorCancelButton{
   background-image: url('../../images/x_button.png');
   z-index: 2; 

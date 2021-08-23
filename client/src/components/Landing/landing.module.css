@@ -139,7 +139,7 @@ p:nth-of-type(2) {
   color: transparent;
 }
 .fbLoginCircle::before{
-  content: url(./facebook.svg);
+  content: url(../../images/facebook_circle.svg);
 }
 
 

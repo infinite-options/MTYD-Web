@@ -105,10 +105,10 @@ const NotificationMain = ({state, dispatch}) => {
   // Send message to selected
   const sendNotification = () => {
     // eslint-disable-next-line
-    console.log('Send notification to selected');
-    console.log(state.notificationType);
-    console.log(state.message);
-    console.log(state.customerSelected)
+    // console.log('Send notification to selected');
+    // console.log(state.notificationType);
+    // console.log(state.message);
+    // console.log(state.customerSelected)
 
     let uids = ""
     for (var i = 0; i < state.customerSelected.length; i++) {
@@ -119,7 +119,7 @@ const NotificationMain = ({state, dispatch}) => {
       }
     }
 
-    console.log(uids)
+    // console.log(uids)
 
     const bodyFormData = new FormData()
 
@@ -141,7 +141,7 @@ const NotificationMain = ({state, dispatch}) => {
         })
     } else if (state.notificationType == 'SMS') {
       // SMS endpoint goes here
-      console.log("SMS endpoint not implememnted")
+      // console.log("SMS endpoint not implememnted")
     }
 
     
@@ -151,8 +151,8 @@ const NotificationMain = ({state, dispatch}) => {
   // Send message to all
   const sendNotificationToAll = () => {
     // eslint-disable-next-line
-    console.log('Send notification to all');
-    console.log(state.customerList)
+    // console.log('Send notification to all');
+    // console.log(state.customerList)
 
     let uids = ""
     for (var i = 0; i < state.customerList.length; i++) {
@@ -163,7 +163,7 @@ const NotificationMain = ({state, dispatch}) => {
       }
     }
 
-    console.log(uids)
+    // console.log(uids)
 
     const bodyFormData = new FormData()
 

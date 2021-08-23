@@ -1,48 +1,22 @@
-/*
-*
-*/
-import React, { Component } from 'react';
-import {Link} from "react-router-dom";
+import { Component } from 'react';
 import {WebNavBar} from "../NavBar";
-import SignUp from "./signUp"
-import {HomeLink, FootLink, AmbassadorLink, AddressLink} from "./homeButtons"
-import Menu from "../Menu";
-import MenuCarousel from "./menuCarousel"
+import {HomeLink, FootLink} from "./homeButtons"
 import styles from "./home.module.css"
 import Logo from "../../images/LOGO_NoBG_MealsForMe.png";
-import exploreImg from "./images/explore.svg"
-import purchaseImg from "./images/purchase.svg"
-import chooseImg from "./images/choose.svg"
-import enjoyImg from "./images/enjoy.svg"
-import inchins from "./images/inchins.png"
-import ponoHawaiian from "./images/PONOHAWAIIAN_LOGO.png"
-import nityaAyurveda from "./images/Nitya_Ayurveda Clear_Logo.png"
-import facebookImg from "../../images/facebook.svg"
-import googleImg from "../../images/google-plus.svg"
-import Box from '@material-ui/core/Box';
-import { makeStyles } from '@material-ui/core/styles';
+import ponoHawaiian from "../../images/PONOHAWAIIAN_LOGO.png"
+import nityaAyurveda from "../../images/Nitya_Ayurveda Clear_Logo.png"
 import PopLogin from '../PopLogin';
-import Popsignup from '../PopSignup';
-import EnterZipCodeImg from "../../images/Group 161.png"
 import getStartedImg from "../../images/Group 133.png"
-import viewMealsImg from "../../images/Group 163.png"
-import appleImg from "../../images/Group 172.svg"
-import facebookImgSmall from "../../images/Group 173.svg"
-import googleImgSmall from "../../images/Group 174.svg"
 import goToImg from "../../images/Group 369.svg"
-import pathFromExploreToPickAPlan from "../../images/Path 17.svg"
-import pathFromSelectMealsToEnjoy from "../../images/Path 51.svg"
 import startServingNowImg from "../../images/Group 182.png"
-import pathFromPurchaseToChoose from "../../images/Path 50.svg"
-import howDoesImage from "../../images/howDoesImage.png"
-import howItWorksDiagram from "./images/howitworksdiagram.png"
-import mobileGraphic from "./images/mobilegraphic.png"
+import howItWorksDiagram from "../../images/howitworksdiagram.png"
+import mobileGraphic from "../../images/mobilegraphic.png"
 import axios from 'axios';
 import ProductDisplay from './ProductDisplay';
 import HomeMap from "../HomeAddressSearch";
 import SocialLogin from "../Landing/socialLogin"
-const google = window.google;
 
+const google = window.google;
 
 class Home extends Component {   
 

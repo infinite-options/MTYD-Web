@@ -1,13 +1,11 @@
 import React, { Fragment } from "react";
 import styles from "./selectmeal.module.css";
-import Tooltip from "@material-ui/core/Tooltip";
-import emptyHeart from "./images/emptyHeart.svg";
-import fullHeart from "./images/fullHeart.svg";
-import info from "./images/info.svg";
+import emptyHeart from "../../images/emptyHeart.svg";
+import fullHeart from "../../images/fullHeart.svg";
+import info from "../../images/info.svg";
 import { API_URL } from "../../reducers/constants";
 import axios from "axios";
 import ReactCardFlip from "react-card-flip";
-import { forEachTrailingCommentRange } from "typescript";
 
 class MenuItem extends React.Component {
   constructor(props) {

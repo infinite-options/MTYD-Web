@@ -346,17 +346,6 @@
   /* cursor: pointer; */
 }
 
-/* .errorModalPopUpShow {
-  height: 100%;
-  width: 100%;
-  z-index: 1;
-  left: 0;
-  top: 0;
-  overflow: auto;
-  position: fixed;
-  display: grid;
-  background-color: rgba(255, 255, 255, 0.5);
-} */
 .popupBackground {
   height: 100vh;
   width: 100vw;
@@ -439,15 +428,3 @@
   height: 50px;
   width: 200px;
 }
-/* .popupBtn:hover {
-  text-align: center;
-  color: #ffffff;
-  font-size: 16px;
-  border-radius: 10px;
-  border-width: 0;
-  min-width: 100px;
-  background-color: #ff6505;
-  width: 90%;
-  height: 50px;
-  width: 200px;
-} */

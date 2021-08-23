@@ -52,7 +52,7 @@ body {
   display: inline-block;
   appearance: none;
   cursor: pointer;
-  background: url("./static/dropdown.svg") no-repeat;
+  background: url("../../../images/dropdown.svg") no-repeat;
   background-position: right 5px top 50%;
 }
 

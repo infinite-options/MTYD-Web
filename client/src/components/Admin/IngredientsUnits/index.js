@@ -5,7 +5,6 @@ import { withRouter } from "react-router";
 import styles from "./ingredientsUnits.module.css";
 import AdminNavBar from '../AdminNavBar'
 import xButton from '../../../images/x_button.png';
-// import editIcon from '../../../images/edit_icon.png';
 
 import m4me_logo from '../../../images/LOGO_NoBG_MealsForMe.png';
 

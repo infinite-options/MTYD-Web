@@ -1,12 +1,5 @@
-import React, {useState} from "react";
+import {useState} from "react";
 import styles from "./menu.module.css";
-import takeaway from "./static/take-away.svg";
-import calendar from "./static/Calendar.svg";
-import group from "./static/Group 1682.svg";
-import lunch from "./static/lunch.svg";
-import {Link} from "react-router-dom";
-import whiteDown from "./static/white_arrow_down.png";
-import Cookies from "js-cookie";
 
 const getCircularReplacer = () => {
   const seen = new WeakSet();

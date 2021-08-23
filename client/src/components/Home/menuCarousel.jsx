@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import {API_URL} from "../../reducers/constants";
 import styles from "./home.module.css"
-import eye from "./images/eye.svg"
-
 
 class MenuCarousel extends Component {
     constructor(props) {

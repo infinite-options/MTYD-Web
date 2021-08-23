@@ -1,11 +1,9 @@
 /*Remove loginPopup and Signup popUp
   Become an ambassador for logged in user needs to be linked to the form.
 */
-import React, { Component } from 'react';
-import { ThemeConsumer } from 'react-bootstrap/esm/ThemeProvider';
+import { Component } from 'react';
 import styles from './home.module.css'
 import {Link} from "react-router-dom";
-import becomeAnAmbassadorImg from "../../images/Group 180.png"
 import facebookAndInstagramImg from "../../images/Group 68.svg"
 import closeIconImg from "../../images/Icon ionic-ios-close-circle.png"
 import LTBAA from "../../images/Group 450.png"
@@ -17,7 +15,6 @@ import PopLogin from '../PopLogin';
 import Popsignup from '../PopSignup';
 import loginButton from '../../images/Group 479.png';
 import signupButton from '../../images/Group 480.png';
-import continueExploring from '../../images/Group 575.png'
 import heartImage from '../../images/Icon ionic-ios-heart.png'
 import continueWithApple from '../../images/Group 539.png'
 import continueWithFacebook from '../../images/Group 537.png'

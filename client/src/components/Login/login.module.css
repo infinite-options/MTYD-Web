@@ -159,7 +159,7 @@
 }
 
 .fbLogin::before {
-  content: url(./facebook.svg);
+  content: url(../../images/facebook_circle.svg);
 }
 
 .loginSectionItem {

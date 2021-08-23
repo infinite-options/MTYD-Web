@@ -21,7 +21,6 @@ import NotFound from "./components/NotFound";
 import Home from "./components/Home";
 import EditPlan from "./components/EditPlan";
 import Terms from "./components/Terms";
-import UpdatePlan from "./components/UpdatePlan";
 import ForgotPassword from "./components/RecoverPassword";
 import "./App.css";
 
@@ -111,10 +110,6 @@ function App() {
               component={ForgotPassword}
             />
             <AppliedRoute exact path="/congrats" component={Congrats} />
-            {/*<AppliedRoute exact path='/edit-plan' component={EditPlan} />*/}
-            <AppliedRoute exact path="/update-plan" component={UpdatePlan} />
-
-            {/* <AppliedRoute exact path='/test' component={MapTest} /> */}
 
             <Route exact path="/admin">
               <AdminHome />

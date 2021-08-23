@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import {WebNavBar} from "../NavBar";
 import styles from "./about.module.css"
-import ponoHawaiian from "./PONOHAWAIIAN_LOGO.png"
+import ponoHawaiian from "../../images/PONOHAWAIIAN_LOGO.png"
 import PopLogin from '../PopLogin';
 import Popsignup from '../PopSignup';
 

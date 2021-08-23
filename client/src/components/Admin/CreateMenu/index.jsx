@@ -2,11 +2,11 @@ import { useEffect, useMemo, useReducer, useRef } from "react";
 import axios from "axios";
 import { API_URL } from "../../../reducers/constants";
 import { formatTime, sortedArray } from "../../../reducers/helperFuncs";
-import { ReactComponent as LeftArrow } from "./static/dateLeftArrow.svg";
-import { ReactComponent as RightArrow } from "./static/dateRightArrow.svg";
-import { ReactComponent as ModalCloseBtn } from "./static/modalClose.svg";
-import { ReactComponent as DeleteBtn } from "./static/delete.svg";
-import { ReactComponent as SaveBtn } from "./static/save.svg";
+import { ReactComponent as LeftArrow } from "../../../images/dateLeftArrow.svg";
+import { ReactComponent as RightArrow } from "../../../images/dateRightArrow.svg";
+import { ReactComponent as ModalCloseBtn } from "../../../images/modalClose.svg";
+import { ReactComponent as DeleteBtn } from "../../../images/delete.svg";
+import { ReactComponent as SaveBtn } from "../../../images/save.svg";
 import AdminNavBar from "../AdminNavBar";
 
 import { Form, Container, Row, Col, Modal } from "react-bootstrap";
@@ -623,7 +623,7 @@ function CreateMenu({ history, ...props }) {
         delivery_days: "[Sunday, Monday]",
         meal_price: "10",
       };
-      console.log(updatedMenuItem);
+      // console.log(updatedMenuItem);
       // Update previous item
       axios
         .put(`${API_URL}menu`, updatedMenuItem)
@@ -650,7 +650,7 @@ function CreateMenu({ history, ...props }) {
         delivery_days: "[Sunday, Monday]",
         meal_price: "10",
       };
-      console.log(newMenuItem);
+      // console.log(newMenuItem);
       axios
         .post(`${API_URL}menu`, newMenuItem)
         .then((response) => {
@@ -680,7 +680,7 @@ function CreateMenu({ history, ...props }) {
   // Delete menu item
   const deleteMenuItem = (menuItem) => {
     const menuId = menuItem.menu_uid;
-    console.log(menuId);
+    // console.log(menuId);
     const menuIndex = state.editedMenu.indexOf(menuItem);
     if (menuId) {
       // Delete from database

@@ -13,11 +13,11 @@ import {
 import { withRouter } from "react-router";
 import AdminNavBar from "../AdminNavBar";
 import styles from "./editMeal.module.css";
-import { ReactComponent as ModalCloseBtn } from "./static/modalClose.svg";
-import { ReactComponent as GlobeIcon } from "./static/globe.svg";
-import { ReactComponent as FacebookIcon } from "./static/facebook.svg";
-import { ReactComponent as InstagramIcon } from "./static/instagram.svg";
-import { ReactComponent as TwitterIcon } from "./static/twitter.svg";
+import { ReactComponent as ModalCloseBtn } from "../../../images/modalClose.svg";
+import { ReactComponent as GlobeIcon } from "../../../images/globe.svg";
+import { ReactComponent as FacebookIcon } from "../../../images/facebook.svg";
+import { ReactComponent as InstagramIcon } from "../../../instagram.svg";
+import { ReactComponent as TwitterIcon } from "../../../twitter.svg";
 import { sortedArray } from "../../../reducers/helperFuncs";
 import ToggleSwitch from "./toggleSwitch.jsx";
 

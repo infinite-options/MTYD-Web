@@ -1,11 +1,8 @@
-import { /*React,*/ Component } from "react";
-import axios from "axios";
-import { API_URL } from "../../reducers/constants";
-// import { Link } from "react-router-dom";
+import { Component } from "react";
 import forkClose from "../../images/forkClose.png";
 import styles from "../NavBar/navBar.module.css";
 import { Modal } from "react-bootstrap";
-import { ReactComponent as ModalCloseBtn } from "../Admin/CreateMenu/static/modalClose.svg";
+import { ReactComponent as ModalCloseBtn } from "../../images/modalClose.svg";
 
 export class MenuList extends Component {
   state = {

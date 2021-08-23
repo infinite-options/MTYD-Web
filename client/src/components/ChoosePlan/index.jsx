@@ -320,8 +320,6 @@ class ChoosePlan extends React.Component {
       }
     }
 
-    //console.log("final deliveryDaysString: " + deliveryDaysString);
-
     return deliveryDaysString;
   };
 
@@ -329,12 +327,8 @@ class ChoosePlan extends React.Component {
     let messageDays = [];
 
     for (const [dateKey, dateData] of Object.entries(this.state.deliveryDays)) {
-      //console.log("showDeliveryDates() key: " + dateKey + ", dateData: " + JSON.stringify(dateData));
-      //console.log("weekday integer: " + dateData["weekday(menu_date)"]);
 
       let dayInt = dateData["weekday(menu_date)"];
-
-      //console.log("weekday int: " + dayInt);
 
       let dayString = "";
 

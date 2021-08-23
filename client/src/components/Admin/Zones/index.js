@@ -24,8 +24,8 @@ import {
 import { withRouter } from "react-router";
 import AdminNavBar from "../AdminNavBar";
 import styles from "./zones.module.css";
-import switchOn from "./static/Switch Light.svg";
-import switchOff from "./static/Switch - Off.svg";
+import switchOn from "../../../images/Switch Light.svg";
+import switchOff from "../../../images/Switch - Off.svg";
 
 const google = window.google;
 

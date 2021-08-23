@@ -2,12 +2,10 @@ import React from "react";
 import PropTypes from "prop-types";
 import {connect} from "react-redux";
 
-import axios from "axios";
-import {API_URL} from "../../reducers/constants";
 import {withRouter} from "react-router";
 import styles from "./terms.module.css";
-import {WebNavBar, BottomNavBar} from "../NavBar";
-import {HomeLink, FootLink, AmbassadorLink, AddressLink} from "../Home/homeButtons";
+import {WebNavBar} from "../NavBar";
+import {FootLink} from "../Home/homeButtons";
 
 import PopLogin from '../PopLogin';
 import Popsignup from '../PopSignup';

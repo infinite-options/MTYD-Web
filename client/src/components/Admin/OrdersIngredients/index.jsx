@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useReducer, useRef } from "react";
+import { useEffect, useReducer, useRef } from "react";
 import axios from "axios";
 import { API_URL } from "../../../reducers/constants";
 import { formatTime, sortedArray } from "../../../reducers/helperFuncs";
@@ -17,8 +17,8 @@ import styles from "./ordersIngredients.module.css";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import AdminNavBar from "../AdminNavBar";
-import { ReactComponent as LeftArrow } from "./static/dateLeftArrow.svg";
-import { ReactComponent as RightArrow } from "./static/dateRightArrow.svg";
+import { ReactComponent as LeftArrow } from "../../../images/dateLeftArrow.svg";
+import { ReactComponent as RightArrow } from "../../../images/dateRightArrow.svg";
 
 const initialState = {
   mounted: false,

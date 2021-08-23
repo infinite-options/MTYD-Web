@@ -1,7 +1,7 @@
-import React, {Component} from "react";
+import {Component} from "react";
 import styles from "./selectmeal.module.css";
-import unselect from "./images/unselected.png"
-import select from "./images/selected.png"
+import unselect from "../../images/unselected.png"
+import select from "../../images/selection.png"
 
 class MealIndicator extends Component {
 

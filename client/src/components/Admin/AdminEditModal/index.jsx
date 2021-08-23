@@ -225,38 +225,13 @@ class AdminEditModal extends React.Component {
         errorLink: link,
         errorHeader: header
       });
-      console.log("\nerror pop up toggled to true");
     }else{
       this.setState({
         errorModal: styles.errorModalPopUpHide,
         showErrorModal: false,
-        // errorMessage: message,
-        // errorLinkText: linkText,
-        // errorLink: link,
-        // errorHeader: header
       });
-      console.log("\nerror pop up toggled to false");
     }
   }
-
-  // displayError = (type, message) => {
-
-  //   if(type === CLOSED) {
-  //     this.setState({
-  //       errorModal: styles.errorModalPopUpHide,
-  //       errorType: type,
-  //       errorMessage: ''
-  //     });
-  //   } else {
-  //     this.setState({
-  //       errorModal: styles.errorModalPopUpShow,
-  //       errorType: type,
-  //       errorMessage: message
-  //     });
-  //   }
-
-  //   console.log("\npop up error toggled to " + type + "\n\n");
-  // }
 
   // Confirm box for cancellations
   displayConfirmation = () => {
@@ -265,13 +240,11 @@ class AdminEditModal extends React.Component {
         showConfirmModal: true,
         confirmModal: styles.errorModalPopUpShow
       });
-      console.log("\nconfirm pop up toggled to true");
     } else {
       this.setState({
         showConfirmModal: false,
         confirmModal: styles.errorModalPopUpHide
       });
-      console.log("\nconfirm pop up toggled to false");
     }
   }
 

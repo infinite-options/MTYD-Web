@@ -1,8 +1,5 @@
 import { useEffect, useState } from "react";
-import { Nav, Navbar, NavDropdown } from "react-bootstrap";
 import whiteLogo from "../../../images/White_logo_for_web.png";
-import { connect } from "react-redux";
-import { withRouter } from "react-router-dom";
 import { useHistory } from "react-router";
 import styles from "./adminNavBar.module.css";
 import hamburger from "../../../images/hamburger.png";
@@ -71,19 +68,6 @@ function NavBar(props) {
 
   return (
     <>
-      {/* <div
-      style={{
-        border: '1px solid red',
-        backgroundColor: '#F8BB17',
-        display: 'flex',
-        // alignItems: 'center',
-        height: '80px',
-        position: 'relative',
-        zIndex: '100',
-        width: '100vw',
-        maxWidth: '100%'
-      }}
-    > */}
 
       {/* For debugging window size */}
       {/* <span 
@@ -102,25 +86,6 @@ function NavBar(props) {
 				<br />
 				Width: {dimensions.width}px
 			</span> */}
-
-      {/* <div
-        style={{
-          // border: 'solid',
-          width: '200px'
-        }}
-      >
-        <a 
-          href='/home' 
-          style={{
-            backgroundImage:`url(${whiteLogo})`,
-            backgroundSize:'cover',
-            marginTop: '10px',
-            marginLeft: '20px',
-            width: '140px',
-            height: '70px'
-          }}>
-        </a>
-      </div> */}
 
       {dimensions.width > 1000 ? (
         <div
@@ -335,13 +300,6 @@ function NavBar(props) {
             maxWidth: "100%",
           }}
         >
-          {/* <div
-          style={{
-            width: '100%',
-            display: 'flex',
-            justifyContent: 'center'
-          }}
-        > */}
           <div
             style={{
               position: "absolute",

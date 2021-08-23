@@ -144,13 +144,7 @@ function Notifications({history,...props}) {
     >
       <div style = {{backgroundColor:"#F26522"}}>
         <AdminNavBar currentPage={'notifications'}/>
-        {/* <Breadcrumb>
-          <Breadcrumb.Item href="/"> Admin Site </Breadcrumb.Item>
-          <Breadcrumb.Item active> Notifications </Breadcrumb.Item>
-        </Breadcrumb> */}
 
-       
-        
         <NotificationOptions
           
           state={state}

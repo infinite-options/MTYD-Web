@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import {useState, useEffect} from "react";
 import {Modal, Button} from "react-bootstrap";
 import {connect} from "react-redux";
 
@@ -14,11 +14,10 @@ import {
   setCurrentPurchase
 } from "../../../reducers/actions/subscriptionActions";
 
-import paymentOption1 from "../../ChoosePlan/Group 2029.svg";
-import paymentOption2 from "../../ChoosePlan/Group 2016.svg";
-import paymentOption3 from "../../ChoosePlan/Group 2030.svg";
+import paymentOption1 from "../../../images/Group 2029.svg";
+import paymentOption2 from "../../../images/Group 2016.svg";
+import paymentOption3 from "../../../images/Group 2030.svg";
 import axios from "axios";
-import {auto} from "@popperjs/core";
 
 const ChangeMealPlan = props => {
   const [show, setShow] = useState(false);
