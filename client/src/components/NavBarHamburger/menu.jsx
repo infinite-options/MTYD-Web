@@ -49,7 +49,7 @@ export class MenuList extends Component {
 
       this.setState({
         ...this.state,
-        mealPlans: this.props.hasMealPlans,
+        mealPlans: this.props.hasMealPlan,
       });
 
       if (this.props.login == true && this.props.isAdmin) {
@@ -265,6 +265,7 @@ export class MenuList extends Component {
             marginTop: "100px",
           }}
         >
+          {console.log(this.state)}
           <a
             href="/home"
             className={styles.hbButton}
@@ -284,13 +285,13 @@ export class MenuList extends Component {
           </a>
 
           <a
-            href={this.state.mealPlans ? "/meal-plan" : ""}
+            href={this.props.hasMealPlan ? "/meal-plan" : ""}
             className={styles.hbButton}
             aria-label="Click here to change your meal plan"
             title="Click here to change your meal plan"
             onClick={(e) => {
-              e.preventDefault();
-              if (!this.state.mealPlans) {
+              if (!this.props.hasMealPlan) {
+                e.preventDefault();
                 this.toggleMealPlanModal();
               }
             }}
@@ -308,13 +309,13 @@ export class MenuList extends Component {
           </a>
 
           <a
-            href={this.state.mealPlans ? "/subscription-history" : ""}
+            href={this.props.hasMealPlan ? "/subscription-history" : ""}
             className={styles.hbButton}
             aria-label="Click here to view your subscriptions"
             title="Click here to view your subscriptions"
             onClick={(e) => {
-              e.preventDefault();
-              if (!this.state.mealPlans) {
+              if (!this.props.hasMealPlan) {
+                e.preventDefault();
                 this.toggleMealPlanModal();
               }
             }}
