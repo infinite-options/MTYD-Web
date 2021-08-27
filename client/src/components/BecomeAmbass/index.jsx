@@ -143,7 +143,7 @@ export class BecomeAmbass extends Component {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          zIndex: "1100",
+          zIndex: "2000",
         }}
       >
         <div className={styles.poploginsignup}>

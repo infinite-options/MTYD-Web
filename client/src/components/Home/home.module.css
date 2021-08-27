@@ -874,3 +874,9 @@ button {
   top: 45px;
   right: 50px; */
 }
+
+.carouselSlider {
+  text-align: center;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}

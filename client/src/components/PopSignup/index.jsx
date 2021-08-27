@@ -1,6 +1,6 @@
-import React, { Component } from 'react'
-import styles from "./popSignup.css"
-import SocialLogin from "../Landing/socialLogin"
+import React, { Component } from "react";
+import styles from "./popSignup.css";
+import SocialLogin from "../Landing/socialLogin";
 import {
   changeNewEmail,
   changeNewPassword,
@@ -16,73 +16,67 @@ import {
   submitPasswordSignUp,
   loginAttempt,
 } from "../../reducers/actions/loginActions";
-import {connect} from "react-redux";
-import { Route , withRouter} from 'react-router-dom';
-import axios from 'axios';
+import { connect } from "react-redux";
+import { Route, withRouter } from "react-router-dom";
+import axios from "axios";
 
 const google = window.google;
 
 export class PopSignup extends Component {
-
-  constructor(props){
+  constructor(props) {
     super(props);
-    this.handlePlaceSelect = this.handlePlaceSelect.bind(this)
-    this.handleChange = this.handleChange.bind(this)
-    this.autocomplete = null
-    this.state = this.initialState()
+    this.handlePlaceSelect = this.handlePlaceSelect.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+    this.autocomplete = null;
+    this.state = this.initialState();
   }
 
   initialState() {
-
-    if(this.props.messageFromHooray){
-      return{
-        name: 'xxx',
+    if (this.props.messageFromHooray) {
+      return {
+        name: "xxx",
         street_address: this.props.streetAddressFromHooray,
         city: this.props.cityFromHooray,
         state: this.props.stateFromHooray,
         zip_code: this.props.zipCodeFromHooray,
-      }
+      };
     }
-    
+
     return {
-      name: '',
-      street_address: '',
-      city: '',
-      state: '',
-      zip_code: '',
-      lat:'',
-      lng:''
-    }
+      name: "",
+      street_address: "",
+      city: "",
+      state: "",
+      zip_code: "",
+      lat: "",
+      lng: "",
+    };
   }
 
-  componentDidMount(){
+  componentDidMount() {
+    this.autocomplete = new google.maps.places.Autocomplete(
+      document.getElementById("ship-address"),
+      {
+        componentRestrictions: { country: ["us", "ca"] },
+      }
+    );
+    this.autocomplete.addListener("place_changed", this.handlePlaceSelect);
 
-    this.autocomplete = new google.maps.places.Autocomplete(document.getElementById('ship-address'),{
-      componentRestrictions: { country: ["us", "ca"] },
-    })
-    this.autocomplete.addListener("place_changed", this.handlePlaceSelect)
-
-    console.log(this.state)
-
+    console.log(this.state);
   }
-
 
   handlePlaceSelect() {
-
-
     let address1Field = document.querySelector("#ship-address");
     let postalField = document.querySelector("#postcode");
 
-    let addressObject = this.autocomplete.getPlace()
+    let addressObject = this.autocomplete.getPlace();
     console.log(addressObject);
     console.log(addressObject.address_components);
 
     let address1 = "";
     let postcode = "";
-    let city = '';
-    let state = '';
-
-
+    let city = "";
+    let state = "";
 
     for (const component of addressObject.address_components) {
       const componentType = component.types[0];
@@ -91,12 +85,12 @@ export class PopSignup extends Component {
           address1 = `${component.long_name} ${address1}`;
           break;
         }
-  
+
         case "route": {
           address1 += component.short_name;
           break;
         }
-  
+
         case "postal_code": {
           postcode = `${component.long_name}${postcode}`;
           break;
@@ -106,10 +100,10 @@ export class PopSignup extends Component {
           document.querySelector("#locality").value = component.long_name;
           city = component.long_name;
           break;
-  
+
         case "administrative_area_level_1": {
           document.querySelector("#state").value = component.short_name;
-          state= component.short_name;
+          state = component.short_name;
           break;
         }
       }
@@ -127,20 +121,23 @@ export class PopSignup extends Component {
       city: city,
       state: state,
       zip_code: postcode,
-      lat:addressObject.geometry.location.lat(),
-      lng:addressObject.geometry.location.lng(),
-    })
+      lat: addressObject.geometry.location.lat(),
+      lng: addressObject.geometry.location.lng(),
+    });
 
-    console.log(this.state)
+    console.log(this.state);
 
-    axios.get(`https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/categoricalOptions/${this.state.lng},${this.state.lat}`)
-      .then(res=>{
-        console.log(res)
-        if(res.data.result.length==0){
-          alert('cannot deliver to this address')
-          console.log('cannot deliver to this address')
-        }else{
-          console.log('we can deliver to this address')
+    axios
+      .get(
+        `https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/categoricalOptions/${this.state.lng},${this.state.lat}`
+      )
+      .then((res) => {
+        console.log(res);
+        if (res.data.result.length == 0) {
+          alert("cannot deliver to this address");
+          console.log("cannot deliver to this address");
+        } else {
+          console.log("we can deliver to this address");
         }
       })
       .catch((err) => {
@@ -150,17 +147,13 @@ export class PopSignup extends Component {
         console.log(err);
       });
 
-
-
     // console.log(this.state)
   }
 
   handleChange(event) {
-
-      this.setState({[event.target.name]: event.target.value})
-      console.log(event.target.name)
-      console.log(event.target.value)
-    
+    this.setState({ [event.target.name]: event.target.value });
+    console.log(event.target.name);
+    console.log(event.target.value);
   }
 
   handleClick = () => {
@@ -168,36 +161,36 @@ export class PopSignup extends Component {
   };
 
   successLogin = () => {
-    console.log('inside success login')
+    console.log("inside success login");
     this.props.history.push(`/choose-plan`);
-  }; 
+  };
 
   sleep = (milliseconds) => {
-    console.log('inside sleep')
-    return new Promise(resolve => setTimeout(resolve, milliseconds))
-  }
+    console.log("inside sleep");
+    return new Promise((resolve) => setTimeout(resolve, milliseconds));
+  };
 
-  wrapperFunction=()=>{
-    console.log(this.state)
-    let nameCheck = false
-    let emailCheck = false
-    let passwordCheck = false
-    if(this.props.firstName == '' || this.props.lastName == ''){
-      alert('first name and last name is required')
+  wrapperFunction = () => {
+    console.log(this.state);
+    let nameCheck = false;
+    let emailCheck = false;
+    let passwordCheck = false;
+    if (this.props.firstName == "" || this.props.lastName == "") {
+      alert("first name and last name is required");
     } else {
-      nameCheck = true
+      nameCheck = true;
     }
-    if(this.props.email == ''){
-      alert('email is required')
+    if (this.props.email == "") {
+      alert("email is required");
     } else {
-      emailCheck = true
+      emailCheck = true;
     }
-    if(this.props.password != this.props.passwordConfirm) {
-      alert('passwords do not match')
+    if (this.props.password != this.props.passwordConfirm) {
+      alert("passwords do not match");
     } else {
-      passwordCheck = true
+      passwordCheck = true;
     }
-    if(nameCheck == true && emailCheck == true && passwordCheck == true){
+    if (nameCheck == true && emailCheck == true && passwordCheck == true) {
       this.props.submitPasswordSignUp(
         this.props.email,
         this.props.password,
@@ -209,43 +202,37 @@ export class PopSignup extends Component {
         this.props.unit,
         this.state.city,
         this.state.state,
-        this.state.zip_code,
+        this.state.zip_code
       );
-      let temppd= this.props.password
-      let tempem = this.props.email
+      let temppd = this.props.password;
+      let tempem = this.props.email;
 
-      console.log('finish signup function');
+      console.log("finish signup function");
 
-      this.sleep(1000).then(()=>{
-        this.props.loginAttempt(
-          tempem,
-          temppd,
-          this.successLogin
-        );
-        console.log('finish login function')
-      })
+      this.sleep(1000).then(() => {
+        this.props.loginAttempt(tempem, temppd, this.successLogin);
+        console.log("finish login function");
+      });
     }
-  }
-
-
-
-
+  };
 
   render() {
     return (
-      <div
-        className="model_content"
-      >
-        <button className="close" onClick={this.handleClick} aria-label="Click here to exit sign up menu"
-        title="Click here to exit sign up menu"/>
+      <div className="model_content">
+        <button
+          className="close"
+          onClick={this.handleClick}
+          aria-label="Click here to exit sign up menu"
+          title="Click here to exit sign up menu"
+        />
         <div
-        style={{
-          marginTop:'59px',
-          marginBottom:'33px',
-          fontSize: '26px',
-          fontWeight:'bold',
-          marginLeft:'230px'
-        }}
+          style={{
+            marginTop: "59px",
+            marginBottom: "33px",
+            fontSize: "26px",
+            fontWeight: "bold",
+            marginLeft: "230px",
+          }}
         >
           Sign up
         </div>
@@ -254,222 +241,218 @@ export class PopSignup extends Component {
           <SocialLogin />
         </div>
 
-        <div  
-        style={{
-          textAlign:'center',
-          height: '28px',
-          letterSpacing: '0.38px',
-          color: 'black',
-          fontSize:'26px',
-          opacity: 1,
-          marginTop:'28px',
-          marginBottom:'25px',
-          fontWeight:'bold'
-        }}>
+        <div
+          style={{
+            textAlign: "center",
+            height: "28px",
+            letterSpacing: "0.38px",
+            color: "black",
+            fontSize: "26px",
+            opacity: 1,
+            marginTop: "28px",
+            marginBottom: "25px",
+            fontWeight: "bold",
+          }}
+        >
           OR
         </div>
 
-        <div style={{
-          marginLeft:'61px',
-        }}>
-
-          <div
+        <div
           style={{
-            display:'flex'
-          }}>
+            marginLeft: "61px",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+            }}
+          >
             <input
               style={{
-                width:'208px',
-                marginRight:'12px'
-              }} 
-              className='inputBox'
-              placeholder='First name'
+                width: "208px",
+                marginRight: "12px",
+              }}
+              className="inputBox"
+              placeholder="First name"
               value={this.props.firstName}
-              onChange={e => {
+              onChange={(e) => {
                 this.props.changeNewFirstName(e.target.value);
               }}
               aria-label="Input first name"
               title="Input first name"
-            >
-            </input>
+            ></input>
 
-            <input 
+            <input
               style={{
-                width:'208px'
-              }} 
-            
-              className='inputBox'
-              placeholder='Last name'
+                width: "208px",
+              }}
+              className="inputBox"
+              placeholder="Last name"
               value={this.props.lastName}
-              onChange={e => {
+              onChange={(e) => {
                 this.props.changeNewLastName(e.target.value);
               }}
               aria-label="Input last name"
               title="Input last name"
-            >
-            </input>
+            ></input>
           </div>
 
-
-
-          <input 
-            className='inputBox'
-            placeholder='Email address (for order confirmation)'
+          <input
+            className="inputBox"
+            placeholder="Email address (for order confirmation)"
             value={this.props.email}
-            onChange={e => {
+            onChange={(e) => {
               this.props.changeNewEmail(e.target.value);
             }}
             aria-label="Input email address"
             title="Input email address"
-          >
-          </input>
+          ></input>
 
-          <input 
-            className='inputBox'
-            placeholder='Create Password'
-            type='password'
+          <input
+            className="inputBox"
+            placeholder="Create Password"
+            type="password"
             value={this.props.password}
-            onChange={e => {
+            onChange={(e) => {
               this.props.changeNewPassword(e.target.value);
             }}
             aria-label="Enter password you want to use"
             title="Enter password you want to use"
-          >
-          </input>
+          ></input>
 
-          <input 
-            className='inputBox'
-            placeholder='Confirm Password'
-            type='password'
+          <input
+            className="inputBox"
+            placeholder="Confirm Password"
+            type="password"
             value={this.props.passwordConfirm}
-            onChange={e => {
+            onChange={(e) => {
               this.props.changeNewPasswordConfirm(e.target.value);
             }}
             aria-label="Confirn your password"
             title="Confirn your password"
-            >
-          </input>
+          ></input>
 
-          <input 
-            className='inputBox'
-            placeholder='Phone Number'
+          <input
+            className="inputBox"
+            placeholder="Phone Number"
             value={this.props.phone}
-            onChange={e => {
+            onChange={(e) => {
               this.props.changeNewPhone(e.target.value);
             }}
             aria-label="Enter your phone number"
             title="Enter your phone number"
-            >
-          </input>
+          ></input>
 
-          <input 
-            className={this.state.street_address==''?'inputBox':'StreetinputBox'}
-
+          <input
+            className={
+              this.state.street_address == "" ? "inputBox" : "StreetinputBox"
+            }
             id="ship-address"
             name="ship-address"
-            onChange={e => {
+            onChange={(e) => {
               this.props.changeNewAddress(e.target.value);
             }}
-
-            placeholder={this.state.street_address==''? 'Street Address':this.state.street_address}
+            placeholder={
+              this.state.street_address == ""
+                ? "Street Address"
+                : this.state.street_address
+            }
             aria-label="Enter your street address"
             title="Enter your street address"
           />
 
-          <input 
+          <input
             style={{
-              width:'208px',
-              marginRight:'12px'
-            }} 
-            className='inputBox'
-            placeholder='Unit'
+              width: "208px",
+              marginRight: "12px",
+            }}
+            className="inputBox"
+            placeholder="Unit"
             value={this.props.unit}
-            onChange={e => {
+            onChange={(e) => {
               this.props.changeNewUnit(e.target.value);
             }}
             aria-label="Enter your unit number. optional"
             title="Enter your unit number. optional"
           />
 
-          <input             
+          <input
             style={{
-              width:'208px',
-              marginRight:'12px'
-            }} 
-            className='inputBox'
-            placeholder='City'
-            id="locality" name="locality"
-            value = {this.state.city}
+              width: "208px",
+              marginRight: "12px",
+            }}
+            className="inputBox"
+            placeholder="City"
+            id="locality"
+            name="locality"
+            value={this.state.city}
             aria-label="Enter your city"
             title="Enter your city"
-            onChange={e => {
+            onChange={(e) => {
               this.props.changeNewCity(e.target.value);
             }}
-            />
+          />
 
-
-
-          <input             
+          <input
             style={{
-              width:'208px',
-              marginRight:'12px'
-            }} 
-            className='inputBox'
-            placeholder='State'
-            id="state" name="state"
-            value = {this.state.state}
+              width: "208px",
+              marginRight: "12px",
+            }}
+            className="inputBox"
+            placeholder="State"
+            id="state"
+            name="state"
+            value={this.state.state}
             aria-label="Enter your state"
             title="Enter your state"
-            onChange={e => {
+            onChange={(e) => {
               this.props.changeNewState(e.target.value);
             }}
-            />
+          />
 
-
-          <input             
-              style={{
-                width:'208px',
-                marginRight:'12px'
-              }} 
-              className='inputBox'
-              placeholder='Zip'
-              id="postcode" name="postcode"
-              value = {this.state.zip_code}
-              aria-label="Enter your zip code"
-              title="Enter your zip code"
-              onChange={e => {
-                this.props.changeNewZip(e.target.value);
-              }}
-            />
+          <input
+            style={{
+              width: "208px",
+              marginRight: "12px",
+            }}
+            className="inputBox"
+            placeholder="Zip"
+            id="postcode"
+            name="postcode"
+            value={this.state.zip_code}
+            aria-label="Enter your zip code"
+            title="Enter your zip code"
+            onChange={(e) => {
+              this.props.changeNewZip(e.target.value);
+            }}
+          />
         </div>
-
-
-
 
         <button
           style={{
-            width: '452px',
-            height: '71px',
-            background:' #FF8500 0% 0% no-repeat padding-box',
-            borderRadius: '14px',
+            width: "452px",
+            height: "71px",
+            background: " #FF8500 0% 0% no-repeat padding-box",
+            borderRadius: "14px",
             opacity: 1,
-            marginLeft:'49px',
-            marginTop:'26px',
-            border:'none'
+            marginLeft: "49px",
+            marginTop: "26px",
+            border: "none",
           }}
           onClick={this.wrapperFunction}
         >
-          <p style={{
-            fontSize:'20px',
-            textAlign:'center',
-            marginTop:8,
-            fontWeight:500,
-          }}
-          aria-label="Click here to sign up"
-          title="Click here to sign up">
+          <p
+            style={{
+              fontSize: "20px",
+              textAlign: "center",
+              marginTop: 8,
+              fontWeight: 500,
+            }}
+            aria-label="Click here to sign up"
+            title="Click here to sign up"
+          >
             Sign up
           </p>
-          
         </button>
 
         {/* <GooglePlacesAutocomplete
@@ -477,16 +460,12 @@ export class PopSignup extends Component {
         /> */}
 
         {/* <input id="autocompletexx"/> */}
-
-
-
-
       </div>
-    )
+    );
   }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   email: state.login.newUserInfo.email,
   password: state.login.newUserInfo.password,
   passwordConfirm: state.login.newUserInfo.passwordConfirm,
@@ -497,7 +476,7 @@ const mapStateToProps = state => ({
   unit: state.login.newUserInfo.address.unit,
   city: state.login.newUserInfo.address.city,
   state: state.login.newUserInfo.address.state,
-  zip: state.login.newUserInfo.address.zip
+  zip: state.login.newUserInfo.address.zip,
 });
 
 const functionList = {

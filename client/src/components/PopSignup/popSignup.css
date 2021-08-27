@@ -6,7 +6,6 @@
   height: 1047px;
   background: white;
   border: 3px solid #ff8500;
-  opacity: 1;
   /* margin-top: 80px; */
   z-index: auto;
 }
@@ -19,7 +18,6 @@
   background: #ffffff;
   border: 2px solid #ff8500;
   border-radius: 10px;
-  opacity: 1;
   margin-bottom: 6px;
   outline: none;
 }
@@ -28,7 +26,6 @@
   color: Black;
   width: 36px;
   height: 36px;
-  opacity: 1;
   margin: 15px;
   text-align: center;
   border-radius: 50%;
@@ -45,7 +42,6 @@
   background: #ffffff;
   border: 2px solid #ff8500;
   border-radius: 10px;
-  opacity: 1;
   margin-bottom: 6px;
   outline: none;
 }

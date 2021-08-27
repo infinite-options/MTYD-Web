@@ -10,7 +10,7 @@ import "react-multi-carousel/lib/styles.css";
 const responsive = {
   superLargeDesktop: {
     breakpoint: { max: 3000, min: 1650 },
-    items: 8,
+    items: 7,
   },
   largeDesktop: {
     breakpoint: { max: 1649, min: 1431 },
@@ -104,6 +104,7 @@ const ProductDisplay = () => {
         // infinite={true}
         draggable={true}
         sliderClass={classes.carouselSlider}
+        arrows={false}
         // responsive={responsive}
       >
         {itemsList.map((product) => {
