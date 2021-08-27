@@ -245,9 +245,9 @@
 .menuItem {
   position: relative;
   border: none;
-  width: 183px;
+  width: 184x;
   height: 170px;
-  box-shadow: 1px 1px #888888;
+  /* box-shadow: 1px 1px #888888; */
 }
 .menuitemIndividual {
   height: 271px;

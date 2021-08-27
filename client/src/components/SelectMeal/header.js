@@ -1,53 +1,51 @@
-import React, {Component} from "react";
+import React, { Component } from "react";
 import MealIndicator from "./MealIndicator";
 import styles from "./selectmeal.module.css";
 import menuStyles from "../Menu/menu.module.css";
 // import {WebNavBar} from "../NavBar";
 import MenuBar from "../Menu";
-import {connect} from "react-redux";
-import Moment from 'react-moment';
-import moment from 'moment';
+import { connect } from "react-redux";
+import Moment from "react-moment";
+import moment from "moment";
 
-import PopLogin from '../PopLogin';
-import Popsignup from '../PopSignup';
+import PopLogin from "../PopLogin";
+import Popsignup from "../PopSignup";
 import { blue } from "@material-ui/core/colors";
 import { SelectMealGuestPop } from "../SelectMealGuestPop/SelectMealGuestPop";
 
 class Header extends Component {
-
-  state = {     
-    login_seen:false,
-    signUpSeen:false, 
-    firstDate:null,
-  }
+  state = {
+    login_seen: false,
+    signUpSeen: false,
+    firstDate: null,
+  };
 
   togglePopLogin = () => {
     this.setState({
-     login_seen: !this.state.login_seen,
+      login_seen: !this.state.login_seen,
     });
 
-    if(!this.state.login_seen){
+    if (!this.state.login_seen) {
       this.setState({
-        signUpSeen:false
-      })
+        signUpSeen: false,
+      });
     }
+  };
 
-   };
-
-   togglePopSignup = () => {
+  togglePopSignup = () => {
     this.setState({
-     signUpSeen: !this.state.signUpSeen
+      signUpSeen: !this.state.signUpSeen,
     });
 
-    if(!this.state.signUpSeen){
+    if (!this.state.signUpSeen) {
       this.setState({
-        login_seen:false
-      })
+        login_seen: false,
+      });
     }
-   };
+  };
   showDeliveryDay = () => {
     const mySet = new Set();
-    this.props.data.map(menuitem => {
+    this.props.data.map((menuitem) => {
       if (menuitem.menu_date === this.props.myDate) {
         mySet.add(menuitem.delivery_days);
       }
@@ -74,7 +72,7 @@ class Header extends Component {
               ? styles.selectionStyles
               : styles.selectionStyles && styles.selectedDays
           }
-          onClick={e => this.props.setDeliveryDay(e)}
+          onClick={(e) => this.props.setDeliveryDay(e)}
         >
           {dayselector}
         </button>
@@ -84,29 +82,30 @@ class Header extends Component {
   };
 
   showSelectionOptions = () => {
-    let options = ["SAVE","SURPRISE", "SKIP"];
+    let options = ["SAVE", "SURPRISE", "SKIP"];
     let selections = [];
     for (const day of options) {
       let selectionOptions = day;
 
-      let displayMessage = '';
+      let displayMessage = "";
 
-      if (selectionOptions=="SAVE") {
-        displayMessage = "Save Meals"
-      } else if (selectionOptions == 'SURPRISE') {
-        displayMessage = 'Surprise Me';
+      if (selectionOptions == "SAVE") {
+        displayMessage = "Save Meals";
+      } else if (selectionOptions == "SURPRISE") {
+        displayMessage = "Surprise Me";
       } else {
-        displayMessage = 'Skip this day';
+        displayMessage = "Skip this day";
       }
 
-      let classForbutton = ''
-      if (this.props.customer_uid==null) {
-        classForbutton = styles.selectionStyles 
+      let classForbutton = "";
+      if (this.props.customer_uid == null) {
+        classForbutton = styles.selectionStyles;
       } else {
-        classForbutton=this.props.selectValue === "" ||
-        this.props.selectValue !== selectionOptions
-          ? styles.selectionStyles
-          : styles.selectionStyles && styles.selectedDays
+        classForbutton =
+          this.props.selectValue === "" ||
+          this.props.selectValue !== selectionOptions
+            ? styles.selectionStyles
+            : styles.selectionStyles && styles.selectedDays;
       }
 
       // console.log(classForbutton)
@@ -118,13 +117,13 @@ class Header extends Component {
       //   ariaTag = "Click here to be suprised on " + moment(this.props.myDate.split(" ")[0]).format("ddd") + " " + moment(this.props.myDate.split(" ")[0]).format("MMM") + " " +
       //   moment(this.props.myDate.split(" ")[0]).format("D")
       // }
-      let ariaTag = ''
-      if(displayMessage != 'Suprise Me'){
+      let ariaTag = "";
+      if (displayMessage != "Suprise Me") {
         //ariaTag = "Click here to " + displayMessage + " on " //+ moment(this.props.myDate.split(" ")[0]).format("ddd") + " " + moment(this.props.myDate.split(" ")[0]).format("MMM") + " " + moment(this.props.myDate.split(" ")[0]).format("D")
-        ariaTag = "Click here to select " + displayMessage
+        ariaTag = "Click here to select " + displayMessage;
       } else {
         //ariaTag = "Click here to be suprised on " //+ moment(this.props.myDate.split(" ")[0]).format("ddd") + " " + moment(this.props.myDate.split(" ")[0]).format("MMM") + " " + moment(this.props.myDate.split(" ")[0]).format("D")
-        ariaTag = "Click here to select " + displayMessage
+        ariaTag = "Click here to select " + displayMessage;
       }
 
       selections.push(
@@ -133,11 +132,11 @@ class Header extends Component {
           key={selectionOptions}
           value={selectionOptions}
           className={classForbutton}
-          onClick={e => this.props.makeSelection(e)}
+          onClick={(e) => this.props.makeSelection(e)}
           // aria-label = {ariaTag}
           // title={ariaTag}
-          aria-label = {ariaTag}
-          title = {ariaTag}
+          aria-label={ariaTag}
+          title={ariaTag}
         >
           {displayMessage}
         </button>
@@ -146,10 +145,9 @@ class Header extends Component {
     return selections;
   };
 
-
   render() {
     console.log("header props: ", this.props);
-    const {meals, totalCount, totalMeals} = this.props;
+    const { meals, totalCount, totalMeals } = this.props;
     let mealsCount = parseInt(totalMeals);
 
     // console.log(this.props.dates)
@@ -157,10 +155,9 @@ class Header extends Component {
     //To disable and enable save button
     if (document.getElementById("SAVE") !== null) {
       if (totalCount !== totalMeals) {
-
-        if(this.props.customer_uid==null){
+        if (this.props.customer_uid == null) {
           document.getElementById("SAVE").disabled = false;
-        }else{
+        } else {
           document.getElementById("SAVE").disabled = true;
         }
       } else {
@@ -190,42 +187,39 @@ class Header extends Component {
       }
     }
 
-    let login = this.props.customer_uid?(true):(false);
+    let login = this.props.customer_uid ? true : false;
 
-    let message = 
-      <p className={menuStyles.navMessage + " text-left"}>
-        Upcoming Menus
-      </p>
+    let message = (
+      <p className={menuStyles.navMessage + " text-left"}>Upcoming Menus</p>
+    );
     return (
       <>
-
         {/* <WebNavBar/> */}
 
         {/* <SelectMealGuestPop message = 'message here'/> */}
 
-
-        <MenuBar 
-          show={true} 
-          message={message} 
-          login = {login} 
-          subscribedPlans = {this.props.subscribedPlans} 
+        <MenuBar
+          show={true}
+          message={message}
+          login={login}
+          subscribedPlans={this.props.subscribedPlans}
           mealsOnChange={this.props.mealsOnChange}
           mealsOnClick={this.props.mealsOnClick}
           meals={meals}
-        />  
+        />
 
-        <div class={styles.divider}/>
+        <div class={styles.divider} />
 
         <div
           style={{
-            overflowX:'auto',
-            display:'flex',
-            height:'170px',
-            marginLeft:'198px',
-            marginRight:'200px',
-            borderRight: 'solid',
-            borderLeft: 'solid',
-            borderColor: '#F0F0F0',
+            overflowX: "auto",
+            display: "flex",
+            height: "170px",
+            marginLeft: "198px",
+            marginRight: "200px",
+            borderRight: "solid",
+            borderLeft: "solid",
+            borderColor: "#F0F0F0",
             // border: 'solid',
           }}
         >
@@ -236,14 +230,12 @@ class Header extends Component {
             <>Loading dates...</>
           )} */}
         </div>
-          
 
         <div className={styles.supriseSkipSave}>
-          <div class={styles.divider}/>
-            {this.showSelectionOptions()}
-          <div class={styles.divider}/>
+          <div class={styles.divider} />
+          {this.showSelectionOptions()}
+          <div class={styles.divider} />
         </div>
-
 
         <div className={styles.stickyHeader + " px-5 "}>
           <MealIndicator
@@ -251,13 +243,11 @@ class Header extends Component {
             totalMeals={this.props.totalMeals}
           />
         </div>
-
-
       </>
     );
   }
 }
-const mapStateToProps = state => ({
-  subscribedPlans: state.subscribe.subscribedPlans
+const mapStateToProps = (state) => ({
+  subscribedPlans: state.subscribe.subscribedPlans,
 });
 export default connect(mapStateToProps, {})(Header);

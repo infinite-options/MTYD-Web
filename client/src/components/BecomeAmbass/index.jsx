@@ -5,6 +5,7 @@ import Cookies from "js-cookie";
 import PopLogin from "../PopLogin";
 import Popsignup from "../PopSignup";
 import { ReactComponent as CloseBtn } from "../../images/closeBtn.svg";
+import styles from "./becomeAmbass.module.css";
 
 export class BecomeAmbass extends Component {
   constructor(props) {
@@ -142,9 +143,10 @@ export class BecomeAmbass extends Component {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
+          zIndex: "1100",
         }}
       >
-        <div className="poploginsignup">
+        <div className={styles.poploginsignup}>
           {this.state.login_seen ? (
             <PopLogin toggle={this.togglePopLogin} />
           ) : null}
@@ -157,7 +159,7 @@ export class BecomeAmbass extends Component {
           if (this.state.user_id == "not login") {
             return (
               <div
-                className="becomeAnAmbassadorPopupSignin"
+                className={styles.becomeAnAmbassadorPopupSignin}
                 style={{
                   zIndex: 4,
                   position: "fixed",
@@ -267,7 +269,7 @@ export class BecomeAmbass extends Component {
           } else {
             return (
               <div
-                className="becomeAnAmbassadorPopupSignin"
+                className={styles.becomeAnAmbassadorPopupSignin}
                 style={{
                   zIndex: 4,
                   position: "fixed",

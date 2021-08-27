@@ -417,6 +417,7 @@ class NavBar extends React.Component {
               width: "40%",
               // minWidth: '180px',
               position: "relative",
+              zIndex: "2000",
             }}
           >
             {this.state.windowWidth > 900 ? (

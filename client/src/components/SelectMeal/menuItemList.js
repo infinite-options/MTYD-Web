@@ -1,32 +1,32 @@
-import {Component} from "react";
+import { Component } from "react";
 import MenuItem from "./menuItem";
 import axios from "axios";
 import Header from "./header";
 import Cookies from "js-cookie";
-import {API_URL} from "../../reducers/constants";
+import { API_URL } from "../../reducers/constants";
 import styles from "./selectmeal.module.css";
 
-import moment from 'moment';
+import moment from "moment";
 
-import {connect} from "react-redux";
+import { connect } from "react-redux";
 import {
   fetchSubscribed,
-  fetchProfileInformation
+  fetchProfileInformation,
 } from "../../reducers/actions/subscriptionActions";
 
 import { SelectMealGuestPop } from "../SelectMealGuestPop/SelectMealGuestPop";
-import {UnloginSave} from "../SelectMealGuestPop/UnloginSave"
-import {UnloginSurprise} from "../SelectMealGuestPop/UnloginSurprise"
-import {UnloginSkip} from "../SelectMealGuestPop/UnloginSkip"
+import { UnloginSave } from "../SelectMealGuestPop/UnloginSave";
+import { UnloginSurprise } from "../SelectMealGuestPop/UnloginSurprise";
+import { UnloginSkip } from "../SelectMealGuestPop/UnloginSkip";
 
 import PopLogin from "../PopLogin";
-import Popsignup from '../PopSignup';
+import Popsignup from "../PopSignup";
 
-import {WebNavBar} from "../NavBar";
+import { WebNavBar } from "../NavBar";
 // import orangePlate from "./static/orange_plate.png";
-import m4me_logo from '../../images/LOGO_NoBG_MealsForMe.png';
+import m4me_logo from "../../images/LOGO_NoBG_MealsForMe.png";
 
-import {FootLink} from "../Home/homeButtons";
+import { FootLink } from "../Home/homeButtons";
 
 class MenuItemList extends Component {
   constructor(props) {
@@ -43,30 +43,29 @@ class MenuItemList extends Component {
       saveButton: false,
       popUp: styles.popUpHide,
       popUpDisplay: false,
-      popUpText: 'Hello',
-      popUpTitle: 'Hello',
+      popUpText: "Hello",
+      popUpTitle: "Hello",
       dateButtonList: null,
-      surpriseSkipSave : [],
-      unloginPopupShowPM:false,
-      currentSelectedDate:'',
-      unloginPopupSave:false,
-      unloginPopupSurprise:false,
-      unloginPopupSkip:false,
-      login_seen:false,
-      signUpSeen:false,
+      surpriseSkipSave: [],
+      unloginPopupShowPM: false,
+      currentSelectedDate: "",
+      unloginPopupSave: false,
+      unloginPopupSurprise: false,
+      unloginPopupSkip: false,
+      login_seen: false,
+      signUpSeen: false,
       mealsLoaded: false,
-      customer_uid: null
+      customer_uid: null,
     };
   }
 
   formatDate = (rawDate) => {
-
-    let dateElements = rawDate.split(' ');
-    let yyyy_mm_dd = dateElements[0].split('-');
+    let dateElements = rawDate.split(" ");
+    let yyyy_mm_dd = dateElements[0].split("-");
     let month;
 
     // Parse month
-    switch(yyyy_mm_dd[1]){
+    switch (yyyy_mm_dd[1]) {
       case "01":
         month = "January";
         break;
@@ -109,41 +108,40 @@ class MenuItemList extends Component {
 
     let day = yyyy_mm_dd[2];
 
-    if(day.substring(0,1) === '0'){
-      day = day.substring(1,2);
+    if (day.substring(0, 1) === "0") {
+      day = day.substring(1, 2);
     }
 
     let dateString = month + " " + day + ", " + yyyy_mm_dd[0];
 
     return dateString;
-  }
+  };
 
   dayBefore = (rawDate) => {
-
     console.log("(dayBefore) raw date: ", rawDate);
 
-    let dateElements = rawDate.split(' ');
+    let dateElements = rawDate.split(" ");
 
     let parsedDate = Date.parse(dateElements[0]);
 
-    let newDate = new Date(parsedDate - 24*60*60*1000);
+    let newDate = new Date(parsedDate - 24 * 60 * 60 * 1000);
 
     console.log("newDate: ", newDate);
 
     console.log("stringified date: ", JSON.stringify(newDate));
 
-    let splitDate = JSON.stringify(newDate).split('\"');
+    let splitDate = JSON.stringify(newDate).split('"');
 
     console.log("splitDate: ", splitDate);
 
-    let splitDate2 = splitDate[1].split('T');
+    let splitDate2 = splitDate[1].split("T");
 
     console.log("splitDate2: ", splitDate2);
 
     // let formattedDate = splitDate[1] + ' ' + splitDate[2];
     // let formattedDate = this.formatDate(splitDate2[0]);
 
-    let splitDate3 = splitDate2[0].split('-');
+    let splitDate3 = splitDate2[0].split("-");
 
     console.log("splitDate3: ", splitDate3);
 
@@ -151,14 +149,14 @@ class MenuItemList extends Component {
 
     return this.formatDate(splitDate2[0]);
     // return formattedDate;
-  }
+  };
 
   toggleDisplay = (option) => {
     console.log("in toggleDisplay");
     console.log("(toggleDisplay) props: ", this.props);
     console.log("(toggleDisplay) current meal: ", this.state.purchaseID);
 
-    // let currMealInfo = this.state.meals_nbd.find(element => 
+    // let currMealInfo = this.state.meals_nbd.find(element =>
     //   element.purchase_uid === this.state.purchaseID
     // );
 
@@ -166,41 +164,48 @@ class MenuItemList extends Component {
     // console.log("(toggleDisplay) charge date: ", currMealInfo.next_billing_date);
     console.log("(toggleDisplay) my date: ", this.state.myDate);
 
-    if(this.state.popUpDisplay === false) {
-       this.setState({
-           popUp: styles.popUpShow,
-           popUpDisplay: true,
-       })
-    }else{
-       this.setState({
-           popUp: styles.popUpHide,
-           popUpDisplay: false,
-       })
+    if (this.state.popUpDisplay === false) {
+      this.setState({
+        popUp: styles.popUpShow,
+        popUpDisplay: true,
+      });
+    } else {
+      this.setState({
+        popUp: styles.popUpHide,
+        popUpDisplay: false,
+      });
     }
-    if(option === "SAVE") {
-      let popUpText = 'You have saved your meals for this week. '
+    if (option === "SAVE") {
+      let popUpText = "You have saved your meals for this week. ";
       if (this.state.addOnAmount > 0) {
         // popUpText = popUpText.concat('You will be charged for ' + this.state.addOnAmount + ' Add On items on ' + this.formatDate(currMealInfo.next_billing_date));
-        popUpText = popUpText.concat('You will be charged for ' + this.state.addOnAmount + ' Add On items on ' + this.dayBefore(this.state.myDate));
+        popUpText = popUpText.concat(
+          "You will be charged for " +
+            this.state.addOnAmount +
+            " Add On items on " +
+            this.dayBefore(this.state.myDate)
+        );
       }
       this.setState({
         popUpText,
-        popUpTitle:"SAVE"
-      })
+        popUpTitle: "SAVE",
+      });
     } else if (option === "SURPRISE") {
-      let popUpText = 'We’ll surprise you with some of our specials on this day!'
+      let popUpText =
+        "We’ll surprise you with some of our specials on this day!";
       this.setState({
         popUpText,
-        popUpTitle:"SURPRISE"
-      })
+        popUpTitle: "SURPRISE",
+      });
     } else if (option === "SKIP") {
-      let popUpText = 'You won’t receive any meals this day. We will extend your subscription accordingly.'
+      let popUpText =
+        "You won’t receive any meals this day. We will extend your subscription accordingly.";
       this.setState({
         popUpText,
-        popUpTitle:"SKIP"
-      })
+        popUpTitle: "SKIP",
+      });
     }
-}
+  };
 
   async componentDidMount() {
     // this.loadMealPlans();
@@ -216,21 +221,23 @@ class MenuItemList extends Component {
     const customer_uid = Cookies.get("customer_uid");
     // const customer_uid = '100-000001';
     console.log("(mount) customer_uid: ", customer_uid);
-    this.setState({
-      customer_uid
-    }, () => {
-      this.loadMealPlans();
-      this.loadMenuItems();
-      this.props.fetchProfileInformation(customer_uid);
-      this.props.fetchSubscribed(customer_uid);
-    });
+    this.setState(
+      {
+        customer_uid,
+      },
+      () => {
+        this.loadMealPlans();
+        this.loadMenuItems();
+        this.props.fetchProfileInformation(customer_uid);
+        this.props.fetchSubscribed(customer_uid);
+      }
+    );
     // const customer_uid = '100-000001'
     // if (customer_uid && customer_uid !== "") {
     //   await this.props.fetchProfileInformation(customer_uid);
     //   await this.props.fetchSubscribed(customer_uid);
     // }
   }
-
 
   loadMealPlans = () => {
     // let remoteDataFetched = 0;
@@ -239,8 +246,9 @@ class MenuItemList extends Component {
 
     // fetch(`${API_URL}customer_lplp?customer_uid=${this.state.customer_uid}`)
     //   .then(response => response.json())
-    axios.get(`${API_URL}customer_lplp?customer_uid=${this.state.customer_uid}`)
-      .then(res => {
+    axios
+      .get(`${API_URL}customer_lplp?customer_uid=${this.state.customer_uid}`)
+      .then((res) => {
         console.log("customer_lplp res: ", res);
         let meals = res.data.result;
         console.log("loadMealPlans: ", meals);
@@ -249,15 +257,14 @@ class MenuItemList extends Component {
           meals: meals,
           purchaseID: meals[0].purchase_id,
           totalMeals: parseInt(meals[0].items.substr(23, 2)),
-          mealsLoaded: true
+          mealsLoaded: true,
         });
-
       })
-      .catch(error => {
+      .catch((error) => {
         console.error(error);
         this.setState({
-          mealsLoaded: true
-        })
+          mealsLoaded: true,
+        });
       });
   };
 
@@ -266,10 +273,11 @@ class MenuItemList extends Component {
     //   `${API_URL}upcoming_menu`
     // )
     //   .then(response => response.json())
-    axios.get(`${API_URL}upcoming_menu`)
-      .then(res => {
-      // .then(json => {
-      //   console.log("json: ", json)
+    axios
+      .get(`${API_URL}upcoming_menu`)
+      .then((res) => {
+        // .then(json => {
+        //   console.log("json: ", json)
         // let menuData = [...json.result];
         console.log("upcoming_menu res: ", res);
         let menuData = res.data.result;
@@ -279,16 +287,15 @@ class MenuItemList extends Component {
           {
             deliveryDay: temp[0],
             data: menuData,
-            myDate: menuData[0].menu_date
+            myDate: menuData[0].menu_date,
           },
           () => {
             this.selectedMeals();
-            
           }
         );
         this.dateButtonArray();
       })
-      .catch(error => {
+      .catch((error) => {
         console.error(error);
       });
   };
@@ -299,14 +306,15 @@ class MenuItemList extends Component {
     //   `${API_URL}meals_selected?customer_uid=${this.state.customer_uid}`
     // )
     //   .then(response => response.json())
-    axios.get(`${API_URL}meals_selected?customer_uid=${this.state.customer_uid}`)
-      .then(res => {
+    axios
+      .get(`${API_URL}meals_selected?customer_uid=${this.state.customer_uid}`)
+      .then((res) => {
         // console.log(json)
         // let mealSelected = [...json.result];
         console.log("meals_selected res: ", res);
         let mealSelected = res.data.result;
 
-        this.setState({mealSelected});
+        this.setState({ mealSelected });
 
         let cartItemsArr = [];
         let addOnArr = [];
@@ -314,7 +322,7 @@ class MenuItemList extends Component {
         let myCounter = 0;
         let addOnCount = 0;
         let pulledSelection = mealSelected.filter(
-          item =>
+          (item) =>
             item.sel_purchase_id === this.state.purchaseID &&
             item.sel_menu_date === this.state.myDate
         );
@@ -324,136 +332,135 @@ class MenuItemList extends Component {
           let addOnSelection = JSON.parse(pulledSelection[0].addon_selection);
           // console.log(addOnSelection)
           delivery_Day = pulledSelection[0].delivery_day;
-          selection.map(myItem => {
+          selection.map((myItem) => {
             // console.log(myItem)
             let required_Id = myItem.item_uid;
             let menuItemCur = this.state.data.filter(
-              dateCheck =>
+              (dateCheck) =>
                 dateCheck.menu_date === this.state.myDate &&
                 dateCheck.meal_uid === required_Id
             );
 
-            let spreadObj = {...menuItemCur};
+            let spreadObj = { ...menuItemCur };
             let pushingObj = {
               count: myItem.qty,
-              ...spreadObj[0]
+              ...spreadObj[0],
             };
 
             if (myItem.name !== "SKIP" && myItem.name !== "SURPRISE") {
               cartItemsArr.push(pushingObj);
               myCounter = myCounter + myItem.qty;
-              return this.setState({selectValue: "SAVE"});
+              return this.setState({ selectValue: "SAVE" });
             } else {
               let select_val = myItem.name;
               let myoutput =
                 select_val[0].toUpperCase() +
                 select_val.substring(1, select_val.length).toUpperCase();
 
-              return this.setState({selectValue: myoutput});
+              return this.setState({ selectValue: myoutput });
             }
           });
-          
-          if (addOnSelection !== null) {
 
-            addOnSelection.map(myItem => {
+          if (addOnSelection !== null) {
+            addOnSelection.map((myItem) => {
               // console.log(myItem)
               let required_Id = myItem.item_uid;
               let menuItemCur = this.state.data.filter(
-                dateCheck =>
+                (dateCheck) =>
                   dateCheck.menu_date === this.state.myDate &&
                   dateCheck.meal_uid === required_Id
               );
-      
-              let spreadObj = {...menuItemCur};
+
+              let spreadObj = { ...menuItemCur };
               let pushingObj = {
                 count: myItem.qty,
-                ...spreadObj[0]
+                ...spreadObj[0],
               };
-      
+
               if (myItem.name !== "SKIP" && myItem.name !== "SURPRISE") {
                 addOnArr.push(pushingObj);
                 addOnCount = addOnCount + myItem.qty;
                 // return this.setState({selectValue: "SAVE"});
-              // } else {
-              //   let select_val = myItem.name;
-              //   let myoutput =
-              //     select_val[0].toUpperCase() +
-              //     select_val.substring(1, select_val.length).toUpperCase();
-      
-              //   return this.setState({selectValue: myoutput});
+                // } else {
+                //   let select_val = myItem.name;
+                //   let myoutput =
+                //     select_val[0].toUpperCase() +
+                //     select_val.substring(1, select_val.length).toUpperCase();
+
+                //   return this.setState({selectValue: myoutput});
               }
             });
-    
           }
-
         }
-        
 
         return this.setState({
-          deliveryDay: delivery_Day !== "" && delivery_Day !== "SKIP" ? delivery_Day : "Sunday",
+          deliveryDay:
+            delivery_Day !== "" && delivery_Day !== "SKIP"
+              ? delivery_Day
+              : "Sunday",
           // deliveryDay: delivery_Day !== ""  ? delivery_Day : "Sunday",
           cartItems: [...cartItemsArr],
           addOnItems: [...addOnArr],
           totalCount: myCounter,
           addOnAmount: addOnCount,
-          displayCount: "block"
+          displayCount: "block",
         });
       })
-      .catch(error => {
+      .catch((error) => {
         console.error(error);
       });
   };
 
   closepopPlusMinus = () => {
-    this.setState({unloginPopupShowPM:false})
-  }
+    this.setState({ unloginPopupShowPM: false });
+  };
 
   closepopSave = () => {
-    this.setState({unloginPopupSave:false})
-  }
+    this.setState({ unloginPopupSave: false });
+  };
   closepopSurprise = () => {
-    this.setState({unloginPopupSurprise:false})
-  }
+    this.setState({ unloginPopupSurprise: false });
+  };
   closepopSkip = () => {
-    this.setState({unloginPopupSkip:false})
-  }
+    this.setState({ unloginPopupSkip: false });
+  };
 
   togglePopLogin = () => {
     this.setState({
-     login_seen: !this.state.login_seen,
-     unloginPopupShowPM:false,
-     unloginPopupSave:false,
-     unloginPopupSurprise:false,
-     unloginPopupSkip:false
+      login_seen: !this.state.login_seen,
+      unloginPopupShowPM: false,
+      unloginPopupSave: false,
+      unloginPopupSurprise: false,
+      unloginPopupSkip: false,
     });
 
-    if(!this.state.login_seen){
+    if (!this.state.login_seen) {
       this.setState({
-        signUpSeen:false
-      })
+        signUpSeen: false,
+      });
     }
   };
 
   togglePopSignup = () => {
     this.setState({
       signUpSeen: !this.state.signUpSeen,
-      unloginPopupShowPM:false,
-      unloginPopupSave:false,
-      unloginPopupSurprise:false,
-      unloginPopupSkip:false
+      unloginPopupShowPM: false,
+      unloginPopupSave: false,
+      unloginPopupSurprise: false,
+      unloginPopupSkip: false,
     });
 
-    if(!this.state.signUpSeen){
+    if (!this.state.signUpSeen) {
       this.setState({
-        login_seen:false
-      })
+        login_seen: false,
+      });
     }
   };
 
-  mealsOnClick = e => {
+  mealsOnClick = (e) => {
     // passing props.subscribedPlans[index]
-    console.log("Meals on Click e is:")
-    console.log(e)
+    console.log("Meals on Click e is:");
+    console.log(e);
 
     // let cust_id = Cookies.get("customer_uid")
 
@@ -462,53 +469,51 @@ class MenuItemList extends Component {
     // )
     //   .then(response => response.json())
     //   .then(json => {
-    axios.get(`${API_URL}meals_selected?customer_uid=${this.state.customer_uid}`)
-      .then(res => {
+    axios
+      .get(`${API_URL}meals_selected?customer_uid=${this.state.customer_uid}`)
+      .then((res) => {
         // let mealSelected = [...json.result];
         console.log("meals_selected res: ", res);
         let mealSelected = res.data.result;
-        console.log("mealSelected: "+mealSelected)
+        console.log("mealSelected: " + mealSelected);
 
         // console.log(mealSelected)
         this.setState({
-          mealSelected
+          mealSelected,
         });
       })
-      .catch(error => {
+      .catch((error) => {
         console.error(error);
       });
 
-      this.dateButtonArray();
-    
-    let planName = e.purchase_uid
-    console.log("onclick planname" + planName)
+    this.dateButtonArray();
 
-      {/*Checkpt 1*/}
+    let planName = e.purchase_uid;
+    console.log("onclick planname" + planName);
 
-    this.state.meals.map(mealItem => {
+    {
+      /*Checkpt 1*/
+    }
 
-      console.log("mealitem:")
-      console.log(mealItem)
+    this.state.meals.map((mealItem) => {
+      console.log("mealitem:");
+      console.log(mealItem);
 
       if (mealItem.purchase_uid === planName) {
         let meal = JSON.parse(mealItem.items)[0];
 
-        console.log(meal.name)
+        console.log(meal.name);
 
-        let mystr = meal.name
-          .toString()
-          .slice(0, 2)
-          .replace(/\s/g, "");
+        let mystr = meal.name.toString().slice(0, 2).replace(/\s/g, "");
 
-        
         this.setState({
           // totalMeals: mystr,
           totalMeals: parseInt(mystr),
           purchaseID: mealItem.purchase_id,
-          saveButton: true
+          saveButton: true,
         });
       } else {
-        return this.setState({selectValue: "SURPRISE"});
+        return this.setState({ selectValue: "SURPRISE" });
       }
     });
     let cartItemsArr = [];
@@ -517,7 +522,7 @@ class MenuItemList extends Component {
     let myCounter = 0;
     let addOnCount = 0;
     let pulledSelection = this.state.mealSelected.filter(
-      item =>
+      (item) =>
         item.sel_purchase_id === planName &&
         item.sel_menu_date === this.state.myDate
     );
@@ -535,86 +540,85 @@ class MenuItemList extends Component {
       // }else{
       //   myCounter=selection[0].qty
       // }
-      
 
-      selection.map(myItem => {
+      selection.map((myItem) => {
         let required_Id = myItem.item_uid;
         let menuItemCur = this.state.data.filter(
-          dateCheck =>
+          (dateCheck) =>
             dateCheck.menu_date === this.state.myDate &&
             dateCheck.meal_uid === required_Id
         );
 
-        let spreadObj = {...menuItemCur};
+        let spreadObj = { ...menuItemCur };
         let pushingObj = {
           count: myItem.qty,
-          ...spreadObj[0]
+          ...spreadObj[0],
         };
 
         if (myItem.name !== "SKIP" && myItem.name !== "SURPRISE") {
           cartItemsArr.push(pushingObj);
           myCounter = myCounter + myItem.qty;
-          return this.setState({selectValue: "SAVE"});
+          return this.setState({ selectValue: "SAVE" });
         } else {
           let select_val = myItem.name;
           let myoutput =
             select_val[0].toUpperCase() +
             select_val.substring(1, select_val.length).toUpperCase();
 
-          return this.setState({selectValue: myoutput});
+          return this.setState({ selectValue: myoutput });
         }
       });
 
       if (addOnSelection !== null) {
-
-        addOnSelection.map(myItem => {
+        addOnSelection.map((myItem) => {
           // console.log(myItem)
           let required_Id = myItem.item_uid;
           let menuItemCur = this.state.data.filter(
-            dateCheck =>
+            (dateCheck) =>
               dateCheck.menu_date === this.state.myDate &&
               dateCheck.meal_uid === required_Id
           );
-  
-          let spreadObj = {...menuItemCur};
+
+          let spreadObj = { ...menuItemCur };
           let pushingObj = {
             count: myItem.qty,
-            ...spreadObj[0]
+            ...spreadObj[0],
           };
-  
+
           if (myItem.name !== "SKIP" && myItem.name !== "SURPRISE") {
             addOnArr.push(pushingObj);
             addOnCount = addOnCount + myItem.qty;
-          //   return this.setState({selectValue: "SAVE"});
-          // } else {
-          //   let select_val = myItem.name;
-          //   let myoutput =
-          //     select_val[0].toUpperCase() +
-          //     select_val.substring(1, select_val.length).toUpperCase();
-  
-          //   return this.setState({selectValue: myoutput});
+            //   return this.setState({selectValue: "SAVE"});
+            // } else {
+            //   let select_val = myItem.name;
+            //   let myoutput =
+            //     select_val[0].toUpperCase() +
+            //     select_val.substring(1, select_val.length).toUpperCase();
+
+            //   return this.setState({selectValue: myoutput});
           }
         });
-
       }
-
     }
 
-    console.log('counter is '+ myCounter)
+    console.log("counter is " + myCounter);
     return this.setState({
-      deliveryDay: delivery_Day !== "" && delivery_Day !== "SKIP" ? delivery_Day : "Sunday",
+      deliveryDay:
+        delivery_Day !== "" && delivery_Day !== "SKIP"
+          ? delivery_Day
+          : "Sunday",
       // deliveryDay: delivery_Day !== "" ? delivery_Day : "Sunday",
       cartItems: [...cartItemsArr],
       addOnItems: [...addOnArr],
       totalCount: myCounter,
       addOnAmount: addOnCount,
-      displayCount: "block"
+      displayCount: "block",
     });
   };
 
-  mealsOnChange = e => {
-    console.log("Meals on change e is:")
-    console.log(e)
+  mealsOnChange = (e) => {
+    console.log("Meals on change e is:");
+    console.log(e);
 
     // console.log(Cookies.get("customer_uid"))
     // let cust_id = Cookies.get("customer_uid");
@@ -624,53 +628,48 @@ class MenuItemList extends Component {
     //   .then(response => response.json())
     //   .then(json => {
     //     let mealSelected = [...json.result];
-    axios.get(`${API_URL}meals_selected?customer_uid=${this.state.customer_uid}`)
-      .then(res => {
+    axios
+      .get(`${API_URL}meals_selected?customer_uid=${this.state.customer_uid}`)
+      .then((res) => {
         console.log("meals_selected res: ", res);
         let mealSelected = res.data.result;
-        console.log("mealSelected: "+mealSelected)
+        console.log("mealSelected: " + mealSelected);
 
         // console.log(mealSelected)
         this.setState({
-          mealSelected
+          mealSelected,
         });
       })
-      .catch(error => {
+      .catch((error) => {
         console.error(error);
       });
 
-      this.dateButtonArray();
+    this.dateButtonArray();
 
     let planName = e.target.value;
-    console.log("e.targetvalue " + e.target.value)
+    console.log("e.targetvalue " + e.target.value);
 
     //console.log(planName)
 
-
-    this.state.meals.map(mealItem => {
-
-      console.log("mealitem:")
-      console.log(mealItem)
+    this.state.meals.map((mealItem) => {
+      console.log("mealitem:");
+      console.log(mealItem);
 
       if (mealItem.purchase_uid === planName) {
         let meal = JSON.parse(mealItem.items)[0];
 
-        console.log(meal.name)
+        console.log(meal.name);
 
-        let mystr = meal.name
-          .toString()
-          .slice(0, 2)
-          .replace(/\s/g, "");
+        let mystr = meal.name.toString().slice(0, 2).replace(/\s/g, "");
 
-        
         this.setState({
           // totalMeals: mystr,
           totalMeals: parseInt(mystr),
           purchaseID: mealItem.purchase_id,
-          saveButton: true
+          saveButton: true,
         });
       } else {
-        return this.setState({selectValue: "SURPRISE"});
+        return this.setState({ selectValue: "SURPRISE" });
       }
     });
     let cartItemsArr = [];
@@ -679,7 +678,7 @@ class MenuItemList extends Component {
     let myCounter = 0;
     let addOnCount = 0;
     let pulledSelection = this.state.mealSelected.filter(
-      item =>
+      (item) =>
         item.sel_purchase_id === planName &&
         item.sel_menu_date === this.state.myDate
     );
@@ -687,8 +686,6 @@ class MenuItemList extends Component {
     // let tempstring = JSON.parse(pulledSelection[0].items)[0].name
     // myCounter = tempstring.substring(0,1);
     // console.log(pulledSelection)
-
-
 
     if (pulledSelection.length > 0) {
       let selection = JSON.parse(pulledSelection[0].meal_selection);
@@ -703,102 +700,99 @@ class MenuItemList extends Component {
       // }else{
       //   myCounter=selection[0].qty
       // }
-      
 
-      selection.map(myItem => {
+      selection.map((myItem) => {
         let required_Id = myItem.item_uid;
         let menuItemCur = this.state.data.filter(
-          dateCheck =>
+          (dateCheck) =>
             dateCheck.menu_date === this.state.myDate &&
             dateCheck.meal_uid === required_Id
         );
 
-        let spreadObj = {...menuItemCur};
+        let spreadObj = { ...menuItemCur };
         let pushingObj = {
           count: myItem.qty,
-          ...spreadObj[0]
+          ...spreadObj[0],
         };
 
         if (myItem.name !== "SKIP" && myItem.name !== "SURPRISE") {
           cartItemsArr.push(pushingObj);
           myCounter = myCounter + myItem.qty;
-          return this.setState({selectValue: "SAVE"});
+          return this.setState({ selectValue: "SAVE" });
         } else {
           let select_val = myItem.name;
           let myoutput =
             select_val[0].toUpperCase() +
             select_val.substring(1, select_val.length).toUpperCase();
 
-          return this.setState({selectValue: myoutput});
+          return this.setState({ selectValue: myoutput });
         }
       });
 
       if (addOnSelection !== null) {
-
-        addOnSelection.map(myItem => {
+        addOnSelection.map((myItem) => {
           // console.log(myItem)
           let required_Id = myItem.item_uid;
           let menuItemCur = this.state.data.filter(
-            dateCheck =>
+            (dateCheck) =>
               dateCheck.menu_date === this.state.myDate &&
               dateCheck.meal_uid === required_Id
           );
-  
-          let spreadObj = {...menuItemCur};
+
+          let spreadObj = { ...menuItemCur };
           let pushingObj = {
             count: myItem.qty,
-            ...spreadObj[0]
+            ...spreadObj[0],
           };
-  
+
           if (myItem.name !== "SKIP" && myItem.name !== "SURPRISE") {
             addOnArr.push(pushingObj);
             addOnCount = addOnCount + myItem.qty;
-          //   return this.setState({selectValue: "SAVE"});
-          // } else {
-          //   let select_val = myItem.name;
-          //   let myoutput =
-          //     select_val[0].toUpperCase() +
-          //     select_val.substring(1, select_val.length).toUpperCase();
-  
-          //   return this.setState({selectValue: myoutput});
+            //   return this.setState({selectValue: "SAVE"});
+            // } else {
+            //   let select_val = myItem.name;
+            //   let myoutput =
+            //     select_val[0].toUpperCase() +
+            //     select_val.substring(1, select_val.length).toUpperCase();
+
+            //   return this.setState({selectValue: myoutput});
           }
         });
-
       }
-
     }
 
-
-    console.log('counter is '+ myCounter)
+    console.log("counter is " + myCounter);
     return this.setState({
-      deliveryDay: delivery_Day !== "" && delivery_Day !== "SKIP" ? delivery_Day : "Sunday",
+      deliveryDay:
+        delivery_Day !== "" && delivery_Day !== "SKIP"
+          ? delivery_Day
+          : "Sunday",
       // deliveryDay: delivery_Day !== "" ? delivery_Day : "Sunday",
       cartItems: [...cartItemsArr],
       addOnItems: [...addOnArr],
       totalCount: myCounter,
       addOnAmount: addOnCount,
-      displayCount: "block"
+      displayCount: "block",
     });
   };
 
-  filterDates = event => {
-
-    if(this.state.currentSelectedDate === ''){
-      this.setState({currentSelectedDate:event.target.value});
-    }else{
+  filterDates = (event) => {
+    if (this.state.currentSelectedDate === "") {
+      this.setState({ currentSelectedDate: event.target.value });
+    } else {
       var tempElement = document.getElementById(this.state.currentSelectedDate);
-      tempElement.style.border = 'none'
-      this.setState({currentSelectedDate:event.target.value});
+      tempElement.style.border = "none";
+      this.setState({ currentSelectedDate: event.target.value });
     }
 
     // console.log(event.target)
     var element = document.getElementById(event.target.value);
     // console.log(element.style)
-    element.style.border = '4px solid #f08e1f'
+    element.style.border = "4px solid #f08e1f";
 
     event.stopPropagation();
 
-    if(Cookies.get("customer_uid") === null){
+    if (Cookies.get("customer_uid") === null) {
       return this.setState({
         myDate: event.target.value,
       });
@@ -812,15 +806,16 @@ class MenuItemList extends Component {
     //   .then(response => response.json())
     //   .then(json => {
     //     let mealSelected = [...json.result];
-    axios.get(`${API_URL}meals_selected?customer_uid=${this.state.customer_uid}`)
-      .then(res => {
+    axios
+      .get(`${API_URL}meals_selected?customer_uid=${this.state.customer_uid}`)
+      .then((res) => {
         console.log("meals_selected res: ", res);
         let mealSelected = res.data.result;
         this.setState({
-          mealSelected
+          mealSelected,
         });
       })
-      .catch(error => {
+      .catch((error) => {
         console.error(error);
       });
 
@@ -833,86 +828,86 @@ class MenuItemList extends Component {
 
     // NEEDS BUGFIXING: sometimes throws an error when mealSelected undefined on mount
     let pulledSelection = this.state.mealSelected.filter(
-      item =>
+      (item) =>
         item.sel_purchase_id === this.state.purchaseID &&
         item.sel_menu_date === event.target.value
     );
-    
+
     // console.log(pulledSelection)
     if (pulledSelection.length > 0) {
       let selection = JSON.parse(pulledSelection[0].meal_selection);
       let addOnSelection = JSON.parse(pulledSelection[0].addon_selection);
       delivery_Day = pulledSelection[0].delivery_day;
-      selection.map(myItem => {
+      selection.map((myItem) => {
         let required_Id = myItem.item_uid;
         let menuItemCur = this.state.data.filter(
-          dateCheck =>
+          (dateCheck) =>
             dateCheck.menu_date === event.target.value &&
             dateCheck.meal_uid === required_Id
         );
-        let spreadObj = {...menuItemCur};
+        let spreadObj = { ...menuItemCur };
         let pushingObj = {
           count: myItem.qty,
-          ...spreadObj[0]
+          ...spreadObj[0],
         };
         // console.log(myItem.name)
         if (myItem.name !== "SKIP" && myItem.name !== "SURPRISE") {
           cartItemsArr.push(pushingObj);
           myCounter = myCounter + myItem.qty;
-          return this.setState({selectValue: "SAVE"});
+          return this.setState({ selectValue: "SAVE" });
         } else {
           let select_val = myItem.name;
           let myoutput =
             select_val[0].toUpperCase() +
             select_val.substring(1, select_val.length).toUpperCase();
-          return this.setState({selectValue: myoutput});
+          return this.setState({ selectValue: myoutput });
         }
       });
       if (addOnSelection !== null) {
-
-        addOnSelection.map(myItem => {
+        addOnSelection.map((myItem) => {
           let required_Id = myItem.item_uid;
           let menuItemCur = this.state.data.filter(
-            dateCheck =>
+            (dateCheck) =>
               dateCheck.menu_date === event.target.value &&
               dateCheck.meal_uid === required_Id
           );
-  
-          let spreadObj = {...menuItemCur};
+
+          let spreadObj = { ...menuItemCur };
           let pushingObj = {
             count: myItem.qty,
-            ...spreadObj[0]
+            ...spreadObj[0],
           };
-          
+
           if (myItem.name !== "SKIP" && myItem.name !== "SURPRISE") {
             addOnArr.push(pushingObj);
             addOnCount = addOnCount + myItem.qty;
-          //   return this.setState({selectValue: "SAVE"});
-          // } else {
-          //   let select_val = myItem.name;
-          //   let myoutput =
-          //     select_val[0].toUpperCase() +
-          //     select_val.substring(1, select_val.length).toUpperCase();
-  
-          //   return this.setState({selectValue: myoutput});
+            //   return this.setState({selectValue: "SAVE"});
+            // } else {
+            //   let select_val = myItem.name;
+            //   let myoutput =
+            //     select_val[0].toUpperCase() +
+            //     select_val.substring(1, select_val.length).toUpperCase();
+
+            //   return this.setState({selectValue: myoutput});
           }
         });
-
       }
-
     } else {
       this.setState({
         deliveryDay: "Sunday",
-        selectValue: "SURPRISE"
+        selectValue: "SURPRISE",
       });
     }
 
     // console.log(event.target.getAttribute('value'));
 
     return this.setState({
-      deliveryDay: delivery_Day !== "" && delivery_Day !== "SKIP" ? delivery_Day : "Sunday",
+      deliveryDay:
+        delivery_Day !== "" && delivery_Day !== "SKIP"
+          ? delivery_Day
+          : "Sunday",
       // deliveryDay: delivery_Day !== "" ? delivery_Day : "Sunday",
-      myDate: event.target.getAttribute('value'),
+      myDate: event.target.getAttribute("value"),
       cartItems: [...cartItemsArr],
       addOnItems: [...addOnArr],
       totalCount: myCounter,
@@ -920,18 +915,16 @@ class MenuItemList extends Component {
     });
   };
 
-
-
-  setDeliveryDay = e => {
+  setDeliveryDay = (e) => {
     let deliver = e.target.value;
     const myarr = [];
     if (this.state.totalMeals == this.state.totalCount) {
-      this.state.cartItems.map(meal => {
+      this.state.cartItems.map((meal) => {
         myarr.push({
           qty: meal.count,
           name: meal.meal_name,
           price: meal.meal_price,
-          item_uid: meal.meal_uid
+          item_uid: meal.meal_uid,
         });
         return meal;
       });
@@ -940,23 +933,20 @@ class MenuItemList extends Component {
         items: myarr,
         purchase_id: this.state.purchaseID,
         menu_date: this.state.myDate,
-        delivery_day: deliver
+        delivery_day: deliver,
       };
-      
+
       axios
-        .post(
-          `${API_URL}meals_selection`,
-          data2
-        )
-        .then(response => {
+        .post(`${API_URL}meals_selection`, data2)
+        .then((response) => {
           console.log(response);
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(error);
         });
       return this.setState({
         deliveryDay: deliver,
-        selectValue: "SAVE"
+        selectValue: "SAVE",
       });
     }
     // } else if (this.state.selectValue === "Surprise") {
@@ -967,114 +957,116 @@ class MenuItemList extends Component {
             qty: "",
             name: "SURPRISE",
             price: "",
-            item_uid: ""
-          }
+            item_uid: "",
+          },
         ];
         const data1 = {
           is_addon: false,
           items: supriseData,
           purchase_id: this.state.purchaseID,
           menu_date: this.state.myDate,
-          delivery_day: deliver
+          delivery_day: deliver,
         };
 
         axios
-          .post(
-            `${API_URL}meals_selection`,
-            data1
-          )
-          .then(response => {
+          .post(`${API_URL}meals_selection`, data1)
+          .then((response) => {
             console.log(response);
           })
-          .catch(error => {
+          .catch((error) => {
             console.log(error);
           });
         return this.setState({
           deliveryDay: deliver,
           totalCount: 0,
-          cartItems: []
+          cartItems: [],
         });
       }
     }
     return this.setState({
-      deliveryDay: deliver
+      deliveryDay: deliver,
     });
   };
 
   makeSelection = (e) => {
-
     // const customer_uid = Cookies.get("customer_uid");
 
-
-    if(this.state.customer_uid==null){
-      if (e.target.value === "SURPRISE"){
-        return this.setState({unloginPopupSurprise:true})
-      }else if(e.target.value === "SKIP"){
-        return this.setState({unloginPopupSkip:true})
-      }else{
-        return this.setState({unloginPopupSave:true})
+    if (this.state.customer_uid == null) {
+      if (e.target.value === "SURPRISE") {
+        return this.setState({ unloginPopupSurprise: true });
+      } else if (e.target.value === "SKIP") {
+        return this.setState({ unloginPopupSkip: true });
+      } else {
+        return this.setState({ unloginPopupSave: true });
       }
     }
 
     this.setState({
-      selectValue: e.target.value
+      selectValue: e.target.value,
     });
 
-    let buttonStyle = ''
-    let extraInfo = ''
+    let buttonStyle = "";
+    let extraInfo = "";
 
     console.log("(makeSelection) date: ", this.state.myDate);
 
     if (e.target.value === "SURPRISE") {
       buttonStyle = styles.datebuttonSurprise;
-      extraInfo = 'Surprise / No selection'
+      extraInfo = "Surprise / No selection";
       let tempNewButton = (
-        <button 
-              key={this.state.myDate} 
-              value={this.state.myDate} 
-              onClick={this.filterDates}
-              className={buttonStyle} 
-              id={this.state.myDate} 
-              autoFocus>
-                <button
-                style={{
-                  fontSize:'25px',
-                  fontWeight:'bold',
-                  lineHeight:'25px',
-                  backgroundColor:'rgba(0, 0, 0, 0)',
-                  border:'none'
-                }}
-                key={this.state.myDate} value={this.state.myDate} 
-                onClick={this.filterDates} 
-                id={this.state.myDate}
-                tabIndex="-1" 
-                >
-                  {moment(this.state.myDate.split(" ")[0]).format("ddd")}
-                  <br/>
-                  {moment(this.state.myDate.split(" ")[0]).format("MMM") +" "+ moment(this.state.myDate.split(" ")[0]).format("D")}
-                </button>
+        <button
+          key={this.state.myDate}
+          value={this.state.myDate}
+          onClick={this.filterDates}
+          className={buttonStyle}
+          id={this.state.myDate}
+          autoFocus
+        >
+          <button
+            style={{
+              fontSize: "25px",
+              fontWeight: "bold",
+              lineHeight: "25px",
+              backgroundColor: "rgba(0, 0, 0, 0)",
+              border: "none",
+            }}
+            key={this.state.myDate}
+            value={this.state.myDate}
+            onClick={this.filterDates}
+            id={this.state.myDate}
+            tabIndex="-1"
+          >
+            {moment(this.state.myDate.split(" ")[0]).format("ddd")}
+            <br />
+            {moment(this.state.myDate.split(" ")[0]).format("MMM") +
+              " " +
+              moment(this.state.myDate.split(" ")[0]).format("D")}
+          </button>
 
-                <button
-                style={{
-                  width:"122px",
-                  height:"48px",
-                  marginTop:"15px",
-                  fontSize:"15px",
-                  backgroundColor:'rgba(0, 0, 0, 0)',
-                  border:'none'
-                }}
-                key={this.state.myDate} value={this.state.myDate} 
-                onClick={this.filterDates} 
-                id={this.state.myDate}
-                tabIndex="-1"
-                >
-                  {extraInfo}
-                </button>
+          <button
+            style={{
+              width: "122px",
+              height: "48px",
+              marginTop: "15px",
+              fontSize: "15px",
+              backgroundColor: "rgba(0, 0, 0, 0)",
+              border: "none",
+            }}
+            key={this.state.myDate}
+            value={this.state.myDate}
+            onClick={this.filterDates}
+            id={this.state.myDate}
+            tabIndex="-1"
+          >
+            {extraInfo}
+          </button>
         </button>
-      )
+      );
       this.setState({
-        dateButtonList: this.state.dateButtonList.map((info)=>info.key===this.state.myDate?tempNewButton:info)
-      })
+        dateButtonList: this.state.dateButtonList.map((info) =>
+          info.key === this.state.myDate ? tempNewButton : info
+        ),
+      });
       if (this.state.myDate !== "") {
         console.log("(before surprise) totalMeals: ", this.state.totalMeals);
         const supriseData = [
@@ -1082,8 +1074,8 @@ class MenuItemList extends Component {
             qty: this.state.totalMeals,
             name: "SURPRISE",
             price: "",
-            item_uid: ""
-          }
+            item_uid: "",
+          },
         ];
 
         // const addOns = []
@@ -1102,7 +1094,7 @@ class MenuItemList extends Component {
           items: supriseData,
           purchase_id: this.state.purchaseID,
           menu_date: this.state.myDate,
-          delivery_day: this.state.deliveryDay
+          delivery_day: this.state.deliveryDay,
         };
 
         const addOnData1 = {
@@ -1111,98 +1103,102 @@ class MenuItemList extends Component {
           items: [],
           purchase_id: this.state.purchaseID,
           menu_date: this.state.myDate,
-          delivery_day: this.state.deliveryDay
+          delivery_day: this.state.deliveryDay,
         };
-        console.log(this.state.deliveryDay)
+        console.log(this.state.deliveryDay);
 
         console.log("(makeSelection) data1: ", data1);
         // console.log("(makeSelection) addOnData1: ", addOnData1);
-        console.log("(makeSelection -- state) addOnItems: ", this.state.addOnItems);
-      
+        console.log(
+          "(makeSelection -- state) addOnItems: ",
+          this.state.addOnItems
+        );
+
         axios
-          .post(
-            `${API_URL}meals_selection`,
-            data1
-          )
-          .then(response => {
+          .post(`${API_URL}meals_selection`, data1)
+          .then((response) => {
             console.log(response);
           })
-          .catch(error => {
+          .catch((error) => {
             console.log(error);
           });
 
-          axios
-          .post(
-            `${API_URL}meals_selection`,
-            addOnData1
-          )
-          .then(response => {
+        axios
+          .post(`${API_URL}meals_selection`, addOnData1)
+          .then((response) => {
             console.log(response);
           })
-          .catch(error => {
+          .catch((error) => {
             console.log(error);
           });
 
-          this.toggleDisplay("SURPRISE")
+        this.toggleDisplay("SURPRISE");
 
         return this.setState({
           totalCount: 0,
           cartItems: [],
-          addOnItems: []
+          addOnItems: [],
         });
       }
     } else if (e.target.value === "SKIP") {
       buttonStyle = styles.datebuttonSkip;
-      extraInfo = 'Skipped'
+      extraInfo = "Skipped";
 
       let tempNewButton = (
-        <button key={this.state.myDate} 
-              value={this.state.myDate} 
-              onClick={this.filterDates}
-              className={buttonStyle} 
-              id={this.state.myDate} 
-              autoFocus>
-                <button
-                  style={{
-                    fontSize:'25px',
-                    fontWeight:'bold',
-                    lineHeight:'25px',
-                    backgroundColor:'rgba(0, 0, 0, 0)',
-                    border:'none'
-                  }}
-                  key={this.state.myDate} value={this.state.myDate} 
-                  onClick={this.filterDates} 
-                  id={this.state.myDate}
-                  tabIndex="-1"
-                  >
-                  {moment(this.state.myDate.split(" ")[0]).format("ddd")}
-                  <br/>{moment(this.state.myDate.split(" ")[0]).format("MMM") +" "+ moment(this.state.myDate.split(" ")[0]).format("D")}
-                </button>
+        <button
+          key={this.state.myDate}
+          value={this.state.myDate}
+          onClick={this.filterDates}
+          className={buttonStyle}
+          id={this.state.myDate}
+          autoFocus
+        >
+          <button
+            style={{
+              fontSize: "25px",
+              fontWeight: "bold",
+              lineHeight: "25px",
+              backgroundColor: "rgba(0, 0, 0, 0)",
+              border: "none",
+            }}
+            key={this.state.myDate}
+            value={this.state.myDate}
+            onClick={this.filterDates}
+            id={this.state.myDate}
+            tabIndex="-1"
+          >
+            {moment(this.state.myDate.split(" ")[0]).format("ddd")}
+            <br />
+            {moment(this.state.myDate.split(" ")[0]).format("MMM") +
+              " " +
+              moment(this.state.myDate.split(" ")[0]).format("D")}
+          </button>
 
-                <button
-                  style={{
-                    width:"122px",
-                    height:"48px",
-                    marginTop:"15px",
-                    fontSize:"15px",
-                    backgroundColor:'rgba(0, 0, 0, 0)',
-                    border:'none'
-                  }}
-                  key={this.state.myDate} value={this.state.myDate} 
-                  onClick={this.filterDates} 
-                  id={this.state.myDate}
-                  tabIndex="-1" 
-                >
-                  {extraInfo}
-                </button>
-                
+          <button
+            style={{
+              width: "122px",
+              height: "48px",
+              marginTop: "15px",
+              fontSize: "15px",
+              backgroundColor: "rgba(0, 0, 0, 0)",
+              border: "none",
+            }}
+            key={this.state.myDate}
+            value={this.state.myDate}
+            onClick={this.filterDates}
+            id={this.state.myDate}
+            tabIndex="-1"
+          >
+            {extraInfo}
+          </button>
         </button>
-      )
-  
-  
+      );
+
       this.setState({
-        dateButtonList: this.state.dateButtonList.map((info)=>info.key===this.state.myDate?tempNewButton:info)
-      })
+        dateButtonList: this.state.dateButtonList.map((info) =>
+          info.key === this.state.myDate ? tempNewButton : info
+        ),
+      });
 
       // let myArr2 = [];
       // this.state.cartItems.map(meal => {
@@ -1224,17 +1220,17 @@ class MenuItemList extends Component {
           qty: this.state.totalMeals,
           name: "SKIP",
           price: "",
-          item_uid: ""
-        }
+          item_uid: "",
+        },
       ];
-      
+
       const data2 = {
         is_addon: false,
         items: skipData,
         purchase_id: this.state.purchaseID,
         menu_date: this.state.myDate,
         // delivery_day: this.state.deliveryDay
-        delivery_day: 'SKIP'
+        delivery_day: "SKIP",
       };
 
       const addOnData2 = {
@@ -1242,34 +1238,28 @@ class MenuItemList extends Component {
         items: [],
         purchase_id: this.state.purchaseID,
         menu_date: this.state.myDate,
-        delivery_day: this.state.deliveryDay
+        delivery_day: this.state.deliveryDay,
       };
 
       axios
-        .post(
-          `${API_URL}meals_selection`,
-          data2
-        )
-        .then(response => {
+        .post(`${API_URL}meals_selection`, data2)
+        .then((response) => {
           // console.log(response);
         })
-        .catch(error => {
+        .catch((error) => {
           // console.log(error);
         });
 
-        axios
-        .post(
-          `${API_URL}meals_selection`,
-          addOnData2
-        )
-        .then(response => {
+      axios
+        .post(`${API_URL}meals_selection`, addOnData2)
+        .then((response) => {
           // console.log(response);
         })
-        .catch(error => {
+        .catch((error) => {
           // console.log(error);
         });
 
-      this.toggleDisplay("SKIP")
+      this.toggleDisplay("SKIP");
 
       return this.setState({
         totalCount: 0,
@@ -1277,81 +1267,84 @@ class MenuItemList extends Component {
         addOnItems: [],
         addOnAmount: 0,
       });
-
     } else {
-
       buttonStyle = styles.datebuttonSave;
-      extraInfo = 'Saved'
+      extraInfo = "Saved";
       let tempNewButton = (
+        <button
+          key={this.state.myDate}
+          value={this.state.myDate}
+          onClick={this.filterDates}
+          className={buttonStyle}
+          id={this.state.myDate}
+          autoFocus
+        >
+          <button
+            style={{
+              fontSize: "25px",
+              fontWeight: "bold",
+              lineHeight: "25px",
+              backgroundColor: "rgba(0, 0, 0, 0)",
+              border: "none",
+            }}
+            key={this.state.myDate}
+            value={this.state.myDate}
+            onClick={this.filterDates}
+            id={this.state.myDate}
+            tabIndex="-1"
+          >
+            {moment(this.state.myDate.split(" ")[0]).format("ddd")}
+            <br />
+            {moment(this.state.myDate.split(" ")[0]).format("MMM") +
+              " " +
+              moment(this.state.myDate.split(" ")[0]).format("D")}
+          </button>
 
-        <button key={this.state.myDate} 
-              value={this.state.myDate} 
-              onClick={this.filterDates}
-              className={buttonStyle} 
-              id={this.state.myDate} 
-              autoFocus>
-                <button
-                style={{
-                  fontSize:'25px',
-                  fontWeight:'bold',
-                  lineHeight:'25px',
-                  backgroundColor:'rgba(0, 0, 0, 0)',
-                  border:'none'
-                }}
-                
-                key={this.state.myDate} value={this.state.myDate} 
-                onClick={this.filterDates} 
-                id={this.state.myDate}
-                tabIndex="-1"
-                >
-                  {moment(this.state.myDate.split(" ")[0]).format("ddd")}
-                  <br/>{moment(this.state.myDate.split(" ")[0]).format("MMM") +" "+ moment(this.state.myDate.split(" ")[0]).format("D")}
-                </button>
+          <button
+            style={{
+              width: "122px",
+              height: "48px",
+              marginTop: "15px",
+              fontSize: "15px",
+              backgroundColor: "rgba(0, 0, 0, 0)",
+              border: "none",
+            }}
+            key={this.state.myDate}
+            value={this.state.myDate}
+            onClick={this.filterDates}
+            id={this.state.myDate}
+            tabIndex="-1"
+          >
+            {extraInfo}
+          </button>
+        </button>
+        // </button>
+      );
 
-                <button
-                style={{
-                  width:"122px",
-                  height:"48px",
-                  marginTop:"15px",
-                  fontSize:"15px",
-                  backgroundColor:'rgba(0, 0, 0, 0)',
-                  border:'none'
-                }}
-                key={this.state.myDate} value={this.state.myDate} 
-                onClick={this.filterDates} 
-                id={this.state.myDate} 
-                tabIndex="-1"
-                >
-                  {extraInfo}
-                </button>
-                
-              </button>
-      // </button>
-      )
-  
-  
       this.setState({
-        dateButtonList: this.state.dateButtonList.map((info)=>info.key===this.state.myDate?tempNewButton:info)
-      })
+        dateButtonList: this.state.dateButtonList.map((info) =>
+          info.key === this.state.myDate ? tempNewButton : info
+        ),
+      });
 
       const myarr = [];
-      this.state.cartItems.map(meal => {
+      this.state.cartItems.map((meal) => {
         myarr.push({
           qty: meal.count,
           name: meal.meal_name,
           price: meal.meal_price,
-          item_uid: meal.meal_uid
+          item_uid: meal.meal_uid,
         });
         return meal;
       });
 
-      const addOns = []
-      this.state.addOnItems.map(meal => {
+      const addOns = [];
+      this.state.addOnItems.map((meal) => {
         addOns.push({
           qty: meal.count,
           name: meal.meal_name,
           price: meal.meal_price,
-          item_uid: meal.meal_uid
+          item_uid: meal.meal_uid,
         });
         return meal;
       });
@@ -1361,7 +1354,7 @@ class MenuItemList extends Component {
         items: myarr,
         purchase_id: this.state.purchaseID,
         menu_date: this.state.myDate,
-        delivery_day: this.state.deliveryDay
+        delivery_day: this.state.deliveryDay,
       };
 
       const addOnData = {
@@ -1369,63 +1362,53 @@ class MenuItemList extends Component {
         items: addOns,
         purchase_id: this.state.purchaseID,
         menu_date: this.state.myDate,
-        delivery_day: this.state.deliveryDay
+        delivery_day: this.state.deliveryDay,
       };
 
       axios
-        .post(
-          `${API_URL}meals_selection`,
-          data
-        )
-        .then(response => {
+        .post(`${API_URL}meals_selection`, data)
+        .then((response) => {
           console.log(response);
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(error);
         });
 
-        axios
-        .post(
-          `${API_URL}meals_selection`,
-          addOnData
-        )
-        .then(response => {
+      axios
+        .post(`${API_URL}meals_selection`, addOnData)
+        .then((response) => {
           console.log(response);
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(error);
         });
 
-        this.toggleDisplay('SAVE')
+      this.toggleDisplay("SAVE");
     }
-    
-    // console.log(buttonStyle)
 
+    // console.log(buttonStyle)
   };
 
-  addToCart = menuitem => {
+  addToCart = (menuitem) => {
+    var elementBig = document.getElementById(menuitem.menu_meal_id);
 
-    var elementBig = document. getElementById(menuitem.menu_meal_id);
-
-    if(Cookies.get("customer_uid")==null){
-      return this.setState({unloginPopupShowPM:true})
+    if (Cookies.get("customer_uid") == null) {
+      return this.setState({ unloginPopupShowPM: true });
     }
-
-
 
     const cartItems = this.state.cartItems.slice();
     let alreadyInCart = false;
     if (this.state.totalCount < this.state.totalMeals) {
-      elementBig.style.backgroundColor = '#F8BB17'
+      elementBig.style.backgroundColor = "#F8BB17";
 
-      cartItems.forEach(item => {
+      cartItems.forEach((item) => {
         if (item.menu_uid === menuitem.menu_uid) {
           item.count++;
           alreadyInCart = true;
         }
       });
       if (!alreadyInCart) {
-        cartItems.push({...menuitem, count: 1});
+        cartItems.push({ ...menuitem, count: 1 });
       }
 
       this.setState({
@@ -1434,54 +1417,54 @@ class MenuItemList extends Component {
         selectValue:
           this.state.totalCount != this.state.totalMeals &&
           this.state.totalCount != 0 &&
-          ""
+          "",
       });
     }
   };
 
-  addAddOn = menuitem => {
+  addAddOn = (menuitem) => {
     const cartItems = this.state.addOnItems.slice();
     let alreadyInCart = false;
-      cartItems.forEach(item => {
-        // if (item.menu_uid === menuitem.menu_uid) {
-        if (item.meal_uid === menuitem.meal_uid) {
-          item.count++;
-          alreadyInCart = true;
-        }
-      });
-      if (!alreadyInCart) {
-        cartItems.push({...menuitem, count: 1});
+    cartItems.forEach((item) => {
+      // if (item.menu_uid === menuitem.menu_uid) {
+      if (item.meal_uid === menuitem.meal_uid) {
+        item.count++;
+        alreadyInCart = true;
       }
+    });
+    if (!alreadyInCart) {
+      cartItems.push({ ...menuitem, count: 1 });
+    }
 
-      // console.log(cartItems)
-      this.setState({
-        addOnItems: cartItems,
-        addOnAmount: this.state.addOnAmount + 1,
-        selectValue:
-          this.state.totalCount != this.state.totalMeals &&
-          this.state.totalCount != 0 &&
-          ""
-      });
-  }
+    // console.log(cartItems)
+    this.setState({
+      addOnItems: cartItems,
+      addOnAmount: this.state.addOnAmount + 1,
+      selectValue:
+        this.state.totalCount != this.state.totalMeals &&
+        this.state.totalCount != 0 &&
+        "",
+    });
+  };
 
   removeFromCart = (menuitem) => {
     console.log("RFC menuitem: ", menuitem);
     var elementBig = document.getElementById(menuitem.menu_meal_id);
-    var elementNum = document.getElementById(menuitem.menu_meal_id+'num');
+    var elementNum = document.getElementById(menuitem.menu_meal_id + "num");
 
-    if((elementNum.textContent)>1){
+    if (elementNum.textContent > 1) {
       // elementBig.style.backgroundColor = '#F8BB17'
-    }else{
-      elementBig.style.backgroundColor = 'white'
+    } else {
+      elementBig.style.backgroundColor = "white";
     }
 
-    if(Cookies.get("customer_uid")==null){
-      return this.setState({unloginPopupShowPM:true})
+    if (Cookies.get("customer_uid") == null) {
+      return this.setState({ unloginPopupShowPM: true });
     }
 
     const cartItems = this.state.cartItems.slice();
     // let alreadyInCart_1 = false;
-    cartItems.forEach(item => {
+    cartItems.forEach((item) => {
       if (this.state.totalCount > 0) {
         if (item.menu_uid === menuitem.menu_uid) {
           if (item.count !== 0) {
@@ -1494,79 +1477,78 @@ class MenuItemList extends Component {
             selectValue:
               this.state.totalCount != this.state.totalMeals &&
               this.state.totalCount != 0 &&
-              ""
+              "",
           });
         }
       }
     });
-    cartItems.forEach(meal => {
+    cartItems.forEach((meal) => {
       if (
         meal.menu_uid === menuitem.menu_uid &&
         meal.count === 0 &&
         this.state.totalCount > 0
       ) {
         this.setState({
-          cartItems: cartItems.filter(x => x.menu_uid !== menuitem.menu_uid),
-          totalCount: this.state.totalCount - 1
+          cartItems: cartItems.filter((x) => x.menu_uid !== menuitem.menu_uid),
+          totalCount: this.state.totalCount - 1,
         });
       }
     });
   };
 
-  removeAddOn = menuitem => {
+  removeAddOn = (menuitem) => {
     console.log("menuitem: ", menuitem);
     const cartItems = this.state.addOnItems.slice();
     // let alreadyInCart_1 = false;
-    console.log("removeAddOn cartItems (1): ", cartItems)
+    console.log("removeAddOn cartItems (1): ", cartItems);
 
     let cartItemsCopy = [];
-    cartItems.forEach(item => {
+    cartItems.forEach((item) => {
       console.log("each item: ", item);
-        // if (item.menu_uid === menuitem.menu_uid) {
-          if (item.meal_uid === menuitem.meal_uid) {
-          console.log("item.count: ", item.count);
-          if (item.count !== 0) {
-            // alreadyInCart_1 = true;
-            console.log("item.count before: ", item.count);
-            // item.count = item.count--;
-            item.count--;
-            console.log("item.count after: ", item.count);
-          }
-          this.setState({
-            addOnItems: cartItems,
-            addOnAmount: this.state.addOnAmount - 1,
-            selectValue:
-              this.state.totalCount != this.state.totalMeals &&
-              this.state.totalCount != 0 &&
-              ""
-          });
+      // if (item.menu_uid === menuitem.menu_uid) {
+      if (item.meal_uid === menuitem.meal_uid) {
+        console.log("item.count: ", item.count);
+        if (item.count !== 0) {
+          // alreadyInCart_1 = true;
+          console.log("item.count before: ", item.count);
+          // item.count = item.count--;
+          item.count--;
+          console.log("item.count after: ", item.count);
         }
+        this.setState({
+          addOnItems: cartItems,
+          addOnAmount: this.state.addOnAmount - 1,
+          selectValue:
+            this.state.totalCount != this.state.totalMeals &&
+            this.state.totalCount != 0 &&
+            "",
+        });
+      }
     });
-    console.log("removeAddOn cartItems (2): ", cartItems)
-    cartItems.forEach(meal => {
+    console.log("removeAddOn cartItems (2): ", cartItems);
+    cartItems.forEach((meal) => {
       console.log("each meal: ", meal);
       if (
         // meal.menu_uid === menuitem.menu_uid &&
         meal.meal_uid === menuitem.meal_uid &&
-        meal.count === 0 
+        meal.count === 0
       ) {
         this.setState({
           // addOnItems: cartItems.filter(x => x.menu_uid !== menuitem.menu_uid),
-          addOnItems: cartItems.filter(x => x.meal_uid !== menuitem.meal_uid),
+          addOnItems: cartItems.filter((x) => x.meal_uid !== menuitem.meal_uid),
           addOnAmount: this.state.addOnAmount - 1,
         });
       }
     });
-    console.log("removeAddOn cartItems (3): ", cartItems)
+    console.log("removeAddOn cartItems (3): ", cartItems);
   };
 
-  prepareSurpriseArr=(uid)=>{
+  prepareSurpriseArr = (uid) => {
     console.log("in PSA");
 
     console.log("PSA uid: ", uid);
 
-    if(uid!=null){
-
+    if (uid != null) {
       console.log("PSA in if statement");
 
       // fetch(
@@ -1575,38 +1557,42 @@ class MenuItemList extends Component {
       //   .then(response => response.json())
       //   .then(json => {
 
-          // console.log("PSA json: ", json);
+      // console.log("PSA json: ", json);
 
-          // let mealSelected = [...json.result];
-      axios.get(`${API_URL}meals_selected?customer_uid=${uid}`)
-        .then(res => {
+      // let mealSelected = [...json.result];
+      axios
+        .get(`${API_URL}meals_selected?customer_uid=${uid}`)
+        .then((res) => {
           console.log("PSA meals_selected res: ", res);
           let tempArr = [];
           let mealSelected = res.data.result;
 
           console.log("PSA meals_selected (1)");
-          for(const eachData of mealSelected){
+          for (const eachData of mealSelected) {
             console.log("PSA eachData: ", eachData);
 
-            console.log("PSA meals_selected before parse: ", eachData.meals_selected);
+            console.log(
+              "PSA meals_selected before parse: ",
+              eachData.meals_selected
+            );
 
             //let tempselection = JSON.parse(eachData.meal_selection);
             let tempselection = JSON.parse(eachData.meals_selected);
 
             console.log("PSA tempselection: ", tempselection);
 
-            if(tempselection.length === 0) {
+            if (tempselection.length === 0) {
               tempArr.push({
                 id: eachData.sel_purchase_id,
                 date: eachData.sel_menu_date,
                 selection: "ERROR",
-              })
+              });
             } else {
               tempArr.push({
                 id: eachData.sel_purchase_id,
                 date: eachData.sel_menu_date,
                 selection: tempselection[0].name,
-              })
+              });
             }
             // tempArr.push({
             //   id: eachData.sel_purchase_id,
@@ -1614,7 +1600,7 @@ class MenuItemList extends Component {
             //   selection: tempselection[0].name,
             // })
           }
-          this.setState({surpriseSkipSave:tempArr});
+          this.setState({ surpriseSkipSave: tempArr });
           console.log("PSA meals_selected (2)");
 
           // console.log(this.state.surpriseSkipSave)
@@ -1622,114 +1608,131 @@ class MenuItemList extends Component {
           let buttonList = [];
           let first = null;
 
-          const dates = this.state.data.map(date => date.menu_date);
+          const dates = this.state.data.map((date) => date.menu_date);
           const uniqueDates = Array.from(new Set(dates));
           let lessThanTen = 0;
 
           // console.log(this.state.surpriseSkipSave)
 
           console.log("PSA meals_selected (3)");
-          for(const date of uniqueDates){
-
-            if(lessThanTen>=10){
+          for (const date of uniqueDates) {
+            if (lessThanTen >= 10) {
               break;
             }
 
-            let classStyle = styles.datebuttonSurprise ;
-            let extraInfo = 'Surprise / No selection'
+            let classStyle = styles.datebuttonSurprise;
+            let extraInfo = "Surprise / No selection";
 
-            for(const surpriseInfo of this.state.surpriseSkipSave){
-              if(surpriseInfo.date == date&&surpriseInfo.id==this.state.purchaseID){
-                if(surpriseInfo.selection=='SKIP'){
-                  classStyle = styles.datebuttonSkip
-                  extraInfo='Skipped'
-                }else if(surpriseInfo.selection=='SURPRISE'){
-                  classStyle = styles.datebuttonSurprise 
-                  extraInfo = 'Surprise / No selection'
-                }
-                else{
-                  classStyle = styles.datebuttonSave
-                  extraInfo = 'Saved'
+            for (const surpriseInfo of this.state.surpriseSkipSave) {
+              if (
+                surpriseInfo.date == date &&
+                surpriseInfo.id == this.state.purchaseID
+              ) {
+                if (surpriseInfo.selection == "SKIP") {
+                  classStyle = styles.datebuttonSkip;
+                  extraInfo = "Skipped";
+                } else if (surpriseInfo.selection == "SURPRISE") {
+                  classStyle = styles.datebuttonSurprise;
+                  extraInfo = "Surprise / No selection";
+                } else {
+                  classStyle = styles.datebuttonSave;
+                  extraInfo = "Saved";
                 }
               }
             }
             buttonList.push(
-              <button 
-              key={date} value={date} 
-              onClick={this.filterDates} 
-              id={date} 
-              className={classStyle} 
-              autoFocus={first==null}
-              aria-label={moment(date.split(" ")[0]).format("ddd") + " " + moment(date.split(" ")[0]).format("MMM") + " " +
-              moment(date.split(" ")[0]).format("D") + " " + extraInfo}
-              title={moment(date.split(" ")[0]).format("ddd") + " " + moment(date.split(" ")[0]).format("MMM") + " " +
-              moment(date.split(" ")[0]).format("D") + " " + extraInfo}
+              <button
+                key={date}
+                value={date}
+                onClick={this.filterDates}
+                id={date}
+                className={classStyle}
+                autoFocus={first == null}
+                aria-label={
+                  moment(date.split(" ")[0]).format("ddd") +
+                  " " +
+                  moment(date.split(" ")[0]).format("MMM") +
+                  " " +
+                  moment(date.split(" ")[0]).format("D") +
+                  " " +
+                  extraInfo
+                }
+                title={
+                  moment(date.split(" ")[0]).format("ddd") +
+                  " " +
+                  moment(date.split(" ")[0]).format("MMM") +
+                  " " +
+                  moment(date.split(" ")[0]).format("D") +
+                  " " +
+                  extraInfo
+                }
               >
-                
                 <button
-                style={{
-                  fontSize:'25px',
-                  fontWeight:'bold',
-                  lineHeight:'25px',
-                  backgroundColor:'rgba(0, 0, 0, 0)',
-                  border:'none'
-                }}
-                key={date} value={date} 
-                onClick={this.filterDates} 
-                id={date} 
-                tabIndex="-1"
-                aria-hidden="true"
+                  style={{
+                    fontSize: "25px",
+                    fontWeight: "bold",
+                    lineHeight: "25px",
+                    backgroundColor: "rgba(0, 0, 0, 0)",
+                    border: "none",
+                  }}
+                  key={date}
+                  value={date}
+                  onClick={this.filterDates}
+                  id={date}
+                  tabIndex="-1"
+                  aria-hidden="true"
                 >
                   {moment(date.split(" ")[0]).format("ddd")}
-                  <br/>{moment(date.split(" ")[0]).format("MMM") +" "+ moment(date.split(" ")[0]).format("D")}
+                  <br />
+                  {moment(date.split(" ")[0]).format("MMM") +
+                    " " +
+                    moment(date.split(" ")[0]).format("D")}
                 </button>
 
                 <button
-                style={{
-                  width:"122px",
-                  height:"48px",
-                  marginTop:"10px",
-                  fontSize:"15px",
-                  backgroundColor:'rgba(0, 0, 0, 0)',
-                  border:'none'
-                }}
-                key={date} value={date} 
-                onClick={this.filterDates} 
-                id={date}
-                tabIndex="-1"
-                aria-hidden="true" 
+                  style={{
+                    width: "122px",
+                    height: "48px",
+                    marginTop: "10px",
+                    fontSize: "15px",
+                    backgroundColor: "rgba(0, 0, 0, 0)",
+                    border: "none",
+                  }}
+                  key={date}
+                  value={date}
+                  onClick={this.filterDates}
+                  id={date}
+                  tabIndex="-1"
+                  aria-hidden="true"
                 >
                   {extraInfo}
                 </button>
-
-                
               </button>
-            )
-            first=1;
+            );
+            first = 1;
             lessThanTen++;
           }
           // console.log("buttonList: ", buttonList)
 
           console.log("(1) setting dateButtonList...");
           this.setState({
-            dateButtonList: buttonList
+            dateButtonList: buttonList,
           });
 
           return buttonList;
-
         })
-        .catch(error => {
+        .catch((error) => {
           console.error(error);
         });
     }
-  }
+  };
 
-  dateButtonArray=()=>{
+  dateButtonArray = () => {
     console.log("in dateButtonArray");
 
     // const customer_uid = Cookies.get("customer_uid");
 
-    const dates = this.state.data.map(date => date.menu_date);
+    const dates = this.state.data.map((date) => date.menu_date);
     const uniqueDates = Array.from(new Set(dates));
 
     // console.log("customer_uid: ", customer_uid);
@@ -1737,14 +1740,14 @@ class MenuItemList extends Component {
     // console.log("uniqueDates: ", uniqueDates);
 
     let buttonList = [];
-    let first=null;
+    let first = null;
 
     let lessThanTen = 0;
 
     if (this.state.customer_uid == null) {
       //if user  not login, show them the basic date button
-      for(const date of uniqueDates){
-        if(lessThanTen>=10){
+      for (const date of uniqueDates) {
+        if (lessThanTen >= 10) {
           break;
         }
         buttonList.push(
@@ -1753,68 +1756,72 @@ class MenuItemList extends Component {
           //   <br/>{moment(date.split(" ")[0]).format("MMM") +" "+ moment(date.split(" ")[0]).format("D")}
           // </button>
 
-          <button 
-          key={date} 
-          value={date} 
-          onClick={this.filterDates} 
-          id={date} className={styles.datebuttonSurprise} 
-          autoFocus={first==null}
-          aria-label={date + "Suprise / No selection"}
+          <button
+            key={date}
+            value={date}
+            onClick={this.filterDates}
+            id={date}
+            className={styles.datebuttonSurprise}
+            autoFocus={first == null}
+            aria-label={date + "Suprise / No selection"}
           >
             <button
               style={{
-                fontSize:'25px',
-                fontWeight:'bold',
-                lineHeight:'25px',
-                backgroundColor:'rgba(0, 0, 0, 0)',
-                border:'none'
+                fontSize: "25px",
+                fontWeight: "bold",
+                lineHeight: "25px",
+                backgroundColor: "rgba(0, 0, 0, 0)",
+                border: "none",
               }}
-              key={date} value={date} 
-              value={date} 
+              key={date}
+              value={date}
+              value={date}
               onClick={this.filterDates}
               tabIndex="-1"
-              >
+            >
               {moment(date.split(" ")[0]).format("ddd")}
-              <br/>{moment(date.split(" ")[0]).format("MMM") +" "+ moment(date.split(" ")[0]).format("D")}
+              <br />
+              {moment(date.split(" ")[0]).format("MMM") +
+                " " +
+                moment(date.split(" ")[0]).format("D")}
             </button>
 
             <button
-            style={{
-              width:"122px",
-              height:"48px",
-              marginTop:"15px",
-              fontSize:"15px",
-              backgroundColor:'rgba(0, 0, 0, 0)',
-              border:'none'
-            }}
-            key={date} value={date} 
-            value={date} 
-            onClick={this.filterDates}
-            tabIndex="-1"
+              style={{
+                width: "122px",
+                height: "48px",
+                marginTop: "15px",
+                fontSize: "15px",
+                backgroundColor: "rgba(0, 0, 0, 0)",
+                border: "none",
+              }}
+              key={date}
+              value={date}
+              value={date}
+              onClick={this.filterDates}
+              tabIndex="-1"
             >
               Surprise / No selection
             </button>
-            
           </button>
-        )
-        first=1;
+        );
+        first = 1;
         lessThanTen++;
       }
 
       console.log("(2) setting dateButtonList...");
       this.setState({
-        dateButtonList: buttonList
-      })
-    }
-    else{
-      //if user login, fetch skip, surprise or something else on that day. 
+        dateButtonList: buttonList,
+      });
+    } else {
+      //if user login, fetch skip, surprise or something else on that day.
       buttonList = this.prepareSurpriseArr(this.state.customer_uid);
     }
     return buttonList;
-  }
+  };
 
   render() {
-    const dates = this.state.data.map(date => date.menu_date);
+    const dates = this.state.data.map((date) => date.menu_date);
     const uniqueDates = Array.from(new Set(dates));
 
     console.log("(render) dateButtonList: ", this.state.dateButtonList);
@@ -1822,32 +1829,34 @@ class MenuItemList extends Component {
 
     // console.log(this.state.surpriseSkipSave)
     return (
-      <>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          minHeight: "100vh",
+        }}
+      >
         <WebNavBar />
 
         {/* Loading Screen */}
         {/* Loading screen does not go away */}
-        {(
-          this.state.dateButtonList !== null &&
-          this.state.mealsLoaded
-        )? (
-          null
-        ) : (
+        {this.state.dateButtonList !== null && this.state.mealsLoaded ? null : (
           <div
             style={{
-              color: 'red',
-              zIndex: '99',
-              height: '100vh',
-              width: '100vw',
+              color: "red",
+              zIndex: "99",
+              height: "100vh",
+              width: "100vw",
               // height: '50vh',
               // width: '50vw',
               // border: 'inset',
-              position: 'fixed',
-              top: '0',
-              backgroundColor: '#F7F4E5',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center'
+              position: "fixed",
+              top: "0",
+              backgroundColor: "#F7F4E5",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
             }}
           >
             <img src={m4me_logo} />
@@ -1894,20 +1903,19 @@ class MenuItemList extends Component {
           saveButton={this.state.saveButton}
           purchaseID={this.state.purchaseID}
           mealSelected={this.state.mealSelected}
-          dateButtonArray = {this.state.dateButtonList}
-          customer_uid = {this.state.customer_uid}
+          dateButtonArray={this.state.dateButtonList}
+          customer_uid={this.state.customer_uid}
         />
 
         {/* <FootLink /> */}
 
-        <div 
-          style = {{
-            overflow: 'visible', 
+        <div
+          style={{
+            overflow: "visible",
             // height: '100vh',
             // border: 'dashed'
           }}
         >
-
           <div className={styles.menuItemsWrapper}>
             <MenuItem
               addToCart={this.addToCart}
@@ -1918,14 +1926,23 @@ class MenuItemList extends Component {
               mealSelected={this.state.mealSelected}
               purchaseID={this.state.purchaseID}
               show={this.props.subscribedPlans.length}
-              addon = {false}
-              customer_uid = {this.state.customer_uid}
+              addon={false}
+              customer_uid={this.state.customer_uid}
             />
           </div>
 
-          <h6 style = {{padding: '10px 90px', fontSize: '30px', fontWeight: 'bold', color: '#FF9400'}}>Add Ons</h6>
+          <h6
+            style={{
+              padding: "10px 90px",
+              fontSize: "30px",
+              fontWeight: "bold",
+              color: "#FF9400",
+            }}
+          >
+            Add Ons
+          </h6>
 
-          <div className = {styles.menuItemsWrapper}>
+          <div className={styles.menuItemsWrapper}>
             <MenuItem
               addToCart={this.addAddOn}
               removeFromCart={this.removeAddOn}
@@ -1935,74 +1952,92 @@ class MenuItemList extends Component {
               mealSelected={this.state.mealSelected}
               purchaseID={this.state.purchaseID}
               show={this.props.subscribedPlans.length}
-              addon = {true}
+              addon={true}
             />
             {/* <FootLink/> */}
           </div>
         </div>
 
-        <FootLink/>		
+        <FootLink />
 
-        <div className = {this.state.popUp}>
-          <div className = {styles.popUpContainer}>
-            <h6 style = {{margin: '20px 25px', fontSize:'18px', textAlign:'center', fontWeight:'bold'}}>{this.state.popUpTitle}</h6>
-            <h6 style = {{margin: '20px 25px', fontSize:'18px', textAlign:'center'}}>{this.state.popUpText}</h6>
-            <a className = {styles.popUpButton} onClick = {this.toggleDisplay}>OK</a>
+        <div className={this.state.popUp}>
+          <div className={styles.popUpContainer}>
+            <h6
+              style={{
+                margin: "20px 25px",
+                fontSize: "18px",
+                textAlign: "center",
+                fontWeight: "bold",
+              }}
+            >
+              {this.state.popUpTitle}
+            </h6>
+            <h6
+              style={{
+                margin: "20px 25px",
+                fontSize: "18px",
+                textAlign: "center",
+              }}
+            >
+              {this.state.popUpText}
+            </h6>
+            <a className={styles.popUpButton} onClick={this.toggleDisplay}>
+              OK
+            </a>
           </div>
           {/* <FootLink/>		 */}
         </div>
 
         {/* <FootLink/>		 */}
 
-        {this.state.unloginPopupShowPM ?
-          <SelectMealGuestPop 
-            closeFunction = {this.closepopPlusMinus}
-            login = {this.togglePopLogin} 
-            signup = {this.togglePopSignup}
+        {this.state.unloginPopupShowPM ? (
+          <SelectMealGuestPop
+            closeFunction={this.closepopPlusMinus}
+            login={this.togglePopLogin}
+            signup={this.togglePopSignup}
           />
-        : null}
+        ) : null}
 
-        {this.state.unloginPopupSave ?
-          <UnloginSave 
-            closeFunction = {this.closepopSave} 
-            login = {this.togglePopLogin} 
-            signup = {this.togglePopSignup}
+        {this.state.unloginPopupSave ? (
+          <UnloginSave
+            closeFunction={this.closepopSave}
+            login={this.togglePopLogin}
+            signup={this.togglePopSignup}
           />
-        : null}
+        ) : null}
 
-        {this.state.unloginPopupSurprise ?
-          <UnloginSurprise 
-            closeFunction = {this.closepopSurprise}
-            login = {this.togglePopLogin} 
-            signup = {this.togglePopSignup}
+        {this.state.unloginPopupSurprise ? (
+          <UnloginSurprise
+            closeFunction={this.closepopSurprise}
+            login={this.togglePopLogin}
+            signup={this.togglePopSignup}
           />
-        : null}
+        ) : null}
 
-        {this.state.unloginPopupSkip ?
-          <UnloginSkip 
-            closeFunction = {this.closepopSkip}
-            login = {this.togglePopLogin} 
-            signup = {this.togglePopSignup}
+        {this.state.unloginPopupSkip ? (
+          <UnloginSkip
+            closeFunction={this.closepopSkip}
+            login={this.togglePopLogin}
+            signup={this.togglePopSignup}
           />
-        : null}
+        ) : null}
 
-        {this.state.login_seen ? 
-          <PopLogin toggle={this.togglePopLogin} /> 
-        : null}
+        {this.state.login_seen ? (
+          <PopLogin toggle={this.togglePopLogin} />
+        ) : null}
 
-        {this.state.signUpSeen ? 
-          <Popsignup toggle={this.togglePopSignup} /> 
-        : null}	
-
-      </>
+        {this.state.signUpSeen ? (
+          <Popsignup toggle={this.togglePopSignup} />
+        ) : null}
+      </div>
     );
   }
 }
-const mapStateToProps = state => ({
-  subscribedPlans: state.subscribe.subscribedPlans
+const mapStateToProps = (state) => ({
+  subscribedPlans: state.subscribe.subscribedPlans,
 });
 
 export default connect(mapStateToProps, {
   fetchSubscribed,
-  fetchProfileInformation
+  fetchProfileInformation,
 })(MenuItemList);

@@ -186,6 +186,7 @@ class MenuItem extends React.Component {
             isFlipped={this.state.flipStatusArray[index]}
             flipDirection="horizontal"
           >
+            {/* FRONT OF CARD */}
             <div
               key={index}
               className={styles.menuitemIndividual}
@@ -194,38 +195,14 @@ class MenuItem extends React.Component {
                 backgroundColor: colorDict[menuitem.menu_meal_id],
               }}
             >
-              {/* {console.log("meal photo url: ", menuitem.meal_photo_URL)} */}
-
-              {/* <ReactCardFlip isFlipped={this.state.flipStatusArray[index]} flipDirection="horizontal"> */}
               <div
                 style={{
                   backgroundImage: `url(${menuitem.meal_photo_URL})`,
                   backgroundSize: "cover",
                   backgroundPosition: "center",
-                  // border: 'dashed'
-                  // backgroundColor:"black"
                 }}
                 className={styles.menuItem}
               >
-                {/* <div className={styles.menuElements} id={styles.eyeBtn}></div> */}
-                {/* <Tooltip title={menuitem.meal_desc}>
-                <button 
-                  className={styles.infoButton}
-                  aria-label={"Click here for more info on " + menuitem.meal_name}
-                  title={"Click here for more info on " + menuitem.meal_name}
-                >
-                  <img 
-                    src={info}
-                    style={{
-                      height:30,
-                      width:30,
-                      borderRadius: '0 0 0 100px',
-                      marginRight:'7px',
-                      marginBottom:'2px',
-                    }}  
-                  />
-                </button>
-              </Tooltip> */}
                 <button
                   className={styles.infoButton}
                   aria-label={
@@ -354,153 +331,14 @@ class MenuItem extends React.Component {
                     </div>
                   )}
                 </Fragment>
-                )
               </div>
-
-              {/*<div
-              style={{
-                backgroundImage: `url(${menuitem.meal_photo_URL})`,
-                backgroundSize: "cover",
-                backgroundPosition:'center',
-                // border: 'dashed'
-                // backgroundColor:"black"
-              }}
-              className={styles.menuItem}
-            >
-
-              <button 
-                className={styles.infoButton}
-                aria-label={"Click here for more info on " + menuitem.meal_name}
-                title={"Click here for more info on " + menuitem.meal_name}
-              >
-                <img 
-                  src={info}
-                  style={{
-                    height:30,
-                    width:30,
-                    borderRadius: '0 0 0 100px',
-                    marginRight:'7px',
-                    marginBottom:'2px',
-                  }}  
-                  onClick={() => {
-                    this.flipCard(index)
-                  }}
-                />
-              </button>
-            
-              <button 
-                onClick={this.changeHeart}
-                className={styles.heartButton}
-                aria-label={"Click here to favorite " + menuitem.meal_name}
-                title={"Click here to favorite " + menuitem.meal_name}
-              >
-                <img 
-                  src={this.state.favList.includes(menuitem.meal_uid) 
-                    ? fullHeart
-                    : emptyHeart}
-                  style={{
-                    height:30,
-                    width:30,
-                    borderRadius: '0 0 100px 0',
-                    marginRight:'7px',
-                    marginBottom:'2px',
-                  }}
-                  id = {menuitem.meal_uid}
-                />
-              </button>
-
-                <Fragment>
-                  <button
-                    onClick={() => this.props.removeFromCart(menuitem)}
-                    style={{
-                      width: '60px',
-                      height: '42px',
-                      top:'223px',
-                      backgroundColor:'rgb(0, 0, 0,0)'
-                    }}
-                    className={styles.minusElements}
-                    id = {String(menuitem.menu_meal_id+'-')}
-                    aria-label={"Click here to remove one " + menuitem.meal_name + ". Current amount: " + dict[menuitem.menu_meal_id]}
-                    title={"Click here to remove one " + menuitem.meal_name + ". Current amount: " + dict[menuitem.menu_meal_id]}
-                  >
-                    -
-                  </button>
-
-                  <div 
-                    key = {index}
-                    style={{
-                      width: '64px',
-                      height: '42px',
-                      top:'223px',
-                      right:'59.5px',
-                      backgroundColor:'rgb(0, 0, 0,0)'
-                    }}
-                    className={styles.numElements}
-                    id = {String(menuitem.menu_meal_id+'num')}
-                  >
-                    {dict[menuitem.menu_meal_id]}
-                  </div>
-
-                  <button
-                    onClick={() => this.props.addToCart(menuitem)}
-                    style={{
-                      width: '60px',
-                      height: '42px',
-                      top:'223px',
-                      left:'124px',
-                      backgroundColor:'rgb(0, 0, 0,0)'
-                    }}
-                    className={styles.plusElements}
-                    id = {String(menuitem.menu_meal_id+'+')}
-                    aria-label={"Click here to add one " + menuitem.meal_name + ". Current amount: " + dict[menuitem.menu_meal_id]}
-                    title={"Click here to add one " + menuitem.meal_name + ". Current amount: " + dict[menuitem.menu_meal_id]}
-                  >
-                    +
-                  </button> 
-
-
-                  {cartItems.length == 0 &&
-                    <div 
-                      key = {index}
-                      style={{
-                        width: '64px',
-                        height: '42px',
-                        top:'223px',
-                        right:'59.5px',
-                      }}
-                      className={styles.numElements}
-                      id={styles.mealCounter}
-                    >
-                      {0}
-                    </div>
-                  }
-
-                </Fragment>
-              ) 
-                </div>*/}
-
-              {/* </ReactCardFlip> */}
-
-              {/* <p 
-            id={styles.menuItemTitle}
-            style = {{
-              display:'inline-block',
-              overflow:'hidden',
-              whiteSpace:'nowrap',
-              border: 'solid'
-            }}
-          >
-            {menuitem.meal_name}
-            <br/>
-            cal: {" " + menuitem.meal_calories}
-          </p> */}
               <div
                 id={styles.menuItemTitle}
                 style={{
                   display: "inline-block",
                   overflow: "hidden",
                   whiteSpace: "nowrap",
-                  // border: 'solid',
+                  padding: "13px 5px",
                   width: "100%",
                 }}
               >
@@ -598,7 +436,7 @@ class MenuItem extends React.Component {
 
                 </div> */}
             </div>
-
+            {/* BACK OF CARD */}
             <div
               key={index}
               className={styles.menuitemIndividual}
@@ -607,12 +445,9 @@ class MenuItem extends React.Component {
                 backgroundColor: colorDict[menuitem.menu_meal_id],
               }}
             >
-              {/* {console.log("meal photo url: ", menuitem.meal_photo_URL)} */}
-
-              {/* <ReactCardFlip isFlipped={this.state.flipStatusArray[index]} flipDirection="horizontal"> */}
               <div
                 style={{
-                  backgroundImage: `url(${menuitem.meal_photo_URL})`,
+                  // backgroundImage: `url(${menuitem.meal_photo_URL})`,
                   backgroundSize: "cover",
                   backgroundPosition: "center",
                   // border: 'dashed'
@@ -620,25 +455,6 @@ class MenuItem extends React.Component {
                 }}
                 className={styles.menuItem}
               >
-                {/* <div className={styles.menuElements} id={styles.eyeBtn}></div> */}
-                {/* <Tooltip title={menuitem.meal_desc}>
-                <button 
-                  className={styles.infoButton}
-                  aria-label={"Click here for more info on " + menuitem.meal_name}
-                  title={"Click here for more info on " + menuitem.meal_name}
-                >
-                  <img 
-                    src={info}
-                    style={{
-                      height:30,
-                      width:30,
-                      borderRadius: '0 0 0 100px',
-                      marginRight:'7px',
-                      marginBottom:'2px',
-                    }}  
-                  />
-                </button>
-              </Tooltip> */}
                 <button
                   className={styles.infoButton}
                   aria-label={
@@ -682,6 +498,17 @@ class MenuItem extends React.Component {
                     id={menuitem.meal_uid}
                   />
                 </button>
+                {console.log(menuitem)}
+                <div
+                  style={{
+                    padding: "40px 5px 5px 5px",
+                    height: "170px",
+                    textAlign: "center",
+                    overflow: "auto",
+                  }}
+                >
+                  {menuitem.meal_desc}
+                </div>
                 <Fragment>
                   <button
                     onClick={() => this.props.removeFromCart(menuitem)}
@@ -767,7 +594,6 @@ class MenuItem extends React.Component {
                     </div>
                   )}
                 </Fragment>
-                )
               </div>
 
               <div
@@ -778,6 +604,7 @@ class MenuItem extends React.Component {
                   whiteSpace: "nowrap",
                   // border: 'solid',
                   width: "100%",
+                  padding: "13px 5px",
                 }}
               >
                 {menuitem.meal_name}

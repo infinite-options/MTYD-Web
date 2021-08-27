@@ -1,5 +1,5 @@
-import {useEffect, useState} from 'react';
-import {connect} from 'react-redux';
+import { useEffect, useState } from "react";
+import { connect } from "react-redux";
 import {
   fetchProfileInformation,
   fetchSubscribed,
@@ -10,20 +10,19 @@ import {
   choosePaymentOption,
   setUserInfo,
   setCurrentPurchase,
-} from '../../reducers/actions/subscriptionActions';
-import {withRouter} from 'react-router';
-import {fetchOrderHistory} from '../../reducers/actions/profileActions';
-import {WebNavBar} from '../NavBar';
-import styles from './mealplan.module.css';
-import axios from 'axios';
-import { API_URL } from '../../reducers/constants';
+} from "../../reducers/actions/subscriptionActions";
+import { withRouter } from "react-router";
+import { fetchOrderHistory } from "../../reducers/actions/profileActions";
+import { WebNavBar } from "../NavBar";
+import styles from "./mealplan.module.css";
+import axios from "axios";
+import { API_URL } from "../../reducers/constants";
 
-import {FootLink} from "../Home/homeButtons";
+import { FootLink } from "../Home/homeButtons";
 
-import m4me_logo from '../../images/LOGO_NoBG_MealsForMe.png';
+import m4me_logo from "../../images/LOGO_NoBG_MealsForMe.png";
 
-const MealPlan = props => {
-
+const MealPlan = (props) => {
   const [customerId, setCustomerId] = useState(null);
   const [currentPlan, setCurrentPlan] = useState(null);
   const [dropdownButtons, setDropdownButtons] = useState([]);
@@ -39,29 +38,30 @@ const MealPlan = props => {
   //let customerId = null;
   if (
     document.cookie
-      .split(';')
-      .some(item => item.trim().startsWith('customer_uid=')) && customerId === null
+      .split(";")
+      .some((item) => item.trim().startsWith("customer_uid=")) &&
+    customerId === null
   ) {
     setCustomerId(
       document.cookie
-        .split('; ')
-        .find(item => item.startsWith('customer_uid='))
-        .split('=')[1]
+        .split("; ")
+        .find((item) => item.startsWith("customer_uid="))
+        .split("=")[1]
     );
   }
 
   // (1) Fetch profile info and subscription history info
   useEffect(() => {
-
     if (!customerId) {
-      props.history.push('/');
+      props.history.push("/");
     } else {
       try {
         props.fetchProfileInformation(customerId);
-        
+
         // console.log("useEffect customerId: " + customerId);
 
-        axios.get(API_URL + 'subscription_history/' + customerId)
+        axios
+          .get(API_URL + "subscription_history/" + customerId)
           .then((res) => {
             // console.log("(sh) res: ", res.data.result);
 
@@ -69,28 +69,22 @@ const MealPlan = props => {
             setBillingInfo(res.data.result);
           })
           .catch((err) => {
-            if(err.response) {
+            if (err.response) {
               console.log(err.response);
             }
             console.log(err);
           });
-        
       } catch (err) {
         console.log(err);
       }
     }
-
   }, []);
-
 
   // (3) Set default plan and associated dropdowns
   useEffect(() => {
     // console.log("(UE currentPlan) current plan set: ", currentPlan);
     // console.log("(UE currentPlan) unique plans: ", uniquePlans);
-
-
   }, [currentPlan, uniquePlans]);
-
 
   // (2) Set default plan
   useEffect(() => {
@@ -105,35 +99,37 @@ const MealPlan = props => {
     let dropdownIndex = 0;
 
     subHistory.forEach((sub) => {
-
-      let elIndex = tempUniquePlans.findIndex(element => element.id === sub.purchase_id);
+      let elIndex = tempUniquePlans.findIndex(
+        (element) => element.id === sub.purchase_id
+      );
 
       // console.log(' ');
       // console.log('(1) ==============================');
       // console.log("sub: ", sub);
 
       if (elIndex === -1) {
-
         // console.log("-- (1.1) UNIQUE PLAN FOUND: ", sub.purchase_id);
 
         let tempUniquePlan = {
           id: sub.purchase_id,
-          history: []
+          history: [],
         };
 
         // console.log("-- (1.2) plan to be pushed: ", tempUniquePlan);
 
         tempUniquePlans.push(tempUniquePlan);
 
-        elIndex = tempUniquePlans.findIndex(element => element.id === sub.purchase_id);
+        elIndex = tempUniquePlans.findIndex(
+          (element) => element.id === sub.purchase_id
+        );
 
         // console.log("-- (1.3) element index: ", elIndex);
         // console.log("-- (1.4) adding to plan: ", sub);
-        
+
         let historyTab = {
           date: sub.payment_time_stamp,
           show_dropdown: false,
-          deliveries: []
+          deliveries: [],
         };
         tempUniquePlans[elIndex].history.push(historyTab);
         tempUniquePlans[elIndex].history[0].deliveries.push(sub);
@@ -148,24 +144,24 @@ const MealPlan = props => {
         );
         let parsedDeliveries = parsedItems.qty;
         let parsedId = sub.purchase_id.substring(
-          sub.purchase_id.indexOf("-")+1,
+          sub.purchase_id.indexOf("-") + 1,
           sub.purchase_id.length
         );
-        let parsedPlan = {...sub}
+        let parsedPlan = { ...sub };
 
-        parsedPlan['meals'] = parsedMeals;
-        parsedPlan['deliveries'] = parsedDeliveries;
-        parsedPlan['id'] = parsedId;
+        parsedPlan["meals"] = parsedMeals;
+        parsedPlan["deliveries"] = parsedDeliveries;
+        parsedPlan["id"] = parsedId;
 
-        if(defaultSub === false) {
+        if (defaultSub === false) {
           defaultSub = true;
           setCurrentPlan(parsedPlan);
         }
 
         // Push buttons into top dropdown menu
         tempDropdownButtons.push(
-          <div 
-            key={dropdownIndex + ' : ' + sub.purchase_id}
+          <div
+            key={dropdownIndex + " : " + sub.purchase_id}
             onClick={() => {
               // console.log("pressed: ", sub.purchase_id);
               setCurrentPlan(parsedPlan);
@@ -174,56 +170,70 @@ const MealPlan = props => {
               toggleShowDropdown(false);
             }}
             style={{
-              borderRadius: '10px',
-              backgroundColor: 'white',
-              height: '32px',
-              width: '96%',
-              paddingLeft: '10px',
-              marginLeft: '2%',
-              marginTop: '10px',
-              textOverflow: 'ellipsis',
-              display: 'block',
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
-              cursor: 'pointer'
+              borderRadius: "10px",
+              backgroundColor: "white",
+              height: "32px",
+              width: "96%",
+              paddingLeft: "10px",
+              marginLeft: "2%",
+              marginTop: "10px",
+              textOverflow: "ellipsis",
+              display: "block",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              cursor: "pointer",
             }}
             tabIndex="0"
-            aria-label={"Click to select the following meal: "+parsedPlan.meals +" Meals, "+parsedPlan.deliveries+" Deliveries : "+parsedPlan.id}
-            title={"Click to select the following meal: "+parsedPlan.meals +" Meals, "+parsedPlan.deliveries+" Deliveries : "+parsedPlan.id}
+            aria-label={
+              "Click to select the following meal: " +
+              parsedPlan.meals +
+              " Meals, " +
+              parsedPlan.deliveries +
+              " Deliveries : " +
+              parsedPlan.id
+            }
+            title={
+              "Click to select the following meal: " +
+              parsedPlan.meals +
+              " Meals, " +
+              parsedPlan.deliveries +
+              " Deliveries : " +
+              parsedPlan.id
+            }
           >
-            {parsedPlan.meals} Meals, {parsedPlan.deliveries} Deliveries : {parsedPlan.id}
+            {parsedPlan.meals} Meals, {parsedPlan.deliveries} Deliveries :{" "}
+            {parsedPlan.id}
           </div>
         );
 
         dropdownIndex++;
-
       } else {
         // console.log("-- (2.1) data before: ", JSON.parse(JSON.stringify(tempUniquePlans[elIndex].history)));
         let dateIndex = tempUniquePlans[elIndex].history.findIndex(
-          element => element.date === sub.payment_time_stamp
+          (element) => element.date === sub.payment_time_stamp
         );
         // console.log("-- (2.2) date index: ", dateIndex);
-        if(dateIndex === -1) {
+        if (dateIndex === -1) {
           // console.log("---- (2A) deliveries for date not found; creating new tab...");
           let historyTab = {
             date: sub.payment_time_stamp,
             show_dropdown: false,
-            deliveries: []
+            deliveries: [],
           };
           tempUniquePlans[elIndex].history.push(historyTab);
           // console.log("----      history length: ", tempUniquePlans[elIndex].history.length);
-          tempUniquePlans[elIndex].history[(tempUniquePlans[elIndex].history.length)-1].deliveries.push(sub);
+          tempUniquePlans[elIndex].history[
+            tempUniquePlans[elIndex].history.length - 1
+          ].deliveries.push(sub);
         } else {
           // console.log("---- (2B) deliveries for date found at " + dateIndex + "! adding to tab...");
           tempUniquePlans[elIndex].history[dateIndex].deliveries.push(sub);
         }
         // console.log("-- (2.3) data after: ", JSON.parse(JSON.stringify(tempUniquePlans[elIndex].history)));
-
       }
 
       // console.log("-- new unique plan array: ", JSON.parse(JSON.stringify(tempUniquePlans)));
       // console.log('(2) ==============================');
-
     });
 
     // console.log(' ');
@@ -233,12 +243,12 @@ const MealPlan = props => {
 
     let dropdownTopMargin = [
       <div
-        key={'space'}
+        key={"space"}
         style={{
-          height: '25px',
-          backgroundColor: '#f26522',
+          height: "25px",
+          backgroundColor: "#f26522",
         }}
-      />
+      />,
     ];
 
     tempDropdownButtons = dropdownTopMargin.concat(tempDropdownButtons);
@@ -250,20 +260,20 @@ const MealPlan = props => {
       <>
         <div
           style={{
-            height: '20px',
-            zIndex: '1'
+            height: "20px",
+            zIndex: "1",
           }}
         />
         <div
           style={{
-            backgroundColor: '#f26522',
-            width: '40%',
-            minWidth: '300px',
-            height: 40 + (uniquePlansFetched * 42),
-            position: 'absolute',
-            zIndex: '1',
-            boxShadow: '0px 5px 10px gray',
-            borderRadius: '15px'
+            backgroundColor: "#f26522",
+            width: "40%",
+            minWidth: "300px",
+            height: 40 + uniquePlansFetched * 42,
+            position: "absolute",
+            zIndex: "1",
+            boxShadow: "0px 5px 10px gray",
+            borderRadius: "15px",
           }}
         >
           {tempDropdownButtons}
@@ -274,17 +284,15 @@ const MealPlan = props => {
     // setHistoryDropdowns([]);
 
     // console.log("(init) current plan set: ", currentPlan);
-
   }, [subHistory]);
 
   const formatDate = (rawDate) => {
-
-    let dateElements = rawDate.split(' ');
-    let yyyy_mm_dd = dateElements[0].split('-');
+    let dateElements = rawDate.split(" ");
+    let yyyy_mm_dd = dateElements[0].split("-");
     let month;
 
     // Parse month
-    switch(yyyy_mm_dd[1]){
+    switch (yyyy_mm_dd[1]) {
       case "01":
         month = "January";
         break;
@@ -329,21 +337,21 @@ const MealPlan = props => {
     // console.log("date string: ", dateString);
 
     return dateString;
-  }
+  };
 
   const showMealsForDelivery = (totalMeals) => {
     // console.log("(showMealsForDelivery) total meals: ", totalMeals);
     let mealsForDelivery = [];
-    for(var i = 0; i < totalMeals; i++) {
+    for (var i = 0; i < totalMeals; i++) {
       mealsForDelivery.push(
-        <div style={{display: 'inline-flex', width: '100%', height: '110px'}}>
+        <div style={{ display: "inline-flex", width: "100%", height: "110px" }}>
           <div
             style={{
               // border: 'inset',
-              width: '8%',
-              fontSize: '40px',
-              fontWeight: '600',
-              paddingTop: '15px'
+              width: "8%",
+              fontSize: "40px",
+              fontWeight: "600",
+              paddingTop: "15px",
             }}
           >
             3
@@ -351,30 +359,30 @@ const MealPlan = props => {
           <div
             style={{
               // border: 'inset',
-              width: '92%',
-              fontWeight: '600',
-              paddingTop: '33px'
+              width: "92%",
+              fontWeight: "600",
+              paddingTop: "33px",
             }}
           >
             Chicken Teriyaki Bowl
           </div>
           <div
             style={{
-              display: 'flex',
+              display: "flex",
               // border: 'inset',
-              width: '0%',
-              minWidth: '100px',
-              textAlign: 'right',
-              float: 'right',
-              fontWeight: '600'
+              width: "0%",
+              minWidth: "100px",
+              textAlign: "right",
+              float: "right",
+              fontWeight: "600",
             }}
           >
             <div
               style={{
-                border: 'dashed',
-                width: '100px',
-                height: '100px',
-                marginTop: '5px'
+                border: "dashed",
+                width: "100px",
+                height: "100px",
+                marginTop: "5px",
               }}
             >
               {"<image goes here>"}
@@ -384,25 +392,42 @@ const MealPlan = props => {
       );
     }
     return mealsForDelivery;
-  }
+  };
 
   const displayMealInfo = (data) => {
     // console.log("(displayMealInfo) data: ", data);
     // console.log("(showMealsForDelivery) total meals: ", totalMeals);
     let mealsForDelivery = [];
     // for(var i = 0; i < totalMeals; i++) {
-    if(data.meal_uid !== null){
+    if (data.meal_uid !== null) {
       mealsForDelivery.push(
-        <div style={{display: 'inline-flex', width: '100%', height: '110px'}} tabIndex="0" 
-        aria-label={formatDate(data.sel_menu_date) + ". "+ data.meal_qty+ " "+data.meal_name+"s"}
-        title={formatDate(data.sel_menu_date) + ". "+ data.meal_qty+ " "+data.meal_name+"s"}>
+        <div
+          style={{ display: "inline-flex", width: "100%", height: "110px" }}
+          tabIndex="0"
+          aria-label={
+            formatDate(data.sel_menu_date) +
+            ". " +
+            data.meal_qty +
+            " " +
+            data.meal_name +
+            "s"
+          }
+          title={
+            formatDate(data.sel_menu_date) +
+            ". " +
+            data.meal_qty +
+            " " +
+            data.meal_name +
+            "s"
+          }
+        >
           <div
             style={{
               // border: 'inset',
-              width: '8%',
-              fontSize: '40px',
-              fontWeight: '600',
-              paddingTop: '15px'
+              width: "8%",
+              fontSize: "40px",
+              fontWeight: "600",
+              paddingTop: "15px",
             }}
           >
             {data.meal_qty}
@@ -410,32 +435,32 @@ const MealPlan = props => {
           <div
             style={{
               // border: 'inset',
-              width: '92%',
-              fontWeight: '600',
-              paddingTop: '33px'
+              width: "92%",
+              fontWeight: "600",
+              paddingTop: "33px",
             }}
           >
             {data.meal_name}
           </div>
           <div
             style={{
-              display: 'flex',
+              display: "flex",
               // border: 'inset',
-              width: '0%',
-              minWidth: '100px',
-              textAlign: 'right',
-              float: 'right',
-              fontWeight: '600'
+              width: "0%",
+              minWidth: "100px",
+              textAlign: "right",
+              float: "right",
+              fontWeight: "600",
             }}
           >
             <div
               style={{
                 // border: 'dashed',
-                width: '100px',
-                height: '100px',
-                marginTop: '5px',
+                width: "100px",
+                height: "100px",
+                marginTop: "5px",
                 backgroundImage: `url(${data.meal_photo_URL})`,
-                backgroundSize: 'cover'
+                backgroundSize: "cover",
               }}
             >
               {/* {data.meal_photo_URL} */}
@@ -445,16 +470,29 @@ const MealPlan = props => {
       );
     } else if (data.meal_desc === "SURPRISE") {
       mealsForDelivery.push(
-        <div style={{display: 'inline-flex', width: '100%', height: '110px'}} tabIndex="0" 
-        aria-label={formatDate(data.sel_menu_date) + ". "+ currentPlan.meals+ "surprises"}
-        title={formatDate(data.sel_menu_date) + ". "+ currentPlan.meals+ "surprises"}>
+        <div
+          style={{ display: "inline-flex", width: "100%", height: "110px" }}
+          tabIndex="0"
+          aria-label={
+            formatDate(data.sel_menu_date) +
+            ". " +
+            currentPlan.meals +
+            "surprises"
+          }
+          title={
+            formatDate(data.sel_menu_date) +
+            ". " +
+            currentPlan.meals +
+            "surprises"
+          }
+        >
           <div
             style={{
               // border: 'inset',
-              width: '8%',
-              fontSize: '40px',
-              fontWeight: '600',
-              paddingTop: '15px'
+              width: "8%",
+              fontSize: "40px",
+              fontWeight: "600",
+              paddingTop: "15px",
             }}
           >
             {currentPlan.meals}
@@ -462,35 +500,35 @@ const MealPlan = props => {
           <div
             style={{
               // border: 'inset',
-              width: '92%',
-              fontWeight: '600',
-              paddingTop: '33px'
+              width: "92%",
+              fontWeight: "600",
+              paddingTop: "33px",
             }}
           >
             {"Surprises"}
           </div>
           <div
             style={{
-              display: 'flex',
+              display: "flex",
               // border: 'inset',
-              width: '0%',
-              minWidth: '100px',
-              textAlign: 'right',
-              float: 'right',
-              fontWeight: '600'
+              width: "0%",
+              minWidth: "100px",
+              textAlign: "right",
+              float: "right",
+              fontWeight: "600",
             }}
           >
             <div
               style={{
-                border: 'dashed',
-                width: '100px',
-                height: '100px',
-                marginTop: '5px',
-                borderWidth: '2px',
+                border: "dashed",
+                width: "100px",
+                height: "100px",
+                marginTop: "5px",
+                borderWidth: "2px",
                 // backgroundColor: 'whitesmoke',
-                fontSize: '50px',
-                paddingRight: '33px',
-                paddingTop: '10px'
+                fontSize: "50px",
+                paddingRight: "33px",
+                paddingTop: "10px",
               }}
             >
               ?
@@ -500,16 +538,19 @@ const MealPlan = props => {
       );
     } else if (data.meal_desc === "SKIP") {
       mealsForDelivery.push(
-        <div style={{display: 'inline-flex', width: '100%', height: '110px'}} tabIndex="0" 
-        aria-label={formatDate(data.sel_menu_date) + ". skip"}
-        title={formatDate(data.sel_menu_date) + ". skip"}>
+        <div
+          style={{ display: "inline-flex", width: "100%", height: "110px" }}
+          tabIndex="0"
+          aria-label={formatDate(data.sel_menu_date) + ". skip"}
+          title={formatDate(data.sel_menu_date) + ". skip"}
+        >
           <div
             style={{
               // border: 'inset',
-              width: '8%',
-              fontSize: '40px',
-              fontWeight: '600',
-              paddingTop: '15px'
+              width: "8%",
+              fontSize: "40px",
+              fontWeight: "600",
+              paddingTop: "15px",
             }}
           >
             0
@@ -517,9 +558,9 @@ const MealPlan = props => {
           <div
             style={{
               // border: 'inset',
-              width: '92%',
-              fontWeight: '600',
-              paddingTop: '33px'
+              width: "92%",
+              fontWeight: "600",
+              paddingTop: "33px",
             }}
           >
             {"(Skip)"}
@@ -528,26 +569,24 @@ const MealPlan = props => {
       );
     }
     return mealsForDelivery;
-  }
+  };
 
   const showMealsDelivered = () => {
     return (
       <div
         style={{
           // border: 'solid',
-          display: 'flex',
+          display: "flex",
           // marginBottom: '10px'
         }}
       >
-
-        <div style={{display: 'inline-block', width: '100%'}}>
-    
-          <div style={{display: 'inline-flex', width: '100%'}}>
+        <div style={{ display: "inline-block", width: "100%" }}>
+          <div style={{ display: "inline-flex", width: "100%" }}>
             <div
               style={{
                 // border: 'inset',
-                width: '50%',
-                fontWeight: '600'
+                width: "50%",
+                fontWeight: "600",
               }}
             >
               Meals Delivered
@@ -555,9 +594,9 @@ const MealPlan = props => {
             <div
               style={{
                 // border: 'inset',
-                width: '50%',
-                textAlign: 'right',
-                fontWeight: '600'
+                width: "50%",
+                textAlign: "right",
+                fontWeight: "600",
               }}
             >
               May 31, 2028
@@ -565,20 +604,17 @@ const MealPlan = props => {
           </div>
 
           {showMealsForDelivery(2)}
-
         </div>
-
       </div>
     );
-  }  
+  };
 
   const isFutureCycle = (rawDate, billDate) => {
-
     // console.log("raw date: ", rawDate);
     // console.log("bill date: ", billDate);
 
-    let dateElements = rawDate.split(' ');
-    let billDateElements = billDate.split(' ');
+    let dateElements = rawDate.split(" ");
+    let billDateElements = billDate.split(" ");
 
     // console.log("date elements: ", dateElements);
     // console.log("bill date elements: ", billDateElements);
@@ -594,10 +630,10 @@ const MealPlan = props => {
     } else {
       return false;
     }
-  }
+  };
 
   const isFutureDate = (rawDate) => {
-    let dateElements = rawDate.split(' ');
+    let dateElements = rawDate.split(" ");
     // console.log("date elements: ", dateElements);
 
     // let timestamp = new Date(dateElements[0]);
@@ -607,13 +643,13 @@ const MealPlan = props => {
 
     // console.log("date now: ", Date.now());
 
-    if(Date.parse(dateElements[0]) > Date.now()) {
+    if (Date.parse(dateElements[0]) > Date.now()) {
       return true;
     } else {
       return false;
     }
-  }
-  
+  };
+
   const showPastMeals = (data) => {
     // console.log("(showPastMeals) data: ", data);
 
@@ -623,20 +659,23 @@ const MealPlan = props => {
 
     data.deliveries.forEach((del) => {
       // console.log("del: ", del);
-      if(!isFutureCycle(del.sel_menu_date, nextBillingDate(currentPlan.purchase_id))) {
-      if(uniqueDates.includes(del.sel_menu_date)){
-        mealsDisplay.push(
-          <div
-            style={{
-              // border: 'solid',
-              display: 'flex'
-              // marginBottom: '10px'
-            }}
-          >
-  
-            <div style={{display: 'inline-block', width: '100%'}}>
-        
-              {/* <div style={{display: 'inline-flex', width: '100%'}}>
+      if (
+        !isFutureCycle(
+          del.sel_menu_date,
+          nextBillingDate(currentPlan.purchase_id)
+        )
+      ) {
+        if (uniqueDates.includes(del.sel_menu_date)) {
+          mealsDisplay.push(
+            <div
+              style={{
+                // border: 'solid',
+                display: "flex",
+                // marginBottom: '10px'
+              }}
+            >
+              <div style={{ display: "inline-block", width: "100%" }}>
+                {/* <div style={{display: 'inline-flex', width: '100%'}}>
                 <div
                   style={{
                     // border: 'inset',
@@ -657,60 +696,52 @@ const MealPlan = props => {
                   {formatDate(del.sel_menu_date)}
                 </div>
               </div> */}
-  
-              {displayMealInfo(del)}
-  
-            </div>
-  
-          </div>
-        );
-      } else {
-        uniqueDates.push(del.sel_menu_date);
-        mealsDisplay.push(
-          <div
-            style={{
-              // border: 'solid',
-              display: 'flex',
-              marginTop: '15px'
-              // marginBottom: '10px'
-            }}
-          >
-  
-            <div style={{display: 'inline-block', width: '100%'}}>
-        
-              <div style={{display: 'inline-flex', width: '100%'}}>
-                <div
-                  style={{
-                    // border: 'inset',
-                    width: '50%',
-                    fontWeight: '600'
-                  }}
-                >
-                  {
-                    isFutureDate(del.sel_menu_date)
-                      ? "Meals Delivered (Future)"
-                      : "Meals Delivered"
-                  }
-                </div>
-                <div
-                  style={{
-                    // border: 'inset',
-                    width: '50%',
-                    textAlign: 'right',
-                    fontWeight: '600'
-                  }}
-                >
-                  {formatDate(del.sel_menu_date)}
-                </div>
+
+                {displayMealInfo(del)}
               </div>
-  
-              {displayMealInfo(del)}
-  
             </div>
-  
-          </div>
-        );
-      }
+          );
+        } else {
+          uniqueDates.push(del.sel_menu_date);
+          mealsDisplay.push(
+            <div
+              style={{
+                // border: 'solid',
+                display: "flex",
+                marginTop: "15px",
+                // marginBottom: '10px'
+              }}
+            >
+              <div style={{ display: "inline-block", width: "100%" }}>
+                <div style={{ display: "inline-flex", width: "100%" }}>
+                  <div
+                    style={{
+                      // border: 'inset',
+                      width: "50%",
+                      fontWeight: "600",
+                    }}
+                  >
+                    {isFutureDate(del.sel_menu_date)
+                      ? "Meals Delivered (Future)"
+                      : "Meals Delivered"}
+                  </div>
+                  <div
+                    style={{
+                      // border: 'inset',
+                      width: "50%",
+                      textAlign: "right",
+                      fontWeight: "600",
+                    }}
+                  >
+                    {formatDate(del.sel_menu_date)}
+                  </div>
+                </div>
+
+                {displayMealInfo(del)}
+              </div>
+            </div>
+          );
+        }
       }
       /*mealsDisplay.push(
         <div
@@ -784,10 +815,8 @@ const MealPlan = props => {
         </div>
       </div>
     );*/
-    return (
-      <div>{mealsDisplay}</div>
-    );
-  }
+    return <div>{mealsDisplay}</div>;
+  };
 
   const nextBillingDate = (id) => {
     console.log("(nbd) id: ", id);
@@ -798,7 +827,7 @@ const MealPlan = props => {
     // let nextBillDate = formatDate(billInfo.next_billing_date);
     // return nextBillDate;
     return billInfo.next_billing_date;
-  }
+  };
 
   const showHistory = () => {
     // console.log(" ");
@@ -822,19 +851,14 @@ const MealPlan = props => {
 
     planHistory.history.forEach((sel) => {
       historyTabs.push(
-        <div    
-          key={sel.date}
-          style={{marginTop: '50px', marginBottom: '50px'}}
-        >
-          <div style={{display: 'inline-flex', width: '100%'}}>
-            <div className={styles.orangeHeaderLeft}>
-              Billing Date
-            </div>
+        <div key={sel.date} style={{ marginTop: "50px", marginBottom: "50px" }}>
+          <div style={{ display: "inline-flex", width: "100%" }}>
+            <div className={styles.orangeHeaderLeft}>Billing Date</div>
             <div className={styles.orangeHeaderRight}>
               {formatDate(sel.date)}
             </div>
           </div>
-          <div 
+          <div
             onClick={() => {
               // console.log("(showHistory) orange dropdown clicked for: ", sel);
               // console.log("display status before: ", sel.showDropdown);
@@ -858,51 +882,49 @@ const MealPlan = props => {
               // console.log("stuff 1: ", uniquePlanCopy[index1]);
               // console.log("stuff 2: ", uniquePlanCopy[index1].history[index2]);
 
-              uniquePlanCopy[index1].history[index2].show_dropdown = !uniquePlanCopy[index1].history[index2].show_dropdown;
+              uniquePlanCopy[index1].history[index2].show_dropdown =
+                !uniquePlanCopy[index1].history[index2].show_dropdown;
 
               setUniquePlans(uniquePlanCopy);
 
               // console.log("display status after: ", sel.showDropdown);
             }}
-            style={{display: 'inline-flex', width: '100%', cursor: 'pointer'}}
+            style={{ display: "inline-flex", width: "100%", cursor: "pointer" }}
           >
-            <div className={styles.orangeHeaderLeft}>
-              Meal Plan
-            </div>
+            <div className={styles.orangeHeaderLeft}>Meal Plan</div>
             <div className={styles.orangeHeaderRightArrow}>
               {currentPlan.meals} Meals, {currentPlan.deliveries} Deliveries
             </div>
-            <div 
+            <div
               style={{
-                width: '1%',
-                borderTop: 'solid',
-                borderWidth: '1px',
-                borderColor: '#f26522'
-              }} 
+                width: "1%",
+                borderTop: "solid",
+                borderWidth: "1px",
+                borderColor: "#f26522",
+              }}
             />
             <div
               style={{
-                width: '3%',
-                minWidth: '24px',
+                width: "3%",
+                minWidth: "24px",
                 // border: 'solid',
                 // borderWidth: '1px',
-                borderTop: 'solid',
-                borderWidth: '1px',
-                borderColor: '#f26522',
-                paddingTop: '12px'
+                borderTop: "solid",
+                borderWidth: "1px",
+                borderColor: "#f26522",
+                paddingTop: "12px",
               }}
             >
               {/* {console.log("(showHistory) (1) show dropdown? ", sel.show_dropdown)} */}
-              {sel.show_dropdown
-                ? <div className={styles.orangeArrowUp} />
-                : <div className={styles.orangeArrowDown} />}
-
+              {sel.show_dropdown ? (
+                <div className={styles.orangeArrowUp} />
+              ) : (
+                <div className={styles.orangeArrowDown} />
+              )}
             </div>
           </div>
           {/* {console.log("(showHistory) (2) show dropdown? ", sel.show_dropdown)} */}
-          {sel.show_dropdown
-            ? <>{showPastMeals(sel)}</>
-            : null}
+          {sel.show_dropdown ? <>{showPastMeals(sel)}</> : null}
         </div>
       );
     });
@@ -910,12 +932,8 @@ const MealPlan = props => {
     console.log("############################## (2)");
     console.log(" ");
 
-    return(
-      <div>
-        {historyTabs.reverse()}
-      </div>
-    );
-  }
+    return <div>{historyTabs.reverse()}</div>;
+  };
 
   /*const showHistory = () => {
     console.log("(showHistory) current plan id: ", currentPlan.purchase_id);
@@ -1051,8 +1069,6 @@ const MealPlan = props => {
     );
   }*/
 
-  
-
   // useEffect(() => {
 
   // }, []);
@@ -1075,8 +1091,7 @@ const MealPlan = props => {
 
   // }, [selectionDisplay]);
 
-
-/*
+  /*
   useEffect(() => {
     // console.log("RERENDER ON SUBSCRIBED PLANS CHANGE");
     // console.log("updating active/cancelled plans...");
@@ -1197,7 +1212,7 @@ const MealPlan = props => {
   }, [placeholderState]);
 */
 
-/*
+  /*
   useEffect(() => {
     // console.log("=== current plan ===: ", currentPlan);
     // console.log("default set? ", defaultSet);
@@ -1232,7 +1247,7 @@ const MealPlan = props => {
           // console.log("total deliveries: ", );
           mealsList.push(
             <div 
-              key={sel.purchase_uid + ' : ' + meal.item_uid}
+              key={sel.purchase_id + ' : ' + meal.item_uid}
               style={{border: 'inset'}}
             >
               <div style={{display: 'inline-flex', width: '100%'}}>
@@ -1333,163 +1348,155 @@ const MealPlan = props => {
 */
 
   return (
-    <>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        minHeight: "100vh",
+        justifyContent: "space-between",
+      }}
+    >
       <WebNavBar />
 
-      <div className={styles.sectionHeader}>
-        Select Meal Plan
-      </div>
+      <div className={styles.sectionHeader}>Select Meal Plan</div>
 
       {/* {infoLoaded === false */}
       {/* {currentPlan === null || historyDropdowns === null */}
-      {currentPlan === null || uniquePlans === null || billingInfo === null
-        ? (
-            // <div
-            //   style={{
-            //     fontSize: '40px',
-            //     fontWeight: 'bold',
-            //     marginLeft: '8%',
-            //     marginBottom: '100px',
-            //     marginRight: '8%'
-            //   }}
-            // >
-            //   LOADING YOUR SUBSCRIPTION HISTORY...
-            // </div>
-            <div
-              style={{
-                color: 'red',
-                zIndex: '99',
-                height: '100vh',
-                width: '100vw',
-                // height: '50vh',
-                // width: '50vw',
-                // border: 'inset',
-                position: 'fixed',
-                top: '0',
-                backgroundColor: '#F7F4E5',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center'
-              }}
-            >
-              <img src={m4me_logo} />
-            </div>
-          )
-        : (<>
-
-      <div className={styles.container}>
-
-        <div className={styles.box2}>
-
-          <div
-            style={{
-              // border: 'inset',
-              position: 'relative',
-              height: (
-                showDropdown
-                  ? 60 + (props.subscribedPlans.length * 42)
-                  : 60
-              )
-            }}
-          >
-            <div 
-              className={styles.dropdownSelection}
-              onClick={() => {
-                // console.log("set show dropdown menu to: ", !showDropdown);
-                toggleShowDropdown(!showDropdown);
-              }}
-              tabIndex="0"
-              aria-label="Click here to choose the subscription you want to view"
-              title="Click here to choose the subscription you want to view"
-            >
-              <div 
-                style={{
-                  // border: 'solid',
-                  // borderWidth: '1px',
-                  width: '80%',
-                  marginLeft: '5%',
-                  textOverflow: 'ellipsis',
-                  display: 'block',
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden'
-                }}
-              >
-                {/* [placeholder default meal plan] */}
-                {
-                  currentPlan === null
-                    ? "No Active Plans"
-                    : (
-                        currentPlan.meals + " Meals, " +
-                        currentPlan.deliveries + " Deliveries : " +
-                        currentPlan.id
-                      )
-                }
-              </div>
+      {currentPlan === null || uniquePlans === null || billingInfo === null ? (
+        // <div
+        //   style={{
+        //     fontSize: '40px',
+        //     fontWeight: 'bold',
+        //     marginLeft: '8%',
+        //     marginBottom: '100px',
+        //     marginRight: '8%'
+        //   }}
+        // >
+        //   LOADING YOUR SUBSCRIPTION HISTORY...
+        // </div>
+        <div
+          style={{
+            color: "red",
+            zIndex: "99",
+            height: "100vh",
+            width: "100vw",
+            // height: '50vh',
+            // width: '50vw',
+            // border: 'inset',
+            position: "fixed",
+            top: "0",
+            backgroundColor: "#F7F4E5",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <img src={m4me_logo} />
+        </div>
+      ) : (
+        <>
+          <div className={styles.container}>
+            <div className={styles.box2}>
               <div
                 style={{
-                  width: '10%',
-                  minWidth: '24px',
-                  marginRight: '5%'
+                  // border: 'inset',
+                  position: "relative",
+                  height: showDropdown
+                    ? 60 + props.subscribedPlans.length * 42
+                    : 60,
                 }}
               >
-                {
-                  currentPlan === null
-                    ? null
-                    : <div className={styles.whiteArrowDown} /> 
-                }
-                {/* <div className={styles.whiteArrowDown} />  */}
+                <div
+                  className={styles.dropdownSelection}
+                  onClick={() => {
+                    // console.log("set show dropdown menu to: ", !showDropdown);
+                    toggleShowDropdown(!showDropdown);
+                  }}
+                  tabIndex="0"
+                  aria-label="Click here to choose the subscription you want to view"
+                  title="Click here to choose the subscription you want to view"
+                >
+                  <div
+                    style={{
+                      // border: 'solid',
+                      // borderWidth: '1px',
+                      width: "80%",
+                      marginLeft: "5%",
+                      textOverflow: "ellipsis",
+                      display: "block",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                    }}
+                  >
+                    {/* [placeholder default meal plan] */}
+                    {currentPlan === null
+                      ? "No Active Plans"
+                      : currentPlan.meals +
+                        " Meals, " +
+                        currentPlan.deliveries +
+                        " Deliveries : " +
+                        currentPlan.id}
+                  </div>
+                  <div
+                    style={{
+                      width: "10%",
+                      minWidth: "24px",
+                      marginRight: "5%",
+                    }}
+                  >
+                    {currentPlan === null ? null : (
+                      <div className={styles.whiteArrowDown} />
+                    )}
+                    {/* <div className={styles.whiteArrowDown} />  */}
+                  </div>
+                </div>
+
+                {showDropdown ? dropdownButtons : null}
               </div>
+
+              {console.log("current plan (before bill date): ", currentPlan)}
+              <div
+                style={{
+                  marginTop: "50px",
+                  marginBottom: "50px" /*border: 'solid'*/,
+                }}
+              >
+                <div style={{ display: "inline-flex", width: "100%" }}>
+                  <div className={styles.orangeHeaderLeft}>
+                    Next Billing Date
+                  </div>
+                  <div className={styles.orangeHeaderRight}>
+                    {formatDate(nextBillingDate(currentPlan.purchase_id))}
+                  </div>
+                </div>
+
+                <div style={{ display: "inline-flex", width: "100%" }}>
+                  <div className={styles.orangeHeaderLeft}>Meal Plan</div>
+                  <div className={styles.orangeHeaderRightUL}>
+                    {currentPlan === null
+                      ? "No Active Plans"
+                      : currentPlan.meals +
+                        " Meals, " +
+                        currentPlan.deliveries +
+                        " Deliveries"}
+                  </div>
+                </div>
+              </div>
+
+              {showHistory()}
             </div>
-
-            {showDropdown
-              ? dropdownButtons
-              : null
-            }
-
           </div>
+        </>
+      )}
 
-          {console.log("current plan (before bill date): ", currentPlan)}
-          <div style={{marginTop: '50px', marginBottom: '50px', /*border: 'solid'*/}}>
-            <div style={{display: 'inline-flex', width: '100%'}}>
-              <div className={styles.orangeHeaderLeft}>
-                Next Billing Date
-              </div>
-              <div className={styles.orangeHeaderRight}>
-                {formatDate(nextBillingDate(currentPlan.purchase_id))}
-              </div>
-            </div>
-
-            <div style={{display: 'inline-flex', width: '100%'}}>
-              <div className={styles.orangeHeaderLeft}>
-                Meal Plan
-              </div>
-              <div className={styles.orangeHeaderRightUL}>
-                {
-                  currentPlan === null
-                    ? "No Active Plans"
-                    : (
-                      currentPlan.meals + " Meals, " +
-                      currentPlan.deliveries + " Deliveries"
-                    )
-                }
-              </div>
-            </div>
-          </div>
-
-          {showHistory()}
-
-        </div>
-      </div>
-
-      </>)}
+      <div style={{ flex: "1" }}></div>
 
       <FootLink />
-    </>
+    </div>
   );
-  
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   subscribe: state.subscribe,
   customerId: state.subscribe.profile.customerId,
   subscribedPlans: state.subscribe.subscribedPlans,
@@ -1499,7 +1506,7 @@ const mapStateToProps = state => ({
   plans: state.subscribe.plans,
   firstName: state.login.userInfo.firstName,
   lastName: state.login.userInfo.lastName,
-  socialMedia: state.subscribe.profile.socialMedia
+  socialMedia: state.subscribe.profile.socialMedia,
 });
 
 export default connect(mapStateToProps, {
