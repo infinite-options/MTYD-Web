@@ -25,12 +25,14 @@ It is breaking everything.
   height: 150px;
   position: relative;
   bottom: 0;
+  /* border: 1px solid cyan; */
 }
 
 .footerBackgroundNarrow {
   background-color: #f8bb17;
   height: 200px;
   position: relative;
+  border: 1px solid cyan;
 }
 
 /* .footerBackgroundNarrow {

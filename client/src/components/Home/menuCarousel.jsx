@@ -14,11 +14,12 @@ class MenuCarousel extends Component {
       componentDidMount() {
         const menuUrl = `${API_URL}upcoming_menu`;
         
-        //console.log("menuURL: " + menuUrl);
+        console.log("menuURL: " + menuUrl);
         
         fetch(menuUrl)
           .then((response) => response.json())
           .then((data) => {
+            console.log("(MenuCarousel) upcoming_menu data: ", data);
             this.processData(data.result);
           });
       }

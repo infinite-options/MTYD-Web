@@ -14,6 +14,9 @@ const Product = (props) => {
         boxShadow: "0 0 7px #838383",
         marginLeft: "auto",
         marginRight: "auto",
+        // marginLeft: '10px',
+        // marginRight: '10px',
+        // border: '1px solid green'
       }}
     >
       <Grid item>

@@ -179,7 +179,13 @@ class Home extends Component {
 
   render() {
     return (
-      <>
+      <div
+        // style={{
+        //   border: '1px dashed',
+        //   width: '100%',
+        //   maxWidth: 'calc(100vw - 15px)'
+        // }}
+      >
         <div
           style={{
             zIndex: "99",
@@ -300,7 +306,16 @@ class Home extends Component {
           }
         })()}
 
-        <div style={{ width: "100%", marginTop: "25px" }}>
+        <div 
+          style={{ 
+            width: "100%", 
+            // position: 'relative',
+            height: '272px',
+            maxWidth: 'calc(100vw - 15px)',
+            marginTop: "25px", 
+            // border: '1px dashed' 
+          }}
+        >
           <ProductDisplay />
         </div>
 
@@ -729,25 +744,8 @@ class Home extends Component {
           </button>
         </div>
 
-        {/* <HomeLink text = {startServingNowImg} link = "/choose-plan" />			 */}
         <FootLink />
-
-        {/*<span>
-        {this.state.windowWidth} x {this.state.windowHeight}
-      </span>*/}
-
-        {/* {(() => {
-          if (this.state.windowWidth >= 800) {
-            return (
-			<FootLink/>			
-            );
-          } else {
-            return (
-			<FootLink/>			
-            );
-          }
-        })()} */}
-      </>
+      </div>
     );
   }
 }
