@@ -59,13 +59,13 @@ p:nth-of-type(2) {
   position: absolute;
   display:block;
   width: 80px;
-
+  /* border: 1px solid red; */
   text-align: center;
   /* justify-content: space-evenly; */
   padding: 0px;
   /* background-color: white; */
   right: 10px;
-  top:100px
+  top: 90px
 }
 .socialLogin > button,
 .socialLogin > span > button,

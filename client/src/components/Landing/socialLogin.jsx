@@ -102,6 +102,7 @@ class SocialLogin extends Component {
           display: "flex",
           alignItem: "center",
           justifyContent: "center",
+          // border: '1px solid cyan'
         }}
       >
         <p
@@ -121,7 +122,11 @@ class SocialLogin extends Component {
   render() {
     let data = null;
     return !this.state.verticalFormat ? (
-      <div>
+      <div
+        // style={{
+        //    border: '1px solid cyan'
+        // }}
+      >
         <div
           style={{
             width: "412px",

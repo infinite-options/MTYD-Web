@@ -333,13 +333,14 @@ export class HomeMap extends Component {
           <input
             id="pac-input"
             type="text"
-            placeholder="Enter a location"
+            placeholder="Enter a Location"
             style={{
               width: "320px",
               height: "57px",
               borderRadius: "10px",
               fontSize: "25px",
-              border: "1px solid",
+              // border: "1px solid",
+              border: 'none',
               textAlign: "center",
               color: "black",
               marginLeft: "40px",
@@ -366,17 +367,19 @@ export class HomeMap extends Component {
             aria-label="Click here to view meals"
             title="Click here to view meals"
           >
-            <a
+            {/* <a
               href="/select-meal"
               style={{
                 color: "white",
                 marginLeft: "95px",
                 textAlign: "center",
+                border: '1px solid'
               }}
               tabIndex="-1"
             >
               View Meals
-            </a>
+            </a> */}
+            View Meals
           </button>
         </div>
 

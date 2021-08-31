@@ -67,6 +67,40 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: "10px",
     paddingBottom: "10px",
   },
+  carouselArrowRight: {
+    border: '1px solid #f26522',
+    marginRight: '50px',
+    zIndex: '50',
+    borderRadius: '50%',
+    backgroundColor: 'rgb(255,255,255,1)',
+    height: '50px',
+    width: '50px',
+    cursor: 'pointer',
+    position: 'relative',
+    '&:hover': {
+      background: '#f26522',
+      // border: '5px solid #f26522',
+    }
+  },
+  carouselArrowLeft: { 
+    border: '1px solid #f26522',
+    marginLeft: '50px',
+    zIndex: '50',
+    // border: 'none',
+    borderRadius: '50%',
+    // backgroundColor: 'transparent',
+    // backgroundImage: `url(${LeftArrow})`,
+    backgroundColor: 'rgb(255,255,255,1)',
+    // backgroundSize: 'cover',
+    height: '50px',
+    width: '50px',
+    cursor: 'pointer',
+    position: 'relative',
+    '&:hover': {
+      background: '#f26522',
+      // border: '5px solid #f26522',
+    }
+  }
 }));
 
 const CustomRightArrow = ({ onClick, ...rest }) => {
@@ -137,21 +171,22 @@ const ProductDisplay = () => {
         }}
       >
         <div
-          style={{ 
-            border: '1px solid #f26522',
-            marginLeft: '50px',
-            zIndex: '50',
-            // border: 'none',
-            borderRadius: '50%',
-            // backgroundColor: 'transparent',
-            // backgroundImage: `url(${LeftArrow})`,
-            backgroundColor: 'rgb(255,255,255,1)',
-            // backgroundSize: 'cover',
-            height: '50px',
-            width: '50px',
-            cursor: 'pointer',
-            position: 'relative'
-          }}
+          // style={{ 
+          //   border: '1px solid #f26522',
+          //   marginLeft: '50px',
+          //   zIndex: '50',
+          //   // border: 'none',
+          //   borderRadius: '50%',
+          //   // backgroundColor: 'transparent',
+          //   // backgroundImage: `url(${LeftArrow})`,
+          //   backgroundColor: 'rgb(255,255,255,1)',
+          //   // backgroundSize: 'cover',
+          //   height: '50px',
+          //   width: '50px',
+          //   cursor: 'pointer',
+          //   position: 'relative'
+          // }}
+          className={classes.carouselArrowLeft}
           onClick={() => {
             carouselRef.current.previous();
           }}
@@ -172,40 +207,32 @@ const ProductDisplay = () => {
               width: '36px'
             }}
           />
-          {/* <LeftArrow /> */}
         </div> 
       </div>
       <div
         style={{
           height: '100%',
           position: 'absolute',
-          // border: '1px solid blue',
           right: '0',
           display: 'flex',
           alignItems: 'center',
-          // zIndex: '50'
         }}
       >
         <button
-          style={{ 
-            border: '1px solid #f26522',
-            marginRight: '50px',
-            zIndex: '50',
-            // border: 'none',
-            borderRadius: '50%',
-            // backgroundColor: 'transparent',
-            // backgroundImage: `url(${LeftArrow})`,
-            backgroundColor: 'rgb(255,255,255,1)',
-            // backgroundSize: 'cover',
-            height: '50px',
-            width: '50px',
-            cursor: 'pointer',
-            position: 'relative'
-          }}
-          // className={styles.dateCarouselArrowBtn}
+          // style={{ 
+          //   border: '1px solid #f26522',
+          //   marginRight: '50px',
+          //   zIndex: '50',
+          //   borderRadius: '50%',
+          //   backgroundColor: 'rgb(255,255,255,1)',
+          //   height: '50px',
+          //   width: '50px',
+          //   cursor: 'pointer',
+          //   position: 'relative'
+          // }}
+          className={classes.carouselArrowRight}
           onClick={() => {
             carouselRef.current.next();
-            // dispatch({ type: "INCREMENT_DATE_INDEX" });
           }}
         >
           <img 

@@ -207,6 +207,7 @@ class Home extends Component {
             right: "10px",
             top: "0px",
             zIndex: "1100",
+            // border: '1px solid cyan'
           }}
         >
           {this.state.login_seen ? (
@@ -286,7 +287,7 @@ class Home extends Component {
                     height: "29px",
                   }}
                 >
-                  <u>Explore</u> meals
+                  <u>Explore</u> Meals
                 </h3>
               </div>
             );
@@ -319,8 +320,8 @@ class Home extends Component {
           <ProductDisplay />
         </div>
 
-        <div class={styles.howDoesContainer}>
-          <div class={styles.howDoesText}>
+        {/* <div class={styles.howDoesContainer}> */}
+          {/* <div class={styles.howDoesText}>
             <p
               style={{ marginLeft: "-90px", display: "inline", color: "black" }}
             >
@@ -346,13 +347,31 @@ class Home extends Component {
                 </p>
               </p>
             </p>
-          </div>
+          </div> */}
+        {/* </div> */}
+
+        <div 
+          className={styles.sectionHeader}
+          style={{
+            marginTop: '100px'
+          }}
+        >
+          How does&nbsp;
+          <span
+            style={{
+              color: "white",
+            }}
+          >
+            MealsFor.Me
+          </span>
+          &nbsp;work?
         </div>
 
         <div>
           <br />
           <br />
         </div>
+
         {(() => {
           if (this.state.windowWidth >= 900) {
             return (
@@ -492,7 +511,7 @@ class Home extends Component {
           }
         })()}
 
-        <div
+        {/* <div
           style={{
             textAlign: "center",
             marginTop: "50px",
@@ -514,37 +533,36 @@ class Home extends Component {
           >
             Signup
           </button>
-          {/* <div
+        </div> */}
+        <div
+          style={{
+            textAlign: "center",
+            marginTop: "50px",
+            fontWeight: "bold",
+            width: "100%",
+          }}
+        >
+          <button
             style={{
-              textAlign: "center",
-              marginTop: "30px",
-              marginBottom: "50px",
-              fontWeight: "bold",
+              backgroundColor: "white",
+              color: "#F26522",
+              border: "2px solid #F26522",
+              padding: "15px",
+              borderRadius: "15px",
+              width: "300px",
+              fontSize: "24px",
             }}
+            onClick={this.togglePopSignup}
           >
-            <a
-              href="/select-meal"
-              style={{
-                height: "50px",
-                width: "320px",
-                marginTop: "77.66px",
-                marginLeft: "auto",
-                marginRight: "auto",
-                backgroundImage: `url(${getStartedImg})`,
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-              }}
-              aria-label="Click here to get started"
-              title="Click here to get started"
-            ></a>
-          </div> */}
+            Sign Up
+          </button>
         </div>
 
         {(() => {
           if (this.state.windowWidth >= 800) {
             return (
               <>
-                <div class={styles.howDoesContainer}>
+                {/* <div class={styles.howDoesContainer}>
                   <div class={styles.howDoesText}>
                     <p
                       style={{
@@ -556,6 +574,14 @@ class Home extends Component {
                       Our Partners Chefs and Restaurants
                     </p>
                   </div>
+                </div> */}
+                <div 
+                  className={styles.sectionHeader}
+                  style={{
+                    marginTop: '100px'
+                  }}
+                >
+                  Our Partners Chefs and Restaurants
                 </div>
                 <div
                   style={{
@@ -583,12 +609,20 @@ class Home extends Component {
           } else {
             return (
               <>
-                <div class={styles.howDoesContainer}>
+                {/* <div class={styles.howDoesContainer}>
                   <div class={styles.howDoesText}>
                     <h1 style={{ display: "inline" }}>
                       Our Partner Chefs & Restaurants
                     </h1>
                   </div>
+                </div> */}
+                <div 
+                  className={styles.sectionHeader}
+                  style={{
+                    marginTop: '100px'
+                  }}
+                >
+                  Our Partners Chefs and Restaurants
                 </div>
 
                 <div style={{ display: "inline-block" }}>
@@ -631,8 +665,8 @@ class Home extends Component {
           }
         })()}
 
-        <div>
-          <div class={styles.howDoesContainer}>
+        {/* <div> */}
+          {/* <div class={styles.howDoesContainer}>
             <div class={styles.howDoesText}>
               <p
                 style={{
@@ -644,7 +678,15 @@ class Home extends Component {
                 Why try MealsFor.Me?
               </p>
             </div>
-          </div>
+          </div> */}
+        {/* </div> */}
+        <div 
+          className={styles.sectionHeader}
+          style={{
+            marginTop: '50px'
+          }}
+        >
+          Why Try MealsFor.Me?
         </div>
 
         {(() => {
@@ -725,7 +767,7 @@ class Home extends Component {
           }
         })()}
 
-        <div style={{ textAlign: "center", width: "100%", padding: "40px" }}>
+        {/* <div style={{ textAlign: "center", width: "100%", padding: "40px" }}>
           <button
             style={{
               backgroundColor: "white",
@@ -734,6 +776,32 @@ class Home extends Component {
               padding: "15px",
               borderRadius: "15px",
               width: "20%",
+              fontSize: "24px",
+            }}
+            onClick={() => {
+              window.location.href = "/choose-plan";
+            }}
+          >
+            Get Started
+          </button>
+        </div> */}
+        <div 
+          style={{ 
+            textAlign: "center", 
+            width: "100%", 
+            border: '1px dashed',
+            padding: "40px" 
+          }}
+        >
+          <button
+            style={{
+              backgroundColor: "white",
+              color: "#F26522",
+              border: "2px solid #F26522",
+              padding: "15px",
+              borderRadius: "15px",
+              width: "300px",
+              // width: '20%',
               fontSize: "24px",
             }}
             onClick={() => {
