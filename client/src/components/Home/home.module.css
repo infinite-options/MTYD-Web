@@ -5,6 +5,8 @@ Do not enable this
 It is breaking everything.
 
 */
+html, body {margin: 0; padding: 0; overflow-x:hidden;}
+
 .topBackground {
   background: url("../../images/madmax-chef-cToNEm70cvE-unsplash@2x.png");
   background-size: cover;

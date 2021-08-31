@@ -180,19 +180,23 @@ class Home extends Component {
   render() {
     return (
       <div
-        // style={{
-        //   border: '1px dashed',
-        //   width: '100%',
-        //   maxWidth: 'calc(100vw - 15px)'
-        // }}
+        style={{
+          // border: '1px dashed',
+          // width: '100vw',
+          // maxWidth: '100%'
+          // max
+          maxWidth: 'calc(100vw - 15px)',
+          position: 'relative'
+        }}
       >
         <div
           style={{
             zIndex: "99",
             position: "absolute",
-            // width: '100vw',
+            width: 'calc(100vw - 15px)',
             // maxWidth: '100%'
-            width: "100%",
+            // width: "100vw",
+            // border: '1px solid cyan'
           }}
         >
           <WebNavBar />
@@ -312,7 +316,7 @@ class Home extends Component {
             width: "100%", 
             // position: 'relative',
             height: '272px',
-            maxWidth: 'calc(100vw - 15px)',
+            // maxWidth: 'calc(100vw - 15px)',
             marginTop: "25px", 
             // border: '1px dashed' 
           }}
@@ -789,7 +793,7 @@ class Home extends Component {
           style={{ 
             textAlign: "center", 
             width: "100%", 
-            border: '1px dashed',
+            // border: '1px dashed',
             padding: "40px" 
           }}
         >
