@@ -36,7 +36,7 @@ html, body {margin: 0; padding: 0; overflow-x:hidden;}
   background-color: #f8bb17;
   height: 200px;
   position: relative;
-  border: 1px solid cyan;
+  /* border: 1px solid cyan; */
 }
 
 /* .footerBackgroundNarrow {

@@ -993,7 +993,8 @@ class EditPlan extends React.Component {
         );
         console.log("===> change_purchase: ", JSON.stringify(object));
         axios
-          .put(API_URL + "change_purchase", object)
+          // .put(API_URL + "change_purchase", object)
+          .put('http://localhost:2000/api/v2/change_purchase', object)
           .then((res) => {
             console.log("change_purchase response: ", res);
             axios

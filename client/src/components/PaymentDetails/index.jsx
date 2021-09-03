@@ -50,6 +50,7 @@ class PaymentDetails extends React.Component {
       mounted: false,
       showPaymentInfo: false,
       ambassadorCode: "",
+      ambassadorCoupon: null,
       paymentSummary: {
         mealSubPrice: "0.00",
         discountAmount: "0.00",
@@ -647,6 +648,8 @@ class PaymentDetails extends React.Component {
               console.log("(GUEST) Ambassador code error: ", err);
             });
         } else {
+
+          /*
           axios
             .post(API_URL + "brandAmbassador/discount_checker", {
               code: this.state.ambassadorCode,
@@ -692,6 +695,65 @@ class PaymentDetails extends React.Component {
                   }
                 );
               }
+            })
+            .catch((err) => {
+              console.log("(CUST) Ambassador code error: ", err);
+            });
+          */
+
+          axios
+            .post(API_URL + "brandAmbassador/discount_checker", {
+              code: this.state.ambassadorCode,
+              info: this.props.email,
+              IsGuest: "False",
+              purchase_data: {
+                items: [{
+                  qty: this.props.selectedPlan.num_deliveries.toString(),
+                  name: this.props.selectedPlan.item_name,
+                  price: this.props.selectedPlan.item_price.toString(),
+                  item_uid: this.props.selectedPlan.item_uid,
+                  itm_business_uid: this.props.selectedPlan.item_uid
+                }],
+                customer_lat: this.state.latitude,
+                customer_long: this.state.longitude,
+                driver_tip: this.state.paymentSummary.tip,
+              }
+            })
+            .then((res) => {
+              console.log("(CUST) ambassador code response: ", res);
+
+              // if (res.data.code !== 200) {
+
+              //   this.displayError(AMBASSADOR_ERROR, res.data.message);
+
+              //   this.setState(
+              //     (prevState) => ({
+              //       paymentSummary: {
+              //         ...prevState.paymentSummary,
+              //         ambassadorDiscount: "0.00",
+              //       },
+              //     }),
+              //     () => {
+              //       this.setTotal();
+              //     }
+              //   );
+              // } else {
+
+              //   this.setState(
+              //     (prevState) => ({
+              //       paymentSummary: {
+              //         ...prevState.paymentSummary,
+              //         ambassadorDiscount: (
+              //           res.data.sub.discount_amount +
+              //           res.data.sub.discount_shipping
+              //         ).toFixed(2),
+              //       },
+              //     }),
+              //     () => {
+              //       this.setTotal();
+              //     }
+              //   );
+              // }
             })
             .catch((err) => {
               console.log("(CUST) Ambassador code error: ", err);
@@ -871,6 +933,7 @@ class PaymentDetails extends React.Component {
                 loadingMap: false,
               });
 
+              /*
               // console.log("Calling categorical options...");
               axios
                 .get(
@@ -929,6 +992,37 @@ class PaymentDetails extends React.Component {
                       fetchingFees: false,
                     });
                   }
+                })
+                .catch((err) => {
+                  if (err.response) {
+                    console.log(err.response);
+                  }
+                  console.log(err);
+                });
+              */
+            
+              console.log("Calling make_purchase...");
+              console.log("props: ", this.props);
+              console.log("state: ", this.state);
+              axios
+                .put(
+                  `http://localhost:2000/api/v2/make_purchase`, 
+                  {
+                    items: [{
+                        qty: this.props.selectedPlan.num_deliveries.toString(),
+                        name: this.props.selectedPlan.item_name,
+                        price: this.props.selectedPlan.item_price.toString(),
+                        item_uid: this.props.selectedPlan.item_uid,
+                        itm_business_uid: this.props.selectedPlan.item_uid
+                    }],
+                    customer_lat: this.state.latitude,
+                    customer_long: this.state.longitude,
+                    driver_tip: this.state.paymentSummary.tip,
+                    ambassador_coupon: this.state.ambassadorCoupon
+                  }
+                )
+                .then((res) => {
+                  console.log("(make_purchase) res: ", res);
                 })
                 .catch((err) => {
                   if (err.response) {

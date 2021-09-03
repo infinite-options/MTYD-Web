@@ -182,10 +182,10 @@ class Home extends Component {
       <div
         style={{
           // border: '1px dashed',
-          // width: '100vw',
+          width: '100%',
           // maxWidth: '100%'
           // max
-          maxWidth: 'calc(100vw - 15px)',
+          // maxWidth: 'calc(100vw - 15px)',
           position: 'relative'
         }}
       >
@@ -193,7 +193,8 @@ class Home extends Component {
           style={{
             zIndex: "99",
             position: "absolute",
-            width: 'calc(100vw - 15px)',
+            // width: 'calc(100vw - 15px)',
+            width: '100%'
             // maxWidth: '100%'
             // width: "100vw",
             // border: '1px solid cyan'
