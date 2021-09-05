@@ -277,61 +277,61 @@ class EditPlan extends React.Component {
     }
   };
 
-  calculateSubtotal(summary) {
-    let subtotal =
-      parseFloat(summary.mealSubPrice) -
-      parseFloat(summary.discountAmount) +
-      parseFloat(summary.deliveryFee) +
-      parseFloat(summary.serviceFee) +
-      parseFloat(summary.taxAmount) +
-      parseFloat(summary.tip);
-    return subtotal.toFixed(2);
-  }
+  // calculateSubtotal(summary) {
+  //   let subtotal =
+  //     parseFloat(summary.mealSubPrice) -
+  //     parseFloat(summary.discountAmount) +
+  //     parseFloat(summary.deliveryFee) +
+  //     parseFloat(summary.serviceFee) +
+  //     parseFloat(summary.taxAmount) +
+  //     parseFloat(summary.tip);
+  //   return subtotal.toFixed(2);
+  // }
 
-  calculateTotal(summary) {
-    let total =
-      parseFloat(summary.mealSubPrice) -
-      parseFloat(summary.discountAmount) +
-      parseFloat(summary.deliveryFee) +
-      parseFloat(summary.serviceFee) +
-      parseFloat(summary.taxAmount) +
-      parseFloat(summary.tip) -
-      parseFloat(summary.ambassadorDiscount);
-    return total.toFixed(2);
-  }
+  // calculateTotal(summary) {
+  //   let total =
+  //     parseFloat(summary.mealSubPrice) -
+  //     parseFloat(summary.discountAmount) +
+  //     parseFloat(summary.deliveryFee) +
+  //     parseFloat(summary.serviceFee) +
+  //     parseFloat(summary.taxAmount) +
+  //     parseFloat(summary.tip) -
+  //     parseFloat(summary.ambassadorDiscount);
+  //   return total.toFixed(2);
+  // }
 
-  setTotal(summary) {
-    let total = this.calculateTotal(summary);
-    let subtotal = this.calculateSubtotal(summary);
-    let newSummary = {
-      ...summary,
-      total,
-      subtotal,
-    };
-    return newSummary;
-  }
+  // setTotal(summary) {
+  //   let total = this.calculateTotal(summary);
+  //   let subtotal = this.calculateSubtotal(summary);
+  //   let newSummary = {
+  //     ...summary,
+  //     total,
+  //     subtotal,
+  //   };
+  //   return newSummary;
+  // }
 
-  calculateNextBillingAmount = (orders) => {
-    console.log("(CNBA) orders: ", orders);
+  // calculateNextBillingAmount = (orders) => {
+  //   console.log("(CNBA) orders: ", orders);
 
-    let initialPurchase = orders[0];
+  //   let initialPurchase = orders[0];
 
-    var sumAmountDue = 0;
-    orders.forEach((pur) => {
-      console.log(pur.purchase_uid + " amount due: " + pur.amount_due);
-      sumAmountDue += pur.amount_due;
-    });
+  //   var sumAmountDue = 0;
+  //   orders.forEach((pur) => {
+  //     console.log(pur.purchase_uid + " amount due: " + pur.amount_due);
+  //     sumAmountDue += pur.amount_due;
+  //   });
 
-    let sumFees =
-      initialPurchase.driver_tip +
-      initialPurchase.delivery_fee +
-      initialPurchase.service_fee +
-      initialPurchase.taxes;
+  //   let sumFees =
+  //     initialPurchase.driver_tip +
+  //     initialPurchase.delivery_fee +
+  //     initialPurchase.service_fee +
+  //     initialPurchase.taxes;
 
-    console.log("final amount due: " + sumAmountDue);
+  //   console.log("final amount due: " + sumAmountDue);
 
-    return sumAmountDue;
-  };
+  //   return sumAmountDue;
+  // };
 
   applyAmbassadorCode() {
     this.setState(

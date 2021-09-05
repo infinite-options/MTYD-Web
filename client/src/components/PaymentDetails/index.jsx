@@ -874,7 +874,7 @@ class PaymentDetails extends React.Component {
                       deliveryFee: res.data.new_billing.delivery_fee.toFixed(2),
                       taxRate: res.data.new_billing.tax_rate,
                       taxAmount: res.data.new_billing.new_tax.toFixed(2),
-                      ambassadorDiscount: res.data.new_billing.ambassador_discount.toString(2),
+                      ambassadorDiscount: res.data.new_billing.ambassador_discount.toFixed(2),
                       total: res.data.new_billing.amount_should_charge.toFixed(2),
                       subtotal: res.data.new_billing.amount_should_charge.toFixed(2),
                     }

@@ -244,65 +244,66 @@ const StripeCheckout = (props) => {
                 // console.log("(StripeCheckout) ambassador_code for checkout: ", props.ambassadorCode);
         
                 console.log("0921 charge_id: ", result.paymentIntent.id);
-                // checkoutItems(
-                //   {
-                //     customer_uid: props.customerUid,
-                //     business_uid: 'WEB',
-                //     items,
-                //     salt: "",
-                //     order_instructions: 'fast',
-                //     delivery_instructions: props.deliveryInstructions,
-                //     delivery_first_name: props.firstName,
-                //     delivery_last_name: props.lastName,
-                //     delivery_phone: props.phone,
-                //     delivery_email: props.email,
-                //     delivery_address: props.address.street,
-                //     delivery_unit: props.unit,
-                //     delivery_city: props.city,
-                //     delivery_state: props.state,
-                //     delivery_zip: props.zip,
-                //     delivery_latitude: props.latitude,
-                //     delivery_longitude: props.longitude,
-                //     purchase_notes: props.dpvCode, // make it the code
-                //     amount_due: props.paymentSummary.total,
-                //     amount_discount: props.paymentSummary.discountAmount,
-                //     amount_paid: '0.00',
-                //     cc_num: 'NULL',
-                //     cc_exp_year: 'NULL',
-                //     cc_exp_month: 'NULL',
-                //     cc_cvv: 'NULL',
-                //     cc_zip: 'NULL',
-                //     charge_id: result.paymentIntent.id,
-                //     payment_type: 'STRIPE',
-                //     service_fee: props.paymentSummary.serviceFee,
-                //     delivery_fee: props.paymentSummary.deliveryFee,
-                //     tip: props.paymentSummary.tip,
-                //     tax: props.paymentSummary.taxAmount,
-                //     subtotal: props.paymentSummary.mealSubPrice,
-                //     ambassador_code: props.ambassadorCode
-                //   },
-                //   (res, checkout_success) => {
+                console.log("checkoutItems props: ", props);
+                checkoutItems(
+                  {
+                    customer_uid: props.customerUid,
+                    business_uid: 'WEB',
+                    items,
+                    salt: "",
+                    order_instructions: 'fast',
+                    delivery_instructions: props.deliveryInstructions,
+                    delivery_first_name: props.firstName,
+                    delivery_last_name: props.lastName,
+                    delivery_phone: props.phone,
+                    delivery_email: props.email,
+                    delivery_address: props.address.street,
+                    delivery_unit: props.unit,
+                    delivery_city: props.city,
+                    delivery_state: props.state,
+                    delivery_zip: props.zip,
+                    delivery_latitude: props.latitude,
+                    delivery_longitude: props.longitude,
+                    purchase_notes: props.dpvCode, // make it the code
+                    amount_due: props.paymentSummary.total,
+                    amount_discount: props.paymentSummary.discountAmount,
+                    amount_paid: '0.00',
+                    cc_num: 'NULL',
+                    cc_exp_year: 'NULL',
+                    cc_exp_month: 'NULL',
+                    cc_cvv: 'NULL',
+                    cc_zip: 'NULL',
+                    charge_id: result.paymentIntent.id,
+                    payment_type: 'STRIPE',
+                    service_fee: props.paymentSummary.serviceFee,
+                    delivery_fee: props.paymentSummary.deliveryFee,
+                    tip: props.paymentSummary.tip,
+                    tax: props.paymentSummary.taxAmount,
+                    subtotal: props.paymentSummary.mealSubPrice,
+                    ambassador_code: props.ambassadorCode
+                  },
+                  (res, checkout_success) => {
 
-                //     // console.log("(SC) checkout items response: ", res);
+                    // console.log("(SC) checkout items response: ", res);
 
-                //     if(!checkout_success) {
-                //       props.displayError(
-                //         CHECKOUT_ERROR, ('CHECKOUT ERROR: ' + res)
-                //       );
-                //       changeLoadingState(false);
-                //     } else {
-                //       history.push({
-                //         pathname: '/congrats',
-                //         delivery_address: props.address.street,
-                //         delivery_city: props.city,
-                //         delivery_state: props.state,
-                //         delivery_zip: props.zip,
-                //         delivery_date: res.data['start delievery date']
-                //       });
-                //     }
+                    if(!checkout_success) {
+                      props.displayError(
+                        CHECKOUT_ERROR, ('CHECKOUT ERROR: ' + res)
+                      );
+                      changeLoadingState(false);
+                    } else {
+                      history.push({
+                        pathname: '/congrats',
+                        delivery_address: props.address.street,
+                        delivery_city: props.city,
+                        delivery_state: props.state,
+                        delivery_zip: props.zip,
+                        delivery_date: res.data['start delievery date']
+                      });
+                    }
 
-                //   }
-                // );
+                  }
+                );
 
               }
 
