@@ -18,7 +18,7 @@ export class NavMenu extends Component {
   };
 
   componentDidMount() {
-    console.log("navbar hamburgermenu props: ", this.props);
+    // console.log("navbar hamburgermenu props: ", this.props);
     window.addEventListener("resize", this.updateDimensions);
   }
   componentWillUnmount() {

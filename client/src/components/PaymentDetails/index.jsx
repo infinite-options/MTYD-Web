@@ -425,6 +425,44 @@ class PaymentDetails extends React.Component {
       // console.log("(mount) customer uid: " + customerUid);
       // console.log("(mount) email: " + this.props.email);
 
+      // this.setState(
+      //   (prevState) => ({
+      //     mounted: true,
+      //     customerUid: customerUid,
+      //     unit: this.props.address.unit,
+      //     instructions: this.props.instructions,
+      //     firstName: this.props.addressInfo.firstName,
+      //     lastName: this.props.addressInfo.lastName,
+      //     email: this.props.email,
+      //     phone: this.props.addressInfo.phoneNumber,
+      //     year: this.props.creditCard.year,
+      //     cardZip: this.props.creditCard.zip,
+      //     recalculatingPrice: true,
+      //     paymentSummary: {
+      //       ...prevState.paymentSummary,
+      //       mealSubPrice: (
+      //         this.props.selectedPlan.item_price *
+      //         this.props.selectedPlan.num_deliveries
+      //       ).toFixed(2),
+      //       discountAmount: (
+      //         this.props.selectedPlan.item_price *
+      //         this.props.selectedPlan.num_deliveries *
+      //         this.props.selectedPlan.delivery_discount *
+      //         0.01
+      //       ).toFixed(2),
+      //       taxAmount: (
+      //         this.props.selectedPlan.item_price *
+      //         this.props.selectedPlan.num_deliveries *
+      //         (1 - this.props.selectedPlan.delivery_discount * 0.01) *
+      //         this.state.paymentSummary.taxRate *
+      //         0.01
+      //       ).toFixed(2),
+      //     },
+      //   }),
+      //   () => {
+      //     // this.setTotal();
+      //   }
+      // );
       this.setState(
         (prevState) => ({
           mounted: true,
@@ -437,70 +475,62 @@ class PaymentDetails extends React.Component {
           phone: this.props.addressInfo.phoneNumber,
           year: this.props.creditCard.year,
           cardZip: this.props.creditCard.zip,
-          recalculatingPrice: true,
-          paymentSummary: {
-            ...prevState.paymentSummary,
-            mealSubPrice: (
-              this.props.selectedPlan.item_price *
-              this.props.selectedPlan.num_deliveries
-            ).toFixed(2),
-            discountAmount: (
-              this.props.selectedPlan.item_price *
-              this.props.selectedPlan.num_deliveries *
-              this.props.selectedPlan.delivery_discount *
-              0.01
-            ).toFixed(2),
-            taxAmount: (
-              this.props.selectedPlan.item_price *
-              this.props.selectedPlan.num_deliveries *
-              (1 - this.props.selectedPlan.delivery_discount * 0.01) *
-              this.state.paymentSummary.taxRate *
-              0.01
-            ).toFixed(2),
-          },
+          recalculatingPrice: true
         }),
         () => {
-          this.setTotal();
+          // this.setTotal();
         }
       );
+
     } else {
       // Reroute to log in page
       // console.log("Payment-details NOT LOGGED IN");
 
+      // this.setState(
+      //   (prevState) => ({
+      //     mounted: true,
+      //     customerUid: "GUEST",
+      //     recalculatingPrice: true,
+      //     paymentSummary: {
+      //       ...prevState.paymentSummary,
+      //       mealSubPrice: (
+      //         this.props.selectedPlan.item_price *
+      //         this.props.selectedPlan.num_deliveries
+      //       ).toFixed(2),
+      //       discountAmount: (
+      //         this.props.selectedPlan.item_price *
+      //         this.props.selectedPlan.num_deliveries *
+      //         this.props.selectedPlan.delivery_discount *
+      //         0.01
+      //       ).toFixed(2),
+      //       taxAmount: (
+      //         this.props.selectedPlan.item_price *
+      //         this.props.selectedPlan.num_deliveries *
+      //         (1 - this.props.selectedPlan.delivery_discount * 0.01) *
+      //         this.state.paymentSummary.taxRate *
+      //         0.01
+      //       ).toFixed(2),
+      //     },
+      //   }),
+      //   () => {
+      //     // this.setTotal();
+      //   }
+      // );
       this.setState(
         (prevState) => ({
           mounted: true,
           customerUid: "GUEST",
-          recalculatingPrice: true,
-          paymentSummary: {
-            ...prevState.paymentSummary,
-            mealSubPrice: (
-              this.props.selectedPlan.item_price *
-              this.props.selectedPlan.num_deliveries
-            ).toFixed(2),
-            discountAmount: (
-              this.props.selectedPlan.item_price *
-              this.props.selectedPlan.num_deliveries *
-              this.props.selectedPlan.delivery_discount *
-              0.01
-            ).toFixed(2),
-            taxAmount: (
-              this.props.selectedPlan.item_price *
-              this.props.selectedPlan.num_deliveries *
-              (1 - this.props.selectedPlan.delivery_discount * 0.01) *
-              this.state.paymentSummary.taxRate *
-              0.01
-            ).toFixed(2),
-          },
+          recalculatingPrice: true
         }),
         () => {
-          this.setTotal();
+          // this.setTotal();
         }
       );
+
     }
   }
 
-  changeTip(newTip) {
+  changeTipOld(newTip) {
     this.setState(
       (prevState) => ({
         recalculatingPrice: true,
@@ -510,7 +540,72 @@ class PaymentDetails extends React.Component {
         },
       }),
       () => {
-        this.setTotal();
+        // this.setTotal();
+        // console.log(
+        //   "changeTip new paymentSummary: ",
+        //   this.state.paymentSummary
+        // );
+      }
+    );
+  }
+
+  changeTip(newTip) {
+    this.setState(
+      (prevState) => ({
+        recalculatingPrice: true
+      }),
+      () => {
+        axios
+          .put(
+            `http://localhost:2000/api/v2/make_purchase`, 
+            {
+              items: [{
+                  qty: this.props.selectedPlan.num_deliveries.toString(),
+                  name: this.props.selectedPlan.item_name,
+                  price: this.props.selectedPlan.item_price.toString(),
+                  item_uid: this.props.selectedPlan.item_uid,
+                  itm_business_uid: this.props.selectedPlan.item_uid
+              }],
+              customer_lat: this.state.latitude,
+              customer_long: this.state.longitude,
+              driver_tip: newTip,
+              ambassador_coupon: this.state.ambassadorCoupon
+            }
+          )
+          .then((res) => {
+            console.log("(make_purchase) res: ", res);
+
+            this.setState(
+              (prevState) => ({
+                recalculatingPrice: false,
+                paymentSummary: {
+                  mealSubPrice: res.data.new_meal_charge.toFixed(2),
+                  discountAmount: res.data.new_discount.toFixed(2),
+                  addOns: "0.00",
+                  tip: res.data.new_driver_tip.toFixed(2),
+                  serviceFee: res.data.service_fee.toFixed(2),
+                  deliveryFee: res.data.delivery_fee.toFixed(2),
+                  taxRate: res.data.tax_rate,
+                  taxAmount: res.data.new_tax.toFixed(2),
+                  ambassadorDiscount: res.data.ambassador_discount.toString(2),
+                  total: res.data.amount_should_charge.toFixed(2),
+                  subtotal: res.data.amount_should_charge.toFixed(2),
+                },
+              }),
+              () => {
+                // this.setTotal();
+                // console.log("(VA) proceeding to payment...");
+                // this.proceedToPayment();
+              }
+            );
+          })
+          .catch((err) => {
+            if (err.response) {
+              console.log(err.response);
+            }
+            console.log(err);
+          });
+        // this.setTotal();
         // console.log(
         //   "changeTip new paymentSummary: ",
         //   this.state.paymentSummary
@@ -620,7 +715,7 @@ class PaymentDetails extends React.Component {
                     },
                   }),
                   () => {
-                    this.setTotal();
+                    // this.setTotal();
                   }
                 );
               } else {
@@ -639,7 +734,7 @@ class PaymentDetails extends React.Component {
                     },
                   }),
                   () => {
-                    this.setTotal();
+                    // this.setTotal();
                   }
                 );
               }
@@ -701,8 +796,10 @@ class PaymentDetails extends React.Component {
             });
           */
 
-          axios
-            .post(API_URL + "brandAmbassador/discount_checker", {
+          // axios
+          //   .post(API_URL + "brandAmbassador/discount_checker", {
+            axios
+            .post('http://localhost:2000/api/v2/brandAmbassador/discount_checker', {
               code: this.state.ambassadorCode,
               info: this.props.email,
               IsGuest: "False",
@@ -722,38 +819,72 @@ class PaymentDetails extends React.Component {
             .then((res) => {
               console.log("(CUST) ambassador code response: ", res);
 
-              // if (res.data.code !== 200) {
+              if (res.data.code !== 200) {
 
-              //   this.displayError(AMBASSADOR_ERROR, res.data.message);
+                this.displayError(AMBASSADOR_ERROR, res.data.message);
 
-              //   this.setState(
-              //     (prevState) => ({
-              //       paymentSummary: {
-              //         ...prevState.paymentSummary,
-              //         ambassadorDiscount: "0.00",
-              //       },
-              //     }),
-              //     () => {
-              //       this.setTotal();
-              //     }
-              //   );
-              // } else {
+                // this.setState(
+                //   (prevState) => ({
+                //     paymentSummary: {
+                //       ...prevState.paymentSummary,
+                //       ambassadorDiscount: "0.00",
+                //     },
+                //   }),
+                //   () => {
+                //     // this.setTotal();
+                //   }
+                // );
+                this.setState(
+                  (prevState) => ({
+                    paymentSummary: {
+                      ...prevState.paymentSummary,
+                      ambassadorDiscount: "0.00",
+                    },
+                  }),
+                  () => {
+                    // this.setTotal();
+                  }
+                );
 
-              //   this.setState(
-              //     (prevState) => ({
-              //       paymentSummary: {
-              //         ...prevState.paymentSummary,
-              //         ambassadorDiscount: (
-              //           res.data.sub.discount_amount +
-              //           res.data.sub.discount_shipping
-              //         ).toFixed(2),
-              //       },
-              //     }),
-              //     () => {
-              //       this.setTotal();
-              //     }
-              //   );
-              // }
+              } else {
+
+                // this.setState(
+                //   (prevState) => ({
+                //     paymentSummary: {
+                //       ...prevState.paymentSummary,
+                //       ambassadorDiscount: (
+                //         res.data.sub.discount_amount +
+                //         res.data.sub.discount_shipping
+                //       ).toFixed(2),
+                //     },
+                //   }),
+                //   () => {
+                //     // this.setTotal();
+                //   }
+                // );
+                console.log("(CUST) ambassador code response 2: ", res.data.new_billing);
+                this.setState(
+                  (prevState) => ({
+                    paymentSummary: {
+                      mealSubPrice: res.data.new_billing.new_meal_charge.toFixed(2),
+                      discountAmount: res.data.new_billing.new_discount.toFixed(2),
+                      addOns: "0.00",
+                      tip: res.data.new_billing.new_driver_tip.toFixed(2),
+                      serviceFee: res.data.new_billing.service_fee.toFixed(2),
+                      deliveryFee: res.data.new_billing.delivery_fee.toFixed(2),
+                      taxRate: res.data.new_billing.tax_rate,
+                      taxAmount: res.data.new_billing.new_tax.toFixed(2),
+                      ambassadorDiscount: res.data.new_billing.ambassador_discount.toString(2),
+                      total: res.data.new_billing.amount_should_charge.toFixed(2),
+                      subtotal: res.data.new_billing.amount_should_charge.toFixed(2),
+                    }
+                  }),
+                  () => {
+                    // this.setTotal();
+                  }
+                );
+
+              }
             })
             .catch((err) => {
               console.log("(CUST) Ambassador code error: ", err);
@@ -797,47 +928,47 @@ class PaymentDetails extends React.Component {
     });
   }
 
-  calculateSubtotal() {
-    let subtotal =
-      parseFloat(this.state.paymentSummary.mealSubPrice) -
-      parseFloat(this.state.paymentSummary.discountAmount) +
-      parseFloat(this.state.paymentSummary.deliveryFee) +
-      parseFloat(this.state.paymentSummary.serviceFee) +
-      parseFloat(this.state.paymentSummary.taxAmount) +
-      parseFloat(this.state.paymentSummary.tip);
-    return subtotal.toFixed(2);
-  }
+  // calculateSubtotal() {
+  //   let subtotal =
+  //     parseFloat(this.state.paymentSummary.mealSubPrice) -
+  //     parseFloat(this.state.paymentSummary.discountAmount) +
+  //     parseFloat(this.state.paymentSummary.deliveryFee) +
+  //     parseFloat(this.state.paymentSummary.serviceFee) +
+  //     parseFloat(this.state.paymentSummary.taxAmount) +
+  //     parseFloat(this.state.paymentSummary.tip);
+  //   return subtotal.toFixed(2);
+  // }
 
-  calculateTotal() {
-    let total =
-      parseFloat(this.state.paymentSummary.mealSubPrice) -
-      parseFloat(this.state.paymentSummary.discountAmount) +
-      parseFloat(this.state.paymentSummary.deliveryFee) +
-      parseFloat(this.state.paymentSummary.serviceFee) +
-      parseFloat(this.state.paymentSummary.taxAmount) +
-      parseFloat(this.state.paymentSummary.tip) -
-      parseFloat(this.state.paymentSummary.ambassadorDiscount);
-    return total.toFixed(2);
-  }
+  // calculateTotal() {
+  //   let total =
+  //     parseFloat(this.state.paymentSummary.mealSubPrice) -
+  //     parseFloat(this.state.paymentSummary.discountAmount) +
+  //     parseFloat(this.state.paymentSummary.deliveryFee) +
+  //     parseFloat(this.state.paymentSummary.serviceFee) +
+  //     parseFloat(this.state.paymentSummary.taxAmount) +
+  //     parseFloat(this.state.paymentSummary.tip) -
+  //     parseFloat(this.state.paymentSummary.ambassadorDiscount);
+  //   return total.toFixed(2);
+  // }
 
-  setTotal() {
-    let total = this.calculateTotal();
-    let subtotal = this.calculateSubtotal();
+  // setTotal() {
+  //   let total = this.calculateTotal();
+  //   let subtotal = this.calculateSubtotal();
 
-    this.setState(
-      (prevState) => ({
-        recalculatingPrice: false,
-        paymentSummary: {
-          ...prevState.paymentSummary,
-          total,
-          subtotal,
-        },
-      }),
-      () => {
-        console.log("setTotal new paymentSummary: ", this.state.paymentSummary);
-      }
-    );
-  }
+  //   this.setState(
+  //     (prevState) => ({
+  //       recalculatingPrice: false,
+  //       paymentSummary: {
+  //         ...prevState.paymentSummary,
+  //         total,
+  //         subtotal,
+  //       },
+  //     }),
+  //     () => {
+  //       console.log("setTotal new paymentSummary: ", this.state.paymentSummary);
+  //     }
+  //   );
+  // }
 
   setResponseCode(responseData) {
     this.setState({ responseCode: responseData.dpv_confirmation });
@@ -1023,6 +1154,29 @@ class PaymentDetails extends React.Component {
                 )
                 .then((res) => {
                   console.log("(make_purchase) res: ", res);
+
+                  this.setState(
+                    (prevState) => ({
+                      paymentSummary: {
+                        mealSubPrice: res.data.new_meal_charge.toFixed(2),
+                        discountAmount: res.data.new_discount.toFixed(2),
+                        addOns: "0.00",
+                        tip: res.data.new_driver_tip.toFixed(2),
+                        serviceFee: res.data.service_fee.toFixed(2),
+                        deliveryFee: res.data.delivery_fee.toFixed(2),
+                        taxRate: res.data.tax_rate,
+                        taxAmount: res.data.new_tax.toFixed(2),
+                        ambassadorDiscount: res.data.ambassador_discount.toString(2),
+                        total: res.data.amount_should_charge.toFixed(2),
+                        subtotal: res.data.amount_should_charge.toFixed(2),
+                      },
+                    }),
+                    () => {
+                      // this.setTotal();
+                      // console.log("(VA) proceeding to payment...");
+                      this.proceedToPayment();
+                    }
+                  );
                 })
                 .catch((err) => {
                   if (err.response) {
@@ -1676,7 +1830,7 @@ class PaymentDetails extends React.Component {
                 title="Enter your zipcode"
                 onChange={(e) => {
                   this.setState({ addressZip: e.target.value });
-                  console.log(this.state.addressZip);
+                  // console.log(this.state.addressZip);
                 }}
               />
             </div>
@@ -1694,9 +1848,9 @@ class PaymentDetails extends React.Component {
               aria-label="Enter delivery instructions"
               title="Enter delivery instructions"
             />
-            {console.log("line 1558")}
-            {console.log(this.state.autoCompleteClicked)}
-            {console.log(this.state.streetChanged)}
+            {/* {console.log("line 1558")} */}
+            {/* {console.log(this.state.autoCompleteClicked)}
+            {console.log(this.state.streetChanged)} */}
             {this.updateMap()}
 
             <div className={styles.googleMap} id="map" />
@@ -2035,7 +2189,9 @@ class PaymentDetails extends React.Component {
                     <div className={styles.summaryLeft}>Total:</div>
 
                     <div className={styles.summaryRight}>
-                      ${this.calculateTotal()}
+                      {/* ${this.calculateTotal()} */}
+                      {console.log("before total: ", this.state.paymentSummary)}
+                      ${this.state.paymentSummary.total}
                     </div>
                   </div>
                 </div>

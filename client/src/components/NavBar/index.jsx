@@ -268,7 +268,7 @@ class NavBar extends React.Component {
     // const nameLength = this.state.firstName.length*14+this.state.lastName.length*14+30;
     const nameLength =
       this.state.firstName.length * 14 + this.state.lastName.length * 14 + "px";
-    console.log("namelength: ", nameLength);
+    // console.log("namelength: ", nameLength);
 
     // const nameFormat = {
     //   width: nameLength,
@@ -307,10 +307,10 @@ class NavBar extends React.Component {
           hasMealPlan={this.state.hasMealPlan}
         />
 
-        {console.log(
+        {/* {console.log(
           "profile role: " + this.state.profileRole + "; window height: ",
           this.state.windowWidth
-        )}
+        )} */}
         {this.state.profileRole === "admin" && this.state.windowWidth > 900 ? (
           <div
             style={{
