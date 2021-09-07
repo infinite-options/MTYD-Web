@@ -501,6 +501,351 @@ class EditPlan extends React.Component {
   // Gets called whenever subscriptions are fetched, modified, or deleted.
   // Parses user subscriptions for display and sorts them, sets default selection,
   // updates map, and updates payment summary.
+  // loadSubscriptions = (subscriptions, discounts, setDefault) => {
+  //   if (subscriptions.length === 0) {
+  //     console.log("NO SUBSCRIPTIONS");
+
+  //     this.displayErrorModal(
+  //       "Hmm...",
+  //       `
+  //       Please purchase a subscription. Once you have a subscription, you can manage it from here.
+  //     `,
+  //       "Choose a Plan",
+  //       "/choose-plan"
+  //     );
+
+  //     return null;
+  //   }
+
+  //   let newSubList = [];
+  //   let defaultCurrentPlan = {};
+  //   let defaultUpdatedPlan = {};
+  //   let defaultDeliveryInfo = {
+  //     first_name: "",
+  //     last_name: "",
+  //     purchase_uid: "",
+  //     phone: "",
+  //     address: "",
+  //     unit: "",
+  //     city: "",
+  //     state: "",
+  //     zip: "",
+  //     cc_num: "",
+  //     cc_cvv: "",
+  //     cc_zip: "",
+  //     cc_exp_date: "",
+  //     instructions: "",
+  //   };
+
+  //   subscriptions.forEach((sub, index) => {
+  //     console.log("(loadSubscriptions) sub: ", sub);
+
+  //     let subscription = {};
+
+  //     let parsedItems = JSON.parse(sub.items)[0];
+  //     let parsedMeals = parsedItems.name.substring(
+  //       0,
+  //       parsedItems.name.indexOf(" ")
+  //     );
+  //     let parsedDeliveries = parsedItems.qty;
+
+  //     let discountItem = discounts.filter(function (e) {
+  //       return e.deliveries === parsedDeliveries;
+  //     });
+
+  //     console.log("PNDA info before parse: ", sub);
+
+  //     let parsedDiscount = discountItem[0].discount;
+  //     let parsedId = sub.purchase_id.substring(
+  //       sub.purchase_id.indexOf("-") + 1,
+  //       sub.purchase_id.length
+  //     );
+  //     console.log("Parsed ID: " + parsedId);
+  //     // let parsedDeliveryDate = "TBD";
+  //     // let parsedSelection = "N/A";
+  //     let parsedDeliveryDate = sub.next_delivery.substring(
+  //       0,
+  //       sub.next_delivery.indexOf(" ")
+  //     );
+  //     let parsedSelection = sub.final_selection;
+  //     let parsedStatus = null;
+
+  //     if (parsedSelection !== "SURPRISE" && parsedSelection !== "SKIP") {
+  //       parsedStatus = "SELECTED";
+  //     } else {
+  //       parsedStatus = parsedSelection;
+  //     }
+
+  //     parsedStatus = "N/A";
+
+  //     let parsedBillingDate = sub.menu_date.substring(
+  //       0,
+  //       sub.menu_date.indexOf(" ")
+  //     );
+
+  //     console.log("(parsed) Billing Date: ", parsedBillingDate);
+
+  //     console.log(" ");
+  //     console.log("Base Amount: ", sub.subtotal);
+  //     console.log("Taxes: ", sub.taxes);
+  //     console.log("Delivery Fee: ", sub.delivery_fee);
+  //     console.log("Service Fee: ", sub.service_fee);
+  //     console.log("Driver Tip: ", sub.driver_tip);
+  //     console.log("Ambassador Code/Discount: ", sub.ambassador_code);
+
+  //     let nextBillingAmount =
+  //       sub.subtotal +
+  //       sub.taxes +
+  //       sub.delivery_fee +
+  //       sub.service_fee +
+  //       sub.driver_tip -
+  //       parsedDiscount * 0.01 * sub.subtotal -
+  //       sub.ambassador_code;
+
+  //     console.log("Next Billing Amount: ", nextBillingAmount);
+
+  //     console.log(" ");
+
+  //     let payment_summary = {
+  //       base_amount: sub.subtotal.toFixed(2),
+  //       taxes: sub.taxes.toFixed(2),
+  //       delivery_fee: sub.delivery_fee.toFixed(2),
+  //       service_fee: sub.service_fee.toFixed(2),
+  //       driver_tip: sub.driver_tip.toFixed(2),
+  //       discount_amount: (sub.subtotal * parsedDiscount * 0.01).toFixed(2),
+  //       discount_rate: parsedDiscount,
+  //       ambassador_discount: sub.ambassador_code.toFixed(2),
+  //       subtotal: "0.00",
+  //       total: nextBillingAmount.toFixed(2),
+  //     };
+
+  //     subscription["load_order"] = index;
+  //     subscription["id"] = parsedId;
+  //     subscription["meals"] = parsedMeals;
+  //     subscription["deliveries"] = parsedDeliveries;
+  //     subscription["discount"] = parsedDiscount;
+  //     subscription["next_delivery_date"] = parsedDeliveryDate;
+  //     // subscription["next_delivery_status"] = parsedStatus;
+  //     subscription["next_delivery_status"] = sub.final_selection;
+  //     subscription["next_billing_date"] = parsedBillingDate;
+  //     subscription["next_billing_amount"] = nextBillingAmount.toFixed(2);
+  //     subscription["payment_summary"] = { ...payment_summary };
+  //     subscription["raw_data"] = sub;
+
+  //     if (index === 0) {
+  //       defaultCurrentPlan["load_order"] = index;
+  //       defaultCurrentPlan["id"] = parsedId;
+  //       defaultCurrentPlan["meals"] = parsedMeals;
+  //       defaultCurrentPlan["deliveries"] = parsedDeliveries;
+  //       defaultCurrentPlan["discount"] = parsedDiscount;
+  //       defaultCurrentPlan["next_delivery_date"] = parsedDeliveryDate;
+  //       // defaultCurrentPlan["next_delivery_status"] = parsedStatus;
+  //       defaultCurrentPlan["next_delivery_status"] = sub.final_selection;
+  //       defaultCurrentPlan["next_billing_date"] = parsedBillingDate;
+  //       defaultCurrentPlan["next_billing_amount"] =
+  //         nextBillingAmount.toFixed(2);
+  //       defaultCurrentPlan["payment_summary"] = { ...payment_summary };
+  //       defaultCurrentPlan["raw_data"] = sub;
+
+  //       defaultUpdatedPlan["load_order"] = index;
+  //       defaultUpdatedPlan["id"] = parsedId;
+  //       defaultUpdatedPlan["meals"] = parsedMeals;
+  //       defaultUpdatedPlan["deliveries"] = parsedDeliveries;
+  //       defaultUpdatedPlan["discount"] = parsedDiscount;
+  //       defaultUpdatedPlan["next_delivery_date"] = parsedDeliveryDate;
+  //       // defaultUpdatedPlan["next_delivery_status"] = parsedStatus;
+  //       defaultUpdatedPlan["next_delivery_status"] = sub.final_selection;
+  //       defaultUpdatedPlan["next_billing_date"] = parsedBillingDate;
+  //       defaultUpdatedPlan["next_billing_amount"] =
+  //         nextBillingAmount.toFixed(2);
+  //       defaultUpdatedPlan["payment_summary"] = { ...payment_summary };
+  //       defaultUpdatedPlan["raw_data"] = sub;
+
+  //       console.log("sub at index 0: ", sub);
+
+  //       document.getElementById("locality").value = sub.delivery_city;
+  //       document.getElementById("state").value = sub.delivery_state;
+  //       document.getElementById("pac-input").value = sub.delivery_address;
+  //       document.getElementById("postcode").value = sub.delivery_zip;
+
+  //       fetchAddressCoordinates(
+  //         sub.delivery_address,
+  //         sub.delivery_city,
+  //         sub.delivery_state,
+  //         sub.delivery_zip,
+  //         (coords) => {
+  //           console.log(
+  //             "(default) Fetched coordinates: " + JSON.stringify(coords)
+  //           );
+
+  //           this.setState({
+  //             latitude: coords.latitude,
+  //             longitude: coords.longitude,
+  //           });
+
+  //           const temp_position = {
+  //             lat: parseFloat(coords.latitude),
+  //             lng: parseFloat(coords.longitude),
+  //           };
+
+  //           console.log(temp_position);
+
+  //           map.setCenter(temp_position);
+
+  //           if (coords.latitude !== "") {
+  //             map.setZoom(17);
+  //             new google.maps.Marker({
+  //               position: temp_position,
+  //               map,
+  //             });
+  //           }
+  //         }
+  //       );
+
+  //       const input = document.getElementById("pac-input");
+  //       const options = {
+  //         componentRestrictions: { country: "us" },
+  //       };
+  //       autocomplete = new google.maps.places.Autocomplete(input, options);
+
+  //       autocomplete.bindTo("bounds", map);
+  //       const marker = new google.maps.Marker({
+  //         map,
+  //       });
+
+  //       autocomplete.addListener("place_changed", () => {
+  //         let address1 = "";
+  //         let postcode = "";
+  //         let city = "";
+  //         let state = "";
+
+  //         let address1Field = document.querySelector("#pac-input");
+  //         let postalField = document.querySelector("#postcode");
+
+  //         marker.setVisible(false);
+  //         const place = autocomplete.getPlace();
+  //         console.log(place);
+  //         if (!place.geometry || !place.geometry.location) {
+  //           // User entered the name of a Place that was not suggested and
+  //           // pressed the Enter key, or the Place Details request failed.
+  //           window.alert(
+  //             "No details available for input: '" + place.name + "'"
+  //           );
+  //           return;
+  //         }
+
+  //         if (place.geometry.viewport) {
+  //           console.log("here");
+  //           map.fitBounds(place.geometry.viewport);
+  //         } else {
+  //           console.log("there");
+  //           map.setCenter(place.geometry.location);
+  //         }
+
+  //         map.setZoom(17);
+  //         marker.setPosition(place.geometry.location);
+  //         marker.setVisible(true);
+
+  //         for (const component of place.address_components) {
+  //           const componentType = component.types[0];
+  //           switch (componentType) {
+  //             case "street_number": {
+  //               address1 = `${component.long_name} ${address1}`;
+  //               break;
+  //             }
+
+  //             case "route": {
+  //               address1 += component.short_name;
+  //               break;
+  //             }
+
+  //             case "postal_code": {
+  //               postcode = `${component.long_name}${postcode}`;
+  //               break;
+  //             }
+
+  //             case "locality":
+  //               document.querySelector("#locality").value = component.long_name;
+  //               city = component.long_name;
+  //               break;
+
+  //             case "administrative_area_level_1": {
+  //               document.querySelector("#state").value = component.short_name;
+  //               state = component.short_name;
+  //               break;
+  //             }
+  //           }
+  //         }
+  //         address1Field.value = address1;
+  //         postalField.value = postcode;
+
+  //         this.setState({
+  //           name: place.name,
+  //           street: address1,
+  //           city: city,
+  //           state: state,
+  //           addressZip: postcode,
+  //           latitude: place.geometry.location.lat(),
+  //           longitude: place.geometry.location.lng(),
+  //         });
+  //       });
+
+  //       defaultDeliveryInfo = this.setDeliveryInfo(sub);
+  //     }
+
+  //     newSubList.push(subscription);
+
+  //     console.log(" ");
+  //   });
+
+  //   newSubList.sort(function (a, b) {
+  //     return a.load_order - b.load_order;
+  //   });
+
+  //   console.log("0906 newSubList: ", newSubList);
+
+  //   if (setDefault === DEFAULT) {
+  //     this.setState(
+  //       (prevState) => ({
+  //         subscriptionsList: newSubList,
+  //         subscriptionsLoaded: true,
+  //         currentPlan: { ...defaultCurrentPlan },
+  //         updatedPlan: { ...defaultUpdatedPlan },
+  //         deliveryInfo: { ...defaultDeliveryInfo },
+  //       }),
+  //       () => {
+  //         this.calculateDifference();
+  //       }
+  //     );
+  //   } else if (setDefault === UPDATED) {
+  //     console.log("(UPDATED) current Plan: ", this.state.currentPlan);
+  //     console.log("(UPDATED) updated Plan: ", this.state.updatedPlan);
+  //     console.log("(UPDATED) deliveryInfo: ", this.state.deliveryInfo);
+
+  //     console.log("(DEFAULT) current Plan: ", defaultCurrentPlan);
+  //     console.log("(DEFAULT) updated Plan: ", defaultUpdatedPlan);
+  //     console.log("(DEFAULT) deliveryInfo: ", defaultDeliveryInfo);
+
+  //     this.setState(
+  //       (prevState) => ({
+  //         subscriptionsList: newSubList,
+  //         subscriptionsLoaded: true,
+  //         currentPlan: { ...defaultCurrentPlan },
+  //         updatedPlan: { ...defaultUpdatedPlan },
+  //         deliveryInfo: { ...defaultDeliveryInfo },
+  //         processingChanges: false,
+  //       }),
+  //       () => {
+  //         this.calculateDifference();
+  //       }
+  //     );
+  //   } else {
+  //     this.setState({
+  //       subscriptionsList: newSubList,
+  //       subscriptionsLoaded: true,
+  //     });
+  //   }
+  // };
   loadSubscriptions = (subscriptions, discounts, setDefault) => {
     if (subscriptions.length === 0) {
       console.log("NO SUBSCRIPTIONS");
@@ -583,9 +928,11 @@ class EditPlan extends React.Component {
         sub.menu_date.indexOf(" ")
       );
 
+      console.log();
       console.log("(parsed) Billing Date: ", parsedBillingDate);
 
       console.log(" ");
+      console.log("================| START CALCULATIONS |================");
       console.log("Base Amount: ", sub.subtotal);
       console.log("Taxes: ", sub.taxes);
       console.log("Delivery Fee: ", sub.delivery_fee);
@@ -603,6 +950,7 @@ class EditPlan extends React.Component {
         sub.ambassador_code;
 
       console.log("Next Billing Amount: ", nextBillingAmount);
+      console.log("================|  END CALCULATIONS  |================");
 
       console.log(" ");
 
@@ -802,6 +1150,8 @@ class EditPlan extends React.Component {
       return a.load_order - b.load_order;
     });
 
+    console.log("0906 newSubList: ", newSubList);
+
     if (setDefault === DEFAULT) {
       this.setState(
         (prevState) => ({
@@ -852,6 +1202,7 @@ class EditPlan extends React.Component {
       this.state.updatedPlan.meals !== null &&
       this.state.updatedPlan.deliveries !== null
     ) {
+      // console.log("0906 plans fetched: ", this.props.plans);
       console.log(
         "(1) plans fetched; defaulting selection to: " +
           this.state.updatedPlan.meals +
@@ -880,12 +1231,13 @@ class EditPlan extends React.Component {
       prevState.updatedPlan.deliveries === null &&
       this.state.updatedPlan.deliveries !== null
     ) {
+      // console.log("0906 plans fetched: ", this.props.plans);
       console.log(
         "(2) plans fetched; defaulting selection to: " +
-          this.state.updatedPlan.meals +
-          " meals, " +
-          this.state.updatedPlan.deliveries +
-          " deliveries"
+        this.state.updatedPlan.meals +
+        " meals, " +
+        this.state.updatedPlan.deliveries +
+        " deliveries"
       );
 
       this.props.chooseMealsDelivery(
@@ -997,10 +1349,12 @@ class EditPlan extends React.Component {
           .put('http://localhost:2000/api/v2/change_purchase', object)
           .then((res) => {
             console.log("change_purchase response: ", res);
+            // axios
+            //   .get(
+            //     API_URL + "predict_next_billing_date/" + this.state.customerUid
+            //   )
             axios
-              .get(
-                API_URL + "predict_next_billing_date/" + this.state.customerUid
-              )
+              .get('http://localhost:2000/api/v2/predict_next_billing_date/' + this.state.customerUid)
               .then((res) => {
                 console.log("(after change) next meal info res: ", res);
 
@@ -1009,20 +1363,20 @@ class EditPlan extends React.Component {
                 this.displayErrorModal(
                   "Success!",
                   `
-              OLD MEAL PLAN: ${this.state.currentPlan.meals} meals, ${this.state.currentPlan.deliveries} deliveries
-              NEW MEAL PLAN: ${this.state.updatedPlan.meals} meals, ${this.state.updatedPlan.deliveries} deliveries
-            `,
+                    OLD MEAL PLAN: ${this.state.currentPlan.meals} meals, ${this.state.currentPlan.deliveries} deliveries
+                    NEW MEAL PLAN: ${this.state.updatedPlan.meals} meals, ${this.state.updatedPlan.deliveries} deliveries
+                  `,
                   "OK",
                   "back"
                 );
 
-                console.log(
-                  "subscriptions loaded? ",
-                  this.state.subscriptionsLoaded
-                );
-                console.log(this.state.defaultSet === false);
-                console.log(this.state.refreshingPrice);
-                console.log(this.activeChanges());
+                // console.log(
+                //   "subscriptions loaded? ",
+                //   this.state.subscriptionsLoaded
+                // );
+                // console.log(this.state.defaultSet === false);
+                // console.log(this.state.refreshingPrice);
+                // console.log(this.activeChanges());
 
                 this.loadSubscriptions(
                   fetchedSubscriptions,

@@ -100,7 +100,7 @@ const useOptions = () => {
 };
 
 const StripeCheckout = (props) => {
-  // console.log("StripeCheckout props: ", props);
+  console.log("StripeCheckout props: ", props);
 
   const elements = useElements();
   const stripe = useStripe();
@@ -280,7 +280,8 @@ const StripeCheckout = (props) => {
                     tip: props.paymentSummary.tip,
                     tax: props.paymentSummary.taxAmount,
                     subtotal: props.paymentSummary.mealSubPrice,
-                    ambassador_code: props.ambassadorCode
+                    ambassador_code: props.ambassadorCode,
+                    ambassador_discount: props.paymentSummary.ambassadorDiscount
                   },
                   (res, checkout_success) => {
 
