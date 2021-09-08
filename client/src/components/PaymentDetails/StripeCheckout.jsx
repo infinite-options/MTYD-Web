@@ -285,7 +285,7 @@ const StripeCheckout = (props) => {
                   },
                   (res, checkout_success) => {
 
-                    // console.log("(SC) checkout items response: ", res);
+                    console.log("(SC) checkout items response: ", res);
 
                     if(!checkout_success) {
                       props.displayError(

@@ -54,7 +54,24 @@ export class Congrats extends Component {
     }
   };
 
+  // componentDidUpdate() {
+  //   console.log("(mount) props: ", this.props);
+  //   if(this.props.location.hasOwnProperty('delivery_date') === false){
+  //     console.log("(mount) delivery_date false");
+  //     this.props.history.push('/choose-plan');
+  //   } else {
+  //     console.log("(mount) delivery_date true");
+  //   }
+  // }
+
   componentDidMount() {
+    console.log("(mount) props: ", this.props);
+    if(this.props.location.hasOwnProperty('delivery_date') === false){
+      console.log("(mount) delivery_date false");
+      this.props.history.push('/choose-plan');
+    } else {
+      console.log("(mount) delivery_date true");
+    }
     const customer_uid = Cookies.get("customer_uid");
     console.log(Cookies.get("customer_uid"));
     if (customer_uid) {
@@ -83,56 +100,64 @@ export class Congrats extends Component {
   formatDate = (rawDate) => {
     console.log("(congrats) rawDate: ", rawDate);
 
-    let dateElements = rawDate.split(" ");
-    let yyyy_mm_dd = dateElements[0].split("-");
-    let month;
+    console.log("(formatDate) props: ", this.props);
+    if(this.props.location.hasOwnProperty('delivery_date') === false){
+      console.log("(formatDate) delivery_date false");
+      this.props.history.push('/choose-plan');
+    } else {
+      console.log("(formatDate) delivery_date true");
 
-    // Parse month
-    switch (yyyy_mm_dd[1]) {
-      case "01":
-        month = "January";
-        break;
-      case "02":
-        month = "February";
-        break;
-      case "03":
-        month = "March";
-        break;
-      case "04":
-        month = "April";
-        break;
-      case "05":
-        month = "May";
-        break;
-      case "06":
-        month = "June";
-        break;
-      case "07":
-        month = "July";
-        break;
-      case "08":
-        month = "August";
-        break;
-      case "09":
-        month = "September";
-        break;
-      case "10":
-        month = "October";
-        break;
-      case "11":
-        month = "November";
-        break;
-      case "12":
-        month = "December";
-        break;
-      default:
-        month = "";
+      let dateElements = rawDate.split(" ");
+      let yyyy_mm_dd = dateElements[0].split("-");
+      let month;
+
+      // Parse month
+      switch (yyyy_mm_dd[1]) {
+        case "01":
+          month = "January";
+          break;
+        case "02":
+          month = "February";
+          break;
+        case "03":
+          month = "March";
+          break;
+        case "04":
+          month = "April";
+          break;
+        case "05":
+          month = "May";
+          break;
+        case "06":
+          month = "June";
+          break;
+        case "07":
+          month = "July";
+          break;
+        case "08":
+          month = "August";
+          break;
+        case "09":
+          month = "September";
+          break;
+        case "10":
+          month = "October";
+          break;
+        case "11":
+          month = "November";
+          break;
+        case "12":
+          month = "December";
+          break;
+        default:
+          month = "";
+      }
+
+      let dateString = month + " " + yyyy_mm_dd[2];
+      // console.log("date string: ", dateString);
+
+      return dateString;
     }
-
-    let dateString = month + " " + yyyy_mm_dd[2];
-    // console.log("date string: ", dateString);
-
-    return dateString;
   };
 
   render() {

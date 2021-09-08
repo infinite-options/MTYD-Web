@@ -103,7 +103,7 @@ function IngredientsUnits() {
         // saveIngredients(res.data.result);
         let uniqueIngredients = [];
         res.data.result.forEach((ingredient) => {
-          let ingredientFound = uniqueIngredients.findIndex(element => element.ingredient_uid === ingredient.ingredient_uid);
+          let ingredientFound = uniqueIngredients.dex(element => element.ingredient_uid === ingredient.ingredient_uid);
           // console.log("Ingredient found? ", ingredientFound);
           if(ingredientFound === -1) {
             uniqueIngredients.push(ingredient);

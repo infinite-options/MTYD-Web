@@ -216,7 +216,7 @@ class NavBar extends React.Component {
       .get(`${API_URL}Profile/${customer_uid}`)
       .then((response) => {
         const role = response.data.result[0].role.toLowerCase();
-        console.log("role: ", role);
+        // console.log("role: ", role);
         this.setState({ profileRole: role });
         // console.log("Profile role: " + this.state.profileRole);
         // console.log(response)
