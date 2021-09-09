@@ -51,6 +51,23 @@ const EditPlan = (props) => {
       subtotal: "0.00",
       total: "0.00",
     },
+    delivery_details: {
+      delivery_address: "",
+      delivery_city: "",
+      delivery_day: null,
+      delivery_email: "",
+      delivery_fee: 0,
+      delivery_first_name: "",
+      delivery_instructions: "",
+      delivery_last_name: "",
+      delivery_latitude: null,
+      delivery_longitude: null,
+      delivery_phone_num: "",
+      delivery_state: "",
+      delivery_status: "",
+      delivery_unit: ""   
+    },
+    items: null,
     meals: null,
     deliveries: null,
     order_history: null,
@@ -73,6 +90,23 @@ const EditPlan = (props) => {
       subtotal: "0.00",
       total: "0.00",
     },
+    delivery_details: {
+      delivery_address: "",
+      delivery_city: "",
+      delivery_day: null,
+      delivery_email: "",
+      delivery_fee: 0,
+      delivery_first_name: "",
+      delivery_instructions: "",
+      delivery_last_name: "",
+      delivery_latitude: null,
+      delivery_longitude: null,
+      delivery_phone_num: "",
+      delivery_state: "",
+      delivery_status: "",
+      delivery_unit: ""   
+    },
+    items: null,
     meals: null,
     deliveries: null,
     order_history: null,
@@ -101,6 +135,7 @@ const EditPlan = (props) => {
   const [deliveryDiscounts, setDeliveryDiscounts] = useState(null);
   const [subscriptions, setSubscriptions] = useState(null);
   const [profileInfo, setProfileInfo] = useState(null);
+  const [recalculating, setRecalculating] = useState(false);
 
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
@@ -179,6 +214,11 @@ const EditPlan = (props) => {
       temp_lng = longitude;
     }
 
+    map = new google.maps.Map(document.getElementById("map"), {
+      center: { lat: temp_lat, lng: temp_lng },
+      zoom: 12,
+    });
+
     let customer_uid = document.cookie
       .split("; ")
       .find((item) => item.startsWith("customer_uid="))
@@ -214,49 +254,6 @@ const EditPlan = (props) => {
         console.log("(PNBD) res: ", res);
 
         setSubscriptions(res.data.result);
-        // res.data.result.forEach((sub, index) => {
-
-        //   console.log("(PNBD) sub: ", sub);
-        //   // console.log("(PNBD) deliveryDiscounts: ", deliveryDiscounts);
-
-        //   let subDiscount = deliveryDiscounts.find((element) => {
-        //     return element.deliveries === sub.num_deliveries
-        //   });
-
-        //   let parsedItems = JSON.parse(sub.items)[0];
-        //   let parsedMeals = parsedItems.name.substring(
-        //     0,
-        //     parsedItems.name.indexOf(" ")
-        //   );
-
-        //   let parsedSub = {
-        //     purchase_uid: sub.purchase_uid,
-        //     index,
-        //     payment_summary: {
-        //       base_amount: sub.subtotal.toFixed(2),
-        //       taxes: sub.taxes.toFixed(2),
-        //       delivery_fee: sub.delivery_fee.toFixed(2),
-        //       service_fee: sub.service_fee.toFixed(2),
-        //       driver_tip: sub.driver_tip.toFixed(2),
-        //       discount_amount: sub.amount_discount.toFixed(2),
-        //       discount_rate: subDiscount.discount,
-        //       ambassador_discount: sub.ambassador_code.toFixed(2),
-        //       subtotal: (sub.amount_due + sub.ambassador_code).toFixed(2),
-        //       total: sub.amount_due.toFixed(2)
-        //     },
-        //     meals: parsedMeals,
-        //     deliveries: sub.num_deliveries,
-        //     order_history: null,
-        //     load_order: null,
-        //     discount: null,
-        //     next_billing_date: null,
-        //     rawData: sub
-        //   }
-
-        //   // if(){
-
-        //   // }
-        // });
 
         // check if all remote data fetched
         fetched++;
@@ -278,8 +275,6 @@ const EditPlan = (props) => {
       })
       .then(res => {
         console.log("(plans) res: ", res);
-
-        // setPlans(res.data.result);
 
         let tempPlans = null;
 
@@ -314,14 +309,6 @@ const EditPlan = (props) => {
         console.log("(plans) payload: ", payload);
 
         setPlans(tempPlans);
-        // dispatch({
-        //   type: FETCH_PLAN_INFO,
-        //   payload: {
-        //     items: itemsReturn,
-        //     numItems: distinctNumItems,
-        //     paymentFrequency: distinctPaymentFrequency,
-        //   },
-        // });
 
         // Set discounts
         let twoMealPlans = res.data.result.filter( function(e) {
@@ -349,29 +336,6 @@ const EditPlan = (props) => {
       .catch(err => {
         console.log(err);
       });
-
-    // let how_much = (Math.random()*1000).toFixed(2);
-    // let person1 = {
-    //   name: 'Thuya',
-    //   age: 22,
-    //   color: 'rgb(0,0,0)',
-    //   should_give_money: true,
-    //   should_get_money: false
-    // }
-    // let person2 = {
-    //   name: 'Brandon',
-    //   age: 23,
-    //   color: undefined,
-    //   should_give_money: false,
-    //   should_get_money: true
-    // }
-    // if(person1.should_give_money && person2.should_get_money){
-    //   let res = (
-    //     person1.name + " should venmo " + 
-    //     person2.name + " $" + how_much
-    //   );
-    //   setResult(res);
-    // }
     
   }, []);
 
@@ -383,8 +347,6 @@ const EditPlan = (props) => {
       let parsedSubs = [];
 
       subscriptions.forEach((sub, index) => {
-        // console.log("(PNBD) sub: ", sub);
-        // console.log("(PNBD) deliveryDiscounts: ", deliveryDiscounts);
 
         let subDiscount = deliveryDiscounts.find((element) => {
           return element.deliveries === sub.num_deliveries
@@ -425,6 +387,23 @@ const EditPlan = (props) => {
             subtotal: (sub.amount_due + sub.ambassador_code).toFixed(2),
             total: sub.amount_due.toFixed(2)
           },
+          delivery_details: {
+            delivery_address: "",
+            delivery_city: "",
+            delivery_day: null,
+            delivery_email: "",
+            delivery_fee: 0,
+            delivery_first_name: "",
+            delivery_instructions: "",
+            delivery_last_name: "",
+            delivery_latitude: null,
+            delivery_longitude: null,
+            delivery_phone_num: "",
+            delivery_state: "",
+            delivery_status: "",
+            delivery_unit: ""   
+          },
+          items: JSON.parse(sub.items),
           meals: parsedMeals,
           deliveries: sub.num_deliveries,
           discount: subDiscount.discount,
@@ -440,59 +419,100 @@ const EditPlan = (props) => {
         }
 
         if(index === 0){
+          document.getElementById("locality").value = sub.delivery_city;
+          document.getElementById("state").value = sub.delivery_state;
+          document.getElementById("pac-input").value = sub.delivery_address;
+          document.getElementById("postcode").value = sub.delivery_zip;
+
+          fetchAddressCoordinates(
+            sub.delivery_address,
+            sub.delivery_city,
+            sub.delivery_state,
+            sub.delivery_zip,
+            (coords) => {
+              console.log("(fetchAddressCoordinates) Fetched coordinates: ", coords);
+  
+              // this.setState({
+              //   latitude: coords.latitude,
+              //   longitude: coords.longitude,
+              // });
+              setLatitude(coords.latitude);
+              setLongitude(coords.longitude);
+  
+              const temp_position = {
+                lat: parseFloat(coords.latitude),
+                lng: parseFloat(coords.longitude),
+              };
+  
+              console.log("(fetchAddressCoordinates) temp_position: ", temp_position);
+  
+              map.setCenter(temp_position);
+
+              console.log("(fetchAddressCoordinates) after center");
+  
+              if (coords.latitude !== "") {
+                map.setZoom(17);
+                new google.maps.Marker({
+                  position: temp_position,
+                  map,
+                });
+              }
+            }
+          );
+
           setCurrentPlan(parsedSub);
           setNewPlan(parsedSub);
         }
 
         parsedSubs.push(parsedSub);
       });
-      // let defaultPlan = subscriptions[0];
-      // console.log("(UE2) defaultPlan: ", defaultPlan);
-      // console.log("(UE2) deliveryDiscounts: ", deliveryDiscounts);
-
-      // // get discount for default plan
-      // let defaultPlanDiscount = deliveryDiscounts.find((element) => {
-      //   return element.deliveries === defaultPlan.num_deliveries
-      // });
-
-      // console.log("(UE2) defaultPlanDiscount: ", defaultPlanDiscount);
-
-      // // parse items
-      // let parsedItems = JSON.parse(defaultPlan.items)[0];
-      // let parsedMeals = parsedItems.name.substring(
-      //   0,
-      //   parsedItems.name.indexOf(" ")
-      // );
-
-      // set current/default plan
-      // setCurrentPlan({
-      //   purchase_uid: defaultPlan.purchase_uid,
-      //   payment_summary: {
-      //     base_amount: defaultPlan.subtotal.toFixed(2),
-      //     taxes: defaultPlan.taxes.toFixed(2),
-      //     delivery_fee: defaultPlan.delivery_fee.toFixed(2),
-      //     service_fee: defaultPlan.service_fee.toFixed(2),
-      //     driver_tip: defaultPlan.driver_tip.toFixed(2),
-      //     discount_amount: defaultPlan.amount_discount.toFixed(2),
-      //     discount_rate: defaultPlanDiscount.discount,
-      //     ambassador_discount: defaultPlan.ambassador_code.toFixed(2),
-      //     subtotal: (defaultPlan.amount_due + defaultPlan.ambassador_code).toFixed(2),
-      //     total: defaultPlan.amount_due.toFixed(2)
-      //   },
-      //   meals: parsedMeals,
-      //   deliveries: defaultPlan.num_deliveries,
-      //   order_history: null,
-      //   load_order: null,
-      //   discount: null,
-      //   next_billing_date: null,
-      //   rawData: defaultPlan
-      // });
 
       setSubscriptions(parsedSubs);
 
       setDataLoaded(true);
     }
   }, [dataFetched]);
+
+  useEffect(() => {
+    // document.getElementById("locality").value = .delivery_city;
+    // document.getElementById("state").value = sub.delivery_state;
+    // document.getElementById("pac-input").value = sub.delivery_address;
+    // document.getElementById("postcode").value = sub.delivery_zip;
+
+    // fetchAddressCoordinates(
+    //   sub.delivery_address,
+    //   sub.delivery_city,
+    //   sub.delivery_state,
+    //   sub.delivery_zip,
+    //   (coords) => {
+    //     console.log(
+    //       "(default) Fetched coordinates: " + JSON.stringify(coords)
+    //     );
+
+    //     this.setState({
+    //       latitude: coords.latitude,
+    //       longitude: coords.longitude,
+    //     });
+
+    //     const temp_position = {
+    //       lat: parseFloat(coords.latitude),
+    //       lng: parseFloat(coords.longitude),
+    //     };
+
+    //     console.log(temp_position);
+
+    //     map.setCenter(temp_position);
+
+    //     if (coords.latitude !== "") {
+    //       map.setZoom(17);
+    //       new google.maps.Marker({
+    //         position: temp_position,
+    //         map,
+    //       });
+    //     }
+    //   }
+    // );
+  }, [currentPlan]);
 
   // Used to render menu at top showing all current meals plans
   const showSubscribedMeals = () => {
@@ -513,6 +533,12 @@ const EditPlan = (props) => {
             // console.log("(SSM) new current plan: ", sub);
             console.log("(SSM) current plan: ", currentPlan);
             console.log("(SSM) clicked plan: ", sub);
+
+            calculateBilling(
+              sub.items,
+              {latitude, longitude},
+              sub.billing.driver_tip
+            );
 
             setCurrentPlan(sub);
             setNewPlan(sub);
@@ -813,7 +839,7 @@ const EditPlan = (props) => {
                           marginBottom: "30px",
                         }}
                       >
-                        {paymentFrequency()}
+                        {dataLoaded ? (paymentFrequency()) : (null)}
                         {/* {"<null>"} */}
                       </div>
                     );
@@ -963,7 +989,7 @@ const EditPlan = (props) => {
                         marginBottom: "50px",
                       }}
                     >
-                      {paymentFrequency()}
+                      {dataLoaded ? (paymentFrequency()) : (null)}
                     </div>
                   );
                 }
@@ -1030,11 +1056,772 @@ const EditPlan = (props) => {
     return true;
   };
 
-  // const showDeliveryDetails = () => {
-  //   return (
+  const showDeliveryDetails = () => {
+    return (
+      <div style={dimensions.width < 800
+        ? {display: "inline-block", marginLeft: "8%", width: "84%", marginRight: "8%"}
+        : {display: "inline-block", marginLeft: "8%", width: "40%", marginRight: "2%"}}
+      >
+        {/* <div style={{ display: "inline-block", border: '1px solid blue'}}> */}
+        <div style={{ display: "flex"}}>
+          <input
+            type="text"
+            placeholder="First Name"
+            className={styles.inputContactLeft}
+            value={deliveryInfo.first_name}
+            onChange={(e) => {
+              // this.setState((prevState) => ({
+              //   deliveryInfo: {
+              //     ...prevState.deliveryInfo,
+              //     first_name: e.target.value,
+              //   },
+              // }));
+            }}
+            aria-label="Confirm your first name"
+            title="Confirm your first name"
+          />
 
-  //   );
-  // }
+          <input
+            type="text"
+            placeholder="Last Name"
+            className={styles.inputContactRight}
+            value={deliveryInfo.last_name}
+            onChange={(e) => {
+              // this.setState((prevState) => ({
+              //   deliveryInfo: {
+              //     ...prevState.deliveryInfo,
+              //     last_name: e.target.value,
+              //   },
+              // }));
+            }}
+            aria-label="Confirm your last name"
+            title="Confirm your last name"
+          />
+        </div>
+
+        <input
+          type="text"
+          placeholder="Email"
+          className={styles.input}
+          // value={this.props.email}
+          aria-label="Confirn your email"
+          title="Confirn your email"
+        />
+
+        <input
+          type="text"
+          placeholder="Phone Number"
+          className={styles.input}
+          value={deliveryInfo.phone}
+          onChange={(e) => {
+            // this.setState((prevState) => ({
+            //   deliveryInfo: {
+            //     ...prevState.deliveryInfo,
+            //     phone: e.target.value,
+            //   },
+            // }));
+          }}
+          aria-label="Confirm your phone number"
+          title="Confirm your phone number"
+        />
+
+        <input
+          type="text"
+          placeholder={"Address 1"}
+          className={styles.input}
+          id="pac-input"
+          name="pac-input"
+          aria-label="Confirm your address"
+          title="Confirm your address"
+        />
+
+        <div style={{ display: "flex" }}>
+          <input
+            type="text"
+            placeholder={"Unit"}
+            className={styles.inputContactLeft}
+            value={deliveryInfo.unit}
+            onChange={(e) => {
+              // this.setState((prevState) => ({
+              //   deliveryInfo: {
+              //     ...prevState.deliveryInfo,
+              //     unit: e.target.value,
+              //   },
+              // }));
+            }}
+            aria-label="Confirm your unit"
+            title="Confirm your unit"
+          />
+
+          <input
+            type="text"
+            placeholder={"City"}
+            id="locality"
+            name="locality"
+            className={styles.inputContactRight}
+            aria-label="Confirm your city"
+            title="Confirm your city"
+          />
+        </div>
+
+        <div style={{ display: "flex" }}>
+          <input
+            type="text"
+            placeholder={"State"}
+            className={styles.inputContactLeft}
+            id="state"
+            name="state"
+            aria-label="Confirm your state"
+            title="Confirm your state"
+          />
+          <input
+            type="text"
+            placeholder={"Zip Code"}
+            className={styles.inputContactRight}
+            id="postcode"
+            name="postcode"
+            aria-label="Confirm your zip code"
+            title="Confirm your zip code"
+          />
+        </div>
+
+        <input
+          type={"text"}
+          placeholder={"Delivery Instructions"}
+          className={styles.input}
+          value={deliveryInfo.instructions}
+          onChange={(e) => {
+            // this.setState((prevState) => ({
+            //   deliveryInfo: {
+            //     ...prevState.deliveryInfo,
+            //     instructions: e.target.value,
+            //   },
+            // }));
+          }}
+          aria-label="Confirm your delivery instructions"
+          title="Confirm your delivery instructions"
+        />
+
+        <div className={styles.googleMap} id="map" />
+
+        <div style={{ textAlign: "center" }}>
+          <button
+            className={styles.orangeBtn}
+            // disabled={!this.state.subscriptionsLoaded}
+            // onClick={() => this.saveEdits()}
+            aria-label="Click to save delivery changes"
+            title="Click to save delivery changes"
+          >
+            Save
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const showPaymentSummary = () => {
+    return (
+      <div
+        style={
+          dimensions.width < 800
+            ? {
+                display: "inline-block",
+                marginLeft: "8%",
+                width: "84%",
+                marginRight: "8%"
+              }
+            : {
+                display: "inline-block",
+                marginLeft: "2%",
+                width: "40%",
+                marginRight: "8%"
+              }
+        }
+      >
+        <div style={{ display: "flex", borderBottom: "solid 2px black" }}>
+          <div
+            className={styles.summaryLeft}
+            style={{ fontWeight: "bold" }}
+          ></div>
+
+          <div
+            className={
+              activeChanges()
+                ? styles.summaryRight
+                : styles.summaryGray
+            }
+          >
+            {newPlan.meals} Meals,{" "}
+            {newPlan.deliveries} Deliveries
+          </div>
+
+          <div className={styles.summaryRight}>Current</div>
+
+          <div
+            className={
+              activeChanges()
+                ? styles.summaryRight
+                : styles.summaryGray
+            }
+          >
+            Difference
+          </div>
+        </div>
+        <div style={{ display: "flex", borderBottom: "1px solid" }}>
+          <div className={styles.summaryLeft}>Meal Subscription</div>
+
+          <div
+            className={
+              activeChanges()
+                ? styles.summaryRight
+                : styles.summaryGray
+            }
+          >
+            {/* {console.log("error newPlan: ", newPlan)} */}
+            ${newPlan.billing.base_amount}
+          </div>
+
+          <div className={styles.summaryRight}>
+            ${newPlan.billing.base_amount}
+          </div>
+
+          <div
+            className={
+              activeChanges()
+                ? styles.summaryRight
+                : styles.summaryGray
+            }
+          >
+            $
+            {Math.abs(billingDifference.base_amount).toFixed(
+              2
+            )}
+          </div>
+        </div>
+
+        <div style={{ display: "flex", borderBottom: "1px solid" }}>
+          <div className={styles.summaryLeft}>Discount</div>
+
+          <div
+            className={
+              activeChanges()
+                ? styles.summaryRight
+                : styles.summaryGray
+            }
+          >
+            {"-$" +
+              newPlan.billing.discount_amount}
+            <br />
+            {"(" +
+              newPlan.billing.discount_rate +
+              "%)"}
+          </div>
+
+          <div className={styles.summaryRight}>
+            {"-$" +
+              currentPlan.billing.discount_amount}
+            <br />
+            {"(" +
+              currentPlan.billing.discount_rate +
+              "%)"}
+          </div>
+
+          <div
+            className={
+              activeChanges()
+                ? styles.summaryRight
+                : styles.summaryGray
+            }
+          >
+            {"$" +
+              Math.abs(
+                billingDifference.discount_amount
+              ).toFixed(2)}
+            <br />
+            {"(" +
+              Math.abs(billingDifference.discount_rate) +
+              "%)"}
+          </div>
+        </div>
+
+        <div style={{ display: "flex", borderBottom: "1px solid" }}>
+          <div className={styles.summaryLeft}>Delivery Fee</div>
+
+          <div
+            className={
+              activeChanges()
+                ? styles.summaryRight
+                : styles.summaryGray
+            }
+          >
+            ${newPlan.billing.delivery_fee}
+          </div>
+
+          <div className={styles.summaryRight}>
+            ${newPlan.billing.delivery_fee}
+          </div>
+
+          <div
+            className={
+              activeChanges()
+                ? styles.summaryRight
+                : styles.summaryGray
+            }
+          >
+            $
+            {Math.abs(billingDifference.delivery_fee).toFixed(
+              2
+            )}
+          </div>
+        </div>
+
+        <div style={{ display: "flex", borderBottom: "1px solid" }}>
+          <div className={styles.summaryLeft}>Service Fee</div>
+
+          <div
+            className={
+              activeChanges()
+                ? styles.summaryRight
+                : styles.summaryGray
+            }
+          >
+            ${newPlan.billing.service_fee}
+          </div>
+
+          <div className={styles.summaryRight}>
+            ${newPlan.billing.service_fee}
+          </div>
+
+          <div
+            className={
+              activeChanges()
+                ? styles.summaryRight
+                : styles.summaryGray
+            }
+          >
+            $
+            {Math.abs(billingDifference.service_fee).toFixed(
+              2
+            )}
+          </div>
+        </div>
+
+        <div style={{ display: "flex", borderBottom: "1px solid" }}>
+          <div className={styles.summaryLeft}>Taxes</div>
+
+          <div
+            className={
+              activeChanges()
+                ? styles.summaryRight
+                : styles.summaryGray
+            }
+          >
+            ${newPlan.billing.taxes}
+          </div>
+
+          <div className={styles.summaryRight}>
+            ${currentPlan.billing.taxes}
+          </div>
+
+          <div
+            className={
+              activeChanges()
+                ? styles.summaryRight
+                : styles.summaryGray
+            }
+          >
+            ${Math.abs(billingDifference.taxes).toFixed(2)}
+          </div>
+        </div>
+
+        <div style={{ display: "flex" }}>
+          <div className={styles.summaryLeft}>Chef and Driver Tip</div>
+
+          <div
+            className={
+              activeChanges()
+                ? styles.summaryRight
+                : styles.summaryGray
+            }
+          >
+            ${newPlan.billing.driver_tip}
+          </div>
+
+          <div className={styles.summaryRight}>
+            ${currentPlan.billing.driver_tip}
+          </div>
+
+          <div
+            className={
+              activeChanges()
+                ? styles.summaryRight
+                : styles.summaryGray
+            }
+          >
+            $
+            {Math.abs(billingDifference.driver_tip).toFixed(2)}
+          </div>
+        </div>
+        <div style={{ display: "flex" }}>
+          {(() => {
+            if (
+              newPlan.billing.driver_tip === "0.00"
+            ) {
+              return (
+                <button
+                  className={styles.tipButtonSelected}
+                  // onClick={() => this.changeTip("0.00")}
+                  aria-label={
+                    "Current tip is: $" +
+                    newPlan.billing.driver_tip
+                  }
+                  title={
+                    "Current tip is: $" +
+                    newPlan.billing.driver_tip
+                  }
+                >
+                  No Tip
+                </button>
+              );
+            } else {
+              return (
+                <button
+                  className={styles.tipButton}
+                  // onClick={() => this.changeTip("0.00")}
+                  aria-label={
+                    "Current tip is: $" +
+                    newPlan.billing.driver_tip +
+                    ". Click here to remove tip."
+                  }
+                  title={
+                    "Current tip is: $" +
+                    newPlan.billing.driver_tip +
+                    ". Click here to remove tip."
+                  }
+                >
+                  No Tip
+                </button>
+              );
+            }
+          })()}
+          {(() => {
+            if (
+              newPlan.billing.driver_tip === "2.00"
+            ) {
+              return (
+                <button
+                  className={styles.tipButtonSelected}
+                  // onClick={() => this.changeTip("2.00")}
+                  aria-label={
+                    "Current tip is: $" +
+                    newPlan.billing.driver_tip
+                  }
+                  title={
+                    "Current tip is: $" +
+                    newPlan.billing.driver_tip
+                  }
+                >
+                  $2
+                </button>
+              );
+            } else {
+              return (
+                <button
+                  className={styles.tipButton}
+                  // onClick={() => this.changeTip("2.00")}
+                  aria-label={
+                    "Current tip is: $" +
+                    newPlan.billing.driver_tip +
+                    ". Click here change tip to $2."
+                  }
+                  title={
+                    "Current tip is: $" +
+                    newPlan.billing.driver_tip +
+                    ". Click here to change tip to $2."
+                  }
+                >
+                  $2
+                </button>
+              );
+            }
+          })()}
+          {(() => {
+            if (
+              newPlan.billing.driver_tip === "3.00"
+            ) {
+              return (
+                <button
+                  className={styles.tipButtonSelected}
+                  // onClick={() => this.changeTip("3.00")}
+                  aria-label={
+                    "Current tip is: $" +
+                    newPlan.billing.driver_tip
+                  }
+                  title={
+                    "Current tip is: $" +
+                    newPlan.billing.driver_tip
+                  }
+                >
+                  $3
+                </button>
+              );
+            } else {
+              return (
+                <button
+                  className={styles.tipButton}
+                  // onClick={() => this.changeTip("3.00")}
+                  aria-label={
+                    "Current tip is: $" +
+                    newPlan.billing.driver_tip +
+                    ". Click here to change tip to $3."
+                  }
+                  title={
+                    "Current tip is: $" +
+                    newPlan.billing.driver_tip +
+                    ". Click here to change tip to $3."
+                  }
+                >
+                  $3
+                </button>
+              );
+            }
+          })()}
+          {(() => {
+            if (
+              newPlan.billing.driver_tip === "5.00"
+            ) {
+              return (
+                <button
+                  className={styles.tipButtonSelected}
+                  // onClick={() => this.changeTip("5.00")}
+                  aria-label={
+                    "Current tip is: $" +
+                    newPlan.billing.driver_tip
+                  }
+                  title={
+                    "Current tip is: $" +
+                    newPlan.billing.driver_tip
+                  }
+                >
+                  $5
+                </button>
+              );
+            } else {
+              return (
+                <button
+                  className={styles.tipButton}
+                  // onClick={() => this.changeTip("5.00")}
+                  aria-label={
+                    "Current tip is: $" +
+                    newPlan.billing.driver_tip +
+                    ". Click here to change tip to $5."
+                  }
+                  title={
+                    "Current tip is: $" +
+                    newPlan.billing.driver_tip +
+                    ". Click here to change tip to $5."
+                  }
+                >
+                  $5
+                </button>
+              );
+            }
+          })()}
+        </div>
+
+        <div 
+          style={{ 
+            display: "flex", 
+            borderBottom: "1px solid" 
+            // border: '1px solid blue'
+          }}
+        >
+          {/* <input
+            type="text"
+            placeholder="Enter Ambassador Code"
+            className={styles.inputAmbassador}
+            onChange={(e) => {
+              // this.setState({
+              //   ambassadorCode: e.target.value,
+              // });
+            }}
+            aria-label="Enter your ambassador code here"
+            title="Enter your ambassador code here"
+          />
+          <button
+            className={styles.codeButton}
+            // disabled={
+            //   this.state.refreshingPrice ||
+            //   parseFloat(this.state.currentPlan.payment_summary.ambassador_discount) > 0 ||
+            //   parseFloat(this.state.updatedPlan.payment_summary.ambassador_discount) > 0
+            // }
+            // disabled={this.state.refreshingPrice}
+            // onClick={() => this.applyAmbassadorCode()}
+            aria-label="Click here to verify your ambassador code"
+            title="Click here to verify your ambassador code"
+          >
+            Verify
+          </button> */}
+          <div
+            // className={styles.inputAmbassador}
+            style={{
+              marginTop: '20px',
+              width: '42%',
+              // float: 'left'
+              // border: '1px solid red',
+              display: 'flex',
+              textAlign: 'left'
+              // float: 'left'
+            }}
+          >
+            Ambassador Discount
+          </div>
+          <div
+            className={
+              activeChanges()
+                ? styles.summarySubLeft
+                : styles.summarySubLeftGray
+            }
+          >
+            -${newPlan.billing.ambassador_discount}
+          </div>
+
+          <div className={styles.summarySubtotal}>
+            -${newPlan.billing.ambassador_discount}
+          </div>
+
+          <div
+            className={
+              activeChanges()
+                ? styles.summarySubtotal
+                : styles.summarySubGray
+            }
+          >
+            ${billingDifference.ambassador_discount}
+          </div>
+        </div>
+
+        <div style={{ display: "flex", marginBottom: "50px" }}>
+          <div className={styles.summaryLeft}>Total</div>
+
+          <div
+            className={
+              activeChanges()
+                ? styles.summaryRight
+                : styles.summaryGray
+            }
+          >
+            ${newPlan.billing.total}
+          </div>
+
+          <div className={styles.summaryRight}>
+            ${currentPlan.billing.total}
+          </div>
+
+          <div
+            className={
+              activeChanges()
+                ? styles.summaryRight
+                : styles.summaryGray
+            }
+          >
+            ${billingDifference.total}
+          </div>
+        </div>
+
+        {/* <div className={styles.checkboxContainer}>
+          <label className={styles.checkboxLabel}>
+            Use Previous Credit Card
+          </label>
+          <input
+            className={styles.checkbox}
+            type="checkbox"
+            checked={this.state.usePreviousCard}
+            onChange={this.handleCheck}
+          />
+        </div> */}
+
+        {/* { this.state.usePreviousCard ? null : this.showCardForm()} */}
+
+        <button
+          className={styles.orangeBtn2}
+          // disabled={
+          //   (!this.state.subscriptionsLoaded &&
+          //     this.state.defaultSet === false) ||
+          //   this.state.refreshingPrice === true ||
+          //   !this.activeChanges() ||
+          //   this.state.processingChanges
+          // }
+          // onClick={() => this.confirmChanges()}
+          aria-label={
+            "Your new plan will cost " +
+            newPlan.billing.total +
+            ". Click here to save your new delivery plan"
+          }
+          title={
+            "Your new plan will cost " +
+            newPlan.billing.total +
+            ". Click here to save your new delivery plan"
+          }
+        >
+          Update Meal Plan
+        </button>
+
+        <button
+          className={styles.orangeBtn3}
+          // disabled={
+          //   (!this.state.subscriptionsLoaded &&
+          //     this.state.defaultSet === false) ||
+          //   this.state.refreshingPrice === true ||
+          //   !this.activeChanges() ||
+          //   this.state.processingChanges
+          // }
+          // onClick={() => this.discardChanges()}
+          aria-label={
+            "Your new plan will cost " +
+            newPlan.billing.total +
+            ". Click here to keep your previous meal plan"
+          }
+          title={
+            "Your new plan will cost " +
+            newPlan.billing.total +
+            ". Click here to keep your previous meal plan"
+          }
+        >
+          Keep Existing Meal Plan
+        </button>
+    </div>
+    );
+  }
+
+  const calculateBilling = (plan, coords, tip, amb_coupon) => {
+    setRecalculating(true);
+
+    let object = {
+      items: plan,
+      customer_lat: coords.latitude,
+      customer_long: coords.longitude,
+      driver_tip: tip
+    };
+    if(amb_coupon !== null) {
+      object['ambassador_coupon'] = amb_coupon
+    }
+
+    axios
+      .put(
+        `http://localhost:2000/api/v2/make_purchase`, 
+        object
+      )
+      .then((res) => {
+        console.log("(make_purchase) res: ", res);
+      })
+      .catch((err) => {
+        if (err.response) {
+          console.log(err.response);
+        }
+        console.log(err);
+      });
+  }
 
   return (
     <>
@@ -1061,24 +1848,66 @@ const EditPlan = (props) => {
       />
 
       {dataLoaded === false ? (
-        <div
-          style={{
-            color: "red",
-            zIndex: "99",
-            height: "100vh",
-            width: "100vw",
-            position: "fixed",
-            top: "0",
-            backgroundColor: "#F7F4E5",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <img src={m4me_logo} />
-        </div>
+          <div
+            style={{
+              color: "red",
+              zIndex: "99",
+              height: "100vh",
+              width: "100vw",
+              position: "fixed",
+              top: "0",
+              backgroundColor: "#F7F4E5",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <img src={m4me_logo} />
+          </div>
+      ) : (null)}
+
+          {/* defined here to prevent null error when initializing values */}
+          {/* <input
+            type="text"
+            placeholder={"Address 1"}
+            className={styles.input}
+            id="pac-input"
+            name="pac-input"
+            aria-label="Confirm your address"
+            title="Confirm your address"
+          />
+          <input
+            type="text"
+            placeholder={"City"}
+            id="locality"
+            name="locality"
+            className={styles.inputContactRight}
+            aria-label="Confirm your city"
+            title="Confirm your city"
+          />
+          <input
+            type="text"
+            placeholder={"State"}
+            className={styles.inputContactLeft}
+            id="state"
+            name="state"
+            aria-label="Confirm your state"
+            title="Confirm your state"
+          />
+          <input
+            type="text"
+            placeholder={"Zip Code"}
+            className={styles.inputContactRight}
+            id="postcode"
+            name="postcode"
+            aria-label="Confirm your zip code"
+            title="Confirm your zip code"
+          />
+          <div className={styles.googleHidden} id="map" /> */}
+          
+        {/* </>
       ) : (
-        <>
+        <> */}
           {login_seen ? (
             <PopLogin toggle={togglePopLogin} />
           ) : null}
@@ -1130,7 +1959,8 @@ const EditPlan = (props) => {
                 </div>
               </div>
               <div style={{ display: "flex" }}>
-                {showSubscribedMeals()}
+                {/* {showSubscribedMeals()} */}
+                {dataLoaded ? (showSubscribedMeals()) : (null)}
               </div>
             </div>
           </div>
@@ -1160,728 +1990,21 @@ const EditPlan = (props) => {
               ? {display: "inline-block", width: "100%"}
               : {display: "inline-flex", width: "100%"}}
             >
-              <div style={dimensions.width < 800
-                ? {display: "inline-block", marginLeft: "8%", width: "84%", marginRight: "8%"}
-                : {display: "inline-block", marginLeft: "8%", width: "40%", marginRight: "2%"}}
-              >
-                {/* <div style={{ display: "inline-block", border: '1px solid blue'}}> */}
-                <div style={{ display: "flex"}}>
-                  <input
-                    type="text"
-                    placeholder="First Name"
-                    className={styles.inputContactLeft}
-                    value={deliveryInfo.first_name}
-                    onChange={(e) => {
-                      // this.setState((prevState) => ({
-                      //   deliveryInfo: {
-                      //     ...prevState.deliveryInfo,
-                      //     first_name: e.target.value,
-                      //   },
-                      // }));
-                    }}
-                    aria-label="Confirm your first name"
-                    title="Confirm your first name"
-                  />
+              {showDeliveryDetails()}
 
-                  <input
-                    type="text"
-                    placeholder="Last Name"
-                    className={styles.inputContactRight}
-                    value={deliveryInfo.last_name}
-                    onChange={(e) => {
-                      // this.setState((prevState) => ({
-                      //   deliveryInfo: {
-                      //     ...prevState.deliveryInfo,
-                      //     last_name: e.target.value,
-                      //   },
-                      // }));
-                    }}
-                    aria-label="Confirm your last name"
-                    title="Confirm your last name"
-                  />
-                </div>
+              {dimensions.width < 800 ? (
+                <>
+                  <div style={{ marginTop: "20px" }} />
+                  <div className={styles.sectionHeader}>Payment Summary</div>
+                </>
+              ) : null}
 
-                  <input
-                    type="text"
-                    placeholder="Email"
-                    className={styles.input}
-                    // value={this.props.email}
-                    aria-label="Confirn your email"
-                    title="Confirn your email"
-                  />
-
-                  <input
-                    type="text"
-                    placeholder="Phone Number"
-                    className={styles.input}
-                    value={deliveryInfo.phone}
-                    onChange={(e) => {
-                      // this.setState((prevState) => ({
-                      //   deliveryInfo: {
-                      //     ...prevState.deliveryInfo,
-                      //     phone: e.target.value,
-                      //   },
-                      // }));
-                    }}
-                    aria-label="Confirm your phone number"
-                    title="Confirm your phone number"
-                  />
-
-                  <input
-                    type="text"
-                    placeholder={"Address 1"}
-                    className={styles.input}
-                    id="pac-input"
-                    name="pac-input"
-                    aria-label="Confirm your address"
-                    title="Confirm your address"
-                  />
-
-                  <div style={{ display: "flex" }}>
-                    <input
-                      type="text"
-                      placeholder={"Unit"}
-                      className={styles.inputContactLeft}
-                      value={deliveryInfo.unit}
-                      onChange={(e) => {
-                        // this.setState((prevState) => ({
-                        //   deliveryInfo: {
-                        //     ...prevState.deliveryInfo,
-                        //     unit: e.target.value,
-                        //   },
-                        // }));
-                      }}
-                      aria-label="Confirm your unit"
-                      title="Confirm your unit"
-                    />
-
-                    <input
-                      type="text"
-                      placeholder={"City"}
-                      id="locality"
-                      name="locality"
-                      className={styles.inputContactRight}
-                      aria-label="Confirm your city"
-                      title="Confirm your city"
-                    />
-                  </div>
-
-                  <div style={{ display: "flex" }}>
-                    <input
-                      type="text"
-                      placeholder={"State"}
-                      className={styles.inputContactLeft}
-                      id="state"
-                      name="state"
-                      aria-label="Confirm your state"
-                      title="Confirm your state"
-                    />
-                    <input
-                      type="text"
-                      placeholder={"Zip Code"}
-                      className={styles.inputContactRight}
-                      id="postcode"
-                      name="postcode"
-                      aria-label="Confirm your zip code"
-                      title="Confirm your zip code"
-                    />
-                  </div>
-
-                  <input
-                    type={"text"}
-                    placeholder={"Delivery Instructions"}
-                    className={styles.input}
-                    value={deliveryInfo.instructions}
-                    onChange={(e) => {
-                      // this.setState((prevState) => ({
-                      //   deliveryInfo: {
-                      //     ...prevState.deliveryInfo,
-                      //     instructions: e.target.value,
-                      //   },
-                      // }));
-                    }}
-                    aria-label="Confirm your delivery instructions"
-                    title="Confirm your delivery instructions"
-                  />
-
-                  {/* <div className={styles.googleMap} id="map" /> */}
-
-                  <div style={{ textAlign: "center" }}>
-                    <button
-                      className={styles.orangeBtn}
-                      // disabled={!this.state.subscriptionsLoaded}
-                      // onClick={() => this.saveEdits()}
-                      aria-label="Click to save delivery changes"
-                      title="Click to save delivery changes"
-                    >
-                      Save
-                    </button>
-                  </div>
-                </div>
-
-                {/* {narrowView ? ( */}
-                {dimensions.width < 800 ? (
-                  <>
-                    <div style={{ marginTop: "20px" }} />
-                    <div className={styles.sectionHeader}>Payment Summary</div>
-                  </>
-                ) : null}
-
-                <div
-                  style={
-                    dimensions.width < 800
-                      ? {
-                          display: "inline-block",
-                          marginLeft: "8%",
-                          width: "84%",
-                          marginRight: "8%"
-                        }
-                      : {
-                          display: "inline-block",
-                          marginLeft: "2%",
-                          width: "40%",
-                          marginRight: "8%"
-                        }
-                  }
-                >
-                  <div style={{ display: "flex", borderBottom: "solid 2px black" }}>
-                    <div
-                      className={styles.summaryLeft}
-                      style={{ fontWeight: "bold" }}
-                    ></div>
-
-                    <div
-                      className={
-                        activeChanges()
-                          ? styles.summaryRight
-                          : styles.summaryGray
-                      }
-                    >
-                      {newPlan.meals} Meals,{" "}
-                      {newPlan.deliveries} Deliveries
-                    </div>
-
-                    <div className={styles.summaryRight}>Current</div>
-
-                    <div
-                      className={
-                        activeChanges()
-                          ? styles.summaryRight
-                          : styles.summaryGray
-                      }
-                    >
-                      Difference
-                    </div>
-                  </div>
-                  <div style={{ display: "flex", borderBottom: "1px solid" }}>
-                    <div className={styles.summaryLeft}>Meal Subscription</div>
-
-                    <div
-                      className={
-                        activeChanges()
-                          ? styles.summaryRight
-                          : styles.summaryGray
-                      }
-                    >
-                      {console.log("error newPlan: ", newPlan)}
-                      ${newPlan.billing.base_amount}
-                    </div>
-
-                    <div className={styles.summaryRight}>
-                      ${newPlan.billing.base_amount}
-                    </div>
-
-                    <div
-                      className={
-                        activeChanges()
-                          ? styles.summaryRight
-                          : styles.summaryGray
-                      }
-                    >
-                      $
-                      {Math.abs(billingDifference.base_amount).toFixed(
-                        2
-                      )}
-                    </div>
-                  </div>
-
-                  <div style={{ display: "flex", borderBottom: "1px solid" }}>
-                    <div className={styles.summaryLeft}>Discount</div>
-
-                    <div
-                      className={
-                        activeChanges()
-                          ? styles.summaryRight
-                          : styles.summaryGray
-                      }
-                    >
-                      {"-$" +
-                        newPlan.billing.discount_amount}
-                      <br />
-                      {"(" +
-                        newPlan.billing.discount_rate +
-                        "%)"}
-                    </div>
-
-                    <div className={styles.summaryRight}>
-                      {"-$" +
-                        currentPlan.billing.discount_amount}
-                      <br />
-                      {"(" +
-                        currentPlan.billing.discount_rate +
-                        "%)"}
-                    </div>
-
-                    <div
-                      className={
-                        activeChanges()
-                          ? styles.summaryRight
-                          : styles.summaryGray
-                      }
-                    >
-                      {"$" +
-                        Math.abs(
-                          billingDifference.discount_amount
-                        ).toFixed(2)}
-                      <br />
-                      {"(" +
-                        Math.abs(billingDifference.discount_rate) +
-                        "%)"}
-                    </div>
-                  </div>
-
-                  <div style={{ display: "flex", borderBottom: "1px solid" }}>
-                    <div className={styles.summaryLeft}>Delivery Fee</div>
-
-                    <div
-                      className={
-                        activeChanges()
-                          ? styles.summaryRight
-                          : styles.summaryGray
-                      }
-                    >
-                      ${newPlan.billing.delivery_fee}
-                    </div>
-
-                    <div className={styles.summaryRight}>
-                      ${newPlan.billing.delivery_fee}
-                    </div>
-
-                    <div
-                      className={
-                        activeChanges()
-                          ? styles.summaryRight
-                          : styles.summaryGray
-                      }
-                    >
-                      $
-                      {Math.abs(billingDifference.delivery_fee).toFixed(
-                        2
-                      )}
-                    </div>
-                  </div>
-
-                  <div style={{ display: "flex", borderBottom: "1px solid" }}>
-                    <div className={styles.summaryLeft}>Service Fee</div>
-
-                    <div
-                      className={
-                        activeChanges()
-                          ? styles.summaryRight
-                          : styles.summaryGray
-                      }
-                    >
-                      ${newPlan.billing.service_fee}
-                    </div>
-
-                    <div className={styles.summaryRight}>
-                      ${newPlan.billing.service_fee}
-                    </div>
-
-                    <div
-                      className={
-                        activeChanges()
-                          ? styles.summaryRight
-                          : styles.summaryGray
-                      }
-                    >
-                      $
-                      {Math.abs(billingDifference.service_fee).toFixed(
-                        2
-                      )}
-                    </div>
-                  </div>
-
-                  <div style={{ display: "flex", borderBottom: "1px solid" }}>
-                    <div className={styles.summaryLeft}>Taxes</div>
-
-                    <div
-                      className={
-                        activeChanges()
-                          ? styles.summaryRight
-                          : styles.summaryGray
-                      }
-                    >
-                      ${newPlan.billing.taxes}
-                    </div>
-
-                    <div className={styles.summaryRight}>
-                      ${currentPlan.billing.taxes}
-                    </div>
-
-                    <div
-                      className={
-                        activeChanges()
-                          ? styles.summaryRight
-                          : styles.summaryGray
-                      }
-                    >
-                      ${Math.abs(billingDifference.taxes).toFixed(2)}
-                    </div>
-                  </div>
-
-                  <div style={{ display: "flex" }}>
-                    <div className={styles.summaryLeft}>Chef and Driver Tip</div>
-
-                    <div
-                      className={
-                        activeChanges()
-                          ? styles.summaryRight
-                          : styles.summaryGray
-                      }
-                    >
-                      ${newPlan.billing.driver_tip}
-                    </div>
-
-                    <div className={styles.summaryRight}>
-                      ${currentPlan.billing.driver_tip}
-                    </div>
-
-                    <div
-                      className={
-                        activeChanges()
-                          ? styles.summaryRight
-                          : styles.summaryGray
-                      }
-                    >
-                      $
-                      {Math.abs(billingDifference.driver_tip).toFixed(2)}
-                    </div>
-                  </div>
-                  <div style={{ display: "flex" }}>
-                    {(() => {
-                      if (
-                        newPlan.billing.driver_tip === "0.00"
-                      ) {
-                        return (
-                          <button
-                            className={styles.tipButtonSelected}
-                            // onClick={() => this.changeTip("0.00")}
-                            aria-label={
-                              "Current tip is: $" +
-                              newPlan.billing.driver_tip
-                            }
-                            title={
-                              "Current tip is: $" +
-                              newPlan.billing.driver_tip
-                            }
-                          >
-                            No Tip
-                          </button>
-                        );
-                      } else {
-                        return (
-                          <button
-                            className={styles.tipButton}
-                            // onClick={() => this.changeTip("0.00")}
-                            aria-label={
-                              "Current tip is: $" +
-                              newPlan.billing.driver_tip +
-                              ". Click here to remove tip."
-                            }
-                            title={
-                              "Current tip is: $" +
-                              newPlan.billing.driver_tip +
-                              ". Click here to remove tip."
-                            }
-                          >
-                            No Tip
-                          </button>
-                        );
-                      }
-                    })()}
-                    {(() => {
-                      if (
-                        newPlan.billing.driver_tip === "2.00"
-                      ) {
-                        return (
-                          <button
-                            className={styles.tipButtonSelected}
-                            // onClick={() => this.changeTip("2.00")}
-                            aria-label={
-                              "Current tip is: $" +
-                              newPlan.billing.driver_tip
-                            }
-                            title={
-                              "Current tip is: $" +
-                              newPlan.billing.driver_tip
-                            }
-                          >
-                            $2
-                          </button>
-                        );
-                      } else {
-                        return (
-                          <button
-                            className={styles.tipButton}
-                            // onClick={() => this.changeTip("2.00")}
-                            aria-label={
-                              "Current tip is: $" +
-                              newPlan.billing.driver_tip +
-                              ". Click here change tip to $2."
-                            }
-                            title={
-                              "Current tip is: $" +
-                              newPlan.billing.driver_tip +
-                              ". Click here to change tip to $2."
-                            }
-                          >
-                            $2
-                          </button>
-                        );
-                      }
-                    })()}
-                    {(() => {
-                      if (
-                        newPlan.billing.driver_tip === "3.00"
-                      ) {
-                        return (
-                          <button
-                            className={styles.tipButtonSelected}
-                            // onClick={() => this.changeTip("3.00")}
-                            aria-label={
-                              "Current tip is: $" +
-                              newPlan.billing.driver_tip
-                            }
-                            title={
-                              "Current tip is: $" +
-                              newPlan.billing.driver_tip
-                            }
-                          >
-                            $3
-                          </button>
-                        );
-                      } else {
-                        return (
-                          <button
-                            className={styles.tipButton}
-                            // onClick={() => this.changeTip("3.00")}
-                            aria-label={
-                              "Current tip is: $" +
-                              newPlan.billing.driver_tip +
-                              ". Click here to change tip to $3."
-                            }
-                            title={
-                              "Current tip is: $" +
-                              newPlan.billing.driver_tip +
-                              ". Click here to change tip to $3."
-                            }
-                          >
-                            $3
-                          </button>
-                        );
-                      }
-                    })()}
-                    {(() => {
-                      if (
-                        newPlan.billing.driver_tip === "5.00"
-                      ) {
-                        return (
-                          <button
-                            className={styles.tipButtonSelected}
-                            // onClick={() => this.changeTip("5.00")}
-                            aria-label={
-                              "Current tip is: $" +
-                              newPlan.billing.driver_tip
-                            }
-                            title={
-                              "Current tip is: $" +
-                              newPlan.billing.driver_tip
-                            }
-                          >
-                            $5
-                          </button>
-                        );
-                      } else {
-                        return (
-                          <button
-                            className={styles.tipButton}
-                            // onClick={() => this.changeTip("5.00")}
-                            aria-label={
-                              "Current tip is: $" +
-                              newPlan.billing.driver_tip +
-                              ". Click here to change tip to $5."
-                            }
-                            title={
-                              "Current tip is: $" +
-                              newPlan.billing.driver_tip +
-                              ". Click here to change tip to $5."
-                            }
-                          >
-                            $5
-                          </button>
-                        );
-                      }
-                    })()}
-                  </div>
-
-                  <div style={{ display: "flex", borderBottom: "1px solid" }}>
-                    <input
-                      type="text"
-                      placeholder="Enter Ambassador Code"
-                      className={styles.inputAmbassador}
-                      onChange={(e) => {
-                        // this.setState({
-                        //   ambassadorCode: e.target.value,
-                        // });
-                      }}
-                      aria-label="Enter your ambassador code here"
-                      title="Enter your ambassador code here"
-                    />
-                    <button
-                      className={styles.codeButton}
-                      // disabled={
-                      //   this.state.refreshingPrice ||
-                      //   parseFloat(this.state.currentPlan.payment_summary.ambassador_discount) > 0 ||
-                      //   parseFloat(this.state.updatedPlan.payment_summary.ambassador_discount) > 0
-                      // }
-                      // disabled={this.state.refreshingPrice}
-                      // onClick={() => this.applyAmbassadorCode()}
-                      aria-label="Click here to verify your ambassador code"
-                      title="Click here to verify your ambassador code"
-                    >
-                      Verify
-                    </button>
-                    <div
-                      className={
-                        activeChanges()
-                          ? styles.summarySubLeft
-                          : styles.summarySubLeftGray
-                      }
-                    >
-                      -${newPlan.billing.ambassador_discount}
-                    </div>
-
-                    <div className={styles.summarySubtotal}>
-                      -${newPlan.billing.ambassador_discount}
-                    </div>
-
-                    <div
-                      className={
-                        activeChanges()
-                          ? styles.summarySubtotal
-                          : styles.summarySubGray
-                      }
-                    >
-                      ${billingDifference.ambassador_discount}
-                    </div>
-                  </div>
-
-                  <div style={{ display: "flex", marginBottom: "50px" }}>
-                    <div className={styles.summaryLeft}>Total</div>
-
-                    <div
-                      className={
-                        activeChanges()
-                          ? styles.summaryRight
-                          : styles.summaryGray
-                      }
-                    >
-                      ${newPlan.billing.total}
-                    </div>
-
-                    <div className={styles.summaryRight}>
-                      ${currentPlan.billing.total}
-                    </div>
-
-                    <div
-                      className={
-                        activeChanges()
-                          ? styles.summaryRight
-                          : styles.summaryGray
-                      }
-                    >
-                      ${billingDifference.total}
-                    </div>
-                  </div>
-
-                  {/* <div className={styles.checkboxContainer}>
-                    <label className={styles.checkboxLabel}>
-                      Use Previous Credit Card
-                    </label>
-                    <input
-                      className={styles.checkbox}
-                      type="checkbox"
-                      checked={this.state.usePreviousCard}
-                      onChange={this.handleCheck}
-                    />
-                  </div> */}
-
-                  {/* { this.state.usePreviousCard ? null : this.showCardForm()} */}
-
-                  <button
-                    className={styles.orangeBtn2}
-                    // disabled={
-                    //   (!this.state.subscriptionsLoaded &&
-                    //     this.state.defaultSet === false) ||
-                    //   this.state.refreshingPrice === true ||
-                    //   !this.activeChanges() ||
-                    //   this.state.processingChanges
-                    // }
-                    // onClick={() => this.confirmChanges()}
-                    aria-label={
-                      "Your new plan will cost " +
-                      newPlan.billing.total +
-                      ". Click here to save your new delivery plan"
-                    }
-                    title={
-                      "Your new plan will cost " +
-                      newPlan.billing.total +
-                      ". Click here to save your new delivery plan"
-                    }
-                  >
-                    Update Meal Plan
-                  </button>
-
-                  <button
-                    className={styles.orangeBtn3}
-                    // disabled={
-                    //   (!this.state.subscriptionsLoaded &&
-                    //     this.state.defaultSet === false) ||
-                    //   this.state.refreshingPrice === true ||
-                    //   !this.activeChanges() ||
-                    //   this.state.processingChanges
-                    // }
-                    // onClick={() => this.discardChanges()}
-                    aria-label={
-                      "Your new plan will cost " +
-                      newPlan.billing.total +
-                      ". Click here to keep your previous meal plan"
-                    }
-                    title={
-                      "Your new plan will cost " +
-                      newPlan.billing.total +
-                      ". Click here to keep your previous meal plan"
-                    }
-                  >
-                    Keep Existing Meal Plan
-                  </button>
-              </div>
+              {showPaymentSummary()}
             </div>
           </div>
 
-        </>
-      )}
+        {/* </>
+      )} */}
 
       <FootLink />
     </>

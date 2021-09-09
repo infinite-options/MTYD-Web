@@ -883,6 +883,16 @@
   vertical-align: middle;
   margin-top: 15px;
 }
+.googleHidden {
+  width: 100px;
+  height: 255px;
+  border-radius: 3px;
+  border: solid;
+  border-width: 1px;
+  background-color: #F0F0F0;
+  vertical-align: middle;
+  margin-top: 15px;
+}
 
 .inputAmbassador {
   width: 28%;
