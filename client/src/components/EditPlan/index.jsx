@@ -233,7 +233,49 @@ const EditPlan = (props) => {
       .then(res => {
         console.log("(plans) res: ", res);
 
-        setPlans(res.data.result);
+        // setPlans(res.data.result);
+
+        let tempPlans = null;
+
+        let items = res.data.result;
+        let itemsReturn = {};
+        for (let item of items) {
+          if (item.num_items in itemsReturn) {
+            itemsReturn[item.num_items][item.num_deliveries] = item;
+          } else {
+            itemsReturn[item.num_items] = {[item.num_deliveries]: item};
+          }
+        }
+
+        let numItems = items.map(curValue => curValue.num_items);
+        let distinctNumItems = numItems.filter(
+          (elt, index) => numItems.indexOf(elt) === index
+        );
+        distinctNumItems.sort((a, b) => a - b);
+        let paymentFrequency = items.map(curValue => curValue.num_deliveries);
+        let distinctPaymentFrequency = paymentFrequency.filter(
+          (elt, index) => paymentFrequency.indexOf(elt) === index
+        );
+        distinctPaymentFrequency.sort((a, b) => a - b);
+        tempPlans = itemsReturn;
+
+        console.log("(plans) tempPlans: ", tempPlans);
+        let payload = {
+              items: itemsReturn,
+              numItems: distinctNumItems,
+              paymentFrequency: distinctPaymentFrequency,
+            };
+        console.log("(plans) payload: ", payload);
+
+        setPlans(tempPlans);
+        // dispatch({
+        //   type: FETCH_PLAN_INFO,
+        //   payload: {
+        //     items: itemsReturn,
+        //     numItems: distinctNumItems,
+        //     paymentFrequency: distinctPaymentFrequency,
+        //   },
+        // });
 
         // Set discounts
         let twoMealPlans = res.data.result.filter( function(e) {
@@ -290,6 +332,7 @@ const EditPlan = (props) => {
   // STEP 2: once all data has been fetched, load into page
   useEffect(() => {
     if(dataFetched === true){
+      console.log("(UE2) plans: ", plans);
 
       let parsedSubs = [];
 
@@ -401,7 +444,7 @@ const EditPlan = (props) => {
 
       setSubscriptions(parsedSubs);
 
-      setDataLoaded(true)
+      setDataLoaded(true);
     }
   }, [dataFetched]);
 
@@ -424,6 +467,9 @@ const EditPlan = (props) => {
             // console.log("(SSM) new current plan: ", sub);
             console.log("(SSM) current plan: ", currentPlan);
             console.log("(SSM) clicked plan: ", sub);
+
+            setCurrentPlan(sub);
+            setUpdatedPlan(sub);
           }}
           tabIndex="0"
           aria-label={
@@ -469,10 +515,456 @@ const EditPlan = (props) => {
     return <div style={{ width: "100%" }}>{mealButtons}</div>;
   };
 
+  const mealsDelivery = () => {
+    let deselectedPlateButton = styles_admin.plateButton;
+    let selectedPlateButton =
+      styles_admin.plateButton + " " + styles_admin.plateButtonSelected;
+    let plateButtons = [];
+    let singleMealData;
+
+    // let mealPlans = this.props.plans;
+
+    for (const [mealIndex, mealData] of Object.entries(plans)) {
+      singleMealData = mealData["1"];
+
+      plateButtons.push(
+        <div>
+          <div className={styles_admin.plateButtonWrapper}>
+            <button
+              key={mealIndex}
+              className={
+                updatedPlan.meals === mealIndex
+                  ? selectedPlateButton
+                  : deselectedPlateButton
+              }
+              onClick={() => {
+                console.log("(MD) clicked: ", mealIndex, " ; ", mealData);
+                // console.log("(MD) clicked: ", mealIndex, " ; ", this.state.updatedPlan.deliveries);
+                // console.log("(MD) plans: ", this.props.plans);
+                // this.props.chooseMealsDelivery(
+                //   mealIndex,
+                //   this.state.updatedPlan.deliveries,
+                //   this.props.plans
+                // );
+
+                // this.changePlans(mealIndex, this.state.updatedPlan.deliveries);
+              }}
+              aria-label={
+                "Click to switch to " +
+                mealIndex +
+                " meals per delivery for $" +
+                singleMealData.item_price
+              }
+              title={
+                "Click to switch to " +
+                mealIndex +
+                " meals per delivery for $" +
+                singleMealData.item_price
+              }
+            >
+              {mealIndex}
+            </button>
+          </div>
+          <div
+            style={{
+              textAlign: "center",
+              // marginTop: '10px',
+              // border: '1px solid violet'
+            }}
+          >
+            ${singleMealData.item_price}
+          </div>
+        </div>
+      );
+    }
+    return plateButtons;
+  };
+
+  const paymentFrequency = () => {
+    let deselectedPaymentOption = styles_admin.deliveryButton;
+    let selectedPaymentOption =
+      styles_admin.deliveryButton + " " + styles_admin.deliveryButtonSelected;
+    let paymentOptionButtons = [];
+
+    var discount = null;
+
+    for (const [deliveryIndex, deliveryData] of Object.entries(plans[2])) {
+      let discountItem = deliveryDiscounts.filter(function (e) {
+        return e.deliveries === deliveryIndex;
+      });
+
+      discount = discountItem[0].discount;
+
+      let ariaTag = "";
+
+      if (deliveryIndex == 1) {
+        ariaTag = "click here to switch to " + deliveryIndex + " delivery";
+      } else {
+        ariaTag =
+          "click here to switch to " +
+          deliveryIndex +
+          " deliveries and save " +
+          discount +
+          "%";
+      }
+
+      paymentOptionButtons.push(
+        <div className={styles_admin.sameLine} key={deliveryIndex}>
+          <button
+            className={
+              updatedPlan.deliveries === deliveryIndex
+                ? selectedPaymentOption
+                : deselectedPaymentOption
+            }
+            onClick={() => {
+              // this.props.choosePaymentOption(
+              //   deliveryIndex,
+              //   updatedPlan.meals,
+              //   this.props.plans
+              // );
+              // this.changePlans(this.state.updatedPlan.meals, deliveryIndex);
+            }}
+            aria-label={ariaTag}
+            title={ariaTag}
+          >
+            <span style={{ fontSize: "2em" }}>{deliveryIndex}</span>
+            <br />
+            {(() => {
+              // if (typeof discount !== "undefined" && discount > 0) {
+                if (discount > 0) {
+                return (
+                  <span
+                    style={{
+                      fontSize: "0.8em",
+                    }}
+                  >
+                    (Save {discount}%)
+                  </span>
+                );
+              }
+            })()}
+          </button>
+        </div>
+      );
+    }
+    return paymentOptionButtons;
+  };
+
+  const showPlanDetails = (width) => {
+    let ariaTag =
+      "Your current meal plan currently contains " +
+      currentPlan.meals +
+      " meals per delivery and" +
+      currentPlan.deliveries +
+      " deliveries";
+    if (width < 800) {
+      return (
+        // <div 
+        //   style={{ 
+        //     display: "flex",
+        //     border: '1px dashed',
+        //   }}
+        // >
+          <div 
+            style={{
+              display: "inline-block",
+              border: '1px dashed',
+              width: '100%'
+            }}
+          >
+            <div className={styles.boxPDnarrowTop}>
+              <div className={styles_admin.planHeader}>Current Plan</div>
+
+              <div style={{ paddingBottom: "50px" }}>
+                <span className={styles_admin.subHeader2}>MEALS</span>
+                <div className={styles_admin.plateButtonWrapper2}>
+                  <button
+                    className={styles_admin.plateButtonCurrent}
+                  >
+                    {currentPlan.meals}
+                  </button>
+                </div>
+              </div>
+
+              <div style={{ paddingBottom: "50px" }}>
+                <span className={styles_admin.subHeader2}>DELIVERIES</span>
+                <div className={styles_admin.plateButtonWrapper2}>
+                  <button className={styles_admin.deliveryButtonCurrent}>
+                    <span style={{ fontSize: "2em" }}>
+                      {currentPlan.deliveries}
+                    </span>
+                    <br />
+                    {(() => {
+                      if (
+                        currentPlan.discount !== null &&
+                        currentPlan.discount > 0
+                      ) {
+                        return (
+                          <span
+                            style={{
+                              fontSize: "0.8em",
+                            }}
+                          >
+                            (Save {currentPlan.discount}%)
+                          </span>
+                        );
+                      }
+                    })()}
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <span className={styles_admin.subHeader2}>CANCEL</span>
+                <div className={styles_admin.plateButtonWrapper3}>
+                  <div
+                    className={styles.iconTrash}
+                    onClick={() => {
+                      // this.confirmDelete();
+                    }}
+                    tabIndex="0"
+                    aria-label="Click here to cancel this meal plan"
+                    title="Click here to cancel this meal plan"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className={styles.boxPDnarrowBottom}>
+              <div className={styles_admin.planHeader}>Updated Plan</div>
+
+              <div className={styles.menuSection}>
+                <div className={styles.center}>
+                  <span className={styles.subHeader}>
+                    NUMBER OF MEALS PER DELIVERY
+                  </span>
+                </div>
+                {(() => {
+                  if (plans !== null) {
+                    return (
+                      <div className={styles_admin.buttonWrapper}>
+                        {mealsDelivery()}
+                        {/* {"<null>"} */}
+                      </div>
+                    );
+                  }
+                })()}
+              </div>
+
+              <div className={styles.menuSection}>
+                <div className={styles.center}>
+                  <span className={styles.subHeader}>
+                    TOTAL NUMBER OF DELIVERIES
+                  </span>
+                </div>
+                {(() => {
+                  if (plans !== null) {
+                    return (
+                      <div
+                        className="row"
+                        style={{
+                          marginTop: "20px",
+                          marginBottom: "30px",
+                        }}
+                      >
+                        {paymentFrequency()}
+                        {/* {"<null>"} */}
+                      </div>
+                    );
+                  }
+                })()}
+              </div>
+
+              <div
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+              >
+                <div className={styles_admin.chargeContainer} tabIndex="0">
+                  {(() => {
+                    // let chargeOrRefund = this.state.differenceSummary.total;
+                    let chargeOrRefund = 0.0;
+                    if (parseFloat(chargeOrRefund) >= 0) {
+                      return (
+                        <>
+                          <div className={styles_admin.chargeText}>
+                            {"Additional Charges "}
+                          </div>
+                          <div className={styles_admin.chargeAmount}>
+                            {/* ${this.state.differenceSummary.total} */}
+                            ${"<null>"}
+                          </div>
+                        </>
+                      );
+                    } else {
+                      return (
+                        <>
+                          <div className={styles_admin.chargeText}>
+                            {"You will be refunded "}
+                          </div>
+                          <div className={styles_admin.chargeAmount}>
+                            ${"<null>"}
+                            {/* {(-1 * this.state.differenceSummary.total).toFixed(
+                              2
+                            )} */}
+                          </div>
+                        </>
+                      );
+                    }
+                  })()}
+                </div>
+              </div>
+            </div>
+          </div>
+        // </div>
+      );
+    } else {
+      return (
+        <>
+          <div className={styles_admin.boxPDleft}>
+            <div>
+              <div className={styles_admin.planHeader}>Current Plan</div>
+
+              <div style={{ paddingBottom: "50px" }}>
+                <span className={styles_admin.subHeader2}>MEALS</span>
+                <div className={styles_admin.plateButtonWrapper2}>
+                  <button
+                    className={styles_admin.plateButtonCurrent}
+                  >
+                    {currentPlan.meals}
+                  </button>
+                </div>
+              </div>
+
+              <div style={{ paddingBottom: "50px" }}>
+                <span className={styles_admin.subHeader2}>DELIVERIES</span>
+
+                <div className={styles_admin.plateButtonWrapper2}>
+                  <button className={styles_admin.deliveryButtonCurrent}>
+                    <span style={{ fontSize: "2em" }}>
+                      {currentPlan.deliveries}
+                    </span>
+                    <br />
+                    {(() => {
+                      if (
+                        currentPlan.discount !== null &&
+                        currentPlan.discount > 0
+                      ) {
+                        return (
+                          <span
+                            style={{
+                              fontSize: "0.8em",
+                            }}
+                          >
+                            (Save {currentPlan.discount}%)
+                          </span>
+                        );
+                      }
+                    })()}
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <span className={styles_admin.subHeader2}>CANCEL</span>
+                <div className={styles_admin.plateButtonWrapper3}>
+                  <div
+                    className={styles.iconTrash}
+                    onClick={() => {
+                      // this.confirmDelete();
+                    }}
+                    tabIndex="0"
+                    aria-label="Click here to cancel this meal plan"
+                    title="Click here to cancel this meal plan"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className={styles.boxPDright}>
+            <div className={styles_admin.planHeader}>Updated Plan</div>
+
+            <div className={styles_admin.menuSection}>
+              <span className={styles.subHeader}>
+                NUMBER OF MEALS PER DELIVERY
+              </span>
+              {(() => {
+                if (plans !== null) {
+                  return (
+                    <div className={styles_admin.buttonWrapper}>
+                      {mealsDelivery()}
+                    </div>
+                  );
+                }
+              })()}
+            </div>
+
+            <div className={styles.menuSection}>
+              <div className={styles.center}>
+                <span className={styles.subHeader}>
+                  TOTAL NUMBER OF DELIVERIES
+                </span>
+              </div>
+              {(() => {
+                if (plans !== null) {
+                  return (
+                    <div
+                      className={styles_admin.buttonWrapper}
+                      style={{
+                        marginBottom: "50px",
+                      }}
+                    >
+                      {paymentFrequency()}
+                    </div>
+                  );
+                }
+              })()}
+            </div>
+
+            <div className={styles_admin.chargeContainer} tabIndex="0">
+              {(() => {
+                // let chargeOrRefund = this.state.differenceSummary.total;
+                let chargeOrRefund = 0.0;
+                if (parseFloat(chargeOrRefund) >= 0) {
+                  return (
+                    <>
+                      <div className={styles_admin.chargeText}>
+                        {"Additional Charges "}
+                      </div>
+                      <div className={styles_admin.chargeAmount}>
+                        {/* ${this.state.differenceSummary.total} */}
+                        ${"<null>"}
+                      </div>
+                    </>
+                  );
+                } else {
+                  return (
+                    <>
+                      <div className={styles_admin.chargeText}>
+                        {"You will be refunded "}
+                      </div>
+                      <div className={styles_admin.chargeAmount}>
+                        {/* ${(-1 * this.state.differenceSummary.total).toFixed(2)} */}
+                        ${"<null>"}
+                      </div>
+                    </>
+                  );
+                }
+              })()}
+            </div>
+          </div>
+        </>
+      );
+    }
+  };
+
   return (
     <>
       {/* For debugging window size */}
-      {/* <span 
+      <span 
         style={{
           zIndex: '101',
           position: 'fixed',
@@ -483,15 +975,34 @@ const EditPlan = (props) => {
           width: '150px'
         }}
       >
-        Height: {this.state.windowHeight}px
+        Height: {dimensions.height}px
         <br />
-        Width: {this.state.windowWidth}px
-      </span> */}
+        Width: {dimensions.width}px
+      </span>
 
       <WebNavBar
         poplogin={togglePopLogin}
         popSignup={togglePopSignup}
       />
+
+      {dataLoaded === false ? (
+        <div
+          style={{
+            color: "red",
+            zIndex: "99",
+            height: "100vh",
+            width: "100vw",
+            position: "fixed",
+            top: "0",
+            backgroundColor: "#F7F4E5",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <img src={m4me_logo} />
+        </div>
+      ) : (<>
 
       {login_seen ? (
         <PopLogin toggle={togglePopLogin} />
@@ -551,39 +1062,16 @@ const EditPlan = (props) => {
             </div>
           </div>
           <div style={{ display: "flex" }}>
-            {
-              dataLoaded === true &&
-              plans !== null ? (
-                showSubscribedMeals()
-              ) : (
-                <div
-                  style={{
-                    color: "red",
-                    zIndex: "99",
-                    height: "100vh",
-                    width: "100vw",
-                    // height: '50vh',
-                    // width: '50vw',
-                    // border: 'inset',
-                    position: "fixed",
-                    top: "0",
-                    left: '0',
-                    backgroundColor: "#F7F4E5",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <img src={m4me_logo} />
-                </div>
-              )
-              // : this.hideSubscribedMeals('plan')}
-            }
+            {showSubscribedMeals()}
           </div>
         </div>
       </div>
 
-      
+      <div className={styles.sectionHeaderUL}>Edit Plan</div>
+      <div className={styles.containerSplit}>
+          {showPlanDetails(dimensions.width)}
+        </div>
+      </>)}
 
       <FootLink />
     </>
