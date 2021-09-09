@@ -128,18 +128,23 @@ const EditPlan = (props) => {
     total: "0.00",
   });
 
-  // const [subscriptionsLoaded, setSubscriptionsLoaded] = useState(false);
   const [dataFetched, setDataFetched] = useState(false);
   const [dataLoaded, setDataLoaded] = useState(false);
   const [plans, setPlans] = useState(null);
   const [deliveryDiscounts, setDeliveryDiscounts] = useState(null);
+  const [pnbd_data, set_pnbd_data] = useState(null);
   const [subscriptions, setSubscriptions] = useState(null);
   const [profileInfo, setProfileInfo] = useState(null);
+  const [profileEmail, setProfileEmail] = useState('');
   const [recalculating, setRecalculating] = useState(false);
+
+  const [tipSelected, selectTip] = useState('2.00');
+  const [numMealsSelected, selectNumMeals] = useState('2.00');
+  const [numDeliveriesSelected, selectNumDeliveries] = useState('2.00');
 
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
-  const [deliveryInfo, setDeliveryInfo] = useState({
+  const [deliveryInput, setDeliveryInput] = useState({
     first_name: "",
     last_name: "",
     purchase_uid: "",
@@ -253,7 +258,7 @@ const EditPlan = (props) => {
       .then((res) => {
         console.log("(PNBD) res: ", res);
 
-        setSubscriptions(res.data.result);
+        set_pnbd_data(res.data.result);
 
         // check if all remote data fetched
         fetched++;
@@ -346,7 +351,8 @@ const EditPlan = (props) => {
 
       let parsedSubs = [];
 
-      subscriptions.forEach((sub, index) => {
+      pnbd_data.forEach((sub, index) => {
+        console.log("(UE2) sub: ", sub);
 
         let subDiscount = deliveryDiscounts.find((element) => {
           return element.deliveries === sub.num_deliveries
@@ -362,6 +368,8 @@ const EditPlan = (props) => {
           0,
           parsedItems.name.indexOf(" ")
         );
+        console.log("(UE2) parsedMeals: ", parsedMeals);
+        console.log("(UE2) name: ", parsedItems.name);
 
         let nextBillingAmount =
           sub.subtotal +
@@ -388,20 +396,20 @@ const EditPlan = (props) => {
             total: sub.amount_due.toFixed(2)
           },
           delivery_details: {
-            delivery_address: "",
-            delivery_city: "",
-            delivery_day: null,
-            delivery_email: "",
-            delivery_fee: 0,
-            delivery_first_name: "",
-            delivery_instructions: "",
-            delivery_last_name: "",
-            delivery_latitude: null,
-            delivery_longitude: null,
-            delivery_phone_num: "",
-            delivery_state: "",
-            delivery_status: "",
-            delivery_unit: ""   
+            delivery_address: sub.delivery_address,
+            delivery_city: sub.delivery_city,
+            delivery_day: sub.delivery_day,
+            delivery_email: sub.delivery_email,
+            delivery_fee: sub.delivery_fee,
+            delivery_first_name: sub.delivery_first_name,
+            delivery_instructions: sub.delivery_instructions,
+            delivery_last_name: sub.delivery_last_name,
+            delivery_latitude: sub.delivery_latitude,
+            delivery_longitude: sub.delivery_longitude,
+            delivery_phone_num: sub.delivery_phone_num,
+            delivery_state: sub.delivery_state,
+            delivery_status: sub.delivery_status,
+            delivery_unit: sub.delivery_unit
           },
           items: JSON.parse(sub.items),
           meals: parsedMeals,
@@ -419,6 +427,26 @@ const EditPlan = (props) => {
         }
 
         if(index === 0){
+          selectNumMeals(parsedSub.meals);
+          selectNumDeliveries(parsedSub.deliveries);
+
+          setDeliveryInput({
+            first_name: sub.delivery_first_name,
+            last_name: sub.delivery_last_name,
+            purchase_uid: sub.purchase_uid,
+            phone: sub.delivery_phone_num,
+            address: sub.delivery_address,
+            unit: sub.delivery_unit,
+            city: sub.delivery_city,
+            state: sub.delivery_state,
+            zip: sub.delivery_zip,
+            cc_num: "NULL",
+            cc_cvv: "NULL",
+            cc_zip: "NULL",
+            cc_exp_date: "NULL",
+            instructions: sub.delivery_instructions,
+          });
+
           document.getElementById("locality").value = sub.delivery_city;
           document.getElementById("state").value = sub.delivery_state;
           document.getElementById("pac-input").value = sub.delivery_address;
@@ -467,52 +495,115 @@ const EditPlan = (props) => {
         parsedSubs.push(parsedSub);
       });
 
+      console.log("setting subscriptions...");
       setSubscriptions(parsedSubs);
-
-      setDataLoaded(true);
     }
   }, [dataFetched]);
 
+  // STEP 3: signal to page that data is loaded
   useEffect(() => {
-    // document.getElementById("locality").value = .delivery_city;
-    // document.getElementById("state").value = sub.delivery_state;
-    // document.getElementById("pac-input").value = sub.delivery_address;
-    // document.getElementById("postcode").value = sub.delivery_zip;
+    if(subscriptions !== null) {
+      console.log("setting dataLoaded...");
+      setDataLoaded(true);
+    }
+  }, [subscriptions])
 
-    // fetchAddressCoordinates(
-    //   sub.delivery_address,
-    //   sub.delivery_city,
-    //   sub.delivery_state,
-    //   sub.delivery_zip,
-    //   (coords) => {
-    //     console.log(
-    //       "(default) Fetched coordinates: " + JSON.stringify(coords)
-    //     );
+  // runs anytime an existing subscription is selected to edit
+  useEffect(() => {
+    if(dataLoaded) {
+      console.log("(UE currentPlan) currentPlan: ", currentPlan);
 
-    //     this.setState({
-    //       latitude: coords.latitude,
-    //       longitude: coords.longitude,
-    //     });
+      // console.log("(UE currentPlan) numMealsSelected: ", typeof numMealsSelected);
+      // console.log("(UE currentPlan) numDeliveriesSelected: ", typeof numDeliveriesSelected);
+      // console.log("(UE currentPlan) currentPlan.meals: ", typeof currentPlan.meals);
+      // console.log("(UE currentPlan) currentPlan.deliveries: ", typeof currentPlan.deliveries);
+      selectNumMeals(currentPlan.meals);
+      selectNumDeliveries(currentPlan.deliveries);
 
-    //     const temp_position = {
-    //       lat: parseFloat(coords.latitude),
-    //       lng: parseFloat(coords.longitude),
-    //     };
+      let sub = currentPlan.delivery_details;
+      setDeliveryInput({
+        first_name: sub.delivery_first_name,
+        last_name: sub.delivery_last_name,
+        purchase_uid: sub.purchase_uid,
+        phone: sub.delivery_phone_num,
+        address: sub.delivery_address,
+        unit: sub.delivery_unit,
+        city: sub.delivery_city,
+        state: sub.delivery_state,
+        zip: sub.delivery_zip,
+        cc_num: "NULL",
+        cc_cvv: "NULL",
+        cc_zip: "NULL",
+        cc_exp_date: "NULL",
+        instructions: sub.delivery_instructions,
+      });
 
-    //     console.log(temp_position);
+      document.getElementById("locality").value = sub.delivery_city;
+      document.getElementById("state").value = sub.delivery_state;
+      document.getElementById("pac-input").value = sub.delivery_address;
+      document.getElementById("postcode").value = sub.delivery_zip;
 
-    //     map.setCenter(temp_position);
+      fetchAddressCoordinates(
+        sub.delivery_address,
+        sub.delivery_city,
+        sub.delivery_state,
+        sub.delivery_zip,
+        (coords) => {
+          console.log("(fetchAddressCoordinates) Fetched coordinates: ", coords);
 
-    //     if (coords.latitude !== "") {
-    //       map.setZoom(17);
-    //       new google.maps.Marker({
-    //         position: temp_position,
-    //         map,
-    //       });
-    //     }
-    //   }
-    // );
+          setLatitude(coords.latitude);
+          setLongitude(coords.longitude);
+
+          const temp_position = {
+            lat: parseFloat(coords.latitude),
+            lng: parseFloat(coords.longitude),
+          };
+
+          console.log("(fetchAddressCoordinates) temp_position: ", temp_position);
+
+          map.setCenter(temp_position);
+
+          console.log("(fetchAddressCoordinates) after center");
+
+          if (coords.latitude !== "") {
+            map.setZoom(17);
+            new google.maps.Marker({
+              position: temp_position,
+              map,
+            });
+          }
+        }
+      );
+
+      // setCurrentPlan(parsedSub);
+      setNewPlan(currentPlan);
+    }
   }, [currentPlan]);
+
+  useEffect(() => {
+    console.log("changed deliveryInput: ", deliveryInput);
+  }, [deliveryInput])
+
+  // // recalculate billing on tip change
+  // useEffect(() => {
+  //   calculateBilling({
+  //     tip: tipSelected
+  //   });
+  // }, [tipSelected]);
+
+  // // recalculate billing on tip change
+  // useEffect(() => {
+  //   calculateBilling({
+  //     num_meals: numMealsSelected
+  //   });
+  // }, [numMealsSelected]);
+
+  // // recalculate billing on tip change
+  // useEffect(() => {
+  //   calculateBilling({
+  //     num_deliveries: numDeliveriesSelected
+  //   });
+  // }, [numDeliveriesSelected]);
 
   // Used to render menu at top showing all current meals plans
   const showSubscribedMeals = () => {
@@ -520,6 +611,8 @@ const EditPlan = (props) => {
     let selectedMealButton = styles.mealButton + " " + styles.mealButtonSelected;
     let mealButtons = [];
 
+    console.log("(SSM) dataLoaded: ", dataLoaded);
+    console.log("(SSM) subscriptions: ", subscriptions);
     subscriptions.forEach((sub) => {
       mealButtons.push(
         <div
@@ -530,15 +623,16 @@ const EditPlan = (props) => {
               : deselectedMealButton
           }
           onClick={() => {
-            // console.log("(SSM) new current plan: ", sub);
+            // console.log("(SSM) CALL calculateBilling here");
             console.log("(SSM) current plan: ", currentPlan);
             console.log("(SSM) clicked plan: ", sub);
 
-            calculateBilling(
-              sub.items,
-              {latitude, longitude},
-              sub.billing.driver_tip
-            );
+
+            // calculateBilling(
+            //   sub.items,
+            //   {latitude, longitude},
+            //   sub.billing.driver_tip
+            // );
 
             setCurrentPlan(sub);
             setNewPlan(sub);
@@ -587,6 +681,10 @@ const EditPlan = (props) => {
     return <div style={{ width: "100%" }}>{mealButtons}</div>;
   };
 
+  // const itemize = () => {
+
+  // }
+
   const mealsDelivery = () => {
     let deselectedPlateButton = styles_admin.plateButton;
     let selectedPlateButton =
@@ -604,13 +702,30 @@ const EditPlan = (props) => {
           <div className={styles_admin.plateButtonWrapper}>
             <button
               key={mealIndex}
+              // className={
+              //   newPlan.meals === mealIndex
+              //     ? selectedPlateButton
+              //     : deselectedPlateButton
+              // }
               className={
-                newPlan.meals === mealIndex
+                numMealsSelected === mealIndex
                   ? selectedPlateButton
                   : deselectedPlateButton
               }
               onClick={() => {
-                console.log("(MD) clicked: ", mealIndex, " ; ", mealData);
+                console.log("(MD) CALL calculateBilling here");
+
+                console.log("(change) plan before: ", newPlan);
+                console.log("(change) new data -- mealIndex: ", mealIndex);
+
+                selectNumMeals(mealIndex);
+                // calculateBilling(
+                //   sub.items,
+                //   {latitude, longitude},
+                //   sub.billing.driver_tip
+                // );
+
+                // console.log("(MD) clicked: ", mealIndex, " ; ", mealData);
                 // console.log("(MD) clicked: ", mealIndex, " ; ", this.state.updatedPlan.deliveries);
                 // console.log("(MD) plans: ", this.props.plans);
                 // this.props.chooseMealsDelivery(
@@ -683,12 +798,23 @@ const EditPlan = (props) => {
       paymentOptionButtons.push(
         <div className={styles_admin.sameLine} key={deliveryIndex}>
           <button
+            // className={
+            //   newPlan.deliveries === deliveryIndex
+            //     ? selectedPaymentOption
+            //     : deselectedPaymentOption
+            // }
             className={
-              newPlan.deliveries === deliveryIndex
+              numDeliveriesSelected === deliveryIndex
                 ? selectedPaymentOption
                 : deselectedPaymentOption
             }
             onClick={() => {
+              console.log("(PF) CALL calculateBilling here");
+
+              console.log("(change) plan before: ", newPlan);
+              console.log("(change) new data -- deliveryIndex: ", deliveryIndex);
+
+              selectNumDeliveries(deliveryIndex);
               // this.props.choosePaymentOption(
               //   deliveryIndex,
               //   updatedPlan.meals,
@@ -816,7 +942,6 @@ const EditPlan = (props) => {
                     return (
                       <div className={styles_admin.buttonWrapper}>
                         {mealsDelivery()}
-                        {/* {"<null>"} */}
                       </div>
                     );
                   }
@@ -840,7 +965,6 @@ const EditPlan = (props) => {
                         }}
                       >
                         {dataLoaded ? (paymentFrequency()) : (null)}
-                        {/* {"<null>"} */}
                       </div>
                     );
                   }
@@ -857,7 +981,6 @@ const EditPlan = (props) => {
                 <div className={styles_admin.chargeContainer} tabIndex="0">
                   {(() => {
                     let chargeOrRefund = billingDifference.total;
-                    // let chargeOrRefund = 0.0;
                     if (parseFloat(chargeOrRefund) >= 0) {
                       return (
                         <>
@@ -866,7 +989,6 @@ const EditPlan = (props) => {
                           </div>
                           <div className={styles_admin.chargeAmount}>
                             ${billingDifference.total}
-                            {/* ${"<null>"} */}
                           </div>
                         </>
                       );
@@ -877,7 +999,6 @@ const EditPlan = (props) => {
                             {"You will be refunded "}
                           </div>
                           <div className={styles_admin.chargeAmount}>
-                            {/* ${"<null>"} */}
                             {(-1 * billingDifference.total).toFixed(
                               2
                             )}
@@ -999,7 +1120,6 @@ const EditPlan = (props) => {
             <div className={styles_admin.chargeContainer} tabIndex="0">
               {(() => {
                 let chargeOrRefund = billingDifference.total;
-                // let chargeOrRefund = 0.0;
                 if (parseFloat(chargeOrRefund) >= 0) {
                   return (
                     <>
@@ -1008,7 +1128,6 @@ const EditPlan = (props) => {
                       </div>
                       <div className={styles_admin.chargeAmount}>
                         ${billingDifference.total}
-                        {/* ${"<null>"} */}
                       </div>
                     </>
                   );
@@ -1020,7 +1139,6 @@ const EditPlan = (props) => {
                       </div>
                       <div className={styles_admin.chargeAmount}>
                         ${(-1 * billingDifference.total).toFixed(2)}
-                        {/* ${"<null>"} */}
                       </div>
                     </>
                   );
@@ -1068,14 +1186,12 @@ const EditPlan = (props) => {
             type="text"
             placeholder="First Name"
             className={styles.inputContactLeft}
-            value={deliveryInfo.first_name}
+            value={deliveryInput.first_name}
             onChange={(e) => {
-              // this.setState((prevState) => ({
-              //   deliveryInfo: {
-              //     ...prevState.deliveryInfo,
-              //     first_name: e.target.value,
-              //   },
-              // }));
+              setDeliveryInput({
+                ...deliveryInput,
+                first_name: e.target.value
+              });
             }}
             aria-label="Confirm your first name"
             title="Confirm your first name"
@@ -1085,14 +1201,12 @@ const EditPlan = (props) => {
             type="text"
             placeholder="Last Name"
             className={styles.inputContactRight}
-            value={deliveryInfo.last_name}
+            value={deliveryInput.last_name}
             onChange={(e) => {
-              // this.setState((prevState) => ({
-              //   deliveryInfo: {
-              //     ...prevState.deliveryInfo,
-              //     last_name: e.target.value,
-              //   },
-              // }));
+              setDeliveryInput({
+                ...deliveryInput,
+                last_name: e.target.value
+              });
             }}
             aria-label="Confirm your last name"
             title="Confirm your last name"
@@ -1103,23 +1217,25 @@ const EditPlan = (props) => {
           type="text"
           placeholder="Email"
           className={styles.input}
-          // value={this.props.email}
-          aria-label="Confirn your email"
-          title="Confirn your email"
+          value={profileInfo !== null ? (profileInfo.customer_email) : ('')}
+          // onChange={(e) => {
+          //   let unchangedEmail = profileEmail;
+          //   setProfileEmail(unchangedEmail);
+          // }}
+          aria-label="Confirm your email"
+          title="Confirm your email"
         />
 
         <input
           type="text"
           placeholder="Phone Number"
           className={styles.input}
-          value={deliveryInfo.phone}
+          value={deliveryInput.phone}
           onChange={(e) => {
-            // this.setState((prevState) => ({
-            //   deliveryInfo: {
-            //     ...prevState.deliveryInfo,
-            //     phone: e.target.value,
-            //   },
-            // }));
+            setDeliveryInput({
+              ...deliveryInput,
+              phone: e.target.value
+            });
           }}
           aria-label="Confirm your phone number"
           title="Confirm your phone number"
@@ -1140,14 +1256,12 @@ const EditPlan = (props) => {
             type="text"
             placeholder={"Unit"}
             className={styles.inputContactLeft}
-            value={deliveryInfo.unit}
+            value={deliveryInput.unit}
             onChange={(e) => {
-              // this.setState((prevState) => ({
-              //   deliveryInfo: {
-              //     ...prevState.deliveryInfo,
-              //     unit: e.target.value,
-              //   },
-              // }));
+              setDeliveryInput({
+                ...deliveryInput,
+                unit: e.target.value
+              });
             }}
             aria-label="Confirm your unit"
             title="Confirm your unit"
@@ -1189,14 +1303,12 @@ const EditPlan = (props) => {
           type={"text"}
           placeholder={"Delivery Instructions"}
           className={styles.input}
-          value={deliveryInfo.instructions}
+          value={deliveryInput.instructions}
           onChange={(e) => {
-            // this.setState((prevState) => ({
-            //   deliveryInfo: {
-            //     ...prevState.deliveryInfo,
-            //     instructions: e.target.value,
-            //   },
-            // }));
+            setDeliveryInput({
+              ...deliveryInput,
+              instructions: e.target.value
+            });
           }}
           aria-label="Confirm your delivery instructions"
           title="Confirm your delivery instructions"
@@ -1208,7 +1320,13 @@ const EditPlan = (props) => {
           <button
             className={styles.orangeBtn}
             // disabled={!this.state.subscriptionsLoaded}
-            // onClick={() => this.saveEdits()}
+            onClick={() => {
+              // this.saveEdits()
+              console.log("(SDD) CALL calculateBilling here");
+
+              console.log("(change) plan before: ", newPlan);
+              console.log("(change) new data -- deliveryInput: ", deliveryInput);
+            }}
             aria-label="Click to save delivery changes"
             title="Click to save delivery changes"
           >
@@ -1463,170 +1581,98 @@ const EditPlan = (props) => {
           </div>
         </div>
         <div style={{ display: "flex" }}>
-          {(() => {
-            if (
-              newPlan.billing.driver_tip === "0.00"
-            ) {
-              return (
-                <button
-                  className={styles.tipButtonSelected}
-                  // onClick={() => this.changeTip("0.00")}
-                  aria-label={
-                    "Current tip is: $" +
-                    newPlan.billing.driver_tip
-                  }
-                  title={
-                    "Current tip is: $" +
-                    newPlan.billing.driver_tip
-                  }
-                >
-                  No Tip
-                </button>
-              );
-            } else {
-              return (
-                <button
-                  className={styles.tipButton}
-                  // onClick={() => this.changeTip("0.00")}
-                  aria-label={
-                    "Current tip is: $" +
-                    newPlan.billing.driver_tip +
-                    ". Click here to remove tip."
-                  }
-                  title={
-                    "Current tip is: $" +
-                    newPlan.billing.driver_tip +
-                    ". Click here to remove tip."
-                  }
-                >
-                  No Tip
-                </button>
-              );
+          <button
+            className={tipSelected === '0.00' 
+              ? (styles.tipButtonSelected)
+              : (styles.tipButton)
             }
-          })()}
-          {(() => {
-            if (
-              newPlan.billing.driver_tip === "2.00"
-            ) {
-              return (
-                <button
-                  className={styles.tipButtonSelected}
-                  // onClick={() => this.changeTip("2.00")}
-                  aria-label={
-                    "Current tip is: $" +
-                    newPlan.billing.driver_tip
-                  }
-                  title={
-                    "Current tip is: $" +
-                    newPlan.billing.driver_tip
-                  }
-                >
-                  $2
-                </button>
-              );
-            } else {
-              return (
-                <button
-                  className={styles.tipButton}
-                  // onClick={() => this.changeTip("2.00")}
-                  aria-label={
-                    "Current tip is: $" +
-                    newPlan.billing.driver_tip +
-                    ". Click here change tip to $2."
-                  }
-                  title={
-                    "Current tip is: $" +
-                    newPlan.billing.driver_tip +
-                    ". Click here to change tip to $2."
-                  }
-                >
-                  $2
-                </button>
-              );
+            onClick={() => {
+              selectTip("0.00")
+              console.log("(tip $0.00) CALL calculateBilling here");
+
+              console.log("(change) plan before: ", newPlan);
+              console.log("(change) new data -- tip: $0.00");
+            }}
+            aria-label={
+              "Current tip is: $" +
+              newPlan.billing.driver_tip
             }
-          })()}
-          {(() => {
-            if (
-              newPlan.billing.driver_tip === "3.00"
-            ) {
-              return (
-                <button
-                  className={styles.tipButtonSelected}
-                  // onClick={() => this.changeTip("3.00")}
-                  aria-label={
-                    "Current tip is: $" +
-                    newPlan.billing.driver_tip
-                  }
-                  title={
-                    "Current tip is: $" +
-                    newPlan.billing.driver_tip
-                  }
-                >
-                  $3
-                </button>
-              );
-            } else {
-              return (
-                <button
-                  className={styles.tipButton}
-                  // onClick={() => this.changeTip("3.00")}
-                  aria-label={
-                    "Current tip is: $" +
-                    newPlan.billing.driver_tip +
-                    ". Click here to change tip to $3."
-                  }
-                  title={
-                    "Current tip is: $" +
-                    newPlan.billing.driver_tip +
-                    ". Click here to change tip to $3."
-                  }
-                >
-                  $3
-                </button>
-              );
+            title={
+              "Current tip is: $" +
+              newPlan.billing.driver_tip
             }
-          })()}
-          {(() => {
-            if (
-              newPlan.billing.driver_tip === "5.00"
-            ) {
-              return (
-                <button
-                  className={styles.tipButtonSelected}
-                  // onClick={() => this.changeTip("5.00")}
-                  aria-label={
-                    "Current tip is: $" +
-                    newPlan.billing.driver_tip
-                  }
-                  title={
-                    "Current tip is: $" +
-                    newPlan.billing.driver_tip
-                  }
-                >
-                  $5
-                </button>
-              );
-            } else {
-              return (
-                <button
-                  className={styles.tipButton}
-                  // onClick={() => this.changeTip("5.00")}
-                  aria-label={
-                    "Current tip is: $" +
-                    newPlan.billing.driver_tip +
-                    ". Click here to change tip to $5."
-                  }
-                  title={
-                    "Current tip is: $" +
-                    newPlan.billing.driver_tip +
-                    ". Click here to change tip to $5."
-                  }
-                >
-                  $5
-                </button>
-              );
+          >
+            No Tip
+          </button>
+          <button
+            className={tipSelected === '2.00' 
+              ? (styles.tipButtonSelected)
+              : (styles.tipButton)
             }
-          })()}
+            onClick={() => {
+              selectTip("2.00")
+              console.log("(tip $2.00) CALL calculateBilling here");
+
+              console.log("(change) plan before: ", newPlan);
+              console.log("(change) new data -- tip: $2.00");
+            }}
+            aria-label={
+              "Current tip is: $" +
+              newPlan.billing.driver_tip
+            }
+            title={
+              "Current tip is: $" +
+              newPlan.billing.driver_tip
+            }
+          >
+            $2
+          </button>
+          <button
+            className={tipSelected === '3.00' 
+              ? (styles.tipButtonSelected)
+              : (styles.tipButton)
+            }
+            onClick={() => {
+              selectTip("3.00")
+              console.log("(tip $3.00) CALL calculateBilling here");
+
+              console.log("(change) plan before: ", newPlan);
+              console.log("(change) new data -- tip: $3.00");
+            }}
+            aria-label={
+              "Current tip is: $" +
+              newPlan.billing.driver_tip
+            }
+            title={
+              "Current tip is: $" +
+              newPlan.billing.driver_tip
+            }
+          >
+            $3
+          </button>
+          <button
+            className={tipSelected === '5.00' 
+              ? (styles.tipButtonSelected)
+              : (styles.tipButton)
+            }
+            onClick={() => {
+              selectTip("5.00")
+              console.log("(tip $5.00) CALL calculateBilling here");
+
+              console.log("(change) plan before: ", newPlan);
+              console.log("(change) new data -- tip: $5.00");
+            }}
+            aria-label={
+              "Current tip is: $" +
+              newPlan.billing.driver_tip
+            }
+            title={
+              "Current tip is: $" +
+              newPlan.billing.driver_tip
+            }
+          >
+            $5
+          </button>
         </div>
 
         <div 
@@ -1636,6 +1682,7 @@ const EditPlan = (props) => {
             // border: '1px solid blue'
           }}
         >
+
           {/* <input
             type="text"
             placeholder="Enter Ambassador Code"
@@ -1662,16 +1709,13 @@ const EditPlan = (props) => {
           >
             Verify
           </button> */}
+
           <div
-            // className={styles.inputAmbassador}
             style={{
               marginTop: '20px',
               width: '42%',
-              // float: 'left'
-              // border: '1px solid red',
               display: 'flex',
               textAlign: 'left'
-              // float: 'left'
             }}
           >
             Ambassador Discount
@@ -1794,17 +1838,24 @@ const EditPlan = (props) => {
     );
   }
 
-  const calculateBilling = (plan, coords, tip, amb_coupon) => {
-    setRecalculating(true);
+  const calculateBilling = (newData) => {
+    // setRecalculating(true);
+
+    let updatedNewPlan = {...newPlan};
+
+    console.log("(CB) newPlan before change: ", newPlan);
+    console.log("(CB) newData: ", newData);
 
     let object = {
-      items: plan,
-      customer_lat: coords.latitude,
-      customer_long: coords.longitude,
-      driver_tip: tip
+      items: newPlan.items,
+      customer_lat: newPlan.delivery_details.delivery_latitude,
+      customer_long: newPlan.delivery_details.delivery_longitude,
+      driver_tip: newPlan.billing.driver_tip
     };
-    if(amb_coupon !== null) {
-      object['ambassador_coupon'] = amb_coupon
+
+    if(newData.hasOwnProperty('tip')) {
+      console.log("(CB) calculating with new tip...");
+      object.driver_tip = newData.tip;
     }
 
     axios
@@ -1848,163 +1899,117 @@ const EditPlan = (props) => {
       />
 
       {dataLoaded === false ? (
-          <div
-            style={{
-              color: "red",
-              zIndex: "99",
-              height: "100vh",
-              width: "100vw",
-              position: "fixed",
-              top: "0",
-              backgroundColor: "#F7F4E5",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <img src={m4me_logo} />
-          </div>
+        <div
+          style={{
+            color: "red",
+            zIndex: "99",
+            height: "100vh",
+            width: "100vw",
+            position: "fixed",
+            top: "0",
+            backgroundColor: "#F7F4E5",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <img src={m4me_logo} />
+        </div>
       ) : (null)}
 
-          {/* defined here to prevent null error when initializing values */}
-          {/* <input
-            type="text"
-            placeholder={"Address 1"}
-            className={styles.input}
-            id="pac-input"
-            name="pac-input"
-            aria-label="Confirm your address"
-            title="Confirm your address"
-          />
-          <input
-            type="text"
-            placeholder={"City"}
-            id="locality"
-            name="locality"
-            className={styles.inputContactRight}
-            aria-label="Confirm your city"
-            title="Confirm your city"
-          />
-          <input
-            type="text"
-            placeholder={"State"}
-            className={styles.inputContactLeft}
-            id="state"
-            name="state"
-            aria-label="Confirm your state"
-            title="Confirm your state"
-          />
-          <input
-            type="text"
-            placeholder={"Zip Code"}
-            className={styles.inputContactRight}
-            id="postcode"
-            name="postcode"
-            aria-label="Confirm your zip code"
-            title="Confirm your zip code"
-          />
-          <div className={styles.googleHidden} id="map" /> */}
-          
-        {/* </>
-      ) : (
-        <> */}
-          {login_seen ? (
-            <PopLogin toggle={togglePopLogin} />
-          ) : null}
-          {signUpSeen ? (
-            <Popsignup toggle={togglePopSignup} />
-          ) : null}
+      {login_seen ? (
+        <PopLogin toggle={togglePopLogin} />
+      ) : null}
+      {signUpSeen ? (
+        <Popsignup toggle={togglePopSignup} />
+      ) : null}
 
-          <div className={styles.sectionHeaderScroll}>Select Meal Plan</div>
+      <div className={styles.sectionHeaderScroll}>Select Meal Plan</div>
 
-          <div className={styles.containerSplit}>
-            <div className={styles.boxScroll}>
-              <div className={styles.mealButtonHeader}>
-                <div className={styles.mealButtonEdit}></div>
-                <div
-                  className={styles.mealButtonPlan}
-                  style={{ fontWeight: "bold", fontSize: "20px" }}
-                >
-                  Meal Plans
-                </div>
-                <div
-                  className={styles.mealButtonSection}
-                  style={{ fontWeight: "bold", fontSize: "20px" }}
-                >
-                  Purchase ID
-                </div>
-                <div
-                  className={styles.mealButtonSection}
-                  style={{ fontWeight: "bold", fontSize: "20px" }}
-                >
-                  Next Delivery Date
-                </div>
-                <div
-                  className={styles.mealButtonSection}
-                  style={{ fontWeight: "bold", fontSize: "20px" }}
-                >
-                  Next Delivery Status
-                </div>
-                <div
-                  className={styles.mealButtonSection}
-                  style={{ fontWeight: "bold", fontSize: "20px" }}
-                >
-                  Next Billing Date
-                </div>
-                <div
-                  className={styles.mealButtonSection}
-                  style={{ fontWeight: "bold", fontSize: "20px" }}
-                >
-                  Next Billing Amount
-                </div>
-              </div>
-              <div style={{ display: "flex" }}>
-                {/* {showSubscribedMeals()} */}
-                {dataLoaded ? (showSubscribedMeals()) : (null)}
-              </div>
+      <div className={styles.containerSplit}>
+        <div className={styles.boxScroll}>
+          <div className={styles.mealButtonHeader}>
+            <div className={styles.mealButtonEdit}></div>
+            <div
+              className={styles.mealButtonPlan}
+              style={{ fontWeight: "bold", fontSize: "20px" }}
+            >
+              Meal Plans
+            </div>
+            <div
+              className={styles.mealButtonSection}
+              style={{ fontWeight: "bold", fontSize: "20px" }}
+            >
+              Purchase ID
+            </div>
+            <div
+              className={styles.mealButtonSection}
+              style={{ fontWeight: "bold", fontSize: "20px" }}
+            >
+              Next Delivery Date
+            </div>
+            <div
+              className={styles.mealButtonSection}
+              style={{ fontWeight: "bold", fontSize: "20px" }}
+            >
+              Next Delivery Status
+            </div>
+            <div
+              className={styles.mealButtonSection}
+              style={{ fontWeight: "bold", fontSize: "20px" }}
+            >
+              Next Billing Date
+            </div>
+            <div
+              className={styles.mealButtonSection}
+              style={{ fontWeight: "bold", fontSize: "20px" }}
+            >
+              Next Billing Amount
             </div>
           </div>
-
-          <div className={styles.sectionHeaderUL}>Edit Plan</div>
-          <div className={styles.containerSplit}>
-            {showPlanDetails(dimensions.width)}
+          <div style={{ display: "flex" }}>
+            {dataLoaded ? (showSubscribedMeals()) : (null)}
           </div>
+        </div>
+      </div>
+
+      <div className={styles.sectionHeaderUL}>Edit Plan</div>
+      <div className={styles.containerSplit}>
+        {showPlanDetails(dimensions.width)}
+      </div>
+
+      {dimensions.width < 800 ? (
+        <>
+          <div className={styles.sectionHeader}>Edit Delivery Details</div>
+        </>
+      ) : (
+        <>
+          <div style={{ display: "flex" }}>
+            <div className={styles.sectionHeaderLeft}>
+              Edit Delivery Details
+            </div>
+            <div className={styles.sectionHeaderRight}>Payment Summary</div>
+          </div>
+        </>
+      )}
+
+      <div className={styles.containerSplit}>
+        <div style={dimensions.width < 800
+          ? {display: "inline-block", width: "100%"}
+          : {display: "inline-flex", width: "100%"}}
+        >
+          {showDeliveryDetails()}
 
           {dimensions.width < 800 ? (
             <>
-              <div className={styles.sectionHeader}>Edit Delivery Details</div>
+              <div style={{ marginTop: "20px" }} />
+              <div className={styles.sectionHeader}>Payment Summary</div>
             </>
-          ) : (
-            <>
-              <div style={{ display: "flex" }}>
-                <div className={styles.sectionHeaderLeft}>
-                  Edit Delivery Details
-                </div>
-                <div className={styles.sectionHeaderRight}>Payment Summary</div>
-              </div>
-            </>
-          )}
+          ) : null}
 
-          <div className={styles.containerSplit}>
-            <div style={dimensions.width < 800
-              ? {display: "inline-block", width: "100%"}
-              : {display: "inline-flex", width: "100%"}}
-            >
-              {showDeliveryDetails()}
-
-              {dimensions.width < 800 ? (
-                <>
-                  <div style={{ marginTop: "20px" }} />
-                  <div className={styles.sectionHeader}>Payment Summary</div>
-                </>
-              ) : null}
-
-              {showPaymentSummary()}
-            </div>
-          </div>
-
-        {/* </>
-      )} */}
+          {showPaymentSummary()}
+        </div>
+      </div>
 
       <FootLink />
     </>
