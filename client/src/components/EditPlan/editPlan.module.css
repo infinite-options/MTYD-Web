@@ -8,7 +8,7 @@
 .containerSplit {
   text-align: center;
   display: flex;
-  border: 1px solid red;
+  /* border: 1px solid red; */
 }
 
 .menuSection {
@@ -117,7 +117,7 @@
   width: 22%;
   margin-left: 8%;
   justify-content: center;
-  border: 1px solid lime;
+  /* border: 1px solid lime; */
 }
 .boxPDright {
   text-align: left;
@@ -125,7 +125,7 @@
   border-color: red;*/
   margin-right: 8%;
   width: 62%;
-  border: 1px solid cyan;
+  /* border: 1px solid cyan; */
 }
 .boxPDnarrowTop {
   width: 84%;
@@ -133,14 +133,14 @@
   margin-right: 8%;
   margin-bottom: 50px;
   justify-content: center;
-  border: 1px solid blue;
+  /* border: 1px solid blue; */
 }
 .boxPDnarrowBottom {
   width: 84%;
   margin-left: 8%;
   margin-right: 8%;
   justify-content: center;
-  border: 1px solid blue;
+  /* border: 1px solid blue; */
 }
 .box2 {
   display: flex;
