@@ -35,6 +35,9 @@ const DEFAULT = 0;
 const CURRENT = 1;
 const UPDATED = 2;
 
+const TRIGGER_RECALCULATION = true;
+const DO_NOT_TRIGGER_RECALCULATION = false;
+
 const EditPlan = (props) => {
   // const [result, setResult] = useState('');
   const [currentPlan, setCurrentPlan] = useState({
@@ -138,7 +141,9 @@ const EditPlan = (props) => {
   const [profileEmail, setProfileEmail] = useState('');
   const [recalculating, setRecalculating] = useState(false);
 
-  const [tipSelected, selectTip] = useState('2.00');
+  // const [tipSelected, selectTip] = useState('2.00');
+  // const [trigger_recalc_by_tip, set_trigger_recalc_by_tip] = useState()
+  const [tipAmount, setTipAmount] = useState('2.00');
   const [numMealsSelected, selectNumMeals] = useState('2.00');
   const [numDeliveriesSelected, selectNumDeliveries] = useState('2.00');
 
@@ -253,8 +258,10 @@ const EditPlan = (props) => {
       });
 
     // fetch future billing info
+    // axios
+    //   .get(API_URL + "predict_next_billing_date/" + customer_uid)
     axios
-      .get(API_URL + "predict_next_billing_date/" + customer_uid)
+      .get("http://localhost:2000/api/v2/predict_next_billing_amount/" + customer_uid)
       .then((res) => {
         console.log("(PNBD) res: ", res);
 
@@ -344,6 +351,13 @@ const EditPlan = (props) => {
     
   }, []);
 
+  const getDeliveryDiscount = (num_delivs) => {
+    let tempDiscount = deliveryDiscounts.find((element) => {
+      return element.deliveries === num_delivs
+    });
+    return tempDiscount.discount;
+  }
+
   // STEP 2: once all data has been fetched, load into page
   useEffect(() => {
     if(dataFetched === true){
@@ -354,9 +368,8 @@ const EditPlan = (props) => {
       pnbd_data.forEach((sub, index) => {
         console.log("(UE2) sub: ", sub);
 
-        let subDiscount = deliveryDiscounts.find((element) => {
-          return element.deliveries === sub.num_deliveries
-        });
+        let subDiscount = getDeliveryDiscount(sub.num_deliveries);
+        console.log("(UE2) subDiscount: ", subDiscount);
 
         let parsedUid = sub.purchase_uid.substring(
           sub.purchase_id.indexOf("-") + 1,
@@ -371,14 +384,14 @@ const EditPlan = (props) => {
         console.log("(UE2) parsedMeals: ", parsedMeals);
         console.log("(UE2) name: ", parsedItems.name);
 
-        let nextBillingAmount =
-          sub.subtotal +
-          sub.taxes +
-          sub.delivery_fee +
-          sub.service_fee +
-          sub.driver_tip -
-          subDiscount.discount * 0.01 * sub.subtotal -
-          sub.ambassador_code;
+        // let nextBillingAmount =
+        //   sub.subtotal +
+        //   sub.taxes +
+        //   sub.delivery_fee +
+        //   sub.service_fee +
+        //   sub.driver_tip -
+        //   subDiscount * 0.01 * sub.subtotal -
+        //   sub.ambassador_code;
 
         let parsedSub = {
           purchase_uid: parsedUid,
@@ -390,7 +403,7 @@ const EditPlan = (props) => {
             service_fee: sub.service_fee.toFixed(2),
             driver_tip: sub.driver_tip.toFixed(2),
             discount_amount: sub.amount_discount.toFixed(2),
-            discount_rate: subDiscount.discount,
+            discount_rate: subDiscount,
             ambassador_discount: sub.ambassador_code.toFixed(2),
             subtotal: (sub.amount_due + sub.ambassador_code).toFixed(2),
             total: sub.amount_due.toFixed(2)
@@ -422,7 +435,8 @@ const EditPlan = (props) => {
           next_delivery_date: sub.next_delivery.substring(
             0, sub.next_delivery.indexOf(" ")
           ),
-          next_billing_amount: nextBillingAmount.toFixed(2),
+          // next_billing_amount: nextBillingAmount.toFixed(2),
+          next_billing_amount: sub.amount_due.toFixed(2),
           rawData: sub
         }
 
@@ -488,6 +502,8 @@ const EditPlan = (props) => {
             }
           );
 
+          // set default plans
+          console.log("(UE2) setting currentPlan: ", parsedSub);
           setCurrentPlan(parsedSub);
           setNewPlan(parsedSub);
         }
@@ -519,6 +535,8 @@ const EditPlan = (props) => {
       // console.log("(UE currentPlan) currentPlan.deliveries: ", typeof currentPlan.deliveries);
       selectNumMeals(currentPlan.meals);
       selectNumDeliveries(currentPlan.deliveries);
+
+      selectTip(currentPlan.billing.driver_tip);
 
       let sub = currentPlan.delivery_details;
       setDeliveryInput({
@@ -575,35 +593,252 @@ const EditPlan = (props) => {
         }
       );
 
-      // setCurrentPlan(parsedSub);
+      // default to current plan since no edits have been made yet
       setNewPlan(currentPlan);
     }
   }, [currentPlan]);
 
+  const refreshSubscriptions = () => {
+    console.log("(RS) refreshing subscriptions...");
+    axios
+      .get("http://localhost:2000/api/v2/predict_next_billing_amount/" + profileInfo.customer_uid)
+      .then((res) => {
+        console.log("(PNBD) res: ", res);
+
+        let parsedSubs = [];
+
+        res.data.result.forEach((sub, index) => {
+          console.log("(RS) sub: ", sub);
+
+          // let subDiscount = deliveryDiscounts.find((element) => {
+          //   return element.deliveries === sub.num_deliveries
+          // });
+          let subDiscount = getDeliveryDiscount(sub.num_deliveries);
+          console.log("(RS) subDiscount: ", subDiscount);
+
+          let parsedUid = sub.purchase_uid.substring(
+            sub.purchase_id.indexOf("-") + 1,
+            sub.purchase_id.length
+          );
+
+          let parsedItems = JSON.parse(sub.items)[0];
+          let parsedMeals = parsedItems.name.substring(
+            0,
+            parsedItems.name.indexOf(" ")
+          );
+          console.log("(RS) parsedMeals: ", parsedMeals);
+          console.log("(RS) name: ", parsedItems.name);
+
+          let nextBillingAmount =
+            sub.subtotal +
+            sub.taxes +
+            sub.delivery_fee +
+            sub.service_fee +
+            sub.driver_tip -
+            subDiscount * 0.01 * sub.subtotal -
+            sub.ambassador_code;
+
+          let parsedSub = {
+            purchase_uid: parsedUid,
+            index,
+            billing: {
+              base_amount: sub.subtotal.toFixed(2),
+              taxes: sub.taxes.toFixed(2),
+              delivery_fee: sub.delivery_fee.toFixed(2),
+              service_fee: sub.service_fee.toFixed(2),
+              driver_tip: sub.driver_tip.toFixed(2),
+              discount_amount: sub.amount_discount.toFixed(2),
+              discount_rate: subDiscount,
+              ambassador_discount: sub.ambassador_code.toFixed(2),
+              subtotal: (sub.amount_due + sub.ambassador_code).toFixed(2),
+              total: sub.amount_due.toFixed(2)
+            },
+            delivery_details: {
+              delivery_address: sub.delivery_address,
+              delivery_city: sub.delivery_city,
+              delivery_day: sub.delivery_day,
+              delivery_email: sub.delivery_email,
+              delivery_fee: sub.delivery_fee,
+              delivery_first_name: sub.delivery_first_name,
+              delivery_instructions: sub.delivery_instructions,
+              delivery_last_name: sub.delivery_last_name,
+              delivery_latitude: sub.delivery_latitude,
+              delivery_longitude: sub.delivery_longitude,
+              delivery_phone_num: sub.delivery_phone_num,
+              delivery_state: sub.delivery_state,
+              delivery_status: sub.delivery_status,
+              delivery_unit: sub.delivery_unit
+            },
+            items: JSON.parse(sub.items),
+            meals: parsedMeals,
+            deliveries: sub.num_deliveries,
+            discount: subDiscount.discount,
+            next_billing_date: sub.next_billing_date.substring(
+              0, sub.next_billing_date.indexOf(" ")
+            ),
+            next_delivery_status: sub.final_selection,
+            next_delivery_date: sub.next_delivery.substring(
+              0, sub.next_delivery.indexOf(" ")
+            ),
+            next_billing_amount: nextBillingAmount.toFixed(2),
+            rawData: sub
+          }
+
+          if(index === 0){
+            selectNumMeals(parsedSub.meals);
+            selectNumDeliveries(parsedSub.deliveries);
+
+            setDeliveryInput({
+              first_name: sub.delivery_first_name,
+              last_name: sub.delivery_last_name,
+              purchase_uid: sub.purchase_uid,
+              phone: sub.delivery_phone_num,
+              address: sub.delivery_address,
+              unit: sub.delivery_unit,
+              city: sub.delivery_city,
+              state: sub.delivery_state,
+              zip: sub.delivery_zip,
+              cc_num: "NULL",
+              cc_cvv: "NULL",
+              cc_zip: "NULL",
+              cc_exp_date: "NULL",
+              instructions: sub.delivery_instructions,
+            });
+
+            document.getElementById("locality").value = sub.delivery_city;
+            document.getElementById("state").value = sub.delivery_state;
+            document.getElementById("pac-input").value = sub.delivery_address;
+            document.getElementById("postcode").value = sub.delivery_zip;
+
+            fetchAddressCoordinates(
+              sub.delivery_address,
+              sub.delivery_city,
+              sub.delivery_state,
+              sub.delivery_zip,
+              (coords) => {
+                console.log("(fetchAddressCoordinates) Fetched coordinates: ", coords);
+    
+                setLatitude(coords.latitude);
+                setLongitude(coords.longitude);
+    
+                const temp_position = {
+                  lat: parseFloat(coords.latitude),
+                  lng: parseFloat(coords.longitude),
+                };
+    
+                console.log("(fetchAddressCoordinates) temp_position: ", temp_position);
+    
+                map.setCenter(temp_position);
+
+                console.log("(fetchAddressCoordinates) after center");
+    
+                if (coords.latitude !== "") {
+                  map.setZoom(17);
+                  new google.maps.Marker({
+                    position: temp_position,
+                    map,
+                  });
+                }
+              }
+            );
+
+            // set default plans
+            console.log("(RS) setting currentPlan: ", parsedSub);
+            setCurrentPlan(parsedSub);
+            setNewPlan(parsedSub);
+          }
+
+          parsedSubs.push(parsedSub);
+        });
+
+        console.log("setting subscriptions...");
+        setSubscriptions(parsedSubs);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  // useEffect(() => {
+  //   console.log("changed deliveryInput: ", deliveryInput);
+  // }, [deliveryInput]);
+
+  const selectTip = (tip_amount, recalculate_billing) => {
+    if(recalculate_billing === true){
+      calculateBilling({
+        tip: tip_amount
+      })
+    }
+    setTipAmount(tip_amount);
+  }
+
+  const saveDeliveryDetails = () => {
+    // setDeliveryInput({
+    //   first_name: sub.delivery_first_name,
+    //   last_name: sub.delivery_last_name,
+    //   purchase_uid: sub.purchase_uid,
+    //   phone: sub.delivery_phone_num,
+    //   address: sub.delivery_address,
+    //   unit: sub.delivery_unit,
+    //   city: sub.delivery_city,
+    //   state: sub.delivery_state,
+    //   zip: sub.delivery_zip,
+    //   cc_num: "NULL",
+    //   cc_cvv: "NULL",
+    //   cc_zip: "NULL",
+    //   cc_exp_date: "NULL",
+    //   instructions: sub.delivery_instructions,
+    // });
+
+    // 1.) save delivery details to database
+    let object = { ...deliveryInput };
+
+    // Deleting since instructions field does not currently exist in endpoint
+    delete object["instructions"];
+
+    object["email"] = profileInfo.email;
+
+    let city = document.getElementById("locality").value;
+    let state = document.getElementById("state").value;
+    let address = document.getElementById("pac-input").value;
+    let zip = document.getElementById("postcode").value;
+
+    let post_object = {
+      first_name: object.first_name,
+      last_name: object.last_name,
+      purchase_uid: currentPlan.purchase_uid,
+      phone: object.phone,
+      address,
+      unit: object.unit,
+      city,
+      state,
+      zip,
+      email: profileInfo.customer_email,
+    };
+    console.log("(SDD) post_object: ", post_object);
+    console.log("(SDD) currentPlan: ", currentPlan);
+
+    axios
+      .post(API_URL + "Update_Delivery_Info_Address", post_object)
+      .then((res) => {
+        console.log("update delivery info res: ", res);
+
+        refreshSubscriptions();
+      })
+      .catch((err) => {
+        console.log("error happened while updating delivery info", err);
+        if (err.response) {
+          console.log("err.response: " + JSON.stringify(err.response));
+        }
+      });
+  }
+
+  // recalculate billing on meals/deliveries change
   useEffect(() => {
-    console.log("changed deliveryInput: ", deliveryInput);
-  }, [deliveryInput])
-
-  // // recalculate billing on tip change
-  // useEffect(() => {
-  //   calculateBilling({
-  //     tip: tipSelected
-  //   });
-  // }, [tipSelected]);
-
-  // // recalculate billing on tip change
-  // useEffect(() => {
-  //   calculateBilling({
-  //     num_meals: numMealsSelected
-  //   });
-  // }, [numMealsSelected]);
-
-  // // recalculate billing on tip change
-  // useEffect(() => {
-  //   calculateBilling({
-  //     num_deliveries: numDeliveriesSelected
-  //   });
-  // }, [numDeliveriesSelected]);
+    if(dataLoaded){
+      calculateBilling({});
+    }
+  }, [numMealsSelected, numDeliveriesSelected]);
 
   // Used to render menu at top showing all current meals plans
   const showSubscribedMeals = () => {
@@ -627,15 +862,10 @@ const EditPlan = (props) => {
             console.log("(SSM) current plan: ", currentPlan);
             console.log("(SSM) clicked plan: ", sub);
 
-
-            // calculateBilling(
-            //   sub.items,
-            //   {latitude, longitude},
-            //   sub.billing.driver_tip
-            // );
-
+            // default new plan to current plan since no edits have been made yet
+            console.log("(SSM) setting currentPlan: ", sub);
             setCurrentPlan(sub);
-            setNewPlan(sub);
+            setNewPlan(sub); 
           }}
           tabIndex="0"
           aria-label={
@@ -1321,7 +1551,7 @@ const EditPlan = (props) => {
             className={styles.orangeBtn}
             // disabled={!this.state.subscriptionsLoaded}
             onClick={() => {
-              // this.saveEdits()
+              saveDeliveryDetails()
               console.log("(SDD) CALL calculateBilling here");
 
               console.log("(change) plan before: ", newPlan);
@@ -1582,12 +1812,12 @@ const EditPlan = (props) => {
         </div>
         <div style={{ display: "flex" }}>
           <button
-            className={tipSelected === '0.00' 
+            className={tipAmount === '0.00' 
               ? (styles.tipButtonSelected)
               : (styles.tipButton)
             }
             onClick={() => {
-              selectTip("0.00")
+              selectTip("0.00", TRIGGER_RECALCULATION);
               console.log("(tip $0.00) CALL calculateBilling here");
 
               console.log("(change) plan before: ", newPlan);
@@ -1605,12 +1835,12 @@ const EditPlan = (props) => {
             No Tip
           </button>
           <button
-            className={tipSelected === '2.00' 
+            className={tipAmount === '2.00' 
               ? (styles.tipButtonSelected)
               : (styles.tipButton)
             }
             onClick={() => {
-              selectTip("2.00")
+              selectTip("2.00", TRIGGER_RECALCULATION);
               console.log("(tip $2.00) CALL calculateBilling here");
 
               console.log("(change) plan before: ", newPlan);
@@ -1628,12 +1858,12 @@ const EditPlan = (props) => {
             $2
           </button>
           <button
-            className={tipSelected === '3.00' 
+            className={tipAmount === '3.00' 
               ? (styles.tipButtonSelected)
               : (styles.tipButton)
             }
             onClick={() => {
-              selectTip("3.00")
+              selectTip("3.00", TRIGGER_RECALCULATION);
               console.log("(tip $3.00) CALL calculateBilling here");
 
               console.log("(change) plan before: ", newPlan);
@@ -1651,12 +1881,12 @@ const EditPlan = (props) => {
             $3
           </button>
           <button
-            className={tipSelected === '5.00' 
+            className={tipAmount === '5.00' 
               ? (styles.tipButtonSelected)
               : (styles.tipButton)
             }
             onClick={() => {
-              selectTip("5.00")
+              selectTip("5.00", TRIGGER_RECALCULATION);
               console.log("(tip $5.00) CALL calculateBilling here");
 
               console.log("(change) plan before: ", newPlan);
@@ -1731,7 +1961,7 @@ const EditPlan = (props) => {
           </div>
 
           <div className={styles.summarySubtotal}>
-            -${newPlan.billing.ambassador_discount}
+            -${currentPlan.billing.ambassador_discount}
           </div>
 
           <div
@@ -1838,16 +2068,46 @@ const EditPlan = (props) => {
     );
   }
 
+  const itemize = (n_meals, n_deliveries) => {
+    console.log("(itemize) plans: ", plans);
+    console.log("(itemize) plans[n_meals]: ", plans[n_meals]);
+    let planData = plans[n_meals][n_deliveries];
+    console.log("(itemize) planData: ", planData);
+    let newItems = [
+      {
+        item_uid: planData.item_uid,
+        itm_business_uid: planData.itm_business_uid,
+        name: planData.item_name,
+        price: planData.item_price.toString(),
+        qty: planData.num_deliveries.toString()
+      }
+    ];
+    return newItems;
+  }
+
   const calculateBilling = (newData) => {
+    console.log("(CB) start");
     // setRecalculating(true);
+
+    console.log("(CB) plans: ", plans);
+    // console.log("(CB) plans (string): ", JSON.stringify(plans));
+
+    // Get discount
+    console.log("(CB) numMealsSelected: ", numMealsSelected, typeof(numMealsSelected));
+    console.log("(CB) numDeliveriesSelected: ", numDeliveriesSelected, typeof(numDeliveriesSelected));
+    let subDiscount = getDeliveryDiscount(numDeliveriesSelected);
+    console.log("(CB) subDiscount: ", subDiscount);
 
     let updatedNewPlan = {...newPlan};
 
-    console.log("(CB) newPlan before change: ", newPlan);
+    console.log("\n(CB) newPlan before change: ", newPlan);
     console.log("(CB) newData: ", newData);
 
+    // let newItems = plans[numMealsSelected][numDeliveriesSelected];
+    let itemized = itemize(numMealsSelected, numDeliveriesSelected);
+    // console.log("(CB) newItems: ", newItems);
     let object = {
-      items: newPlan.items,
+      items: itemized,
       customer_lat: newPlan.delivery_details.delivery_latitude,
       customer_long: newPlan.delivery_details.delivery_longitude,
       driver_tip: newPlan.billing.driver_tip
@@ -1858,6 +2118,7 @@ const EditPlan = (props) => {
       object.driver_tip = newData.tip;
     }
 
+    console.log("(CB) object for make_purchase: ", object);
     axios
       .put(
         `http://localhost:2000/api/v2/make_purchase`, 
@@ -1865,6 +2126,30 @@ const EditPlan = (props) => {
       )
       .then((res) => {
         console.log("(make_purchase) res: ", res);
+
+        let recalculated_plan = {
+          ...newPlan,
+          billing: {
+            base_amount: res.data.new_meal_charge.toFixed(2),
+            taxes: res.data.new_tax.toFixed(2),
+            delivery_fee: res.data.delivery_fee.toFixed(2),
+            service_fee: res.data.service_fee.toFixed(2),
+            driver_tip: res.data.new_driver_tip.toFixed(2),
+            discount_amount: res.data.new_discount.toFixed(2),
+            discount_rate: subDiscount,
+            ambassador_discount: res.data.ambassador_discount.toFixed(2),
+            subtotal: (res.data.amount_should_charge + res.data.ambassador_discount).toFixed(2),
+            total: res.data.amount_should_charge.toFixed(2),
+          },
+          items: itemized,
+          meals: numMealsSelected,
+          deliveries: numDeliveriesSelected,
+          discount: subDiscount
+        }
+
+        setNewPlan(recalculated_plan);
+
+        console.log("\n");
       })
       .catch((err) => {
         if (err.response) {
