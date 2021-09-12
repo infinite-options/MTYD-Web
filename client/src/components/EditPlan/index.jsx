@@ -132,6 +132,105 @@ const EditPlan = (props) => {
     subtotal: "0.00",
     total: "0.00",
   });
+  const [ambassadorCode, setAmbassadorCode] = useState('');
+
+  const applyAmbassadorCode = () => {
+    // axios
+    //   .post(API_URL + "brandAmbassador/discount_checker", {
+      let itemized = itemize(numMealsSelected, numDeliveriesSelected);
+    axios
+      .post('http://localhost:2000/api/v2/brandAmbassador/discount_checker', {
+        code: ambassadorCode,
+        info: profileInfo.customer_email,
+        IsGuest: "False",
+        purchase_data: {
+          items: itemized,
+          customer_lat: latitude,
+          customer_long: longitude,
+          driver_tip: tipAmount
+        }
+      })
+      .then((res) => {
+        console.log("(CUST) ambassador code response: ", res);
+
+        if (res.data.code !== 200) {
+          console.log("(CUST) Invalid code");
+
+          // this.setState(
+          //   (prevState) => ({
+          //     paymentSummary: {
+          //       ...prevState.paymentSummary,
+          //       ambassadorDiscount: "0.00",
+          //     },
+          //     recalculatingPrice: false,
+          //   }),
+          //   () => {
+          //     // this.setTotal();
+          //   }
+          // );
+
+        } else {
+          console.log("(CUST) Valid code");
+
+          console.log("(CUST) ambassador code response 2: ", res.data.new_billing);
+          // this.setState(
+          //   (prevState) => ({
+          //     paymentSummary: {
+          //       mealSubPrice: res.data.new_billing.new_meal_charge.toFixed(2),
+          //       discountAmount: res.data.new_billing.new_discount.toFixed(2),
+          //       addOns: "0.00",
+          //       tip: res.data.new_billing.new_driver_tip.toFixed(2),
+          //       serviceFee: res.data.new_billing.service_fee.toFixed(2),
+          //       deliveryFee: res.data.new_billing.delivery_fee.toFixed(2),
+          //       taxRate: res.data.new_billing.tax_rate,
+          //       taxAmount: res.data.new_billing.new_tax.toFixed(2),
+          //       ambassadorDiscount: res.data.new_billing.ambassador_discount.toFixed(2),
+          //       total: res.data.new_billing.amount_should_charge.toFixed(2),
+          //       subtotal: res.data.new_billing.amount_should_charge.toFixed(2),
+          //     },
+          //     recalculatingPrice: false,
+          //   }),
+          //   () => {
+          //     // this.setTotal();
+          //   }
+          // );
+          // let subDiscount = getDeliveryDiscount(numDeliveriesSelected);
+
+          // let recalculated_plan = {
+          //   ...newPlan,
+          //   billing: {
+          //     base_amount: res.data.new_billing.new_meal_charge.toFixed(2),
+          //     taxes: res.data.new_billing.new_tax.toFixed(2),
+          //     delivery_fee: res.data.new_billing.delivery_fee.toFixed(2),
+          //     service_fee: res.data.new_billing.service_fee.toFixed(2),
+          //     driver_tip: res.data.new_billing.new_driver_tip.toFixed(2),
+          //     discount_amount: res.data.new_billing.new_discount.toFixed(2),
+          //     discount_rate: subDiscount,
+          //     ambassador_discount: res.data.new_billing.ambassador_discount.toFixed(2),
+          //     subtotal: (res.data.new_billing.amount_should_charge + res.data.new_billing.ambassador_discount).toFixed(2),
+          //     total: res.data.new_billing.amount_should_charge.toFixed(2),
+          //   },
+          //   items: itemized,
+          //   meals: numMealsSelected,
+          //   deliveries: numDeliveriesSelected,
+          //   discount: subDiscount
+          // }
+
+          // console.log('ambassador code: ',);
+
+          // setNewPlan(recalculated_plan);
+
+          calculateBilling({
+            amb_coupon: res.data.sub
+          });
+
+        }
+
+      })
+      .catch((err) => {
+        console.log("Ambassador code error: ", err);
+      });
+  }
 
   // Calculate values for difference column of payment summary.
   // Call whenever current or updated plan are changed.
@@ -189,7 +288,7 @@ const EditPlan = (props) => {
   const [subscriptions, setSubscriptions] = useState(null);
   const [profileInfo, setProfileInfo] = useState(null);
   const [profileEmail, setProfileEmail] = useState('');
-  const [recalculating, setRecalculating] = useState(false);
+  const [recalculating, setRecalculating] = useState(true);
 
   // const [tipSelected, selectTip] = useState('2.00');
   // const [trigger_recalc_by_tip, set_trigger_recalc_by_tip] = useState()
@@ -550,13 +649,18 @@ const EditPlan = (props) => {
                   map,
                 });
               }
+
+              // set default plans
+              console.log("(UE2) setting currentPlan: ", parsedSub);
+              setCurrentPlan(parsedSub);
+              setNewPlan(parsedSub);
             }
           );
 
-          // set default plans
-          console.log("(UE2) setting currentPlan: ", parsedSub);
-          setCurrentPlan(parsedSub);
-          setNewPlan(parsedSub);
+          // // set default plans
+          // console.log("(UE2) setting currentPlan: ", parsedSub);
+          // setCurrentPlan(parsedSub);
+          // setNewPlan(parsedSub);
         }
 
         parsedSubs.push(parsedSub);
@@ -577,11 +681,16 @@ const EditPlan = (props) => {
 
   useEffect(() => {
     calculateDifference();
+    console.log("done recalculating 1");
+    if(dataLoaded) {
+      setRecalculating(false);
+    }
   }, [newPlan]);
 
   // runs anytime an existing subscription is selected to edit
   useEffect(() => {
     if(dataLoaded) {
+      setRecalculating(true);
       console.log("(UE currentPlan) currentPlan: ", currentPlan);
 
       // console.log("(UE currentPlan) numMealsSelected: ", typeof numMealsSelected);
@@ -645,6 +754,8 @@ const EditPlan = (props) => {
               map,
             });
           }
+          console.log("done recalculating 2");
+          setRecalculating(false);
         }
       );
 
@@ -817,10 +928,11 @@ const EditPlan = (props) => {
   // }, [deliveryInput]);
 
   const selectTip = (tip_amount, recalculate_billing) => {
+    setRecalculating(true);
     if(recalculate_billing === true){
       calculateBilling({
         tip: tip_amount
-      })
+      });
     }
     setTipAmount(tip_amount);
   }
@@ -964,14 +1076,11 @@ const EditPlan = (props) => {
     return <div style={{ width: "100%" }}>{mealButtons}</div>;
   };
 
-  // const itemize = () => {
-
-  // }
-
-  const mealsDelivery = () => {
+  const showMealsButtons = () => {
     let deselectedPlateButton = styles_admin.plateButton;
-    let selectedPlateButton =
-      styles_admin.plateButton + " " + styles_admin.plateButtonSelected;
+    // let selectedPlateButton =
+    //   styles_admin.plateButton + " " + styles_admin.plateButtonSelected;
+    let selectedPlateButton = styles_admin.plateButtonSelected;
     let plateButtons = [];
     let singleMealData;
 
@@ -995,29 +1104,15 @@ const EditPlan = (props) => {
                   ? selectedPlateButton
                   : deselectedPlateButton
               }
+              disabled={recalculating}
               onClick={() => {
+                setRecalculating(true);
                 console.log("(MD) CALL calculateBilling here");
 
                 console.log("(change) plan before: ", newPlan);
                 console.log("(change) new data -- mealIndex: ", mealIndex);
 
                 selectNumMeals(mealIndex);
-                // calculateBilling(
-                //   sub.items,
-                //   {latitude, longitude},
-                //   sub.billing.driver_tip
-                // );
-
-                // console.log("(MD) clicked: ", mealIndex, " ; ", mealData);
-                // console.log("(MD) clicked: ", mealIndex, " ; ", this.state.updatedPlan.deliveries);
-                // console.log("(MD) plans: ", this.props.plans);
-                // this.props.chooseMealsDelivery(
-                //   mealIndex,
-                //   this.state.updatedPlan.deliveries,
-                //   this.props.plans
-                // );
-
-                // this.changePlans(mealIndex, this.state.updatedPlan.deliveries);
               }}
               aria-label={
                 "Click to switch to " +
@@ -1050,7 +1145,7 @@ const EditPlan = (props) => {
     return plateButtons;
   };
 
-  const paymentFrequency = () => {
+  const showDeliveryButtons = () => {
     let deselectedPaymentOption = styles_admin.deliveryButton;
     let selectedPaymentOption =
       styles_admin.deliveryButton + " " + styles_admin.deliveryButtonSelected;
@@ -1081,29 +1176,20 @@ const EditPlan = (props) => {
       paymentOptionButtons.push(
         <div className={styles_admin.sameLine} key={deliveryIndex}>
           <button
-            // className={
-            //   newPlan.deliveries === deliveryIndex
-            //     ? selectedPaymentOption
-            //     : deselectedPaymentOption
-            // }
             className={
               numDeliveriesSelected === deliveryIndex
                 ? selectedPaymentOption
                 : deselectedPaymentOption
             }
+            disabled={recalculating}
             onClick={() => {
+              setRecalculating(true);
               console.log("(PF) CALL calculateBilling here");
 
               console.log("(change) plan before: ", newPlan);
               console.log("(change) new data -- deliveryIndex: ", deliveryIndex);
 
               selectNumDeliveries(deliveryIndex);
-              // this.props.choosePaymentOption(
-              //   deliveryIndex,
-              //   updatedPlan.meals,
-              //   this.props.plans
-              // );
-              // this.changePlans(this.state.updatedPlan.meals, deliveryIndex);
             }}
             aria-label={ariaTag}
             title={ariaTag}
@@ -1200,6 +1286,7 @@ const EditPlan = (props) => {
                 <div className={styles_admin.plateButtonWrapper3}>
                   <div
                     className={styles.iconTrash}
+                    disabled={recalculating}
                     onClick={() => {
                       // this.confirmDelete();
                       deletePurchase();
@@ -1210,6 +1297,28 @@ const EditPlan = (props) => {
                   />
                 </div>
               </div>
+              {/* {recalculating ? (
+                <div>
+                  <span className={styles_admin.subHeader2}/>
+                  <div className={styles_admin.plateButtonWrapper3}/>
+                </div>
+              ) : (
+                <div>
+                  <span className={styles_admin.subHeader2}>CANCEL</span>
+                  <div className={styles_admin.plateButtonWrapper3}>
+                    <div
+                      className={styles.iconTrash}
+                      onClick={() => {
+                        // this.confirmDelete();
+                        deletePurchase();
+                      }}
+                      tabIndex="0"
+                      aria-label="Click here to cancel this meal plan"
+                      title="Click here to cancel this meal plan"
+                    />
+                  </div>
+                </div>
+              )} */}
             </div>
 
             <div className={styles.boxPDnarrowBottom}>
@@ -1225,7 +1334,7 @@ const EditPlan = (props) => {
                   if (plans !== null) {
                     return (
                       <div className={styles_admin.buttonWrapper}>
-                        {mealsDelivery()}
+                        {showMealsButtons()}
                       </div>
                     );
                   }
@@ -1248,7 +1357,7 @@ const EditPlan = (props) => {
                           marginBottom: "30px",
                         }}
                       >
-                        {dataLoaded ? (paymentFrequency()) : (null)}
+                        {dataLoaded ? (showDeliveryButtons()) : (null)}
                       </div>
                     );
                   }
@@ -1265,7 +1374,13 @@ const EditPlan = (props) => {
                 <div className={styles_admin.chargeContainer} tabIndex="0">
                   {(() => {
                     let chargeOrRefund = billingDifference.total;
-                    if (parseFloat(chargeOrRefund) >= 0) {
+                    if (recalculating) {
+                      return (
+                        <div className={styles_admin.chargeText}>
+                          {"Calculating, Please Wait..."}
+                        </div>
+                      );
+                    } else if (parseFloat(chargeOrRefund) >= 0) {
                       return (
                         <>
                           <div className={styles_admin.chargeText}>
@@ -1349,6 +1464,7 @@ const EditPlan = (props) => {
                 <div className={styles_admin.plateButtonWrapper3}>
                   <div
                     className={styles.iconTrash}
+                    disabled={recalculating}
                     onClick={() => {
                       // this.confirmDelete();
                       deletePurchase();
@@ -1359,6 +1475,23 @@ const EditPlan = (props) => {
                   />
                 </div>
               </div>
+              {/* {recalculating ? (null) : (
+                <div>
+                  <span className={styles_admin.subHeader2}>CANCEL</span>
+                  <div className={styles_admin.plateButtonWrapper3}>
+                    <div
+                      className={styles.iconTrash}
+                      onClick={() => {
+                        // this.confirmDelete();
+                        deletePurchase();
+                      }}
+                      tabIndex="0"
+                      aria-label="Click here to cancel this meal plan"
+                      title="Click here to cancel this meal plan"
+                    />
+                  </div>
+                </div>
+              )} */}
             </div>
           </div>
 
@@ -1373,7 +1506,7 @@ const EditPlan = (props) => {
                 if (plans !== null) {
                   return (
                     <div className={styles_admin.buttonWrapper}>
-                      {mealsDelivery()}
+                      {showMealsButtons()}
                     </div>
                   );
                 }
@@ -1395,7 +1528,7 @@ const EditPlan = (props) => {
                         marginBottom: "50px",
                       }}
                     >
-                      {dataLoaded ? (paymentFrequency()) : (null)}
+                      {dataLoaded ? (showDeliveryButtons()) : (null)}
                     </div>
                   );
                 }
@@ -1405,7 +1538,13 @@ const EditPlan = (props) => {
             <div className={styles_admin.chargeContainer} tabIndex="0">
               {(() => {
                 let chargeOrRefund = billingDifference.total;
-                if (parseFloat(chargeOrRefund) >= 0) {
+                if (recalculating) {
+                  return (
+                    <div className={styles_admin.chargeText}>
+                      {"Calculating, Please Wait..."}
+                    </div>
+                  );
+                } else if (parseFloat(chargeOrRefund) >= 0) {
                   return (
                     <>
                       <div className={styles_admin.chargeText}>
@@ -1638,6 +1777,7 @@ const EditPlan = (props) => {
           <button
             className={styles.orangeBtn}
             // disabled={!this.state.subscriptionsLoaded}
+            disabled={recalculating}
             onClick={() => {
               saveDeliveryDetails()
               console.log("(SDD) CALL calculateBilling here");
@@ -1718,7 +1858,7 @@ const EditPlan = (props) => {
           </div>
 
           <div className={styles.summaryRight}>
-            ${newPlan.billing.base_amount}
+            ${currentPlan.billing.base_amount}
           </div>
 
           <div
@@ -1904,6 +2044,7 @@ const EditPlan = (props) => {
               ? (styles.tipButtonSelected)
               : (styles.tipButton)
             }
+            disabled={recalculating}
             onClick={() => {
               selectTip("0.00", TRIGGER_RECALCULATION);
               console.log("(tip $0.00) CALL calculateBilling here");
@@ -1927,6 +2068,7 @@ const EditPlan = (props) => {
               ? (styles.tipButtonSelected)
               : (styles.tipButton)
             }
+            disabled={recalculating}
             onClick={() => {
               selectTip("2.00", TRIGGER_RECALCULATION);
               console.log("(tip $2.00) CALL calculateBilling here");
@@ -1950,6 +2092,7 @@ const EditPlan = (props) => {
               ? (styles.tipButtonSelected)
               : (styles.tipButton)
             }
+            disabled={recalculating}
             onClick={() => {
               selectTip("3.00", TRIGGER_RECALCULATION);
               console.log("(tip $3.00) CALL calculateBilling here");
@@ -1973,6 +2116,7 @@ const EditPlan = (props) => {
               ? (styles.tipButtonSelected)
               : (styles.tipButton)
             }
+            disabled={recalculating}
             onClick={() => {
               selectTip("5.00", TRIGGER_RECALCULATION);
               console.log("(tip $5.00) CALL calculateBilling here");
@@ -2001,14 +2145,12 @@ const EditPlan = (props) => {
           }}
         >
 
-          {/* <input
+          <input
             type="text"
             placeholder="Enter Ambassador Code"
             className={styles.inputAmbassador}
             onChange={(e) => {
-              // this.setState({
-              //   ambassadorCode: e.target.value,
-              // });
+              setAmbassadorCode(e.target.value);
             }}
             aria-label="Enter your ambassador code here"
             title="Enter your ambassador code here"
@@ -2020,15 +2162,15 @@ const EditPlan = (props) => {
             //   parseFloat(this.state.currentPlan.payment_summary.ambassador_discount) > 0 ||
             //   parseFloat(this.state.updatedPlan.payment_summary.ambassador_discount) > 0
             // }
-            // disabled={this.state.refreshingPrice}
-            // onClick={() => this.applyAmbassadorCode()}
+            disabled={recalculating}
+            onClick={() => applyAmbassadorCode()}
             aria-label="Click here to verify your ambassador code"
             title="Click here to verify your ambassador code"
           >
             Verify
-          </button> */}
+          </button>
 
-          <div
+          {/* <div
             style={{
               marginTop: '20px',
               width: '42%',
@@ -2037,7 +2179,8 @@ const EditPlan = (props) => {
             }}
           >
             Ambassador Discount
-          </div>
+          </div> */}
+
           <div
             className={
               activeChanges()
@@ -2114,6 +2257,7 @@ const EditPlan = (props) => {
           //   !this.activeChanges() ||
           //   this.state.processingChanges
           // }
+          disabled={recalculating}
           onClick={() => confirmChanges()}
           aria-label={
             "Your new plan will cost " +
@@ -2138,6 +2282,7 @@ const EditPlan = (props) => {
           //   !this.activeChanges() ||
           //   this.state.processingChanges
           // }
+          disabled={recalculating}
           onClick={() => discardChanges()}
           aria-label={
             "Your new plan will cost " +
@@ -2191,15 +2336,7 @@ const EditPlan = (props) => {
     console.log("\n(CB) newPlan before change: ", newPlan);
     console.log("(CB) newData: ", newData);
 
-    // let newItems = plans[numMealsSelected][numDeliveriesSelected];
     let itemized = itemize(numMealsSelected, numDeliveriesSelected);
-    // console.log("(CB) newItems: ", newItems);
-
-    // if(newPlan.rawData.amb_code !== 0 && newPlan.rawData.amb_code !== "" && newPlan.rawData.amb_code !== null) {
-
-
-
-    // } else {
 
       let object = {
         items: itemized,
@@ -2211,6 +2348,11 @@ const EditPlan = (props) => {
       if(newData.hasOwnProperty('tip')) {
         console.log("(CB) calculating with new tip...");
         object.driver_tip = newData.tip;
+      }
+
+      if(newData.hasOwnProperty('amb_coupon')) {
+        console.log("(CB) calculating with new coupon...");
+        object.ambassador_coupon = newData.amb_coupon;
       }
 
       console.log("(CB) object for make_purchase: ", object);
@@ -2254,6 +2396,20 @@ const EditPlan = (props) => {
         });
     // }
   }
+
+  const getCurrentDate = () => {
+    const currentDate = new Date();
+    let day = currentDate.getDate();
+    if (day < 10) {
+      day = ["0", day].join("");
+    }
+    let month = currentDate.getMonth() + 1;
+    if (month < 10) {
+      month = ["0", month].join("");
+    }
+    let year = currentDate.getFullYear();
+    return [[year, month, day].join("-"), "00-00-00"].join(" ");
+  };
 
   const deletePurchase = () => {
     console.log("plan to cancel: ", newPlan);
@@ -2302,10 +2458,75 @@ const EditPlan = (props) => {
       customer_lat: newPlan.delivery_details.delivery_latitude,
       customer_long: newPlan.delivery_details.delivery_longitude,
       start_delivery_date: "",
+      ambassador_code: ambassadorCode
     };
 
     console.log("===> change_purchase: ", object);
-    axios
+
+    // give back coupon if unused
+    console.log("(CC) currentPlan: ", currentPlan);
+    console.log("(CC) amb_code (code): ", currentPlan.rawData.amb_code);
+    console.log("(CC) ambassador_code (discount): ", currentPlan.rawData.ambassador_code);
+    console.log("(CC) email: ", profileInfo.customer_email);
+
+    let amb_code = currentPlan.rawData.amb_code;
+    let amb_discount = currentPlan.rawData.ambassador_code;
+    let amb_start_date = currentPlan.rawData.start_delivery_date;
+
+    let currentDate = getCurrentDate();
+    console.log("(CC) current date: ", currentDate);
+
+    let isPastStartDate = currentDate > amb_start_date;
+    console.log("(CC) is ", currentDate, " past ", amb_start_date, "? ", isPastStartDate);
+    // isPastStartDate = currentDate < amb_start_date;
+    // console.log("(CC) is ", currentDate, " before ", amb_start_date, "? ", isPastStartDate);
+
+    // check if currently past start delivery date to determine if used coupon should be reimbursed
+    if((amb_code !== "" || amb_code !== null) && amb_discount > 0 && !isPastStartDate) {
+      console.log("(CC) coupon unused, fetching coupons...");
+      axios
+        .get(API_URL + 'coupons')
+        .then((res) => {
+          console.log("coupons res: ", res);
+
+          let coupon_used = res.data.result.find((coupon) => {
+            return (
+              coupon.email_id === profileInfo.customer_email &&
+              coupon.notes === amb_code
+            );
+          });
+
+          console.log("coupon used: ", coupon_used);
+
+          axios
+            .put('http://localhost:2000/api/v2/reissue_coupon/' + coupon_used.coupon_uid)
+            .then((res) => {
+              console.log("reissue_coupon res: ", res);
+
+              axios
+                // .put(API_URL + "change_purchase", object)
+                .put('http://localhost:2000/api/v2/change_purchase', object)
+                .then((res) => {
+                  console.log("change_purchase response: ", res);
+                  
+                  refreshSubscriptions();
+                })
+                .catch((err) => {
+                  console.log(err);
+                  if (err.response) {
+                    console.log("error: ", err.response);
+                  }
+                });
+            })
+            .catch((err) => {
+              console.log("reissue_coupons error: ", err);
+            });
+        })
+        .catch((err) => {
+          console.log("coupons error: ", err);
+        });
+    } else {
+      axios
       // .put(API_URL + "change_purchase", object)
       .put('http://localhost:2000/api/v2/change_purchase', object)
       .then((res) => {
@@ -2319,6 +2540,23 @@ const EditPlan = (props) => {
           console.log("error: ", err.response);
         }
       });
+    }
+
+    // confirm change purchase
+    // axios
+    //   // .put(API_URL + "change_purchase", object)
+    //   .put('http://localhost:2000/api/v2/change_purchase', object)
+    //   .then((res) => {
+    //     console.log("change_purchase response: ", res);
+        
+    //     refreshSubscriptions();
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //     if (err.response) {
+    //       console.log("error: ", err.response);
+    //     }
+    //   });
   }
 
   return (

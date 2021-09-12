@@ -463,6 +463,7 @@ class PaymentDetails extends React.Component {
       //     // this.setTotal();
       //   }
       // );
+      // console.log("recalculatingPrice ===> true (start)");
       this.setState(
         (prevState) => ({
           mounted: true,
@@ -475,9 +476,10 @@ class PaymentDetails extends React.Component {
           phone: this.props.addressInfo.phoneNumber,
           year: this.props.creditCard.year,
           cardZip: this.props.creditCard.zip,
-          recalculatingPrice: true
+          // recalculatingPrice: true
         }),
         () => {
+          // console.log("recalculatingPrice ===> true (end)");
           // this.setTotal();
         }
       );
@@ -516,13 +518,15 @@ class PaymentDetails extends React.Component {
       //     // this.setTotal();
       //   }
       // );
+      // console.log("recalculatingPrice ===> true (start)");
       this.setState(
         (prevState) => ({
           mounted: true,
           customerUid: "GUEST",
-          recalculatingPrice: true
+          // recalculatingPrice: true
         }),
         () => {
+          // console.log("recalculatingPrice ===> true (end)");
           // this.setTotal();
         }
       );
@@ -530,31 +534,14 @@ class PaymentDetails extends React.Component {
     }
   }
 
-  changeTipOld(newTip) {
-    this.setState(
-      (prevState) => ({
-        recalculatingPrice: true,
-        paymentSummary: {
-          ...prevState.paymentSummary,
-          tip: newTip,
-        },
-      }),
-      () => {
-        // this.setTotal();
-        // console.log(
-        //   "changeTip new paymentSummary: ",
-        //   this.state.paymentSummary
-        // );
-      }
-    );
-  }
-
   changeTip(newTip) {
+    console.log("recalculatingPrice ===> true (start)");
     this.setState(
       (prevState) => ({
         recalculatingPrice: true
       }),
       () => {
+        console.log("recalculatingPrice ===> true (end)");
         axios
           .put(
             `http://localhost:2000/api/v2/make_purchase`, 
@@ -575,6 +562,7 @@ class PaymentDetails extends React.Component {
           .then((res) => {
             console.log("(make_purchase) res: ", res);
 
+            console.log("recalculatingPrice ===> false (start)");
             this.setState(
               (prevState) => ({
                 recalculatingPrice: false,
@@ -593,6 +581,7 @@ class PaymentDetails extends React.Component {
                 },
               }),
               () => {
+                console.log("recalculatingPrice ===> false (end)");
                 // this.setTotal();
                 // console.log("(VA) proceeding to payment...");
                 // this.proceedToPayment();
@@ -617,8 +606,13 @@ class PaymentDetails extends React.Component {
   saveDeliveryDetails() {
     // console.log("Saving delivery details...");
 
+    // this.setState({
+    //   fetchingFees: true,
+    // });
     this.setState({
       fetchingFees: true,
+    }, () => {
+      console.log("fetchingFees ==> true");
     });
 
     if (this.state.customerUid !== "GUEST") {
@@ -679,12 +673,13 @@ class PaymentDetails extends React.Component {
 
   applyAmbassadorCode() {
     // console.log("amb code: ", this.state.ambassadorCode);
-
+    console.log("recalculatingPrice ===> true (start)");
     this.setState(
       {
         recalculatingPrice: true,
       },
       () => {
+        console.log("recalculatingPrice ===> true (end)");
         if (this.state.customerUid === "GUEST") {
           axios
             .post(API_URL + "brandAmbassador/discount_checker", {
@@ -713,6 +708,7 @@ class PaymentDetails extends React.Component {
                       ...prevState.paymentSummary,
                       ambassadorDiscount: "0.00",
                     },
+                    recalculatingPrice: false,
                   }),
                   () => {
                     // this.setTotal();
@@ -732,6 +728,7 @@ class PaymentDetails extends React.Component {
                         res.data.sub.discount_shipping
                       ).toFixed(2),
                     },
+                    recalculatingPrice: false,
                   }),
                   () => {
                     // this.setTotal();
@@ -798,7 +795,7 @@ class PaymentDetails extends React.Component {
 
           // axios
           //   .post(API_URL + "brandAmbassador/discount_checker", {
-            axios
+          axios
             .post('http://localhost:2000/api/v2/brandAmbassador/discount_checker', {
               code: this.state.ambassadorCode,
               info: this.props.email,
@@ -840,6 +837,7 @@ class PaymentDetails extends React.Component {
                       ...prevState.paymentSummary,
                       ambassadorDiscount: "0.00",
                     },
+                    recalculatingPrice: false,
                   }),
                   () => {
                     // this.setTotal();
@@ -877,7 +875,8 @@ class PaymentDetails extends React.Component {
                       ambassadorDiscount: res.data.new_billing.ambassador_discount.toFixed(2),
                       total: res.data.new_billing.amount_should_charge.toFixed(2),
                       subtotal: res.data.new_billing.amount_should_charge.toFixed(2),
-                    }
+                    },
+                    recalculatingPrice: false,
                   }),
                   () => {
                     // this.setTotal();
@@ -911,16 +910,6 @@ class PaymentDetails extends React.Component {
 
     // console.log("\npop up error toggled to " + type + "\n\n");
   };
-
-  refreshStripe() {
-    // console.log("refreshing stripe...");
-    let stripePromise = loadStripe(this.state.stripeKey);
-    // console.log("(refreshStripe) stripe promise: ", stripePromise);
-    this.setState({
-      stripePromise: stripePromise,
-      fetchingFees: false,
-    });
-  }
 
   setPaymentType(type) {
     this.setState({
@@ -1051,6 +1040,7 @@ class PaymentDetails extends React.Component {
           showPaymentInfo: false,
         }),
         () => {
+          console.log("fetchingFees ==> true");
           fetchAddressCoordinates(
             document.getElementById("pac-input").value,
             document.getElementById("locality").value,
@@ -1170,8 +1160,11 @@ class PaymentDetails extends React.Component {
                         total: res.data.amount_should_charge.toFixed(2),
                         subtotal: res.data.amount_should_charge.toFixed(2),
                       },
+                      recalculatingPrice: false,
+                      fetchingFees: false
                     }),
                     () => {
+                      console.log("fetchingFees ==> false");
                       // this.setTotal();
                       // console.log("(VA) proceeding to payment...");
                       this.proceedToPayment();
@@ -1269,8 +1262,13 @@ class PaymentDetails extends React.Component {
 
           remoteDataFetched++;
           if (remoteDataFetched === 2) {
+            // this.setState({
+            //   fetchingFees: false,
+            // });
             this.setState({
               fetchingFees: false,
+            }, () => {
+              console.log("fetchingFees ==> false");
             });
           }
         }
@@ -1282,8 +1280,13 @@ class PaymentDetails extends React.Component {
 
       remoteDataFetched++;
       if (remoteDataFetched === 2) {
+        // this.setState({
+        //   fetchingFees: false,
+        // });
         this.setState({
           fetchingFees: false,
+        }, () => {
+          console.log("fetchingFees ==> false");
         });
       }
     }
@@ -1308,8 +1311,13 @@ class PaymentDetails extends React.Component {
 
           remoteDataFetched++;
           if (remoteDataFetched === 2) {
+            // this.setState({
+            //   fetchingFees: false,
+            // });
             this.setState({
               fetchingFees: false,
+            }, () => {
+              console.log("fetchingFees ==> false");
             });
           }
         })
@@ -1341,8 +1349,13 @@ class PaymentDetails extends React.Component {
 
           remoteDataFetched++;
           if (remoteDataFetched === 2) {
+            // this.setState({
+            //   fetchingFees: false,
+            // });
             this.setState({
               fetchingFees: false,
+            }, () => {
+              console.log("fetchingFees ==> false");
             });
           }
         })

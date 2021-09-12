@@ -960,6 +960,16 @@
   width: 50px;
   cursor: pointer;
 }
+.iconTrash:disabled {
+  background-image: none;
+  background-size: 100%;
+  background-color: #ccc9c9;
+  outline: 0;
+  margin: auto;
+  height: 645px;
+  width: 50px;
+  /* cursor: pointer; */
+}
 
 .summaryLeft {
   width: 34%;
@@ -1166,8 +1176,40 @@
   overflow: hidden;
   border-radius: 5px;
 }
+.tipButton:disabled {
+  border: solid;
+  border-color: #ccc9c9;
+  background-color: #ccc9c9;
+  color: white;
+  border-width: 1px;
+  height: 30px;
+  width: 63px;
+  font-size: 12px;
+  font-weight: 500;
+  margin-right: 10%;
+  margin-bottom: 10px;
+  text-overflow: ellipsis;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  border-radius: 5px;
+}
 
 .tipButtonSelected {
+  border: solid;
+  border-color: #ff6505;
+  background-color: #ff6505;
+  color: #ffffff;
+  border-width: 1px;
+  height: 30px;
+  width: 63px;
+  font-size: 12px;
+  font-weight: 500;
+  margin-right: 10%;
+  margin-bottom: 10px;
+  border-radius: 5px;
+}
+.tipButtonSelected:disabled {
   border: solid;
   border-color: #ff6505;
   background-color: #ff6505;
