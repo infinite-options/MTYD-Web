@@ -400,7 +400,8 @@
   color: #000000;
   border: 1px solid #e4e4e4;
   box-shadow: 2px 2px #d3d3d3;
-  background-color: #ccc9c9;
+  opacity: 0.5;
+  /* background-color: #ccc9c9; */
   /*border-radius: 25px;*/
   margin: 5px;
   align-content: center;
@@ -508,7 +509,8 @@
 .orangeBtn:disabled {
   margin-top: 36px;
   margin-bottom: 50px;
-  background-color: #ccc9c9;
+  /* background-color: #ccc9c9; */
+  opacity: 0.5;
   color: white;
   font-size: 20px;
   border-radius: 15px;
@@ -542,7 +544,8 @@
 .orangeBtn2:disabled {
   margin-top: 50px;
   margin-bottom: 10px;
-  background-color: #ccc9c9;
+  /* background-color: #ccc9c9; */
+  opacity: 0.5;
   color: white;
   font-size: 20px;
   border-radius: 15px;
@@ -573,7 +576,8 @@
 }
 .orangeBtn3:disabled {
   margin-bottom: 50px;
-  background-color: #ccc9c9;
+  /* background-color: #ccc9c9; */
+  opacity: 0.5;
   color: white;
   font-size: 20px;
   border-radius: 15px;
@@ -954,6 +958,8 @@
 .iconTrash {
   background-image: url('../../images/trash_icon.png');
   background-size: 100%;
+  border: none;
+  background-color: rgba(255, 255, 255, 0.0);
   outline: 0;
   margin: auto;
   height: 65px;
@@ -961,14 +967,17 @@
   cursor: pointer;
 }
 .iconTrash:disabled {
-  background-image: none;
+  /* background-image: none; */
+  background-image: url('../../images/trash_icon.png');
+  /* color:rgba(255, 255, 255, 0.5); */
+  opacity: 0.5;
   background-size: 100%;
-  background-color: #ccc9c9;
+  background-color: rgba(255, 255, 255, 0.0);
   outline: 0;
   margin: auto;
-  height: 645px;
+  height: 65px;
   width: 50px;
-  /* cursor: pointer; */
+  cursor: default;
 }
 
 .summaryLeft {
@@ -1178,9 +1187,12 @@
 }
 .tipButton:disabled {
   border: solid;
-  border-color: #ccc9c9;
-  background-color: #ccc9c9;
-  color: white;
+  /* border-color: #ccc9c9; */
+  /* background-color: #ccc9c9; */
+  border-color: #ff6505;
+  background-color: white;
+  opacity: 0.5;
+  /* color: white; */
   border-width: 1px;
   height: 30px;
   width: 63px;
@@ -1309,7 +1321,8 @@
   width: 12%;
   height: 30px;
   border: none;
-  background-color: #ccc9c9;
+  /* background-color: #ccc9c9; */
+  opacity: 0.5;
   border-radius: 10px;
   border-width: 2px;
   margin-left: 2%;
