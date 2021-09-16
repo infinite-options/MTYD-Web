@@ -616,7 +616,8 @@ select {
   width: 20%;
   height: 30px;
   border: none;
-  background-color: #ccc9c9;
+  /* background-color: #ccc9c9; */
+  opacity: 0.5;
   border-radius: 10px;
   border-width: 2px;
   margin-left: 2%;
@@ -684,6 +685,7 @@ select {
   border: solid;
   border-color: #ff6505;
   background-color: #ff6505;
+  /* opacity: 0.5; */
   color: #ffffff;
   border-width: 1px;
   height: 30px;
@@ -982,7 +984,8 @@ select {
 .orangeBtn:disabled {
   margin-top: 36px;
   margin-bottom: 50px;
-  background-color: #ccc9c9;
+  /* background-color: #ccc9c9; */
+  opacity: 0.5;
   color: white;
   font-size: 20px;
   border-radius: 15px;
@@ -1017,6 +1020,7 @@ select {
   margin-top: 10px;
   margin-bottom: 30px;
   background-color: #ccc9c9;
+  /* opacity: 0.5; */
   color: white;
   font-size: 20px;
   border-radius: 15px;

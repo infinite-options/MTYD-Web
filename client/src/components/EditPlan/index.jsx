@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useHistory } from "react-router";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import {
@@ -39,7 +40,16 @@ const TRIGGER_RECALCULATION = true;
 const DO_NOT_TRIGGER_RECALCULATION = false;
 
 const EditPlan = (props) => {
-  // const [result, setResult] = useState('');
+  const history = useHistory();
+
+  const [prevState, setPrevState] = useState({
+    currentPlan: null,
+    numDeliveriesSelected: null,
+    numMealsSelected: null,
+    tipAmount: null,
+    ambassadorCoupon: null
+  });
+
   const [currentPlan, setCurrentPlan] = useState({
     purchase_uid: null,
     billing: {
@@ -133,6 +143,7 @@ const EditPlan = (props) => {
     total: "0.00",
   });
   const [ambassadorCode, setAmbassadorCode] = useState('');
+  const [ambassadorCoupon, setAmbassadorCoupon] = useState(null);
 
   const applyAmbassadorCode = () => {
     setRecalculating(true);
@@ -157,14 +168,23 @@ const EditPlan = (props) => {
         if (res.data.code !== 200) {
           console.log("(CUST) Invalid code");
 
+          // displayErrorModal(
+          //   "Hmm...",
+          //   res.data.message,
+          //   "Go Back",
+          //   "back"
+          // );
+
         } else {
           console.log("(CUST) Valid code");
 
           console.log("(CUST) ambassador code response 2: ", res.data.new_billing);
 
-          calculateBilling({
-            amb_coupon: res.data.sub
-          });
+          console.log("(before CB) 1");
+          // calculateBilling({
+          //   amb_coupon: res.data.sub
+          // });
+          setAmbassadorCoupon(res.data.sub);
 
         }
 
@@ -230,13 +250,16 @@ const EditPlan = (props) => {
   const [subscriptions, setSubscriptions] = useState(null);
   const [profileInfo, setProfileInfo] = useState(null);
   const [profileEmail, setProfileEmail] = useState('');
+
   const [recalculating, setRecalculating] = useState(true);
+  const [recalculatingBilling, setRecalculatingBilling] = useState(false);
 
   // const [tipSelected, selectTip] = useState('2.00');
   // const [trigger_recalc_by_tip, set_trigger_recalc_by_tip] = useState()
-  const [tipAmount, setTipAmount] = useState('2.00');
-  const [numMealsSelected, selectNumMeals] = useState('2.00');
-  const [numDeliveriesSelected, selectNumDeliveries] = useState('2.00');
+  // const [tipAmount, setTipAmount] = useState(null);
+  const [tipAmount, selectTip] = useState(null);
+  const [numMealsSelected, selectNumMeals] = useState(null);
+  const [numDeliveriesSelected, selectNumDeliveries] = useState(null);
 
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
@@ -259,6 +282,211 @@ const EditPlan = (props) => {
 
   const [login_seen, setLoginSeen] = useState(false);
   const [signUpSeen, setSignUpSeen] = useState(false);
+
+  // // State for pop up modal
+  // const [showErrorModal, setShowErrorModal] = useState(false);
+  // const [errorModal, setErrorModal] = useState(null);
+  // const [errorHeader, setErrorHeader] = useState('');
+  // const [errorMessage, setErrorMessage] = useState('');
+  // const [errorLink, setErrorLink] = useState('');
+  // const [errorLinkText, setErrorLinkText] = useState('');
+  // const [showConfirmModal, setShowConfirmModal] = useState(false);
+  // const [confirmModal, setConfirmModal] = useState(null);
+  // const [deletingPurchase, setDeletingPurchase] = useState(false);
+  // const [deleteSuccess, setDeleteSuccess] = useState(null);
+  // const [refundAmount, setRefundAmount] = useState(0);
+  // const [refundError, setRefundError] = useState("Error attempting to refund subscription");
+
+  // // Display pop up message
+  // const displayErrorModal = (header, message, linkText, link) => {
+  //   if (showErrorModal === false) {
+  //     setErrorModal(styles.errorModalPopUpShow);
+  //     setShowErrorModal(true);
+  //     setErrorMessage(message);
+  //     setErrorLinkText(linkText);
+  //     setErrorLink(link);
+  //     setErrorHeader(header);
+  //     console.log("\nerror pop up toggled to true");
+  //   } else {
+  //     setErrorModal(styles.errorModalPopUpHide);
+  //     setShowErrorModal(false);
+  //     console.log("\nerror pop up toggled to false");
+  //   }
+  // };
+
+  // const displayPopUp = () => {
+  //   if (showErrorModal === true) {
+  //     return (
+  //       <div className={errorModal}>
+  //         <div className={styles.errorModalContainer}>
+  //           <div className={styles.errorContainer}>
+  //             <div className={styles.errorHeader}>
+  //               {errorHeader}
+  //             </div>
+
+  //             <div className={styles.errorText}>
+  //               {errorMessage}
+  //             </div>
+
+  //             <br />
+
+  //             <button
+  //               className={styles.chargeBtn}
+  //               onClick={() => {
+  //                 if (errorLink === "back") {
+  //                   displayErrorModal();
+  //                 } else {
+  //                   history.push(errorLink);
+  //                 }
+  //               }}
+  //             >
+  //               {errorLinkText}
+  //             </button>
+  //           </div>
+  //         </div>
+  //       </div>
+  //     );
+  //   }
+
+  //   if (showConfirmModal === true) {
+  //     return (
+  //       <div className={styles.errorModalPopUpShow}>
+  //         <div className={styles.confirmModalContainer}>
+  //           <div className={styles.confirmContainer}>
+  //             <div className={styles.confirmHeader}>
+  //               Confirm Cancellation
+  //             </div>
+
+  //             <div className={styles.errorText}>
+  //               Are you sure you want to delete
+  //               <br />
+  //               the following meal plan:
+  //               <br />
+  //               <strong>
+  //                 {" " + this.state.currentPlan.meals} meals,
+  //                 {" " + this.state.currentPlan.deliveries} deliveries
+  //                 (ID: {this.state.currentPlan.id})
+  //               </strong>
+  //               ?
+  //             </div>
+
+  //             <br />
+
+  //             <div
+  //               style={{
+  //                 // border: 'solid',
+  //                 display: "flex",
+  //                 justifyContent: "center",
+  //               }}
+  //             >
+  //               <button
+  //                 className={styles.confirmBtn}
+  //                 onClick={() => {
+  //                   console.log("deleting purchase...");
+  //                   this.setState(
+  //                     {
+  //                       deletingPurchase: true,
+  //                       showConfirmModal: false,
+  //                       // confirmModal: styles.errorModalPopUpHide
+  //                     },
+  //                     () => {
+  //                       this.deletePurchase();
+  //                     }
+  //                   );
+  //                 }}
+  //               >
+  //                 Yes
+  //               </button>
+
+  //               <button
+  //                 className={styles.confirmBtn}
+  //                 onClick={() => {
+  //                   this.displayConfirmation();
+  //                 }}
+  //               >
+  //                 No
+  //               </button>
+  //             </div>
+  //           </div>
+  //         </div>
+  //       </div>
+  //     );
+  //   }
+
+  //   if (deletingPurchase === true) {
+  //     return (
+  //       <div className={styles.errorModalPopUpShow}>
+  //         <div className={styles.confirmModalContainer}>
+  //           <div className={styles.deletingContainer}>
+  //             <div className={styles.deletingHeader}>
+  //               Deleting Purchase
+  //             </div>
+
+  //             <div className={styles.errorText}>Please wait...</div>
+  //           </div>
+  //         </div>
+  //       </div>
+  //     );
+  //   }
+
+  //   if (deleteSuccess === true) {
+  //     return (
+  //       <div className={styles.errorModalPopUpShow}>
+  //         <div className={styles.confirmModalContainer}>
+  //           <div className={styles.confirmContainer}>
+  //             <div className={styles.cancelledHeader}>
+  //               Cancellation Success!
+  //             </div>
+
+  //             <div className={styles.errorText}>
+  //               You have been refunded ${this.state.refundAmount}.
+  //             </div>
+
+  //             <button
+  //               className={styles.cancelledBtn}
+  //               onClick={() => {
+  //                 this.setState({
+  //                   deleteSuccess: null,
+  //                   confirmModal: styles.errorModalPopUpHide,
+  //                 });
+  //               }}
+  //             >
+  //               OK
+  //             </button>
+  //           </div>
+  //         </div>
+  //       </div>
+  //     );
+  //   } else if (deleteSuccess === false) {
+  //     return (
+  //       <div className={styles.errorModalPopUpShow}>
+  //         <div className={styles.confirmModalContainer}>
+  //           <div className={styles.confirmContainer}>
+  //             <div className={styles.cancelledHeader}>
+  //               Cancellation Error
+  //             </div>
+
+  //             <div className={styles.errorText}>
+  //               {refundError}
+  //             </div>
+
+  //             <button
+  //               className={styles.cancelledBtn}
+  //               onClick={() => {
+  //                 this.setState({
+  //                   deleteSuccess: null,
+  //                   confirmModal: styles.errorModalPopUpHide,
+  //                 });
+  //               }}
+  //             >
+  //               OK
+  //             </button>
+  //           </div>
+  //         </div>
+  //       </div>
+  //     );
+  //   }
+  // }
 
   const togglePopLogin = () => {
     setLoginSeen(login_seen);
@@ -320,125 +548,155 @@ const EditPlan = (props) => {
       zoom: 12,
     });
 
-    let customer_uid = document.cookie
-      .split("; ")
-      .find((item) => item.startsWith("customer_uid="))
-      .split("=")[1];
+    if (
+      document.cookie
+        .split(";")
+        .some((item) => item.trim().startsWith("customer_uid="))
+    ) {
 
-    console.log("(UE1) customerId: ", customer_uid);
+      let customer_uid = document.cookie
+        .split("; ")
+        .find((item) => item.startsWith("customer_uid="))
+        .split("=")[1];
 
-    var fetched = 0;
+      console.log("(UE1) customerId: ", customer_uid);
 
-    // fetch profile info
-    axios
-      .get(API_URL + "Profile/" + customer_uid)
-      .then((res) => {
-        console.log("(profile) res: ", res);
+      var fetched = 0;
 
-        setProfileInfo(res.data.result[0]);
+      // fetch profile info
+      axios
+        .get(API_URL + "Profile/" + customer_uid)
+        .then((res) => {
+          console.log("(profile) res: ", res);
 
-        // check if all remote data fetched
-        fetched++;
-        if(fetched === 3){
-          console.log("(profile) all data fetched; loading into page...");
-          setDataFetched(true);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+          setProfileInfo(res.data.result[0]);
 
-    // fetch future billing info
-    // axios
-    //   .get(API_URL + "predict_next_billing_date/" + customer_uid)
-    axios
-      .get("http://localhost:2000/api/v2/predict_next_billing_amount/" + customer_uid)
-      .then((res) => {
-        console.log("(PNBD) res: ", res);
-
-        set_pnbd_data(res.data.result);
-
-        // check if all remote data fetched
-        fetched++;
-        if(fetched === 3){
-          console.log("(PNBD) all data fetched; loading into page...");
-          setDataFetched(true);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-
-    // fetch plans/discounts
-    axios
-      .get(API_URL + 'plans', {
-        params: {
-          business_uid: '200-000002',
-        },
-      })
-      .then(res => {
-        console.log("(plans) res: ", res);
-
-        let tempPlans = null;
-
-        let items = res.data.result;
-        let itemsReturn = {};
-        for (let item of items) {
-          if (item.num_items in itemsReturn) {
-            itemsReturn[item.num_items][item.num_deliveries] = item;
-          } else {
-            itemsReturn[item.num_items] = {[item.num_deliveries]: item};
+          // check if all remote data fetched
+          fetched++;
+          if(fetched === 3){
+            console.log("(profile) all data fetched; loading into page...");
+            setDataFetched(true);
           }
-        }
-
-        let numItems = items.map(curValue => curValue.num_items);
-        let distinctNumItems = numItems.filter(
-          (elt, index) => numItems.indexOf(elt) === index
-        );
-        distinctNumItems.sort((a, b) => a - b);
-        let paymentFrequency = items.map(curValue => curValue.num_deliveries);
-        let distinctPaymentFrequency = paymentFrequency.filter(
-          (elt, index) => paymentFrequency.indexOf(elt) === index
-        );
-        distinctPaymentFrequency.sort((a, b) => a - b);
-        tempPlans = itemsReturn;
-
-        console.log("(plans) tempPlans: ", tempPlans);
-        let payload = {
-              items: itemsReturn,
-              numItems: distinctNumItems,
-              paymentFrequency: distinctPaymentFrequency,
-            };
-        console.log("(plans) payload: ", payload);
-
-        setPlans(tempPlans);
-
-        // Set discounts
-        let twoMealPlans = res.data.result.filter( function(e) {
-          return e.num_items === 2;
+        })
+        .catch((err) => {
+          console.log(err);
         });
 
-        let discounts = [];
+      // fetch future billing info
+      // axios
+      //   .get(API_URL + "predict_next_billing_date/" + customer_uid)
+      axios
+        .get("http://localhost:2000/api/v2/predict_next_billing_amount/" + customer_uid)
+        .then((res) => {
+          console.log("(PNBD) res: ", res);
 
-        twoMealPlans.forEach((plan) => {
-          discounts.push({
-            deliveries: plan.num_deliveries.toString(),
-            discount: plan.delivery_discount
+          set_pnbd_data(res.data.result);
+
+          if(res.data.result.length === 0) {
+            // displayErrorModal(
+            //   "Hmm...",
+            //   `
+            //     Please purchase a subscription. Once you have a subscription, you can manage it from here.
+            //   `,
+            //   "Choose a Plan",
+            //   "/choose-plan"
+            // );
+          } else {
+            fetched++;
+          }
+
+          // check if all remote data fetched
+          // fetched++;
+          if(fetched === 3){
+            console.log("(PNBD) all data fetched; loading into page...");
+            setDataFetched(true);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+
+      // fetch plans/discounts
+      axios
+        .get(API_URL + 'plans', {
+          params: {
+            business_uid: '200-000002',
+          },
+        })
+        .then(res => {
+          console.log("(plans) res: ", res);
+
+          let tempPlans = null;
+
+          let items = res.data.result;
+          let itemsReturn = {};
+          for (let item of items) {
+            if (item.num_items in itemsReturn) {
+              itemsReturn[item.num_items][item.num_deliveries] = item;
+            } else {
+              itemsReturn[item.num_items] = {[item.num_deliveries]: item};
+            }
+          }
+
+          let numItems = items.map(curValue => curValue.num_items);
+          let distinctNumItems = numItems.filter(
+            (elt, index) => numItems.indexOf(elt) === index
+          );
+          distinctNumItems.sort((a, b) => a - b);
+          let paymentFrequency = items.map(curValue => curValue.num_deliveries);
+          let distinctPaymentFrequency = paymentFrequency.filter(
+            (elt, index) => paymentFrequency.indexOf(elt) === index
+          );
+          distinctPaymentFrequency.sort((a, b) => a - b);
+          tempPlans = itemsReturn;
+
+          console.log("(plans) tempPlans: ", tempPlans);
+          let payload = {
+                items: itemsReturn,
+                numItems: distinctNumItems,
+                paymentFrequency: distinctPaymentFrequency,
+              };
+          console.log("(plans) payload: ", payload);
+
+          setPlans(tempPlans);
+
+          // Set discounts
+          let twoMealPlans = res.data.result.filter( function(e) {
+            return e.num_items === 2;
           });
+
+          let discounts = [];
+
+          twoMealPlans.forEach((plan) => {
+            discounts.push({
+              deliveries: plan.num_deliveries.toString(),
+              discount: plan.delivery_discount
+            });
+          });
+
+          setDeliveryDiscounts(discounts);
+
+          // check if all remote data fetched
+          fetched++;
+          if(fetched === 3){
+            console.log("(plans) all data fetched; loading into page...");
+            setDataFetched(true);
+          }
+        })
+        .catch(err => {
+          console.log(err);
         });
 
-        setDeliveryDiscounts(discounts);
-
-        // check if all remote data fetched
-        fetched++;
-        if(fetched === 3){
-          console.log("(plans) all data fetched; loading into page...");
-          setDataFetched(true);
-        }
-      })
-      .catch(err => {
-        console.log(err);
-      });
+    } else {
+      // this.displayErrorModal(
+      //   "Hmm...",
+      //   `
+      //     Please log in to edit your meals.
+      //   `,
+      //   "Go Home",
+      //   "/home"
+      // );
+    }
     
   }, []);
 
@@ -457,7 +715,7 @@ const EditPlan = (props) => {
       let parsedSubs = [];
 
       pnbd_data.forEach((sub, index) => {
-        // console.log("(UE2) sub: ", sub);
+        console.log("(UE2) sub: ", sub);
 
         let subDiscount = getDeliveryDiscount(sub.num_deliveries);
         // console.log("(UE2) subDiscount: ", subDiscount);
@@ -532,9 +790,9 @@ const EditPlan = (props) => {
           rawData: sub
         }
 
-        if(index === 0){
-          selectNumMeals(parsedSub.meals);
-          selectNumDeliveries(parsedSub.deliveries);
+        if(index === 39){
+          // selectNumMeals(parsedSub.meals);
+          // selectNumDeliveries(parsedSub.deliveries);
 
           setDeliveryInput({
             first_name: sub.delivery_first_name,
@@ -593,16 +851,12 @@ const EditPlan = (props) => {
               }
 
               // set default plans
-              console.log("(UE2) setting currentPlan: ", parsedSub);
+              console.log("\n(UE2) setting default plans: ", parsedSub, "\n");
               setCurrentPlan(parsedSub);
-              setNewPlan(parsedSub);
+              // console.log("(0915) setNewPlan 1");
+              // setNewPlan(parsedSub);
             }
           );
-
-          // // set default plans
-          // console.log("(UE2) setting currentPlan: ", parsedSub);
-          // setCurrentPlan(parsedSub);
-          // setNewPlan(parsedSub);
         }
 
         parsedSubs.push(parsedSub);
@@ -621,30 +875,130 @@ const EditPlan = (props) => {
     }
   }, [subscriptions])
 
+  // useEffect(() => {
+  //   console.log("(UE newPlan) newPlan: ", newPlan);
+  //   selectNumMeals(newPlan.meals);
+  //   selectNumDeliveries(newPlan.deliveries);
+  //   calculateDifference();
+  //   // console.log("done recalculating 1");
+  //   if(dataLoaded) {
+  //     // console.log("set recalculating false 1");
+  //     setRecalculating(false);
+  //   }
+  // }, [newPlan]);
+  // useEffect(() => {
+  //   console.log("(UE newPlan) newPlan: ", newPlan);
+  //   selectNumMeals(newPlan.meals);
+  //   selectNumDeliveries(newPlan.deliveries);
+  //   // calculateDifference();
+  //   // console.log("done recalculating 1");
+  //   if(dataLoaded) {
+  //     // console.log("set recalculating false 1");
+  //     setRecalculating(false);
+  //   }
+  // }, [newPlan.purchase_uid]);
+  // useEffect(() => {
+  //   if(dataLoaded) {
+  //     calculateBilling({});
+  //     calculateDifference();
+  //   }
+  // }, [newPlan])
   useEffect(() => {
-    calculateDifference();
-    // console.log("done recalculating 1");
-    if(dataLoaded) {
-      console.log("set recalculating false 1");
-      setRecalculating(false);
+    console.log(" ");
+    console.log("=========================| START |=========================");
+    console.log("(UE4) currentPlan: ", currentPlan);
+    console.log("(UE4) numMealsSelected: ", numMealsSelected);
+    console.log("(UE4) numDeliveriesSelected: ", numDeliveriesSelected);
+    console.log("(UE4) tipAmount: ", tipAmount);
+    console.log(" ");
+    console.log("(UE4) prevState: ", prevState);
+
+    // values that will be passed to make_purchase for calculation
+    let mp_currentPlan = prevState.currentPlan;
+    let mp_numMealsSelected = prevState.numMealsSelected;
+    let mp_numDeliveriesSelected = prevState.numDeliveriesSelected;
+    let mp_tipAmount = prevState.tipAmount;
+    let mp_ambassadorCoupon = prevState.ambassadorCoupon;
+
+    // default everything to current plan if it was selected/changed
+    if(currentPlan.purchase_uid !== null && currentPlan !== prevState.currentPlan){
+      console.log("(UE 4 -- currentPlan) setting defaults...");
+      selectNumDeliveries(currentPlan.deliveries);
+      selectNumMeals(currentPlan.meals);
+      selectTip(currentPlan.rawData.driver_tip);
+      // mp_numMealsSelected = currentPlan.meals;
+      // mp_numDeliveriesSelected = currentPlan.deliveries;
+      // mp_tipAmount = currentPlan.rawData.driver_tip;
+    } else {
+      console.log("(UE 4) about to run calculations...");
+
+      if (numMealsSelected !== prevState.numMealsSelected) {
+        console.log("(UE 4 -- 1) NMS");
+        mp_numMealsSelected = numMealsSelected;
+      }
+      if (numDeliveriesSelected !== prevState.numDeliveriesSelected) {
+        console.log("(UE 4 -- 2) NDS");
+        mp_numDeliveriesSelected = numDeliveriesSelected;
+      }
+      if (tipAmount !== prevState.tipAmount) {
+        console.log("(UE 4 -- 3) TA");
+        mp_tipAmount = tipAmount;
+      }
+      if (ambassadorCoupon !== prevState.ambassadorCoupon) {
+        console.log("(UE 4 -- 4) AC");
+        mp_ambassadorCoupon = ambassadorCoupon;
+      }
+
+      if(
+        currentPlan.purchase_uid !== null &&
+        mp_numMealsSelected !== null &&
+        mp_numDeliveriesSelected !== null &&
+        mp_tipAmount !== null &&
+        latitude !== null &&
+        longitude !== null
+      ){
+        setRecalculatingBilling(true);
+        calculateBilling(
+          currentPlan, 
+          numMealsSelected, 
+          numDeliveriesSelected, 
+          tipAmount, 
+          ambassadorCode, 
+          latitude, 
+          longitude
+        );
+      }
+
     }
-  }, [newPlan]);
+
+    setPrevState({
+      currentPlan,
+      numMealsSelected,
+      numDeliveriesSelected,
+      tipAmount,
+      ambassadorCoupon
+    });
+
+    console.log("=========================|  END  |=========================");
+    console.log(" ");
+  }, [currentPlan, numMealsSelected, numDeliveriesSelected, tipAmount, ambassadorCode, latitude, longitude]);
 
   // runs anytime an existing subscription is selected to edit
   useEffect(() => {
+    console.log("(UE currentPlan) currentPlan: ", currentPlan);
     if(dataLoaded) {
-      console.log("set recalculating true 1");
+      // console.log("set recalculating true 1");
       setRecalculating(true);
-      console.log("(UE currentPlan) currentPlan: ", currentPlan);
+      // console.log("(UE currentPlan) currentPlan: ", currentPlan);
 
       // console.log("(UE currentPlan) numMealsSelected: ", typeof numMealsSelected);
       // console.log("(UE currentPlan) numDeliveriesSelected: ", typeof numDeliveriesSelected);
       // console.log("(UE currentPlan) currentPlan.meals: ", typeof currentPlan.meals);
       // console.log("(UE currentPlan) currentPlan.deliveries: ", typeof currentPlan.deliveries);
-      selectNumMeals(currentPlan.meals);
-      selectNumDeliveries(currentPlan.deliveries);
+      // selectNumMeals(currentPlan.meals);
+      // selectNumDeliveries(currentPlan.deliveries);
 
-      selectTip(currentPlan.billing.driver_tip);
+      // selectTip(currentPlan.billing.driver_tip);
 
       let sub = currentPlan.delivery_details;
       setDeliveryInput({
@@ -675,7 +1029,7 @@ const EditPlan = (props) => {
         sub.delivery_state,
         sub.delivery_zip,
         (coords) => {
-          console.log("(fetchAddressCoordinates) Fetched coordinates: ", coords);
+          // console.log("(fetchAddressCoordinates) Fetched coordinates: ", coords);
 
           setLatitude(coords.latitude);
           setLongitude(coords.longitude);
@@ -685,11 +1039,11 @@ const EditPlan = (props) => {
             lng: parseFloat(coords.longitude),
           };
 
-          console.log("(fetchAddressCoordinates) temp_position: ", temp_position);
+          // console.log("(fetchAddressCoordinates) temp_position: ", temp_position);
 
           map.setCenter(temp_position);
 
-          console.log("(fetchAddressCoordinates) after center");
+          // console.log("(fetchAddressCoordinates) after center");
 
           if (coords.latitude !== "") {
             map.setZoom(17);
@@ -699,13 +1053,14 @@ const EditPlan = (props) => {
             });
           }
           // console.log("done recalculating 2");
-          console.log("set recalculating false 2");
+          // console.log("set recalculating false 2");
           setRecalculating(false);
         }
       );
 
       // default to current plan since no edits have been made yet
-      setNewPlan(currentPlan);
+      // console.log("(0915) setNewPlan 2");
+      // setNewPlan(currentPlan);
     }
   }, [currentPlan]);
 
@@ -794,8 +1149,8 @@ const EditPlan = (props) => {
           }
 
           if(index === 0){
-            selectNumMeals(parsedSub.meals);
-            selectNumDeliveries(parsedSub.deliveries);
+            // selectNumMeals(parsedSub.meals);
+            // selectNumDeliveries(parsedSub.deliveries);
 
             setDeliveryInput({
               first_name: sub.delivery_first_name,
@@ -854,7 +1209,8 @@ const EditPlan = (props) => {
             // set default plans
             console.log("(RS) setting currentPlan: ", parsedSub);
             setCurrentPlan(parsedSub);
-            setNewPlan(parsedSub);
+            // console.log("(0915) setNewPlan 3");
+            // setNewPlan(parsedSub);
           }
 
           parsedSubs.push(parsedSub);
@@ -872,16 +1228,17 @@ const EditPlan = (props) => {
   //   console.log("changed deliveryInput: ", deliveryInput);
   // }, [deliveryInput]);
 
-  const selectTip = (tip_amount, recalculate_billing) => {
-    console.log("set recalculating true 2");
-    setRecalculating(true);
-    if(recalculate_billing === true){
-      calculateBilling({
-        tip: tip_amount
-      });
-    }
-    setTipAmount(tip_amount);
-  }
+  // const selectTip = (tip_amount, recalculate_billing) => {
+  //   console.log("set recalculating true 2");
+  //   setRecalculating(true);
+  //   if(recalculate_billing === true){
+  //     console.log("(before CB) 2");
+  //     calculateBilling({
+  //       tip: tip_amount
+  //     });
+  //   }
+  //   setTipAmount(tip_amount);
+  // }
 
   const saveDeliveryDetails = () => {
     // setDeliveryInput({
@@ -944,21 +1301,23 @@ const EditPlan = (props) => {
       });
   }
 
-  // recalculate billing on meals/deliveries change
-  useEffect(() => {
-    // console.log("(nds) recalculate billing on meals/deliveries change 1");
-    if(dataLoaded){
-      // console.log("(nds) recalculate billing on meals/deliveries change 2");
-      calculateBilling({});
-    }
-  }, [numDeliveriesSelected]);
-  useEffect(() => {
-    // console.log("(nms) recalculate billing on meals/deliveries change 1");
-    if(dataLoaded){
-      // console.log("(nms) recalculate billing on meals/deliveries change 2");
-      calculateBilling({});
-    }
-  }, [numMealsSelected]);
+  // // recalculate billing on meals/deliveries change
+  // useEffect(() => {
+  //   console.log("(nds) recalculate billing on meals/deliveries change 1");
+  //   if(dataLoaded){
+  //     // console.log("(nds) recalculate billing on meals/deliveries change 2");
+  //     console.log("(before CB) 3");
+  //     calculateBilling({});
+  //   }
+  // }, [numDeliveriesSelected]);
+  // useEffect(() => {
+  //   console.log("(nms) recalculate billing on meals/deliveries change 1");
+  //   if(dataLoaded){
+  //     // console.log("(nms) recalculate billing on meals/deliveries change 2");
+  //     console.log("(before CB) 4");
+  //     calculateBilling({});
+  //   }
+  // }, [numMealsSelected]);
 
   // Used to render menu at top showing all current meals plans
   const showSubscribedMeals = () => {
@@ -979,13 +1338,14 @@ const EditPlan = (props) => {
           }
           onClick={() => {
             // console.log("(SSM) CALL calculateBilling here");
-            // console.log("(SSM) current plan: ", currentPlan);
-            // console.log("(SSM) clicked plan: ", sub);
+            console.log("(SSM) current plan: ", currentPlan);
+            console.log("(SSM) clicked plan: ", sub);
 
             // default new plan to current plan since no edits have been made yet
             // console.log("(SSM) setting currentPlan: ", sub);
             setCurrentPlan(sub);
-            setNewPlan(sub); 
+            // console.log("(0915) setNewPlan 4");
+            // setNewPlan(sub); 
           }}
           tabIndex="0"
           aria-label={
@@ -1059,15 +1419,15 @@ const EditPlan = (props) => {
                   ? selectedPlateButton
                   : deselectedPlateButton
               }
-              disabled={recalculating}
+              disabled={recalculating || recalculatingBilling}
               onClick={() => {
                 if(numMealsSelected !== mealIndex) {
-                  console.log("set recalculating true 3");
+                  // console.log("set recalculating true 3");
                   setRecalculating(true);
-                  console.log("(MD) CALL calculateBilling here");
+                  // console.log("(MD) CALL calculateBilling here");
 
-                  console.log("(change) plan before: ", newPlan);
-                  console.log("(change) new data -- mealIndex: ", mealIndex);
+                  // console.log("(change) plan before: ", newPlan);
+                  // console.log("(change) new data -- mealIndex: ", mealIndex);
 
                   selectNumMeals(mealIndex);
                 }
@@ -1139,15 +1499,15 @@ const EditPlan = (props) => {
                 ? selectedPaymentOption
                 : deselectedPaymentOption
             }
-            disabled={recalculating}
+            disabled={recalculating || recalculatingBilling}
             onClick={() => {
               if(numDeliveriesSelected !== deliveryIndex){
-                console.log("set recalculating true 4");
+                // console.log("set recalculating true 4");
                 setRecalculating(true);
-                console.log("(PF) CALL calculateBilling here");
+                // console.log("(PF) CALL calculateBilling here");
 
-                console.log("(change) plan before: ", newPlan);
-                console.log("(change) new data -- deliveryIndex: ", deliveryIndex);
+                // console.log("(change) plan before: ", newPlan);
+                // console.log("(change) new data -- deliveryIndex: ", deliveryIndex);
 
                 selectNumDeliveries(deliveryIndex);
               }
@@ -1247,7 +1607,7 @@ const EditPlan = (props) => {
                 <div className={styles_admin.plateButtonWrapper3}>
                   <button
                     className={styles.iconTrash}
-                    disabled={recalculating}
+                    disabled={recalculating || recalculatingBilling}
                     onClick={() => {
                       console.log("recalculating: ", recalculating);
                       setRecalculating(true);
@@ -1427,7 +1787,7 @@ const EditPlan = (props) => {
                 <div className={styles_admin.plateButtonWrapper3}>
                   <button
                     className={styles.iconTrash}
-                    disabled={recalculating}
+                    disabled={recalculating || recalculatingBilling}
                     onClick={() => {
                       console.log("recalculating: ", recalculating);
                       setRecalculating(true);
@@ -1561,17 +1921,26 @@ const EditPlan = (props) => {
       return false;
     }
     // console.log("(activeChanges) return true");
+    console.log("\n(AC) true");
+    console.log("(AC) currentSummary: ", currentSummary);
+    console.log("(AC) newSummary: ", newSummary, "\n");
     return true;
   };
 
   const discardChanges = () => {
     console.log("(DISCARD) currentPlan: ", currentPlan);
 
-    selectNumMeals(currentPlan.meals);
+    // selectNumMeals(currentPlan.meals);
+    // selectNumDeliveries(currentPlan.deliveries);
+    // setTipAmount(currentPlan.billing.driver_tip);
+    // console.log("(0915) setNewPlan 5");
+    // setNewPlan(currentPlan);
+    // calculateBilling({current_plan: currentPlan});
     selectNumDeliveries(currentPlan.deliveries);
-    setTipAmount(currentPlan.billing.driver_tip);
-    setNewPlan(currentPlan);
+    selectNumMeals(currentPlan.meals);
+    selectTip(currentPlan.rawData.driver_tip);
     setAmbassadorCode('');
+    setAmbassadorCoupon(null);
 
     setDeliveryInput({
       first_name: currentPlan.delivery_details.delivery_first_name,
@@ -1743,7 +2112,7 @@ const EditPlan = (props) => {
           <button
             className={styles.orangeBtn}
             // disabled={!this.state.subscriptionsLoaded}
-            disabled={recalculating}
+            disabled={recalculating || recalculatingBilling}
             onClick={() => {
               saveDeliveryDetails()
               // console.log("(SDD) CALL calculateBilling here");
@@ -1900,7 +2269,7 @@ const EditPlan = (props) => {
           </div>
 
           <div className={styles.summaryRight}>
-            ${newPlan.billing.delivery_fee}
+            ${currentPlan.billing.delivery_fee}
           </div>
 
           <div
@@ -1931,7 +2300,7 @@ const EditPlan = (props) => {
           </div>
 
           <div className={styles.summaryRight}>
-            ${newPlan.billing.service_fee}
+            ${currentPlan.billing.service_fee}
           </div>
 
           <div
@@ -2010,13 +2379,14 @@ const EditPlan = (props) => {
               ? (styles.tipButtonSelected)
               : (styles.tipButton)
             }
-            disabled={recalculating}
+            disabled={recalculating || recalculatingBilling}
             onClick={() => {
-              selectTip("0.00", TRIGGER_RECALCULATION);
-              console.log("(tip $0.00) CALL calculateBilling here");
+              // selectTip("0.00", TRIGGER_RECALCULATION);
+              selectTip("0.00");
+              // console.log("(tip $0.00) CALL calculateBilling here");
 
-              console.log("(change) plan before: ", newPlan);
-              console.log("(change) new data -- tip: $0.00");
+              // console.log("(change) plan before: ", newPlan);
+              // console.log("(change) new data -- tip: $0.00");
             }}
             aria-label={
               "Current tip is: $" +
@@ -2034,13 +2404,14 @@ const EditPlan = (props) => {
               ? (styles.tipButtonSelected)
               : (styles.tipButton)
             }
-            disabled={recalculating}
+            disabled={recalculating || recalculatingBilling}
             onClick={() => {
-              selectTip("2.00", TRIGGER_RECALCULATION);
-              console.log("(tip $2.00) CALL calculateBilling here");
+              // selectTip("2.00", TRIGGER_RECALCULATION);
+              selectTip("2.00");
+              // console.log("(tip $2.00) CALL calculateBilling here");
 
-              console.log("(change) plan before: ", newPlan);
-              console.log("(change) new data -- tip: $2.00");
+              // console.log("(change) plan before: ", newPlan);
+              // console.log("(change) new data -- tip: $2.00");
             }}
             aria-label={
               "Current tip is: $" +
@@ -2058,13 +2429,14 @@ const EditPlan = (props) => {
               ? (styles.tipButtonSelected)
               : (styles.tipButton)
             }
-            disabled={recalculating}
+            disabled={recalculating || recalculatingBilling}
             onClick={() => {
-              selectTip("3.00", TRIGGER_RECALCULATION);
-              console.log("(tip $3.00) CALL calculateBilling here");
+              // selectTip("3.00", TRIGGER_RECALCULATION);
+              selectTip("3.00");
+              // console.log("(tip $3.00) CALL calculateBilling here");
 
-              console.log("(change) plan before: ", newPlan);
-              console.log("(change) new data -- tip: $3.00");
+              // console.log("(change) plan before: ", newPlan);
+              // console.log("(change) new data -- tip: $3.00");
             }}
             aria-label={
               "Current tip is: $" +
@@ -2082,13 +2454,14 @@ const EditPlan = (props) => {
               ? (styles.tipButtonSelected)
               : (styles.tipButton)
             }
-            disabled={recalculating}
+            disabled={recalculating || recalculatingBilling}
             onClick={() => {
-              selectTip("5.00", TRIGGER_RECALCULATION);
-              console.log("(tip $5.00) CALL calculateBilling here");
+              // selectTip("5.00", TRIGGER_RECALCULATION);
+              selectTip("5.00");
+              // console.log("(tip $5.00) CALL calculateBilling here");
 
-              console.log("(change) plan before: ", newPlan);
-              console.log("(change) new data -- tip: $5.00");
+              // console.log("(change) plan before: ", newPlan);
+              // console.log("(change) new data -- tip: $5.00");
             }}
             aria-label={
               "Current tip is: $" +
@@ -2129,7 +2502,7 @@ const EditPlan = (props) => {
             //   parseFloat(this.state.currentPlan.payment_summary.ambassador_discount) > 0 ||
             //   parseFloat(this.state.updatedPlan.payment_summary.ambassador_discount) > 0
             // }
-            disabled={recalculating}
+            disabled={recalculating || recalculatingBilling}
             onClick={() => applyAmbassadorCode()}
             aria-label="Click here to verify your ambassador code"
             title="Click here to verify your ambassador code"
@@ -2224,7 +2597,7 @@ const EditPlan = (props) => {
           //   !this.activeChanges() ||
           //   this.state.processingChanges
           // }
-          disabled={recalculating}
+          disabled={recalculating || recalculatingBilling || !activeChanges()}
           onClick={() => confirmChanges()}
           aria-label={
             "Your new plan will cost " +
@@ -2249,7 +2622,7 @@ const EditPlan = (props) => {
           //   !this.activeChanges() ||
           //   this.state.processingChanges
           // }
-          disabled={recalculating}
+          disabled={recalculating || recalculatingBilling || !activeChanges()}
           onClick={() => discardChanges()}
           aria-label={
             "Your new plan will cost " +
@@ -2269,10 +2642,10 @@ const EditPlan = (props) => {
   }
 
   const itemize = (n_meals, n_deliveries) => {
-    console.log("(itemize) plans: ", plans);
-    console.log("(itemize) plans[n_meals]: ", plans[n_meals]);
+    // console.log("(itemize) plans: ", plans);
+    // console.log("(itemize) plans[n_meals]: ", plans[n_meals]);
     let planData = plans[n_meals][n_deliveries];
-    console.log("(itemize) planData: ", planData);
+    // console.log("(itemize) planData: ", planData);
     let newItems = [
       {
         item_uid: planData.item_uid,
@@ -2285,23 +2658,20 @@ const EditPlan = (props) => {
     return newItems;
   }
 
-  const calculateBilling = (newData) => {
-    console.log("(CB) start");
-    // setRecalculating(true);
+  /*const calculateBilling = (newData) => {
+    console.log("\n(CB) start");
+    // console.log("(CB) plans: ", plans);
 
-    console.log("(CB) plans: ", plans);
-    // console.log("(CB) plans (string): ", JSON.stringify(plans));
-
-    // Get discount
-    console.log("(CB) numMealsSelected: ", numMealsSelected, typeof(numMealsSelected));
-    console.log("(CB) numDeliveriesSelected: ", numDeliveriesSelected, typeof(numDeliveriesSelected));
+    // // Get discount
+    // console.log("(CB) numMealsSelected: ", numMealsSelected, typeof(numMealsSelected));
+    // console.log("(CB) numDeliveriesSelected: ", numDeliveriesSelected, typeof(numDeliveriesSelected));
     let subDiscount = getDeliveryDiscount(numDeliveriesSelected);
-    console.log("(CB) subDiscount: ", subDiscount);
+    // console.log("(CB) subDiscount: ", subDiscount);
 
-    let updatedNewPlan = {...newPlan};
+    // let updatedNewPlan = {...newPlan};
 
-    console.log("\n(CB) newPlan before change: ", newPlan);
-    console.log("(CB) newData: ", newData);
+    // console.log("\n(CB) newPlan before change: ", newPlan);
+    // console.log("(CB) newData: ", newData);
 
     let itemized = itemize(numMealsSelected, numDeliveriesSelected);
 
@@ -2313,12 +2683,12 @@ const EditPlan = (props) => {
       };
 
       if(newData.hasOwnProperty('tip')) {
-        console.log("(CB) calculating with new tip...");
+        // console.log("(CB) calculating with new tip...");
         object.driver_tip = newData.tip;
       }
 
       if(newData.hasOwnProperty('amb_coupon')) {
-        console.log("(CB) calculating with new coupon...");
+        // console.log("(CB) calculating with new coupon...");
         object.ambassador_coupon = newData.amb_coupon;
       }
 
@@ -2352,9 +2722,81 @@ const EditPlan = (props) => {
           }
 
           setRecalculating(false);
+          console.log("(0915) setNewPlan 6");
+          setNewPlan(recalculated_plan);
+          console.log("(CB) end\n");
+        })
+        .catch((err) => {
+          if (err.response) {
+            console.log(err.response);
+          }
+          console.log(err);
+        });
+    // }
+  }*/
+  const calculateBilling = (
+    mp_currentPlan, 
+    mp_numMealsSelected, 
+    mp_numDeliveriesSelected, 
+    mp_tipAmount, 
+    mp_ambassadorCoupon, 
+    mp_latitude, 
+    mp_longitude
+  ) => {
+    console.log("\n(CB) 1");
+
+    // if(mp_longitude !== null && mp_latitude !== null) {
+    //   console.log("\n(CB) 2");
+
+      let subDiscount = getDeliveryDiscount(mp_numDeliveriesSelected);
+
+      let itemized = itemize(mp_numMealsSelected, mp_numDeliveriesSelected);
+
+      let object = {
+        items: itemized,
+        customer_lat: mp_latitude,
+        customer_long: mp_longitude,
+        driver_tip: mp_tipAmount
+      };
+      if(mp_ambassadorCoupon !== null) {
+        object['ambassadorCoupon'] = mp_ambassadorCoupon;
+      }
+
+      console.log("(CB) object for make_purchase: ", object);
+      axios
+        .put(
+          `http://localhost:2000/api/v2/make_purchase`, 
+          object
+        )
+        .then((res) => {
+          console.log("(make_purchase) res: ", res);
+
+          let recalculated_plan = {
+            ...mp_currentPlan,
+            billing: {
+              base_amount: res.data.new_meal_charge.toFixed(2),
+              taxes: res.data.new_tax.toFixed(2),
+              delivery_fee: res.data.delivery_fee.toFixed(2),
+              service_fee: res.data.service_fee.toFixed(2),
+              driver_tip: res.data.new_driver_tip.toFixed(2),
+              discount_amount: res.data.new_discount.toFixed(2),
+              discount_rate: subDiscount,
+              ambassador_discount: res.data.ambassador_discount.toFixed(2),
+              subtotal: (res.data.amount_should_charge + res.data.ambassador_discount).toFixed(2),
+              total: res.data.amount_should_charge.toFixed(2),
+            },
+            items: itemized,
+            meals: mp_numMealsSelected,
+            deliveries: mp_numDeliveriesSelected,
+            discount: subDiscount
+          }
+
+          // setRecalculating(false);
+          console.log("(0915) setNewPlan 6");
           setNewPlan(recalculated_plan);
 
-          console.log("\n");
+          setRecalculatingBilling(false);
+          console.log("(CB) end\n");
         })
         .catch((err) => {
           if (err.response) {
@@ -2382,8 +2824,10 @@ const EditPlan = (props) => {
   const deletePurchase = () => {
     console.log("plan to cancel: ", newPlan);
 
+    // axios
+    //   .put(`${API_URL}cancel_purchase`, {
     axios
-      .put(`${API_URL}cancel_purchase`, {
+      .put('http://localhost:2000/api/v2/cancel_purchase', {
         //purchase_uid: this.state.updatedPlan.raw_data.purchase_uid,
         //purchase_uid: this.state.updatedPlan.raw_data.purchase_uid
         purchase_uid: newPlan.rawData.purchase_uid,
@@ -2398,6 +2842,14 @@ const EditPlan = (props) => {
       })
       .catch((err) => {
         console.log("refund error: ", err);
+        // setDeletingPurchase(false);
+        // setDeleteSuccess(false);
+        // setRefundError(
+        //   err.response.data.message &&
+        //   typeof err.response.data.message === "string"
+        //     ? err.response.data.message
+        //     : "Error attempting to refund subscription"
+        // );
         if (err.response) {
           console.log(err.response);
         }
@@ -2503,7 +2955,16 @@ const EditPlan = (props) => {
                 .then((res) => {
                   console.log("(CC -- 1) change_purchase response: ", res);
                   
-                  // STEP 6: refresh page
+                  // STEP 6: confirm change and refresh page
+                  // this.displayErrorModal(
+                  //   "Success!",
+                  //   `
+                  //     OLD MEAL PLAN: ${currentPlan.meals} meals, ${currentPlan.deliveries} deliveries
+                  //     NEW MEAL PLAN: ${newPlan.meals} meals, ${newPlan.deliveries} deliveries
+                  //   `,
+                  //   "OK",
+                  //   "back"
+                  // );
                   refreshSubscriptions();
                 })
                 .catch((err) => {
@@ -2562,7 +3023,16 @@ const EditPlan = (props) => {
             .then((res) => {
               console.log("(CC -- 2) change_purchase response: ", res);
               
-              // STEP 5: refresh page
+              // STEP 5: confirm change and refresh page
+              // this.displayErrorModal(
+              //   "Success!",
+              //   `
+              //     OLD MEAL PLAN: ${currentPlan.meals} meals, ${currentPlan.deliveries} deliveries
+              //     NEW MEAL PLAN: ${newPlan.meals} meals, ${newPlan.deliveries} deliveries
+              //   `,
+              //   "OK",
+              //   "back"
+              // );
               refreshSubscriptions();
             })
             .catch((err) => {
@@ -2732,6 +3202,12 @@ const EditPlan = (props) => {
           {showPaymentSummary()}
         </div>
       </div>
+
+      {/* {popUp !== null ? (
+        displayPopUp()
+      ) : (
+        null
+      )} */}
 
       <FootLink />
     </>

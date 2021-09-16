@@ -5,7 +5,7 @@ import {BING_LOCATION_API_URL} from '../reducers/constants';
 export default async function fetchAddressCoordinates(address, city, state, zip, _callback) {
   let latitude, longitude;
 
-  console.log("(FAC) getting lat and lon...");
+  // console.log("(FAC) getting lat and lon...");
 
   axios
     .get(BING_LOCATION_API_URL, {
@@ -19,11 +19,11 @@ export default async function fetchAddressCoordinates(address, city, state, zip,
       },
     })
     .then(res => {
-      console.log("(FAC) in then");
+      // console.log("(FAC) in then");
 
       let locationApiResult = res.data;
 
-      console.log("(FAC) fetchAddressCoordinates res: ", res);
+      // console.log("(FAC) fetchAddressCoordinates res: ", res);
 
       if (locationApiResult.statusCode === 200) {
         let locations = locationApiResult.resourceSets[0].resources;
@@ -36,16 +36,16 @@ export default async function fetchAddressCoordinates(address, city, state, zip,
           longitude = location.geocodePoints[1].coordinates[1];
         }
 
-        console.log("Latitude: " + latitude);
-        console.log("Longitude: " + longitude);
+        // console.log("Latitude: " + latitude);
+        // console.log("Longitude: " + longitude);
         _callback({ latitude, longitude });
       } else {
-        console.log("(FAC) location api error");
+        // console.log("(FAC) location api error");
       }
       
     })
     .catch(err => {
-      console.log("(FAC) in catch");
+      // console.log("(FAC) in catch");
 
       console.log("(FAC) error: ", err);
       if (err.response) {

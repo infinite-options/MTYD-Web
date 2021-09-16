@@ -2013,6 +2013,7 @@ class PaymentDetails extends React.Component {
                         return (
                           <button
                             className={styles.tipButtonSelected}
+                            disabled={this.state.recalculatingPrice}
                             onClick={() => this.changeTip("0.00")}
                             aria-label={
                               "Current tip is: $" +
@@ -2030,6 +2031,7 @@ class PaymentDetails extends React.Component {
                         return (
                           <button
                             className={styles.tipButton}
+                            disabled={this.state.recalculatingPrice}
                             onClick={() => this.changeTip("0.00")}
                             aria-label={
                               "Current tip is: $" +
@@ -2052,6 +2054,7 @@ class PaymentDetails extends React.Component {
                         return (
                           <button
                             className={styles.tipButtonSelected2}
+                            disabled={this.state.recalculatingPrice}
                             onClick={() => this.changeTip("2.00")}
                             aria-label={
                               "Current tip is: $" +
@@ -2069,6 +2072,7 @@ class PaymentDetails extends React.Component {
                         return (
                           <button
                             className={styles.tipButton2}
+                            disabled={this.state.recalculatingPrice}
                             onClick={() => this.changeTip("2.00")}
                             aria-label={
                               "Current tip is: $" +
@@ -2091,6 +2095,7 @@ class PaymentDetails extends React.Component {
                         return (
                           <button
                             className={styles.tipButtonSelected2}
+                            disabled={this.state.recalculatingPrice}
                             onClick={() => this.changeTip("3.00")}
                             aria-label={
                               "Current tip is: $" +
@@ -2108,6 +2113,7 @@ class PaymentDetails extends React.Component {
                         return (
                           <button
                             className={styles.tipButton2}
+                            disabled={this.state.recalculatingPrice}
                             onClick={() => this.changeTip("3.00")}
                             aria-label={
                               "Current tip is: $" +
@@ -2130,6 +2136,7 @@ class PaymentDetails extends React.Component {
                         return (
                           <button
                             className={styles.tipButtonSelected2}
+                            disabled={this.state.recalculatingPrice}
                             onClick={() => this.changeTip("5.00")}
                             aria-label={
                               "Current tip is: $" +
@@ -2147,6 +2154,7 @@ class PaymentDetails extends React.Component {
                         return (
                           <button
                             className={styles.tipButton2}
+                            disabled={this.state.recalculatingPrice}
                             onClick={() => this.changeTip("5.00")}
                             aria-label={
                               "Current tip is: $" +
