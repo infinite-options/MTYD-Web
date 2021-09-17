@@ -165,7 +165,7 @@ const StripeCheckout = (props) => {
     var clientSecret;
 
     // console.log("===> orderData: ", JSON.stringify(orderData));
-
+    console.log("(createPaymentIntent) orderData: ", orderData);
     await axios.post("https://huo8rhh76i.execute-api.us-west-1.amazonaws.com/dev/api/v2/createPaymentIntent", orderData)
     .then(function(result) {
       // console.log("createPaymentIntent result: " + JSON.stringify(result));

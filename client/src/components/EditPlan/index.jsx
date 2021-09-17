@@ -790,7 +790,7 @@ const EditPlan = (props) => {
           rawData: sub
         }
 
-        if(index === 39){
+        if(index === 0){
           // selectNumMeals(parsedSub.meals);
           // selectNumDeliveries(parsedSub.deliveries);
 
@@ -2791,7 +2791,7 @@ const EditPlan = (props) => {
             discount: subDiscount
           }
 
-          // setRecalculating(false);
+          setRecalculating(false);
           console.log("(0915) setNewPlan 6");
           setNewPlan(recalculated_plan);
 
