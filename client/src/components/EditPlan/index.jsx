@@ -314,37 +314,335 @@ const EditPlan = (props) => {
   //   }
   // };
 
+  const [popUp, setPopUp] = useState(null);
+
+  const closePopUp = () => {
+    setPopUp(null);
+  }
+
+  // Cancel Purchase -- STEP 1: display cancellation confirmation pop up
+  const showConfirmCancelPopUp = () => {
+    console.log("clicked showConfirmCancelPopUp...");
+    setPopUp(
+      <div className={styles.errorModalPopUpShow}>
+        <div className={styles.errorModalContainer}>
+          <div className={styles.errorContainer}>
+            <div className={styles.errorHeader}>
+              Confirm Cancellation
+            </div>
+
+            <div className={styles.errorText}>
+              Are you sure you want to delete
+              <br />
+              the following meal plan:
+              <br />
+              <strong>
+                {" " + currentPlan.meals} meals,
+                {" " + currentPlan.deliveries} deliveries
+                (ID: {currentPlan.purchase_uid})
+              </strong>
+              ?
+            </div>
+
+            <br />
+
+            <div
+              style={{
+                // border: 'solid',
+                display: "flex",
+                justifyContent: "center",
+              }}
+            >
+              <button
+                className={styles.confirmBtn}
+                onClick={() => {
+                  // console.log("deleting purchase...");
+                  // this.setState(
+                  //   {
+                  //     deletingPurchase: true,
+                  //     showConfirmModal: false,
+                  //     // confirmModal: styles.errorModalPopUpHide
+                  //   },
+                  //   () => {
+                  //     this.deletePurchase();
+                  //   }
+                  // );
+                  showDeletingPurchasePopUp();
+                  deletePurchase();
+                }}
+              >
+                Yes
+              </button>
+
+              <button
+                className={styles.confirmBtn}
+                onClick={() => {
+                  // this.displayConfirmation();
+                  setPopUp(null);
+                }}
+              >
+                No
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Cancel Purchase -- STEP 2: display cancellation confirmation pop up
+  const showDeletingPurchasePopUp = () => {
+    setPopUp(
+      <div className={styles.errorModalPopUpShow}>
+        <div className={styles.confirmModalContainer}>
+          <div className={styles.deletingContainer}>
+            <div className={styles.deletingHeader}>
+              Deleting Purchase
+            </div>
+
+            <div className={styles.errorText}>Please wait...</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Cancel Purchase -- STEP 3: process meal cancellation
+  const deletePurchase = () => {
+    console.log("plan to cancel: ", newPlan);
+
+    axios
+      .put(`${API_URL}cancel_purchase`, {
+    // axios
+    //   .put('http://localhost:2000/api/v2/cancel_purchase', {
+        purchase_uid: newPlan.rawData.purchase_uid,
+      })
+      .then((response) => {
+        console.log("cancel_purchase response: ", response);
+
+        showCancelSuccessPopUp(response.data.refund_amount);
+        refreshSubscriptions();
+      })
+      .catch((err) => {
+        console.log("refund error: ", err);
+        // setDeletingPurchase(false);
+        // setDeleteSuccess(false);
+        // setRefundError(
+        //   err.response.data.message &&
+        //   typeof err.response.data.message === "string"
+        //     ? err.response.data.message
+        //     : "Error attempting to refund subscription"
+        // );
+        showErrorPopUp("Cancellation Error",
+          err.response.data.message &&
+          typeof err.response.data.message === "string"
+            ? err.response.data.message
+            : "Error attempting to refund subscription"
+        );
+        if (err.response) {
+          console.log(err.response);
+        }
+        console.log(err);
+      });
+
+  };
+
+  // Cancel Purchase -- STEP 4: confirm meal cancelled successfully
+  const showCancelSuccessPopUp = (amount_refunded) => {
+    setPopUp(
+      <div className={styles.errorModalPopUpShow}>
+        <div className={styles.confirmModalContainer}>
+          <div className={styles.confirmContainer}>
+            <div className={styles.cancelledHeader}>
+              Cancellation Success!
+            </div>
+
+            <div className={styles.errorText}>
+              You have been refunded ${amount_refunded.toFixed(2)}.
+            </div>
+
+            <button
+              className={styles.cancelledBtn}
+              onClick={() => {
+                // this.setState({
+                //   deleteSuccess: null,
+                //   confirmModal: styles.errorModalPopUpHide,
+                // });
+                setPopUp(null);
+              }}
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const showErrorPopUp = (error_header, error_text) => {
+    setPopUp(
+      <div className={styles.errorModalPopUpShow}>
+        <div className={styles.confirmModalContainer}>
+          <div className={styles.confirmContainer}>
+            <div className={styles.cancelledHeader}>
+              {error_header}
+            </div>
+
+            <div className={styles.errorText}>
+              {error_text}
+            </div>
+
+            <button
+              className={styles.cancelledBtn}
+              onClick={() => {
+                // this.setState({
+                //   deleteSuccess: null,
+                //   confirmModal: styles.errorModalPopUpHide,
+                // });
+                setPopUp(null);
+              }}
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const showNoPlansPopUp = () => {
+    setPopUp(
+      <div className={styles.errorModalPopUpShow}>
+        <div className={styles.confirmModalContainer}>
+          <div className={styles.confirmContainer}>
+            <div className={styles.cancelledHeader}>
+              Hmm...
+            </div>
+
+            <div className={styles.errorText}>
+              {/* Please purchase a subscription. 
+              Once you have a subscription, 
+              you can manage it from here. */}
+              <div style={{width: '100%', marginBottom: '20px'}}>
+                Please purchase a subscription. 
+              </div>
+              <div style={{width: '100%'}}>
+                Once you have a subscription, you can manage it from here.
+              </div>
+            </div>
+
+            <button
+              className={styles.cancelledBtn}
+              onClick={() => {
+                history.push('/choose-plan');
+              }}
+            >
+              Choose a Plan
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const showUpdateSuccessPopUp = (oldMeals, oldDeliveries, newMeals, newDeliveries) => {
+    setPopUp(
+      <div className={styles.errorModalPopUpShow}>
+        <div className={styles.errorModalContainer}>
+          <div className={styles.errorContainer}>
+            <div className={styles.errorHeader}>
+              Success!
+            </div>
+
+            <div className={styles.errorText}>
+              <div style={{width: '100%'}}>
+                OLD MEAL PLAN: {oldMeals} meals, {oldDeliveries} deliveries
+              </div>
+              <div style={{width: '100%'}}>
+                NEW MEAL PLAN: {newMeals} meals, {newDeliveries} deliveries
+              </div>
+            </div>
+
+            <br />
+
+            <button
+              className={styles.chargeBtn}
+              onClick={() => {
+                setPopUp(null);
+              }}
+            >
+              Go Back
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // const displayPopUp = (type) => {
+  //   if(type === "Cancel") {
+  //     <div className={errorModal}>
+  //       <div className={styles.errorModalContainer}>
+  //         <div className={styles.errorContainer}>
+  //           <div className={styles.errorHeader}>
+  //             {/* {errorHeader} */}
+  //           </div>
+
+  //           <div className={styles.errorText}>
+  //             {errorMessage}
+  //           </div>
+
+  //           <br />
+
+  //           <button
+  //             className={styles.chargeBtn}
+  //             onClick={() => {
+  //               if (errorLink === "back") {
+  //                 displayErrorModal();
+  //               } else {
+  //                 history.push(errorLink);
+  //               }
+  //             }}
+  //           >
+  //             {errorLinkText}
+  //           </button>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   }
+  // }
+
   // const displayPopUp = () => {
   //   if (showErrorModal === true) {
   //     return (
-  //       <div className={errorModal}>
-  //         <div className={styles.errorModalContainer}>
-  //           <div className={styles.errorContainer}>
-  //             <div className={styles.errorHeader}>
-  //               {errorHeader}
-  //             </div>
+        // <div className={errorModal}>
+        //   <div className={styles.errorModalContainer}>
+        //     <div className={styles.errorContainer}>
+        //       <div className={styles.errorHeader}>
+        //         {errorHeader}
+        //       </div>
 
-  //             <div className={styles.errorText}>
-  //               {errorMessage}
-  //             </div>
+        //       <div className={styles.errorText}>
+        //         {errorMessage}
+        //       </div>
 
-  //             <br />
+        //       <br />
 
-  //             <button
-  //               className={styles.chargeBtn}
-  //               onClick={() => {
-  //                 if (errorLink === "back") {
-  //                   displayErrorModal();
-  //                 } else {
-  //                   history.push(errorLink);
-  //                 }
-  //               }}
-  //             >
-  //               {errorLinkText}
-  //             </button>
-  //           </div>
-  //         </div>
-  //       </div>
+        //       <button
+        //         className={styles.chargeBtn}
+        //         onClick={() => {
+        //           if (errorLink === "back") {
+        //             displayErrorModal();
+        //           } else {
+        //             history.push(errorLink);
+        //           }
+        //         }}
+        //       >
+        //         {errorLinkText}
+        //       </button>
+        //     </div>
+        //   </div>
+        // </div>
   //     );
   //   }
 
@@ -372,41 +670,41 @@ const EditPlan = (props) => {
 
   //             <br />
 
-  //             <div
-  //               style={{
-  //                 // border: 'solid',
-  //                 display: "flex",
-  //                 justifyContent: "center",
-  //               }}
-  //             >
-  //               <button
-  //                 className={styles.confirmBtn}
-  //                 onClick={() => {
-  //                   console.log("deleting purchase...");
-  //                   this.setState(
-  //                     {
-  //                       deletingPurchase: true,
-  //                       showConfirmModal: false,
-  //                       // confirmModal: styles.errorModalPopUpHide
-  //                     },
-  //                     () => {
-  //                       this.deletePurchase();
-  //                     }
-  //                   );
-  //                 }}
-  //               >
-  //                 Yes
-  //               </button>
+              // <div
+              //   style={{
+              //     // border: 'solid',
+              //     display: "flex",
+              //     justifyContent: "center",
+              //   }}
+              // >
+              //   <button
+              //     className={styles.confirmBtn}
+              //     onClick={() => {
+              //       console.log("deleting purchase...");
+              //       this.setState(
+              //         {
+              //           deletingPurchase: true,
+              //           showConfirmModal: false,
+              //           // confirmModal: styles.errorModalPopUpHide
+              //         },
+              //         () => {
+              //           this.deletePurchase();
+              //         }
+              //       );
+              //     }}
+              //   >
+              //     Yes
+              //   </button>
 
-  //               <button
-  //                 className={styles.confirmBtn}
-  //                 onClick={() => {
-  //                   this.displayConfirmation();
-  //                 }}
-  //               >
-  //                 No
-  //               </button>
-  //             </div>
+              //   <button
+              //     className={styles.confirmBtn}
+              //     onClick={() => {
+              //       this.displayConfirmation();
+              //     }}
+              //   >
+              //     No
+              //   </button>
+              // </div>
   //           </div>
   //         </div>
   //       </div>
@@ -583,14 +881,19 @@ const EditPlan = (props) => {
         });
 
       // fetch future billing info
-      // axios
-      //   .get(API_URL + "predict_next_billing_date/" + customer_uid)
       axios
-        .get("http://localhost:2000/api/v2/predict_next_billing_amount/" + customer_uid)
+        .get(API_URL + "predict_next_billing_date/" + customer_uid)
+      // axios
+      //   .get("http://localhost:2000/api/v2/predict_next_billing_amount/" + customer_uid)
         .then((res) => {
           console.log("(PNBD) res: ", res);
 
+          if (res.data.result === 0) {
+            showNoPlansPopUp();
+          }
+
           set_pnbd_data(res.data.result);
+
 
           if(res.data.result.length === 0) {
             // displayErrorModal(
@@ -1066,8 +1369,10 @@ const EditPlan = (props) => {
 
   const refreshSubscriptions = () => {
     console.log("(RS) refreshing subscriptions...");
+    // axios
+    //   .get("http://localhost:2000/api/v2/predict_next_billing_amount/" + profileInfo.customer_uid)
     axios
-      .get("http://localhost:2000/api/v2/predict_next_billing_amount/" + profileInfo.customer_uid)
+    .get(API_URL + "predict_next_billing_amount/" + profileInfo.customer_uid)
       .then((res) => {
         console.log("(PNBD) res: ", res);
 
@@ -1610,9 +1915,10 @@ const EditPlan = (props) => {
                     disabled={recalculating || recalculatingBilling}
                     onClick={() => {
                       console.log("recalculating: ", recalculating);
-                      setRecalculating(true);
+                      // setRecalculating(true);
                       // this.confirmDelete();
-                      deletePurchase();
+                      // deletePurchase();
+                      showConfirmCancelPopUp();
                     }}
                     tabIndex="0"
                     aria-label="Click here to cancel this meal plan"
@@ -1790,9 +2096,10 @@ const EditPlan = (props) => {
                     disabled={recalculating || recalculatingBilling}
                     onClick={() => {
                       console.log("recalculating: ", recalculating);
-                      setRecalculating(true);
+                      // setRecalculating(true);
                       // this.confirmDelete();
-                      deletePurchase();
+                      // deletePurchase();
+                      showConfirmCancelPopUp();
                     }}
                     tabIndex="0"
                     aria-label="Click here to cancel this meal plan"
@@ -1921,9 +2228,9 @@ const EditPlan = (props) => {
       return false;
     }
     // console.log("(activeChanges) return true");
-    console.log("\n(AC) true");
-    console.log("(AC) currentSummary: ", currentSummary);
-    console.log("(AC) newSummary: ", newSummary, "\n");
+    // console.log("\n(AC) true");
+    // console.log("(AC) currentSummary: ", currentSummary);
+    // console.log("(AC) newSummary: ", newSummary, "\n");
     return true;
   };
 
@@ -2764,10 +3071,8 @@ const EditPlan = (props) => {
 
       console.log("(CB) object for make_purchase: ", object);
       axios
-        .put(
-          `http://localhost:2000/api/v2/make_purchase`, 
-          object
-        )
+        // .put(`http://localhost:2000/api/v2/make_purchase`, object)
+        .put(API_URL + `make_purchase`, object)
         .then((res) => {
           console.log("(make_purchase) res: ", res);
 
@@ -2821,44 +3126,8 @@ const EditPlan = (props) => {
     return [[year, month, day].join("-"), "00-00-00"].join(" ");
   };
 
-  const deletePurchase = () => {
-    console.log("plan to cancel: ", newPlan);
-
-    // axios
-    //   .put(`${API_URL}cancel_purchase`, {
-    axios
-      .put('http://localhost:2000/api/v2/cancel_purchase', {
-        //purchase_uid: this.state.updatedPlan.raw_data.purchase_uid,
-        //purchase_uid: this.state.updatedPlan.raw_data.purchase_uid
-        purchase_uid: newPlan.rawData.purchase_uid,
-      })
-      .then((response) => {
-        console.log("cancel_purchase response: ", response);
-        // console.log(
-        //   "cancel_purchase customerUid: " + profileInfo
-        // );
-
-        refreshSubscriptions();
-      })
-      .catch((err) => {
-        console.log("refund error: ", err);
-        // setDeletingPurchase(false);
-        // setDeleteSuccess(false);
-        // setRefundError(
-        //   err.response.data.message &&
-        //   typeof err.response.data.message === "string"
-        //     ? err.response.data.message
-        //     : "Error attempting to refund subscription"
-        // );
-        if (err.response) {
-          console.log(err.response);
-        }
-        console.log(err);
-      });
-
-  };
-
   const confirmChanges = () => {
+    setRecalculating(true);
     console.log("(CC) before change_purchase: ", newPlan);
 
     let object = {
@@ -2919,39 +3188,39 @@ const EditPlan = (props) => {
           //          - if used, use existing coupon referral
           //          - else, pass in the coupon itself
           let coupon_use;
-          if(ambassadorCode !== '') {
+          if(ambassadorCode !== '' || ambassadorCode !== 'null') {
             console.log("(CC -- 1) using new code: ", ambassadorCode);
 
-            if(ambassadorCode !== 'null') {
+            coupon_use = res.data.result.find((coupon) => {
+              return (
+                coupon.email_id === profileInfo.customer_email &&
+                coupon.notes === ambassadorCode
+              );
+            });
+            if(typeof(coupon_use) === 'undefined'){
               coupon_use = res.data.result.find((coupon) => {
                 return (
-                  coupon.email_id === profileInfo.customer_email &&
-                  coupon.notes === ambassadorCode
+                  coupon.coupon_id === 'Ambassador' &&
+                  coupon.email_id === ambassadorCode
                 );
               });
-              if(typeof(coupon_use) === 'undefined'){
-                coupon_use = res.data.result.find((coupon) => {
-                  return (
-                    coupon.coupon_id === 'Ambassador' &&
-                    coupon.email_id === ambassadorCode
-                  );
-                });
-              }
-              console.log("(CC -- 1) coupon_use: ", coupon_use);
-              object['ambassador_coupon'] = coupon_use;
             }
+            console.log("(CC -- 1) coupon_use: ", coupon_use);
+            object['ambassador_coupon'] = coupon_use;
           }
 
           // STEP 4: reimburse the old coupon to the customer
           axios
-            .put('http://localhost:2000/api/v2/reissue_coupon/' + coupon_used.coupon_uid)
+            // .put('http://localhost:2000/api/v2/reissue_coupon/' + coupon_used.coupon_uid)
+            .put(API_URL + 'reissue_coupon/' + coupon_used.coupon_uid)
             .then((res) => {
               console.log("(CC -- 1)reissue_coupon res: ", res);
 
               // STEP 5: change to new meal plan
               console.log("(CC -- 1) object for change_purchase: ", object);
               axios
-                .put('http://localhost:2000/api/v2/change_purchase', object)
+                // .put('http://localhost:2000/api/v2/change_purchase', object)
+                .put(API_URL + 'change_purchase', object)
                 .then((res) => {
                   console.log("(CC -- 1) change_purchase response: ", res);
                   
@@ -2965,10 +3234,22 @@ const EditPlan = (props) => {
                   //   "OK",
                   //   "back"
                   // );
+                  // setRecalculating(false);
+                  showUpdateSuccessPopUp(
+                    currentPlan.meals, currentPlan.deliveries, 
+                    newPlan.meals, newPlan.deliveries
+                  );
                   refreshSubscriptions();
                 })
                 .catch((err) => {
                   console.log(err);
+                  setRecalculating(false);
+                  showErrorPopUp("Hmm...", 
+                    err.response.data.message &&
+                    typeof err.response.data.message === "string"
+                      ? err.response.data.message
+                      : "Error attempting to update meal plan"
+                  );
                   if (err.response) {
                     console.log("(CC -- 1) change_purchase error: ", err.response);
                   }
@@ -3019,7 +3300,8 @@ const EditPlan = (props) => {
           // STEP 4: change to new meal plan
           console.log("(CC -- 2) object for change_purchase: ", object);
           axios
-            .put('http://localhost:2000/api/v2/change_purchase', object)
+            // .put('http://localhost:2000/api/v2/change_purchase', object)
+            .put(API_URL + 'change_purchase', object)
             .then((res) => {
               console.log("(CC -- 2) change_purchase response: ", res);
               
@@ -3033,10 +3315,22 @@ const EditPlan = (props) => {
               //   "OK",
               //   "back"
               // );
+              // setRecalculating(false);
+              showUpdateSuccessPopUp(
+                currentPlan.meals, currentPlan.deliveries, 
+                newPlan.meals, newPlan.deliveries
+              );
               refreshSubscriptions();
             })
             .catch((err) => {
               console.log(err);
+              setRecalculating(false);
+              showErrorPopUp("Hmm...", 
+                err.response.data.message &&
+                typeof err.response.data.message === "string"
+                  ? err.response.data.message
+                  : "Error attempting to update meal plan"
+              );
               if (err.response) {
                 console.log("(CC -- 2) change_purchase error: ", err.response);
               }
@@ -3208,6 +3502,7 @@ const EditPlan = (props) => {
       ) : (
         null
       )} */}
+      {popUp}
 
       <FootLink />
     </>

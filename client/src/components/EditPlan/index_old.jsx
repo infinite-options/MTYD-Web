@@ -1488,8 +1488,8 @@ class EditPlan extends React.Component {
   //               this.displayErrorModal(
   //                 "Success!",
   //                 `
-  //                   OLD MEAL PLAN: ${this.state.currentPlan.meals} meals, ${this.state.currentPlan.deliveries} deliveries
-  //                   NEW MEAL PLAN: ${this.state.updatedPlan.meals} meals, ${this.state.updatedPlan.deliveries} deliveries
+                    // OLD MEAL PLAN: ${this.state.currentPlan.meals} meals, ${this.state.currentPlan.deliveries} deliveries
+                    // NEW MEAL PLAN: ${this.state.updatedPlan.meals} meals, ${this.state.updatedPlan.deliveries} deliveries
   //                 `,
   //                 "OK",
   //                 "back"
