@@ -6,16 +6,16 @@ export default async function checkoutItems(data, _callback) {
     // POST to checkout endpoint
     console.log('===> checkout data: ', JSON.stringify(data));
 
-    // axios
-    //   .post(
-    //     process.env.REACT_APP_SERVER_BASE_URI + 'checkout',
-    //     data
-    //   )
     axios
       .post(
-        'http://localhost:2000/api/v2/checkout',
+        process.env.REACT_APP_SERVER_BASE_URI + 'checkout',
         data
       )
+    // axios
+    //   .post(
+    //     'http://localhost:2000/api/v2/checkout',
+    //     data
+    //   )
       .then((res) => {
         console.log("Checkout complete; response: ", res);
         _callback(res, true);

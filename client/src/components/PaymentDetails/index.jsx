@@ -542,9 +542,26 @@ class PaymentDetails extends React.Component {
       }),
       () => {
         console.log("recalculatingPrice ===> true (end)");
+        // axios
+        //   .put(
+        //     `http://localhost:2000/api/v2/make_purchase`, 
+        //     {
+        //       items: [{
+        //           qty: this.props.selectedPlan.num_deliveries.toString(),
+        //           name: this.props.selectedPlan.item_name,
+        //           price: this.props.selectedPlan.item_price.toString(),
+        //           item_uid: this.props.selectedPlan.item_uid,
+        //           itm_business_uid: this.props.selectedPlan.item_uid
+        //       }],
+        //       customer_lat: this.state.latitude,
+        //       customer_long: this.state.longitude,
+        //       driver_tip: newTip,
+        //       ambassador_coupon: this.state.ambassadorCoupon
+        //     }
+        //   )
         axios
           .put(
-            `http://localhost:2000/api/v2/make_purchase`, 
+            API_URL + `make_purchase`, 
             {
               items: [{
                   qty: this.props.selectedPlan.num_deliveries.toString(),
@@ -793,10 +810,10 @@ class PaymentDetails extends React.Component {
             });
           */
 
-          // axios
-          //   .post(API_URL + "brandAmbassador/discount_checker", {
           axios
-            .post('http://localhost:2000/api/v2/brandAmbassador/discount_checker', {
+            .post(API_URL + "brandAmbassador/discount_checker", {
+          // axios
+          //   .post('http://localhost:2000/api/v2/brandAmbassador/discount_checker', {
               code: this.state.ambassadorCode,
               info: this.props.email,
               IsGuest: "False",
@@ -1125,9 +1142,26 @@ class PaymentDetails extends React.Component {
               console.log("Calling make_purchase...");
               console.log("props: ", this.props);
               console.log("state: ", this.state);
+              // axios
+              //   .put(
+              //     `http://localhost:2000/api/v2/make_purchase`, 
+              //     {
+              //       items: [{
+              //           qty: this.props.selectedPlan.num_deliveries.toString(),
+              //           name: this.props.selectedPlan.item_name,
+              //           price: this.props.selectedPlan.item_price.toString(),
+              //           item_uid: this.props.selectedPlan.item_uid,
+              //           itm_business_uid: this.props.selectedPlan.item_uid
+              //       }],
+              //       customer_lat: this.state.latitude,
+              //       customer_long: this.state.longitude,
+              //       driver_tip: this.state.paymentSummary.tip,
+              //       ambassador_coupon: this.state.ambassadorCoupon
+              //     }
+              //   )
               axios
                 .put(
-                  `http://localhost:2000/api/v2/make_purchase`, 
+                  API_URL + `make_purchase`, 
                   {
                     items: [{
                         qty: this.props.selectedPlan.num_deliveries.toString(),
