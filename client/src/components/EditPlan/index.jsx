@@ -1207,6 +1207,10 @@ const EditPlan = (props) => {
   //   }
   // }, [newPlan])
   useEffect(() => {
+    calculateDifference();
+  }, [newPlan]);
+
+  useEffect(() => {
     console.log(" ");
     console.log("=========================| START |=========================");
     console.log("(UE4) currentPlan: ", currentPlan);
@@ -2003,7 +2007,7 @@ const EditPlan = (props) => {
                 <div className={styles_admin.chargeContainer} tabIndex="0">
                   {(() => {
                     let chargeOrRefund = billingDifference.total;
-                    if (recalculating) {
+                    if (recalculating || recalculatingBilling) {
                       return (
                         <div className={styles_admin.chargeText}>
                           {"Calculating, Please Wait..."}
@@ -2170,7 +2174,7 @@ const EditPlan = (props) => {
             <div className={styles_admin.chargeContainer} tabIndex="0">
               {(() => {
                 let chargeOrRefund = billingDifference.total;
-                if (recalculating) {
+                if (recalculating || recalculatingBilling) {
                   return (
                     <div className={styles_admin.chargeText}>
                       {"Calculating, Please Wait..."}
