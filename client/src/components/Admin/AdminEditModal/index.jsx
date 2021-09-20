@@ -148,8 +148,10 @@ const EditPlan = (props) => {
     // axios
     //   .post(API_URL + "brandAmbassador/discount_checker", {
       let itemized = itemize(numMealsSelected, numDeliveriesSelected);
+    // axios
+    //   .post('http://localhost:2000/api/v2/brandAmbassador/discount_checker', {
     axios
-      .post('http://localhost:2000/api/v2/brandAmbassador/discount_checker', {
+      .post(API_URL + "brandAmbassador/discount_checker", {
         code: ambassadorCode,
         info: profileInfo.customer_email,
         IsGuest: "False",
@@ -427,8 +429,8 @@ const EditPlan = (props) => {
       }
       console.log("rc_data: ", rc_data);
       axios
-        .put('http://localhost:2000/api/v2/reissue_coupon', rc_data)
-        // .put(API_URL + 'reissue_coupon', rc_data)
+        // .put('http://localhost:2000/api/v2/reissue_coupon', rc_data)
+        .put(API_URL + 'reissue_coupon', rc_data)
         .then((res) => {
           console.log("(CC -- 1)reissue_coupon res: ", res);
           axios
@@ -950,10 +952,10 @@ const EditPlan = (props) => {
       });
 
     // fetch future billing info
-    // axios
-    //   .get(API_URL + "predict_next_billing_amount/" + customer_uid)
     axios
-      .get("http://localhost:2000/api/v2/predict_next_billing_amount/" + customer_uid)
+      .get(API_URL + "predict_next_billing_amount/" + customer_uid)
+    // axios
+    //   .get("http://localhost:2000/api/v2/predict_next_billing_amount/" + customer_uid)
       .then((res) => {
         console.log("(PNBD) res: ", res);
 
@@ -1445,10 +1447,10 @@ const EditPlan = (props) => {
 
   const refreshSubscriptions = () => {
     console.log("(RS) refreshing subscriptions...");
-    axios
-      .get("http://localhost:2000/api/v2/predict_next_billing_amount/" + profileInfo.customer_uid)
     // axios
-    // .get(API_URL + "predict_next_billing_amount/" + profileInfo.customer_uid)
+    //   .get("http://localhost:2000/api/v2/predict_next_billing_amount/" + profileInfo.customer_uid)
+    axios
+    .get(API_URL + "predict_next_billing_amount/" + profileInfo.customer_uid)
       .then((res) => {
         console.log("(PNBD) res: ", res);
 
@@ -3156,8 +3158,8 @@ const EditPlan = (props) => {
 
       console.log("(CB) object for make_purchase: ", object);
       axios
-        .put(`http://localhost:2000/api/v2/make_purchase`, object)
-        // .put(API_URL + `make_purchase`, object)
+        // .put(`http://localhost:2000/api/v2/make_purchase`, object)
+        .put(API_URL + `make_purchase`, object)
         .then((res) => {
           console.log("(make_purchase) res: ", res);
 
@@ -3297,12 +3299,12 @@ const EditPlan = (props) => {
 
           // STEP 4: reimburse the old coupon to the customer
           axios
-            .put('http://localhost:2000/api/v2/reissue_coupon', {
-              coupon_uid: coupon_used.coupon_uid
-            })
-            // .put(API_URL + 'reissue_coupon', {
+            // .put('http://localhost:2000/api/v2/reissue_coupon', {
             //   coupon_uid: coupon_used.coupon_uid
             // })
+            .put(API_URL + 'reissue_coupon', {
+              coupon_uid: coupon_used.coupon_uid
+            })
             .then((res) => {
               console.log("(CC -- 1)reissue_coupon res: ", res);
 
