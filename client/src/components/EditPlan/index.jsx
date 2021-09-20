@@ -174,6 +174,8 @@ const EditPlan = (props) => {
           //   "Go Back",
           //   "back"
           // );
+          setRecalculating(false);
+          showErrorPopUp("Hmm...", res.data.message);
 
         } else {
           console.log("(CUST) Valid code");
@@ -409,41 +411,105 @@ const EditPlan = (props) => {
 
   // Cancel Purchase -- STEP 3: process meal cancellation
   const deletePurchase = () => {
-    console.log("plan to cancel: ", newPlan);
+    console.log("plan to cancel: ", currentPlan);
 
-    axios
-      .put(`${API_URL}cancel_purchase`, {
-    // axios
-    //   .put('http://localhost:2000/api/v2/cancel_purchase', {
-        purchase_uid: newPlan.rawData.purchase_uid,
-      })
-      .then((response) => {
-        console.log("cancel_purchase response: ", response);
+    let amb_code = currentPlan.rawData.amb_code;
+    let amb_discount = currentPlan.rawData.ambassador_code;
+    let amb_start_date = currentPlan.rawData.start_delivery_date;
 
-        showCancelSuccessPopUp(response.data.refund_amount);
-        refreshSubscriptions();
-      })
-      .catch((err) => {
-        console.log("refund error: ", err);
-        // setDeletingPurchase(false);
-        // setDeleteSuccess(false);
-        // setRefundError(
-        //   err.response.data.message &&
-        //   typeof err.response.data.message === "string"
-        //     ? err.response.data.message
-        //     : "Error attempting to refund subscription"
-        // );
-        showErrorPopUp("Cancellation Error",
-          err.response.data.message &&
-          typeof err.response.data.message === "string"
-            ? err.response.data.message
-            : "Error attempting to refund subscription"
-        );
-        if (err.response) {
-          console.log(err.response);
-        }
-        console.log(err);
-      });
+    let currentDate = getCurrentDate();
+
+    let isPastStartDate = currentDate > amb_start_date;
+
+    if((amb_code !== "" || amb_code !== null) && amb_discount > 0 && !isPastStartDate) {
+
+      let rc_data = {
+        user_email: profileInfo.customer_email,
+        code: amb_code
+      }
+      console.log("rc_data: ", rc_data);
+      axios
+        .put('http://localhost:2000/api/v2/reissue_coupon', rc_data)
+        // .put(API_URL + 'reissue_coupon', rc_data)
+        .then((res) => {
+          console.log("(CC -- 1)reissue_coupon res: ", res);
+          axios
+            .put(`${API_URL}cancel_purchase`, {
+          // axios
+          //   .put('http://localhost:2000/api/v2/cancel_purchase', {
+              // purchase_uid: newPlan.rawData.purchase_uid,
+              purchase_uid: currentPlan.rawData.purchase_uid,
+            })
+            .then((response) => {
+              console.log("cancel_purchase response: ", response);
+
+              showCancelSuccessPopUp(response.data.refund_amount);
+              refreshSubscriptions();
+            })
+            .catch((err) => {
+              console.log("refund error: ", err);
+              // setDeletingPurchase(false);
+              // setDeleteSuccess(false);
+              // setRefundError(
+              //   err.response.data.message &&
+              //   typeof err.response.data.message === "string"
+              //     ? err.response.data.message
+              //     : "Error attempting to refund subscription"
+              // );
+              showErrorPopUp("Cancellation Error",
+                err.response.data.message &&
+                typeof err.response.data.message === "string"
+                  ? err.response.data.message
+                  : "Error attempting to refund subscription"
+              );
+              if (err.response) {
+                console.log(err.response);
+              }
+              console.log(err);
+            });
+        })
+        .catch((err) => {
+          console.log("(CC -- 1) reissue_coupons error: ", err);
+        });
+
+    } else {
+
+      axios
+        .put(`${API_URL}cancel_purchase`, {
+      // axios
+      //   .put('http://localhost:2000/api/v2/cancel_purchase', {
+          // purchase_uid: newPlan.rawData.purchase_uid,
+          purchase_uid: currentPlan.rawData.purchase_uid,
+        })
+        .then((response) => {
+          console.log("cancel_purchase response: ", response);
+
+          showCancelSuccessPopUp(response.data.refund_amount);
+          refreshSubscriptions();
+        })
+        .catch((err) => {
+          console.log("refund error: ", err);
+          // setDeletingPurchase(false);
+          // setDeleteSuccess(false);
+          // setRefundError(
+          //   err.response.data.message &&
+          //   typeof err.response.data.message === "string"
+          //     ? err.response.data.message
+          //     : "Error attempting to refund subscription"
+          // );
+          showErrorPopUp("Cancellation Error",
+            err.response.data.message &&
+            typeof err.response.data.message === "string"
+              ? err.response.data.message
+              : "Error attempting to refund subscription"
+          );
+          if (err.response) {
+            console.log(err.response);
+          }
+          console.log(err);
+        });
+
+    }
 
   };
 
@@ -571,7 +637,7 @@ const EditPlan = (props) => {
                 setPopUp(null);
               }}
             >
-              Go Back
+              OK
             </button>
           </div>
         </div>
@@ -881,10 +947,10 @@ const EditPlan = (props) => {
         });
 
       // fetch future billing info
-      axios
-        .get(API_URL + "predict_next_billing_date/" + customer_uid)
       // axios
-      //   .get("http://localhost:2000/api/v2/predict_next_billing_amount/" + customer_uid)
+      //   .get(API_URL + "predict_next_billing_amount/" + customer_uid)
+      axios
+        .get("http://localhost:2000/api/v2/predict_next_billing_amount/" + customer_uid)
         .then((res) => {
           console.log("(PNBD) res: ", res);
 
@@ -1270,7 +1336,7 @@ const EditPlan = (props) => {
           numMealsSelected, 
           numDeliveriesSelected, 
           tipAmount, 
-          ambassadorCode, 
+          mp_ambassadorCoupon, 
           latitude, 
           longitude
         );
@@ -1288,7 +1354,7 @@ const EditPlan = (props) => {
 
     console.log("=========================|  END  |=========================");
     console.log(" ");
-  }, [currentPlan, numMealsSelected, numDeliveriesSelected, tipAmount, ambassadorCode, latitude, longitude]);
+  }, [currentPlan, numMealsSelected, numDeliveriesSelected, tipAmount, ambassadorCoupon, latitude, longitude]);
 
   // runs anytime an existing subscription is selected to edit
   useEffect(() => {
@@ -1373,10 +1439,10 @@ const EditPlan = (props) => {
 
   const refreshSubscriptions = () => {
     console.log("(RS) refreshing subscriptions...");
-    // axios
-    //   .get("http://localhost:2000/api/v2/predict_next_billing_amount/" + profileInfo.customer_uid)
     axios
-    .get(API_URL + "predict_next_billing_amount/" + profileInfo.customer_uid)
+      .get("http://localhost:2000/api/v2/predict_next_billing_amount/" + profileInfo.customer_uid)
+    // axios
+    // .get(API_URL + "predict_next_billing_amount/" + profileInfo.customer_uid)
       .then((res) => {
         console.log("(PNBD) res: ", res);
 
@@ -2252,6 +2318,13 @@ const EditPlan = (props) => {
     selectTip(currentPlan.rawData.driver_tip);
     setAmbassadorCode('');
     setAmbassadorCoupon(null);
+    setPrevState({
+      currentPlan: null,
+      numDeliveriesSelected: null,
+      numMealsSelected: null,
+      tipAmount: null,
+      ambassadorCoupon: null
+    });
 
     setDeliveryInput({
       first_name: currentPlan.delivery_details.delivery_first_name,
@@ -3055,6 +3128,7 @@ const EditPlan = (props) => {
     mp_longitude
   ) => {
     console.log("\n(CB) 1");
+    console.log("(CB) coupon: ", mp_ambassadorCoupon);
 
     // if(mp_longitude !== null && mp_latitude !== null) {
     //   console.log("\n(CB) 2");
@@ -3070,13 +3144,13 @@ const EditPlan = (props) => {
         driver_tip: mp_tipAmount
       };
       if(mp_ambassadorCoupon !== null) {
-        object['ambassadorCoupon'] = mp_ambassadorCoupon;
+        object['ambassador_coupon'] = mp_ambassadorCoupon;
       }
 
       console.log("(CB) object for make_purchase: ", object);
       axios
-        // .put(`http://localhost:2000/api/v2/make_purchase`, object)
-        .put(API_URL + `make_purchase`, object)
+        .put(`http://localhost:2000/api/v2/make_purchase`, object)
+        // .put(API_URL + `make_purchase`, object)
         .then((res) => {
           console.log("(make_purchase) res: ", res);
 
@@ -3192,20 +3266,21 @@ const EditPlan = (props) => {
           //          - if used, use existing coupon referral
           //          - else, pass in the coupon itself
           let coupon_use;
-          if(ambassadorCode !== '' || ambassadorCode !== 'null') {
-            console.log("(CC -- 1) using new code: ", ambassadorCode);
+          // if(ambassadorCode !== '' || ambassadorCode !== 'null') {
+          if(ambassadorCoupon !== null) {
+            console.log("(CC -- 1) using new code: ", ambassadorCoupon.email_id);
 
             coupon_use = res.data.result.find((coupon) => {
               return (
                 coupon.email_id === profileInfo.customer_email &&
-                coupon.notes === ambassadorCode
+                coupon.notes === ambassadorCoupon.email_id
               );
             });
             if(typeof(coupon_use) === 'undefined'){
               coupon_use = res.data.result.find((coupon) => {
                 return (
                   coupon.coupon_id === 'Ambassador' &&
-                  coupon.email_id === ambassadorCode
+                  coupon.email_id === ambassadorCoupon.email_id
                 );
               });
             }
@@ -3215,8 +3290,12 @@ const EditPlan = (props) => {
 
           // STEP 4: reimburse the old coupon to the customer
           axios
-            // .put('http://localhost:2000/api/v2/reissue_coupon/' + coupon_used.coupon_uid)
-            .put(API_URL + 'reissue_coupon/' + coupon_used.coupon_uid)
+            .put('http://localhost:2000/api/v2/reissue_coupon', {
+              coupon_uid: coupon_used.coupon_uid
+            })
+            // .put(API_URL + 'reissue_coupon', {
+            //   coupon_uid: coupon_used.coupon_uid
+            // })
             .then((res) => {
               console.log("(CC -- 1)reissue_coupon res: ", res);
 
@@ -3282,18 +3361,19 @@ const EditPlan = (props) => {
           //         - if used, use existing coupon referral
           //         - else, pass in the coupon itself
           let coupon_use;
-          if(ambassadorCode !== 'null') {
+          // if(ambassadorCode !== 'null') {
+          if(ambassadorCoupon !== null) {
             coupon_use = res.data.result.find((coupon) => {
               return (
                 coupon.email_id === profileInfo.customer_email &&
-                coupon.notes === ambassadorCode
+                coupon.notes === ambassadorCoupon.email_id
               );
             });
             if(typeof(coupon_use) === 'undefined'){
               coupon_use = res.data.result.find((coupon) => {
                 return (
                   coupon.coupon_id === 'Ambassador' &&
-                  coupon.email_id === ambassadorCode
+                  coupon.email_id === ambassadorCoupon.email_id
                 );
               });
             }
@@ -3367,7 +3447,7 @@ const EditPlan = (props) => {
   return (
     <>
       {/* For debugging window size */}
-      <span 
+      {/* <span 
         style={{
           zIndex: '101',
           position: 'fixed',
@@ -3381,7 +3461,7 @@ const EditPlan = (props) => {
         Height: {dimensions.height}px
         <br />
         Width: {dimensions.width}px
-      </span>
+      </span> */}
 
       <WebNavBar
         poplogin={togglePopLogin}

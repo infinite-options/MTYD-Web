@@ -14,6 +14,7 @@ import editIcon from "../../../images/edit_icon.png";
 import xButton from "../../../images/x_button.png";
 
 import AdminEditModal from "../AdminEditModal";
+// import EditPlan from "../../EditPlan";
 
 import {
   fetchPlans,
@@ -1875,6 +1876,13 @@ function CustomerInfo(props) {
                 refreshPlans={refreshPlans}
                 toggleEditModal={toggleEditModal}
               />
+              {/* <AdminE
+                isAdminModal={true}
+                currentPlan={currentPlan}
+                defaultDelete={showConfirmDelete}
+                refreshPlans={refreshPlans}
+                toggleEditModal={toggleEditModal}
+              /> */}
             </div>
 
             {/* <div
