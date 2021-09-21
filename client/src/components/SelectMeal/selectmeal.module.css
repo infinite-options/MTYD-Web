@@ -204,6 +204,7 @@
   /* height: 3rem; */
   width: 100%;
   margin-left: 130px;
+  position: relative;
 }
 .dishicon {
   position: relative;

@@ -319,7 +319,7 @@ class Home extends Component {
             height: '272px',
             // maxWidth: 'calc(100vw - 15px)',
             marginTop: "25px", 
-            // border: '1px dashed' 
+            border: '1px dashed' 
           }}
         >
           <ProductDisplay />

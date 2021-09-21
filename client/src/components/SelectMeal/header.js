@@ -217,9 +217,9 @@ class Header extends Component {
             height: "170px",
             marginLeft: "198px",
             marginRight: "200px",
-            borderRight: "solid",
-            borderLeft: "solid",
-            borderColor: "#F0F0F0",
+            // borderRight: "solid",
+            // borderLeft: "solid",
+            // borderColor: "#F0F0F0",
             // border: 'solid',
           }}
         >

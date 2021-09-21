@@ -1,5 +1,6 @@
 import { useState } from "react";
 import styles from "./menu.module.css";
+import makeStyles from '@material-ui/core/styles/makeStyles';
 
 const getCircularReplacer = () => {
   const seen = new WeakSet();
@@ -14,7 +15,32 @@ const getCircularReplacer = () => {
   };
 };
 
+const useStyles = makeStyles((theme) => ({
+  menuButton: {
+    borderRadius: "10px",
+    backgroundColor: "white",
+    height: "32px",
+    width: "96%",
+    // paddingLeft: "10px",
+    marginLeft: "2%",
+    marginTop: "10px",
+    textOverflow: "ellipsis",
+    // display: "block",
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    cursor: "pointer",
+    '&:hover': {
+      backgroundColor: '#ffba00'
+    }
+  },
+}));
+
 const Menu = (props) => {
+  const classes = useStyles();
+
   const [showDropdown, toggleShowDropdown] = useState(false);
   const [dropdownButtons, setDropdownButtons] = useState([]);
   const [currentPlan, setCurrentPlan] = useState(null);
@@ -35,6 +61,7 @@ const Menu = (props) => {
       let index = i;
       tempDropdownButtons.push(
         <div
+          className={classes.menuButton}
           key={
             index +
             " : " +
@@ -58,20 +85,23 @@ const Menu = (props) => {
             props.mealsOnClick(props.subscribedPlans[index]);
             toggleShowDropdown(false);
           }}
-          style={{
-            borderRadius: "10px",
-            backgroundColor: "white",
-            height: "32px",
-            width: "96%",
-            paddingLeft: "10px",
-            marginLeft: "2%",
-            marginTop: "10px",
-            textOverflow: "ellipsis",
-            display: "block",
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            cursor: "pointer",
-          }}
+          // style={{
+          //   borderRadius: "10px",
+          //   backgroundColor: "white",
+          //   height: "32px",
+          //   width: "96%",
+          //   // paddingLeft: "10px",
+          //   marginLeft: "2%",
+          //   marginTop: "10px",
+          //   textOverflow: "ellipsis",
+          //   // display: "block",
+          //   display: 'flex',
+          //   alignItems: 'center',
+          //   justifyContent: 'center',
+          //   whiteSpace: "nowrap",
+          //   overflow: "hidden",
+          //   cursor: "pointer",
+          // }}
           tabIndex="0"
           aria-label={
             "Click to select the following meal: " +

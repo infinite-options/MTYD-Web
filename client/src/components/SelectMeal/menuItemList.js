@@ -308,6 +308,7 @@ class MenuItemList extends Component {
     //   .then(response => response.json())
     axios
       .get(`${API_URL}meals_selected?customer_uid=${this.state.customer_uid}`)
+      // .get(`http://localhost:2000/api/v2/meals_selected?customer_uid=${this.state.customer_uid}`)
       .then((res) => {
         // console.log(json)
         // let mealSelected = [...json.result];
@@ -471,6 +472,7 @@ class MenuItemList extends Component {
     //   .then(json => {
     axios
       .get(`${API_URL}meals_selected?customer_uid=${this.state.customer_uid}`)
+      // .get(`http://localhost:2000/api/v2/meals_selected?customer_uid=${this.state.customer_uid}`)
       .then((res) => {
         // let mealSelected = [...json.result];
         console.log("meals_selected res: ", res);
@@ -630,6 +632,7 @@ class MenuItemList extends Component {
     //     let mealSelected = [...json.result];
     axios
       .get(`${API_URL}meals_selected?customer_uid=${this.state.customer_uid}`)
+      // .get(`http://localhost:2000/api/v2/meals_selected?customer_uid=${this.state.customer_uid}`)
       .then((res) => {
         console.log("meals_selected res: ", res);
         let mealSelected = res.data.result;
@@ -808,6 +811,7 @@ class MenuItemList extends Component {
     //     let mealSelected = [...json.result];
     axios
       .get(`${API_URL}meals_selected?customer_uid=${this.state.customer_uid}`)
+      // .get(`http://localhost:2000/api/v2/meals_selected?customer_uid=${this.state.customer_uid}`)
       .then((res) => {
         console.log("meals_selected res: ", res);
         let mealSelected = res.data.result;
@@ -915,6 +919,18 @@ class MenuItemList extends Component {
     });
   };
 
+  saveSelection = (data) => {
+    console.log("(saveSelection) data: ", data);
+    axios
+      .post(`${API_URL}meals_selection`, data)
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
   setDeliveryDay = (e) => {
     let deliver = e.target.value;
     const myarr = [];
@@ -936,14 +952,16 @@ class MenuItemList extends Component {
         delivery_day: deliver,
       };
 
-      axios
-        .post(`${API_URL}meals_selection`, data2)
-        .then((response) => {
-          console.log(response);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      // axios
+      //   .post(`${API_URL}meals_selection`, data2)
+      //   .then((response) => {
+      //     console.log(response);
+      //   })
+      //   .catch((error) => {
+      //     console.log(error);
+      //   });
+      this.saveSelection(data2);
+
       return this.setState({
         deliveryDay: deliver,
         selectValue: "SAVE",
@@ -968,14 +986,16 @@ class MenuItemList extends Component {
           delivery_day: deliver,
         };
 
-        axios
-          .post(`${API_URL}meals_selection`, data1)
-          .then((response) => {
-            console.log(response);
-          })
-          .catch((error) => {
-            console.log(error);
-          });
+        // axios
+        //   .post(`${API_URL}meals_selection`, data1)
+        //   .then((response) => {
+        //     console.log(response);
+        //   })
+        //   .catch((error) => {
+        //     console.log(error);
+        //   });
+        this.saveSelection(data1);
+
         return this.setState({
           deliveryDay: deliver,
           totalCount: 0,
@@ -1114,23 +1134,26 @@ class MenuItemList extends Component {
           this.state.addOnItems
         );
 
-        axios
-          .post(`${API_URL}meals_selection`, data1)
-          .then((response) => {
-            console.log(response);
-          })
-          .catch((error) => {
-            console.log(error);
-          });
+        // axios
+        //   .post(`${API_URL}meals_selection`, data1)
+        //   .then((response) => {
+        //     console.log(response);
+        //   })
+        //   .catch((error) => {
+        //     console.log(error);
+        //   });
 
-        axios
-          .post(`${API_URL}meals_selection`, addOnData1)
-          .then((response) => {
-            console.log(response);
-          })
-          .catch((error) => {
-            console.log(error);
-          });
+        // axios
+        //   .post(`${API_URL}meals_selection`, addOnData1)
+        //   .then((response) => {
+        //     console.log(response);
+        //   })
+        //   .catch((error) => {
+        //     console.log(error);
+        //   });
+
+        this.saveSelection(data1);
+        this.saveSelection(addOnData1);
 
         this.toggleDisplay("SURPRISE");
 
@@ -1241,23 +1264,26 @@ class MenuItemList extends Component {
         delivery_day: this.state.deliveryDay,
       };
 
-      axios
-        .post(`${API_URL}meals_selection`, data2)
-        .then((response) => {
-          // console.log(response);
-        })
-        .catch((error) => {
-          // console.log(error);
-        });
+      // axios
+      //   .post(`${API_URL}meals_selection`, data2)
+      //   .then((response) => {
+      //     // console.log(response);
+      //   })
+      //   .catch((error) => {
+      //     // console.log(error);
+      //   });
 
-      axios
-        .post(`${API_URL}meals_selection`, addOnData2)
-        .then((response) => {
-          // console.log(response);
-        })
-        .catch((error) => {
-          // console.log(error);
-        });
+      // axios
+      //   .post(`${API_URL}meals_selection`, addOnData2)
+      //   .then((response) => {
+      //     // console.log(response);
+      //   })
+      //   .catch((error) => {
+      //     // console.log(error);
+      //   });
+
+      this.saveSelection(data2);
+      this.saveSelection(addOnData2);
 
       this.toggleDisplay("SKIP");
 
@@ -1365,23 +1391,26 @@ class MenuItemList extends Component {
         delivery_day: this.state.deliveryDay,
       };
 
-      axios
-        .post(`${API_URL}meals_selection`, data)
-        .then((response) => {
-          console.log(response);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      // axios
+      //   .post(`${API_URL}meals_selection`, data)
+      //   .then((response) => {
+      //     console.log(response);
+      //   })
+      //   .catch((error) => {
+      //     console.log(error);
+      //   });
 
-      axios
-        .post(`${API_URL}meals_selection`, addOnData)
-        .then((response) => {
-          console.log(response);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      // axios
+      //   .post(`${API_URL}meals_selection`, addOnData)
+      //   .then((response) => {
+      //     console.log(response);
+      //   })
+      //   .catch((error) => {
+      //     console.log(error);
+      //   });
+
+      this.saveSelection(data);
+      this.saveSelection(addOnData);
 
       this.toggleDisplay("SAVE");
     }
@@ -1562,6 +1591,7 @@ class MenuItemList extends Component {
       // let mealSelected = [...json.result];
       axios
         .get(`${API_URL}meals_selected?customer_uid=${uid}`)
+        // .get(`http://localhost:2000/api/v2/meals_selected?customer_uid=${uid}`)
         .then((res) => {
           console.log("PSA meals_selected res: ", res);
           let tempArr = [];
