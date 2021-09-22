@@ -2033,18 +2033,29 @@ class MenuItemList extends Component {
             />
           </div>
 
-          <h6
+          <div
             style={{
-              padding: "10px 90px",
+              // padding: "10px 90px",
               fontSize: "30px",
               fontWeight: "bold",
               color: "#FF9400",
+              // border: '1px solid teal',
+              // height: '60px',
+              width: '84%',
+              marginLeft: '8%',
+              marginRight: '8%',
+              marginTop: '50px',
+              display: 'flex',
+              alignItems: 'center'
             }}
           >
             Add Ons
-          </h6>
+          </div>
 
-          <div className={styles.menuItemsWrapper}>
+          <div 
+            className={styles.menuItemsWrapper}
+            style={{marginBottom: '50px'}}
+          >
             <MenuItem
               addToCart={this.addAddOn}
               removeFromCart={this.removeAddOn}

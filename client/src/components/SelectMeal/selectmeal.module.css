@@ -264,7 +264,7 @@
   display: flex;
   justify-content: left;
   flex-wrap: wrap;
-  padding: 1rem 200px 1rem 200px;
+  /* padding: 1rem 200px 1rem 200px; */
   /* background-image: linear-gradient(#000000, #ff9300); */
   /* overflow: scroll; */
   /* height: 650px; */
@@ -272,8 +272,9 @@
   /* border: 1px dashed; */
   height: max-content;
   /* width: 100%; */
-  /* width: 92%;
-  margin-left: 4%; */
+  width: 84%;
+  margin-left: 8%;
+  margin-right: 8%;
 }
 
 .menuItem {
