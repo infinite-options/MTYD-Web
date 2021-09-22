@@ -284,6 +284,42 @@
   text-align: right;
 }
 
+.menuButton {
+  border-radius: 10px;
+  background-color: white;
+  height: 32px;
+  width: 96%;
+  /* // paddingLeft: "10px", */
+  margin-left: 2%;
+  margin-top: 10px;
+  text-overflow: ellipsis;
+  /* // display: "block", */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.menuButton:hover {
+  border-radius: 10px;
+  background-color: #ffba00;
+  height: 32px;
+  width: 96%;
+  /* // paddingLeft: "10px", */
+  margin-left: 2%;
+  margin-top: 10px;
+  text-overflow: ellipsis;
+  /* // display: "block", */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  overflow: hidden;
+  cursor: pointer;
+}
+
 .dropdownSelection {
   color: white;
   border-radius: 15px;
@@ -296,6 +332,8 @@
   display: flex;
   width: 40%;
   min-width: 300px;
+  /* min-width: 40%;
+  max-width: 350px; */
   z-index: 2;
   position: absolute;
   cursor: pointer;

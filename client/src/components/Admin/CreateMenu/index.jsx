@@ -331,6 +331,7 @@ function CreateMenu({ history, ...props }) {
     axios
       .get(`${API_URL}meals`)
       .then((response) => {
+        console.log("meals response: ", response);
         const mealApiResult = response.data.result;
         dispatch({ type: "FETCH_MEALS", payload: mealApiResult });
       })
@@ -621,10 +622,11 @@ function CreateMenu({ history, ...props }) {
         menu_meal_id: menuItem.meal_uid,
         default_meal: menuItem.default_meal,
         delivery_days: "[Sunday, Monday]",
-        meal_price: "10",
+        meal_price: "10"
       };
       // console.log(updatedMenuItem);
       // Update previous item
+      console.log("0921 put menu: ", updatedMenuItem);
       axios
         .put(`${API_URL}menu`, updatedMenuItem)
         .then((response) => {
@@ -648,9 +650,10 @@ function CreateMenu({ history, ...props }) {
         menu_meal_id: menuItem.meal_uid,
         default_meal: menuItem.default_meal,
         delivery_days: "[Sunday, Monday]",
-        meal_price: "10",
+        meal_price: "10"
       };
       // console.log(newMenuItem);
+      console.log("0921 post menu 1: ", newMenuItem);
       axios
         .post(`${API_URL}menu`, newMenuItem)
         .then((response) => {
@@ -1728,9 +1731,10 @@ function CreateMenu({ history, ...props }) {
                         menu_meal_id: state.newMeal.meal_uid,
                         default_meal: state.newMeal.default_meal,
                         delivery_days: "[Sunday, Monday]",
-                        meal_price: "10",
+                        meal_price: "10"
                       };
-                      console.log(newMenuItem);
+                      // console.log(newMenuItem);
+                      console.log("0921 post menu 2: ", newMenuItem);
                       axios
                         .post(`${API_URL}menu`, newMenuItem)
                         .then((response) => {

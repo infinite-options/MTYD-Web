@@ -189,9 +189,13 @@ class Header extends Component {
 
     let login = this.props.customer_uid ? true : false;
 
+    // let message = (
+    //   <p className={menuStyles.navMessage + " text-left"}>Upcoming Menus</p>
+    // );
     let message = (
-      <p className={menuStyles.navMessage + " text-left"}>Upcoming Menus</p>
+      <div className={menuStyles.navMessage + " text-left"}>Upcoming Menus</div>
     );
+
     return (
       <>
         {/* <WebNavBar/> */}
@@ -208,19 +212,22 @@ class Header extends Component {
           meals={meals}
         />
 
-        <div class={styles.divider} />
+        {/* <div class={styles.divider} /> */}
 
         <div
           style={{
             overflowX: "auto",
             display: "flex",
             height: "170px",
-            marginLeft: "198px",
-            marginRight: "200px",
+            // marginLeft: "198px",
+            width: '80%',
+            marginLeft: '10%',
+            marginRIght: '10%',
+            // marginRight: "200px",
             // borderRight: "solid",
             // borderLeft: "solid",
             // borderColor: "#F0F0F0",
-            // border: 'solid',
+            // border: '1px solid red',
           }}
         >
           {this.props.dateButtonArray}
@@ -231,18 +238,19 @@ class Header extends Component {
           )} */}
         </div>
 
-        <div className={styles.supriseSkipSave}>
-          <div class={styles.divider} />
+        <div className={styles.surpriseSkipSave}>
+          {/* <div class={styles.divider} /> */}
           {this.showSelectionOptions()}
-          <div class={styles.divider} />
+          {/* <div class={styles.divider} /> */}
         </div>
 
-        <div className={styles.stickyHeader + " px-5 "}>
+        {/* <div className={styles.stickyHeader + " px-5 "}> */}
+        {/* <div className={styles.stickyHeader}> */}
           <MealIndicator
             totalCount={this.props.totalCount}
             totalMeals={this.props.totalMeals}
           />
-        </div>
+        {/* </div> */}
       </>
     );
   }

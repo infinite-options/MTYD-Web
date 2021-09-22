@@ -59,6 +59,12 @@ class MenuItemList extends Component {
     };
   }
 
+  isNumeric = (str) => {
+    if (typeof str != "string") return false
+    return !isNaN(str) && 
+           !isNaN(parseFloat(str)) 
+  }
+
   formatDate = (rawDate) => {
     let dateElements = rawDate.split(" ");
     let yyyy_mm_dd = dateElements[0].split("-");
@@ -301,18 +307,11 @@ class MenuItemList extends Component {
   };
 
   selectedMeals = () => {
-    // let cust_id = Cookies.get("customer_uid");
-    // fetch(
-    //   `${API_URL}meals_selected?customer_uid=${this.state.customer_uid}`
-    // )
-    //   .then(response => response.json())
     axios
       .get(`${API_URL}meals_selected?customer_uid=${this.state.customer_uid}`)
       // .get(`http://localhost:2000/api/v2/meals_selected?customer_uid=${this.state.customer_uid}`)
       .then((res) => {
-        // console.log(json)
-        // let mealSelected = [...json.result];
-        console.log("meals_selected res: ", res);
+        console.log("meals_selected res 1: ", res);
         let mealSelected = res.data.result;
 
         this.setState({ mealSelected });
@@ -343,14 +342,19 @@ class MenuItemList extends Component {
             );
 
             let spreadObj = { ...menuItemCur };
+            // let pushingObj = {
+            //   count: myItem.qty,
+            //   ...spreadObj[0],
+            // };
             let pushingObj = {
-              count: myItem.qty,
+              count: parseInt(myItem.qty),
               ...spreadObj[0],
             };
 
             if (myItem.name !== "SKIP" && myItem.name !== "SURPRISE") {
               cartItemsArr.push(pushingObj);
-              myCounter = myCounter + myItem.qty;
+              // myCounter = myCounter + myItem.qty;
+              myCounter = myCounter + parseInt(myItem.qty);
               return this.setState({ selectValue: "SAVE" });
             } else {
               let select_val = myItem.name;
@@ -373,14 +377,19 @@ class MenuItemList extends Component {
               );
 
               let spreadObj = { ...menuItemCur };
+              // let pushingObj = {
+              //   count: myItem.qty,
+              //   ...spreadObj[0],
+              // };
               let pushingObj = {
-                count: myItem.qty,
+                count: parseInt(myItem.qty),
                 ...spreadObj[0],
               };
 
               if (myItem.name !== "SKIP" && myItem.name !== "SURPRISE") {
                 addOnArr.push(pushingObj);
-                addOnCount = addOnCount + myItem.qty;
+                // addOnCount = addOnCount + myItem.qty;
+                addOnCount = addOnCount + parseInt(myItem.qty);
                 // return this.setState({selectValue: "SAVE"});
                 // } else {
                 //   let select_val = myItem.name;
@@ -394,6 +403,7 @@ class MenuItemList extends Component {
           }
         }
 
+        console.log("0921 setting totalCount 1: ", myCounter);
         return this.setState({
           deliveryDay:
             delivery_Day !== "" && delivery_Day !== "SKIP"
@@ -463,23 +473,15 @@ class MenuItemList extends Component {
     console.log("Meals on Click e is:");
     console.log(e);
 
-    // let cust_id = Cookies.get("customer_uid")
-
-    // fetch(
-    //   `${API_URL}meals_selected?customer_uid=${this.state.customer_uid}`
-    // )
-    //   .then(response => response.json())
-    //   .then(json => {
+    console.log("0921 meals_selected 1");
     axios
       .get(`${API_URL}meals_selected?customer_uid=${this.state.customer_uid}`)
       // .get(`http://localhost:2000/api/v2/meals_selected?customer_uid=${this.state.customer_uid}`)
       .then((res) => {
         // let mealSelected = [...json.result];
-        console.log("meals_selected res: ", res);
+        console.log("meals_selected res 2: ", res);
         let mealSelected = res.data.result;
-        console.log("mealSelected: " + mealSelected);
 
-        // console.log(mealSelected)
         this.setState({
           mealSelected,
         });
@@ -552,14 +554,19 @@ class MenuItemList extends Component {
         );
 
         let spreadObj = { ...menuItemCur };
+        // let pushingObj = {
+        //   count: myItem.qty,
+        //   ...spreadObj[0],
+        // };
         let pushingObj = {
-          count: myItem.qty,
+          count: parseInt(myItem.qty),
           ...spreadObj[0],
         };
 
         if (myItem.name !== "SKIP" && myItem.name !== "SURPRISE") {
           cartItemsArr.push(pushingObj);
-          myCounter = myCounter + myItem.qty;
+          // myCounter = myCounter + myItem.qty;
+          myCounter = myCounter + parseInt(myItem.qty);
           return this.setState({ selectValue: "SAVE" });
         } else {
           let select_val = myItem.name;
@@ -582,14 +589,19 @@ class MenuItemList extends Component {
           );
 
           let spreadObj = { ...menuItemCur };
+          // let pushingObj = {
+          //   count: myItem.qty,
+          //   ...spreadObj[0],
+          // };
           let pushingObj = {
-            count: myItem.qty,
+            count: parseInt(myItem.qty),
             ...spreadObj[0],
           };
 
           if (myItem.name !== "SKIP" && myItem.name !== "SURPRISE") {
             addOnArr.push(pushingObj);
-            addOnCount = addOnCount + myItem.qty;
+            // addOnCount = addOnCount + myItem.qty;
+            addOnCount = addOnCount + parseInt(myItem.qty);
             //   return this.setState({selectValue: "SAVE"});
             // } else {
             //   let select_val = myItem.name;
@@ -603,7 +615,8 @@ class MenuItemList extends Component {
       }
     }
 
-    console.log("counter is " + myCounter);
+    // console.log("counter is " + myCounter);
+    console.log("0921 setting totalCount 2: ", myCounter);
     return this.setState({
       deliveryDay:
         delivery_Day !== "" && delivery_Day !== "SKIP"
@@ -622,19 +635,11 @@ class MenuItemList extends Component {
     console.log("Meals on change e is:");
     console.log(e);
 
-    // console.log(Cookies.get("customer_uid"))
-    // let cust_id = Cookies.get("customer_uid");
-    // fetch(
-    //   `${API_URL}meals_selected?customer_uid=${this.state.customer_uid}`
-    // )
-    //   .then(response => response.json())
-    //   .then(json => {
-    //     let mealSelected = [...json.result];
+    console.log("0921 meals_selected 2");
     axios
       .get(`${API_URL}meals_selected?customer_uid=${this.state.customer_uid}`)
-      // .get(`http://localhost:2000/api/v2/meals_selected?customer_uid=${this.state.customer_uid}`)
       .then((res) => {
-        console.log("meals_selected res: ", res);
+        console.log("meals_selected res 3: ", res);
         let mealSelected = res.data.result;
         console.log("mealSelected: " + mealSelected);
 
@@ -713,14 +718,19 @@ class MenuItemList extends Component {
         );
 
         let spreadObj = { ...menuItemCur };
+        // let pushingObj = {
+        //   count: myItem.qty,
+        //   ...spreadObj[0],
+        // };
         let pushingObj = {
-          count: myItem.qty,
+          count: parseInt(myItem.qty),
           ...spreadObj[0],
         };
 
         if (myItem.name !== "SKIP" && myItem.name !== "SURPRISE") {
           cartItemsArr.push(pushingObj);
-          myCounter = myCounter + myItem.qty;
+          // myCounter = myCounter + myItem.qty;
+          myCounter = myCounter + parseInt(myItem.qty);
           return this.setState({ selectValue: "SAVE" });
         } else {
           let select_val = myItem.name;
@@ -743,14 +753,19 @@ class MenuItemList extends Component {
           );
 
           let spreadObj = { ...menuItemCur };
+          // let pushingObj = {
+          //   count: myItem.qty,
+          //   ...spreadObj[0],
+          // };
           let pushingObj = {
-            count: myItem.qty,
+            count: parseInt(myItem.qty),
             ...spreadObj[0],
           };
 
           if (myItem.name !== "SKIP" && myItem.name !== "SURPRISE") {
             addOnArr.push(pushingObj);
-            addOnCount = addOnCount + myItem.qty;
+            // addOnCount = addOnCount + myItem.qty;
+            addOnCount = addOnCount + parseInt(myItem.qty);
             //   return this.setState({selectValue: "SAVE"});
             // } else {
             //   let select_val = myItem.name;
@@ -764,7 +779,8 @@ class MenuItemList extends Component {
       }
     }
 
-    console.log("counter is " + myCounter);
+    console.log("0921 setting totalCount 3: ", myCounter);
+    // console.log("counter is " + myCounter);
     return this.setState({
       deliveryDay:
         delivery_Day !== "" && delivery_Day !== "SKIP"
@@ -801,19 +817,12 @@ class MenuItemList extends Component {
       });
     }
 
-    // let cust_id = Cookies.get("customer_uid");
-    // console.log(cust_id)
-    // fetch(
-    //   `${API_URL}meals_selected?customer_uid=${this.state.customer_uid}`
-    // )
-    //   .then(response => response.json())
-    //   .then(json => {
-    //     let mealSelected = [...json.result];
+    // console.log("0921 mealSelected before axios: ", this.state.mealSelected);
+    console.log("0921 meals_selected 3");
     axios
       .get(`${API_URL}meals_selected?customer_uid=${this.state.customer_uid}`)
-      // .get(`http://localhost:2000/api/v2/meals_selected?customer_uid=${this.state.customer_uid}`)
       .then((res) => {
-        console.log("meals_selected res: ", res);
+        console.log("meals_selected res 4: ", res);
         let mealSelected = res.data.result;
         this.setState({
           mealSelected,
@@ -836,13 +845,16 @@ class MenuItemList extends Component {
         item.sel_purchase_id === this.state.purchaseID &&
         item.sel_menu_date === event.target.value
     );
+    console.log("0921 pulledSelection: ", pulledSelection);
 
     // console.log(pulledSelection)
     if (pulledSelection.length > 0) {
       let selection = JSON.parse(pulledSelection[0].meal_selection);
+      console.log("0921 selection: ", selection);
       let addOnSelection = JSON.parse(pulledSelection[0].addon_selection);
       delivery_Day = pulledSelection[0].delivery_day;
       selection.map((myItem) => {
+        console.log("0921 myItem: ", myItem);
         let required_Id = myItem.item_uid;
         let menuItemCur = this.state.data.filter(
           (dateCheck) =>
@@ -850,14 +862,19 @@ class MenuItemList extends Component {
             dateCheck.meal_uid === required_Id
         );
         let spreadObj = { ...menuItemCur };
+        // let pushingObj = {
+        //   count: myItem.qty,
+        //   ...spreadObj[0],
+        // };
         let pushingObj = {
-          count: myItem.qty,
+          count: parseInt(myItem.qty),
           ...spreadObj[0],
         };
         // console.log(myItem.name)
         if (myItem.name !== "SKIP" && myItem.name !== "SURPRISE") {
           cartItemsArr.push(pushingObj);
-          myCounter = myCounter + myItem.qty;
+          // myCounter = myCounter + myItem.qty;
+          myCounter = myCounter + parseInt(myItem.qty);
           return this.setState({ selectValue: "SAVE" });
         } else {
           let select_val = myItem.name;
@@ -877,14 +894,19 @@ class MenuItemList extends Component {
           );
 
           let spreadObj = { ...menuItemCur };
+          // let pushingObj = {
+          //   count: myItem.qty,
+          //   ...spreadObj[0],
+          // };
           let pushingObj = {
-            count: myItem.qty,
+            count: parseInt(myItem.qty),
             ...spreadObj[0],
           };
 
           if (myItem.name !== "SKIP" && myItem.name !== "SURPRISE") {
             addOnArr.push(pushingObj);
-            addOnCount = addOnCount + myItem.qty;
+            // addOnCount = addOnCount + myItem.qty;
+            addOnCount = addOnCount + parseInt(myItem.qty);
             //   return this.setState({selectValue: "SAVE"});
             // } else {
             //   let select_val = myItem.name;
@@ -905,6 +927,7 @@ class MenuItemList extends Component {
 
     // console.log(event.target.getAttribute('value'));
 
+    console.log("0921 setting totalCount 4: ", myCounter);
     return this.setState({
       deliveryDay:
         delivery_Day !== "" && delivery_Day !== "SKIP"
@@ -921,6 +944,15 @@ class MenuItemList extends Component {
 
   saveSelection = (data) => {
     console.log("(saveSelection) data: ", data);
+
+    // make sure qty and price do not go in as strings
+    if(data.hasOwnProperty('qty') && !isNaN(data.qty)){
+      data.qty = parseInt(data.qty);
+    }
+    if(data.hasOwnProperty('price')){
+      data.price = parseInt(data.price);
+    }
+
     axios
       .post(`${API_URL}meals_selection`, data)
       .then((response) => {
@@ -932,12 +964,19 @@ class MenuItemList extends Component {
   }
 
   setDeliveryDay = (e) => {
+    console.log("0921 setDeliveryDay");
     let deliver = e.target.value;
     const myarr = [];
     if (this.state.totalMeals == this.state.totalCount) {
       this.state.cartItems.map((meal) => {
+        // myarr.push({
+        //   qty: meal.count,
+        //   name: meal.meal_name,
+        //   price: meal.meal_price,
+        //   item_uid: meal.meal_uid,
+        // });
         myarr.push({
-          qty: meal.count,
+          qty: parseInt(meal.count),
           name: meal.meal_name,
           price: meal.meal_price,
           item_uid: meal.meal_uid,
@@ -970,11 +1009,20 @@ class MenuItemList extends Component {
     // } else if (this.state.selectValue === "Surprise") {
     else {
       if (this.state.myDate !== "" && this.state.selectValue === "SURPRISE") {
+        console.log("before surpriseData");
+        // const supriseData = [
+        //   {
+        //     qty: "",
+        //     name: "SURPRISE",
+        //     price: "",
+        //     item_uid: "",
+        //   },
+        // ];
         const supriseData = [
           {
-            qty: "",
+            qty: 0,
             name: "SURPRISE",
-            price: "",
+            price: 0,
             item_uid: "",
           },
         ];
@@ -1089,11 +1137,19 @@ class MenuItemList extends Component {
       });
       if (this.state.myDate !== "") {
         console.log("(before surprise) totalMeals: ", this.state.totalMeals);
+        // const supriseData = [
+        //   {
+        //     qty: this.state.totalMeals,
+        //     name: "SURPRISE",
+        //     price: "",
+        //     item_uid: "",
+        //   },
+        // ];
         const supriseData = [
           {
-            qty: this.state.totalMeals,
+            qty: parseInt(this.state.totalMeals),
             name: "SURPRISE",
-            price: "",
+            price: 0,
             item_uid: "",
           },
         ];
@@ -1238,11 +1294,19 @@ class MenuItemList extends Component {
       console.log("(before skip) state: ", this.state);
       console.log("(before skip) props: ", this.props);
 
+      // const skipData = [
+      //   {
+      //     qty: this.state.totalMeals,
+      //     name: "SKIP",
+      //     price: "",
+      //     item_uid: "",
+      //   },
+      // ];
       const skipData = [
         {
           qty: this.state.totalMeals,
           name: "SKIP",
-          price: "",
+          price: 0,
           item_uid: "",
         },
       ];
@@ -1355,8 +1419,14 @@ class MenuItemList extends Component {
 
       const myarr = [];
       this.state.cartItems.map((meal) => {
+        // myarr.push({
+        //   qty: meal.count,
+        //   name: meal.meal_name,
+        //   price: meal.meal_price,
+        //   item_uid: meal.meal_uid,
+        // });
         myarr.push({
-          qty: meal.count,
+          qty: parseInt(meal.count),
           name: meal.meal_name,
           price: meal.meal_price,
           item_uid: meal.meal_uid,
@@ -1366,8 +1436,14 @@ class MenuItemList extends Component {
 
       const addOns = [];
       this.state.addOnItems.map((meal) => {
+        // addOns.push({
+        //   qty: meal.count,
+        //   name: meal.meal_name,
+        //   price: meal.meal_price,
+        //   item_uid: meal.meal_uid,
+        // });
         addOns.push({
-          qty: meal.count,
+          qty: parseInt(meal.count),
           name: meal.meal_name,
           price: meal.meal_price,
           item_uid: meal.meal_uid,
@@ -1440,6 +1516,7 @@ class MenuItemList extends Component {
         cartItems.push({ ...menuitem, count: 1 });
       }
 
+      console.log("0921 setting totalCount 6: ", this.state.totalCount + 1);
       this.setState({
         cartItems,
         totalCount: this.state.totalCount + 1,
@@ -1500,6 +1577,7 @@ class MenuItemList extends Component {
             // alreadyInCart_1 = true;
             item.count--;
           }
+          console.log("0921 setting totalCount 7: ", this.state.totalCount - 1);
           this.setState({
             cartItems,
             totalCount: this.state.totalCount - 1,
@@ -1517,6 +1595,7 @@ class MenuItemList extends Component {
         meal.count === 0 &&
         this.state.totalCount > 0
       ) {
+        console.log("0921 setting totalCount 8: ", this.state.totalCount - 1);
         this.setState({
           cartItems: cartItems.filter((x) => x.menu_uid !== menuitem.menu_uid),
           totalCount: this.state.totalCount - 1,
@@ -1580,20 +1659,11 @@ class MenuItemList extends Component {
     if (uid != null) {
       console.log("PSA in if statement");
 
-      // fetch(
-      //   `${API_URL}meals_selected?customer_uid=${uid}`
-      // )
-      //   .then(response => response.json())
-      //   .then(json => {
-
-      // console.log("PSA json: ", json);
-
-      // let mealSelected = [...json.result];
+      console.log("0921 meals_selected 4");
       axios
         .get(`${API_URL}meals_selected?customer_uid=${uid}`)
-        // .get(`http://localhost:2000/api/v2/meals_selected?customer_uid=${uid}`)
         .then((res) => {
-          console.log("PSA meals_selected res: ", res);
+          console.log("PSA meals_selected res 5: ", res);
           let tempArr = [];
           let mealSelected = res.data.result;
 
@@ -1865,6 +1935,7 @@ class MenuItemList extends Component {
           flexDirection: "column",
           justifyContent: "space-between",
           minHeight: "100vh",
+          // border: '1px solid blue'
         }}
       >
         <WebNavBar />
@@ -1942,6 +2013,7 @@ class MenuItemList extends Component {
         <div
           style={{
             overflow: "visible",
+            // border: '1px solid blue'
             // height: '100vh',
             // border: 'dashed'
           }}

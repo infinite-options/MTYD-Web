@@ -1,9 +1,10 @@
 .menu {
-  width: 90%;
+  width: 100%;
   display: flex;
   position:relative;
   height:100px;
-
+  /* border: 1px solid red; */
+  margin-top: 40px;
 }
 
 .menu1 {
@@ -90,17 +91,17 @@ a img {
   font-weight: bold;
 }
 .navMessage {
-  width: 400px;
+  /* width: 400px; */
   color: black !important;
   font-size: 24px !important;
   font-weight: 600 !important;
-  margin-bottom: 0px;
+  /* margin-bottom: 0px; */
 
 
-  padding-left: 0px;
-  text-align: center;
-  margin-left: 120px;
-  margin-top: 79px;
+  /* padding-left: 0px; */
+  /* text-align: center; */
+  /* margin-left: 120px; */
+  /* margin-top: 79px; */
   
 }
 
@@ -115,8 +116,6 @@ a img {
 } 
 
 select.pickers {
-
-
   background-image:
     linear-gradient(45deg, transparent 50%, white 50%),
     linear-gradient(135deg, white 50%, transparent 50%);
@@ -129,21 +128,43 @@ select.pickers {
     15px 15px;
     /* 2.6em 2.6em */
   background-repeat: no-repeat;
-
-
-
-
-
-
-
-
-
-
-
 }
 
+.menuButton {
+  border-radius: 10px;
+  background-color: white;
+  height: 32px;
+  width: 96%;
+  /* // paddingLeft: "10px", */
+  margin-left: 2%;
+  margin-top: 10px;
+  text-overflow: ellipsis;
+  /* // display: "block", */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  overflow: hidden;
+  cursor: pointer;
+}
 
-
+.menuButton:hover {
+  border-radius: 10px;
+  background-color: #ffba00;
+  height: 32px;
+  width: 96%;
+  /* // paddingLeft: "10px", */
+  margin-left: 2%;
+  margin-top: 10px;
+  text-overflow: ellipsis;
+  /* // display: "block", */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  overflow: hidden;
+  cursor: pointer;
+}
 
 select {
   display: inline-block;
@@ -190,14 +211,19 @@ select {
   background-color: #f26522;
   font-size: 20px;
   height: 40px;
-  padding-top: 5px;
+  /* padding-top: 5px; */
   box-shadow: 0px 5px 10px gray;
   margin-bottom: 10px;
   display: flex;
-  width: 40%;
-  min-width: 300px;
+  align-items: center;
+  /* width: 40%;
+  min-width: 300px; */
+  /* min-width: 40%; */
+  /* max-width: 350px; */
+  width: 350px;
   z-index: 2;
   position: absolute;
+  right: 8%;
   cursor: pointer;
 }
 

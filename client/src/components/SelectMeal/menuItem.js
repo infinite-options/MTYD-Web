@@ -103,7 +103,7 @@ class MenuItem extends React.Component {
   }
 
   componentDidMount() {
-    // console.log("(menuItem) props data: ", this.props.data);
+    console.log("(menuItem) props data: ", this.props.data);
 
     let filteredData = this.props.data.filter(
       (date) => date.menu_date === this.props.myDate

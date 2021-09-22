@@ -6,6 +6,7 @@ import select from "../../images/selection.png"
 class MealIndicator extends Component {
 
   render() {
+    console.log("(MealIndicator) props: ", this.props);
     const {totalCount} = this.props;
     const {totalMeals} = this.props;
     const {displayCount} = this.props;
@@ -22,16 +23,17 @@ class MealIndicator extends Component {
     for (let i = 0; i < totalCount; i++) {
       myarr.push(
         <div
-        style={{
-          width:"30px",
-          height:"30px",
-          backgroundImage:`url(${select})`,
-          backgroundSize:'cover',
-          backgroundPosition:'center',
-          margin:'10px',
-        }}
+          style={{
+            width:"30px",
+            minWidth: '30px',
+            height:"30px",
+            backgroundImage:`url(${select})`,
+            backgroundSize:'cover',
+            backgroundPosition:'center',
+            margin:'10px',
+            // border: '1px solid navy',
+          }}
         />
-
       );
     }
 
@@ -40,8 +42,10 @@ class MealIndicator extends Component {
         <div
         style={{
           width:"30px",
+          minWidth: '30px',
           height:"30px",
           margin:'10px',
+          // border: '1px solid cyan',
           backgroundImage:`url(${unselect})`,
           backgroundSize:'cover',
           backgroundPosition:'center'
@@ -50,38 +54,55 @@ class MealIndicator extends Component {
       );
     }
 
-
-
-
     let indicatorColor = "";
     return (
       <div className={styles.indicatorWrapper}>
-        <h4
+        {/* <h4
           style={{
-            padding: '10px', 
+            // padding: '10px', 
             fontSize: '24px', 
             display:'inline-block',
             overflow:'hidden',
             whiteSpace:'nowrap',
-            color:"black"
+            color:"black",
+            border: '1px solid purple'
+          }}
+        > */}
+        <div
+          style={{
+            // border: '1px solid purple',
+            width: '42%',
+            marginLeft: '8%'
           }}
         >
           {this.props.totalMeals==null?"Select meals after signup":
             (selectCount === 0
             ? "All Meals Selected!"
-            : `Select ${selectCount} meals`)}
-        </h4>
+            : `Select ${selectCount} Meals`)}
+        </div>
+        {/* </h4> */}
 
-        <div
+        {/* <div
           style={{
             position:'absolute',
             display:"flex",
             right:'200px',
-            // border: 'dashed'
+            border: '1px solid green'
+          }}
+        > */}
+        <div
+          style={{
+            // border: '1px solid green',
+            display: 'flex',
+            flexDirection: 'row-reverse',
+            width: '42%',
+            float: 'right'
           }}
         >
           {myarr}
         </div>
+          {/* {myarr} */}
+        {/* </div> */}
           
       </div>
     );

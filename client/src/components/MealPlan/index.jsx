@@ -23,6 +23,7 @@ import { FootLink } from "../Home/homeButtons";
 import m4me_logo from "../../images/LOGO_NoBG_MealsForMe.png";
 
 const MealPlan = (props) => {
+
   const [customerId, setCustomerId] = useState(null);
   const [currentPlan, setCurrentPlan] = useState(null);
   const [dropdownButtons, setDropdownButtons] = useState([]);
@@ -161,6 +162,7 @@ const MealPlan = (props) => {
         // Push buttons into top dropdown menu
         tempDropdownButtons.push(
           <div
+            className={styles.menuButton}
             key={dropdownIndex + " : " + sub.purchase_id}
             onClick={() => {
               // console.log("pressed: ", sub.purchase_id);
@@ -169,20 +171,20 @@ const MealPlan = (props) => {
               // console.log(parsedPlan)
               toggleShowDropdown(false);
             }}
-            style={{
-              borderRadius: "10px",
-              backgroundColor: "white",
-              height: "32px",
-              width: "96%",
-              paddingLeft: "10px",
-              marginLeft: "2%",
-              marginTop: "10px",
-              textOverflow: "ellipsis",
-              display: "block",
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              cursor: "pointer",
-            }}
+            // style={{
+            //   borderRadius: "10px",
+            //   backgroundColor: "white",
+            //   height: "32px",
+            //   width: "96%",
+            //   paddingLeft: "10px",
+            //   marginLeft: "2%",
+            //   marginTop: "10px",
+            //   textOverflow: "ellipsis",
+            //   display: "block",
+            //   whiteSpace: "nowrap",
+            //   overflow: "hidden",
+            //   cursor: "pointer",
+            // }}
             tabIndex="0"
             aria-label={
               "Click to select the following meal: " +
@@ -1358,7 +1360,7 @@ const MealPlan = (props) => {
     >
       <WebNavBar />
 
-      <div className={styles.sectionHeader}>Select Meal Plan</div>
+      <div className={styles.sectionHeader}>Subscription History</div>
 
       {/* {infoLoaded === false */}
       {/* {currentPlan === null || historyDropdowns === null */}

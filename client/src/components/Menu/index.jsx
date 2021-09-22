@@ -1,6 +1,6 @@
 import { useState } from "react";
 import styles from "./menu.module.css";
-import makeStyles from '@material-ui/core/styles/makeStyles';
+// import makeStyles from '@material-ui/core/styles/makeStyles';
 
 const getCircularReplacer = () => {
   const seen = new WeakSet();
@@ -15,31 +15,31 @@ const getCircularReplacer = () => {
   };
 };
 
-const useStyles = makeStyles((theme) => ({
-  menuButton: {
-    borderRadius: "10px",
-    backgroundColor: "white",
-    height: "32px",
-    width: "96%",
-    // paddingLeft: "10px",
-    marginLeft: "2%",
-    marginTop: "10px",
-    textOverflow: "ellipsis",
-    // display: "block",
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    whiteSpace: "nowrap",
-    overflow: "hidden",
-    cursor: "pointer",
-    '&:hover': {
-      backgroundColor: '#ffba00'
-    }
-  },
-}));
+// const useStyles = makeStyles((theme) => ({
+//   menuButton: {
+//     borderRadius: "10px",
+//     backgroundColor: "white",
+//     height: "32px",
+//     width: "96%",
+//     // paddingLeft: "10px",
+//     marginLeft: "2%",
+//     marginTop: "10px",
+//     textOverflow: "ellipsis",
+//     // display: "block",
+//     display: 'flex',
+//     alignItems: 'center',
+//     justifyContent: 'center',
+//     whiteSpace: "nowrap",
+//     overflow: "hidden",
+//     cursor: "pointer",
+//     '&:hover': {
+//       backgroundColor: '#ffba00'
+//     }
+//   },
+// }));
 
 const Menu = (props) => {
-  const classes = useStyles();
+  // const classes = useStyles();
 
   const [showDropdown, toggleShowDropdown] = useState(false);
   const [dropdownButtons, setDropdownButtons] = useState([]);
@@ -61,7 +61,7 @@ const Menu = (props) => {
       let index = i;
       tempDropdownButtons.push(
         <div
-          className={classes.menuButton}
+          className={styles.menuButton}
           key={
             index +
             " : " +
@@ -166,10 +166,13 @@ const Menu = (props) => {
         <div
           style={{
             backgroundColor: "#f26522",
-            width: "40%",
-            minWidth: "300px",
+            // width: "40%",
+            // minWidth: "300px",
+            // maxWidth: '350px',
+            width: '350px',
             height: 40 + props.subscribedPlans.length * 42,
             position: "absolute",
+            right: '8%',
             zIndex: "1",
             boxShadow: "0px 5px 10px gray",
             borderRadius: "15px",
@@ -201,22 +204,48 @@ const Menu = (props) => {
     <div className={styles.menu}>
       {setDefaultCurrentPlan()}
       {!props.login ? (
+        // <div
+        //   style={{
+        //     border: '1px dashed',
+        //     width: '50%',
+        //     fontSize: '90px !important',
+        //     fontWeight: '600'
+        //   }}
+        // >{props.show && props.message}</div>
         <div>{props.show && props.message}</div>
       ) : (
-        <div>
+        <div
+          style={{
+            // border: '1px solid lime',
+            display: 'flex',
+            width: '84%',
+            marginLeft: '8%'
+          }}
+        >
+          {/* <div
+            style={{
+              border: '1px dashed',
+              width: '50%',
+              fontSize: '90px !important',
+              fontWeight: '600'
+            }}
+          >
+            Upcoming Menus
+          </div> */}
           <div>{props.message}</div>
 
-          <div className={styles.selectBtn + " " + (!props.show && styles.w5)}>
+          {/* <div className={styles.selectBtn + " " + (!props.show && styles.w5)}> */}
             {/* NEW CODE */}
 
             <div
               style={{
-                position: "absolute",
-                top: "68px",
-                right: "330px",
+                // position: "absolute",
+                // top: "68px",
+                // right: "330px",
                 height: showDropdown
                   ? 60 + props.subscribedPlans.length * 42
                   : 60,
+                // border: '1px dashed'
               }}
             >
               <div
@@ -329,7 +358,7 @@ const Menu = (props) => {
               </div> */}
 
             {/*OLD CODE*/}
-          </div>
+          {/* </div> */}
         </div>
       )}
     </div>
