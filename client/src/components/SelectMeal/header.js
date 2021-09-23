@@ -237,7 +237,7 @@ class Header extends Component {
               backgroundColor: 'white',
               // width: '100px',
               height: '20px',
-              zIndex: '10',
+              zIndex: '1',
               bottom: '0px',
               width: '100%'
             }}
