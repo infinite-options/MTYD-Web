@@ -180,7 +180,7 @@ const Menu = (props) => {
             height: 40 + props.subscribedPlans.length * 42,
             // position: "absolute",
             // right: '8%',
-            // zIndex: "1",
+            zIndex: "2",
             // boxShadow: "0px 5px 10px gray",
             // borderRadius: "15px",
           }}

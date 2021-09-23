@@ -38,7 +38,7 @@
   /* min-width: 40%; */
   /* max-width: 350px; */
   width: 350px;
-  z-index: 2;
+  z-index: 3;
   position: absolute;
   right: 8%;
   cursor: pointer;
@@ -106,7 +106,7 @@
     /* min-width: 40%; */
     /* max-width: 350px; */
     width: 350px;
-    z-index: 2;
+    z-index: 3;
     position: relative;
     right: 0%;
     cursor: pointer;
