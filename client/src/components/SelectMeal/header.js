@@ -213,34 +213,79 @@ class Header extends Component {
         />
 
         {/* <div class={styles.divider} /> */}
+        {/* <div 
+          style={{
+            position: 'absolute',
+            border: '1px solid',
+            backgroundColor: 'blue',
+            width: '100px',
+            height: '100px'
+          }}
+        /> */}
 
         <div
           style={{
-            overflowX: "auto",
-            display: "flex",
-            height: "170px",
-            // marginLeft: "198px",
-            width: '80%',
-            marginLeft: '10%',
-            marginRIght: '10%',
-            // marginRight: "200px",
-            // borderRight: "solid",
-            // borderLeft: "solid",
-            // borderColor: "#F0F0F0",
-            // border: '1px solid red',
+            // border: '1px solid green',
+            position: 'relative'
           }}
         >
-          {this.props.dateButtonArray}
-          {/* {this.props.dateButtonArray.length > 0 ? (
-            this.props.dateButtonArray
-          ) : (
-            <>Loading dates...</>
-          )} */}
+          <div 
+            style={{
+              position: 'absolute',
+              // border: '1px solid',
+              // backgroundColor: 'blue',
+              backgroundColor: 'white',
+              // width: '100px',
+              height: '20px',
+              zIndex: '10',
+              bottom: '0px',
+              width: '100%'
+            }}
+          />
+          <div
+            style={{
+              overflowX: "auto",
+              display: "flex",
+              height: "160px",
+              // marginLeft: "198px",
+              // width: '84%',
+              // marginLeft: '8%',
+              // marginRIght: '8%',
+              width: '100%',
+              position: 'relative'
+              // marginLeft: '8%',
+              // marginRIght: '8%',
+              // marginRight: "200px",
+              // borderRight: "solid",
+              // borderLeft: "solid",
+              // borderColor: "#F0F0F0",
+              // border: '1px solid red',
+            }}
+          >
+            {/* <div 
+              style={{
+                position: 'absolute',
+                border: '1px solid',
+                backgroundColor: 'blue',
+                width: '100px',
+                height: '100px'
+              }}
+            /> */}
+            {this.props.dateButtonArray}
+            {/* {this.props.dateButtonArray.length > 0 ? (
+              this.props.dateButtonArray
+            ) : (
+              <>Loading dates...</>
+            )} */}
+          </div>
         </div>
 
         <div className={styles.surpriseSkipSave}>
           {/* <div class={styles.divider} /> */}
-          {this.showSelectionOptions()}
+          <div className={styles.surpriseSkipSave2}>
+            {this.showSelectionOptions()}
+          </div>
+          {/* {this.showSelectionOptions()} */}
           {/* <div class={styles.divider} /> */}
         </div>
 

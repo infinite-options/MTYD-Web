@@ -178,9 +178,9 @@ class MenuItem extends React.Component {
     x.forEach((menuitem, index) => {
       menuHTML.push(
         <div
-        // style={{
-        //   border: 'dashed'
-        // }}
+          // style={{
+          //   border: '1px dashed'
+          // }}
         >
           <ReactCardFlip
             isFlipped={this.state.flipStatusArray[index]}
@@ -625,12 +625,13 @@ class MenuItem extends React.Component {
   render() {
     return (
       <Fragment>
-        <div
+        {/* <div
           style={{
             width: "100%",
             height: "7px",
+            border: '1px dashed'
           }}
-        />
+        /> */}
         {this.menuItemFilter()}
       </Fragment>
     );

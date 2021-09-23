@@ -156,7 +156,13 @@ const Menu = (props) => {
 
   const getDropdownButtons = () => {
     return (
-      <>
+      <div
+        className={styles.dropdownStyling2}
+        // style={{
+        //   border: '1px inset',
+        //   position: 'relative'
+        // }}
+      >
         <div
           style={{
             height: "20px",
@@ -164,23 +170,24 @@ const Menu = (props) => {
           }}
         />
         <div
+          className={styles.dropdownStyling}
           style={{
-            backgroundColor: "#f26522",
-            // width: "40%",
-            // minWidth: "300px",
-            // maxWidth: '350px',
-            width: '350px',
+            // backgroundColor: "#f26522",
+            // // width: "40%",
+            // // minWidth: "300px",
+            // // maxWidth: '350px',
+            // width: '350px',
             height: 40 + props.subscribedPlans.length * 42,
-            position: "absolute",
-            right: '8%',
-            zIndex: "1",
-            boxShadow: "0px 5px 10px gray",
-            borderRadius: "15px",
+            // position: "absolute",
+            // right: '8%',
+            // zIndex: "1",
+            // boxShadow: "0px 5px 10px gray",
+            // borderRadius: "15px",
           }}
         >
           {generateDropdownButtons()}
         </div>
-      </>
+      </div>
     );
   };
 
@@ -203,7 +210,7 @@ const Menu = (props) => {
 
     <div className={styles.menu}>
       {setDefaultCurrentPlan()}
-      {!props.login ? (
+      {/* {!props.login ? (
         // <div
         //   style={{
         //     border: '1px dashed',
@@ -213,14 +220,15 @@ const Menu = (props) => {
         //   }}
         // >{props.show && props.message}</div>
         <div>{props.show && props.message}</div>
-      ) : (
+      ) : ( */}
         <div
-          style={{
-            // border: '1px solid lime',
-            display: 'flex',
-            width: '84%',
-            marginLeft: '8%'
-          }}
+          className={styles.headerWrapper}
+          // style={{
+          //   // border: '1px solid lime',
+          //   display: 'flex',
+          //   width: '84%',
+          //   marginLeft: '8%'
+          // }}
         >
           {/* <div
             style={{
@@ -232,12 +240,21 @@ const Menu = (props) => {
           >
             Upcoming Menus
           </div> */}
-          <div>{props.message}</div>
+          <div
+            className={styles.headerLeft}
+            // style={{
+            //   border: '1px dashed',
+            //   display: 'flex',
+            //   alignItems: 'center',
+            //   height: '40px'
+            // }}
+          >{props.message}</div>
 
           {/* <div className={styles.selectBtn + " " + (!props.show && styles.w5)}> */}
             {/* NEW CODE */}
 
             <div
+              className={styles.dropdownWrapper}
               style={{
                 // position: "absolute",
                 // top: "68px",
@@ -360,7 +377,7 @@ const Menu = (props) => {
             {/*OLD CODE*/}
           {/* </div> */}
         </div>
-      )}
+      {/* )} */}
     </div>
   );
 };

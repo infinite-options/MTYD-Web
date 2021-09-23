@@ -1862,6 +1862,13 @@ class MenuItemList extends Component {
             onClick={this.filterDates}
             id={date}
             className={styles.datebuttonSurprise}
+            // style={first === null ? ({
+            //   marginLeft: '50px',
+            //   border: '1px dashed'
+            // }) : ({
+            //   marginLeft: '10px',
+            //   border: '1px dashed'
+            // })}
             autoFocus={first == null}
             aria-label={date + "Suprise / No selection"}
           >
@@ -1920,12 +1927,48 @@ class MenuItemList extends Component {
     return buttonList;
   };
 
+  // padDateArray = (arr) => {
+  //   arr.unshift(<div style={{
+  //     width: '100px',
+  //     border: '1px dashed'
+  //   }}/>);
+  //   arr.push(<div style={{
+  //     width: '100px',
+  //     border: '1px dashed'
+  //   }}/>);
+  //   return arr;
+  // }
+
   render() {
     const dates = this.state.data.map((date) => date.menu_date);
     const uniqueDates = Array.from(new Set(dates));
 
     console.log("(render) dateButtonList: ", this.state.dateButtonList);
     console.log("(render) mealsLoaded: ", this.state.mealsLoaded);
+
+    // const padDateArray = (arr) => {
+    //   arr.unshift(<div style={{
+    //     width: '100px',
+    //     border: '1px dashed'
+    //   }}/>);
+    //   arr.push(<div style={{
+    //     width: '100px',
+    //     border: '1px dashed'
+    //   }}/>);
+    //   return arr;
+    // }
+    const padded_dateButtonList = [];
+    padded_dateButtonList.push(<div style={{
+      // width: '200px',
+      // border: '1px dashed',
+      marginLeft: '8%'
+    }}/>);
+    padded_dateButtonList.push(this.state.dateButtonList);
+    padded_dateButtonList.push(<div style={{
+      // width: '200px',
+      // border: '1px dashed',
+      marginRight: '8%'
+    }}/>);
 
     // console.log(this.state.surpriseSkipSave)
     return (
@@ -1939,6 +1982,16 @@ class MenuItemList extends Component {
         }}
       >
         <WebNavBar />
+
+        {/* <div 
+          style={{
+            position: 'absolute',
+            border: '1px solid',
+            backgroundColor: 'blue',
+            width: '100px',
+            height: '100px'
+          }}
+        /> */}
 
         {/* Loading Screen */}
         {/* Loading screen does not go away */}
@@ -2004,7 +2057,8 @@ class MenuItemList extends Component {
           saveButton={this.state.saveButton}
           purchaseID={this.state.purchaseID}
           mealSelected={this.state.mealSelected}
-          dateButtonArray={this.state.dateButtonList}
+          // dateButtonArray={this.state.dateButtonList}
+          dateButtonArray={padded_dateButtonList}
           customer_uid={this.state.customer_uid}
         />
 
@@ -2044,7 +2098,7 @@ class MenuItemList extends Component {
               width: '84%',
               marginLeft: '8%',
               marginRight: '8%',
-              marginTop: '50px',
+              marginTop: '40px',
               display: 'flex',
               alignItems: 'center'
             }}
