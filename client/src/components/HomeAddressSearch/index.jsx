@@ -2,6 +2,7 @@ import { Component } from "react";
 import axios from "axios";
 import Popsignup from "../PopSignup";
 import { withRouter } from "react-router-dom";
+import styles from "../Home/home.module.css";
 
 const google = window.google;
 
@@ -351,19 +352,20 @@ export class HomeMap extends Component {
           />
 
           <button
-            style={{
-              width: "320px",
-              height: "57px",
-              borderRadius: "10px",
-              fontSize: "25px",
-              border: "none",
-              textAlign: "center",
-              color: "white",
-              marginLeft: "40px",
-              marginBottom: "15px",
-              borderRadius: "10px",
-              backgroundColor: "#ff6505",
-            }}
+            // style={{
+            //   width: "320px",
+            //   height: "57px",
+            //   borderRadius: "10px",
+            //   fontSize: "25px",
+            //   border: "none",
+            //   textAlign: "center",
+            //   color: "white",
+            //   marginLeft: "40px",
+            //   marginBottom: "15px",
+            //   borderRadius: "10px",
+            //   backgroundColor: "#ff6505",
+            // }}
+            className={styles.viewMeals}
             aria-label="Click here to view meals"
             title="Click here to view meals"
           >

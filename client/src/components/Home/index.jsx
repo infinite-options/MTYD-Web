@@ -319,7 +319,7 @@ class Home extends Component {
             height: '272px',
             // maxWidth: 'calc(100vw - 15px)',
             marginTop: "25px", 
-            border: '1px dashed' 
+            // border: '1px dashed' 
           }}
         >
           <ProductDisplay />
@@ -548,15 +548,16 @@ class Home extends Component {
           }}
         >
           <button
-            style={{
-              backgroundColor: "white",
-              color: "#F26522",
-              border: "2px solid #F26522",
-              padding: "15px",
-              borderRadius: "15px",
-              width: "300px",
-              fontSize: "24px",
-            }}
+            className={styles.whiteBtn}
+            // style={{
+            //   backgroundColor: "white",
+            //   color: "#F26522",
+            //   border: "2px solid #F26522",
+            //   padding: "15px",
+            //   borderRadius: "15px",
+            //   width: "300px",
+            //   fontSize: "24px",
+            // }}
             onClick={this.togglePopSignup}
           >
             Sign Up
@@ -799,16 +800,17 @@ class Home extends Component {
           }}
         >
           <button
-            style={{
-              backgroundColor: "white",
-              color: "#F26522",
-              border: "2px solid #F26522",
-              padding: "15px",
-              borderRadius: "15px",
-              width: "300px",
-              // width: '20%',
-              fontSize: "24px",
-            }}
+            className={styles.whiteBtn}
+            // style={{
+            //   backgroundColor: "white",
+            //   color: "#F26522",
+            //   border: "2px solid #F26522",
+            //   padding: "15px",
+            //   borderRadius: "15px",
+            //   width: "300px",
+            //   // width: '20%',
+            //   fontSize: "24px",
+            // }}
             onClick={() => {
               window.location.href = "/choose-plan";
             }}
