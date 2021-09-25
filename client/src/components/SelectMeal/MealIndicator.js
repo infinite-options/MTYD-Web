@@ -6,7 +6,7 @@ import select from "../../images/selection.png"
 class MealIndicator extends Component {
 
   render() {
-    console.log("(MealIndicator) props: ", this.props);
+    // console.log("(MealIndicator) props: ", this.props);
     const {totalCount} = this.props;
     const {totalMeals} = this.props;
     const {displayCount} = this.props;

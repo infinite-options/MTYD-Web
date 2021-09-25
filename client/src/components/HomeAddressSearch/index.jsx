@@ -113,12 +113,12 @@ export class HomeMap extends Component {
             this.setState({
               stillGrowing: true,
             });
-            console.log("cannot deliver to this address");
+            // console.log("cannot deliver to this address");
           } else {
             this.setState({
               hooray: true,
             });
-            console.log("we can deliver to this address");
+            // console.log("we can deliver to this address");
           }
         })
         .catch((err) => {
@@ -232,7 +232,7 @@ export class HomeMap extends Component {
               }}
               onClick={() => {
                 this.setState({ signup: true, hooray: false });
-                console.log(this.state);
+                // console.log(this.state);
               }}
               aria-label="Click here to sign up"
               title="Click here to sign up"

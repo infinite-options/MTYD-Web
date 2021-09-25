@@ -78,10 +78,10 @@ class Home extends Component {
 
     autocomplete.addListener("place_changed", () => {
       const place = autocomplete.getPlace();
-      console.log(place);
+      // console.log(place);
     });
 
-    console.log(autocomplete);
+    // console.log(autocomplete);
 
     this.handleResize();
     window.addEventListener("resize", this.handleResize);
@@ -92,17 +92,17 @@ class Home extends Component {
   // }
 
   goToLink(navlink) {
-    console.log("LINK CLICKED");
+    // console.log("LINK CLICKED");
     this.props.history.push(navlink);
   }
 
   handlePlaceSelect() {
-    console.log("here");
+    // console.log("here");
 
     let address1Field = document.querySelector("#ship-address");
 
     let addressObject = this.autocomplete.getPlace();
-    console.log(addressObject.address_components);
+    // console.log(addressObject.address_components);
 
     let address1 = "";
     let postcode = "";
@@ -142,8 +142,8 @@ class Home extends Component {
 
     address1Field.value = address1;
 
-    console.log(address1);
-    console.log(postcode);
+    // console.log(address1);
+    // console.log(postcode);
 
     this.setState({
       name: addressObject.name,
@@ -163,9 +163,9 @@ class Home extends Component {
         console.log(res);
         if (res.data.result.length == 0) {
           alert("cannot deliver to this address");
-          console.log("cannot deliver to this address");
+          // console.log("cannot deliver to this address");
         } else {
-          console.log("we can deliver to this address");
+          // console.log("we can deliver to this address");
         }
       })
       .catch((err) => {
@@ -174,7 +174,7 @@ class Home extends Component {
         }
         console.log(err);
       });
-    console.log(this.state);
+    // console.log(this.state);
   }
 
   render() {

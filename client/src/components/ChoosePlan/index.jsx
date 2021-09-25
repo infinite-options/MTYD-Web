@@ -133,11 +133,11 @@ class ChoosePlan extends React.Component {
 
       // New Code
       let hashed_customer_uid = urlParams.get("customer_uid");
-      console.log(hashed_customer_uid);
+      // console.log(hashed_customer_uid);
 
       let customer_uid = this.convertHexToString(hashed_customer_uid);
       document.cookie = "customer_uid=" + customer_uid;
-      console.log(customer_uid);
+      // console.log(customer_uid);
 
       // Old Api Calls
       axios
@@ -147,7 +147,7 @@ class ChoosePlan extends React.Component {
           },
         })
         .then((res) => {
-          console.log(res);
+          // console.log(res);
           if (res.data.result !== undefined) {
             // this.props.history.push("/select-meal");
             this.props.fetchProfileInformation(customer_uid);

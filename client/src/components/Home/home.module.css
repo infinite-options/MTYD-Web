@@ -955,3 +955,227 @@ button {
   background-color: #ffba00;
   /* border: solid #F26522; */
 }
+
+.congratsBody {
+  /* border: 3px solid purple; */
+  position: relative;
+  margin-top: 30px;
+  min-height: calc(100vh - 350px);
+}
+
+.congratsLeft {
+  margin-left: 8%;
+  /* border: 1px solid blue; */
+}
+
+.congratsRight {
+  /* border: 1px solid red; */
+  position: absolute;
+  top: 0px;
+  right: 8%;
+  /* width: 510px; */
+  width: 510px;
+  max-width: 90%;
+}
+
+.congratsRightWrapper {
+  /* width: 510px; */
+  /* border: 1px dashed; */
+  border: none;
+}
+
+
+.path1 {
+  /* border: 1px solid cyan; */
+  width: 282px;
+  height: 101px;
+  /* width: 400px; */
+  /* height: 100px; */
+  position: absolute;
+  right: 85px;
+  top: 82px;
+  /* top: 90px; */
+  /* max-width: 292px;
+  max-height: 101px; */
+  background-image: url("../../images/Path 28.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.path2 {
+  /* border: 1px solid red; */
+  width: 192px;
+  height: 40px;
+  position: absolute;
+  top: 250px;
+  right: 150px;
+  /* max-width: 192px;
+  max-height: 40px; */
+  background-image: url("../../images/Path 29.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+/* style={{ 
+  // marginTop: "-70px",
+  // marginTop: '0px',
+  position: 'absolute',
+  // left: '0px',
+  top: '250px',
+  right: '150px',
+  // border: '1px solid teal',
+  maxWidth: '192px',
+  maxHeight: '40px'
+}}
+src={pathFromRYMToHAE}
+/> */
+.rym {
+  width: 207px;
+  height: 70px;
+  font: SF Pro;
+  font-weight: medium;
+  font-size: 24px;
+  border: 2px solid #F26522;
+  border-radius: 25px;
+  /* padding: 5px; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: black;
+  background-color: white;
+  z-index: 1;
+  position: absolute;
+  top: 183px;
+}
+.hae {
+  width: 207px;
+  height: 70px;
+  font: SF Pro;
+  font-size: 24px;
+  font-weight: medium;
+  border: 2px solid #F26522;
+  border-radius: 25px;
+  /* padding: 5px; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: black;
+  position: absolute;
+  right: 0px;
+  top: 187px;
+  background-color: white;
+  z-index: 1;
+}
+
+@media (max-width: 1200px) {
+  .congratsRight {
+    /* border: 1px solid blue; */
+    margin-top: 50px;
+    margin-bottom: 30px;
+    height: 500px;
+    position: relative;
+    right: 0px;
+  }
+
+  .congratsRightWrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+  .path1 {
+    /* border: 1px solid lime; */
+    /* width: 282px; */
+    width: 80%;
+    max-width: 282px;
+    margin-right: 10%;
+    margin-left: 10%;
+    height: 101px;
+    /* width: 400px; */
+    /* height: 100px; */
+    position: absolute;
+    right: 0;
+    /* right: 85px;
+    top: 82px; */
+    /* top: 90px; */
+    /* max-width: 292px;
+    max-height: 101px; */
+    background-image: url("../../images/Path 28.png");
+    background-size: 100% 100%;
+    /* background-size: contain; */
+    /* background-repeat: no-repeat; */
+  }
+  .path2 {
+    /* border: 1px solid lime; */
+    /* width: 282px; */
+    width: 80%;
+    max-width: 282px;
+    margin-right: 10%;
+    margin-left: 10%;
+    height: 101px;
+    /* width: 400px; */
+    /* height: 100px; */
+    position: absolute;
+    left: 0;
+    /* right: 85px;
+    top: 82px; */
+    /* top: 90px; */
+    /* max-width: 292px;
+    max-height: 101px; */
+    background-image: url("../../images/Path 28.png");
+    background-size: 100% 100%;
+    /* background-size: contain; */
+    /* background-repeat: no-repeat; */
+  }
+  .rym {
+    width: 100%;
+    /* max-width: 100%; */
+    height: 70px;
+    font: SF Pro;
+    font-weight: medium;
+    font-size: 24px;
+    border: 2px solid #F26522;
+    border-radius: 25px;
+    /* padding: 5px; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: black;
+    background-color: white;
+    z-index: 1;
+    /* position: absolute; */
+    top: 183px;
+  }
+  .hae {
+    width: 100%;
+    /* max-width: 100%; */
+    height: 70px;
+    font: SF Pro;
+    font-weight: medium;
+    font-size: 24px;
+    border: 2px solid #F26522;
+    border-radius: 25px;
+    /* padding: 5px; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: black;
+    background-color: white;
+    z-index: 1;
+    /* position: absolute; */
+    top: 351px;
+  }
+}
+
+.selectMealsBtn {
+  color: white;
+  background-color: #F26522;
+  border: none;
+  padding: 20px;
+  border-radius: 20px;
+  width: 100%;
+  font-size: 25px;
+  z-index: 1;
+}
+.selectMealsBtn:hover {
+  /* color: white; */
+  background-color: #ffba00;
+}

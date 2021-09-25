@@ -101,14 +101,14 @@ export class BecomeAmbass extends Component {
 
   componentDidMount() {
     const customer_uid = Cookies.get("customer_uid");
-    console.log(Cookies.get("customer_uid"));
+    // console.log(Cookies.get("customer_uid"));
     if (customer_uid) {
       this.setState({ user_id: customer_uid });
       axios
         .get(`${API_URL}Profile/${customer_uid}`)
         .then((response) => {
-          console.log(response.data.result[0].customer_first_name);
-          console.log(response.data.result[0].customer_last_name);
+          // console.log(response.data.result[0].customer_first_name);
+          // console.log(response.data.result[0].customer_last_name);
 
           const addr = response.data.result[0].customer_address.toLowerCase();
           this.setState({

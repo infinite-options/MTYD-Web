@@ -124,7 +124,7 @@ class MenuItemList extends Component {
   };
 
   dayBefore = (rawDate) => {
-    console.log("(dayBefore) raw date: ", rawDate);
+    // console.log("(dayBefore) raw date: ", rawDate);
 
     let dateElements = rawDate.split(" ");
 
@@ -132,24 +132,24 @@ class MenuItemList extends Component {
 
     let newDate = new Date(parsedDate - 24 * 60 * 60 * 1000);
 
-    console.log("newDate: ", newDate);
+    // console.log("newDate: ", newDate);
 
-    console.log("stringified date: ", JSON.stringify(newDate));
+    // console.log("stringified date: ", JSON.stringify(newDate));
 
     let splitDate = JSON.stringify(newDate).split('"');
 
-    console.log("splitDate: ", splitDate);
+    // console.log("splitDate: ", splitDate);
 
     let splitDate2 = splitDate[1].split("T");
 
-    console.log("splitDate2: ", splitDate2);
+    // console.log("splitDate2: ", splitDate2);
 
     // let formattedDate = splitDate[1] + ' ' + splitDate[2];
     // let formattedDate = this.formatDate(splitDate2[0]);
 
     let splitDate3 = splitDate2[0].split("-");
 
-    console.log("splitDate3: ", splitDate3);
+    // console.log("splitDate3: ", splitDate3);
 
     // moment(this.state.myDate.split(" ")[0]).format("ddd")
 
@@ -158,9 +158,9 @@ class MenuItemList extends Component {
   };
 
   toggleDisplay = (option) => {
-    console.log("in toggleDisplay");
-    console.log("(toggleDisplay) props: ", this.props);
-    console.log("(toggleDisplay) current meal: ", this.state.purchaseID);
+    // console.log("in toggleDisplay");
+    // console.log("(toggleDisplay) props: ", this.props);
+    // console.log("(toggleDisplay) current meal: ", this.state.purchaseID);
 
     // let currMealInfo = this.state.meals_nbd.find(element =>
     //   element.purchase_uid === this.state.purchaseID
@@ -168,7 +168,7 @@ class MenuItemList extends Component {
 
     // console.log("(toggleDisplay) curr meal info: ", currMealInfo);
     // console.log("(toggleDisplay) charge date: ", currMealInfo.next_billing_date);
-    console.log("(toggleDisplay) my date: ", this.state.myDate);
+    // console.log("(toggleDisplay) my date: ", this.state.myDate);
 
     if (this.state.popUpDisplay === false) {
       this.setState({
@@ -226,7 +226,7 @@ class MenuItemList extends Component {
 
     const customer_uid = Cookies.get("customer_uid");
     // const customer_uid = '100-000001';
-    console.log("(mount) customer_uid: ", customer_uid);
+    // console.log("(mount) customer_uid: ", customer_uid);
     this.setState(
       {
         customer_uid,
@@ -1828,7 +1828,7 @@ class MenuItemList extends Component {
   };
 
   dateButtonArray = () => {
-    console.log("in dateButtonArray");
+    // console.log("in dateButtonArray");
 
     // const customer_uid = Cookies.get("customer_uid");
 
@@ -1916,7 +1916,7 @@ class MenuItemList extends Component {
         lessThanTen++;
       }
 
-      console.log("(2) setting dateButtonList...");
+      // console.log("(2) setting dateButtonList...");
       this.setState({
         dateButtonList: buttonList,
       });
@@ -1943,8 +1943,8 @@ class MenuItemList extends Component {
     const dates = this.state.data.map((date) => date.menu_date);
     const uniqueDates = Array.from(new Set(dates));
 
-    console.log("(render) dateButtonList: ", this.state.dateButtonList);
-    console.log("(render) mealsLoaded: ", this.state.mealsLoaded);
+    // console.log("(render) dateButtonList: ", this.state.dateButtonList);
+    // console.log("(render) mealsLoaded: ", this.state.mealsLoaded);
 
     // const padDateArray = (arr) => {
     //   arr.unshift(<div style={{
