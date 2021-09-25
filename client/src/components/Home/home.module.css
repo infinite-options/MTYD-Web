@@ -969,7 +969,7 @@ button {
 }
 
 .congratsRight {
-  /* border: 1px solid red; */
+  border: 1px solid red;
   position: absolute;
   top: 0px;
   right: 8%;
@@ -977,11 +977,27 @@ button {
   width: 510px;
   max-width: 90%;
 }
+.congratsRight2 {
+  border: 1px solid red;
+  position: absolute;
+  top: 0px;
+  right: 8%;
+  /* width: 510px; */
+  width: 510px;
+  max-width: 90%;
+  height: 700px;
+}
 
 .congratsRightWrapper {
   /* width: 510px; */
-  /* border: 1px dashed; */
-  border: none;
+  border: 1px dashed;
+  /* border: none; */
+}
+.congratsRightWrapper2 {
+  /* width: 510px; */
+  height: 700px;
+  border: 1px dashed;
+  /* border: none; */
 }
 
 
@@ -1015,6 +1031,43 @@ button {
   background-size: contain;
   background-repeat: no-repeat;
 }
+
+.path3 {
+  /* border: 1px solid cyan; */
+  width: 336px;
+  height: 144px;
+  /* width: 400px; */
+  /* height: 100px; */
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  /* top: 90px; */
+  /* max-width: 292px;
+  max-height: 101px; */
+  background-image: url("../../images/Path 49.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.whatsNext {
+  font: SF Pro;
+  font-weight: bold;
+  font-size: 25px;
+  color: black;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+.whatsNext2 {
+  font: SF Pro;
+  font-weight: bold;
+  font-size: 25px;
+  color: black;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding-left: 125px;
+}
 /* style={{ 
   // marginTop: "-70px",
   // marginTop: '0px',
@@ -1046,6 +1099,43 @@ src={pathFromRYMToHAE}
   position: absolute;
   top: 183px;
 }
+.sym {
+  width: 207px;
+  height: 70px;
+  font: SF Pro;
+  font-weight: medium;
+  font-size: 24px;
+  border: 2px solid #F26522;
+  border-radius: 25px;
+  /* padding: 5px; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: black;
+  background-color: white;
+  z-index: 1;
+  position: absolute;
+  top: 183px;
+}
+.sym:hover {
+  width: 207px;
+  height: 70px;
+  font: SF Pro;
+  font-weight: medium;
+  font-size: 24px;
+  /* border: 2px solid #F26522; */
+  border: none;
+  border-radius: 25px;
+  /* padding: 5px; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: black;
+  background-color: #ffba00;
+  z-index: 1;
+  position: absolute;
+  top: 183px;
+}
 .hae {
   width: 207px;
   height: 70px;
@@ -1066,6 +1156,24 @@ src={pathFromRYMToHAE}
   z-index: 1;
 }
 
+.createAccBtn {
+  color: white;
+  background-color: #F26522;
+  border: none;
+  padding: 20px;
+  border-radius: 20px;
+  /* width: 100%; */
+  font-size: 25px;
+  z-index: 1;
+  position: absolute;
+  left: 0;
+  top: 120px;
+  cursor: pointer;
+}
+.createAccBtn:hover {
+  background-color: #ffba00;
+}
+
 @media (max-width: 1200px) {
   .congratsRight {
     /* border: 1px solid blue; */
@@ -1075,11 +1183,25 @@ src={pathFromRYMToHAE}
     position: relative;
     right: 0px;
   }
-
+  .congratsRight2 {
+    /* border: 1px solid blue; */
+    margin-top: 50px;
+    margin-bottom: 30px;
+    height: 700px;
+    position: relative;
+    right: 0px;
+  }
   .congratsRightWrapper {
     width: 100%;
     display: flex;
     justify-content: center;
+    /* border: 1px dashed; */
+  }
+  .congratsRightWrapper2 {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    /* border: 1px dashed; */
   }
   .path1 {
     /* border: 1px solid lime; */
