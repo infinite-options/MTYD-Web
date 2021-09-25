@@ -69,7 +69,7 @@ export class Congrats extends Component {
     console.log("(mount) props: ", this.props);
     if(this.props.location.hasOwnProperty('delivery_date') === false){
       console.log("(mount) delivery_date false");
-      // this.props.history.push('/choose-plan');
+      this.props.history.push('/choose-plan');
     } else {
       console.log("(mount) delivery_date true");
     }
@@ -104,7 +104,7 @@ export class Congrats extends Component {
     console.log("(formatDate) props: ", this.props);
     if(this.props.location.hasOwnProperty('delivery_date') === false){
       console.log("(formatDate) delivery_date false");
-      // this.props.history.push('/choose-plan');
+      this.props.history.push('/choose-plan');
     } else {
       console.log("(formatDate) delivery_date true");
 
@@ -365,7 +365,7 @@ export class Congrats extends Component {
           </div>
 
           {(() => {
-            if (this.state.user_id === "not login") {
+            if (this.state.user_id !== "not login") {
               return (
                 <div className={styles.congratsRightWrapper}>
                   <div className={styles.congratsRight}>
@@ -394,14 +394,7 @@ export class Congrats extends Component {
                         // zIndex: '0'
                       }}
                     >
-                      <div
-                        style={{
-                          textAlign: "center",
-                          marginTop: "15px",
-                          fontWeight: "bold",
-                          // border: '1px solid'
-                        }}
-                      >
+                      <div className={styles.selectMealsWrapper}>
                         <Link to={"/select-meal"} style={{ textDecoration: "none" }}>
                           <button
                             className={styles.selectMealsBtn}
@@ -431,149 +424,6 @@ export class Congrats extends Component {
                   </div>
                 </div>
               );
-            } else if (true === false) {
-            // } else if (true) {
-              return (
-                // <div
-                //   className={styles.congratsRightWrapper}
-                // >
-                //   <div
-                //     className={styles.congratsRight}
-                //   >
-                  <div
-                    style={{
-                      marginLeft: "75%",
-                      marginBottom: "50px",
-                      marginTop: "-160px",
-                      // border: '1px solid green'
-                    }}
-                  >
-                  <div style={{ display: "inline-flex" }}>
-
-                    <h3
-                      style={{
-                        font: " SF Pro",
-                        fontWeight: "bold",
-                        fontSize: "25px",
-                        marginTop: "-30px",
-                        marginRight: "-380px",
-                        color: "black",
-                        // border: '1px solid green'
-                      }}
-                    >
-                      {" "}
-                      What's next?
-                    </h3>
-                    {/* <div
-                        style={{
-                          font: "SF Pro",
-                          fontWeight: "bold",
-                          fontSize: "25px",
-                          color: "black",
-                          border: '1px solid green',
-                          width: '100%',
-                          display: 'flex',
-                          justifyContent: 'center'
-                        }}
-                      >
-                        What's next?
-                      </div>
-                      <div 
-                        style={{ 
-                          textAlign: "center",
-                          position: 'relative',
-                          border: '1px solid blue',
-                          height: '300px',
-                        }}
-                      >
-                    </div> */}
-
-                    <div style={{ textAlign: "center" }}>
-                      <img style={{ marginLeft: "-20%" }} src={path28_bottom} />
-                      <br />
-                      <img
-                        src={createAnAccountImage}
-                        style={{
-                          marginTop: "-20px",
-                          marginLeft: "-70px",
-                          marginBottom: "-10px",
-                          width: "320px",
-                          height: "50px",
-                        }}
-                        onClick={() => this.togglePop()}
-                      />
-                      {this.state.seen ? (
-                        <CreateAccPWSU1 toggle={this.togglePop} />
-                      ) : null}
-                      <div style={{ marginTop: "10px", marginLeft: "-90px" }}>
-                        <img
-                          style={{ width: "280px", height: "120px" }}
-                          src={pathFromCAAToSYM}
-                        />
-                      </div>
-                      <HomeLink
-                        text="Select Your Meals"
-                        link="/select-meal"
-                        style={{ marginLeft: "80px", marginBottom: "-10px" }}
-                      />
-                      <img
-                        style={{
-                          marginLeft: "-50px",
-                          width: "280px",
-                          height: "120px",
-                        }}
-                        src={path28_top}
-                      />
-                      <br />
-                      {/*Change the following to medium later on, using bold for testing*/}
-                      <div style={{ width: "207px", height: "115px" }}>
-                        <p
-                          style={{
-                            font: "SF Pro",
-                            fontSize: "24px",
-                            fontWeight: "medium",
-                            border: "2px solid #F26522",
-                            borderRadius: "25px",
-                            padding: "5px",
-                            color: "black",
-                          }}
-                        >
-                          Receive your <br />
-                          meals
-                        </p>
-                      </div>
-                      <div
-                        style={{
-                          marginTop: "-120px",
-                          marginLeft: "300px",
-                          width: "207px",
-                          height: "115px",
-                        }}
-                      >
-                        <p
-                          style={{
-                            font: "SF Pro",
-                            fontSize: "24px",
-                            fontWeight: "medium",
-                            border: "2px solid #F26522",
-                            borderRadius: "25px",
-                            padding: "5px",
-                            color: "black",
-                          }}
-                        >
-                          Heat and <br />
-                          enjoy!
-                        </p>
-                      </div>
-                      <img
-                        style={{ marginTop: "-50px" }}
-                        src={pathFromRYMToHAE}
-                      />
-                    </div>
-                  </div>
-                </div>
-              );
-            // } else if (true === false) {
             } else {
               return (
                 <div
@@ -582,21 +432,7 @@ export class Congrats extends Component {
                   <div
                     className={styles.congratsRight2}
                   >
-                    <div
-                      className={styles.whatsNext2}
-                      // style={{
-                      //   font: "SF Pro",
-                      //   fontWeight: "bold",
-                      //   fontSize: "25px",
-                      //   // marginTop: "-30px",
-                      //   // marginRight: "-408px",
-                      //   color: "black",
-                      //   // border: '1px solid green',
-                      //   width: '100%',
-                      //   display: 'flex',
-                      //   justifyContent: 'center'
-                      // }}
-                    >
+                    <div className={styles.whatsNext2}>
                       {/* {" "} */}
                       What's next?
                     </div>
@@ -609,35 +445,12 @@ export class Congrats extends Component {
                       }}
                     >
 
-                      {/* <img 
-                        style={{ 
-                          marginLeft: "-20%" 
-                        }} 
-                        src={path28_bottom} 
-                      /> */}
                       <div 
-                        className={styles.path1}
-                        style={{
-                          // position: 'absolute',
-                          right: '120px',
-                          top: '28px',
-                          // border: '1px solid green'
-                        }}
+                        className={styles.path4}
                       />
 
                       <br />
 
-                      {/* <img
-                        src={createAnAccountImage}
-                        style={{
-                          marginTop: "-20px",
-                          marginLeft: "-70px",
-                          marginBottom: "-10px",
-                          width: "320px",
-                          height: "50px",
-                        }}
-                        onClick={() => this.togglePop()}
-                      /> */}
                       <div
                         className={styles.createAccBtn}
                       >
@@ -648,136 +461,47 @@ export class Congrats extends Component {
                         <CreateAccPWSU1 toggle={this.togglePop} />
                       ) : null}
 
-                      {/* <div style={{ marginTop: "10px", marginLeft: "-90px" }}>
-                        <img
-                          style={{ width: "280px", height: "120px" }}
-                          src={pathFromCAAToSYM}
-                        />
-                      </div> */}
                       <div 
-                        className={styles.path3}
-                        style={{
-                          right: '75px',
-                          top: '183px',
-                          // border: '1px solid violet'
-                        }}
+                        className={styles.path5}
                       />
 
-                      {/* <HomeLink
-                        text="Select Your Meals"
-                        link="/select-meal"
-                        style={{ marginLeft: "80px", marginBottom: "-10px" }}
-                      /> */}
-                      <div
-                        style={{
-                          textAlign: "center",
-                          // marginTop: "0px",
-                          position: 'absolute',
-                          right: '0px',
-                          top: '314px',
-                          fontWeight: "bold",
-                          // border: '1px solid'
-                        }}
-                      >
+                      <div className={styles.selectMealsWrapper2}>
                         <Link to={"/select-meal"} style={{ textDecoration: "none" }}>
                           <button
-                            className={styles.selectMealsBtn}
+                            className={styles.selectMealsBtn2}
                           >
                             Select Your Meals
                           </button>
                         </Link>
                       </div>
 
-                      {/* <img
-                        style={{
-                          marginLeft: "-50px",
-                          width: "280px",
-                          height: "120px",
-                          border: '1px dashed'
-                        }}
-                        src={path28_top}
-                      /> */}
                       <div 
-                        className={styles.path1}
-                        style={{
-                          right: '100px',
-                          top: '333px',
-                          // border: '1px dashed'
-                        }}
+                        className={styles.path6}
+                        // style={{
+                        //   right: '100px',
+                        //   top: '333px',
+                        //   // border: '1px dashed'
+                        // }}
                       />
 
                       <br />
-                      {/*Change the following to medium later on, using bold for testing*/}
-                      {/* <div style={{ width: "207px", height: "115px" }}>
-                        <p
-                          style={{
-                            font: "SF Pro",
-                            fontSize: "24px",
-                            fontWeight: "medium",
-                            border: "2px solid #F26522",
-                            borderRadius: "25px",
-                            padding: "5px",
-                            color: "black",
-                          }}
-                        >
-                          Receive your <br />
-                          meals
-                        </p>
-                      </div> */}
-                      <div 
-                        className={styles.rym}
-                        style={{
-                          left: '0px',
-                          top: '434px'
-                        }}
-                      >
+
+                      <div className={styles.rym2}>
                         Receive your meals
                       </div>
 
-                      {/* <div
-                        style={{
-                          marginTop: "-120px",
-                          marginLeft: "300px",
-                          width: "207px",
-                          height: "115px",
-                        }}
-                      >
-                        <p
-                          style={{
-                            font: "SF Pro",
-                            fontSize: "24px",
-                            fontWeight: "medium",
-                            border: "2px solid #F26522",
-                            borderRadius: "25px",
-                            padding: "5px",
-                            color: "black",
-                          }}
-                        >
-                          Heat and <br />
-                          enjoy!
-                        </p>
-                      </div> */}
-
-                      {/* <img
-                        style={{ marginTop: "-500px" }}
-                        src={pathFromRYMToHAE}
-                      /> */}
                       <div 
-                        className={styles.path2}
-                        style={{
-                          // border: '1px solid cyan',
-                          left: '150px',
-                          top: '502px'
-                        }}
+                        className={styles.path7}
+                        // style={{
+                        //   // border: '1px solid cyan',
+                        //   left: '150px',
+                        //   top: '502px'
+                        // }}
                       />
 
-                      <div
-                        className={styles.hae}
-                        style={{
-                          right: '0px',
-                          top: '452px'
-                        }}
-                      >Heat and enjoy!</div>
+                      <div className={styles.hae2}>
+                        Heat and enjoy!
+                      </div>
 
                     </div>
 
