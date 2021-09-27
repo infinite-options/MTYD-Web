@@ -87,10 +87,6 @@ class Home extends Component {
     window.addEventListener("resize", this.handleResize);
   }
 
-  // componentWillUnmount() {
-  //   window.removeEventListener('resize', this.handleResize);
-  // }
-
   goToLink(navlink) {
     // console.log("LINK CLICKED");
     this.props.history.push(navlink);

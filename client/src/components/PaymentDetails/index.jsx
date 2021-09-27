@@ -50,6 +50,7 @@ class PaymentDetails extends React.Component {
       mounted: false,
       showPaymentInfo: false,
       ambassadorCode: "",
+      ambassadorCode_applied: "",
       ambassadorCoupon: null,
       paymentSummary: {
         mealSubPrice: "0.00",
@@ -542,23 +543,6 @@ class PaymentDetails extends React.Component {
       }),
       () => {
         console.log("recalculatingPrice ===> true (end)");
-        // axios
-        //   .put(
-        //     `http://localhost:2000/api/v2/make_purchase`, 
-        //     {
-        //       items: [{
-        //           qty: this.props.selectedPlan.num_deliveries.toString(),
-        //           name: this.props.selectedPlan.item_name,
-        //           price: this.props.selectedPlan.item_price.toString(),
-        //           item_uid: this.props.selectedPlan.item_uid,
-        //           itm_business_uid: this.props.selectedPlan.item_uid
-        //       }],
-        //       customer_lat: this.state.latitude,
-        //       customer_long: this.state.longitude,
-        //       driver_tip: newTip,
-        //       ambassador_coupon: this.state.ambassadorCoupon
-        //     }
-        //   )
         axios
           .put(
             API_URL + `make_purchase`, 
@@ -689,7 +673,6 @@ class PaymentDetails extends React.Component {
   }
 
   applyAmbassadorCode() {
-    // console.log("amb code: ", this.state.ambassadorCode);
     console.log("recalculatingPrice ===> true (start)");
     this.setState(
       {
@@ -725,7 +708,7 @@ class PaymentDetails extends React.Component {
                       ...prevState.paymentSummary,
                       ambassadorDiscount: "0.00",
                     },
-                    recalculatingPrice: false,
+                    recalculatingPrice: false
                   }),
                   () => {
                     // this.setTotal();
@@ -746,6 +729,7 @@ class PaymentDetails extends React.Component {
                       ).toFixed(2),
                     },
                     recalculatingPrice: false,
+                    ambassadorCode_applied: this.state.ambassadorCode
                   }),
                   () => {
                     // this.setTotal();
@@ -758,62 +742,8 @@ class PaymentDetails extends React.Component {
             });
         } else {
 
-          /*
           axios
             .post(API_URL + "brandAmbassador/discount_checker", {
-              code: this.state.ambassadorCode,
-              info: this.props.email,
-              IsGuest: "False",
-            })
-            .then((res) => {
-              console.log("(CUST) ambassador code response: ", res);
-
-              if (res.data.code !== 200) {
-                // console.log("(CUST) Invalid code");
-
-                this.displayError(AMBASSADOR_ERROR, res.data.message);
-
-                this.setState(
-                  (prevState) => ({
-                    paymentSummary: {
-                      ...prevState.paymentSummary,
-                      ambassadorDiscount: "0.00",
-                    },
-                  }),
-                  () => {
-                    this.setTotal();
-                  }
-                );
-              } else {
-                // console.log("(CUST) Valid code");
-
-                // console.log("(CUST) result: ", res.data);
-
-                this.setState(
-                  (prevState) => ({
-                    paymentSummary: {
-                      ...prevState.paymentSummary,
-                      ambassadorDiscount: (
-                        res.data.sub.discount_amount +
-                        res.data.sub.discount_shipping
-                      ).toFixed(2),
-                    },
-                  }),
-                  () => {
-                    this.setTotal();
-                  }
-                );
-              }
-            })
-            .catch((err) => {
-              console.log("(CUST) Ambassador code error: ", err);
-            });
-          */
-
-          axios
-            .post(API_URL + "brandAmbassador/discount_checker", {
-          // axios
-          //   .post('http://localhost:2000/api/v2/brandAmbassador/discount_checker', {
               code: this.state.ambassadorCode,
               info: this.props.email,
               IsGuest: "False",
@@ -894,6 +824,7 @@ class PaymentDetails extends React.Component {
                       subtotal: res.data.new_billing.amount_should_charge.toFixed(2),
                     },
                     recalculatingPrice: false,
+                    ambassadorCode_applied: this.state.ambassadorCode
                   }),
                   () => {
                     // this.setTotal();
@@ -2287,7 +2218,7 @@ class PaymentDetails extends React.Component {
                         fetchingFees={this.state.fetchingFees}
                         displayError={this.displayError}
                         dpvCode={this.state.responseCode}
-                        ambassadorCode={this.state.ambassadorCode}
+                        ambassadorCode={this.state.ambassadorCode_applied}
                       />
                     </div>
                   </div>
