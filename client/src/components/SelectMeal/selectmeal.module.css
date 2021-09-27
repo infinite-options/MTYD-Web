@@ -344,7 +344,7 @@
   padding: 0rem;
 }
 
-.numElements {
+/* .numElements {
   color: #000000;
   font-size: 1.7rem;
   font-weight: 600;
@@ -355,6 +355,21 @@
   white-space: nowrap;
   vertical-align: baseline;
   border-top: tomato 2px solid;
+} */
+.numElements {
+  color: #000000;
+  font-size: 1.7rem;
+  font-weight: 600;
+  /* text-align: center !important; */
+  position: absolute;
+  /* background-color: white; */
+  /* border: none; */
+  /* white-space: nowrap; */
+  /* vertical-align: baseline; */
+  border-top: tomato 2px solid;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .plusElements {

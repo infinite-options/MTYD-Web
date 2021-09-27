@@ -8,17 +8,6 @@ export class MenuList extends Component {
   state = {
     width: window.innerWidth,
     height: window.innerHeight,
-    // crossFork :
-    // {
-    //   width:'44px',
-    //   height:'44px',
-    //   position:'absolute',
-    //   right:'100px',
-    //   top:'25px',
-    //   backgroundImage:`url(${forkClose})`,
-    //   backgroundSize:'cover',
-    //   backgroundPosition:'center',
-    // },
     showLogout: "none",
     showName: "none",
     showAdmin: "none",
@@ -30,22 +19,8 @@ export class MenuList extends Component {
   };
 
   componentDidMount() {
-    // this.checkMealPlans();
-    console.log("menu props: ", this.props);
     window.addEventListener("resize", this.updateDimensions);
     if (window.innerWidth <= 900) {
-      // this.setState({
-      //   crossFork:{
-      //     width:'44px',
-      //     height:'44px',
-      //     position:'absolute',
-      //     left:'50px',
-      //     top:'25px',
-      //     backgroundImage:`url(${forkClose})`,
-      //     backgroundSize:'cover',
-      //     backgroundPosition:'center',
-      //   }
-      // })
 
       this.setState({
         ...this.state,
@@ -53,7 +28,6 @@ export class MenuList extends Component {
       });
 
       if (this.props.login == true && this.props.isAdmin) {
-        console.log("(mount) 1");
         this.setState({
           ...this.state,
           showLogout: "flex",
@@ -62,7 +36,6 @@ export class MenuList extends Component {
           heightOfBlock: "430px",
         });
       } else if (this.props.login == true && !this.props.isAdmin) {
-        console.log("(mount) 2");
         this.setState({
           ...this.state,
           showLogout: "flex",
@@ -71,7 +44,6 @@ export class MenuList extends Component {
           heightOfBlock: "400px",
         });
       } else {
-        console.log("(mount) 3");
         this.setState({
           ...this.state,
           showLogout: "none",
@@ -80,31 +52,9 @@ export class MenuList extends Component {
           heightOfBlock: "400px",
         });
       }
-
-      // }else{
-      //   this.setState({
-      //     crossFork:{
-      //       width:'44px',
-      //       height:'44px',
-      //       position:'absolute',
-      //       right:'100px',
-      //       top:'25px',
-      //       backgroundImage:`url(${forkClose})`,
-      //       backgroundSize:'cover',
-      //       backgroundPosition:'center',
-      //     }
-      //   })
-      //   if (this.props.isAdmin) {
-      //     this.setState({
-      //       heightOfBlock: '360px'
-      //     });
-      //   }
-      // }
     } else if (this.props.isAdmin) {
-      console.log("cp");
       this.setState({
         heightOfBlock: "330px",
-        // showAdmin: 'flex'
       });
     }
   }
@@ -114,21 +64,7 @@ export class MenuList extends Component {
 
   updateDimensions = () => {
     if (window.innerWidth <= 900) {
-      // this.setState({
-      //   crossFork:{
-      //     width:'44px',
-      //     height:'44px',
-      //     position:'absolute',
-      //     left:'50px',
-      //     top:'25px',
-      //     backgroundImage:`url(${forkClose})`,
-      //     backgroundSize:'cover',
-      //     backgroundPosition:'center',
-      //   }
-      // })
-
       if (this.props.login == true && this.props.isAdmin) {
-        console.log("(UD) 1");
         this.setState({
           showLogout: "flex",
           showAdmin: "flex",
@@ -136,7 +72,6 @@ export class MenuList extends Component {
           heightOfBlock: "430px",
         });
       } else if (this.props.login == true && !this.props.isAdmin) {
-        console.log("(UD) 2");
         this.setState({
           showLogout: "flex",
           showAdmin: "none",
@@ -144,7 +79,6 @@ export class MenuList extends Component {
           heightOfBlock: "400px",
         });
       } else {
-        console.log("(UD) 3");
         this.setState({
           showLogout: "none",
           showAdmin: "none",
@@ -153,55 +87,7 @@ export class MenuList extends Component {
         });
       }
     } else {
-      /*if (this.props.isAdmin) {
-        console.log("narrow 1");
-        this.setState({
-          // crossFork:{
-          //   width:'44px',
-          //   height:'44px',
-          //   position:'absolute',
-          //   right:'100px',
-          //   top:'25px',
-          //   backgroundImage:`url(${forkClose})`,
-          //   backgroundSize:'cover',
-          //   backgroundPosition:'center',
-          // },
-          showLogout: 'none',
-          showAdmin: 'flex',
-          showSigninSignup: 'none',
-          heightOfBlock: '360px'
-        })
-      } else {
-        console.log("narrow 2");
-        this.setState({
-          // crossFork:{
-          //   width:'44px',
-          //   height:'44px',
-          //   position:'absolute',
-          //   right:'100px',
-          //   top:'25px',
-          //   backgroundImage:`url(${forkClose})`,
-          //   backgroundSize:'cover',
-          //   backgroundPosition:'center',
-          // },
-          showLogout: 'none',
-          showAdmin: 'none',
-          showSigninSignup: 'none',
-          heightOfBlock: '330px'
-        })
-      }*/
-      console.log("narrow new");
       this.setState({
-        // crossFork:{
-        //   width:'44px',
-        //   height:'44px',
-        //   position:'absolute',
-        //   right:'100px',
-        //   top:'25px',
-        //   backgroundImage:`url(${forkClose})`,
-        //   backgroundSize:'cover',
-        //   backgroundPosition:'center',
-        // },
         showLogout: "none",
         showAdmin: "none",
         showSigninSignup: "none",
@@ -242,7 +128,7 @@ export class MenuList extends Component {
         }}
       >
         {/* <span>Window size: {this.state.width} x {this.state.height}</span> */}
-        {console.log("Logged In: " + this.props.login)}
+        {/* {console.log("Logged In: " + this.props.login)} */}
         <div
           style={{
             width: "44px",
@@ -265,7 +151,6 @@ export class MenuList extends Component {
             marginTop: "100px",
           }}
         >
-          {console.log(this.state)}
           <a
             href="/home"
             className={styles.hbButton}

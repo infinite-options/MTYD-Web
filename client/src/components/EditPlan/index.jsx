@@ -258,9 +258,6 @@ const EditPlan = (props) => {
   const [recalculating, setRecalculating] = useState(true);
   const [recalculatingBilling, setRecalculatingBilling] = useState(false);
 
-  // const [tipSelected, selectTip] = useState('2.00');
-  // const [trigger_recalc_by_tip, set_trigger_recalc_by_tip] = useState()
-  // const [tipAmount, setTipAmount] = useState(null);
   const [tipAmount, selectTip] = useState(null);
   const [numMealsSelected, selectNumMeals] = useState(null);
   const [numDeliveriesSelected, selectNumDeliveries] = useState(null);
@@ -286,38 +283,6 @@ const EditPlan = (props) => {
 
   const [login_seen, setLoginSeen] = useState(false);
   const [signUpSeen, setSignUpSeen] = useState(false);
-
-  // // State for pop up modal
-  // const [showErrorModal, setShowErrorModal] = useState(false);
-  // const [errorModal, setErrorModal] = useState(null);
-  // const [errorHeader, setErrorHeader] = useState('');
-  // const [errorMessage, setErrorMessage] = useState('');
-  // const [errorLink, setErrorLink] = useState('');
-  // const [errorLinkText, setErrorLinkText] = useState('');
-  // const [showConfirmModal, setShowConfirmModal] = useState(false);
-  // const [confirmModal, setConfirmModal] = useState(null);
-  // const [deletingPurchase, setDeletingPurchase] = useState(false);
-  // const [deleteSuccess, setDeleteSuccess] = useState(null);
-  // const [refundAmount, setRefundAmount] = useState(0);
-  // const [refundError, setRefundError] = useState("Error attempting to refund subscription");
-
-  // // Display pop up message
-  // const displayErrorModal = (header, message, linkText, link) => {
-  //   if (showErrorModal === false) {
-  //     setErrorModal(styles.errorModalPopUpShow);
-  //     setShowErrorModal(true);
-  //     setErrorMessage(message);
-  //     setErrorLinkText(linkText);
-  //     setErrorLink(link);
-  //     setErrorHeader(header);
-  //     console.log("\nerror pop up toggled to true");
-  //   } else {
-  //     setErrorModal(styles.errorModalPopUpHide);
-  //     setShowErrorModal(false);
-  //     console.log("\nerror pop up toggled to false");
-  //   }
-  // };
-
   const [popUp, setPopUp] = useState(null);
 
   const closePopUp = () => {
@@ -360,17 +325,6 @@ const EditPlan = (props) => {
               <button
                 className={styles.confirmBtn}
                 onClick={() => {
-                  // console.log("deleting purchase...");
-                  // this.setState(
-                  //   {
-                  //     deletingPurchase: true,
-                  //     showConfirmModal: false,
-                  //     // confirmModal: styles.errorModalPopUpHide
-                  //   },
-                  //   () => {
-                  //     this.deletePurchase();
-                  //   }
-                  // );
                   showDeletingPurchasePopUp();
                   deletePurchase();
                 }}
@@ -381,7 +335,6 @@ const EditPlan = (props) => {
               <button
                 className={styles.confirmBtn}
                 onClick={() => {
-                  // this.displayConfirmation();
                   setPopUp(null);
                 }}
               >
@@ -547,9 +500,14 @@ const EditPlan = (props) => {
     );
   }
 
-  const showErrorPopUp = (error_header, error_text) => {
+  const showErrorPopUp = (error_header, error_text, error_link) => {
     setPopUp(
-      <div className={styles.errorModalPopUpShow}>
+      <div 
+        className={styles.errorModalPopUpShow}
+        style={{
+          zIndex: "100",
+        }}
+      >
         <div className={styles.confirmModalContainer}>
           <div className={styles.confirmContainer}>
             <div className={styles.cancelledHeader}>
@@ -567,6 +525,9 @@ const EditPlan = (props) => {
                 //   deleteSuccess: null,
                 //   confirmModal: styles.errorModalPopUpHide,
                 // });
+                if(error_link !== null){
+                  history.push(error_link);
+                }
                 setPopUp(null);
               }}
             >
@@ -1067,6 +1028,8 @@ const EditPlan = (props) => {
       //   "Go Home",
       //   "/home"
       // );
+      console.log("(mount) show not logged in modal!");
+      showErrorPopUp("Hmm...", "Please log in to edit your meals", "/home");
     }
     
   }, []);
@@ -1443,8 +1406,10 @@ const EditPlan = (props) => {
     console.log("(RS) refreshing subscriptions...");
     // axios
     //   .get("http://localhost:2000/api/v2/predict_next_billing_amount/" + profileInfo.customer_uid)
+    setAmbassadorCode('');
+    setAmbassadorCoupon(null);
     axios
-    .get(API_URL + "predict_next_billing_amount/" + profileInfo.customer_uid)
+      .get(API_URL + "predict_next_billing_amount/" + profileInfo.customer_uid)
       .then((res) => {
         console.log("(PNBD) res: ", res);
 
@@ -1720,6 +1685,8 @@ const EditPlan = (props) => {
 
             // default new plan to current plan since no edits have been made yet
             // console.log("(SSM) setting currentPlan: ", sub);
+            setAmbassadorCode('');
+            setAmbassadorCoupon(null);
             setCurrentPlan(sub);
             // console.log("(0915) setNewPlan 4");
             // setNewPlan(sub); 

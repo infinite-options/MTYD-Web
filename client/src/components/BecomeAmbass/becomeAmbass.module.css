@@ -39,3 +39,24 @@
   background-position: center;
   background-repeat: no-repeat; */
 }
+
+.orangeBtn {
+  width: 288px;
+  height: 52px;
+  background-color: #f26522;
+  border-radius: 15px;
+  color: white;
+  font-size: 18px;
+  border: none;
+  margin: 40px 0px 10px 0px;
+}
+.orangeBtn:hover {
+  width: 288px;
+  height: 52px;
+  background-color: #ffab00;
+  border-radius: 15px;
+  color: white;
+  font-size: 18px;
+  border: none;
+  margin: 40px 0px 10px 0px;
+}

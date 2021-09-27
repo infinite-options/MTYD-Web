@@ -276,6 +276,7 @@ class MenuItem extends React.Component {
                   <div
                     key={index}
                     style={{
+                      // border: '1px solid green',
                       width: "64px",
                       height: "42px",
                       top: "223px",
@@ -346,96 +347,8 @@ class MenuItem extends React.Component {
                 <br />
                 cal: {" " + menuitem.meal_calories}
               </div>
-
-              {/* New buttons */}
-              {/* <div
-            style={{border: 'dashed'}}
-          > */}
-              {/* <button
-              onClick={() => this.props.removeFromCart(menuitem)}
-              style={{
-                width: '60px',
-                height: '45px',
-                // top:'223px',
-                backgroundColor:'rgb(0, 0, 0,0)'
-              }}
-              className={styles.minusElements}
-              id = {String(menuitem.menu_meal_id+'-')}
-              aria-label={"Click here to remove one " + menuitem.meal_name + ". Current amount: " + dict[menuitem.menu_meal_id]}
-              title={"Click here to remove one " + menuitem.meal_name + ". Current amount: " + dict[menuitem.menu_meal_id]}
-            >
-              -
-            </button> */}
-              {/* </div> */}
-
-              {/*<div>
-                  <button
-                    onClick={() => this.props.removeFromCart(menuitem)}
-                    style={{
-                      width: '60px',
-                      height: '42px',
-                      top:'223px',
-                      backgroundColor:'rgb(0, 0, 0,0)'
-                    }}
-                    className={styles.minusElements}
-                    id = {String(menuitem.menu_meal_id+'-')}
-                    aria-label={"Click here to remove one " + menuitem.meal_name + ". Current amount: " + dict[menuitem.menu_meal_id]}
-                    title={"Click here to remove one " + menuitem.meal_name + ". Current amount: " + dict[menuitem.menu_meal_id]}
-                  >
-                    -
-                  </button>
-
-                  <div 
-                    key = {index}
-                    style={{
-                      width: '64px',
-                      height: '42px',
-                      top:'223px',
-                      right:'59.5px',
-                      backgroundColor:'rgb(0, 0, 0,0)'
-                    }}
-                    className={styles.numElements}
-                    id = {String(menuitem.menu_meal_id+'num')}
-                  >
-                    {dict[menuitem.menu_meal_id]}
-                  </div>
-
-                  <button
-                    onClick={() => this.props.addToCart(menuitem)}
-                    style={{
-                      width: '60px',
-                      height: '42px',
-                      top:'223px',
-                      left:'124px',
-                      backgroundColor:'rgb(0, 0, 0,0)'
-                    }}
-                    className={styles.plusElements}
-                    id = {String(menuitem.menu_meal_id+'+')}
-                    aria-label={"Click here to add one " + menuitem.meal_name + ". Current amount: " + dict[menuitem.menu_meal_id]}
-                    title={"Click here to add one " + menuitem.meal_name + ". Current amount: " + dict[menuitem.menu_meal_id]}
-                  >
-                    +
-                  </button> 
-
-
-                  {cartItems.length == 0 &&
-                    <div 
-                      key = {index}
-                      style={{
-                        width: '64px',
-                        height: '42px',
-                        top:'223px',
-                        right:'59.5px',
-                      }}
-                      className={styles.numElements}
-                      id={styles.mealCounter}
-                    >
-                      {0}
-                    </div>
-                  }
-
-                </div> */}
             </div>
+            
             {/* BACK OF CARD */}
             <div
               key={index}

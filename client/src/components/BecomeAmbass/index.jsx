@@ -223,16 +223,17 @@ export class BecomeAmbass extends Component {
                   </p>
 
                   <button
-                    style={{
-                      width: "288px",
-                      height: "52px",
-                      backgroundColor: "#f26522",
-                      borderRadius: "15px",
-                      color: "white",
-                      fontSize: "18px",
-                      border: "none",
-                      margin: "40px 0px 10px 0px",
-                    }}
+                    className={styles.orangeBtn}
+                    // style={{
+                    //   width: "288px",
+                    //   height: "52px",
+                    //   backgroundColor: "#f26522",
+                    //   borderRadius: "15px",
+                    //   color: "white",
+                    //   fontSize: "18px",
+                    //   border: "none",
+                    //   margin: "40px 0px 10px 0px",
+                    // }}
                     onClick={() => {
                       this.handleClick();
                       this.props.togglePopLogin();
@@ -244,14 +245,15 @@ export class BecomeAmbass extends Component {
                   </button>
                   <div style={{ fontWeight: "bold", fontSize: "17px" }}>OR</div>
                   <button
+                    className={styles.orangeBtn}
                     style={{
-                      width: "288px",
-                      height: "52px",
-                      backgroundColor: "#f26522",
-                      borderRadius: "15px",
-                      color: "white",
-                      fontSize: "18px",
-                      border: "none",
+                      // width: "288px",
+                      // height: "52px",
+                      // backgroundColor: "#f26522",
+                      // borderRadius: "15px",
+                      // color: "white",
+                      // fontSize: "18px",
+                      // border: "none",
                       margin: "10px",
                     }}
                     onClick={() => {

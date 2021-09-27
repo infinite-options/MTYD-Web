@@ -110,6 +110,7 @@
   height: 20px !important;
   font-size: 26px !important;
   color: white !important;
+  cursor: pointer;
 }
 
 .hbButton:hover {
