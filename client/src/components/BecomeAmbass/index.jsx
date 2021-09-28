@@ -24,8 +24,10 @@ export class BecomeAmbass extends Component {
       success: false,
     };
   }
+
   handleClick = () => {
     this.props.toggle();
+    console.log("(BA) handleClick triggered");
   };
   togglePopForAdd = () => {
     this.setState({
@@ -33,6 +35,7 @@ export class BecomeAmbass extends Component {
     });
   };
   togglePopLogin = () => {
+    console.log("(BA) in togglePopLogin");
     this.setState({
       login_seen: !this.state.login_seen,
       hidden: 0,
@@ -44,6 +47,10 @@ export class BecomeAmbass extends Component {
       });
     }
   };
+
+  // toggleLoginAndAmbassador = () => {
+  //   this.handleClick();
+  // }
 
   togglePopSignup = () => {
     this.setState({
@@ -100,6 +107,7 @@ export class BecomeAmbass extends Component {
   }
 
   componentDidMount() {
+    console.log("(mount) props: ", this.props);
     const customer_uid = Cookies.get("customer_uid");
     // console.log(Cookies.get("customer_uid"));
     if (customer_uid) {
@@ -132,6 +140,7 @@ export class BecomeAmbass extends Component {
     }
   }
   render() {
+    console.log("(becomeAmbass) props: ", this.props);
     return (
       <div
         style={{
@@ -145,15 +154,58 @@ export class BecomeAmbass extends Component {
           alignItems: "center",
           zIndex: "2000",
         }}
+        // style={{
+        //   position: "fixed",
+        //   // border: 'inset'
+        //   border: 'green solid',
+        //   width: "100vw",
+        //   height: "100vh",
+        //   display: "flex",
+        //   justifyContent: "center",
+        //   alignItems: "center",
+        //   zIndex: "2000",
+        // }}
       >
-        <div className={styles.poploginsignup}>
+        <div 
+          className={styles.poploginsignup}
+          style={this.state.login_seen || this.state.signUpSeen ? ({
+            height: '100%',
+            width: '100%',
+            // border: '1px dashed',
+            overflowY: 'scroll',
+            zIndex: 5
+          }) : ({
+            height: '0%',
+            width: '0%',
+            zIndex: 3
+          })}
+        >
           {this.state.login_seen ? (
-            <PopLogin toggle={this.togglePopLogin} />
+            <PopLogin 
+              toggle={this.togglePopLogin} 
+              styling={{position: 'static'}}
+            />
+          ) : null}
+          {this.state.signUpSeen ? (
+            <Popsignup 
+              toggle={this.togglePopSignup} 
+              styling={{
+                position: 'static',
+                // position: 
+                // top: '0px'
+                // overflowY: 'auto'
+              }}
+            />
+          ) : null}
+        </div>
+        {/* <div className={styles.poploginsignup}>
+          {this.state.login_seen ? (
+            <PopLogin toggle={this.props.toggle} />
           ) : null}
           {this.state.signUpSeen ? (
             <Popsignup toggle={this.togglePopSignup} />
           ) : null}
-        </div>
+        </div> */}
 
         {(() => {
           if (this.state.user_id == "not login") {
@@ -165,11 +217,13 @@ export class BecomeAmbass extends Component {
                   position: "fixed",
                 }}
               >
-                <div style={{ padding: "10px", textAlign: "right" }}>
+                <div 
+                  style={{ padding: "10px", textAlign: "right" }}>
                   <CloseBtn
-                    style={{
-                      cursor: "pointer",
-                    }}
+                    // style={{
+                    //   cursor: "pointer",
+                    // }}
+                    className={styles.closeBtn}
                     onClick={this.handleClick}
                     aria-label="click here to close"
                     title="click here to close"
@@ -225,8 +279,8 @@ export class BecomeAmbass extends Component {
                   <button
                     className={styles.orangeBtn}
                     onClick={() => {
-                      this.handleClick();
-                      this.props.togglePopLogin();
+                      // this.handleClick();
+                      this.togglePopLogin();
                     }}
                     aria-label="Click here to log in"
                     title="Click here to log in"
@@ -240,8 +294,9 @@ export class BecomeAmbass extends Component {
                       margin: "10px",
                     }}
                     onClick={() => {
-                      this.handleClick();
-                      this.props.togglePopSignup();
+                      // this.handleClick();
+                      // this.props.togglePopSignup();
+                      this.togglePopSignup();
                     }}
                     aria-label="Click here to sign up for meals 4 me"
                     title="Click here to sign up for meals 4 me"

@@ -79,7 +79,7 @@ class Landing extends React.Component {
     console.log(response);
     if (response.profileObj) {
       // Google Login successful, try to login to MTYD
-      console.log("Google login successful");
+      console.log("Google login successful 1");
       let email = response.profileObj.email;
       let accessToken = response.accessToken;
       let refreshToken = response.googleId;

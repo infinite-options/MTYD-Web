@@ -16,6 +16,7 @@ import styles from "./landing.module.css";
 import socialG from "../../images/socialGoogle.png";
 import socialF from "../../images/socialFb.png";
 import socialA from "../../images/socialApple.png";
+import axios from "axios";
 
 export var responseData = null;
 
@@ -24,6 +25,7 @@ class SocialLogin extends Component {
     super(props);
     this.state = {
       verticalFormat: false,
+      showWrongSocial: false
     };
   }
 
@@ -50,23 +52,45 @@ class SocialLogin extends Component {
   }
 
   responseGoogle = (response) => {
-    console.log(response);
+    console.log("===| GOOGLE LOGIN SUCCESS |===");
+    console.log("google response: ", response);
+    
     if (response.profileObj) {
       // Google Login successful, try to login to MTYD
-      console.log("Google login successful");
+      // console.log("Google login successful 2");
       let email = response.profileObj.email;
       let accessToken = response.accessToken;
       let refreshToken = response.googleId;
 
-      // console.log(email,accessToken,refreshToken)
-      this.props.socialLoginAttempt(
-        email,
-        accessToken,
-        refreshToken,
-        "GOOGLE",
-        this.successLogin,
-        this.socialSignUp
-      );
+      // make sure profile is social media account before proceeding
+      axios
+        // .get(API_URL + "Profile?customer_email=" + email)
+        .get('http://localhost:2000/api/v2/Profile?customer_email=' + email)
+        .then((res) => {
+          console.log("(profile) res: ", res);
+
+          if(res.data.result[0].user_social_media !== 'GOOGLE'){
+            console.log("(profile) invalid social media account!");
+            this.setState({
+              showWrongSocial: true
+            });
+          } else {
+            console.log("(profile) valid social media account, proceeding with login...");
+            this.props.socialLoginAttempt(
+              email,
+              accessToken,
+              refreshToken,
+              "GOOGLE",
+              this.successLogin,
+              this.socialSignUp
+            );
+          }
+
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+
     } else {
       // Google Login unsuccessful
       console.log("Google Login failed");
@@ -102,7 +126,7 @@ class SocialLogin extends Component {
           display: "flex",
           alignItem: "center",
           justifyContent: "center",
-          // border: '1px solid cyan'
+          // border: '1px solid red'
         }}
       >
         <p
@@ -121,12 +145,22 @@ class SocialLogin extends Component {
 
   render() {
     let data = null;
+    
+    // if(this.state.showWrongSocial) {
+    //   return this.showError("ERROR: Invalid social media login attempt")
+    // }
+
     return !this.state.verticalFormat ? (
       <div
         // style={{
         //    border: '1px solid cyan'
         // }}
       >
+        {this.state.showWrongSocial ? (
+          this.showError("ERROR: Attempted to login with wrong social media account")
+        ) : (
+          null
+        )}
         <div
           style={{
             width: "412px",

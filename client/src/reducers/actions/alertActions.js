@@ -1,6 +1,5 @@
 import {v4 as uuidv4} from "uuid";
 import {SET_ALERT, REMOVE_ALERT} from "../actions/alertTypes";
-//import {setMsg} from "../../components/PopLogin/index.jsx";
 
 export const setAlert = (type, msg) => dispatch => {
   const id = uuidv4();

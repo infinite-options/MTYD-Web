@@ -218,7 +218,12 @@ export class PopSignup extends Component {
 
   render() {
     return (
-      <div className="model_content">
+      <div 
+        className="model_content"
+        style={this.props.styling === null ? ({}) : (
+          this.props.styling
+        )}
+      >
         <button
           className="close"
           onClick={this.handleClick}

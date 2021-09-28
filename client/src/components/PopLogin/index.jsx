@@ -81,7 +81,7 @@ export class PopLogin extends Component {
     console.log(response);
     if (response.profileObj) {
       // Google Login successful, try to login to MTYD
-      console.log("Google login successful");
+      console.log("Google login successful 4");
       let email = response.profileObj.email;
       let accessToken = response.accessToken;
       let refreshToken = response.googleId;
@@ -151,6 +151,9 @@ export class PopLogin extends Component {
     return (
       <div          
         className="pop_content"
+        style={this.props.styling === null ? ({}) : (
+          this.props.styling
+        )}
       >
 
           <button className="close" onClick={this.handleClick} aria-label="Click here to exit Login menu" title="Click here to exit Login menu"/>
