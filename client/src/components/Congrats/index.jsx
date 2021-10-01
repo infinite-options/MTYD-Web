@@ -180,7 +180,7 @@ export class Congrats extends Component {
         />
 
         {this.state.login_seen ? (
-          <PopLogin toggle={this.togglePopLogin} />
+          <PopLogin toggle={this.togglePopLogin} toggle_signup={this.togglePopSignup}/>
         ) : null}
         {this.state.signUpSeen ? (
           <Popsignup toggle={this.togglePopSignup} />

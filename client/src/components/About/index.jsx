@@ -43,7 +43,7 @@ class About extends Component {
           poplogin = {this.togglePopLogin}
           popSignup = {this.togglePopSignup}
         />
-        {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} /> : null}
+        {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} toggle_signup={this.togglePopSignup}/> : null}
         {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
 
         <div className = {styles.centerBox}>

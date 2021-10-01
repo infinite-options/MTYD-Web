@@ -13,12 +13,15 @@
 
 .pop_content {
   position: absolute;
-  top: 500px;
-  right: 1%;
+  /* top: 500px; */
+  top: 80px;
+  right: 20px;
   width: 549px;
   height: 732px;
   background: white;
   border: 3px solid #ff8500;
+  /* background: lime; */
+  /* border: inset; */
   opacity: 1;
   z-index: 100;
 }
@@ -33,7 +36,7 @@
   outline: none;
 }
 
-.signInBtn {
+/* .signInBtn {
   border-radius: 8px;
   background-color: #ff8500;
   border: 1px solid black;
@@ -42,6 +45,21 @@
   width: 452px;
   height: 71px;
   border-color: #ff8500;
+} */
+.signInBtn {
+  border-radius: 15px;
+  background-color: #ff6505;
+  /* margin-left: 49px;
+  margin-top: 10px; */
+  width: 400px;
+  height: 71px;
+  /* border-color: #ff8500; */
+  color: white;
+  font-size: 30px;
+  border: none;
+}
+.signInBtn:hover {
+  background-color: #ffba00;
 }
 
 .inputContainer i {
@@ -145,4 +163,104 @@
   height: 40px;
   margin-top: 20px;
   cursor: pointer;
+}
+
+.loginErrorModal {
+  /* border: 1px dashed; */
+  /* background-color: rgba(255, 255, 255, 1); */
+  background-color: white;
+  border: solid #ff6505;
+  /* height: 50%; */
+  /* width: 85%; */
+  width: 460px;
+  z-index: 2002;
+  /* height: initial; */
+  display: inline-block;
+  justify-content: center;
+  height: fit-content;
+  margin-top: 50px;
+}
+
+.loginErrorHeader {
+  font-size: 30px;
+  font-weight: bold;
+  /* padding-top: 5px; */
+  /* margin-top: 15px; */
+  margin: 60px 50px 15px 50px;
+  text-align: center;
+  /* border: 1px dashed; */
+}
+
+.loginErrorText {
+  font-size: 24px;
+  /* padding-top: 20px; */
+  /* border: 1px dashed; */
+  text-align: center;
+  /* font-weight: 0; */
+  margin: 22px;
+}
+
+.socialBtnWrapper {
+  /* border: 1px dashed; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 15px 15px 60px 15px;
+}
+
+.socialBtn {
+  /* width: 300px; */
+  max-width: 90%;
+  width: 350px;
+  /* width: 90%; */
+  height: 60px;
+  border-radius: 10px;
+  padding: 10px;
+  background-size: cover;
+  background-position: center;
+  border: none;
+}
+
+.fbLogin2 {
+  width: 300px;
+  max-width: 90%;
+  height: 60px;
+  border-radius: 10px;
+  padding: 10px;
+  background-image: url("../../images/socialFb.png");
+  background-size: cover;
+  background-position: center;
+  border: none;
+}
+
+.orangeBtnWrapper {
+  /* border: 1px dashed; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 15px;
+}
+.orangeBtn {
+  max-width: 90%;
+  width: 350px;
+  color: white;
+  background-color: #ff6505;
+  height: 60px;
+  border-radius: 10px;
+  padding: 10px;
+  background-size: cover;
+  background-position: center;
+  border: none;
+  font-size: 20px;
+}
+.orangeBtn:hover {
+  background-color: #ffba00;
+}
+
+.linkText {
+  text-decoration: underline;
+  cursor: pointer;
+}
+.linkText:hover {
+  color: #ff6505;
 }

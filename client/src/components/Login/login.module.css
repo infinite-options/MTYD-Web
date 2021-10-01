@@ -150,6 +150,7 @@
 .fbLogin {
   background-color: none;
   border: none;
+  /* border: 1px dashed; */
   cursor: pointer;
   border-radius: 50%;
   padding: 0px;

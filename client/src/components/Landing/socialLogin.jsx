@@ -13,6 +13,7 @@ import { withRouter } from "react-router";
 import GoogleLogin from "react-google-login";
 import FacebookLogin from "react-facebook-login";
 import styles from "./landing.module.css";
+import styles2 from "../PopLogin/popLogin.css"
 import socialG from "../../images/socialGoogle.png";
 import socialF from "../../images/socialFb.png";
 import socialA from "../../images/socialApple.png";
@@ -25,7 +26,7 @@ class SocialLogin extends Component {
     super(props);
     this.state = {
       verticalFormat: false,
-      showWrongSocial: false
+      showLoginError: false
     };
   }
 
@@ -72,7 +73,7 @@ class SocialLogin extends Component {
           if(res.data.result[0].user_social_media !== 'GOOGLE'){
             console.log("(profile) invalid social media account!");
             this.setState({
-              showWrongSocial: true
+              showLoginError: true
             });
           } else {
             console.log("(profile) valid social media account, proceeding with login...");
@@ -119,36 +120,57 @@ class SocialLogin extends Component {
   };
 
   showError = (err) => {
-    console.log("this is error in show err: ", err);
     return (
       <div
         style={{
-          display: "flex",
-          alignItem: "center",
-          justifyContent: "center",
-          // border: '1px solid red'
+          width: '100%',
+          // height: '100%',
+          height: 'calc(100% - 60px)',
+          // backgroundColor: 'white',
+          backgroundColor: 'rgb(255,255,255,0.5)',
+          position: 'absolute',
+          top: '60px',
+          display: 'flex',
+          justifyContent: 'center',
+          // opacity: 0.5
+          zIndex: '2001',
+          // border: '1px dashed'
         }}
       >
-        <p
-          style={{
-            color: "red",
-            fontSize: "15px",
-            fontWeight: "bold",
-            padding: "10px 10px",
-          }}
-        >
-          {err}
-        </p>
+        <div className='loginErrorModal'>
+          <button 
+            className="close" 
+            onClick={() => {
+              this.setState({showLoginError: false})
+            }} 
+            aria-label="Click here to close login error pop up" 
+            title="Click here to close login error pop up"
+          />
+          <div className='loginErrorHeader'>
+            Use Direct Login
+          </div>
+          <div className='loginErrorText'>
+            We have found this account with an email and password.
+          </div>
+          <div className='socialBtnWrapper'>
+            <button
+              className='orangeBtn'
+              onClick={() => {
+                this.setState({showLoginError: false})
+              }}
+              aria-label="Login using email and password"
+              title="Login using email and password"
+            >
+              Log in with email
+            </button>
+          </div>
+        </div>
       </div>
     );
   };
 
   render() {
     let data = null;
-    
-    // if(this.state.showWrongSocial) {
-    //   return this.showError("ERROR: Invalid social media login attempt")
-    // }
 
     return !this.state.verticalFormat ? (
       <div
@@ -156,11 +178,12 @@ class SocialLogin extends Component {
         //    border: '1px solid cyan'
         // }}
       >
-        {this.state.showWrongSocial ? (
+        {this.state.showLoginError ? (
           this.showError("ERROR: Attempted to login with wrong social media account")
         ) : (
           null
         )}
+
         <div
           style={{
             width: "412px",

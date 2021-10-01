@@ -1209,38 +1209,14 @@ const EditPlan = (props) => {
     }
   }, [subscriptions])
 
-  // useEffect(() => {
-  //   console.log("(UE newPlan) newPlan: ", newPlan);
-  //   selectNumMeals(newPlan.meals);
-  //   selectNumDeliveries(newPlan.deliveries);
-  //   calculateDifference();
-  //   // console.log("done recalculating 1");
-  //   if(dataLoaded) {
-  //     // console.log("set recalculating false 1");
-  //     setRecalculating(false);
-  //   }
-  // }, [newPlan]);
-  // useEffect(() => {
-  //   console.log("(UE newPlan) newPlan: ", newPlan);
-  //   selectNumMeals(newPlan.meals);
-  //   selectNumDeliveries(newPlan.deliveries);
-  //   // calculateDifference();
-  //   // console.log("done recalculating 1");
-  //   if(dataLoaded) {
-  //     // console.log("set recalculating false 1");
-  //     setRecalculating(false);
-  //   }
-  // }, [newPlan.purchase_uid]);
-  // useEffect(() => {
-  //   if(dataLoaded) {
-  //     calculateBilling({});
-  //     calculateDifference();
-  //   }
-  // }, [newPlan])
+  // Recalculate difference in payment summary whenever new plan is edited
   useEffect(() => {
     calculateDifference();
   }, [newPlan]);
 
+  /*  Trigger recalculation from backend whenever anything that 
+      influences price (i.e. meal plan selected, amount tipped, 
+      ambassador coupon used, delivery coordinates) is changed    */
   useEffect(() => {
     console.log(" ");
     console.log("=========================| START |=========================");
@@ -1566,39 +1542,7 @@ const EditPlan = (props) => {
       });
   }
 
-  // useEffect(() => {
-  //   console.log("changed deliveryInput: ", deliveryInput);
-  // }, [deliveryInput]);
-
-  // const selectTip = (tip_amount, recalculate_billing) => {
-  //   console.log("set recalculating true 2");
-  //   setRecalculating(true);
-  //   if(recalculate_billing === true){
-  //     console.log("(before CB) 2");
-  //     calculateBilling({
-  //       tip: tip_amount
-  //     });
-  //   }
-  //   setTipAmount(tip_amount);
-  // }
-
   const saveDeliveryDetails = () => {
-    // setDeliveryInput({
-    //   first_name: sub.delivery_first_name,
-    //   last_name: sub.delivery_last_name,
-    //   purchase_uid: sub.purchase_uid,
-    //   phone: sub.delivery_phone_num,
-    //   address: sub.delivery_address,
-    //   unit: sub.delivery_unit,
-    //   city: sub.delivery_city,
-    //   state: sub.delivery_state,
-    //   zip: sub.delivery_zip,
-    //   cc_num: "NULL",
-    //   cc_cvv: "NULL",
-    //   cc_zip: "NULL",
-    //   cc_exp_date: "NULL",
-    //   instructions: sub.delivery_instructions,
-    // });
 
     // 1.) save delivery details to database
     let object = { ...deliveryInput };
@@ -1642,24 +1586,6 @@ const EditPlan = (props) => {
         }
       });
   }
-
-  // // recalculate billing on meals/deliveries change
-  // useEffect(() => {
-  //   console.log("(nds) recalculate billing on meals/deliveries change 1");
-  //   if(dataLoaded){
-  //     // console.log("(nds) recalculate billing on meals/deliveries change 2");
-  //     console.log("(before CB) 3");
-  //     calculateBilling({});
-  //   }
-  // }, [numDeliveriesSelected]);
-  // useEffect(() => {
-  //   console.log("(nms) recalculate billing on meals/deliveries change 1");
-  //   if(dataLoaded){
-  //     // console.log("(nms) recalculate billing on meals/deliveries change 2");
-  //     console.log("(before CB) 4");
-  //     calculateBilling({});
-  //   }
-  // }, [numMealsSelected]);
 
   // Used to render menu at top showing all current meals plans
   const showSubscribedMeals = () => {
@@ -2850,11 +2776,6 @@ const EditPlan = (props) => {
           />
           <button
             className={styles.codeButton}
-            // disabled={
-            //   this.state.refreshingPrice ||
-            //   parseFloat(this.state.currentPlan.payment_summary.ambassador_discount) > 0 ||
-            //   parseFloat(this.state.updatedPlan.payment_summary.ambassador_discount) > 0
-            // }
             disabled={recalculating || recalculatingBilling}
             onClick={() => applyAmbassadorCode()}
             aria-label="Click here to verify your ambassador code"
@@ -2862,17 +2783,6 @@ const EditPlan = (props) => {
           >
             Verify
           </button>
-
-          {/* <div
-            style={{
-              marginTop: '20px',
-              width: '42%',
-              display: 'flex',
-              textAlign: 'left'
-            }}
-          >
-            Ambassador Discount
-          </div> */}
 
           <div
             className={
@@ -2943,13 +2853,6 @@ const EditPlan = (props) => {
 
         <button
           className={styles.orangeBtn2}
-          // disabled={
-          //   (!this.state.subscriptionsLoaded &&
-          //     this.state.defaultSet === false) ||
-          //   this.state.refreshingPrice === true ||
-          //   !this.activeChanges() ||
-          //   this.state.processingChanges
-          // }
           disabled={recalculating || recalculatingBilling || !activeChanges()}
           onClick={() => confirmChanges()}
           aria-label={
@@ -2968,13 +2871,6 @@ const EditPlan = (props) => {
 
         <button
           className={styles.orangeBtn3}
-          // disabled={
-          //   (!this.state.subscriptionsLoaded &&
-          //     this.state.defaultSet === false) ||
-          //   this.state.refreshingPrice === true ||
-          //   !this.activeChanges() ||
-          //   this.state.processingChanges
-          // }
           disabled={recalculating || recalculatingBilling || !activeChanges()}
           onClick={() => discardChanges()}
           aria-label={
@@ -2995,10 +2891,7 @@ const EditPlan = (props) => {
   }
 
   const itemize = (n_meals, n_deliveries) => {
-    // console.log("(itemize) plans: ", plans);
-    // console.log("(itemize) plans[n_meals]: ", plans[n_meals]);
     let planData = plans[n_meals][n_deliveries];
-    // console.log("(itemize) planData: ", planData);
     let newItems = [
       {
         item_uid: planData.item_uid,
@@ -3011,82 +2904,6 @@ const EditPlan = (props) => {
     return newItems;
   }
 
-  /*const calculateBilling = (newData) => {
-    console.log("\n(CB) start");
-    // console.log("(CB) plans: ", plans);
-
-    // // Get discount
-    // console.log("(CB) numMealsSelected: ", numMealsSelected, typeof(numMealsSelected));
-    // console.log("(CB) numDeliveriesSelected: ", numDeliveriesSelected, typeof(numDeliveriesSelected));
-    let subDiscount = getDeliveryDiscount(numDeliveriesSelected);
-    // console.log("(CB) subDiscount: ", subDiscount);
-
-    // let updatedNewPlan = {...newPlan};
-
-    // console.log("\n(CB) newPlan before change: ", newPlan);
-    // console.log("(CB) newData: ", newData);
-
-    let itemized = itemize(numMealsSelected, numDeliveriesSelected);
-
-      let object = {
-        items: itemized,
-        customer_lat: newPlan.delivery_details.delivery_latitude,
-        customer_long: newPlan.delivery_details.delivery_longitude,
-        driver_tip: newPlan.billing.driver_tip
-      };
-
-      if(newData.hasOwnProperty('tip')) {
-        // console.log("(CB) calculating with new tip...");
-        object.driver_tip = newData.tip;
-      }
-
-      if(newData.hasOwnProperty('amb_coupon')) {
-        // console.log("(CB) calculating with new coupon...");
-        object.ambassador_coupon = newData.amb_coupon;
-      }
-
-      console.log("(CB) object for make_purchase: ", object);
-      axios
-        .put(
-          `http://localhost:2000/api/v2/make_purchase`, 
-          object
-        )
-        .then((res) => {
-          console.log("(make_purchase) res: ", res);
-
-          let recalculated_plan = {
-            ...newPlan,
-            billing: {
-              base_amount: res.data.new_meal_charge.toFixed(2),
-              taxes: res.data.new_tax.toFixed(2),
-              delivery_fee: res.data.delivery_fee.toFixed(2),
-              service_fee: res.data.service_fee.toFixed(2),
-              driver_tip: res.data.new_driver_tip.toFixed(2),
-              discount_amount: res.data.new_discount.toFixed(2),
-              discount_rate: subDiscount,
-              ambassador_discount: res.data.ambassador_discount.toFixed(2),
-              subtotal: (res.data.amount_should_charge + res.data.ambassador_discount).toFixed(2),
-              total: res.data.amount_should_charge.toFixed(2),
-            },
-            items: itemized,
-            meals: numMealsSelected,
-            deliveries: numDeliveriesSelected,
-            discount: subDiscount
-          }
-
-          setRecalculating(false);
-          console.log("(0915) setNewPlan 6");
-          setNewPlan(recalculated_plan);
-          console.log("(CB) end\n");
-        })
-        .catch((err) => {
-          if (err.response) {
-            console.log(err.response);
-          }
-          console.log(err);
-        });
-    // }
-  }*/
   const calculateBilling = (
     mp_currentPlan, 
     mp_numMealsSelected, 
@@ -3099,64 +2916,59 @@ const EditPlan = (props) => {
     console.log("\n(CB) 1");
     console.log("(CB) coupon: ", mp_ambassadorCoupon);
 
-    // if(mp_longitude !== null && mp_latitude !== null) {
-    //   console.log("\n(CB) 2");
+    let subDiscount = getDeliveryDiscount(mp_numDeliveriesSelected);
 
-      let subDiscount = getDeliveryDiscount(mp_numDeliveriesSelected);
+    let itemized = itemize(mp_numMealsSelected, mp_numDeliveriesSelected);
 
-      let itemized = itemize(mp_numMealsSelected, mp_numDeliveriesSelected);
+    let object = {
+      items: itemized,
+      customer_lat: mp_latitude,
+      customer_long: mp_longitude,
+      driver_tip: mp_tipAmount
+    };
+    if(mp_ambassadorCoupon !== null) {
+      object['ambassador_coupon'] = mp_ambassadorCoupon;
+    }
 
-      let object = {
-        items: itemized,
-        customer_lat: mp_latitude,
-        customer_long: mp_longitude,
-        driver_tip: mp_tipAmount
-      };
-      if(mp_ambassadorCoupon !== null) {
-        object['ambassador_coupon'] = mp_ambassadorCoupon;
-      }
+    console.log("(CB) object for make_purchase: ", object);
+    axios
+      .put(API_URL + `make_purchase`, object)
+      .then((res) => {
+        console.log("(make_purchase) res: ", res);
 
-      console.log("(CB) object for make_purchase: ", object);
-      axios
-        // .put(`http://localhost:2000/api/v2/make_purchase`, object)
-        .put(API_URL + `make_purchase`, object)
-        .then((res) => {
-          console.log("(make_purchase) res: ", res);
+        let recalculated_plan = {
+          ...mp_currentPlan,
+          billing: {
+            base_amount: res.data.new_meal_charge.toFixed(2),
+            taxes: res.data.new_tax.toFixed(2),
+            delivery_fee: res.data.delivery_fee.toFixed(2),
+            service_fee: res.data.service_fee.toFixed(2),
+            driver_tip: res.data.new_driver_tip.toFixed(2),
+            discount_amount: res.data.new_discount.toFixed(2),
+            discount_rate: subDiscount,
+            ambassador_discount: res.data.ambassador_discount.toFixed(2),
+            subtotal: (res.data.amount_should_charge + res.data.ambassador_discount).toFixed(2),
+            total: res.data.amount_should_charge.toFixed(2),
+          },
+          items: itemized,
+          meals: mp_numMealsSelected,
+          deliveries: mp_numDeliveriesSelected,
+          discount: subDiscount
+        }
 
-          let recalculated_plan = {
-            ...mp_currentPlan,
-            billing: {
-              base_amount: res.data.new_meal_charge.toFixed(2),
-              taxes: res.data.new_tax.toFixed(2),
-              delivery_fee: res.data.delivery_fee.toFixed(2),
-              service_fee: res.data.service_fee.toFixed(2),
-              driver_tip: res.data.new_driver_tip.toFixed(2),
-              discount_amount: res.data.new_discount.toFixed(2),
-              discount_rate: subDiscount,
-              ambassador_discount: res.data.ambassador_discount.toFixed(2),
-              subtotal: (res.data.amount_should_charge + res.data.ambassador_discount).toFixed(2),
-              total: res.data.amount_should_charge.toFixed(2),
-            },
-            items: itemized,
-            meals: mp_numMealsSelected,
-            deliveries: mp_numDeliveriesSelected,
-            discount: subDiscount
-          }
+        setRecalculating(false);
+        console.log("(0915) setNewPlan 6");
+        setNewPlan(recalculated_plan);
 
-          setRecalculating(false);
-          console.log("(0915) setNewPlan 6");
-          setNewPlan(recalculated_plan);
-
-          setRecalculatingBilling(false);
-          console.log("(CB) end\n");
-        })
-        .catch((err) => {
-          if (err.response) {
-            console.log(err.response);
-          }
-          console.log(err);
-        });
-    // }
+        setRecalculatingBilling(false);
+        console.log("(CB) end\n");
+      })
+      .catch((err) => {
+        if (err.response) {
+          console.log(err.response);
+        }
+        console.log(err);
+      });
   }
 
   const getCurrentDate = () => {
@@ -3457,7 +3269,7 @@ const EditPlan = (props) => {
       ) : (null)}
 
       {login_seen ? (
-        <PopLogin toggle={togglePopLogin} />
+        <PopLogin toggle={togglePopLogin} toggle_signup={this.togglePopSignup}/>
       ) : null}
       {signUpSeen ? (
         <Popsignup toggle={togglePopSignup} />

@@ -25,33 +25,48 @@ const google = window.google;
 export class PopSignup extends Component {
   constructor(props) {
     super(props);
-    this.handlePlaceSelect = this.handlePlaceSelect.bind(this);
-    this.handleChange = this.handleChange.bind(this);
-    this.autocomplete = null;
-    this.state = this.initialState();
-  }
-
-  initialState() {
-    if (this.props.messageFromHooray) {
-      return {
-        name: "xxx",
-        street_address: this.props.streetAddressFromHooray,
-        city: this.props.cityFromHooray,
-        state: this.props.stateFromHooray,
-        zip_code: this.props.zipCodeFromHooray,
-      };
+    // this.handlePlaceSelect = this.handlePlaceSelect.bind(this);
+    // this.handleChange = this.handleChange.bind(this);
+    // this.autocomplete = null;
+    // this.state = this.initialState();
+    this.state = {
+      first_name: '',
+      last_name: '',
+      email: '',
+      phone: '',
+      street: '',
+      city: '',
+      state: '',
+      zip: '',
+      password: '',
+      password_confirm: '',
+      latitude: '',
+      longitude: '',
+      signUpPopUp: null
     }
-
-    return {
-      name: "",
-      street_address: "",
-      city: "",
-      state: "",
-      zip_code: "",
-      lat: "",
-      lng: "",
-    };
   }
+
+  // initialState() {
+  //   if (this.props.messageFromHooray) {
+  //     return {
+  //       name: "xxx",
+  //       street_address: this.props.streetAddressFromHooray,
+  //       city: this.props.cityFromHooray,
+  //       state: this.props.stateFromHooray,
+  //       zip_code: this.props.zipCodeFromHooray,
+  //     };
+  //   }
+
+  //   return {
+  //     name: "",
+  //     street_address: "",
+  //     city: "",
+  //     state: "",
+  //     zip_code: "",
+  //     lat: "",
+  //     lng: "",
+  //   };
+  // }
 
   componentDidMount() {
     this.autocomplete = new google.maps.places.Autocomplete(
@@ -63,9 +78,18 @@ export class PopSignup extends Component {
     this.autocomplete.addListener("place_changed", this.handlePlaceSelect);
 
     console.log(this.state);
+    if (this.props.messageFromHooray) {
+      this.setState({
+        street: this.props.streetAddressFromHooray,
+        city: this.props.cityFromHooray,
+        state: this.props.stateFromHooray,
+        zip_code: this.props.zipCodeFromHooray
+      });
+    }
   }
 
   handlePlaceSelect() {
+    console.log("in handlePlaceSelect");
     let address1Field = document.querySelector("#ship-address");
     let postalField = document.querySelector("#postcode");
 
@@ -115,21 +139,30 @@ export class PopSignup extends Component {
     // console.log(address1);
     // console.log(postcode)
 
+    // this.setState({
+    //   name: addressObject.name,
+    //   street_address: address1,
+    //   city: city,
+    //   state: state,
+    //   zip_code: postcode,
+    //   lat: addressObject.geometry.location.lat(),
+    //   lng: addressObject.geometry.location.lng(),
+    // });
     this.setState({
       name: addressObject.name,
-      street_address: address1,
+      street: address1,
       city: city,
       state: state,
-      zip_code: postcode,
-      lat: addressObject.geometry.location.lat(),
-      lng: addressObject.geometry.location.lng(),
+      zip: postcode,
+      latitude: addressObject.geometry.location.lat().toString(),
+      longitude: addressObject.geometry.location.lng().toString(),
     });
 
     console.log(this.state);
 
     axios
       .get(
-        `https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/categoricalOptions/${this.state.lng},${this.state.lat}`
+        `https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/categoricalOptions/${this.state.longitude},${this.state.latitude}`
       )
       .then((res) => {
         console.log(res);
@@ -216,6 +249,10 @@ export class PopSignup extends Component {
     }
   };
 
+  directSignUp() {
+
+  }
+
   render() {
     return (
       <div 
@@ -279,9 +316,15 @@ export class PopSignup extends Component {
               }}
               className="inputBox"
               placeholder="First name"
-              value={this.props.firstName}
+              // value={this.props.firstName}
+              // onChange={(e) => {
+              //   this.props.changeNewFirstName(e.target.value);
+              // }}
+              value={this.state.first_name}
               onChange={(e) => {
-                this.props.changeNewFirstName(e.target.value);
+                this.setState({
+                  first_name: e.target.value
+                });
               }}
               aria-label="Input first name"
               title="Input first name"
@@ -293,9 +336,15 @@ export class PopSignup extends Component {
               }}
               className="inputBox"
               placeholder="Last name"
-              value={this.props.lastName}
+              // value={this.props.lastName}
+              // onChange={(e) => {
+              //   this.props.changeNewLastName(e.target.value);
+              // }}
+              value={this.state.last_name}
               onChange={(e) => {
-                this.props.changeNewLastName(e.target.value);
+                this.setState({
+                  last_name: e.target.value
+                });
               }}
               aria-label="Input last name"
               title="Input last name"
@@ -305,9 +354,15 @@ export class PopSignup extends Component {
           <input
             className="inputBox"
             placeholder="Email address (for order confirmation)"
-            value={this.props.email}
+            // value={this.props.email}
+            // onChange={(e) => {
+            //   this.props.changeNewEmail(e.target.value);
+            // }}
+            value={this.state.email}
             onChange={(e) => {
-              this.props.changeNewEmail(e.target.value);
+              this.setState({
+                email: e.target.value
+              });
             }}
             aria-label="Input email address"
             title="Input email address"
@@ -317,9 +372,15 @@ export class PopSignup extends Component {
             className="inputBox"
             placeholder="Create Password"
             type="password"
-            value={this.props.password}
+            // value={this.props.password}
+            // onChange={(e) => {
+            //   this.props.changeNewPassword(e.target.value);
+            // }}
+            value={this.state.password}
             onChange={(e) => {
-              this.props.changeNewPassword(e.target.value);
+              this.setState({
+                password: e.target.value
+              });
             }}
             aria-label="Enter password you want to use"
             title="Enter password you want to use"
@@ -329,9 +390,15 @@ export class PopSignup extends Component {
             className="inputBox"
             placeholder="Confirm Password"
             type="password"
-            value={this.props.passwordConfirm}
+            // value={this.props.passwordConfirm}
+            // onChange={(e) => {
+            //   this.props.changeNewPasswordConfirm(e.target.value);
+            // }}
+            value={this.state.password_confirm}
             onChange={(e) => {
-              this.props.changeNewPasswordConfirm(e.target.value);
+              this.setState({
+                password_confirm: e.target.value
+              });
             }}
             aria-label="Confirn your password"
             title="Confirn your password"
@@ -340,17 +407,48 @@ export class PopSignup extends Component {
           <input
             className="inputBox"
             placeholder="Phone Number"
-            value={this.props.phone}
+            // value={this.props.phone}
+            // onChange={(e) => {
+            //   this.props.changeNewPhone(e.target.value);
+            // }}
+            value={this.state.phone}
             onChange={(e) => {
-              this.props.changeNewPhone(e.target.value);
+              this.setState({
+                phone: e.target.value
+              });
             }}
             aria-label="Enter your phone number"
             title="Enter your phone number"
           ></input>
 
-          <input
+          {/* <input
+            // className={
+            //   this.state.street == "" ? "inputBox" : "StreetinputBox"
+            // }
+            className='inputBox'
+            id="ship-address"
+            name="ship-address"
+            // onChange={(e) => {
+            //   this.props.changeNewAddress(e.target.value);
+            // }}
+            value={this.state.street}
+            onChange={(e) => {
+              this.setState({
+                street: e.target.value
+              });
+            }}
+            // placeholder={
+            //   this.state.street == ""
+            //     ? "Street Address"
+            //     : this.state.street
+            // }
+            placeholder={"Street Address"}
+            aria-label="Enter your street address"
+            title="Enter your street address"
+          /> */}
+          {/* <input
             className={
-              this.state.street_address == "" ? "inputBox" : "StreetinputBox"
+              this.state.street == "" ? "inputBox" : "StreetinputBox"
             }
             id="ship-address"
             name="ship-address"
@@ -358,9 +456,26 @@ export class PopSignup extends Component {
               this.props.changeNewAddress(e.target.value);
             }}
             placeholder={
-              this.state.street_address == ""
+              this.state.street == ""
                 ? "Street Address"
-                : this.state.street_address
+                : this.state.street
+            }
+            aria-label="Enter your street address"
+            title="Enter your street address"
+          /> */}
+          <input
+            className={
+              this.state.street == "" ? "inputBox" : "StreetinputBox"
+            }
+            id="ship-address"
+            name="ship-address"
+            onChange={(e) => {
+              this.props.changeNewAddress(e.target.value);
+            }}
+            placeholder={
+              this.state.street == ""
+                ? "Street Address"
+                : this.state.street
             }
             aria-label="Enter your street address"
             title="Enter your street address"
@@ -373,9 +488,15 @@ export class PopSignup extends Component {
             }}
             className="inputBox"
             placeholder="Unit"
-            value={this.props.unit}
+            // value={this.props.unit}
+            // onChange={(e) => {
+            //   this.props.changeNewUnit(e.target.value);
+            // }}
+            value={this.state.unit}
             onChange={(e) => {
-              this.props.changeNewUnit(e.target.value);
+              this.setState({
+                unit: e.target.value
+              });
             }}
             aria-label="Enter your unit number. optional"
             title="Enter your unit number. optional"
@@ -390,11 +511,17 @@ export class PopSignup extends Component {
             placeholder="City"
             id="locality"
             name="locality"
-            value={this.state.city}
+            // value={this.state.city}
             aria-label="Enter your city"
             title="Enter your city"
+            // onChange={(e) => {
+            //   this.props.changeNewCity(e.target.value);
+            // }}
+            value={this.state.city}
             onChange={(e) => {
-              this.props.changeNewCity(e.target.value);
+              this.setState({
+                city: e.target.value
+              });
             }}
           />
 
@@ -407,11 +534,17 @@ export class PopSignup extends Component {
             placeholder="State"
             id="state"
             name="state"
-            value={this.state.state}
+            // value={this.state.state}
             aria-label="Enter your state"
             title="Enter your state"
+            // onChange={(e) => {
+            //   this.props.changeNewState(e.target.value);
+            // }}
+            value={this.state.state}
             onChange={(e) => {
-              this.props.changeNewState(e.target.value);
+              this.setState({
+                state: e.target.value
+              });
             }}
           />
 
@@ -424,41 +557,59 @@ export class PopSignup extends Component {
             placeholder="Zip"
             id="postcode"
             name="postcode"
-            value={this.state.zip_code}
+            // value={this.state.zip_code}
             aria-label="Enter your zip code"
             title="Enter your zip code"
+            // onChange={(e) => {
+            //   this.props.changeNewZip(e.target.value);
+            // }}
+            value={this.state.zip}
             onChange={(e) => {
-              this.props.changeNewZip(e.target.value);
+              this.setState({
+                zip: e.target.value
+              });
             }}
           />
         </div>
 
-        <button
+        <div
           style={{
-            width: "452px",
-            height: "71px",
-            background: " #FF8500 0% 0% no-repeat padding-box",
-            borderRadius: "14px",
-            opacity: 1,
-            marginLeft: "49px",
-            marginTop: "26px",
-            border: "none",
+            // border: '1px dashed',
+            display: 'flex',
+            justifyContent: 'center',
+            marginTop: '25px'
           }}
-          onClick={this.wrapperFunction}
         >
-          <p
-            style={{
-              fontSize: "20px",
-              textAlign: "center",
-              marginTop: 8,
-              fontWeight: 500,
-            }}
-            aria-label="Click here to sign up"
-            title="Click here to sign up"
+          <button
+            // style={{
+            //   width: "452px",
+            //   height: "71px",
+            //   background: " #FF8500 0% 0% no-repeat padding-box",
+            //   borderRadius: "14px",
+            //   opacity: 1,
+            //   marginLeft: "49px",
+            //   marginTop: "26px",
+            //   border: "none",
+            // }}
+            className='signUpBtn'
+            onClick={this.wrapperFunction}
+            // onClick={this.directSignUp}
           >
+            {/* <p
+              style={{
+                fontSize: "20px",
+                textAlign: "center",
+                marginTop: 8,
+                fontWeight: 500,
+              }}
+              aria-label="Click here to sign up"
+              title="Click here to sign up"
+            >
+              Sign up
+            </p> */}
             Sign up
-          </p>
-        </button>
+          </button>
+        </div>
 
         {/* <GooglePlacesAutocomplete
           placeholder="Type in an address"

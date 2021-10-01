@@ -143,10 +143,74 @@ export const forgotPassword = (email) => (dispatch) => {
     });
 };
 
+export const forgotPassword_v2 = (email, callback) => (dispatch) => {
+  console.log("in forgotPassword_v2");
+  axios
+    .get(API_URL + "reset_password?email=" + email)
+    .then((res) => {
+       console.log(res)
+      if (res.status === 200) {
+        //  console.log(res)
+        console.log("temp password sent");
+        dispatch(
+          setAlert(
+            "TempPassword",
+            "A temporary password has been sent to " + email
+          )
+        );
+        callback(<>
+          {"A temporary password has been sent to "}
+          <span style={{textDecoration: 'underline'}}>
+            {email}
+          </span> 
+          {". You can use it to reset your password."}
+        </>);
+      } else if (res.status === 204) {
+        console.log("account doesnt exist");
+        dispatch(
+          setAlert("NoAccount", "There is no account with the email " + email)
+        );
+        callback(<>
+          <span style={{fontWeight: 'bold'}}>
+            {"ERROR: "}
+          </span> 
+          {"An account with the email "}
+          <span style={{textDecoration: 'underline'}}>
+            {email}
+          </span> 
+          {" does not exist."}
+        </>);
+      } else {
+        console.log("some other error");
+        dispatch(
+          setAlert(
+            "TempPasswordError",
+            "An error has occured. Please try again later."
+          )
+        );
+        callback(<>
+          <span style={{fontWeight: 'bold'}}>
+            {"ERROR: "}
+          </span> 
+          {"An unknown error has occured. Please try again later."}
+        </>);
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      callback(<>
+        <span style={{fontWeight: 'bold'}}>
+          {"ERROR: "}
+        </span> 
+        {"An unknown error has occured. Please try again later."}
+      </>);
+    });
+};
+
 export var errMessage = "";
 
 export function getErrMessage() {
-  //console.log("getErrMessage = " + errMessage)
+  // console.log("getErrMessage = " + errMessage)
   return errMessage;
 }
 
@@ -162,9 +226,13 @@ export const loginAttempt = (email, password, callback) => (dispatch) => {
       let saltObject = res;
 
       if (!(saltObject.data.code && saltObject.data.code !== 200)) {
+        // console.log("(salt) 1");
+
         let hashAlg = saltObject.data.result[0].password_algorithm;
         let salt = saltObject.data.result[0].password_salt;
         if (hashAlg !== null && salt !== null) {
+          // console.log("(salt) 1.1");
+
           //Get hash algorithm
           switch (hashAlg) {
             case "SHA512":
@@ -226,6 +294,7 @@ export const loginAttempt = (email, password, callback) => (dispatch) => {
               });
           });
         } else {
+          // console.log("(salt) 1.2");
           // No hash/salt information, probably need to sign in by socail media
           console.log("Salt not found");
           // Try to login anyway to confirm
@@ -256,6 +325,8 @@ export const loginAttempt = (email, password, callback) => (dispatch) => {
         }
         // No information from Account Salt endpoint, probably invalid credentials
       } else {
+        // console.log("(salt) 2");
+
         if (res.data?.message) {
           errMessage = res.data.message;
           console.log(errMessage);
@@ -266,6 +337,150 @@ export const loginAttempt = (email, password, callback) => (dispatch) => {
         } else {
           errMessage = "Something weird happened";
           console.log("Something weird happened.");
+        }
+      }
+    })
+    // Error for Account Salt endpoint
+    .catch((err) => {
+      console.log(err);
+      if (err.response) {
+        console.log(err.response);
+      }
+    });
+};
+
+export const loginAttempt_v2 = (email, password, callback_success, callback_failure) => (dispatch) => {
+  // Get salt for account
+  let m = "";
+  console.log("inside login attempt");
+  axios
+    .post(API_URL + "accountsalt", {
+      email: email,
+    })
+    .then((res) => {
+      let saltObject = res;
+      console.log("saltObject: ", saltObject);
+
+      if (!(saltObject.data.code && saltObject.data.code !== 200)) {
+        console.log("(salt) 1");
+
+        let hashAlg = saltObject.data.result[0].password_algorithm;
+        let salt = saltObject.data.result[0].password_salt;
+        if (hashAlg !== null && salt !== null) {
+          console.log("(salt) 1.1");
+
+          //Get hash algorithm
+          switch (hashAlg) {
+            case "SHA512":
+              hashAlg = "SHA-512";
+              break;
+
+            default:
+              break;
+          }
+          // console.log(hashAlg,salt);
+          let saltedPassword = password + salt;
+          // console.log(saltedPassword);
+          // Encode salted password to prepare for hashing
+          const encoder = new TextEncoder();
+          const data = encoder.encode(saltedPassword);
+          // Hash salted password
+          crypto.subtle.digest(hashAlg, data).then((res) => {
+            let hash = res;
+            // Decode hash with hex digest
+            let hashArray = Array.from(new Uint8Array(hash));
+            let hashedPassword = hashArray
+              .map((byte) => byte.toString(16).padStart(2, "0"))
+              .join("");
+            // console.log(hashedPassword);
+            // Attempt to login
+            axios
+              .post(API_URL + "login", {
+                email: email,
+                password: hashedPassword,
+                social_id: "",
+                signup_platform: "",
+              })
+              .then((res) => {
+                // Handle successful Login
+                if (res.data.code === 200) {
+                  let customerInfo = res.data.result[0];
+
+                  document.cookie = "customer_uid=" + customerInfo.customer_uid;
+
+                  dispatch({
+                    type: SUBMIT_PASSWORD,
+                  });
+                  preCallback(customerInfo, callback_success);
+                } else if (res.data.code === 406 || res.data.code === 404) {
+                  console.log("Invalid credentials");
+                  dispatch(setAlert("LoginError", res.data.message));
+                  callback_failure(res.data.message);
+                } else if (res.data.code === 401) {
+                  console.log("Need to log in by social media");
+                  dispatch(setAlert("LoginError", res.data.message));
+                  callback_failure(res.data.message);
+                } else {
+                  console.log("Unknown login error");
+                  callback_failure("Unknown login error");
+                }
+              })
+              .catch((err) => {
+                console.log(err);
+                if (err.response) {
+                  console.log(err.response);
+                }
+              });
+          });
+        } else {
+          console.log("(salt) 1.2");
+          // No hash/salt information, probably need to sign in by socail media
+          console.log("Salt not found");
+          // Try to login anyway to confirm
+          axios
+            .post(API_URL + "login", {
+              email: email,
+              password: "test",
+              social_id: "",
+              signup_platform: "",
+            })
+            .then((res) => {
+              // Don't expect success, checking for need to log in by social media
+              if (res.data.code === 401) {
+                errMessage = "Log in via social media";
+                console.log("Need to log in by social media");
+                callback_failure("Need to log in by social media");
+              } else {
+                errMessage = "Unknown login error";
+                console.log("Unknown login error");
+                callback_failure("Unknown login error");
+              }
+            })
+            // Catch unkown Login errors
+            .catch((err) => {
+              console.log(err);
+              if (err.response) {
+                console.log(err.response);
+              }
+            });
+        }
+        // No information from Account Salt endpoint, probably invalid credentials
+      } else {
+        console.log("(salt) 2");
+        // console.log("res:");
+
+        if (res.data?.message) {
+          errMessage = res.data.message;
+          console.log(errMessage);
+          console.log(":P");
+          dispatch(setAlert("LoginError", res.data.message));
+          console.log("done with dispatch");
+          callback_failure(res.data.message);
+          //return res.data.message
+        } else {
+          errMessage = "Something weird happened";
+          console.log("Something weird happened.");
+          callback_failure("Something weird happened");
         }
       }
     })

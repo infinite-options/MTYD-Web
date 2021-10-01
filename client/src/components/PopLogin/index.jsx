@@ -3,16 +3,19 @@ import styles from "./popLogin.css"
 import SocialLogin from "../Landing/socialLogin"
 import {
   loginAttempt,
+  loginAttempt_v2,
   changeEmail,
   changePassword,
   getErrMessage,
-  socialLoginAttempt
+  socialLoginAttempt,
+  forgotPassword_v2
 } from "../../reducers/actions/loginActions";
 
 import { withRouter} from 'react-router-dom';
 import GoogleLogin from "react-google-login";
-import FacebookLogin from "react-facebook-login";
-
+// import FacebookLogin from "react-facebook-login";
+// import {FacebookLogin as FacebookLoginCustom} from 'react-facebook-login/dist/facebook-login-render-props';
+import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props';
 
 import {connect} from "react-redux";
 
@@ -33,6 +36,12 @@ export class PopLogin extends Component {
     //   errorLinkText: '',
     //   errorHeader: ''
     // }
+    this.state = {
+      email_input: '',
+      password_input: '',
+      loginPopUp: null,
+      disableLogin: false
+    }
   }
 
   errVal=''
@@ -56,25 +65,54 @@ export class PopLogin extends Component {
     });
   }
 
-  errVal=''
-  attemptLogin=false
-  attemptShow=true
-  attemptReload=false
-  showErrorModal = false
-  errorModal = null
-  errorMessage = ''
-  errorLink = ''
-  errorLinkText = ''
-  errorHeader = ''
-  loginClicked = false
-
-  componentDidMount() {
-    window.AppleID.auth.init({
-      clientId: process.env.REACT_APP_APPLE_CLIENT_ID,
-      scope: "email",
-      redirectURI: process.env.REACT_APP_APPLE_REDIRECT_URI
-      //redirectURI: ""
-    });
+  directLogin() {
+    console.log("directLogin email: |" + this.state.email_input + "|");
+    if(this.state.email_input === '') {
+      this.setState({
+        loginPopUp: (
+          <div className='loginErrorModal'>
+            <button 
+              className="close" 
+              onClick={() => {
+                this.setState({loginPopUp: null})
+              }} 
+              aria-label="Click here to close login error pop up" 
+              title="Click here to close login error pop up"
+            />
+            <div className='loginErrorHeader'>
+              No Email Provided
+            </div>
+            <div className='loginErrorText'>
+              Please log in with your email address.
+            </div>
+            <div className='socialBtnWrapper'>
+              <button
+                className='orangeBtn'
+                onClick={() => {
+                  this.setState({loginPopUp: null})
+                }}
+                aria-label="Login using email and password"
+                title="Login using email and password"
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        )
+      });
+    } else {
+      this.setState({
+        disableLogin: true
+      }, () => {
+        console.log("(directLogin) start");
+        this.props.loginAttempt_v2( 
+          this.state.email_input,
+          this.state.password_input,
+          this.successLogin,
+          this.failLogin
+        );
+      });
+    }
   }
 
   responseGoogle = response => {
@@ -139,6 +177,487 @@ export class PopLogin extends Component {
     this.props.history.push(`/${page}`);
   }; 
 
+  resetPassword = email => {
+    console.log("resetPassword email: |" + this.state.email_input + "|");
+    if(this.state.email_input === '') {
+      this.setState({
+        loginPopUp: (
+          <div className='loginErrorModal'>
+            <button 
+              className="close" 
+              onClick={() => {
+                this.setState({loginPopUp: null})
+              }} 
+              aria-label="Click here to close login error pop up" 
+              title="Click here to close login error pop up"
+            />
+            <div className='loginErrorHeader'>
+              No Email Provided
+            </div>
+            <div className='loginErrorText'>
+              {"Enter your email and then click "}
+              <span style={{textDecoration: 'underline', fontWeight: 'bold'}}>
+                Forgot&nbsp;Password
+              </span>
+              {" to be sent a temporary password."}
+            </div>
+            <div className='socialBtnWrapper'>
+              <button
+                className='orangeBtn'
+                onClick={() => {
+                  this.setState({loginPopUp: null})
+                }}
+                aria-label="Login using email and password"
+                title="Login using email and password"
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        )
+      });
+    } else {
+      this.setState({disableLogin: true}, () => {
+        this.props.forgotPassword_v2(email, (text) => {
+          console.log("in forgotPassword_v2 callback");
+          this.setState({
+            disableLogin: false,
+            loginPopUp: (
+              <div className='loginErrorModal'>
+                <button 
+                  className="close" 
+                  onClick={() => {
+                    this.setState({loginPopUp: null})
+                  }} 
+                  aria-label="Click here to close reset password pop up" 
+                  title="Click here to close reset password pop up"
+                />
+                <div className='loginErrorHeader'>
+                  Reset Password
+                </div>
+                <div className='loginErrorText'>
+                  {text}
+                </div>
+                <div className='socialBtnWrapper'>
+                  <button
+                    className='orangeBtn'
+                    onClick={() => {
+                      this.setState({loginPopUp: null})
+                    }}
+                    aria-label="Click to close reset password pop up"
+                    title="Click to close reset password pop up"
+                  >
+                    OK
+                  </button>
+                </div>
+              </div>
+            )
+          });
+        });
+      });
+    }
+  }
+
+  failLogin = error => {
+    console.log("(failLogin) error: |" + error + "|");
+
+    this.setState({
+      disableLogin: false
+    }, () => {
+      switch (error) {
+        case "Social Signup exists. Use 'GOOGLE' ":
+          this.setState({
+            loginPopUp: (
+              <div className='loginErrorModal'>
+                <button 
+                  className="close" 
+                  onClick={() => {
+                    this.setState({loginPopUp: null})
+                  }} 
+                  aria-label="Click here to close login error pop up" 
+                  title="Click here to close login error pop up"
+                />
+                <div className='loginErrorHeader'>
+                  Social Sign Up Exists
+                </div>
+                <div className='loginErrorText'>
+                  We have found this account with a different social login. Please click below to continue.
+                </div>
+                <GoogleLogin
+                  clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
+                  render={renderProps => (
+                    <div className='socialBtnWrapper'>
+                      <button
+                        className='socialBtn'
+                        onClick={renderProps.onClick}
+                        disabled={renderProps.disabled}
+                        style={{
+                          backgroundImage:`url(${socialG})`
+                        }}
+                        aria-label="Continue in with Google"
+                        title="Continue in with Google"
+                      />
+                    </div>
+                  )}
+                  onSuccess={this.responseGoogle}
+                  onFailure={this.responseGoogle}
+                  isSignedIn={false}
+                  disabled={false}
+                  cookiePolicy={"single_host_origin"}
+                />
+              </div>
+            )
+          });
+          break;
+        case "Social Signup exists. Use 'FACEBOOK' ":
+          this.setState({
+            loginPopUp: (
+              <div className='loginErrorModal'>
+                <button 
+                  className="close" 
+                  onClick={() => {
+                    this.setState({loginPopUp: null})
+                  }} 
+                  aria-label="Click here to close login error pop up" 
+                  title="Click here to close login error pop up"
+                />
+                <div className='loginErrorHeader'>
+                  Social Sign Up Exists
+                </div>
+                <div className='loginErrorText'>
+                  We have found this account with a different social login. Please click below to continue.
+                </div>
+                <FacebookLogin
+                  appId={process.env.REACT_APP_FACEBOOK_APP_ID}
+                  render={renderProps => (
+                    <div 
+                      className='socialBtnWrapper'
+                    >
+                      <button
+                        className='socialBtn'
+                        onClick={renderProps.onClick}
+                        disabled={renderProps.disabled}
+                        style={{
+                          backgroundImage:`url(${socialF})`
+                        }}
+                        aria-label="Continue in with Facebook"
+                        title="Continue in with Facebook"
+                      />
+                    </div>
+                  )}
+                  autoLoad={false}
+                  fields={"name,email,picture"}
+                  callback={this.responseFacebook}
+                  // cssClass='fbLogin2'
+                  textButton=''
+                />
+              </div>
+            )
+          });
+          break;
+        case "Social Signup exists. Use 'APPLE' ":
+          this.setState({
+            loginPopUp: (
+              <div className='loginErrorModal'>
+                <button 
+                  className="close" 
+                  onClick={() => {
+                    this.setState({loginPopUp: null})
+                  }} 
+                  aria-label="Click here to close login error pop up" 
+                  title="Click here to close login error pop up"
+                />
+                <div className='loginErrorHeader'>
+                  Social Sign Up Exists
+                </div>
+                <div className='loginErrorText'>
+                  We have found this account with a different social login. Please click below to continue.
+                </div>
+                <div 
+                  className='socialBtnWrapper'
+                >
+                  <button
+                    onClick={() => {
+                      console.log("pressed apple login button")
+                      const data = window.AppleID.auth.signIn();
+                      console.log(data)
+                    }}
+                    className='socialBtn'
+                    // onClick={renderProps.onClick}
+                    style={{
+                      backgroundImage:`url(${socialA})`
+                    }}
+                    aria-label="Continue with your Apple ID"
+                    title="Continue with your Apple ID"
+                  />
+                </div>
+              </div>
+            )
+          });
+          break;
+        case "Wrong password":
+          // console.log("wrong assword");
+          this.setState({
+            loginPopUp: (
+              <div className='loginErrorModal'>
+                <button 
+                  className="close" 
+                  onClick={() => {
+                    this.setState({loginPopUp: null})
+                  }} 
+                  aria-label="Click here to close login error pop up" 
+                  title="Click here to close login error pop up"
+                />
+                <div className='loginErrorHeader'>
+                  Incorrect Password
+                </div>
+                <div className='loginErrorText'>
+                  Seems like an incorrect password was entered for the associated email with this account.
+                </div>
+                <div className='orangeBtnWrapper'>
+                  <button
+                    className='orangeBtn'
+                    onClick={() => {
+                      this.setState({loginPopUp: null})
+                    }}
+                    aria-label="Login using email and password"
+                    title="Login using email and password"
+                  >
+                    Try again with the correct password
+                  </button>
+                </div>
+                <div
+                  style={{
+                    // border: '1px dashed',
+                    margin: '20px 15px 60px 15px',
+                    display: 'flex',
+                    justifyContent: 'center'
+                  }}
+                >
+                  <span
+                    onClick={() => {
+                      console.log("clicked forgot password");
+                      this.resetPassword(this.state.email_input);
+                    }}
+                    className='linkText'
+                    aria-label="Click here to reset your password"
+                    title="Click here to reset your password"
+                  >
+                    Forgot Password?
+                  </span>
+                </div>
+              </div>
+            )
+          });
+          break;
+        case "Email doesn't exists":
+          this.setState({
+            loginPopUp: (
+              <div className='loginErrorModal'>
+                <button 
+                  className="close" 
+                  onClick={() => {
+                    this.setState({loginPopUp: null})
+                  }} 
+                  aria-label="Click here to close login error pop up" 
+                  title="Click here to close login error pop up"
+                />
+                <div className='loginErrorHeader'>
+                  Account Not Found
+                </div>
+                <div className='loginErrorText'>
+                  Sorry, we don't recognize this email or username.
+                </div>
+                <div className='orangeBtnWrapper'>
+                  <button
+                    className='orangeBtn'
+                    onClick={() => {
+                      this.setState({loginPopUp: null})
+                    }}
+                    aria-label="Login using a different username"
+                    title="Login using a different username"
+                  >
+                    Try again with a different Username
+                  </button>
+                </div>
+                <div
+                  style={{
+                    // border: '1px dashed',
+                    margin: '20px 15px 0px 15px',
+                    display: 'flex',
+                    justifyContent: 'center'
+                  }}
+                >
+                  <div
+                    style={{
+                      width: '350px',
+                      // border: '1px solid green'
+                    }}
+                  >
+                    Don't have an account?
+                  </div>
+                </div>
+                <div 
+                  className='orangeBtnWrapper'
+                  style={{marginTop: '5px', marginBottom: '60px'}}
+                >
+                  <button
+                    className='orangeBtn'
+                    onClick={() => {
+                      // this.setState({loginPopUp: null})
+                      this.props.toggle_signup();
+                      this.props.toggle();
+                    }}
+                    aria-label="Sign up for an account"
+                    title="Sign up for an account"
+                  >
+                    Sign up
+                  </button>
+                </div>
+              </div>
+            )
+          });
+          break;
+        default:
+          this.setState({
+            loginPopUp: (
+              <div className='loginErrorModal'>
+                <button 
+                  className="close" 
+                  onClick={() => {
+                    this.setState({loginPopUp: null})
+                  }} 
+                  aria-label="Click here to close login error pop up" 
+                  title="Click here to close login error pop up"
+                />
+                <div className='loginErrorHeader'>
+                  Account Not Found
+                </div>
+                <div className='loginErrorText'>
+                  Sorry, we don't recognize this email or username.
+                </div>
+                <div className='orangeBtnWrapper'>
+                  <button
+                    className='orangeBtn'
+                    onClick={() => {
+                      this.setState({loginPopUp: null})
+                    }}
+                    aria-label="Login using email and password"
+                    title="Login using email and password"
+                  >
+                    Try again with a different Username
+                  </button>
+                </div>
+                <div
+                  style={{
+                    // border: '1px dashed',
+                    margin: '20px 15px 0px 15px',
+                    display: 'flex',
+                    justifyContent: 'center'
+                  }}
+                >
+                  <div
+                    style={{
+                      width: '350px',
+                      // border: '1px solid green'
+                    }}
+                  >
+                    <span
+                      className='linkText'
+                      onClick={() => {
+                        console.log("onclick props: ", this.props);
+                        this.props.toggle_signup();
+                        this.props.toggle();
+                      }}
+                    >
+                      Don't have an account?
+                    </span>
+                  </div>
+                </div>
+                <div 
+                  className='orangeBtnWrapper'
+                  style={{marginTop: '5px', marginBottom: '60px'}}
+                >
+                  <button
+                    className='orangeBtn'
+                    onClick={() => {
+                      this.setState({loginPopUp: null})
+                    }}
+                    aria-label="Login using email and password"
+                    title="Login using email and password"
+                  >
+                    Sign up
+                  </button>
+                </div>
+              </div>
+            )
+          });
+      }
+    });
+
+    // <div
+    // >
+    //   <button
+    //     onClick={() => {
+    //       console.log("pressed apple login button")
+    //       const data = window.AppleID.auth.signIn();
+    //       console.log(data)
+    //     }}
+    //     style={{
+    //       borderRadius: '10px',
+    //       borderWidth: '0',
+    //       minWidth: '100px',
+    //       backgroundColor: '#ff6505',
+    //       marginTop: '10px',
+    //       marginBottom: '25px',
+    //       width: '90%',
+    //       height: '50px',
+    //       backgroundImage:`url(${socialA})`,
+    //       backgroundSize:'cover',
+    //       backgroundPosition:'center',
+    //     }}
+    //     className={styles.appleLogin}
+    //     //callback={this.responseApple}
+    //     aria-label="Continue with your Apple ID"     
+    //     title="Continue with your Apple ID" 
+    //   >
+    //   </button>
+    // </div>
+
+
+    // if (this.errVal == "Social Signup exists. Use 'GOOGLE' ") {
+    //   errorHead = 'Social sign up exists'
+    //   errorString = "We have found this account with a different social login. Please click below to continue."
+    //   errorButton = 'Google button placeholder'
+    //   errorLink = 'google'
+    // }
+    // if (this.errVal == "Social Signup exists. Use 'FACEBOOK' ") {
+    //   errorHead = 'Social sign up exists'
+    //   errorString = "We have found this account with a different social login. Please click below to continue."
+    //   errorButton = 'Facebook button placeholder'
+    //   errorLink = 'facebook'
+    // }
+    // if (this.errVal == "Social Signup exists. Use 'APPLE' ") {
+    //   errorHead = 'Social sign up exists'
+    //   errorString = "We have found this account with a different social login. Please click below to continue."
+    //   errorButton = 'Apple button placeholder'
+    //   errorLink = 'apple'
+    // } 
+    // if (this.errVal == "" || this.errVal == "Wrong password") {
+    //   errorHead = 'Hmm...'
+    //   errorString = "Something doesn't match, please make sure you've entered your email address and password correctly."
+    //   errorButton = 'Okay'
+    //   errorLink = 'back'
+    // }
+    // if (this.errVal == "Email doesn't exists") {
+    //   errorHead = 'Account Not Found'
+    //   errorString = "Sorry, we don't recognize this email."
+    //   errorButton = 'Sign up'
+    //   errorLink = 'sign-up'
+    // }
+
+  }
+
   render() {
     //this.errVal=''
     this.attemptLogin=true
@@ -156,7 +675,33 @@ export class PopLogin extends Component {
         )}
       >
 
-          <button className="close" onClick={this.handleClick} aria-label="Click here to exit Login menu" title="Click here to exit Login menu"/>
+          {this.state.loginPopUp === null && this.state.disableLogin === false ? (null) : (
+            <div
+              style={{
+                width: '100%',
+                // height: '100%',
+                height: 'calc(100% - 60px)',
+                // backgroundColor: 'white',
+                backgroundColor: 'rgb(255,255,255,0.5)',
+                position: 'absolute',
+                top: '60px',
+                display: 'flex',
+                justifyContent: 'center',
+                // opacity: 0.5
+                zIndex: '2001',
+                // border: '1px dashed'
+              }}
+            >
+              {this.state.loginPopUp}
+            </div>
+          )}
+
+          <button 
+            className="close" 
+            onClick={this.handleClick} 
+            aria-label="Click here to exit Login menu" 
+            title="Click here to exit Login menu"
+          />
           <p style={{
             textAlign:'center',
             height: '28px',
@@ -171,8 +716,6 @@ export class PopLogin extends Component {
           >
           Login
           </p>
-
-
 
           {/* <div
               style={{
@@ -202,7 +745,7 @@ export class PopLogin extends Component {
           </div>
 
 
-          <input
+          {/* <input
             type='text'
             placeholder='USER NAME'
             className="loginSectionItem"
@@ -213,8 +756,23 @@ export class PopLogin extends Component {
             }}
             aria-label="Enter your username"
             title="Enter your username"
+          /> */}
+          <input
+            type='text'
+            placeholder='EMAIL'
+            className="loginSectionItem"
+            onChange={e => {
+              // this.props.changeEmail(e.target.value);
+              this.loginClicked = false;
+              this.setState({
+                email_input: e.target.value
+              });
+              //console.log(e.target.value);
+            }}
+            aria-label="Enter your email"
+            title="Enter your email"
+            value={this.state.email_input}
           />
-            
 
           <input
             className="loginSectionItem"
@@ -225,15 +783,18 @@ export class PopLogin extends Component {
             size="56"
             value={this.props.password}
             onChange={e => {
-              this.props.changePassword(e.target.value);
+              // this.props.changePassword(e.target.value);
               this.loginClicked = false;
+              this.setState({
+                password_input: e.target.value
+              });
             }}
             aria-label="Enter your password"
             title="Enter your password"
+            value={this.state.password_input}
           />
 
-
-          <p
+          {/* <p
           style={{
             textAlign: 'center',
             letterSpacing: '0.32px',
@@ -243,36 +804,58 @@ export class PopLogin extends Component {
             color:'black',
             paddingTop:0,
             marginTop:10,
-            textDecoration:"underline"
+            textDecoration:"underline",
+            border: '1px dashed'
           }}
           aria-label="Click here to reset your password"
           title="Click here to reset your password">
             Forgot password?
-          </p>
-
-          <button
-            className='signInBtn'
-            onClick={() => {
-              this.attemptLogin = true
-              this.getError()
-              this.forceUpdate()
-              //console.log("Login clicked, attemptLogin = " + this.attemptLogin)
-              this.loginClicked = true
-            }}
-            aria-label="Click here to login"
-            title="Click here to login"
-          >
-
-            <p
+          </p> */}
+          <div
             style={{
-              textAlign: 'center',
-              letterSpacing: '0.32px',
-              color: '#FFFFFF',
-              opacity: 1,
-            }}>
+              // border: '1px dashed',
+              marginTop: '10px',
+              display: 'flex',
+              justifyContent: 'center'
+            }}
+          >
+            <span
+              className='linkText'
+              aria-label="Click here to reset your password"
+              title="Click here to reset your password"
+              onClick={() => {
+                this.resetPassword(this.state.email_input)
+              }}
+            >
+              Forgot Password?
+            </span>
+          </div>
+
+          <div
+            style={{
+              // border: '1px dashed',
+              display: 'flex',
+              justifyContent: 'center',
+              marginTop: '25px'
+            }}
+          >
+            <button
+              className='signInBtn'
+              onClick={() => {
+                // this.attemptLogin = true
+                // this.getError()
+                this.forceUpdate()
+                //console.log("Login clicked, attemptLogin = " + this.attemptLogin)
+                // this.loginClicked = true
+                this.directLogin();
+              }}
+              aria-label="Click here to login"
+              title="Click here to login"
+            >
               Login
-            </p>
-          </button>
+            </button>
+          </div>
+
           {/*this.getError()*/}
           {this.showError()}
           
@@ -407,6 +990,7 @@ export class PopLogin extends Component {
                                 fields={"name,email,picture"}
                                 callback={this.responseFacebook}
                                 cssClass={styles.fbLogin}
+                                // cssClass='fbLogin'
                                 textButton=''
                               />
                               </div>
@@ -582,6 +1166,7 @@ export class PopLogin extends Component {
   }
 
   getError = () => {
+    console.log("(PL) in getError");
     //console.log("attemptLogin = " + this.attemptLogin)
     if (this.attemptLogin==true){
       if (this.props.email!=''){ 
@@ -677,8 +1262,9 @@ const functionList = {
   loginAttempt,
   changeEmail,
   changePassword,
-  loginAttempt,
-  socialLoginAttempt
+  loginAttempt_v2,
+  socialLoginAttempt,
+  forgotPassword_v2
 };
 
 export default connect(mapStateToProps, functionList) (withRouter(PopLogin));

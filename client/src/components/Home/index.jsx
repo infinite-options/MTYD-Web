@@ -212,7 +212,7 @@ class Home extends Component {
           }}
         >
           {this.state.login_seen ? (
-            <PopLogin toggle={this.togglePopLogin} />
+            <PopLogin toggle={this.togglePopLogin} toggle_signup={this.togglePopSignup}/>
           ) : null}
           {this.state.signUpSeen ? (
             <PopSignup toggle={this.togglePopSignup} />

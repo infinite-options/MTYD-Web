@@ -3493,7 +3493,7 @@ const EditPlan = (props) => {
       ) : (null)}
 
       {login_seen ? (
-        <PopLogin toggle={togglePopLogin} />
+        <PopLogin toggle={togglePopLogin} toggle_signup={togglePopSignup}/>
       ) : null}
       {signUpSeen ? (
         <Popsignup toggle={togglePopSignup} />

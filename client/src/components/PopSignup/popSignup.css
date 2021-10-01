@@ -1,14 +1,29 @@
 .model_content {
   position: absolute;
-  top: 85px;
-  right: 1%;
+  /* top: 85px; */
+  /* right: 1%; */
+  top: 80px;
+  right: 20px;
   width: 549px;
+  max-width: calc(100vh - 40px);
   height: 1047px;
   background: white;
   border: 3px solid #ff8500;
   /* margin-top: 80px; */
+  /* background-color: lime; */
   z-index: auto;
 }
+/* .pop_content {
+  position: absolute;
+  top: 80px;
+  right: 20px;
+  width: 549px;
+  height: 732px;
+  background: white;
+  border: 3px solid #ff8500;
+  opacity: 1;
+  z-index: 100;
+} */
 
 .inputBox {
   top: 333px;
@@ -17,12 +32,13 @@
   height: 49px;
   background: #ffffff;
   border: 2px solid #ff8500;
+  /* border: 1px solid red; */
   border-radius: 10px;
   margin-bottom: 6px;
   outline: none;
 }
 
-.close {
+/* .close {
   color: Black;
   width: 36px;
   height: 36px;
@@ -32,7 +48,7 @@
   background-image: url("../../images/closeIcon.png");
   background-size: cover;
   background-position: center;
-}
+} */
 
 .StreetinputBox {
   top: 333px;
@@ -41,6 +57,7 @@
   height: 49px;
   background: #ffffff;
   border: 2px solid #ff8500;
+  border: 1px dashed;
   border-radius: 10px;
   margin-bottom: 6px;
   outline: none;
@@ -48,4 +65,35 @@
 .StreetinputBox::placeholder {
   color: black;
   font-size: large;
+}
+
+.signUpBtn {
+  border-radius: 15px;
+  background-color: #ff6505;
+  /* margin-left: 49px;
+  margin-top: 10px; */
+  width: 400px;
+  height: 71px;
+  /* border-color: #ff8500; */
+  color: white;
+  font-size: 30px;
+  /* border: 1px dashed; */
+  border: none;
+}
+.signUpBtn:hover {
+  background-color: #ffba00;
+}
+
+.pac-item {
+  border: 1px solid red;
+  z-index: 10000 !important;
+}
+.pac-container {
+  position: fixed;
+  border: 1px solid blue;
+  z-index: 10000 !important;
+}
+.ship-address {
+  border: 1px solid green;
+  z-index: 10000 !important;
 }

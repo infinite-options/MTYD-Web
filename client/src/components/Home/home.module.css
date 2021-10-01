@@ -633,14 +633,14 @@ input[type="credentials"]::placeholder {
   bottom: 10px;
   background-color: rgba(0, 0, 0, 0.25);
 }
-.close {
+/* .close {
   color: Black;
   float: right;
 }
 .close:hover {
   color: cyan;
   cursor: pointer;
-}
+} */
 
 button {
   /* border-radius: 10px; */

@@ -183,6 +183,7 @@ export class BecomeAmbass extends Component {
           {this.state.login_seen ? (
             <PopLogin 
               toggle={this.togglePopLogin} 
+              toggle_signup={this.togglePopSignup}
               styling={{position: 'static'}}
             />
           ) : null}
@@ -198,14 +199,6 @@ export class BecomeAmbass extends Component {
             />
           ) : null}
         </div>
-        {/* <div className={styles.poploginsignup}>
-          {this.state.login_seen ? (
-            <PopLogin toggle={this.props.toggle} />
-          ) : null}
-          {this.state.signUpSeen ? (
-            <Popsignup toggle={this.togglePopSignup} />
-          ) : null}
-        </div> */}
 
         {(() => {
           if (this.state.user_id == "not login") {

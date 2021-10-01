@@ -447,7 +447,7 @@ class NavBar extends React.Component {
             ) : null}
 
             {this.state.login_seen ? (
-              <PopLogin toggle={this.togglePopLogin} />
+              <PopLogin toggle={this.togglePopLogin} toggle_signup={this.togglePopSignup}/>
             ) : null}
           </div>
         )}
