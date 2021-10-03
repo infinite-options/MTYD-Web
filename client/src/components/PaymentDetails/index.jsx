@@ -33,6 +33,7 @@ import StripeElement from "./StripeElement";
 
 import createGuestAccount from "../../utils/CreateGuestAccount";
 import fetchAddressCoordinates from "../../utils/FetchAddressCoordinates";
+import verifyAddressDelivers from "../../utils/VerifyAddressDelivers";
 
 const google = window.google;
 
@@ -936,17 +937,31 @@ class PaymentDetails extends React.Component {
     axios.get(uspsURL).then((response) => {
       var parser = new DOMParser();
       responseData = response.data.split("\n")[1];
-      var xmlDoc = parser.parseFromString(responseData, "text/xml");
-      this.setState({
-        responseCode:
+
+      try {
+        var xmlDoc = parser.parseFromString(responseData, "text/xml");
+        this.setState({
+          responseCode:
+            xmlDoc.getElementsByTagName("DPVConfirmation")[0].childNodes[0]
+              .nodeValue,
+        });
+        console.log(
           xmlDoc.getElementsByTagName("DPVConfirmation")[0].childNodes[0]
-            .nodeValue,
-      });
-      console.log(
-        xmlDoc.getElementsByTagName("DPVConfirmation")[0].childNodes[0]
-          .nodeValue
-      );
-      this.validateAddress();
+            .nodeValue
+        );
+        this.validateAddress();
+      } catch(err) {
+        console.log("catch => invalid address!");
+        this.setState({
+          showPaymentInfo: false
+        }, () => {
+          this.displayError(
+            ADDRESS_ERROR,
+            `You entered an invalid address. Try again.`
+          );
+        });
+      }
+      
     });
 
     // console.log("in isValidAddress");
@@ -989,18 +1004,18 @@ class PaymentDetails extends React.Component {
         }),
         () => {
           console.log("fetchingFees ==> true");
-          fetchAddressCoordinates(
+          verifyAddressDelivers(
             document.getElementById("pac-input").value,
             document.getElementById("locality").value,
             document.getElementById("state").value,
             document.getElementById("postcode").value,
-            (coords) => {
+            (latitude, longitude) => {
               // console.log("Fetched coordinates: " + JSON.stringify(coords));
-              this.setState({
-                latitude: coords.latitude,
-                longitude: coords.longitude,
-                loadingMap: false,
-              });
+              // this.setState({
+              //   latitude: coords.latitude,
+              //   longitude: coords.longitude,
+              //   loadingMap: false,
+              // });
 
               /*
               // console.log("Calling categorical options...");
@@ -1070,78 +1085,93 @@ class PaymentDetails extends React.Component {
                 });
               */
             
-              console.log("Calling make_purchase...");
-              console.log("props: ", this.props);
-              console.log("state: ", this.state);
-              // axios
-              //   .put(
-              //     `http://localhost:2000/api/v2/make_purchase`, 
-              //     {
-              //       items: [{
-              //           qty: this.props.selectedPlan.num_deliveries.toString(),
-              //           name: this.props.selectedPlan.item_name,
-              //           price: this.props.selectedPlan.item_price.toString(),
-              //           item_uid: this.props.selectedPlan.item_uid,
-              //           itm_business_uid: this.props.selectedPlan.item_uid
-              //       }],
-              //       customer_lat: this.state.latitude,
-              //       customer_long: this.state.longitude,
-              //       driver_tip: this.state.paymentSummary.tip,
-              //       ambassador_coupon: this.state.ambassadorCoupon
-              //     }
-              //   )
-              axios
-                .put(
-                  API_URL + `make_purchase`, 
-                  {
-                    items: [{
-                        qty: this.props.selectedPlan.num_deliveries.toString(),
-                        name: this.props.selectedPlan.item_name,
-                        price: this.props.selectedPlan.item_price.toString(),
-                        item_uid: this.props.selectedPlan.item_uid,
-                        itm_business_uid: this.props.selectedPlan.item_uid
-                    }],
-                    customer_lat: this.state.latitude,
-                    customer_long: this.state.longitude,
-                    driver_tip: this.state.paymentSummary.tip,
-                    ambassador_coupon: this.state.ambassadorCoupon
-                  }
-                )
-                .then((res) => {
-                  console.log("(make_purchase) res: ", res);
+              
 
-                  this.setState(
-                    (prevState) => ({
-                      paymentSummary: {
-                        mealSubPrice: res.data.new_meal_charge.toFixed(2),
-                        discountAmount: res.data.new_discount.toFixed(2),
-                        addOns: "0.00",
-                        tip: res.data.new_driver_tip.toFixed(2),
-                        serviceFee: res.data.service_fee.toFixed(2),
-                        deliveryFee: res.data.delivery_fee.toFixed(2),
-                        taxRate: res.data.tax_rate,
-                        taxAmount: res.data.new_tax.toFixed(2),
-                        ambassadorDiscount: res.data.ambassador_discount.toFixed(2),
-                        total: res.data.amount_should_charge.toFixed(2),
-                        subtotal: res.data.amount_should_charge.toFixed(2),
-                      },
-                      recalculatingPrice: false,
-                      fetchingFees: false
-                    }),
-                    () => {
-                      console.log("fetchingFees ==> false");
-                      // this.setTotal();
-                      // console.log("(VA) proceeding to payment...");
-                      this.proceedToPayment();
-                    }
-                  );
-                })
-                .catch((err) => {
-                  if (err.response) {
-                    console.log(err.response);
+                  if (latitude !== null && longitude !== null) {
+                    console.log("(VA) valid zone!");
+
+                    console.log("Calling make_purchase...");
+                    console.log("props: ", this.props);
+                    console.log("state: ", this.state);
+
+                    this.setState({
+                      latitude,
+                      longitude,
+                      loadingMap: false,
+                    });
+
+                    axios
+                      .put(
+                        API_URL + `make_purchase`, 
+                        {
+                          items: [{
+                              qty: this.props.selectedPlan.num_deliveries.toString(),
+                              name: this.props.selectedPlan.item_name,
+                              price: this.props.selectedPlan.item_price.toString(),
+                              item_uid: this.props.selectedPlan.item_uid,
+                              itm_business_uid: this.props.selectedPlan.item_uid
+                          }],
+                          customer_lat: this.state.latitude,
+                          customer_long: this.state.longitude,
+                          driver_tip: this.state.paymentSummary.tip,
+                          ambassador_coupon: this.state.ambassadorCoupon
+                        }
+                      )
+                      .then((res) => {
+                        console.log("(make_purchase) res: ", res);
+
+                        this.setState(
+                          (prevState) => ({
+                            paymentSummary: {
+                              mealSubPrice: res.data.new_meal_charge.toFixed(2),
+                              discountAmount: res.data.new_discount.toFixed(2),
+                              addOns: "0.00",
+                              tip: res.data.new_driver_tip.toFixed(2),
+                              serviceFee: res.data.service_fee.toFixed(2),
+                              deliveryFee: res.data.delivery_fee.toFixed(2),
+                              taxRate: res.data.tax_rate,
+                              taxAmount: res.data.new_tax.toFixed(2),
+                              ambassadorDiscount: res.data.ambassador_discount.toFixed(2),
+                              total: res.data.amount_should_charge.toFixed(2),
+                              subtotal: res.data.amount_should_charge.toFixed(2),
+                            },
+                            recalculatingPrice: false,
+                            fetchingFees: false
+                          }),
+                          () => {
+                            console.log("fetchingFees ==> false");
+                            // this.setTotal();
+                            // console.log("(VA) proceeding to payment...");
+                            this.proceedToPayment();
+                          }
+                        );
+                      })
+                      .catch((err) => {
+                        if (err.response) {
+                          console.log(err.response);
+                        }
+                        console.log(err);
+                      });
+
+                  } else {
+                    // console.log("(VA) invalid zone!");
+
+                    // this.displayError(
+                    //   ADDRESS_ERROR,
+                    //   `Sorry, it looks like we don't deliver to your neighborhood yet. 
+                    //     Enter your email address and we will let you know as soon as
+                    //     we come to your neighborhood.`
+                    // );
+                    this.displayError(
+                      ADDRESS_ERROR,
+                      `Sorry, it looks like we don't deliver to your neighborhood yet.`
+                    );
+
+                    this.setState({
+                      fetchingFees: false,
+                    });
                   }
-                  console.log(err);
-                });
+
             }
           );
         }
@@ -1524,7 +1554,7 @@ class PaymentDetails extends React.Component {
                     <div className={styles.errorContainer}>
                       <h6
                         style={{
-                          margin: "5px",
+                          // margin: "5px",
                           fontWeight: "bold",
                           fontSize: "25px",
                         }}
@@ -1566,7 +1596,7 @@ class PaymentDetails extends React.Component {
                     <div className={styles.errorContainer}>
                       <h6
                         style={{
-                          margin: "5px",
+                          // margin: "5px",
                           fontWeight: "bold",
                           fontSize: "25px",
                         }}
@@ -1586,7 +1616,7 @@ class PaymentDetails extends React.Component {
 
                       <br />
 
-                      <input
+                      {/* <input
                         placeholder="Enter your email"
                         style={{
                           width: "300px",
@@ -1598,7 +1628,7 @@ class PaymentDetails extends React.Component {
                           borderRadius: "10px",
                           outline: "none",
                         }}
-                      ></input>
+                      ></input> */}
 
                       <button
                         className={styles.errorBtn}
@@ -1797,6 +1827,7 @@ class PaymentDetails extends React.Component {
                   this.setState({ state: e.target.value });
                   console.log(this.state.state);
                 }}
+                maxLength='2'
               />
               <input
                 type="text"
@@ -1810,6 +1841,7 @@ class PaymentDetails extends React.Component {
                   this.setState({ addressZip: e.target.value });
                   // console.log(this.state.addressZip);
                 }}
+                maxLength='5'
               />
             </div>
 

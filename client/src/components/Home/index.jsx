@@ -17,6 +17,12 @@ import ProductDisplay from "./ProductDisplay";
 import HomeMap from "../HomeAddressSearch";
 import SocialLogin from "../Landing/socialLogin";
 import PopSignup from "../PopSignup";
+import {
+  toggleLoginPopup,
+  toggleSignupPopup
+} from "../../reducers/actions/loginActions";
+import { connect } from "react-redux";
+import { Route, withRouter } from "react-router-dom";
 
 const google = window.google;
 
@@ -215,7 +221,13 @@ class Home extends Component {
             <PopLogin toggle={this.togglePopLogin} toggle_signup={this.togglePopSignup}/>
           ) : null}
           {this.state.signUpSeen ? (
-            <PopSignup toggle={this.togglePopSignup} />
+            <PopSignup 
+              toggle={this.togglePopSignup} 
+              // styling={{
+              //   top: '100px', 
+              //   border: '1px solid green'
+              // }}
+            />
           ) : null}
         </div>
 
@@ -249,6 +261,7 @@ class Home extends Component {
               width: "100%",
               display: "flex",
               justifyContent: "center",
+              // border: '1px solid blue'
             }}
           >
             <div className={styles.whiteStripe}>
@@ -260,9 +273,13 @@ class Home extends Component {
                   style={{
                     zIndex: "3",
                     opacity: "1",
+                    // border: '1px solid red'
                   }}
                 >
-                  <HomeMap />
+                  <HomeMap 
+                    toggleSignupPopup={this.props.toggleSignupPopup}
+                    showSignupPopup={this.props.showSignupPopup}
+                  />
                 </div>
               </div>
             </div>
@@ -821,4 +838,14 @@ class Home extends Component {
   }
 }
 
-export default Home;
+// export default Home;
+const mapStateToProps = (state) => ({
+  showSignupPopup: state.login.showSignupPopup
+});
+
+const functionList = {
+  toggleSignupPopup
+};
+
+// export default withRouter(HomeMap);
+export default connect(mapStateToProps, functionList)(withRouter(Home));

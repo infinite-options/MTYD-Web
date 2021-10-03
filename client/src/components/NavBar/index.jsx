@@ -18,6 +18,10 @@ import { API_URL } from "../../reducers/constants";
 import PopLogin from "../PopLogin";
 import NavMenu from "../NavBarHamburger";
 import Popsignup from "../PopSignup";
+import {
+  toggleLoginPopup,
+  toggleSignupPopup
+} from "../../reducers/actions/loginActions";
 
 class SideNavBar extends React.Component {
   render() {
@@ -121,15 +125,18 @@ class NavBar extends React.Component {
   };
 
   togglePopSignup = () => {
-    this.setState({
-      signUpSeen: !this.state.signUpSeen,
-    });
+    // this.setState({
+    //   signUpSeen: !this.state.signUpSeen,
+    // });
 
-    if (!this.state.signUpSeen) {
-      this.setState({
-        login_seen: false,
-      });
-    }
+    // if (!this.state.signUpSeen) {
+    //   this.setState({
+    //     login_seen: false,
+    //   });
+    // }
+    console.log("togglePopSignup props: ", this.props);
+    this.props.toggleSignupPopup(!this.props.showSignupPopup);
+
   };
 
   logOut = () => {
@@ -430,7 +437,10 @@ class NavBar extends React.Component {
               </div>
             ) : null}
 
-            {this.state.signUpSeen ? (
+            {/* {this.state.signUpSeen ? (
+              <Popsignup toggle={this.togglePopSignup} />
+            ) : null} */}
+            {this.props.showSignupPopup ? (
               <Popsignup toggle={this.togglePopSignup} />
             ) : null}
 
@@ -456,12 +466,17 @@ class NavBar extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => ({});
+const mapStateToProps = (state) => ({
+  showSignupPopup: state.login.showSignupPopup,
+  showLoginPopup: state.login.showLoginPopup
+});
 const WebNavBar = connect(mapStateToProps, {
   resetLogin,
   resetProfile,
   resetSubscription,
   LoadUserInfo,
+  toggleSignupPopup,
+  toggleLoginPopup
 })(withRouter(NavBar));
 
 export { WebNavBar, BottomNavBar, SideNavBar };
