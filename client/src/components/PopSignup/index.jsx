@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import styles from "./popSignup.css";
 import SocialLogin from "../Landing/socialLogin";
+import { API_URL } from "../../reducers/constants";
 import {
   changeNewEmail,
   changeNewPassword,
@@ -318,8 +319,8 @@ export class PopSignup extends Component {
           (latitude, longitude) => {
             if(latitude !== null && longitude !== null){
               axios
-                // .get(API_URL + "Profile?customer_email=" + email)
-                .get('http://localhost:2000/api/v2/Profile?customer_email=' + this.state.email)
+                .get(API_URL + "Profile?customer_email=" + this.state.email)
+                // .get('http://localhost:2000/api/v2/Profile?customer_email=' + this.state.email)
                 .then((res) => {
                   console.log("(profile) res: ", res);
 

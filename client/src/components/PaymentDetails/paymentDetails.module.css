@@ -959,6 +959,9 @@ select {
   margin-top: 20px;
   cursor: pointer;
 }
+.errorCancelButton:hover {
+  opacity: 0.5;
+}
 
 .orangeBtn {
   margin-top: 36px;
