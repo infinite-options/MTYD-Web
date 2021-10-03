@@ -8,7 +8,9 @@ import {
   changePassword,
   getErrMessage,
   socialLoginAttempt,
-  forgotPassword_v2
+  forgotPassword_v2,
+  toggleLoginPopup,
+  toggleSignupPopup
 } from "../../reducers/actions/loginActions";
 
 import { withRouter} from 'react-router-dom';
@@ -160,7 +162,9 @@ export class PopLogin extends Component {
   };
 
   handleClick = () => {
-    this.props.toggle(); // this.props.toggle is not a function
+    // this.props.toggle(); // this.props.toggle is not a function
+    console.log("handleclick props: ", this.props);
+    this.props.toggleLoginPopup(!this.props.showLoginPopup);
   };
 
   viewPassword() {
@@ -505,8 +509,9 @@ export class PopLogin extends Component {
                     className='orangeBtn'
                     onClick={() => {
                       // this.setState({loginPopUp: null})
-                      this.props.toggle_signup();
-                      this.props.toggle();
+                      // this.props.toggle_signup();
+                      // this.props.toggle();
+                      this.props.toggleSignupPopup(true);
                     }}
                     aria-label="Sign up for an account"
                     title="Sign up for an account"
@@ -1268,7 +1273,8 @@ export class PopLogin extends Component {
 const mapStateToProps = state => ({
   email: state.login.email,
   password: state.login.password,
-  error: state.login.error
+  error: state.login.error,
+  showLoginPopup: state.login.showLoginPopup
 });
 
 const functionList = {
@@ -1277,7 +1283,9 @@ const functionList = {
   changePassword,
   loginAttempt_v2,
   socialLoginAttempt,
-  forgotPassword_v2
+  forgotPassword_v2,
+  toggleLoginPopup,
+  toggleSignupPopup
 };
 
 export default connect(mapStateToProps, functionList) (withRouter(PopLogin));
