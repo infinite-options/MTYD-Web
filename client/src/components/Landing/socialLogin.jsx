@@ -18,6 +18,7 @@ import socialG from "../../images/socialGoogle.png";
 import socialF from "../../images/socialFb.png";
 import socialA from "../../images/socialApple.png";
 import axios from "axios";
+import { API_URL } from "../../reducers/constants";
 
 export var responseData = null;
 
@@ -69,8 +70,8 @@ class SocialLogin extends Component {
 
         // make sure profile is social media account before proceeding
         axios
-          // .get(API_URL + "Profile?customer_email=" + email)
-          .get('http://localhost:2000/api/v2/Profile?customer_email=' + email)
+          .get(API_URL + "Profile?customer_email=" + email)
+          // .get('http://localhost:2000/api/v2/Profile?customer_email=' + email)
           .then((res) => {
             console.log("(profile) res: ", res);
 
