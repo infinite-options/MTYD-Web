@@ -1,3 +1,4 @@
+import { isDoStatement } from "typescript";
 import {
   LOGOUT_LOGIN,
   CHANGE_EMAIL,
@@ -17,7 +18,9 @@ import {
   CHANGE_NEW_STATE,
   CHANGE_NEW_ZIP,
   SUBMIT_SIGNUP,
-  LOAD_USER_INFO
+  LOAD_USER_INFO,
+  TOGGLE_LOGIN_POPUP,
+  TOGGLE_SIGNUP_POPUP
 } from "./actions/loginTypes";
 
 const initialState = {
@@ -47,7 +50,9 @@ const initialState = {
       state: "",
       zip: ""
     }
-  }
+  },
+  showLoginPopup: false,
+  showSignupPopup: false,
 };
 
 export default function(state = initialState, action) {
@@ -222,6 +227,16 @@ export default function(state = initialState, action) {
           ...action.payload
         }
       };
+    case TOGGLE_LOGIN_POPUP:
+      return {
+        ...state,
+        showLoginPopup: action.payload
+      }
+    case TOGGLE_SIGNUP_POPUP:
+      return {
+        ...state,
+        showSignupPopup: action.payload
+      }
     default:
       return state;
   }

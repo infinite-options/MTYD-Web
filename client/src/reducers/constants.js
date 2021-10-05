@@ -5,3 +5,4 @@ export const API_URL =
 // export const API_URL = "http://localhost:2000/api/v2/";
 export const BING_LOCATION_API_URL =
   "https://dev.virtualearth.net/REST/v1/Locations/";
+export const GOOGLE_API = "AIzaSyBLoal-kZlb6tO5aDvkJTFC0a4WMp7oHUM";
