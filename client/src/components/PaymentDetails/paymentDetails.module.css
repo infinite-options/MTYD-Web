@@ -807,7 +807,7 @@ select {
   background-color: rgba(255, 255, 255, 0.5);
 }
 
-.errorModalContainer {
+/* .errorModalContainer {
   position: relative;
   justify-self: center;
   align-self: center;
@@ -818,7 +818,7 @@ select {
   height: 35vh;
   width: 400px;
   z-index: 2;
-}
+} */
 
 .errorModalButtonMenu {
   text-decoration: none;
@@ -862,18 +862,18 @@ select {
   height: 50px;
 }
 .errorBtn:hover {
-  text-align: center;
+  /* text-align: center;
   justify-content: center;
   padding: 5px !important;
   color: #ffffff;
   font-size: 16px !important;
   border-radius: 10px;
   border-width: 0;
-  min-width: 100px !important;
-  background-color: #ff6505;
-  margin-top: 10px;
+  min-width: 100px !important; */
+  background-color: #ffba00;
+  /* margin-top: 10px;
   width: 90%;
-  height: 50px;
+  height: 50px; */
 }
 
 .errorText {
@@ -905,7 +905,8 @@ select {
   display: block;
   border:#ff6505 solid;
   background-color: white;
-  height: 400px;
+  /* height: 400px; */
+  padding-bottom: 60px;
   width: 450px;
   z-index: 2;
 }
@@ -941,7 +942,7 @@ select {
 .errorContainer {
   display: block;
   width: 370px;
-  margin: 80px auto 0px;
+  margin: 60px auto 0px;
   text-align: center;
 }
 
@@ -971,27 +972,26 @@ select {
   width: 70%;
 }
 .orangeBtn:hover {
-  margin-top: 36px;
-  margin-bottom: 50px;
-  background-color: #f26522;
-  color: white;
+  /* margin-top: 36px;
+  margin-bottom: 50px; */
+  background-color: #ffba00;
+  /* color: white;
   font-size: 20px;
   border-radius: 15px;
   border: none;
   height: 54px;
-  width: 70%;
+  width: 70%; */
 }
 .orangeBtn:disabled {
-  margin-top: 36px;
-  margin-bottom: 50px;
-  /* background-color: #ccc9c9; */
+  /* margin-top: 36px;
+  margin-bottom: 50px; */
   opacity: 0.5;
-  color: white;
+  /* color: white;
   font-size: 20px;
   border-radius: 15px;
   border: none;
   height: 54px;
-  width: 70%;
+  width: 70%; */
 }
 
 .orangeBtn2 {
