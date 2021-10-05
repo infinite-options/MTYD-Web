@@ -331,6 +331,7 @@ export class HomeMap extends Component {
 
             <button
               className={styles.hoorayBtn}
+              disabled={this.props.loggedIn}
               style={{
                 // position: "relative",
                 top: "113px",
