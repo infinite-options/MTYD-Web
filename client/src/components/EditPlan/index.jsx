@@ -21,6 +21,7 @@ import { FootLink } from "../Home/homeButtons";
 
 import fetchDiscounts from "../../utils/FetchDiscounts";
 import fetchAddressCoordinates from "../../utils/FetchAddressCoordinates";
+import verifyAddressDelivers from "../../utils/VerifyAddressDelivers";
 
 import PopLogin from "../PopLogin";
 import Popsignup from "../PopSignup";
@@ -528,6 +529,45 @@ const EditPlan = (props) => {
                 if(error_link !== null){
                   history.push(error_link);
                 }
+                setPopUp(null);
+              }}
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const showStillGrowingPopUp = () => {
+    setPopUp(
+      <div 
+        className={styles.errorModalPopUpShow}
+        style={{
+          zIndex: "100",
+        }}
+      >
+        <div className={styles.confirmModalContainer}>
+          <div className={styles.confirmContainer}>
+            <div className={styles.cancelledHeader}>
+              Still Growing
+            </div>
+
+            <div className={styles.errorText}>
+              Sorry, it looks like we don't deliver to your neighborhood yet.
+            </div>
+
+            <button
+              className={styles.cancelledBtn}
+              onClick={() => {
+                // this.setState({
+                //   deleteSuccess: null,
+                //   confirmModal: styles.errorModalPopUpHide,
+                // });
+                // if(error_link !== null){
+                //   history.push(error_link);
+                // }
                 setPopUp(null);
               }}
             >
@@ -1557,34 +1597,44 @@ const EditPlan = (props) => {
     let address = document.getElementById("pac-input").value;
     let zip = document.getElementById("postcode").value;
 
-    let post_object = {
-      first_name: object.first_name,
-      last_name: object.last_name,
-      purchase_uid: currentPlan.rawData.purchase_uid,
-      phone: object.phone,
-      address,
-      unit: object.unit,
-      city,
-      state,
-      zip,
-      email: profileInfo.customer_email,
-    };
-    // console.log("(SDD) post_object: ", post_object);
-    // console.log("(SDD) currentPlan: ", currentPlan);
-
-    axios
-      .post(API_URL + "Update_Delivery_Info_Address", post_object)
-      .then((res) => {
-        // console.log("(SDD) update delivery info res: ", res);
-
-        refreshSubscriptions();
-      })
-      .catch((err) => {
-        console.log("error happened while updating delivery info", err);
-        if (err.response) {
-          console.log("err.response: " + JSON.stringify(err.response));
+    verifyAddressDelivers(address, city, state, zip,
+      (latitude, longitude) => {
+        if(latitude !== null && longitude !== null){
+          console.log("(SDD) valid address");
+          let post_object = {
+            first_name: object.first_name,
+            last_name: object.last_name,
+            purchase_uid: currentPlan.rawData.purchase_uid,
+            phone: object.phone,
+            address,
+            unit: object.unit,
+            city,
+            state,
+            zip,
+            email: profileInfo.customer_email,
+          };
+          // console.log("(SDD) post_object: ", post_object);
+          // console.log("(SDD) currentPlan: ", currentPlan);
+      
+          axios
+            .post(API_URL + "Update_Delivery_Info_Address", post_object)
+            .then((res) => {
+              // console.log("(SDD) update delivery info res: ", res);
+      
+              refreshSubscriptions();
+            })
+            .catch((err) => {
+              console.log("error happened while updating delivery info", err);
+              if (err.response) {
+                console.log("err.response: " + JSON.stringify(err.response));
+              }
+            });
+        } else {
+          console.log("(SDD) invalid address");
+          showStillGrowingPopUp();
         }
-      });
+      }
+    );
   }
 
   // Used to render menu at top showing all current meals plans
@@ -2394,10 +2444,6 @@ const EditPlan = (props) => {
             disabled={recalculating || recalculatingBilling}
             onClick={() => {
               saveDeliveryDetails()
-              // console.log("(SDD) CALL calculateBilling here");
-
-              // console.log("(change) plan before: ", newPlan);
-              // console.log("(change) new data -- deliveryInput: ", deliveryInput);
             }}
             aria-label="Click to save delivery changes"
             title="Click to save delivery changes"
