@@ -40,11 +40,11 @@ class About extends Component {
       <>
       <div className = {styles.top}>
         <WebNavBar 
-          poplogin = {this.togglePopLogin}
-          popSignup = {this.togglePopSignup}
+          // poplogin = {this.togglePopLogin}
+          // popSignup = {this.togglePopSignup}
         />
-        {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} toggle_signup={this.togglePopSignup}/> : null}
-        {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null}
+        {/* {this.state.login_seen ? <PopLogin toggle={this.togglePopLogin} toggle_signup={this.togglePopSignup}/> : null}
+        {this.state.signUpSeen ? <Popsignup toggle={this.togglePopSignup} /> : null} */}
 
         <div className = {styles.centerBox}>
           <h2 style = {{fontWeight: 'bold'}}>OUR STORY</h2>
