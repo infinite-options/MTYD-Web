@@ -70,7 +70,10 @@ class SocialLogin extends Component {
         .then((res) => {
           console.log("(profile) res: ", res);
 
-          if(res.data.result[0].user_social_media !== 'GOOGLE'){
+          if(
+            res.data.code !== 404 && // if 404 profile not found, login (create new social account)
+            res.data.result[0].user_social_media !== 'GOOGLE'
+          ){
             console.log("(profile) invalid social media account!");
             this.setState({
               showLoginError: true
