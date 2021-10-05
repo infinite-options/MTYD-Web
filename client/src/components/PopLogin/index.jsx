@@ -91,8 +91,8 @@ export class PopLogin extends Component {
                 onClick={() => {
                   this.setState({loginPopUp: null})
                 }}
-                aria-label="Login using email and password"
-                title="Login using email and password"
+                aria-label="Click here to close login error pop up"
+                title="Click here to close login error pop up"
               >
                 OK
               </button>
@@ -658,6 +658,18 @@ export class PopLogin extends Component {
 
   }
 
+  formIsValid = () => {
+    console.log("(FIV) state: ", this.state);
+
+    if(
+      this.state.email_input === '' ||
+      this.state.password_input === ''
+    ) {
+      return false;
+    }
+    return true;
+  }
+
   render() {
     //this.errVal=''
     this.attemptLogin=true
@@ -849,6 +861,7 @@ export class PopLogin extends Component {
                 // this.loginClicked = true
                 this.directLogin();
               }}
+              disabled={!this.formIsValid()}
               aria-label="Click here to login"
               title="Click here to login"
             >

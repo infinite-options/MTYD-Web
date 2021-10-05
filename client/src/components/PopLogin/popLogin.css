@@ -58,8 +58,11 @@
   font-size: 30px;
   border: none;
 }
-.signInBtn:hover {
+.signInBtn:hover:enabled {
   background-color: #ffba00;
+}
+.signInBtn:disabled {
+  opacity: 0.5;
 }
 
 .inputContainer i {
