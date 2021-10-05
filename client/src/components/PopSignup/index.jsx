@@ -14,7 +14,10 @@ import {
   changeNewState,
   changeNewZip,
   submitPasswordSignUp,
+  submitPasswordSignUp_v2,
   loginAttempt,
+  toggleLoginPopup,
+  toggleSignupPopup
 } from "../../reducers/actions/loginActions";
 import { connect } from "react-redux";
 import { Route, withRouter } from "react-router-dom";
@@ -24,6 +27,7 @@ import PlacesAutocomplete, {
   geocodeByPlaceId,
   getLatLng,
 } from 'react-places-autocomplete';
+import verifyAddressDelivers from "../../utils/VerifyAddressDelivers";
 
 const google = window.google;
 
@@ -47,7 +51,10 @@ export class PopSignup extends Component {
       password_confirm: '',
       latitude: '',
       longitude: '',
-      signUpPopUp: null
+      address: '',
+      coordinates: {lat: null, lng: null},
+      signUpPopUp: null,
+      disableSignUp: false
     }
   }
 
@@ -74,119 +81,120 @@ export class PopSignup extends Component {
   // }
 
   componentDidMount() {
-    this.autocomplete = new google.maps.places.Autocomplete(
-      document.getElementById("ship-address"),
-      {
-        componentRestrictions: { country: ["us", "ca"] },
-      }
-    );
-    this.autocomplete.addListener("place_changed", this.handlePlaceSelect);
+    console.log("(PSU) props: ", this.props);
+    // this.autocomplete = new google.maps.places.Autocomplete(
+    //   document.getElementById("ship-address"),
+    //   {
+    //     componentRestrictions: { country: ["us", "ca"] },
+    //   }
+    // );
+    // this.autocomplete.addListener("place_changed", this.handlePlaceSelect);
 
     console.log(this.state);
     if (this.props.messageFromHooray) {
       this.setState({
-        street: this.props.streetAddressFromHooray,
+        address: this.props.streetAddressFromHooray,
         city: this.props.cityFromHooray,
         state: this.props.stateFromHooray,
-        zip_code: this.props.zipCodeFromHooray
+        zip: this.props.zipCodeFromHooray
       });
     }
   }
 
-  handlePlaceSelect() {
-    console.log("in handlePlaceSelect");
-    let address1Field = document.querySelector("#ship-address");
-    let postalField = document.querySelector("#postcode");
+  // handlePlaceSelect() {
+  //   console.log("in handlePlaceSelect");
+  //   let address1Field = document.querySelector("#ship-address");
+  //   let postalField = document.querySelector("#postcode");
 
-    let addressObject = this.autocomplete.getPlace();
-    console.log(addressObject);
-    console.log(addressObject.address_components);
+  //   let addressObject = this.autocomplete.getPlace();
+  //   console.log(addressObject);
+  //   console.log(addressObject.address_components);
 
-    let address1 = "";
-    let postcode = "";
-    let city = "";
-    let state = "";
+  //   let address1 = "";
+  //   let postcode = "";
+  //   let city = "";
+  //   let state = "";
 
-    for (const component of addressObject.address_components) {
-      const componentType = component.types[0];
-      switch (componentType) {
-        case "street_number": {
-          address1 = `${component.long_name} ${address1}`;
-          break;
-        }
+  //   for (const component of addressObject.address_components) {
+  //     const componentType = component.types[0];
+  //     switch (componentType) {
+  //       case "street_number": {
+  //         address1 = `${component.long_name} ${address1}`;
+  //         break;
+  //       }
 
-        case "route": {
-          address1 += component.short_name;
-          break;
-        }
+  //       case "route": {
+  //         address1 += component.short_name;
+  //         break;
+  //       }
 
-        case "postal_code": {
-          postcode = `${component.long_name}${postcode}`;
-          break;
-        }
+  //       case "postal_code": {
+  //         postcode = `${component.long_name}${postcode}`;
+  //         break;
+  //       }
 
-        case "locality":
-          document.querySelector("#locality").value = component.long_name;
-          city = component.long_name;
-          break;
+  //       case "locality":
+  //         document.querySelector("#locality").value = component.long_name;
+  //         city = component.long_name;
+  //         break;
 
-        case "administrative_area_level_1": {
-          document.querySelector("#state").value = component.short_name;
-          state = component.short_name;
-          break;
-        }
-      }
-    }
+  //       case "administrative_area_level_1": {
+  //         document.querySelector("#state").value = component.short_name;
+  //         state = component.short_name;
+  //         break;
+  //       }
+  //     }
+  //   }
 
-    address1Field.value = address1;
-    postalField.value = postcode;
+  //   address1Field.value = address1;
+  //   postalField.value = postcode;
 
-    // console.log(address1);
-    // console.log(postcode)
+  //   // console.log(address1);
+  //   // console.log(postcode)
 
-    // this.setState({
-    //   name: addressObject.name,
-    //   street_address: address1,
-    //   city: city,
-    //   state: state,
-    //   zip_code: postcode,
-    //   lat: addressObject.geometry.location.lat(),
-    //   lng: addressObject.geometry.location.lng(),
-    // });
-    this.setState({
-      name: addressObject.name,
-      street: address1,
-      city: city,
-      state: state,
-      zip: postcode,
-      latitude: addressObject.geometry.location.lat().toString(),
-      longitude: addressObject.geometry.location.lng().toString(),
-    });
+  //   // this.setState({
+  //   //   name: addressObject.name,
+  //   //   street_address: address1,
+  //   //   city: city,
+  //   //   state: state,
+  //   //   zip_code: postcode,
+  //   //   lat: addressObject.geometry.location.lat(),
+  //   //   lng: addressObject.geometry.location.lng(),
+  //   // });
+  //   this.setState({
+  //     name: addressObject.name,
+  //     street: address1,
+  //     city: city,
+  //     state: state,
+  //     zip: postcode,
+  //     latitude: addressObject.geometry.location.lat().toString(),
+  //     longitude: addressObject.geometry.location.lng().toString(),
+  //   });
 
-    console.log(this.state);
+  //   console.log(this.state);
 
-    axios
-      .get(
-        `https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/categoricalOptions/${this.state.longitude},${this.state.latitude}`
-      )
-      .then((res) => {
-        console.log(res);
-        if (res.data.result.length == 0) {
-          alert("cannot deliver to this address");
-          console.log("cannot deliver to this address");
-        } else {
-          console.log("we can deliver to this address");
-        }
-      })
-      .catch((err) => {
-        if (err.response) {
-          console.log(err.response);
-        }
-        console.log(err);
-      });
+  //   axios
+  //     .get(
+  //       `https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/categoricalOptions/${this.state.longitude},${this.state.latitude}`
+  //     )
+  //     .then((res) => {
+  //       console.log(res);
+  //       if (res.data.result.length == 0) {
+  //         alert("cannot deliver to this address");
+  //         console.log("cannot deliver to this address");
+  //       } else {
+  //         console.log("we can deliver to this address");
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       if (err.response) {
+  //         console.log(err.response);
+  //       }
+  //       console.log(err);
+  //     });
 
-    // console.log(this.state)
-  }
+  //   // console.log(this.state)
+  // }
 
   handleChange(event) {
     this.setState({ [event.target.name]: event.target.value });
@@ -195,7 +203,9 @@ export class PopSignup extends Component {
   }
 
   handleClick = () => {
-    this.props.toggle();
+    // this.props.toggle();
+    // this.props.dispatch({type: "SHOW_SIGNUP_POPUP"})
+    this.props.toggleSignupPopup(!this.props.showSignupPopup);
   };
 
   successLogin = () => {
@@ -254,11 +264,320 @@ export class PopSignup extends Component {
     }
   };
 
-  directSignUp() {
+  directSignUp = () => {
+    console.log("(DSU) in directSignUp");
+    console.log("(DSU) state: ", this.state);
 
+    let nameCheck = false;
+    let emailCheck = false;
+    let passwordCheck = false;
+
+    if (this.state.password !== this.state.password_confirm) {
+      // alert("passwords do not match");
+      this.setState({
+        signUpPopUp: (
+          <div className='loginErrorModal' style={{marginTop: '500px'}}>
+            <button 
+              className="close" 
+              onClick={() => {
+                this.setState({signUpPopUp: null})
+              }} 
+              aria-label="Click here to close password error pop up" 
+              title="Click here to close password error pop up"
+            />
+            <div className='loginErrorHeader'>
+              Passwords Don't Match
+            </div>
+            <div className='loginErrorText'>
+              Please enter matching passwords.
+            </div>
+            <div className='socialBtnWrapper'>
+              <button
+                className='orangeBtn'
+                onClick={() => {
+                  this.setState({signUpPopUp: null})
+                }}
+                aria-label="Click here to close password error pop up"
+                title="Click here to close password error pop up"
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        )
+      });
+    } else {
+      this.setState({
+        disableSignUp: true
+      }, () => {
+        verifyAddressDelivers(
+          this.state.address,
+          this.state.city,
+          this.state.state,
+          this.state.zip,
+          (latitude, longitude) => {
+            if(latitude !== null && longitude !== null){
+              axios
+                // .get(API_URL + "Profile?customer_email=" + email)
+                .get('http://localhost:2000/api/v2/Profile?customer_email=' + this.state.email)
+                .then((res) => {
+                  console.log("(profile) res: ", res);
+
+                  if(res.data.code === 404){ // account doesn't exist, so proceed with creating it
+                    let temp_pw = this.state.password;
+                    let temp_email = this.state.email;
+                    
+                    this.props.submitPasswordSignUp_v2(
+                      this.state.email,
+                      this.state.password,
+                      this.state.password_confirm,
+                      this.state.first_name,
+                      this.state.last_name,
+                      this.state.phone,
+                      this.state.address,
+                      this.state.unit,
+                      this.state.city,
+                      this.state.state,
+                      this.state.zip,
+                      (signup_success, message) => {
+                        console.log("callback success? ", signup_success);
+                        console.log("callback message: ", message);
+                        if(signup_success){
+                          this.props.loginAttempt(temp_email, temp_pw, this.successLogin);
+                        } else {
+                          this.setState({
+                            signUpPopUp: (
+                              <div className='loginErrorModal' style={{marginTop: '500px'}}>
+                                <button 
+                                  className="close" 
+                                  onClick={() => {
+                                    this.setState({
+                                      signUpPopUp: null, 
+                                      disableSignUp: false
+                                    });
+                                  }} 
+                                  aria-label="Click here to close sign up error pop up" 
+                                  title="Click here to close sign up error pop up"
+                                />
+                                <div className='loginErrorHeader'>
+                                  Error Creating Account
+                                </div>
+                                <div className='loginErrorText'>
+                                  {message}
+                                </div>
+                                <div className='socialBtnWrapper'>
+                                  <button
+                                    className='orangeBtn'
+                                    onClick={() => {
+                                      this.setState({
+                                        signUpPopUp: null, 
+                                        disableSignUp: false
+                                      });
+                                    }}
+                                    aria-label="Click here to close sign up error pop up"
+                                    title="Click here to close sign up error pop up"
+                                  >
+                                    OK
+                                  </button>
+                                </div>
+                              </div>
+                            )
+                          });
+                        }
+                      }
+                    );
+                    
+                  } else { // account already exists, display error
+                    this.setState({
+                      signUpPopUp: (
+                        <div className='loginErrorModal' style={{marginTop: '500px'}}>
+                          <button 
+                            className="close" 
+                            onClick={() => {
+                              this.setState({
+                                signUpPopUp: null, 
+                                disableSignUp: false
+                              });
+                            }} 
+                            aria-label="Click here to close email exists error pop up" 
+                            title="Click here to close email exists error pop up"
+                          />
+                          <div className='loginErrorHeader'>
+                            Email Already Exists
+                          </div>
+                          <div className='loginErrorText'>
+                            {"The email "}
+                            <span style={{textDecoration: 'underline'}}>{this.state.email}</span>
+                            {" has already been used to create an account. Please use a different one."}
+                          </div>
+                          <div className='socialBtnWrapper'>
+                            <button
+                              className='orangeBtn'
+                              onClick={() => {
+                                this.setState({
+                                  signUpPopUp: null, 
+                                  disableSignUp: false
+                                });
+                              }}
+                              aria-label="Click here to close email exists error pop up"
+                              title="Click here to close email exists error pop up"
+                            >
+                              OK
+                            </button>
+                          </div>
+                        </div>
+                      )
+                    });
+                  }
+                })
+                .catch((err) => {
+                  console.log(err);
+                });
+            } else {
+              this.setState({
+                signUpPopUp: (
+                  <div className='loginErrorModal' style={{marginTop: '500px'}}>
+                    <button 
+                      className="close" 
+                      onClick={() => {
+                        this.setState({
+                          signUpPopUp: null, 
+                          disableSignUp: false
+                        });
+                      }} 
+                      aria-label="Click here to close address error pop up" 
+                      title="Click here to close address error pop up"
+                    />
+                    <div className='loginErrorHeader'>
+                      Still Growing
+                    </div>
+                    {/* <div className='loginErrorText'>
+                      {"Sorry, the address\n"}
+                      <br/>
+                      <span style={{textDecoration: 'underline'}}>
+                        {this.state.address + ", "}
+                        <br/>
+                        {this.state.city + ", " +
+                        this.state.state + ", " +
+                        this.state.zip}
+                      </span>
+                      <br/>
+                      {" is currently outside our service area."}
+                    </div> */}
+                    <div className='loginErrorText'>
+                      Sorry, it looks like we don’t deliver to your neighborhood yet.
+                    </div>
+                    <div className='socialBtnWrapper'>
+                      <button
+                        className='orangeBtn'
+                        onClick={() => {
+                          this.setState({
+                            signUpPopUp: null, 
+                            disableSignUp: false
+                          });
+                        }}
+                        aria-label="Click here to close address error pop up"
+                        title="Click here to close address error pop up"
+                      >
+                        OK
+                      </button>
+                    </div>
+                  </div>
+                )
+              });
+            }
+          }
+        );
+      });
+      // let temp_pw = this.state.password;
+      // let temp_email = this.state.email;
+      // this.setState({
+      //   disableSignUp: true
+      // }, () => {
+      //   this.props.submitPasswordSignUp_v2(
+      //     this.state.email,
+      //     this.state.password,
+      //     this.state.password_confirm,
+      //     this.state.first_name,
+      //     this.state.last_name,
+      //     this.state.phone,
+      //     this.state.address,
+      //     this.state.unit,
+      //     this.state.city,
+      //     this.state.state,
+      //     this.state.zip,
+      //     () => {
+      //       this.props.loginAttempt(temp_email, temp_pw, this.successLogin);
+      //       console.log("finish signup function");
+      //     }
+      //   );
+      // });
+    }
+  }
+
+  handleChange = address => {
+    this.setState({address});
+  };
+
+  handleSelect = async (value, placeId) => {
+    const results = await geocodeByAddress(value);
+
+    const ll = await getLatLng(results[0])
+    console.log("(handleSelect) coords: ", ll);
+
+    const [place] = await geocodeByPlaceId(placeId);
+    const { long_name: postalCode = '' } =
+      place.address_components.find(c => c.types.includes('postal_code')) || {};
+    console.log("(handleSelect) postalCode: ",postalCode);
+
+    console.log("(handleSelect) value: ", value);
+    let tokens = value.split(', ');
+    console.log("(handleSelect) address tokens: ", tokens);
+
+    this.setState({
+      address: tokens[0],
+      city: tokens[1],
+      state: tokens[2],
+      zip: postalCode,
+      coordinates: ll
+    });
+  }
+
+  formIsValid = () => {
+    console.log("(FIV) state: ", this.state);
+
+    // this.props.email,
+    //     this.props.password,
+    //     this.props.passwordConfirm,
+    //     this.props.firstName,
+    //     this.props.lastName,
+    //     this.props.phone,
+    //     this.state.street_address,
+    //     this.props.unit,
+    //     this.state.city,
+    //     this.state.state,
+    //     this.state.zip_code
+
+    if(
+      this.state.first_name === '' || 
+      this.state.last_name === '' ||
+      this.state.email === '' ||
+      this.state.phone === '' ||
+      this.state.password === '' ||
+      this.state.password_confirm === '' ||
+      this.state.address === '' ||
+      this.state.city === '' ||
+      this.state.state === '' ||
+      this.state.zip === ''
+    ) {
+      return false;
+    }
+    return true;
   }
 
   render() {
+    console.log("(PSU) styling: ", this.props.styling);
+    console.log("(PSU) props 2: ", this.props);
     return (
       <div 
         className="model_content"
@@ -266,6 +585,26 @@ export class PopSignup extends Component {
           this.props.styling
         )}
       >
+        {this.state.signUpPopUp === null && this.state.disableSignUp === false ? (null) : (
+          <div
+            style={{
+              width: '100%',
+              // height: '100%',
+              height: 'calc(100% - 60px)',
+              // backgroundColor: 'white',
+              backgroundColor: 'rgb(255,255,255,0.5)',
+              position: 'absolute',
+              top: '60px',
+              display: 'flex',
+              justifyContent: 'center',
+              // opacity: 0.5
+              zIndex: '2001',
+              // border: '1px dashed'
+            }}
+          >
+            {this.state.signUpPopUp}
+          </div>
+        )}
         <button
           className="close"
           onClick={this.handleClick}
@@ -468,7 +807,7 @@ export class PopSignup extends Component {
             aria-label="Enter your street address"
             title="Enter your street address"
           /> */}
-          <input
+          {/* <input
             className={
               this.state.street == "" ? "inputBox" : "StreetinputBox"
             }
@@ -484,7 +823,13 @@ export class PopSignup extends Component {
             }
             aria-label="Enter your street address"
             title="Enter your street address"
-          />
+          /> */}
+          {/* <Autocomplete
+            apiKey={'AIzaSyBLoal-kZlb6tO5aDvkJTFC0a4WMp7oHUM'}
+            onPlaceSelected={(place) => {
+              console.log("(autocomplete) place: ", place);
+            }}
+          /> */}
           {console.log("(RPAC) coords: ", this.state.coordinates)}
           <PlacesAutocomplete
             value={this.state.address}
@@ -606,7 +951,7 @@ export class PopSignup extends Component {
           <input
             style={{
               width: "208px",
-              marginRight: "12px",
+              margin: "6px 12px 0 0",
             }}
             className="inputBox"
             placeholder="Unit"
@@ -677,8 +1022,8 @@ export class PopSignup extends Component {
             }}
             className="inputBox"
             placeholder="Zip"
-            id="postcode"
-            name="postcode"
+            // id="postcode"
+            // name="postcode"
             // value={this.state.zip_code}
             aria-label="Enter your zip code"
             title="Enter your zip code"
@@ -714,8 +1059,9 @@ export class PopSignup extends Component {
             //   border: "none",
             // }}
             className='signUpBtn'
-            onClick={this.wrapperFunction}
-            // onClick={this.directSignUp}
+            // onClick={this.wrapperFunction}
+            disabled={!this.formIsValid()}
+            onClick={this.directSignUp}
           >
             {/* <p
               style={{
@@ -755,6 +1101,7 @@ const mapStateToProps = (state) => ({
   city: state.login.newUserInfo.address.city,
   state: state.login.newUserInfo.address.state,
   zip: state.login.newUserInfo.address.zip,
+  showSignupPopup: state.login.showSignupPopup
 });
 
 const functionList = {
@@ -770,7 +1117,9 @@ const functionList = {
   changeNewState,
   changeNewZip,
   submitPasswordSignUp,
+  submitPasswordSignUp_v2,
   loginAttempt,
+  toggleSignupPopup
 };
 
 export default connect(mapStateToProps, functionList)(withRouter(PopSignup));

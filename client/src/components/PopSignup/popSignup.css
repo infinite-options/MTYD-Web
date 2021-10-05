@@ -80,11 +80,14 @@
   /* border: 1px dashed; */
   border: none;
 }
-.signUpBtn:hover {
+.signUpBtn:hover:enabled {
   background-color: #ffba00;
 }
+.signUpBtn:disabled {
+  opacity: 0.5;
+}
 
-.pac-item {
+/* .pac-item {
   border: 1px solid red;
   z-index: 10000 !important;
 }
@@ -96,4 +99,4 @@
 .ship-address {
   border: 1px solid green;
   z-index: 10000 !important;
-}
+} */
