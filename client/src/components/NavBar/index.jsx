@@ -112,16 +112,17 @@ class NavBar extends React.Component {
     });
 
   togglePopLogin = () => {
-    console.log("inside toggle pop login");
-    this.setState({
-      login_seen: !this.state.login_seen,
-    });
+    // console.log("inside toggle pop login");
+    // this.setState({
+    //   login_seen: !this.state.login_seen,
+    // });
 
-    if (!this.state.login_seen) {
-      this.setState({
-        signUpSeen: false,
-      });
-    }
+    // if (!this.state.login_seen) {
+    //   this.setState({
+    //     signUpSeen: false,
+    //   });
+    // }
+    this.props.toggleLoginPopup(!this.props.showLoginPopup);
   };
 
   togglePopSignup = () => {
@@ -282,6 +283,8 @@ class NavBar extends React.Component {
     //   color:'white',
     //   display:this.state.loginNameLogoutDisplay
     // }
+
+    console.log("SLIPU props: ", this.props);
 
     return (
       <div className={styles.navbar} style={{ zIndex: "2000" }}>
@@ -456,7 +459,12 @@ class NavBar extends React.Component {
               </div>
             ) : null}
 
-            {this.state.login_seen ? (
+            {/* {this.state.login_seen ? (
+              <PopLogin toggle={this.togglePopLogin} toggle_signup={this.togglePopSignup}/>
+            ) : null} */}
+            {console.log("showLoginPopup? ", this.props.showLoginPopup)}
+            {console.log("showLoginPopup2? ", this.props.showLoginPopup2)}
+            {this.props.showLoginPopup ? (
               <PopLogin toggle={this.togglePopLogin} toggle_signup={this.togglePopSignup}/>
             ) : null}
           </div>
