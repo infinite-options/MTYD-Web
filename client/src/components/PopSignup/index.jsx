@@ -19,6 +19,11 @@ import {
 import { connect } from "react-redux";
 import { Route, withRouter } from "react-router-dom";
 import axios from "axios";
+import PlacesAutocomplete, {
+  geocodeByAddress,
+  geocodeByPlaceId,
+  getLatLng,
+} from 'react-places-autocomplete';
 
 const google = window.google;
 
@@ -480,6 +485,123 @@ export class PopSignup extends Component {
             aria-label="Enter your street address"
             title="Enter your street address"
           />
+          {console.log("(RPAC) coords: ", this.state.coordinates)}
+          <PlacesAutocomplete
+            value={this.state.address}
+            onChange={this.handleChange}
+            onSelect={this.handleSelect}
+          >
+            {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
+              <div
+                style={{
+                  // border: '1px dashed'
+                  position: 'relative',
+                }}
+              >
+                <input
+                  // className='inputBox'
+                  // style={{
+                  //   border: '1px solid blue'
+                  // }}
+                  {...getInputProps({
+                    placeholder: 'Address',
+                    // className: 'location-search-input',
+                    className: 'inputBox',
+                    style: {
+                      marginBottom: '0px',
+                      // borderRadius: '15px 15px 0 0'
+                    }
+                  })}
+                />
+                <div 
+                  // className="autocomplete-dropdown-container"
+                  style={{
+                    // border: '1px solid #ff8500',
+                    // backgroundColor: '#ffba00',
+                    width: '428px',
+                    // borderRadius: '15px',
+                    position: 'absolute',
+                    top: '48px'
+                  }}
+                >
+                  {/* {loading && 
+                    <div 
+                      style={{
+                        backgroundColor: '#ccc9c9',
+                        border: 'inset',
+                        borderWidth: '0px 1px 1px 1px'
+                      }}>
+                      Loading...
+                    </div>}
+                  {suggestions.map((suggestion,index) => {
+                    const className = suggestion.active
+                      ? 'suggestion-item--active'
+                      : 'suggestion-item';
+                    // inline style for demonstration purpose
+                    const style = suggestion.active ? { 
+                      backgroundColor: '#ff6505', 
+                      color: 'white', 
+                      cursor: 'pointer' ,
+                      border: 'inset',
+                      borderWidth: '0px 1px 1px 1px'
+                    } : { 
+                      backgroundColor: '#ccc9c9', 
+                      cursor: 'pointer',
+                      border: 'inset',
+                      borderWidth: '0px 1px 1px 1px'
+                    };
+                    return (
+                      <div
+                        {...getSuggestionItemProps(suggestion, {
+                          className,
+                          style
+                        })}
+                      >
+                        <span>{suggestion.description}</span>
+                      </div>
+                    );
+                  })} */}
+                  {loading ? (
+                    <div 
+                      style={{
+                        backgroundColor: '#f3f3f3',
+                        border: 'inset',
+                        borderWidth: '0px 1px 1px 1px'
+                      }}>
+                      Loading...
+                    </div>
+                  ) : (suggestions.map((suggestion,index) => {
+                    const className = suggestion.active
+                      ? 'suggestion-item--active'
+                      : 'suggestion-item';
+                    // inline style for demonstration purpose
+                    const style = suggestion.active ? { 
+                      backgroundColor: '#ff6505', 
+                      color: 'white', 
+                      cursor: 'pointer' ,
+                      border: 'inset',
+                      borderWidth: '0px 1px 1px 1px'
+                    } : { 
+                      backgroundColor: '#f3f3f3', 
+                      cursor: 'pointer',
+                      border: 'inset',
+                      borderWidth: '0px 1px 1px 1px'
+                    };
+                    return (
+                      <div
+                        {...getSuggestionItemProps(suggestion, {
+                          className,
+                          style
+                        })}
+                      >
+                        <span>{suggestion.description}</span>
+                      </div>
+                    );
+                  }))}
+                </div>
+              </div>
+            )}
+          </PlacesAutocomplete>
 
           <input
             style={{
