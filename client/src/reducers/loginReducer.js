@@ -230,12 +230,14 @@ export default function(state = initialState, action) {
     case TOGGLE_LOGIN_POPUP:
       return {
         ...state,
-        showLoginPopup: action.payload
+        showLoginPopup: action.payload,
+        showSignupPopup: false
       }
     case TOGGLE_SIGNUP_POPUP:
       return {
         ...state,
-        showSignupPopup: action.payload
+        showSignupPopup: action.payload,
+        showLoginPopup: false
       }
     default:
       return state;
