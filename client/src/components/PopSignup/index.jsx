@@ -1,5 +1,4 @@
-import React, { Component } from "react";
-import styles from "./popSignup.css";
+import { Component } from "react";
 import SocialLogin from "../Landing/socialLogin";
 import {
   changeNewEmail,
@@ -20,7 +19,7 @@ import {
   toggleSignupPopup
 } from "../../reducers/actions/loginActions";
 import { connect } from "react-redux";
-import { Route, withRouter } from "react-router-dom";
+import { withRouter } from "react-router-dom";
 import axios from "axios";
 import PlacesAutocomplete, {
   geocodeByAddress,
@@ -28,6 +27,7 @@ import PlacesAutocomplete, {
   getLatLng,
 } from 'react-places-autocomplete';
 import verifyAddressDelivers from "../../utils/VerifyAddressDelivers";
+import { API_URL } from "../../reducers/constants";
 
 const google = window.google;
 
@@ -318,8 +318,7 @@ export class PopSignup extends Component {
           (latitude, longitude) => {
             if(latitude !== null && longitude !== null){
               axios
-                // .get(API_URL + "Profile?customer_email=" + email)
-                .get('http://localhost:2000/api/v2/Profile?customer_email=' + this.state.email)
+                .get(API_URL + "Profile?customer_email=" + this.state.email)
                 .then((res) => {
                   console.log("(profile) res: ", res);
 

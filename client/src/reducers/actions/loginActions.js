@@ -897,8 +897,7 @@ export const submitPasswordSignUp =
                 console.log(res);
                 console.log("(SPWSU) verifying email...");
                 axios
-                  // .post(API_URL + "email_verification", {
-                  .post('http://localhost:2000/api/v2/email_verification', {
+                  .post(API_URL + "email_verification", {
                     email: object.email,
                   })
                   .then((res) => {
