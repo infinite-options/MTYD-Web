@@ -42,29 +42,31 @@ class Home extends Component {
   }
 
   togglePopLogin = () => {
-    window.scrollTo(0, 0);
-    this.setState({
-      login_seen: !this.state.login_seen,
-    });
+    // window.scrollTo(0, 0);
+    // this.setState({
+    //   login_seen: !this.state.login_seen,
+    // });
 
-    if (!this.state.login_seen) {
-      this.setState({
-        signUpSeen: false,
-      });
-    }
+    // if (!this.state.login_seen) {
+    //   this.setState({
+    //     signUpSeen: false,
+    //   });
+    // }
+    this.props.toggleLoginPopup(!this.props.showLoginPopup);
   };
 
   togglePopSignup = () => {
-    window.scrollTo(0, 0);
-    this.setState({
-      signUpSeen: !this.state.signUpSeen,
-    });
+    // window.scrollTo(0, 0);
+    // this.setState({
+    //   signUpSeen: !this.state.signUpSeen,
+    // });
 
-    if (!this.state.signUpSeen) {
-      this.setState({
-        login_seen: false,
-      });
-    }
+    // if (!this.state.signUpSeen) {
+    //   this.setState({
+    //     login_seen: false,
+    //   });
+    // }
+    this.props.toggleSignupPopup(!this.props.showSignupPopup);
   };
 
   handleResize = () =>
@@ -179,6 +181,13 @@ class Home extends Component {
     // console.log(this.state);
   }
 
+  loggedIn = () => {
+    console.log("in loggedIn");
+    let is_logged_in = this.props.userInfo.customerId !== "";
+    console.log("is logged in? ", is_logged_in);
+    return is_logged_in;
+  }
+
   render() {
     return (
       <div
@@ -208,7 +217,7 @@ class Home extends Component {
         {/* <div>
         <WebNavBar/>
       </div> */}
-        <div
+        {/* <div
           style={{
             position: "absolute",
             right: "10px",
@@ -229,13 +238,20 @@ class Home extends Component {
               // }}
             />
           ) : null}
-        </div>
+        </div> */}
 
         <div className={styles.topBackground}>
           <div className={styles.gridDisplayRight}>
-            <SocialLogin verticalFormat={true} />
+            <SocialLogin 
+              verticalFormat={true} 
+              toggleLoginPopup={this.props.toggleLoginPopup}
+            />
             <img
               className={styles.gridRightIcons}
+              style={this.loggedIn() ? ({
+                opacity: '0',
+                cursor: 'default'
+              }) : ({})}
               src={goToImg}
               onClick={this.togglePopLogin}
             />
@@ -279,6 +295,7 @@ class Home extends Component {
                   <HomeMap 
                     toggleSignupPopup={this.props.toggleSignupPopup}
                     showSignupPopup={this.props.showSignupPopup}
+                    loggedIn={this.loggedIn()}
                   />
                 </div>
               </div>
@@ -840,11 +857,14 @@ class Home extends Component {
 
 // export default Home;
 const mapStateToProps = (state) => ({
-  showSignupPopup: state.login.showSignupPopup
+  showSignupPopup: state.login.showSignupPopup,
+  showLoginPopup: state.login.showLoginPopup,
+  userInfo: state.login.userInfo,
 });
 
 const functionList = {
-  toggleSignupPopup
+  toggleSignupPopup,
+  toggleLoginPopup
 };
 
 // export default withRouter(HomeMap);
