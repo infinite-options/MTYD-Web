@@ -112,31 +112,11 @@ class NavBar extends React.Component {
     });
 
   togglePopLogin = () => {
-    console.log("inside toggle pop login");
-    this.setState({
-      login_seen: !this.state.login_seen,
-    });
-
-    if (!this.state.login_seen) {
-      this.setState({
-        signUpSeen: false,
-      });
-    }
+    this.props.toggleLoginPopup();
   };
 
   togglePopSignup = () => {
-    // this.setState({
-    //   signUpSeen: !this.state.signUpSeen,
-    // });
-
-    // if (!this.state.signUpSeen) {
-    //   this.setState({
-    //     login_seen: false,
-    //   });
-    // }
-    console.log("togglePopSignup props: ", this.props);
     this.props.toggleSignupPopup(!this.props.showSignupPopup);
-
   };
 
   logOut = () => {
@@ -456,7 +436,10 @@ class NavBar extends React.Component {
               </div>
             ) : null}
 
-            {this.state.login_seen ? (
+            {/* {this.state.login_seen ? (
+              <PopLogin toggle={this.togglePopLogin} toggle_signup={this.togglePopSignup}/>
+            ) : null} */}
+            {this.props.showLoginPopup ? (
               <PopLogin toggle={this.togglePopLogin} toggle_signup={this.togglePopSignup}/>
             ) : null}
           </div>
