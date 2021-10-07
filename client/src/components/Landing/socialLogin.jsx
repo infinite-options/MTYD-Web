@@ -1,6 +1,5 @@
-import React, { Component } from "react";
+import { Component } from "react";
 import PropTypes from "prop-types";
-import Cookies from "js-cookie";
 import { connect } from "react-redux";
 import {
   socialLoginAttempt,
@@ -9,11 +8,11 @@ import { withRouter } from "react-router";
 import GoogleLogin from "react-google-login";
 import FacebookLogin from "react-facebook-login";
 import styles from "./landing.module.css";
-import styles2 from "../PopLogin/popLogin.css"
 import socialG from "../../images/socialGoogle.png";
 import socialF from "../../images/socialFb.png";
 import socialA from "../../images/socialApple.png";
 import axios from "axios";
+import { API_URL } from "../../reducers/constants";
 
 export var responseData = null;
 
@@ -64,8 +63,7 @@ class SocialLogin extends Component {
 
         // make sure profile is social media account before proceeding
         axios
-          // .get(API_URL + "Profile?customer_email=" + email)
-          .get('http://localhost:2000/api/v2/Profile?customer_email=' + email)
+          .get(API_URL + "Profile?customer_email=" + email)
           .then((res) => {
             console.log("(profile) res: ", res);
 
