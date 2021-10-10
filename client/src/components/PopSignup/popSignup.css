@@ -11,7 +11,8 @@
   border: 3px solid #ff8500;
   /* margin-top: 80px; */
   /* background-color: lime; */
-  z-index: auto;
+  /* z-index: auto; */
+  z-index: 100;
 }
 /* .pop_content {
   position: absolute;

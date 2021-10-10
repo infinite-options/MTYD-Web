@@ -1,4 +1,5 @@
 import { Component } from "react";
+import styles from "./popSignup.css"
 import SocialLogin from "../Landing/socialLogin";
 import {
   changeNewEmail,

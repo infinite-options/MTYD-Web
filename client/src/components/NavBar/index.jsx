@@ -112,7 +112,8 @@ class NavBar extends React.Component {
     });
 
   togglePopLogin = () => {
-    this.props.toggleLoginPopup();
+    // console.log();
+    this.props.toggleLoginPopup(!this.props.showLoginPopup);
   };
 
   togglePopSignup = () => {
