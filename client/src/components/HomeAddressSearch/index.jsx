@@ -246,7 +246,7 @@ export class HomeMap extends Component {
           // width: "300px",
           width: '100%',
           // border: '1px solid green',
-          height: "200px",
+          // height: "200px",
         }}
       >
         {this.state.hooray ? (
@@ -258,11 +258,13 @@ export class HomeMap extends Component {
               height: "371px",
               backgroundColor: "white",
               border: "2px solid #F26522",
-              top: '100px',
+              // top: '100px',
+              top: '-400px',
               right: '20px'
               // left: "65%",
               // top: "40%",
               // top: '0px'
+
             }}
           >
             <button
@@ -372,7 +374,8 @@ export class HomeMap extends Component {
               border: "2px solid #F26522",
               // left: "65%",
               // top: "40%",
-              top: '100px',
+              // top: '100px',
+              bottom: '269px',
               right: '20px',
               zIndex: 100
             }}
@@ -516,12 +519,12 @@ export class HomeMap extends Component {
                       height: "57px",
                       borderRadius: "10px",
                       fontSize: "25px",
-                      // border: "1px solid",
+                      // border: "1px solid red",
                       border: 'none',
                       textAlign: "center",
                       color: "black",
                       // marginLeft: "40px",
-                      marginTop: "-30px",
+                      // marginTop: "-30px",
                       // marginBottom: "15px",
                       borderRadius: "10px",
                     }
@@ -541,7 +544,9 @@ export class HomeMap extends Component {
                     position: 'absolute',
                     // top: '48px',
                     // marginLeft: "40px",
-                    marginTop: "27px",
+                    // marginTop: "27px",
+                    // marginTop: 
+                    top: '57px',
                     // marginBottom: "15px",
                     // borderRadius: "10px",
                   }}

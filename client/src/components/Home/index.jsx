@@ -240,8 +240,18 @@ class Home extends Component {
           ) : null}
         </div> */}
 
-        <div className={styles.topBackground}>
-          <div className={styles.gridDisplayRight}>
+        <div 
+          className={styles.topBackground}
+          // style={{
+          //   border: '1px solid lime'
+          // }}
+        >
+          {/* <div 
+            className={styles.gridDisplayRight}
+            style={{
+              border: '1px solid red'
+            }}
+          > */}
             <SocialLogin 
               verticalFormat={true} 
               toggleLoginPopup={this.props.toggleLoginPopup}
@@ -255,7 +265,7 @@ class Home extends Component {
               src={goToImg}
               onClick={this.togglePopLogin}
             />
-          </div>
+          {/* </div> */}
 
           {/* <div className =  {styles.whiteStripe}>		  
           <div className = {styles.gridDisplayCenter}>
@@ -272,20 +282,30 @@ class Home extends Component {
           </div>
         </div>	 */}
 
-          <div
+          {/* <div
             style={{
               width: "100%",
               display: "flex",
               justifyContent: "center",
-              // border: '1px solid blue'
+              border: '1px solid blue'
             }}
           >
-            <div className={styles.whiteStripe}>
-              <div className={styles.gridDisplayCenter}>
-                <div className={styles.centerSubtitleText}>
+            <div 
+              className={styles.whiteStripe}
+              style={{
+                border: '1px solid red'
+              }}
+            > */}
+              {/* <div 
+                className={styles.gridDisplayCenter}
+                style={{
+                  border: '1px solid cyan'
+                }}
+              > */}
+                {/* <div className={styles.centerSubtitleText}>
                   <img className={styles.centerImage} src={Logo} alt="logo" />
-                </div>
-                <div
+                </div> */}
+                {/* <div
                   style={{
                     zIndex: "3",
                     opacity: "1",
@@ -297,10 +317,27 @@ class Home extends Component {
                     showSignupPopup={this.props.showSignupPopup}
                     loggedIn={this.loggedIn()}
                   />
-                </div>
-              </div>
-            </div>
+                </div> */}
+              {/* </div> */}
+            {/* </div>
+          </div> */}
+          <div
+            className={styles.banner}
+          >
+            <img className={styles.centerImage} src={Logo} alt="logo" />
           </div>
+
+          <div
+            className={styles.viewMealsWrapper}
+          >
+            <HomeMap 
+              toggleSignupPopup={this.props.toggleSignupPopup}
+              showSignupPopup={this.props.showSignupPopup}
+              loggedIn={this.loggedIn()}
+            />
+          </div>
+
+
         </div>
 
         {(() => {
