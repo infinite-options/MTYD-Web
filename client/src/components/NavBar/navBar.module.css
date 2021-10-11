@@ -103,11 +103,13 @@
 }
 
 .hbButton {
-  /* border: 1px solid; */
+  /* border: 1px dashed; */
   width: fit-content;
   /* margin: 0 0 0 0 !important;
   padding: 0 0 0 0 !important; */
   height: 20px !important;
+  /* padding: 0px; */
+  min-width: 320px;
   font-size: 26px !important;
   color: white !important;
   cursor: pointer;

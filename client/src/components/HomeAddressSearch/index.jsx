@@ -34,7 +34,8 @@ export class HomeMap extends Component {
       city: "",
       state: "",
       zip_code: "",
-      await_endpoints: false
+      await_delivery_check: false,
+      await_autocomplete_select: false
     };
   }
 
@@ -42,7 +43,38 @@ export class HomeMap extends Component {
     this.setState({address});
   };
 
-  handleSelect = async (value, placeId) => {
+  handleSelect = (value, placeId) => {
+    this.setState({
+      await_autocomplete_select: true
+    }, () => {
+      this.handleSelect2(value, placeId)
+      // const results = await geocodeByAddress(value);
+
+      // const ll = await getLatLng(results[0])
+      // console.log("(handleSelect) coords: ", ll);
+
+      // const [place] = await geocodeByPlaceId(placeId);
+      // const { long_name: postalCode = '' } =
+      //   place.address_components.find(c => c.types.includes('postal_code')) || {};
+      // console.log("(handleSelect) postalCode: ",postalCode);
+
+      // console.log("(handleSelect) value: ", value);
+      // let tokens = value.split(', ');
+      // console.log("(handleSelect) address tokens: ", tokens);
+
+      // this.setState({
+      //   // address: tokens[0],
+      //   address: value,
+      //   city: tokens[1],
+      //   state: tokens[2],
+      //   zip: postalCode,
+      //   coordinates: ll,
+      //   await_autocomplete_select: false
+      // });
+    });
+  }
+
+  handleSelect2 = async (value, placeId) => {
     const results = await geocodeByAddress(value);
 
     const ll = await getLatLng(results[0])
@@ -63,7 +95,8 @@ export class HomeMap extends Component {
       city: tokens[1],
       state: tokens[2],
       zip: postalCode,
-      coordinates: ll
+      coordinates: ll,
+      await_autocomplete_select: false
     });
   }
 
@@ -214,7 +247,7 @@ export class HomeMap extends Component {
     let tokens = this.state.address.split(', ');
     console.log("(CID) tokens: ", tokens);
     this.setState({
-      await_endpoints: true
+      await_delivery_check: true
     }, () => {
       verifyAddressDelivers(
         tokens[0],
@@ -225,12 +258,12 @@ export class HomeMap extends Component {
           if(latitude !== null && longitude !== null){
             this.setState({
               hooray: true,
-              await_endpoints: false
+              await_delivery_check: false
             });
           } else {
             this.setState({
               stillGrowing: true,
-              await_endpoints: false
+              await_delivery_check: false
             });
           }
         }
@@ -252,20 +285,22 @@ export class HomeMap extends Component {
         {this.state.hooray ? (
           // {/* {true? */}
           <div
-            style={{
-              position: "absolute",
-              width: "384px",
-              height: "371px",
-              backgroundColor: "white",
-              border: "2px solid #F26522",
-              // top: '100px',
-              top: '-400px',
-              right: '20px'
-              // left: "65%",
-              // top: "40%",
-              // top: '0px'
+            className={styles.hoorayPopUp}
+            // style={{
+            //   position: "absolute",
+            //   width: "384px",
+            //   height: "371px",
+            //   backgroundColor: "white",
+            //   border: "2px solid #F26522",
+            //   // top: '100px',
+            //   top: '-400px',
+            //   right: '20px',
+            //   marginLeft: '20px'
+            //   // left: "65%",
+            //   // top: "40%",
+            //   // top: '0px'
 
-            }}
+            // }}
           >
             <button
               className="close"
@@ -277,30 +312,32 @@ export class HomeMap extends Component {
             />
 
             <div
-              style={{
-                position: "relative",
-                top: "29px",
-                left: "144px",
-                width: "96px",
-                height: "31px",
-                fontSize: "26px",
-                fontWeight: "bold",
-              }}
+              className={styles.hoorayHeader}
+              // style={{
+              //   position: "relative",
+              //   top: "29px",
+              //   left: "144px",
+              //   width: "96px",
+              //   height: "31px",
+              //   fontSize: "26px",
+              //   fontWeight: "bold",
+              // }}
             >
               Hooray!
             </div>
 
             <div
-              style={{
-                position: "relative",
-                top: "57px",
-                left: "27px",
-                width: "330px",
-                height: "69px",
-                fontSize: "18px",
-                textAlign: "center",
-                //  fontWeight:'',
-              }}
+              className={styles.hoorayText}
+              // style={{
+              //   position: "relative",
+              //   top: "57px",
+              //   left: "27px",
+              //   width: "330px",
+              //   height: "69px",
+              //   fontSize: "18px",
+              //   textAlign: "center",
+              //   //  fontWeight:'',
+              // }}
             >
               Looks like we deliver to your address. Click the button below to
               see the variety of meals we offer.
@@ -308,9 +345,9 @@ export class HomeMap extends Component {
 
             <button
               className={styles.hoorayBtn}
-              style={{
+              // style={{
                 // position: "relative",
-                top: "100px",
+                // top: "0px",
                 // left: "92px",
                 // width: "200px",
                 // height: "50px",
@@ -321,7 +358,7 @@ export class HomeMap extends Component {
                 // paddingTop: "10px",
                 // borderRadius: "15px",
                 //  fontWeight:'',
-              }}
+              // }}
               onClick={() => {
                 this.props.history.push("/select-meal");
               }}
@@ -332,22 +369,8 @@ export class HomeMap extends Component {
             </button>
 
             <button
-              className={styles.hoorayBtn}
+              className={styles.hoorayBtn2}
               disabled={this.props.loggedIn}
-              style={{
-                // position: "relative",
-                top: "113px",
-                // left: "92px",
-                // width: "200px",
-                // height: "50px",
-                // fontSize: "18px",
-                // textAlign: "center",
-                // backgroundColor: "#F26522",
-                // color: "white",
-                // paddingTop: "10px",
-                // borderRadius: "15px",
-                //  fontWeight:'',
-              }}
               onClick={() => {
                 // this.setState({ signup: true, hooray: false });
                 this.setState({ hooray: false });
@@ -364,24 +387,28 @@ export class HomeMap extends Component {
 
         {this.state.stillGrowing ? (
           <div
-            // {true?<div
-            style={{
-              position: "absolute",
-              width: "384px",
-              // height: "371px",
-              height: '271px',
-              backgroundColor: "white",
-              border: "2px solid #F26522",
-              // left: "65%",
-              // top: "40%",
-              // top: '100px',
-              bottom: '269px',
-              right: '20px',
-              zIndex: 100
-            }}
+            className={styles.stillGrowingPopUp}
+            // style={{
+            //   position: "absolute",
+            //   width: "384px",
+            //   // height: "371px",
+            //   height: '271px',
+            //   backgroundColor: "white",
+            //   border: "2px solid #F26522",
+            //   // left: "65%",
+            //   // top: "40%",
+            //   // top: '100px',
+            //   bottom: '269px',
+            //   right: '20px',
+            //   zIndex: 100
+            // }}
           >
             <div
-              style={{cursor: 'pointer'}}
+              style={{
+                position: 'relative',
+                cursor: 'pointer',
+                zIndex: 102
+              }}
               className="close"
               onClick={() => {
                 this.setState({ stillGrowing: false });
@@ -389,30 +416,32 @@ export class HomeMap extends Component {
             />
 
             <div
-              style={{
-                position: "relative",
-                top: "29px",
-                left: "106px",
-                width: "172px",
-                height: "31px",
-                fontSize: "26px",
-                fontWeight: "bold",
-              }}
+              className={styles.stillGrowingHeader}
+              // style={{
+              //   position: "relative",
+              //   top: "29px",
+              //   left: "106px",
+              //   width: "172px",
+              //   height: "31px",
+              //   fontSize: "26px",
+              //   fontWeight: "bold",
+              // }}
             >
               Still Growing
             </div>
 
             <div
-              style={{
-                position: "relative",
-                top: "57px",
-                left: "27px",
-                width: "332px",
-                height: "69px",
-                fontSize: "18px",
-                textAlign: "center",
-                //  fontWeight:'',
-              }}
+              className={styles.stillGrowingText}
+              // style={{
+              //   position: "relative",
+              //   top: "57px",
+              //   left: "27px",
+              //   width: "332px",
+              //   height: "69px",
+              //   fontSize: "18px",
+              //   textAlign: "center",
+              //   //  fontWeight:'',
+              // }}
             >
               {/* Sorry, it looks like we don’t deliver to your neighborhood yet.
               Enter your email address and we will let you know as soon as we
@@ -438,7 +467,7 @@ export class HomeMap extends Component {
             ></input> */}
 
             <button
-              className={styles.hoorayBtn}
+              className={styles.hoorayBtn3}
               style={{
                 // position: "relative",
                 // top: "153px",
@@ -523,6 +552,8 @@ export class HomeMap extends Component {
                       border: 'none',
                       textAlign: "center",
                       color: "black",
+                      marginLeft: '20px',
+                      marginRight: '20px',
                       // marginLeft: "40px",
                       // marginTop: "-30px",
                       // marginBottom: "15px",
@@ -655,7 +686,10 @@ export class HomeMap extends Component {
             //   backgroundColor: "#ff6505",
             // }}
             className={styles.viewMeals}
-            disabled={this.state.await_endpoints}
+            disabled={
+              this.state.await_delivery_check ||
+              this.state.await_autocomplete_select
+            }
             aria-label="Click here to view meals"
             title="Click here to view meals"
             onClick={() => {
