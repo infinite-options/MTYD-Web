@@ -908,6 +908,8 @@ select {
   /* height: 400px; */
   padding-bottom: 60px;
   width: 450px;
+  /* max-width: 320px; */
+  /* max-width: 96%; */
   z-index: 2;
 }
 
