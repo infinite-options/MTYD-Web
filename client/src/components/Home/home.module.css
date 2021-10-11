@@ -362,15 +362,26 @@ input[type="zipCode"]:focus {
   /*display: grid;*/
   /*margin-left:auto;*/
 }
-.stepsHeader {
-  /*margin: 20px 20px 0 0px;*/
+/* .stepsHeader {
   flex: 1 1 15%;
   text-align: center;
   justify-content: center;
   align-items: center;
   display: grid;
-  /*margin-left:auto;*/
+  border: 1px solid green;
+} */
+.stepsHeader {
+  display: inline-block;
+  /* border: 1px solid green; */
+  margin: 0 20px 0 20px;
 }
+
+@media (max-width: 800px) {
+  .stepsHeader {
+    margin: 20px 40px 20px 40px;
+  }
+}
+
 .topRightText {
   position: absolute;
   top: 8px;
@@ -501,12 +512,17 @@ input[type="credentials"]::placeholder {
   text-align: left;
 }
 
-.stepsTitle2 {
+/* .stepsTitle2 {
   font-weight: bold;
-  /*font: normal normal bold 24px/29px;*/
   font-size: 24px/29px;
   font: SF Pro;
-  /*font-family: -apple-system, BlinkMacSystemFont;*/
+} */
+.stepsTitle2 {
+  text-align: center;
+  font-weight: bold;
+  font-size: 24px/29px;
+  font: SF Pro;
+  /* border: 1px solid red; */
 }
 
 .stepsText {
@@ -566,13 +582,19 @@ input[type="credentials"]::placeholder {
   /*font-family: -apple-system, BlinkMacSystemFont;*/
 }
 
-.stepsText2 {
-  /*color: #979797;*/
+/* .stepsText2 {
   font-size: 24px/29px;
   padding: 0 100px;
   font-weight: normal;
   font: SF Pro;
-  /*font-family: -apple-system, BlinkMacSystemFont;*/
+} */
+.stepsText2 {
+  font-size: 24px/29px;
+  /* padding: 0 100px; */
+  font-weight: normal;
+  font: SF Pro;
+  /* border: 1px solid blue; */
+  text-align: center;
 }
 
 .couponContainer {
@@ -935,6 +957,40 @@ button {
   font-size: 25px;
   margin-bottom: 30px;
   text-align: left;
+}
+.sectionHeaderHowDoes {
+  background-color: #ffba00;
+  width: 100%;
+  height: 60px;
+  font-weight: bold;
+  /*padding-left: 100px;*/
+  padding-left: 8%;
+  /* padding-top: 12px; */
+  display: flex;
+  align-items: center;
+  font-size: 25px;
+  margin-bottom: 30px;
+  text-align: left;
+}
+@media (max-width: 400px) {
+  .sectionHeaderHowDoes {
+    display: inline-block;
+    justify-content: center;
+    padding: 0;
+    text-align: center
+  }
+}
+@media (max-width: 800px) {
+  .sectionHeader {
+    justify-content: center;
+    padding: 0;
+    text-align: center
+  }
+  .sectionHeaderHowDoes {
+    justify-content: center;
+    padding: 0;
+    text-align: center
+  }
 }
 
 .whiteBtn {

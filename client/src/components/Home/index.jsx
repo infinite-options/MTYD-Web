@@ -422,13 +422,55 @@ class Home extends Component {
           </div> */}
         {/* </div> */}
 
-        <div 
+        {this.state.windowWidth >= 400 ? (
+          <div 
+            className={styles.sectionHeader}
+            style={{
+              marginTop: '100px',
+              whiteSpace: 'pre-wrap'
+            }}
+          >
+            <span>How does&nbsp;</span>
+            <span
+              style={{
+                color: "white",
+              }}
+            >
+              MealsFor.Me
+            </span>
+            <span>&nbsp;work?</span>
+          </div>
+        ) : (
+          <div 
+            className={styles.sectionHeader}
+            style={{
+              marginTop: '100px',
+              // whiteSpace: 'pre-wrap'
+              display: 'inline-block',
+              height: '82px'
+            }}
+          >
+            <span>How does</span>
+            <br/>
+            <span
+              style={{
+                color: "white",
+              }}
+            >
+              MealsFor.Me
+            </span>
+            <br/>
+            <span>work?</span>
+          </div>
+        )}
+        {/* <div 
           className={styles.sectionHeader}
           style={{
-            marginTop: '100px'
+            marginTop: '100px',
+            whiteSpace: 'pre-wrap'
           }}
         >
-          How does&nbsp;
+          <span>How does&#32;</span>
           <span
             style={{
               color: "white",
@@ -436,8 +478,8 @@ class Home extends Component {
           >
             MealsFor.Me
           </span>
-          &nbsp;work?
-        </div>
+          <span>&#32;work?</span>
+        </div> */}
 
         <div>
           <br />
@@ -546,72 +588,19 @@ class Home extends Component {
                 >
                   <img src={mobileGraphic} width="100%" float="left"></img>
                 </div>
-                {/* <div className = {styles.stepsHeader} onClick={() => this.goToLink('select-meal')}>
-                  <img className = {styles.stepsImage} src = {exploreImg}></img>
-                  <div style = {{justifyContent: 'center', display: 'inline-flex'}}>
-                  <view className={styles.stepsNumber}>1</view>
-                    <h6 className = {styles.stepsTitleNarrow}>Explore</h6>
-                  </div>
-                  <h6 className = {styles.stepsTextNarrow}>Let your pallete be your guide. Explore the different cuisines (we have three!) and dishes available.</h6>
-                </div>
-                <div className = {styles.stepsHeader} onClick={() => this.goToLink('choose-plan')}>
-                  <img className = {styles.stepsImage} src = {purchaseImg}></img>
-                  <div style = {{justifyContent: 'center', display: 'inline-flex'}}>
-                  <view className={styles.stepsNumber}>2</view>
-                    <h6 className = {styles.stepsTitle}>Purchase</h6>
-                  </div>
-                  <h6 className = {styles.stepsTextNarrow}>Purchase a Meal Plan. Pre-pay with PayPal or Stripe. Get discounts if you purchase 2 or 4 weeks in advance.</h6>
-                </div>
-                <div className = {styles.stepsHeader}>
-                  <img className = {styles.stepsImage} src = {chooseImg}></img>
-                  <div style = {{justifyContent: 'center', display: 'inline-flex'}}>
-                  <view className={styles.stepsNumber}>3</view>
-                    <h6 className = {styles.stepsTitle}>Choose</h6>
-                  </div>
-                  <h6 className = {styles.stepsTextNarrow}>Choose the meals you want to receive each delivery up to 4 weeks in advance.</h6>
-                </div>
-                <div className = {styles.stepsHeader}>
-                  <img className = {styles.stepsImage} src = {enjoyImg}></img>
-                  <div style = {{justifyContent: 'center', display: 'inline-flex'}}>
-                  <view className={styles.stepsNumber}>4</view>
-                    <h6 className = {styles.stepsTitle}>Enjoy</h6>
-                  </div>
-                  <h6 className = {styles.stepsTextNarrow}>Heat, enjoy, and stay healthy!</h6>
-                </div> */}
+                
               </div>
             );
           }
         })()}
 
-        {/* <div
-          style={{
-            textAlign: "center",
-            marginTop: "50px",
-            fontWeight: "bold",
-            width: "100%",
-          }}
-        >
-          <button
-            style={{
-              backgroundColor: "white",
-              color: "#F26522",
-              border: "2px solid #F26522",
-              padding: "15px",
-              borderRadius: "15px",
-              width: "20%",
-              fontSize: "24px",
-            }}
-            onClick={this.togglePopSignup}
-          >
-            Signup
-          </button>
-        </div> */}
         <div
           style={{
             textAlign: "center",
             marginTop: "50px",
             fontWeight: "bold",
             width: "100%",
+            // border: '1px solid red'
           }}
         >
           <button
@@ -692,7 +681,11 @@ class Home extends Component {
                 <div 
                   className={styles.sectionHeader}
                   style={{
-                    marginTop: '100px'
+                    marginTop: '100px',
+
+                    // justifyContent: 'center',
+                    // padding: '0',
+                    // textAlign: 'center'
                   }}
                 >
                   Our Partners Chefs and Restaurants
@@ -770,9 +763,15 @@ class Home extends Component {
                   display: "inline-flex",
                   width: "100%",
                   marginTop: "30px",
+                  // border: '1px dashed'
                 }}
               >
-                <div className={styles.stepsHeader}>
+                <div 
+                  className={styles.stepsHeader}
+                  style={{
+                    marginLeft: '40px'
+                  }}
+                >
                   <h6 className={styles.stepsTitle2}>Who has time?</h6>
                   <h6 className={styles.stepsText2}>
                     Save time and money! Ready to heat meal come to your doors
@@ -790,7 +789,12 @@ class Home extends Component {
                     in the fridge and your next meals are en route!
                   </h6>
                 </div>
-                <div className={styles.stepsHeader}>
+                <div 
+                  className={styles.stepsHeader}
+                  style={{
+                    marginRight: '40px'
+                  }}
+                >
                   <h6 className={styles.stepsTitle2}>Better value</h6>
                   <h6 className={styles.stepsText2}>
                     You get resturant quality food at a fraction of the cost;
@@ -858,14 +862,25 @@ class Home extends Component {
             Get Started
           </button>
         </div> */}
-        <div 
+
+        <div
+          style={{
+            textAlign: "center",
+            marginTop: "50px",
+            fontWeight: "bold",
+            width: "100%",
+            // border: '1px solid red',
+            marginBottom: '40px'
+          }}
+        >
+        {/* <div 
           style={{ 
             textAlign: "center", 
             width: "100%", 
             // border: '1px dashed',
             padding: "40px" 
           }}
-        >
+        > */}
           <button
             className={styles.whiteBtn}
             // style={{
