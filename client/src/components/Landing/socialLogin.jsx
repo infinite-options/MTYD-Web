@@ -304,9 +304,9 @@ class SocialLogin extends Component {
 
     return !this.state.verticalFormat ? (
       <div
-        // style={{
-        //    border: '1px solid cyan'
-        // }}
+        style={{
+          //  border: '1px solid red'
+        }}
       >
         {this.state.waitForLogin ? (
           this.showLoading()
@@ -321,7 +321,7 @@ class SocialLogin extends Component {
           null
         )}
 
-        <div
+        {/* <div
           style={{
             width: "412px",
             height: "77px",
@@ -349,8 +349,40 @@ class SocialLogin extends Component {
             disabled={false}
             cookiePolicy={"single_host_origin"}
           />
+        </div> */}
+        {/* <div
+          style={{
+            width: "412px",
+            height: "77px",
+            marginBottom: "11px",
+            marginLeft: "68px",
+            backgroundImage: `url(${socialG})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        > */}
+        <div className={styles.btnWrapper}>
+          <GoogleLogin
+            clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
+            render={(renderProps) => (
+              <button
+                className={styles.googleBtn}
+                onClick={renderProps.onClick}
+                disabled={renderProps.disabled}
+                aria-label="Continue with google"
+                title="Continue with google"
+              />
+            )}
+            onSuccess={this.responseGoogle}
+            onFailure={this.responseGoogle}
+            isSignedIn={false}
+            disabled={false}
+            cookiePolicy={"single_host_origin"}
+          />
         </div>
-        <div
+        {/* </div> */}
+        
+        {/* <div
           style={{
             width: "412px",
             height: "77px",
@@ -373,8 +405,19 @@ class SocialLogin extends Component {
             cssClass={styles.fbLogin}
             textButton=""
           />
+        </div> */}
+        <div className={styles.btnWrapper}>
+          <FacebookLogin
+            appId={process.env.REACT_APP_FACEBOOK_APP_ID}
+            autoLoad={false}
+            fields={"name,email,picture"}
+            callback={this.responseFacebook}
+            cssClass={styles.fbLogin}
+            textButton=""
+          />
         </div>
-        <div
+        
+        {/* <div
           style={{
             width: "412px",
             height: "77px",
@@ -396,7 +439,21 @@ class SocialLogin extends Component {
             aria-label="Continue with your Apple ID"
             title="Continue with your Apple ID"
           ></button>
+        </div> */}
+        <div className={styles.btnWrapper}>
+          <button
+            onClick={() => {
+              console.log("pressed apple login button");
+              const data = window.AppleID.auth.signIn();
+              console.log(data);
+            }}
+            className={styles.appleLogin}
+            //callback={this.responseApple}
+            aria-label="Continue with your Apple ID"
+            title="Continue with your Apple ID"
+          />
         </div>
+
       </div>
     ) : (
       <div className={styles.socialLogin}>

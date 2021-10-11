@@ -74,15 +74,43 @@ p:nth-of-type(2) {
   margin-right: 20px;
 }
 
-.googleBtn {
+/* .googleBtn {
   background-color: none;
   border: none;
   cursor: pointer;
   width: 412px;
-  height:77px;
+  height: 77px;
   padding: 0px;
   opacity: 0;
+} */
+/* width: "412px",
+            height: "77px",
+            marginBottom: "11px",
+            marginLeft: "68px",
+            backgroundImage: `url(${socialG})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center", */
+.btnWrapper {
+  /* border: 1px dashed; */
+  width: 100%;
+  height: 88px;
+  display: flex;
+  justify-content: center;
 }
+.googleBtn {
+  /* background-color: none; */
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+  width: 412px;
+  height: 77px;
+  padding: 0px;
+  background-image: url('../../images/socialGoogle.png');
+  background-size: cover;
+  background-position: center;
+  /* opacity: 0; */
+}
+
 .googleBtnCircle{
   background-color: white;
   border: none;
@@ -95,18 +123,32 @@ p:nth-of-type(2) {
 }
 .googleBtnCircle::before {
   /* content: url(../../images/google-plus.svg); */
-  content: url(../../images/Group 174.svg);
+  content: url('../../images/Group 174.svg');
 }
 
-
-.appleLogin {
+/* ../../images/socialApple.png */
+/* .appleLogin {
   border: none;
   cursor: pointer;
   padding: 0px;
   width: 412px;
   height:77px;
   opacity: 0;
+} */
+.appleLogin {
+  /* background-color: none; */
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+  width: 412px;
+  height: 77px;
+  padding: 0px;
+  background-image: url('../../images/socialApple.png');
+  background-size: cover;
+  background-position: center;
+  /* opacity: 0; */
 }
+
 .appleLoginCircle{
   background-color: white;
   border: none;
@@ -118,8 +160,7 @@ p:nth-of-type(2) {
   margin-left: 15px;
 }
 
-
-.fbLogin {
+/* .fbLogin {
   background-color: none;
   border: none;
   border: 1px dashed;
@@ -128,6 +169,68 @@ p:nth-of-type(2) {
   width: 412px;
   height:77px;
   opacity: 0;
+} */
+.fbLogin {
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+  width: 412px;
+  height: 77px;
+  padding: 0px;
+  background-image: url('../../images/socialFb.png');
+  background-size: cover;
+  background-position: center;
+  max-width: 100% !important;
+}
+
+@media (max-width: 590px) {
+  .btnWrapper {
+    /* border: 1px dashed; */
+    width: 100%;
+    height: 64px;
+    display: flex;
+    justify-content: center;
+  }
+  .fbLogin {
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    width: 290px;
+    height: 50px;
+    padding: 0px;
+    background-image: url('../../images/socialFb.png');
+    background-size: cover;
+    background-position: center;
+    max-width: 100% !important;
+  }
+
+  .appleLogin {
+    /* background-color: none; */
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    width: 290px;
+    height: 50px;
+    padding: 0px;
+    background-image: url('../../images/socialApple.png');
+    background-size: cover;
+    background-position: center;
+    /* opacity: 0; */
+  }
+
+  .googleBtn {
+    /* background-color: none; */
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    width: 290px;
+    height: 50px;
+    padding: 0px;
+    background-image: url('../../images/socialGoogle.png');
+    background-size: cover;
+    background-position: center;
+    /* opacity: 0; */
+  }
 }
 
 .fbLoginCircle{

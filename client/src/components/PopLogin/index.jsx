@@ -769,7 +769,7 @@ export class PopLogin extends Component {
             aria-label="Enter your username"
             title="Enter your username"
           /> */}
-          <input
+          {/* <input
             type='text'
             placeholder='EMAIL'
             className="loginSectionItem"
@@ -784,27 +784,60 @@ export class PopLogin extends Component {
             aria-label="Enter your email"
             title="Enter your email"
             value={this.state.email_input}
-          />
-
-          <input
-            className="loginSectionItem"
-            style={{marginBottom: "0px"}}
-            type='password'
-            id='password'
-            placeholder='PASSWORD'
-            size="56"
-            value={this.props.password}
-            onChange={e => {
-              // this.props.changePassword(e.target.value);
-              this.loginClicked = false;
-              this.setState({
-                password_input: e.target.value
-              });
+          /> */}
+          
+          <div
+            className='loginSectionWrapper'
+            style={{
+              // border: '1px solid red',
+              // width: '100%'
             }}
-            aria-label="Enter your password"
-            title="Enter your password"
-            value={this.state.password_input}
-          />
+          >
+            <input
+              type='text'
+              placeholder='EMAIL'
+              className="loginSectionItem"
+              onChange={e => {
+                // this.props.changeEmail(e.target.value);
+                this.loginClicked = false;
+                this.setState({
+                  email_input: e.target.value
+                });
+                //console.log(e.target.value);
+              }}
+              aria-label="Enter your email"
+              title="Enter your email"
+              value={this.state.email_input}
+            />
+          </div>
+
+          <div
+            className='loginSectionWrapper'
+            style={{
+              // border: '1px solid red',
+              // width: '100%'
+            }}
+          >
+            <input
+              className="loginSectionItem"
+              style={{marginBottom: "0px"}}
+              type='password'
+              id='password'
+              placeholder='PASSWORD'
+              size="56"
+              value={this.props.password}
+              onChange={e => {
+                // this.props.changePassword(e.target.value);
+                this.loginClicked = false;
+                this.setState({
+                  password_input: e.target.value
+                });
+              }}
+              aria-label="Enter your password"
+              title="Enter your password"
+              value={this.state.password_input}
+            />
+          </div>
 
           {/* <p
           style={{
@@ -939,36 +972,36 @@ export class PopLogin extends Component {
                                 clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
                                 render={renderProps => (
                                   <button
-                                  className={styles.googleBtnCircle}
-                                  onClick={renderProps.onClick}
-                                  // onClick = {() => {
-                                  //   renderProps.onClick;
-                                  //   if(this.errorLink === 'google'){
-                                  //     this.displayErrorModal();
-                                  //     this.loginClicked = false
-                                  //     this.showErrorModal=false
-                                  //     this.forceUpdate()
-                                  //   } else {
-                                  //     this.props.history.push(this.errorLink);
-                                  //   }
-                                  // }}
-                                  disabled={renderProps.disabled}
-                                  style={{
-                                    borderRadius: '10px',
-                                    borderWidth: '0',
-                                    minWidth: '100px',
-                                    backgroundColor: '#ff6505',
-                                    marginTop: '10px',
-                                    marginBottom: '25px',
-                                    width: '90%',
-                                    height: '50px',
-                                    backgroundImage:`url(${socialG})`,
-                                    backgroundSize:'cover',
-                                    backgroundPosition:'center',
-                                  }}
-                                  aria-label="Continue in with Google"
-                                  title="Continue in with Google"
-                                  ></button>
+                                    className={styles.googleBtnCircle}
+                                    onClick={renderProps.onClick}
+                                    // onClick = {() => {
+                                    //   renderProps.onClick;
+                                    //   if(this.errorLink === 'google'){
+                                    //     this.displayErrorModal();
+                                    //     this.loginClicked = false
+                                    //     this.showErrorModal=false
+                                    //     this.forceUpdate()
+                                    //   } else {
+                                    //     this.props.history.push(this.errorLink);
+                                    //   }
+                                    // }}
+                                    disabled={renderProps.disabled}
+                                    style={{
+                                      borderRadius: '10px',
+                                      borderWidth: '0',
+                                      minWidth: '100px',
+                                      backgroundColor: '#ff6505',
+                                      marginTop: '10px',
+                                      marginBottom: '25px',
+                                      width: '90%',
+                                      height: '50px',
+                                      backgroundImage:`url(${socialG})`,
+                                      backgroundSize:'cover',
+                                      backgroundPosition:'center',
+                                    }}
+                                    aria-label="Continue in with Google"
+                                    title="Continue in with Google"
+                                    ></button>
                                   )}
                                 onSuccess={this.responseGoogle}
                                 onFailure={this.responseGoogle}
