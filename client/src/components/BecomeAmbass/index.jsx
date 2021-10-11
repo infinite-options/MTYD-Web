@@ -4,8 +4,14 @@ import { API_URL } from "../../reducers/constants";
 import Cookies from "js-cookie";
 import PopLogin from "../PopLogin";
 import Popsignup from "../PopSignup";
+import {
+  toggleLoginPopup,
+  toggleSignupPopup
+} from "../../reducers/actions/loginActions";
 import { ReactComponent as CloseBtn } from "../../images/closeBtn.svg";
 import styles from "./becomeAmbass.module.css";
+import { connect } from "react-redux";
+import { Route, withRouter } from "react-router-dom";
 
 export class BecomeAmbass extends Component {
   constructor(props) {
@@ -35,17 +41,19 @@ export class BecomeAmbass extends Component {
     });
   };
   togglePopLogin = () => {
-    console.log("(BA) in togglePopLogin");
-    this.setState({
-      login_seen: !this.state.login_seen,
-      hidden: 0,
-    });
+    // console.log("(BA) in togglePopLogin");
+    // this.setState({
+    //   login_seen: !this.state.login_seen,
+    //   hidden: 0,
+    // });
 
-    if (!this.state.login_seen) {
-      this.setState({
-        signUpSeen: false,
-      });
-    }
+    // if (!this.state.login_seen) {
+    //   this.setState({
+    //     signUpSeen: false,
+    //   });
+    // }
+    this.props.toggleLoginPopup(!this.props.showLoginPopup);
+    this.props.toggle();
   };
 
   // toggleLoginAndAmbassador = () => {
@@ -53,16 +61,18 @@ export class BecomeAmbass extends Component {
   // }
 
   togglePopSignup = () => {
-    this.setState({
-      signUpSeen: !this.state.signUpSeen,
-      hidden: 0,
-    });
+    // this.setState({
+    //   signUpSeen: !this.state.signUpSeen,
+    //   hidden: 0,
+    // });
 
-    if (!this.state.signUpSeen) {
-      this.setState({
-        login_seen: false,
-      });
-    }
+    // if (!this.state.signUpSeen) {
+    //   this.setState({
+    //     login_seen: false,
+    //   });
+    // }
+    this.props.toggleSignupPopup(!this.props.showSignupPopup);
+    this.props.toggle();
   };
 
   validateEmail(email) {
@@ -180,24 +190,7 @@ export class BecomeAmbass extends Component {
             zIndex: 3
           })}
         >
-          {this.state.login_seen ? (
-            <PopLogin 
-              toggle={this.togglePopLogin} 
-              toggle_signup={this.togglePopSignup}
-              styling={{position: 'static'}}
-            />
-          ) : null}
-          {this.state.signUpSeen ? (
-            <Popsignup 
-              toggle={this.togglePopSignup} 
-              styling={{
-                position: 'static',
-                // position: 
-                // top: '0px'
-                // overflowY: 'auto'
-              }}
-            />
-          ) : null}
+          
         </div>
 
         {(() => {
@@ -211,7 +204,12 @@ export class BecomeAmbass extends Component {
                 }}
               >
                 <div 
-                  style={{ padding: "10px", textAlign: "right" }}>
+                  style={{ 
+                    padding: "10px", 
+                    textAlign: "right",
+                    // border: '1px solid red'
+                  }}
+                >
                   <CloseBtn
                     // style={{
                     //   cursor: "pointer",
@@ -224,7 +222,12 @@ export class BecomeAmbass extends Component {
                 </div>
 
                 <div
-                  style={{ textAlign: "center", padding: "0px 50px 20px 50px" }}
+                  className={styles.becomeAmbassContent}
+                  // style={{ 
+                  //   textAlign: "center", 
+                  //   padding: "0px 50px 20px 50px",
+                  //   border: '1px solid blue'
+                  // }}
                 >
                   <p
                     style={{
@@ -284,7 +287,7 @@ export class BecomeAmbass extends Component {
                   <button
                     className={styles.orangeBtn}
                     style={{
-                      margin: "10px",
+                      marginTop: "10px",
                     }}
                     onClick={() => {
                       // this.handleClick();
@@ -494,4 +497,15 @@ export class BecomeAmbass extends Component {
   }
 }
 
-export default BecomeAmbass;
+const mapStateToProps = (state) => ({
+  showSignupPopup: state.login.showSignupPopup,
+  showLoginPopup: state.login.showLoginPopup
+});
+
+const functionList = {
+  toggleSignupPopup,
+  toggleLoginPopup
+};
+
+// export default BecomeAmbass;
+export default connect(mapStateToProps, functionList)(withRouter(BecomeAmbass));

@@ -813,7 +813,12 @@ class Home extends Component {
                   marginTop: "30px",
                 }}
               >
-                <div className={styles.stepsHeader}>
+                <div 
+                  className={styles.stepsHeader}
+                  style={{
+                    marginTop: '0'
+                  }}
+                >
                   <h6 className={styles.stepsTitle2}>Who has time?</h6>
                   <h6 className={styles.stepsText2}>
                     Save time and money! Ready to heat meal come to your doors
@@ -902,6 +907,10 @@ class Home extends Component {
         </div>
 
         <FootLink />
+        {/* <FootLink 
+          toggleLoginPopup={this.props.toggleLoginPopup}
+          toggleSignupPopup={this.props.toggleSignupPopup}
+        /> */}
       </div>
     );
   }

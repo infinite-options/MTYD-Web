@@ -511,11 +511,6 @@ export class Congrats extends Component {
             }
           })()}
 
-          {/* <div style={{ flex: "1" }}></div> */}
-          {/* <div style={{ position: "absolute", bottom: "0px", width: "100vw" }}>
-            <FootLink />
-          </div> */}
-
         </div>
         
         <div 

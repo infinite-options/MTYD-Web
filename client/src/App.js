@@ -43,6 +43,7 @@ import AdminIngredientsUnits from './components/Admin/IngredientsUnits';
 
 // import MapTest from './components/MapTest';
 import Congrats from "./components/Congrats";
+import { BecomeAmbass } from "./components/BecomeAmbass";
 
 export const history = createBrowserHistory();
 
@@ -148,6 +149,9 @@ function App() {
               <AdminIngredientsUnits />
             </Route>
             <AppliedRoute path='*' component={NotFound} />
+            <Route>
+              <BecomeAmbass />
+            </Route>
           </Switch>
         </Router>
       </Provider>

@@ -216,6 +216,7 @@ class NavBar extends React.Component {
         console.log(err);
       });
   }
+  
 
   // checkMealPlans = () => {
   //   if (
