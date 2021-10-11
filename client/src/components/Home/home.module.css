@@ -893,7 +893,7 @@ button {
   display: flex;
   justify-content: center;
   /* align-items: center; */
-  /* border: dashed; */
+  /* border: 1px dashed; */
 }
 .becomeAmbassadorBtnNarrow {
   border-radius: 15px;

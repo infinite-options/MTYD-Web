@@ -339,6 +339,8 @@ class FootLink extends Component {
                 style={{
                   width: "320px",
                   height: "60px",
+                  marginLeft: '20px',
+                  marginRight: '20px'
                 }}
                 // src = {becomeAnAmbassadorImg}
                 // style = {{marginTop: '25px'}}

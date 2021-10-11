@@ -611,16 +611,35 @@ export class PopSignup extends Component {
           aria-label="Click here to exit sign up menu"
           title="Click here to exit sign up menu"
         />
+        {/* <p style={{
+            textAlign:'center',
+            height: '28px',
+            letterSpacing: '0.38px',
+            color: 'black',
+            fontSize:'26px',
+            opacity: 1,
+            marginTop:'58px',
+            marginBottom:'25px',
+            fontWeight:'bold'
+            }} 
+          >
+          Login
+          </p> */}
         <div
           style={{
-            marginTop: "59px",
+            // marginTop: "50px",
             marginBottom: "33px",
+            width: '100%',
             fontSize: "26px",
             fontWeight: "bold",
-            marginLeft: "230px",
+            // marginLeft: "230px",
+            // textAlign:'center',
+            // border: '1px dashed',
+            display: 'flex',
+            justifyContent: 'center'
           }}
         >
-          Sign up
+          Sign Up
         </div>
 
         <div>
@@ -644,21 +663,25 @@ export class PopSignup extends Component {
         </div>
 
         <div
-          style={{
-            marginLeft: "61px",
-          }}
+          className='formWrapper'
+          // style={{
+          //   // marginLeft: "61px",
+          //   border: '1px solid red'
+          // }}
         >
           <div
-            style={{
-              display: "flex",
-            }}
+            className='formWrapper1'
+            // style={{
+            //   display: "flex",
+            // }}
           >
             <input
-              style={{
-                width: "208px",
-                marginRight: "12px",
-              }}
-              className="inputBox"
+              // style={{
+              //   width: "208px",
+              //   marginRight: "12px",
+              // }}
+              // className="inputBox"
+              className='inputBoxL'
               placeholder="First name"
               // value={this.props.firstName}
               // onChange={(e) => {
@@ -672,13 +695,14 @@ export class PopSignup extends Component {
               }}
               aria-label="Input first name"
               title="Input first name"
-            ></input>
+            />
 
             <input
-              style={{
-                width: "208px",
-              }}
-              className="inputBox"
+              // style={{
+              //   width: "208px",
+              // }}
+              // className="inputBox"
+              className='inputBoxR'
               placeholder="Last name"
               // value={this.props.lastName}
               // onChange={(e) => {
@@ -692,351 +716,362 @@ export class PopSignup extends Component {
               }}
               aria-label="Input last name"
               title="Input last name"
-            ></input>
+            />
           </div>
 
-          <input
-            className="inputBox"
-            placeholder="Email address (for order confirmation)"
-            // value={this.props.email}
-            // onChange={(e) => {
-            //   this.props.changeNewEmail(e.target.value);
+          <div
+            className='formWrapper2'
+            // style={{
+            //   display: "flex",
             // }}
-            value={this.state.email}
-            onChange={(e) => {
-              this.setState({
-                email: e.target.value
-              });
-            }}
-            aria-label="Input email address"
-            title="Input email address"
-          ></input>
-
-          <input
-            className="inputBox"
-            placeholder="Create Password"
-            type="password"
-            // value={this.props.password}
-            // onChange={(e) => {
-            //   this.props.changeNewPassword(e.target.value);
-            // }}
-            value={this.state.password}
-            onChange={(e) => {
-              this.setState({
-                password: e.target.value
-              });
-            }}
-            aria-label="Enter password you want to use"
-            title="Enter password you want to use"
-          ></input>
-
-          <input
-            className="inputBox"
-            placeholder="Confirm Password"
-            type="password"
-            // value={this.props.passwordConfirm}
-            // onChange={(e) => {
-            //   this.props.changeNewPasswordConfirm(e.target.value);
-            // }}
-            value={this.state.password_confirm}
-            onChange={(e) => {
-              this.setState({
-                password_confirm: e.target.value
-              });
-            }}
-            aria-label="Confirn your password"
-            title="Confirn your password"
-          ></input>
-
-          <input
-            className="inputBox"
-            placeholder="Phone Number"
-            // value={this.props.phone}
-            // onChange={(e) => {
-            //   this.props.changeNewPhone(e.target.value);
-            // }}
-            value={this.state.phone}
-            onChange={(e) => {
-              this.setState({
-                phone: e.target.value
-              });
-            }}
-            aria-label="Enter your phone number"
-            title="Enter your phone number"
-          ></input>
-
-          {/* <input
-            // className={
-            //   this.state.street == "" ? "inputBox" : "StreetinputBox"
-            // }
-            className='inputBox'
-            id="ship-address"
-            name="ship-address"
-            // onChange={(e) => {
-            //   this.props.changeNewAddress(e.target.value);
-            // }}
-            value={this.state.street}
-            onChange={(e) => {
-              this.setState({
-                street: e.target.value
-              });
-            }}
-            // placeholder={
-            //   this.state.street == ""
-            //     ? "Street Address"
-            //     : this.state.street
-            // }
-            placeholder={"Street Address"}
-            aria-label="Enter your street address"
-            title="Enter your street address"
-          /> */}
-          {/* <input
-            className={
-              this.state.street == "" ? "inputBox" : "StreetinputBox"
-            }
-            id="ship-address"
-            name="ship-address"
-            onChange={(e) => {
-              this.props.changeNewAddress(e.target.value);
-            }}
-            placeholder={
-              this.state.street == ""
-                ? "Street Address"
-                : this.state.street
-            }
-            aria-label="Enter your street address"
-            title="Enter your street address"
-          /> */}
-          {/* <input
-            className={
-              this.state.street == "" ? "inputBox" : "StreetinputBox"
-            }
-            id="ship-address"
-            name="ship-address"
-            onChange={(e) => {
-              this.props.changeNewAddress(e.target.value);
-            }}
-            placeholder={
-              this.state.street == ""
-                ? "Street Address"
-                : this.state.street
-            }
-            aria-label="Enter your street address"
-            title="Enter your street address"
-          /> */}
-          {/* <Autocomplete
-            apiKey={'AIzaSyBLoal-kZlb6tO5aDvkJTFC0a4WMp7oHUM'}
-            onPlaceSelected={(place) => {
-              console.log("(autocomplete) place: ", place);
-            }}
-          /> */}
-          {console.log("(RPAC) coords: ", this.state.coordinates)}
-          <PlacesAutocomplete
-            value={this.state.address}
-            onChange={this.handleChange}
-            onSelect={this.handleSelect}
           >
-            {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
-              <div
-                style={{
-                  // border: '1px dashed'
-                  position: 'relative',
-                }}
-              >
-                <input
-                  // className='inputBox'
-                  // style={{
-                  //   border: '1px solid blue'
-                  // }}
-                  {...getInputProps({
-                    placeholder: 'Address',
-                    // className: 'location-search-input',
-                    className: 'inputBox',
-                    style: {
-                      marginBottom: '0px',
-                      // borderRadius: '15px 15px 0 0'
-                    }
-                  })}
-                />
-                <div 
-                  // className="autocomplete-dropdown-container"
+            <input
+              className="inputBox"
+              placeholder="Email address (for order confirmation)"
+              // value={this.props.email}
+              // onChange={(e) => {
+              //   this.props.changeNewEmail(e.target.value);
+              // }}
+              value={this.state.email}
+              onChange={(e) => {
+                this.setState({
+                  email: e.target.value
+                });
+              }}
+              aria-label="Input email address"
+              title="Input email address"
+            />
+
+            <input
+              className="inputBox"
+              placeholder="Create Password"
+              type="password"
+              // value={this.props.password}
+              // onChange={(e) => {
+              //   this.props.changeNewPassword(e.target.value);
+              // }}
+              value={this.state.password}
+              onChange={(e) => {
+                this.setState({
+                  password: e.target.value
+                });
+              }}
+              aria-label="Enter password you want to use"
+              title="Enter password you want to use"
+            />
+
+            <input
+              className="inputBox"
+              placeholder="Confirm Password"
+              type="password"
+              // value={this.props.passwordConfirm}
+              // onChange={(e) => {
+              //   this.props.changeNewPasswordConfirm(e.target.value);
+              // }}
+              value={this.state.password_confirm}
+              onChange={(e) => {
+                this.setState({
+                  password_confirm: e.target.value
+                });
+              }}
+              aria-label="Confirn your password"
+              title="Confirn your password"
+            />
+
+            <input
+              className="inputBox"
+              placeholder="Phone Number"
+              // value={this.props.phone}
+              // onChange={(e) => {
+              //   this.props.changeNewPhone(e.target.value);
+              // }}
+              value={this.state.phone}
+              onChange={(e) => {
+                this.setState({
+                  phone: e.target.value
+                });
+              }}
+              aria-label="Enter your phone number"
+              title="Enter your phone number"
+            />
+
+            {/* <input
+              // className={
+              //   this.state.street == "" ? "inputBox" : "StreetinputBox"
+              // }
+              className='inputBox'
+              id="ship-address"
+              name="ship-address"
+              // onChange={(e) => {
+              //   this.props.changeNewAddress(e.target.value);
+              // }}
+              value={this.state.street}
+              onChange={(e) => {
+                this.setState({
+                  street: e.target.value
+                });
+              }}
+              // placeholder={
+              //   this.state.street == ""
+              //     ? "Street Address"
+              //     : this.state.street
+              // }
+              placeholder={"Street Address"}
+              aria-label="Enter your street address"
+              title="Enter your street address"
+            /> */}
+            {/* <input
+              className={
+                this.state.street == "" ? "inputBox" : "StreetinputBox"
+              }
+              id="ship-address"
+              name="ship-address"
+              onChange={(e) => {
+                this.props.changeNewAddress(e.target.value);
+              }}
+              placeholder={
+                this.state.street == ""
+                  ? "Street Address"
+                  : this.state.street
+              }
+              aria-label="Enter your street address"
+              title="Enter your street address"
+            /> */}
+            {/* <input
+              className={
+                this.state.street == "" ? "inputBox" : "StreetinputBox"
+              }
+              id="ship-address"
+              name="ship-address"
+              onChange={(e) => {
+                this.props.changeNewAddress(e.target.value);
+              }}
+              placeholder={
+                this.state.street == ""
+                  ? "Street Address"
+                  : this.state.street
+              }
+              aria-label="Enter your street address"
+              title="Enter your street address"
+            /> */}
+            {/* <Autocomplete
+              apiKey={'AIzaSyBLoal-kZlb6tO5aDvkJTFC0a4WMp7oHUM'}
+              onPlaceSelected={(place) => {
+                console.log("(autocomplete) place: ", place);
+              }}
+            /> */}
+            {console.log("(RPAC) coords: ", this.state.coordinates)}
+            <PlacesAutocomplete
+              value={this.state.address}
+              onChange={this.handleChange}
+              onSelect={this.handleSelect}
+            >
+              {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
+                <div
                   style={{
-                    // border: '1px solid #ff8500',
-                    // backgroundColor: '#ffba00',
-                    width: '428px',
-                    // borderRadius: '15px',
-                    position: 'absolute',
-                    top: '48px'
+                    // border: '1px dashed'
+                    position: 'relative',
                   }}
                 >
-                  {/* {loading && 
-                    <div 
-                      style={{
-                        backgroundColor: '#ccc9c9',
+                  <input
+                    // className='inputBox'
+                    // style={{
+                    //   border: '1px solid blue'
+                    // }}
+                    {...getInputProps({
+                      placeholder: 'Address',
+                      // className: 'location-search-input',
+                      className: 'inputBox',
+                      style: {
+                        // marginBottom: '0px',
+                        // borderRadius: '15px 15px 0 0'
+                      }
+                    })}
+                  />
+                  <div 
+                    // className="autocomplete-dropdown-container"
+                    style={{
+                      // border: '1px solid #ff8500',
+                      // backgroundColor: '#ffba00',
+                      width: '428px',
+                      // borderRadius: '15px',
+                      position: 'absolute',
+                      top: '48px'
+                    }}
+                  >
+                    {/* {loading && 
+                      <div 
+                        style={{
+                          backgroundColor: '#ccc9c9',
+                          border: 'inset',
+                          borderWidth: '0px 1px 1px 1px'
+                        }}>
+                        Loading...
+                      </div>}
+                    {suggestions.map((suggestion,index) => {
+                      const className = suggestion.active
+                        ? 'suggestion-item--active'
+                        : 'suggestion-item';
+                      // inline style for demonstration purpose
+                      const style = suggestion.active ? { 
+                        backgroundColor: '#ff6505', 
+                        color: 'white', 
+                        cursor: 'pointer' ,
                         border: 'inset',
                         borderWidth: '0px 1px 1px 1px'
-                      }}>
-                      Loading...
-                    </div>}
-                  {suggestions.map((suggestion,index) => {
-                    const className = suggestion.active
-                      ? 'suggestion-item--active'
-                      : 'suggestion-item';
-                    // inline style for demonstration purpose
-                    const style = suggestion.active ? { 
-                      backgroundColor: '#ff6505', 
-                      color: 'white', 
-                      cursor: 'pointer' ,
-                      border: 'inset',
-                      borderWidth: '0px 1px 1px 1px'
-                    } : { 
-                      backgroundColor: '#ccc9c9', 
-                      cursor: 'pointer',
-                      border: 'inset',
-                      borderWidth: '0px 1px 1px 1px'
-                    };
-                    return (
-                      <div
-                        {...getSuggestionItemProps(suggestion, {
-                          className,
-                          style
-                        })}
-                      >
-                        <span>{suggestion.description}</span>
-                      </div>
-                    );
-                  })} */}
-                  {loading ? (
-                    <div 
-                      style={{
-                        backgroundColor: '#f3f3f3',
+                      } : { 
+                        backgroundColor: '#ccc9c9', 
+                        cursor: 'pointer',
                         border: 'inset',
                         borderWidth: '0px 1px 1px 1px'
-                      }}>
-                      Loading...
-                    </div>
-                  ) : (suggestions.map((suggestion,index) => {
-                    const className = suggestion.active
-                      ? 'suggestion-item--active'
-                      : 'suggestion-item';
-                    // inline style for demonstration purpose
-                    const style = suggestion.active ? { 
-                      backgroundColor: '#ff6505', 
-                      color: 'white', 
-                      cursor: 'pointer' ,
-                      border: 'inset',
-                      borderWidth: '0px 1px 1px 1px'
-                    } : { 
-                      backgroundColor: '#f3f3f3', 
-                      cursor: 'pointer',
-                      border: 'inset',
-                      borderWidth: '0px 1px 1px 1px'
-                    };
-                    return (
-                      <div
-                        {...getSuggestionItemProps(suggestion, {
-                          className,
-                          style
-                        })}
-                      >
-                        <span>{suggestion.description}</span>
+                      };
+                      return (
+                        <div
+                          {...getSuggestionItemProps(suggestion, {
+                            className,
+                            style
+                          })}
+                        >
+                          <span>{suggestion.description}</span>
+                        </div>
+                      );
+                    })} */}
+                    {loading ? (
+                      <div 
+                        style={{
+                          backgroundColor: '#f3f3f3',
+                          border: 'inset',
+                          borderWidth: '0px 1px 1px 1px'
+                        }}>
+                        Loading...
                       </div>
-                    );
-                  }))}
+                    ) : (suggestions.map((suggestion,index) => {
+                      const className = suggestion.active
+                        ? 'suggestion-item--active'
+                        : 'suggestion-item';
+                      // inline style for demonstration purpose
+                      const style = suggestion.active ? { 
+                        backgroundColor: '#ff6505', 
+                        color: 'white', 
+                        cursor: 'pointer' ,
+                        border: 'inset',
+                        borderWidth: '0px 1px 1px 1px'
+                      } : { 
+                        backgroundColor: '#f3f3f3', 
+                        cursor: 'pointer',
+                        border: 'inset',
+                        borderWidth: '0px 1px 1px 1px'
+                      };
+                      return (
+                        <div
+                          {...getSuggestionItemProps(suggestion, {
+                            className,
+                            style
+                          })}
+                        >
+                          <span>{suggestion.description}</span>
+                        </div>
+                      );
+                    }))}
+                  </div>
                 </div>
-              </div>
-            )}
-          </PlacesAutocomplete>
+              )}
+            </PlacesAutocomplete>
+          </div>
 
-          <input
-            style={{
-              width: "208px",
-              margin: "6px 12px 0 0",
-            }}
-            className="inputBox"
-            placeholder="Unit"
-            // value={this.props.unit}
-            // onChange={(e) => {
-            //   this.props.changeNewUnit(e.target.value);
-            // }}
-            value={this.state.unit}
-            onChange={(e) => {
-              this.setState({
-                unit: e.target.value
-              });
-            }}
-            aria-label="Enter your unit number. optional"
-            title="Enter your unit number. optional"
-          />
+          <div className='formWrapper1'>
+            <input
+              // style={{
+              //   width: "208px",
+              //   margin: "6px 12px 0 0",
+              // }}
+              className="inputBoxL"
+              placeholder="Unit"
+              // value={this.props.unit}
+              // onChange={(e) => {
+              //   this.props.changeNewUnit(e.target.value);
+              // }}
+              value={this.state.unit}
+              onChange={(e) => {
+                this.setState({
+                  unit: e.target.value
+                });
+              }}
+              aria-label="Enter your unit number. optional"
+              title="Enter your unit number. optional"
+            />
 
-          <input
-            style={{
-              width: "208px",
-              marginRight: "12px",
-            }}
-            className="inputBox"
-            placeholder="City"
-            id="locality"
-            name="locality"
-            // value={this.state.city}
-            aria-label="Enter your city"
-            title="Enter your city"
-            // onChange={(e) => {
-            //   this.props.changeNewCity(e.target.value);
-            // }}
-            value={this.state.city}
-            onChange={(e) => {
-              this.setState({
-                city: e.target.value
-              });
-            }}
-          />
+            <input
+              // style={{
+              //   width: "208px",
+              //   marginRight: "12px",
+              // }}
+              className="inputBoxR"
+              placeholder="City"
+              id="locality"
+              name="locality"
+              // value={this.state.city}
+              aria-label="Enter your city"
+              title="Enter your city"
+              // onChange={(e) => {
+              //   this.props.changeNewCity(e.target.value);
+              // }}
+              value={this.state.city}
+              onChange={(e) => {
+                this.setState({
+                  city: e.target.value
+                });
+              }}
+            />
+          </div>
 
-          <input
-            style={{
-              width: "208px",
-              marginRight: "12px",
-            }}
-            className="inputBox"
-            placeholder="State"
-            id="state"
-            name="state"
-            // value={this.state.state}
-            aria-label="Enter your state"
-            title="Enter your state"
-            // onChange={(e) => {
-            //   this.props.changeNewState(e.target.value);
-            // }}
-            value={this.state.state}
-            onChange={(e) => {
-              this.setState({
-                state: e.target.value
-              });
-            }}
-          />
+          <div className='formWrapper1'>
+            <input
+              // style={{
+              //   width: "208px",
+              //   marginRight: "12px",
+              // }}
+              className="inputBoxL"
+              placeholder="State"
+              id="state"
+              name="state"
+              // value={this.state.state}
+              aria-label="Enter your state"
+              title="Enter your state"
+              // onChange={(e) => {
+              //   this.props.changeNewState(e.target.value);
+              // }}
+              value={this.state.state}
+              onChange={(e) => {
+                this.setState({
+                  state: e.target.value
+                });
+              }}
+            />
 
-          <input
-            style={{
-              width: "208px",
-              marginRight: "12px",
-            }}
-            className="inputBox"
-            placeholder="Zip"
-            // id="postcode"
-            // name="postcode"
-            // value={this.state.zip_code}
-            aria-label="Enter your zip code"
-            title="Enter your zip code"
-            // onChange={(e) => {
-            //   this.props.changeNewZip(e.target.value);
-            // }}
-            value={this.state.zip}
-            onChange={(e) => {
-              this.setState({
-                zip: e.target.value
-              });
-            }}
-          />
+            <input
+              // style={{
+              //   width: "208px",
+              //   marginRight: "12px",
+              // }}
+              className="inputBoxR"
+              placeholder="Zip"
+              // id="postcode"
+              // name="postcode"
+              // value={this.state.zip_code}
+              aria-label="Enter your zip code"
+              title="Enter your zip code"
+              // onChange={(e) => {
+              //   this.props.changeNewZip(e.target.value);
+              // }}
+              value={this.state.zip}
+              onChange={(e) => {
+                this.setState({
+                  zip: e.target.value
+                });
+              }}
+            />
+          </div>
         </div>
 
         <div
@@ -1075,7 +1110,7 @@ export class PopSignup extends Component {
             >
               Sign up
             </p> */}
-            Sign up
+            Sign Up
           </button>
         </div>
 
