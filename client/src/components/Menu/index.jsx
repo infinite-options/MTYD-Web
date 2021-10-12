@@ -158,15 +158,23 @@ const Menu = (props) => {
     return (
       <div
         className={styles.dropdownStyling2}
-        // style={{
-        //   border: '1px inset',
-        //   position: 'relative'
-        // }}
+        style={{
+          // border: '1px inset',
+          // width: '100%',
+          // left: '0',
+          width: '350px',
+          position: 'absolute',
+          maxWidth: '96%',
+          marginLeft: '2%',
+          marginRight: '2%'
+        }}
       >
         <div
           style={{
             height: "20px",
             zIndex: "1",
+            // border: '1px dashed',
+            maxWidth: '100%'
           }}
         />
         <div
@@ -183,6 +191,8 @@ const Menu = (props) => {
             zIndex: "2",
             // boxShadow: "0px 5px 10px gray",
             // borderRadius: "15px",
+            // border: '1px solid blue',
+            maxWidth: '100%'
           }}
         >
           {generateDropdownButtons()}

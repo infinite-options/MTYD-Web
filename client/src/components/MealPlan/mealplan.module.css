@@ -1,5 +1,6 @@
 .container {
   text-align: center;
+  /* border: 1px solid red; */
   /* margin-left: 20px;
   margin-right: 20px; */
 }
@@ -326,14 +327,16 @@
   background-color: #f26522;
   font-size: 20px;
   height: 40px;
-  padding-top: 5px;
+  /* padding-top: 5px; */
   box-shadow: 0px 5px 10px gray;
   margin-bottom: 10px;
   display: flex;
   width: 40%;
-  min-width: 300px;
+  /* min-width: 300px; */
+  min-width: 269px;
   /* min-width: 40%;
   max-width: 350px; */
+  max-width: 400px;
   z-index: 2;
   position: absolute;
   cursor: pointer;

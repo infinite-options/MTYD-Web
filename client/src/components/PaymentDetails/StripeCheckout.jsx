@@ -384,46 +384,61 @@ const StripeCheckout = (props) => {
         />
       </div>
 
-      <div style={{display: 'flex'}}>
-      <div className={styles.checkboxContainer}>
-        {/* <input
-          className={styles.checkbox}
-          type="checkbox"
-          checked={termsAccepted}
-          onChange={handleCheck}
-        />
-        <label className={styles.checkboxLabel}>
-          I've read and accept the terms and conditions
-        </label> */}
-        <div
-          style={{
-            // border: 'dashed',
-            width: '50px',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center'
-          }}
-        >
-          <input
+      <div 
+        style={{
+          display: 'flex',
+          // border: '1px dashed'
+        }}
+      >
+        <div className={styles.checkboxContainer}>
+          {/* <input
             className={styles.checkbox}
             type="checkbox"
             checked={termsAccepted}
             onChange={handleCheck}
           />
+          <label className={styles.checkboxLabel}>
+            I've read and accept the terms and conditions
+          </label> */}
+          <div
+            className={styles.checkboxWrapper}
+            // style={{
+            //   border: '1px solid pink',
+            //   width: '50px',
+            //   display: 'flex',
+            //   justifyContent: 'center',
+            //   alignItems: 'center'
+            // }}
+          >
+            <input
+              className={styles.checkbox}
+              type="checkbox"
+              checked={termsAccepted}
+              onChange={handleCheck}
+            />
+          </div>
+          <span
+            className={styles.checkboxLabel}
+            // style={{
+            //   // border: 'inset',
+            //   // width: 'fit-content'
+            //   // width: '50px'
+            //   // flexGrow: '1'
+            //   display: 'flex',
+            //   whiteSpace: 'nowrap',
+            //   border: '1px solid green'
+            // }}
+          >
+            I've read and accept the&nbsp;
+            <br />
+            <a 
+              className={styles.tc_link}
+              href='/terms-and-conditions'
+            >
+              Terms and Conditions
+            </a>
+          </span>
         </div>
-        <span
-          style={{
-            // border: 'inset',
-            // width: 'fit-content'
-            // width: '50px'
-            // flexGrow: '1'
-            display: 'flex',
-            whiteSpace: 'nowrap'
-          }}
-        >
-          I've read and accept the&nbsp;<a href='/terms-and-conditions'>Terms and Conditions</a>
-        </span>
-      </div>
       </div>
 
       <button 

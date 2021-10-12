@@ -3522,7 +3522,14 @@ const EditPlan = (props) => {
             alignItems: "center",
           }}
         >
-          <img src={m4me_logo} />
+          <img 
+            src={m4me_logo} 
+            style={{
+              // border: '1px solid blue',
+              maxWidth: '70%',
+              objectFit: 'contain'
+            }}
+          />
         </div>
       ) : (null)}
 

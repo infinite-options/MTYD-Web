@@ -166,6 +166,7 @@
   width: 92%;
   flex: inline-block;
   height: 300px;
+  /* border: 1px dashed; */
 }
 
 .forty {
@@ -230,6 +231,16 @@
   outline: 0 !important;
 }
 
+.activePlans {
+  display: flex;
+  /* border: 1px solid red; */
+  min-width: 1232px;
+}
+/* 1232 */
+/* @media (max-width: 1340px) {
+
+} */
+
 .mealButtonWrapper {
   margin-right: 35px;
   margin-bottom: 50px;
@@ -240,6 +251,7 @@
 .mealButtonHeader {
   height: 50px;
   border-bottom: 2px solid #ffba00;
+  min-width: 1232px;
 }
 
 .mealButton {

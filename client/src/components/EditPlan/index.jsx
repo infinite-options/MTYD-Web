@@ -1688,10 +1688,24 @@ const EditPlan = (props) => {
           }
         >
           <div className={styles.mealButtonEdit}></div>
-          <div className={styles.mealButtonPlan}>
+          <div 
+            className={styles.mealButtonPlan}
+            // style={{
+            //   // minWidth: '200px',
+            //   // border: '1px dashed'
+            // }}
+          >
             {sub.meals} Meals, {sub.deliveries} Deliveries
           </div>
-          <div className={styles.mealButtonPlan}>{sub.purchase_uid}</div>
+          <div 
+            className={styles.mealButtonPlan}
+            // style={{
+            //   minWidth: '100px',
+            //   border: '1px dashed'
+            // }}
+          >
+            {sub.purchase_uid}
+          </div>
           <div className={styles.mealButtonSection}>
             {sub.next_delivery_date}
           </div>
@@ -3295,7 +3309,7 @@ const EditPlan = (props) => {
         popSignup={togglePopSignup}
       />
 
-      {dataLoaded === false ? (
+      {/* {dataLoaded === false ? (
         <div
           style={{
             color: "red",
@@ -3312,6 +3326,31 @@ const EditPlan = (props) => {
         >
           <img src={m4me_logo} />
         </div>
+      ) : (null)} */}
+      {dataLoaded === false ? (
+        <div
+          style={{
+            color: "red",
+            zIndex: "99",
+            height: "100vh",
+            width: "100vw",
+            position: "fixed",
+            top: "0",
+            backgroundColor: "#F7F4E5",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <img 
+            src={m4me_logo} 
+            style={{
+              // border: '1px solid blue',
+              maxWidth: '70%',
+              objectFit: 'contain'
+            }}
+          />
+        </div>
       ) : (null)}
 
       {login_seen ? (
@@ -3325,7 +3364,12 @@ const EditPlan = (props) => {
 
       <div className={styles.containerSplit}>
         <div className={styles.boxScroll}>
-          <div className={styles.mealButtonHeader}>
+          <div 
+            className={styles.mealButtonHeader}
+            // style={{
+            //   border: '1px solid blue'
+            // }}
+          >
             <div className={styles.mealButtonEdit}></div>
             <div
               className={styles.mealButtonPlan}
@@ -3364,7 +3408,14 @@ const EditPlan = (props) => {
               Next Billing Amount
             </div>
           </div>
-          <div style={{ display: "flex" }}>
+          <div 
+            className={styles.activePlans}
+            // style={{ 
+            //   display: "flex",
+            //   border: '1px solid red',
+            //   // overflowX: 'scroll'
+            // }}
+          >
             {dataLoaded ? (showSubscribedMeals()) : (null)}
           </div>
         </div>

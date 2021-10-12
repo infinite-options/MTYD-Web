@@ -197,22 +197,6 @@
   font-size: large;
 }
 
-.indicatorWrapper {
-  display: flex;
-  /* justify-content: flex-start; */
-  /* text-align: center; */
-  /* flex-direction: row; */
-  width: 100%;
-  /* border: 1px dashed; */
-  margin-bottom: 12px;
-  position: relative;
-  background-color: #ffba00;
-  height: 60px;
-  font-weight: bold;
-  font-size: 25px;
-  /* display: flex; */
-  align-items: center;
-}
 .sectionHeader {
   background-color: #ffba00;
   width: 100%;
@@ -816,4 +800,69 @@
 .popUpButton:hover {
   color: #ffba00;
   text-decoration: none;
+}
+
+.indicatorText {
+  /* border: 1px solid purple; */
+  width: 42%;
+  margin-left: 8%;
+}
+.indicatorWrapper {
+  display: flex;
+  /* justify-content: flex-start; */
+  /* text-align: center; */
+  /* flex-direction: row; */
+  width: 100%;
+  /* border: 1px dashed; */
+  margin-bottom: 12px;
+  position: relative;
+  background-color: #ffba00;
+  height: 60px;
+  font-weight: bold;
+  font-size: 25px;
+  /* display: flex; */
+  align-items: center;
+}
+.indicatorPlates {
+  /* border: 1px solid green; */
+  display: flex;
+  flex-direction: row-reverse;
+  width: 42%;
+  float: right;
+}
+.plateIcon {
+  width: 30px;
+  min-width: 30px;
+  height: 30px;
+  margin-left: 20px;
+  /* border: 1px solid cyan; */
+}
+
+@media (max-width: 580px) {
+  .indicatorText {
+    margin: 14px 8% 0 8%;
+    /* border: 1px solid purple; */
+    width: 84%;
+    display: flex;
+    justify-content: center;
+    /* margin-left: 8%;
+    margin-right: 8%; */
+  }
+  .indicatorWrapper {
+    display: inline-block;
+    /* border: 1px inset; */
+    height: 101px;
+  }
+  .indicatorPlates {
+    /* border: 1px solid green; */
+    display: flex;
+    /* flex-direction: row-reverse; */
+    justify-content: center;
+    width: 84%;
+    margin: 10px 8% 13px 8%;
+    /* float: right; */
+  }
+  .plateIcon {
+    margin: 0 10px 0 10px;
+  }
 }

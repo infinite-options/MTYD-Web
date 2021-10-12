@@ -221,13 +221,16 @@ const MealPlan = (props) => {
           style={{
             height: "20px",
             zIndex: "1",
+            // border: '1px dashed'
           }}
         />
         <div
           style={{
             backgroundColor: "#f26522",
             width: "40%",
-            minWidth: "300px",
+            // minWidth: "300px",
+            minWidth: '269px',
+            maxWidth: '400px',
             height: 40 + uniquePlansFetched * 42,
             position: "absolute",
             zIndex: "1",
@@ -376,6 +379,7 @@ const MealPlan = (props) => {
             style={{
               // border: 'inset',
               width: "8%",
+              minWidth: '36px',
               fontSize: "40px",
               fontWeight: "600",
               paddingTop: "15px",
@@ -437,8 +441,9 @@ const MealPlan = (props) => {
         >
           <div
             style={{
-              // border: 'inset',
+              // border: '1px inset',
               width: "8%",
+              minWidth: '36px',
               fontSize: "40px",
               fontWeight: "600",
               paddingTop: "15px",
@@ -476,8 +481,11 @@ const MealPlan = (props) => {
                 borderWidth: "2px",
                 // backgroundColor: 'whitesmoke',
                 fontSize: "50px",
-                paddingRight: "33px",
-                paddingTop: "10px",
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center'
+                // paddingRight: "33px",
+                // paddingTop: "10px",
               }}
             >
               ?
@@ -497,6 +505,7 @@ const MealPlan = (props) => {
             style={{
               // border: 'inset',
               width: "8%",
+              minWidth: '36px',
               fontSize: "40px",
               fontWeight: "600",
               paddingTop: "15px",
@@ -767,9 +776,6 @@ const MealPlan = (props) => {
             zIndex: "99",
             height: "100vh",
             width: "100vw",
-            // height: '50vh',
-            // width: '50vw',
-            // border: 'inset',
             position: "fixed",
             top: "0",
             backgroundColor: "#F7F4E5",
@@ -778,7 +784,14 @@ const MealPlan = (props) => {
             alignItems: "center",
           }}
         >
-          <img src={m4me_logo} />
+          <img 
+            src={m4me_logo} 
+            style={{
+              // border: '1px solid blue',
+              maxWidth: '70%',
+              objectFit: 'contain'
+            }}
+          />
         </div>
       ) : (
         <>
@@ -786,7 +799,7 @@ const MealPlan = (props) => {
             <div className={styles.box2}>
               <div
                 style={{
-                  // border: 'inset',
+                  // border: '1px dashed',
                   position: "relative",
                   height: showDropdown
                     ? 60 + props.subscribedPlans.length * 42
@@ -805,30 +818,44 @@ const MealPlan = (props) => {
                 >
                   <div
                     style={{
-                      // border: 'solid',
-                      // borderWidth: '1px',
+                      // border: '1px solid lime',
                       width: "80%",
                       marginLeft: "5%",
-                      textOverflow: "ellipsis",
-                      display: "block",
-                      whiteSpace: "nowrap",
-                      overflow: "hidden",
+                      display: 'flex',
+                      alignItems: 'center'
                     }}
                   >
-                    {/* [placeholder default meal plan] */}
-                    {currentPlan === null
-                      ? "No Active Plans"
-                      : currentPlan.meals +
-                        " Meals, " +
-                        currentPlan.deliveries +
-                        " Deliveries : " +
-                        currentPlan.id}
+                    <div
+                      style={{
+                        // border: '1px solid blue',
+                        // height: '100%',
+                        // borderWidth: '1px',
+                        // width: "80%",
+                        // marginLeft: "5%",
+                        textOverflow: "ellipsis",
+                        display: "block",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        padding: '0'
+                        // alignItems: 'center'
+                      }}
+                    >
+                      {/* [placeholder default meal plan] */}
+                      {currentPlan === null
+                        ? "No Active Plans"
+                        : currentPlan.meals +
+                          " Meals, " +
+                          currentPlan.deliveries +
+                          " Deliveries : " +
+                          currentPlan.id}
+                    </div>
                   </div>
                   <div
                     style={{
                       width: "10%",
                       minWidth: "24px",
                       marginRight: "5%",
+                      marginTop: '7px'
                     }}
                   >
                     {currentPlan === null ? null : (

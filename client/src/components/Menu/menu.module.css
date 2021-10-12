@@ -110,6 +110,9 @@
     position: relative;
     right: 0%;
     cursor: pointer;
+    max-width: 96%;
+    margin-left: 2%;
+    margin-right: 2%;
     /* border: 1px solid teal; */
   }
   .dropdownStyling {
@@ -122,6 +125,9 @@
     z-index: 1;
     box-shadow: 0px 5px 10px gray;
     border-radius: 15px;
+    right: 0;
+    /* border: 1px dashed; */
+    /* max-width: 100%; */
   }
   .dropdownWrapper {
     /* border: 1px solid red; */

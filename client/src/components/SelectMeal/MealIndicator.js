@@ -40,16 +40,18 @@ class MealIndicator extends Component {
     for (let i = 0; i < totalMeals-totalCount; i++) {
       myarr.push(
         <div
-        style={{
-          width:"30px",
-          minWidth: '30px',
-          height:"30px",
-          margin:'10px',
-          // border: '1px solid cyan',
-          backgroundImage:`url(${unselect})`,
-          backgroundSize:'cover',
-          backgroundPosition:'center'
-        }}
+          className={styles.plateIcon}
+          style={{
+            // width:"30px",
+            // minWidth: '30px',
+            // height:"30px",
+            // margin:'10px',
+            // marginLeft: '20px',
+            // border: '1px solid cyan',
+            backgroundImage:`url(${unselect})`,
+            backgroundSize:'cover',
+            backgroundPosition:'center'
+          }}
         />
       );
     }
@@ -69,11 +71,12 @@ class MealIndicator extends Component {
           }}
         > */}
         <div
-          style={{
-            // border: '1px solid purple',
-            width: '42%',
-            marginLeft: '8%'
-          }}
+          className={styles.indicatorText}
+          // style={{
+          //   border: '1px solid purple',
+          //   width: '42%',
+          //   marginLeft: '8%'
+          // }}
         >
           {this.props.totalMeals==null?"Select meals after signup":
             (selectCount === 0
@@ -91,13 +94,14 @@ class MealIndicator extends Component {
           }}
         > */}
         <div
-          style={{
-            // border: '1px solid green',
-            display: 'flex',
-            flexDirection: 'row-reverse',
-            width: '42%',
-            float: 'right'
-          }}
+          className={styles.indicatorPlates}
+          // style={{
+          //   border: '1px solid green',
+          //   display: 'flex',
+          //   flexDirection: 'row-reverse',
+          //   width: '42%',
+          //   float: 'right'
+          // }}
         >
           {myarr}
         </div>

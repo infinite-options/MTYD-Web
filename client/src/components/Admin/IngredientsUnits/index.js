@@ -1532,27 +1532,28 @@ function IngredientsUnits() {
 
 			{loadingData === true ? (
 				<div
-					style={{
-						color: 'red',
-						zIndex: '99',
-						height: '100vh',
-						width: '100vw',
-            maxWidth: '100%',
-						// height: '50vh',
-						// width: '50vw',
-						// border: 'inset',
-						position: 'fixed',
-						top: '0',
-						left: '0',
-						backgroundColor: '#F7F4E5',
-            // backgroundColor: 'blue',
-						display: 'flex',
-						justifyContent: 'center',
-						alignItems: 'center'
-					}}
-				>
-					<img src={m4me_logo} />
-				</div>
+          style={{
+            color: "red",
+            zIndex: "99",
+            height: "100vh",
+            width: "100vw",
+            position: "fixed",
+            top: "0",
+            backgroundColor: "#F7F4E5",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <img 
+            src={m4me_logo} 
+            style={{
+              // border: '1px solid blue',
+              maxWidth: '70%',
+              objectFit: 'contain'
+            }}
+          />
+        </div>
 			) : (
 				null
 			)}

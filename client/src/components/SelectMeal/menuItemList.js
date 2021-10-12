@@ -2002,9 +2002,6 @@ class MenuItemList extends Component {
               zIndex: "99",
               height: "100vh",
               width: "100vw",
-              // height: '50vh',
-              // width: '50vw',
-              // border: 'inset',
               position: "fixed",
               top: "0",
               backgroundColor: "#F7F4E5",
@@ -2013,7 +2010,14 @@ class MenuItemList extends Component {
               alignItems: "center",
             }}
           >
-            <img src={m4me_logo} />
+            <img 
+              src={m4me_logo} 
+              style={{
+                // border: '1px solid blue',
+                maxWidth: '70%',
+                objectFit: 'contain'
+              }}
+            />
           </div>
         )}
 
