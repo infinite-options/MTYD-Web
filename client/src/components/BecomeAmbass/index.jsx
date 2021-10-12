@@ -149,6 +149,7 @@ export class BecomeAmbass extends Component {
       this.setState({ user_address: "not login yet" });
     }
   }
+
   render() {
     console.log("(becomeAmbass) props: ", this.props);
     return (
@@ -323,7 +324,12 @@ export class BecomeAmbass extends Component {
                 </div>
 
                 <div
-                  style={{ textAlign: "center", padding: "0px 50px 20px 50px" }}
+                  className={styles.ambContent2}
+                  // style={{ 
+                  //   textAlign: "center", 
+                  //   padding: "0px 50px 20px 50px",
+                  //   border: '1px dashed'
+                  // }}
                 >
                   <p
                     style={{
@@ -395,22 +401,37 @@ export class BecomeAmbass extends Component {
                   </p>
 
                   <div
-                    style={{
-                      backgroundColor: "white",
-                      // opacity:0.5,
-                      color: "black",
-                      textAlign: "center",
-                      fontSize: "18px",
-                      display: "flex",
-                      flexDirection: "row",
-                      justifyContent: "space-between",
-                      padding: "20px 20px 0px 20px",
-                      marginTop: "30px",
-                    }}
+                    className={styles.ambNameWrapper}
+                    // style={{
+                    //   backgroundColor: "white",
+                    //   // opacity:0.5,
+                    //   color: "black",
+                    //   textAlign: "center",
+                    //   fontSize: "18px",
+                    //   display: "flex",
+                    //   flexDirection: "row",
+                    //   justifyContent: "space-between",
+                    //   padding: "20px 20px 0px 20px",
+                    //   marginTop: "30px",
+                    //   border: '1px solid blue'
+                    // }}
                     // onClick={this.handleClick}
                   >
-                    <div style={{ color: "#F26522" }}>Ambassador Name:</div>
-                    <div>{this.state.username}</div>
+                    <div 
+                      style={{ 
+                        color: "#F26522",
+                        // border: '1px solid red'
+                      }}
+                    >
+                      Ambassador Name:
+                    </div>
+                    <div
+                      style={{ 
+                        // border: '1px solid green'
+                      }}
+                    >
+                      {this.state.username}
+                    </div>
                   </div>
                   <p
                     style={{
@@ -425,16 +446,17 @@ export class BecomeAmbass extends Component {
                     {!this.state.validEmail ? "Please enter a valid email" : ""}
                   </p>
                   <input
-                    style={{
-                      width: "385px",
-                      height: "42px",
-                      backgroundColor: "white",
-                      border: "2px solid #F26522",
-                      borderRadius: "15px",
-                      outline: "none",
-                      paddingLeft: "15px",
-                      // opacity:0.5
-                    }}
+                    className={styles.ambEmailInput}
+                    // style={{
+                    //   width: "385px",
+                    //   height: "42px",
+                    //   backgroundColor: "white",
+                    //   border: "2px solid #F26522",
+                    //   borderRadius: "15px",
+                    //   outline: "none",
+                    //   paddingLeft: "15px",
+                    //   // opacity:0.5
+                    // }}
                     id="becomeAmbassadorEmail"
                     placeholder="Enter your email here"
                     value={this.state.user_email}
@@ -452,15 +474,16 @@ export class BecomeAmbass extends Component {
                   </div>
 
                   <button
-                    style={{
-                      width: "410px",
-                      height: "75px",
-                      backgroundColor: "#F26522",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "20px",
-                      fontSize: "24px",
-                    }}
+                    className={styles.ambPopUpBtn}
+                    // style={{
+                    //   width: "410px",
+                    //   height: "75px",
+                    //   backgroundColor: "#F26522",
+                    //   color: "white",
+                    //   border: "none",
+                    //   borderRadius: "20px",
+                    //   fontSize: "24px",
+                    // }}
                     onClick={() => {
                       if (this.state.emailExists || this.state.success) {
                         this.handleClick();

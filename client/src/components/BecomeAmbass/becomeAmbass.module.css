@@ -64,6 +64,46 @@
   /* border: 1px solid blue; */
 }
 
+.ambNameWrapper {
+  background-color: white;
+  color: black;
+  text-align: center;
+  font-size: 18px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  /* padding: 20px 20px 0px 20px; */
+  /* margin-top: 30px; */
+  margin: 50px 20px 0px 20px;
+  /* border: 1px solid blue; */
+}
+
+.ambPopUpBtn {
+  width: 410px;
+  height: 75px;
+  background-color: #F26522;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  font-size: 24px;
+}
+
+.ambEmailInput {
+  width: 385px;
+  height: 42px;
+  background-color: white;
+  border: 2px solid #F26522;
+  border-radius: 15px;
+  outline: none;
+  padding-left: 15px;
+}
+
+.ambContent2 {
+  text-align: center;
+  padding: 0px 50px 20px 50px;
+  /* border: 1px dashed; */
+}
+
 @media (max-width: 550px) {
   .becomeAnAmbassadorPopupSignin {
     /* position: fixed; */
@@ -91,6 +131,49 @@
     /* padding: 0px 50px 20px 50px; */
     padding: 0;
     /* border: 1px solid green; */
+  }
+
+  .ambNameWrapper {
+    /* background-color: white;
+    color: black;
+    text-align: center;
+    font-size: 18px; */
+    /* display: flex; */
+    /* flex-direction: row;
+    justify-content: space-between; */
+    /* padding: 20px 20px 0px 20px;
+    margin-top: 30px; */
+    display: inline-block;
+    /* border: 1px solid lime; */
+  }
+
+  .ambPopUpBtn {
+    width: 96%;
+    /* width: 410px; */
+    /* height: 75px;
+    background-color: #F26522;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    font-size: 24px; */
+  }
+
+  .ambContent2 {
+    text-align: center;
+    padding: 0;
+    /* border: 1px dashed; */
+    margin: 0px 10px 20px 10px;
+  }
+
+  .ambEmailInput {
+    width: 96%;
+    /* width: 385px; */
+    /* height: 42px;
+    background-color: white;
+    border: 2px solid #F26522;
+    border-radius: 15px;
+    outline: none;
+    padding-left: 15px; */
   }
 }
 
