@@ -1645,6 +1645,9 @@ src={pathFromRYMToHAE}
   border-radius: 15px;
   border: none;
 }
+.hoorayBtn:hover, .hoorayBtn3:hover {
+  background-color: #ffba00;
+}
 .hoorayBtn2 {
   position: relative;
   top: 113px;

@@ -259,9 +259,6 @@ export class HomeMap extends Component {
               //   //  fontWeight:'',
               // }}
             >
-              {/* Sorry, it looks like we don’t deliver to your neighborhood yet.
-              Enter your email address and we will let you know as soon as we
-              come to your neighborhood. */}
               Sorry, it looks like we don’t deliver to your neighborhood yet.
             </div>
 
