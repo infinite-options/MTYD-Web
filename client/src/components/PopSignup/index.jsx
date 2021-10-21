@@ -92,7 +92,13 @@ export class PopSignup extends Component {
     // this.autocomplete.addListener("place_changed", this.handlePlaceSelect);
 
     console.log(this.state);
-    if (this.props.messageFromHooray) {
+    // if (this.props.messageFromHooray) {
+    if(
+      this.props.streetAddressFromHooray !== null &&
+      this.props.cityFromHooray !== null &&
+      this.props.stateFromHooray !== null &&
+      this.props.zipCodeFromHooray !== null
+    ) {
       this.setState({
         address: this.props.streetAddressFromHooray,
         city: this.props.cityFromHooray,

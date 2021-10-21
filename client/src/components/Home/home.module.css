@@ -1655,12 +1655,14 @@ src={pathFromRYMToHAE}
   text-align: center;
   background-color: #F26522;
   color: white;
-  /* padding-top: 10px; */
   display: flex;
   justify-content: center;
   align-items: center;
   border-radius: 15px;
   border: none;
+}
+.hoorayBtn2:hover {
+  background-color: #ffba00;
 }
 
 .hoorayBtn:hover:enabled {

@@ -35,6 +35,10 @@ class Home extends Component {
       windowWidth: undefined,
       login_seen: false,
       signUpSeen: false,
+      address_horray: null,
+      city_hooray: null,
+      state_hooray: null,
+      zip_hooray: null
     };
 
     this.autocomplete = null;
@@ -68,6 +72,17 @@ class Home extends Component {
     // }
     this.props.toggleSignupPopup(!this.props.showSignupPopup);
   };
+
+  toggleHooraySignup = (addr, city, state, zip) => {
+    this.setState({
+      address_horray: addr,
+      city_hooray: city,
+      state_hooray: state,
+      zip_hooray: zip
+    }, () => {
+      this.props.toggleSignupPopup(!this.props.showSignupPopup);
+    });
+  }
 
   handleResize = () =>
     this.setState({
@@ -192,11 +207,7 @@ class Home extends Component {
     return (
       <div
         style={{
-          // border: '1px dashed',
           width: '100%',
-          // maxWidth: '100%'
-          // max
-          // maxWidth: 'calc(100vw - 15px)',
           position: 'relative'
         }}
       >
@@ -204,54 +215,19 @@ class Home extends Component {
           style={{
             zIndex: "99",
             position: "absolute",
-            // width: 'calc(100vw - 15px)',
             width: '100%'
-            // maxWidth: '100%'
-            // width: "100vw",
-            // border: '1px solid cyan'
           }}
         >
-          <WebNavBar />
+          <WebNavBar 
+            streetAddressFromHooray={this.state.address_horray}
+            cityFromHooray={this.state.city_hooray}
+            stateFromHooray={this.state.state_hooray}
+            zipCodeFromHooray={this.state.zip_hooray}
+          />
         </div>
-        {/* <WebNavBar/> */}
-        {/* <div>
-        <WebNavBar/>
-      </div> */}
-        {/* <div
-          style={{
-            position: "absolute",
-            right: "10px",
-            top: "0px",
-            zIndex: "1100",
-            // border: '1px solid cyan'
-          }}
-        >
-          {this.state.login_seen ? (
-            <PopLogin toggle={this.togglePopLogin} toggle_signup={this.togglePopSignup}/>
-          ) : null}
-          {this.state.signUpSeen ? (
-            <PopSignup 
-              toggle={this.togglePopSignup} 
-              // styling={{
-              //   top: '100px', 
-              //   border: '1px solid green'
-              // }}
-            />
-          ) : null}
-        </div> */}
 
-        <div 
-          className={styles.topBackground}
-          // style={{
-          //   border: '1px solid lime'
-          // }}
-        >
-          {/* <div 
-            className={styles.gridDisplayRight}
-            style={{
-              border: '1px solid red'
-            }}
-          > */}
+        <div className={styles.topBackground}>
+
             <SocialLogin 
               verticalFormat={true} 
               toggleLoginPopup={this.props.toggleLoginPopup}
@@ -265,62 +241,7 @@ class Home extends Component {
               src={goToImg}
               onClick={this.togglePopLogin}
             />
-          {/* </div> */}
-
-          {/* <div className =  {styles.whiteStripe}>		  
-          <div className = {styles.gridDisplayCenter}>
-            <div className = {styles.centerSubtitleText}>
-              <img className = {styles.centerImage} src = {Logo} alt="logo" />
-            </div>
-            <div
-            style={{
-              zIndex:'3'
-            }}>
-              <HomeMap/>
-            </div>
-
-          </div>
-        </div>	 */}
-
-          {/* <div
-            style={{
-              width: "100%",
-              display: "flex",
-              justifyContent: "center",
-              border: '1px solid blue'
-            }}
-          >
-            <div 
-              className={styles.whiteStripe}
-              style={{
-                border: '1px solid red'
-              }}
-            > */}
-              {/* <div 
-                className={styles.gridDisplayCenter}
-                style={{
-                  border: '1px solid cyan'
-                }}
-              > */}
-                {/* <div className={styles.centerSubtitleText}>
-                  <img className={styles.centerImage} src={Logo} alt="logo" />
-                </div> */}
-                {/* <div
-                  style={{
-                    zIndex: "3",
-                    opacity: "1",
-                    // border: '1px solid red'
-                  }}
-                >
-                  <HomeMap 
-                    toggleSignupPopup={this.props.toggleSignupPopup}
-                    showSignupPopup={this.props.showSignupPopup}
-                    loggedIn={this.loggedIn()}
-                  />
-                </div> */}
-              {/* </div> */}
-            {/* </div>
-          </div> */}
+          
           <div
             className={styles.banner}
           >
@@ -332,6 +253,7 @@ class Home extends Component {
           >
             <HomeMap 
               toggleSignupPopup={this.props.toggleSignupPopup}
+              toggleHooraySignup={this.toggleHooraySignup}
               showSignupPopup={this.props.showSignupPopup}
               loggedIn={this.loggedIn()}
             />
@@ -506,68 +428,9 @@ class Home extends Component {
                     justifyContent: "center",
                   }}
                 >
-                  {/* <img
-                    src={howItWorksDiagram}
-                    width="100%"
-                    float="left"
-                  ></img> */}
                   <HowItWorks />
                 </div>
-                {/* <div className={styles.stepsContainer}>
-                  <img className = {styles.stepsImage} src = {exploreImg} ></img>
-                  <div className = {styles.stepsHeaderForHowDoesSection} onClick={() => this.goToLink('select-meal')}>
-                      <h6 className = {styles.stepsTextForExplore}><h6 className={styles.stepsNumber}>
-                        1. Explore</h6><br/><br/>
-                        Let your pallete be your guide. Explore the different cuisines (we have three!) and dishes available.
-                      </h6>
-                        
-                    <img className = {styles.pathFromExploreToPickAPlan} src = {pathFromExploreToPickAPlan}></img>
-                        
-                  </div>
-                </div>
-                <div className={styles.stepsContainer}>
-                        <div className = {styles.stepsHeaderForHowDoesSection}>
-                        </div>
-                </div>                
-                      
-                <div className={styles.stepsContainer} style = {{marginLeft:'-230px', marginTop:'-50px'}}>
-                        <div className = {styles.stepsHeaderForHowDoesSection} styles= {{marginLeft:'-300px'}} onClick={() => this.goToLink('choose-plan')} style = {{marginTop:'200px'}}>
-
-                      <h6 className = {styles.stepsText}><h6 className={styles.stepsNumber}>2. Purchase</h6><br/><br/>
-                                  Purchase a Meal Plan. Pre-pay with PayPal or Stripe. Get discounts if you purchase 2 or 4 weeks in advance.</h6>
-                              
-                      <img className = {styles.stepsImageForPurchase} src = {purchaseImg}></img></div> 
-                      <img className = {styles.pathFromPurchaseToChoose} src = {pathFromPurchaseToChoose}></img>
-                        
-                </div>
-                <div className={styles.stepsContainer} >
-                      <div className = {styles.stepsHeaderForHowDoesSection}>
-                    <h6 className = {styles.stepsText}>
-                              <h6 className={styles.stepsNumber}>3. Choose</h6><br/><br/>
-                            Choose the meals you want to receive each delivery up to 4 weeks in advance.</h6>          
-                              <img className = {styles.stepsImageForChoose} src = {chooseImg}></img>
-                      <img className = {styles.pathFromSelectMealsToEnjoy} src = {pathFromSelectMealsToEnjoy}></img></div>
-                </div>
-                <div className={styles.stepsContainer}>
-                        <div className = {styles.stepsHeaderForHowDoesSection}>
-                        </div>
-                </div>
-
-                <div className={styles.stepsContainer}>
-                        <div className = {styles.stepsHeaderForHowDoesSection}>
-                        </div>
-                </div>
-                      
-                <div className={styles.stepsContainer}>
-                  <div className = {styles.stepsHeaderForHowDoesSection} style = {{marginLeft: '-350px',marginTop:'180px'}}>
-                      <h6 className = {styles.stepsText}>					
-                        <h6 className={styles.stepsNumber}>4. Enjoy</h6>
-                        <br/><br/>
-                        Heat, enjoy, and stay healthy!
-                      </h6>
-                      <img className = {styles.stepsImageForEnjoy} src = {enjoyImg} aria-label="Click to get started" title="Click to get started"></img>
-                    </div>
-                </div> */}
+                
               </div>
             );
           } else {
@@ -600,20 +463,10 @@ class Home extends Component {
             marginTop: "50px",
             fontWeight: "bold",
             width: "100%",
-            // border: '1px solid red'
           }}
         >
           <button
             className={styles.whiteBtn}
-            // style={{
-            //   backgroundColor: "white",
-            //   color: "#F26522",
-            //   border: "2px solid #F26522",
-            //   padding: "15px",
-            //   borderRadius: "15px",
-            //   width: "300px",
-            //   fontSize: "24px",
-            // }}
             onClick={this.togglePopSignup}
           >
             Sign Up
@@ -624,19 +477,6 @@ class Home extends Component {
           if (this.state.windowWidth >= 800) {
             return (
               <>
-                {/* <div class={styles.howDoesContainer}>
-                  <div class={styles.howDoesText}>
-                    <p
-                      style={{
-                        marginLeft: "-90px",
-                        display: "inline",
-                        color: "black",
-                      }}
-                    >
-                      Our Partners Chefs and Restaurants
-                    </p>
-                  </div>
-                </div> */}
                 <div 
                   className={styles.sectionHeader}
                   style={{

@@ -34,6 +34,7 @@ export class HomeMap extends Component {
       city: "",
       state: "",
       zip_code: "",
+      street: "",
       await_delivery_check: false,
       await_autocomplete_select: false
     };
@@ -91,6 +92,7 @@ export class HomeMap extends Component {
 
     this.setState({
       // address: tokens[0],
+      street: tokens[0],
       address: value,
       city: tokens[1],
       state: tokens[2],
@@ -105,143 +107,6 @@ export class HomeMap extends Component {
       signup: !this.state.signup,
     });
   };
-
-  // componentDidMount() {
-    // const input = document.getElementById("pac-input");
-
-    // const options = {
-    //   componentRestrictions: { country: "us" },
-    // };
-
-    // this.autocomplete = new google.maps.places.Autocomplete(input, options);
-
-    // console.log(autocomplete)
-    // console.log(this.autocomplete)
-
-    // this.autocomplete.addListener("place_changed", () => {
-    //   let place = this.autocomplete.getPlace();
-
-    //   // console.log(place)
-    //   // console.log(place.address_components)
-
-    //   let address1 = "";
-    //   let postcode = "";
-    //   let city = "";
-    //   let state = "";
-
-    //   for (const component of place.address_components) {
-    //     const componentType = component.types[0];
-    //     switch (componentType) {
-    //       case "street_number": {
-    //         address1 = `${component.long_name} ${address1}`;
-    //         break;
-    //       }
-
-    //       case "route": {
-    //         address1 += component.short_name;
-    //         break;
-    //       }
-
-    //       case "postal_code": {
-    //         postcode = `${component.long_name}${postcode}`;
-    //         break;
-    //       }
-
-    //       case "locality":
-    //         city = component.long_name;
-    //         break;
-
-    //       case "administrative_area_level_1": {
-    //         state = component.short_name;
-    //         break;
-    //       }
-    //     }
-    //   }
-
-    //   this.setState({
-    //     name: place.name,
-    //     street_address: address1,
-    //     city: city,
-    //     state: state,
-    //     zip_code: postcode,
-    //     lat: place.geometry.location.lat(),
-    //     lng: place.geometry.location.lng(),
-    //   });
-
-    //   // console.log(this.state)
-
-    //   if (!place.geometry || !place.geometry.location) {
-    //     // User entered the name of a Place that was not suggested and
-    //     // pressed the Enter key, or the Place Details request failed.
-    //     window.alert("No details available for input: '" + place.name + "'");
-    //     return;
-    //   }
-
-      // axios
-      //   .get(
-      //     `https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/categoricalOptions/${this.state.lng},${this.state.lat}`
-      //   )
-      //   .then((res) => {
-      //     console.log("(CO) res: ", res);
-      //     if (res.data.result.length == 0) {
-      //       // alert('cannot deliver to this address')
-      //       this.setState({
-      //         stillGrowing: true,
-      //       });
-      //       // console.log("cannot deliver to this address");
-      //     } else {
-      //       this.setState({
-      //         hooray: true,
-      //         await_endpoints: false
-      //       });
-      //       // console.log("we can deliver to this address");
-      //     }
-      //   })
-      //   .catch((err) => {
-      //     if (err.response) {
-      //       console.log(err.response);
-      //     }
-      //     console.log(err);
-      //   });
-    // });
-  // }
-
-  // checkIfDelivers = () => {
-  //   this.setState({
-  //     await_endpoints: true
-  //   }, () => {
-  //     axios
-  //       .get(
-  //         `https://ht56vci4v9.execute-api.us-west-1.amazonaws.com/dev/api/v2/categoricalOptions/${this.state.lng},${this.state.lat}`
-  //       )
-  //       .then((res) => {
-  //         console.log("(CO) res: ", res);
-  //         if (res.data.result.length == 0) {
-  //           // alert('cannot deliver to this address')
-  //           this.setState({
-  //             stillGrowing: true,
-  //             await_endpoints: false
-  //           });
-  //           // console.log("cannot deliver to this address");
-  //         } else {
-  //           this.setState({
-  //             hooray: true,
-  //             await_endpoints: false
-  //           });
-  //           // console.log("we can deliver to this address");
-  //         }
-  //       })
-  //       .catch((err) => {
-  //         this.setState({
-  //           await_endpoints: false
-  //         });
-  //         if (err.response) {
-  //           console.log(err.response);
-  //         }
-  //         console.log(err);
-  //       });
-  //   });
-  // }
 
   checkIfDelivers = () => {
     let tokens = this.state.address.split(', ');
@@ -283,25 +148,7 @@ export class HomeMap extends Component {
         }}
       >
         {this.state.hooray ? (
-          // {/* {true? */}
-          <div
-            className={styles.hoorayPopUp}
-            // style={{
-            //   position: "absolute",
-            //   width: "384px",
-            //   height: "371px",
-            //   backgroundColor: "white",
-            //   border: "2px solid #F26522",
-            //   // top: '100px',
-            //   top: '-400px',
-            //   right: '20px',
-            //   marginLeft: '20px'
-            //   // left: "65%",
-            //   // top: "40%",
-            //   // top: '0px'
-
-            // }}
-          >
+          <div className={styles.hoorayPopUp}>
             <button
               className="close"
               onClick={() => {
@@ -311,54 +158,17 @@ export class HomeMap extends Component {
               title="close popup"
             />
 
-            <div
-              className={styles.hoorayHeader}
-              // style={{
-              //   position: "relative",
-              //   top: "29px",
-              //   left: "144px",
-              //   width: "96px",
-              //   height: "31px",
-              //   fontSize: "26px",
-              //   fontWeight: "bold",
-              // }}
-            >
+            <div className={styles.hoorayHeader}>
               Hooray!
             </div>
 
-            <div
-              className={styles.hoorayText}
-              // style={{
-              //   position: "relative",
-              //   top: "57px",
-              //   left: "27px",
-              //   width: "330px",
-              //   height: "69px",
-              //   fontSize: "18px",
-              //   textAlign: "center",
-              //   //  fontWeight:'',
-              // }}
-            >
+            <div className={styles.hoorayText}>
               Looks like we deliver to your address. Click the button below to
               see the variety of meals we offer.
             </div>
 
             <button
               className={styles.hoorayBtn}
-              // style={{
-                // position: "relative",
-                // top: "0px",
-                // left: "92px",
-                // width: "200px",
-                // height: "50px",
-                // fontSize: "18px",
-                // textAlign: "center",
-                // backgroundColor: "#F26522",
-                // color: "white",
-                // paddingTop: "10px",
-                // borderRadius: "15px",
-                //  fontWeight:'',
-              // }}
               onClick={() => {
                 this.props.history.push("/select-meal");
               }}
@@ -375,12 +185,18 @@ export class HomeMap extends Component {
                 // this.setState({ signup: true, hooray: false });
                 this.setState({ hooray: false });
                 console.log("click props: ", this.props);
-                this.props.toggleSignupPopup(!this.props.showSignupPopup);
+                // this.props.toggleSignupPopup(!this.props.showSignupPopup);
+                this.props.toggleHooraySignup(
+                  this.state.street,
+                  this.state.city,
+                  this.state.state,
+                  this.state.zip
+                ); 
               }}
               aria-label="Click here to sign up"
               title="Click here to sign up"
             >
-              Sign up
+              Sign Up
             </button>
           </div>
         ) : null}
@@ -490,35 +306,6 @@ export class HomeMap extends Component {
             </button>
           </div>
         ) : null}
-
-        {/* <div id="pac-container"> */}
-          {/* <input
-            // id="pac-input"
-            type="text"
-            placeholder="Enter a Location"
-            style={{
-              width: "320px",
-              height: "57px",
-              borderRadius: "10px",
-              fontSize: "25px",
-              // border: "1px solid",
-              border: 'none',
-              textAlign: "center",
-              color: "black",
-              marginLeft: "40px",
-              marginTop: "-30px",
-              marginBottom: "15px",
-              borderRadius: "10px",
-            }}
-          /> */}
-          {/* <div
-            style={{
-              width: '100%',
-              dispaly: 'flex',
-              justifyContent: 'center',
-              border: '1px solid lime'
-            }}
-          > */}
           <PlacesAutocomplete
             value={this.state.address}
             onChange={this.handleChange}
@@ -582,43 +369,7 @@ export class HomeMap extends Component {
                     // borderRadius: "10px",
                   }}
                 >
-                  {/* {loading && 
-                    <div 
-                      style={{
-                        backgroundColor: '#ccc9c9',
-                        border: 'inset',
-                        borderWidth: '0px 1px 1px 1px'
-                      }}>
-                      Loading...
-                    </div>}
-                  {suggestions.map((suggestion,index) => {
-                    const className = suggestion.active
-                      ? 'suggestion-item--active'
-                      : 'suggestion-item';
-                    // inline style for demonstration purpose
-                    const style = suggestion.active ? { 
-                      backgroundColor: '#ff6505', 
-                      color: 'white', 
-                      cursor: 'pointer' ,
-                      border: 'inset',
-                      borderWidth: '0px 1px 1px 1px'
-                    } : { 
-                      backgroundColor: '#ccc9c9', 
-                      cursor: 'pointer',
-                      border: 'inset',
-                      borderWidth: '0px 1px 1px 1px'
-                    };
-                    return (
-                      <div
-                        {...getSuggestionItemProps(suggestion, {
-                          className,
-                          style
-                        })}
-                      >
-                        <span>{suggestion.description}</span>
-                      </div>
-                    );
-                  })} */}
+                  
                   {loading ? (
                     <div 
                       style={{
@@ -660,89 +411,31 @@ export class HomeMap extends Component {
               </div>
             )}
           </PlacesAutocomplete>
-          {/* </div> */}
 
           <div
             style={{
-              // border: '1px dashed',
-              // width: '100%',
-              // position: 'relative',
               display: 'flex',
               justifyContent: 'center'
             }}
           >
-          <button
-            // style={{
-            //   width: "320px",
-            //   height: "57px",
-            //   borderRadius: "10px",
-            //   fontSize: "25px",
-            //   border: "none",
-            //   textAlign: "center",
-            //   color: "white",
-            //   marginLeft: "40px",
-            //   marginBottom: "15px",
-            //   borderRadius: "10px",
-            //   backgroundColor: "#ff6505",
-            // }}
-            className={styles.viewMeals}
-            disabled={
-              this.state.await_delivery_check ||
-              this.state.await_autocomplete_select
-            }
-            aria-label="Click here to view meals"
-            title="Click here to view meals"
-            onClick={() => {
-              this.checkIfDelivers();
-            }}
-          >
-            {/* <a
-              href="/select-meal"
-              style={{
-                color: "white",
-                marginLeft: "95px",
-                textAlign: "center",
-                border: '1px solid'
+            <button
+              className={styles.viewMeals}
+              disabled={
+                this.state.await_delivery_check ||
+                this.state.await_autocomplete_select
+              }
+              aria-label="Click here to view meals"
+              title="Click here to view meals"
+              onClick={() => {
+                this.checkIfDelivers();
               }}
-              tabIndex="-1"
             >
               View Meals
-            </a> */}
-            View Meals
-          </button>
+            </button>
           </div>
-        {/* </div> */}
-
-        {/* {this.state.signup ? (
-          <Popsignup
-            toggle={this.togglePopLogin}
-            messageFromHooray={true}
-            nameFromHooray={this.state.name}
-            // streetAddressFromHooray={this.state.street_address}
-            streetAddressFromHooray={this.state.address}
-            cityFromHooray={this.state.city}
-            stateFromHooray={this.state.state}
-            zipCodeFromHooray={this.state.zip_code}
-            styling={{
-              top: '100px', 
-              position: 'relative'
-              // zIndex: '10000'
-              // border: '1px solid green'
-            }}
-          />
-        ) : null} */}
       </div>
     );
   }
 }
 
-// const mapStateToProps = (state) => ({
-//   showSignupPopup: state.login.showSignupPopup
-// });
-
-// const functionList = {
-//   toggleSignupPopup
-// };
-
 export default withRouter(HomeMap);
-// export default connect(mapStateToProps, functionList)(withRouter(HomeMap));

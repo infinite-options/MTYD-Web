@@ -423,7 +423,13 @@ class NavBar extends React.Component {
               <Popsignup toggle={this.togglePopSignup} />
             ) : null} */}
             {this.props.showSignupPopup ? (
-              <Popsignup toggle={this.togglePopSignup} />
+              <Popsignup 
+                toggle={this.togglePopSignup} 
+                streetAddressFromHooray={this.props.streetAddressFromHooray}
+                cityFromHooray={this.props.cityFromHooray}
+                stateFromHooray={this.props.stateFromHooray}
+                zipCodeFromHooray={this.props.zipCodeFromHooray}
+              />
             ) : null}
 
             {this.state.windowWidth > 900 ? (
