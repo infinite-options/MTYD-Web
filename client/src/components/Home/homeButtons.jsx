@@ -21,8 +21,11 @@ import continueWithApple from "../../images/Group 539.png";
 import continueWithFacebook from "../../images/Group 537.png";
 import continueWithGoogle from "../../images/Group 538.png";
 import BecomeAmbass from "../BecomeAmbass";
+import { withRouter } from 'react-router-dom';
+
 
 class HomeLink extends Component {
+  
   render() {
     return (
       <div
@@ -178,6 +181,39 @@ class FootLink extends Component {
                 title="Check us out on Instagram"
               />
             </p>
+            <div>
+              <a href={`mailto:${"support@mealsfor.me"}`} style={{
+                color:"white",
+                position:"absolute",
+                bottom:"56px",
+                left:"550px",
+                fontSize:"25px"
+                }}>
+                support@mealsfor.me
+              </a>
+            </div>
+            <div onClick={() => {
+              window.location.href = "/privacy-policy";
+            }}
+                className={styles.becomeAmbassadorBtn}
+                style={{
+                width: "320px",
+                height: "60px",
+                right:"750px"
+              }}>
+              Privacy Policy
+            </div>
+            <div onClick={() => {
+              window.location.href = "/terms-and-conditions";
+            }}
+                className={styles.becomeAmbassadorBtn}
+                style={{
+                width: "320px",
+                height: "60px",
+                right:"400px"
+              }}>
+              Terms and Conditions
+            </div>
             {/* <div className = {styles.footerRight}> */}
             {/* <img 
                   onClick={() => this.togglePop()} 

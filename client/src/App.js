@@ -44,6 +44,7 @@ import AdminIngredientsUnits from './components/Admin/IngredientsUnits';
 // import MapTest from './components/MapTest';
 import Congrats from "./components/Congrats";
 import { BecomeAmbass } from "./components/BecomeAmbass";
+import PrivacyPolicy from "./components/Home/PrivacyPolicy";
 
 export const history = createBrowserHistory();
 
@@ -99,6 +100,7 @@ function App() {
             />
             <AppliedRoute exact path="/profile" component={Profile} />
             <AppliedRoute exact path="/select-meal" component={SelectMeal} />
+            <AppliedRoute exact path="/privacy-policy" component={PrivacyPolicy} />
             {/* <AppliedRoute
               exact
               path="/congratulations"

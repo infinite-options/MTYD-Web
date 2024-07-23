@@ -1898,3 +1898,22 @@ src={pathFromRYMToHAE}
     text-align: center;
   }
 }
+
+.privacyHeader {
+  display:flex;
+}
+
+.privacyTitle {
+  font-size:100px;
+}
+
+.bodyText {
+  color:black;
+  font-size:30px;
+  margin-bottom:50px;
+}
+
+.bodyTitle {
+  font-weight:bold;
+  margin-bottom:50px;
+}
